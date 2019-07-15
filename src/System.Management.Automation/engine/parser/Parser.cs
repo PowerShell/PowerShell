@@ -6426,13 +6426,17 @@ namespace System.Management.Automation.Language
 
         #region Expressions
 
-        private ExpressionAst ExpressionRule()
+        private ExpressionAst ExpressionRule(bool endNumbeOnTernaryOpChars = false)
         {
             // G  expression:
+            // G      logical-expression
+            // G
+            // G  logical-expression:
+            // G      binary-expression
             // G      ternary-expression
             // G
             // G  ternary-expression:
-            // G      logical-expression   '?'   new-lines:opt   ternary-expression   ':'   ternary-expression
+            // G      binary-expression  new-lines:opt   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
 
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
@@ -6441,7 +6445,7 @@ namespace System.Management.Automation.Language
                 SetTokenizerMode(TokenizerMode.Expression);
 
                 List<Ast> componentAsts = new List<Ast>();
-                ExpressionAst condition = BinaryExpressionRule();
+                ExpressionAst condition = BinaryExpressionRule(endNumbeOnTernaryOpChars);
                 if (condition == null)
                 {
                     return null;
@@ -6450,8 +6454,11 @@ namespace System.Management.Automation.Language
                 componentAsts.Add(condition);
                 Token token = PeekToken();
 
-                // Skip newlines before question mark token to support (ternary operator)line continuance when
-                // the quetion-mark tokens start the next line of script
+                // Skip newlines before question mark token to support (ternary operator)line continuance when the
+                // quetion -mark tokens start the next line of script. This is to support the common usage like:
+                //     $varName1 -eq $varName2
+                //         ? <do-something-if-true>
+                //         : <do-something-if-false>
                 if (token.Kind == TokenKind.NewLine && _tokenizer.IsTernaryContinuance(token.Extent))
                 {
                     SkipNewlines();
@@ -6466,7 +6473,11 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 SkipNewlines();
 
-                ExpressionAst ifOperand = ExpressionRule();
+                // We have seen the ternary operator '?' and now expecting the 'IfFalse' expression.
+                // Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                // so we force to start a new token upon seeing '?' and ':' when scanning for a number,
+                // hoping to find a ternary expression.
+                ExpressionAst ifOperand = ExpressionRule(endNumbeOnTernaryOpChars: true);
                 if (ifOperand == null)
                 {
                     // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
@@ -6506,7 +6517,7 @@ namespace System.Management.Automation.Language
 
                 SkipNewlines();
 
-                ExpressionAst elseOperand = ExpressionRule();
+                ExpressionAst elseOperand = ExpressionRule(endNumbeOnTernaryOpChars: true);
                 if (elseOperand == null)
                 {
                     // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
@@ -6528,16 +6539,13 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private ExpressionAst BinaryExpressionRule()
+        private ExpressionAst BinaryExpressionRule(bool endNumbeOnTernaryOpChars = false)
         {
-            // G  expression:
-            // G      logical-expression
-            // G
-            // G  logical-expression:
+            // G  binary-expression:
             // G      bitwise-expression
-            // G      logical-expression   '-and'   new-lines:opt   bitwise-expression
-            // G      logical-expression   '-or'   new-lines:opt   bitwise-expression
-            // G      logical-expression   '-xor'   new-lines:opt   bitwise-expression
+            // G      binary-expression   '-and'   new-lines:opt   bitwise-expression
+            // G      binary-expression   '-or'   new-lines:opt   bitwise-expression
+            // G      binary-expression   '-xor'   new-lines:opt   bitwise-expression
             // G
             // G  bitwise-expression:
             // G      comparison-expression
@@ -6574,7 +6582,7 @@ namespace System.Management.Automation.Language
                 SetTokenizerMode(TokenizerMode.Expression);
 
                 ExpressionAst lhs, rhs;
-                ExpressionAst expr = ArrayLiteralRule();
+                ExpressionAst expr = ArrayLiteralRule(endNumbeOnTernaryOpChars);
 
                 if (expr == null)
                 {
@@ -6607,7 +6615,11 @@ namespace System.Management.Automation.Language
                 {
                     SkipNewlines();
 
-                    expr = ArrayLiteralRule();
+                    // We have seen a binary operator token and now expecting the right-hand-side expression.
+                    // Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                    // so we force to start a new token upon seeing '?' and ':' when scanning for a number,
+                    // hoping to find a ternary expression.
+                    expr = ArrayLiteralRule(endNumbeOnTernaryOpChars: true);
                     if (expr == null)
                     {
                         // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
@@ -6689,13 +6701,18 @@ namespace System.Management.Automation.Language
                     new CommandParameterAst(paramToken.Extent, paramToken.ParameterName, null, paramToken.Extent)});
         }
 
-        private ExpressionAst ArrayLiteralRule()
+        private ExpressionAst ArrayLiteralRule(bool endNumbeOnTernaryOpChars = false)
         {
             // G  array-literal-expression:
             // G      unary-expression
             // G      unary-expression   ','    new-lines:opt   array-literal-expression
 
-            ExpressionAst lastExpr = UnaryExpressionRule();
+            ExpressionAst lastExpr = UnaryExpressionRule(endNumbeOnTernaryOpChars);
+            if (lastExpr == null)
+            {
+                return null;
+            }
+
             ExpressionAst firstExpr = lastExpr;
 
             Token commaToken = PeekToken();
@@ -6711,7 +6728,11 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 SkipNewlines();
 
-                lastExpr = UnaryExpressionRule();
+                // We have seen a comma token and now expecting an expression as an array element.
+                // Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                // so we force to start a new token upon seeing '?' and ':' when scanning for a number,
+                // hoping to find a ternary expression.
+                lastExpr = UnaryExpressionRule(endNumbeOnTernaryOpChars: true);
                 if (lastExpr == null)
                 {
                     // ErrorRecovery: create an error expression for the ast and break.
@@ -6733,7 +6754,7 @@ namespace System.Management.Automation.Language
             return new ArrayLiteralAst(ExtentOf(firstExpr, lastExpr), arrayValues);
         }
 
-        private ExpressionAst UnaryExpressionRule()
+        private ExpressionAst UnaryExpressionRule(bool endNumbeOnTernaryOpChars = false)
         {
             // G  unary-expression:
             // G      primary-expression
@@ -6764,12 +6785,24 @@ namespace System.Management.Automation.Language
             ExpressionAst expr = null;
             Token token;
             bool oldAllowSignedNumbers = _tokenizer.AllowSignedNumbers;
+            bool oldForceEndNumberOnTernaryOperators = _tokenizer.ForceEndNumbeOnTernaryOpChars;
             try
             {
                 _tokenizer.AllowSignedNumbers = true;
-                if (_ungotToken != null && _ungotToken.Kind == TokenKind.Minus)
+                _tokenizer.ForceEndNumbeOnTernaryOpChars = endNumbeOnTernaryOpChars;
+
+                if (_ungotToken != null)
                 {
-                    Resync(_ungotToken);
+                    bool needResync = _ungotToken.Kind == TokenKind.Minus;
+                    if (!needResync)
+                    {
+                        needResync = endNumbeOnTernaryOpChars && _ungotToken.Kind == TokenKind.Generic;
+                    }
+
+                    if (needResync)
+                    {
+                        Resync(_ungotToken);
+                    }
                 }
 
                 token = PeekToken();
@@ -6777,6 +6810,7 @@ namespace System.Management.Automation.Language
             finally
             {
                 _tokenizer.AllowSignedNumbers = oldAllowSignedNumbers;
+                _tokenizer.ForceEndNumbeOnTernaryOpChars = oldForceEndNumberOnTernaryOperators;
             }
 
             ExpressionAst child;
@@ -6789,7 +6823,12 @@ namespace System.Management.Automation.Language
 
                 SkipToken();
                 SkipNewlines();
-                child = UnaryExpressionRule();
+
+                // We have seen a unary operator token and now expecting an expression.
+                // Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                // so we force to start a new token upon seeing '?' and ':' when scanning for a number,
+                // hoping to find a ternary expression.
+                child = UnaryExpressionRule(endNumbeOnTernaryOpChars: true);
                 if (child != null)
                 {
                     if (token.Kind == TokenKind.Comma)
@@ -6828,7 +6867,10 @@ namespace System.Management.Automation.Language
                 if (lastAttribute is AttributeAst)
                 {
                     SkipNewlines();
-                    child = UnaryExpressionRule();
+
+                    // We are now expecting a child expression. Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                    // so we force to start a new token upon seeing '?' and ':' when scanning for a number, hoping to find a ternary expression.
+                    child = UnaryExpressionRule(endNumbeOnTernaryOpChars: true);
                     if (child == null)
                     {
                         // ErrorRecovery: We have a list of attributes, and we know it's not before a param statement,
@@ -6861,7 +6903,9 @@ namespace System.Management.Automation.Language
                         token = PeekToken();
                         if (token.Kind != TokenKind.NewLine && token.Kind != TokenKind.Comma)
                         {
-                            child = UnaryExpressionRule();
+                            // We are now expecting a child expression. Allowing a generic token like '12?' or '12:' is not useful in the current situation,
+                            // so we force to start a new token upon seeing '?' and ':' when scanning for a number, hoping to find a ternary expression.
+                            child = UnaryExpressionRule(endNumbeOnTernaryOpChars: true);
                             if (child != null)
                             {
                                 expr = new ConvertExpressionAst(ExtentOf(lastAttribute, child),

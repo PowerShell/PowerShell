@@ -721,6 +721,7 @@ namespace System.Management.Automation.Language
 
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
+        internal bool ForceEndNumbeOnTernaryOpChars { get; set; }
         internal bool WantSimpleName { get; set; }
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
@@ -4118,7 +4119,7 @@ namespace System.Management.Automation.Language
 
             if (!c.ForceStartNewToken())
             {
-                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber())
+                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber(ForceEndNumbeOnTernaryOpChars))
                 {
                     notNumber = true;
                 }

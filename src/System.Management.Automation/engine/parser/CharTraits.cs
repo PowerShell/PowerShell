@@ -376,11 +376,16 @@ namespace System.Management.Automation.Language
 
         // Return true if the character ends the current number token.  This allows the tokenizer
         // to scan '7z' as a single token, but '7+' as 2 tokens.
-        internal static bool ForceStartNewTokenAfterNumber(this char c)
+        internal static bool ForceStartNewTokenAfterNumber(this char c, bool forceEndNumberOnTernaryOperatorChars)
         {
             if (c < 128)
             {
-                return (s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0;
+                if ((s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0)
+                {
+                    return true;
+                }
+
+                return forceEndNumberOnTernaryOperatorChars && (c == '?' || c == ':');
             }
 
             return c.IsDash();

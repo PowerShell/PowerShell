@@ -36,7 +36,7 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class IsSafeValueVisitor : ICustomAstVisitor
+    internal class IsSafeValueVisitor : ICustomAstVisitor2
     {
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
@@ -142,6 +142,20 @@ namespace System.Management.Automation.Language
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
 
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return false; }
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return false; }
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return false; }
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return false; }
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return false; }
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return false; }
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return false; }
+
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
             return (bool)indexExpressionAst.Index.Accept(this) && (bool)indexExpressionAst.Target.Accept(this);
@@ -189,6 +203,13 @@ namespace System.Management.Automation.Language
         {
             var expr = pipelineAst.GetPureExpression();
             return expr != null && (bool)expr.Accept(this);
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            return (bool)ternaryExpressionAst.Condition.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfOperand.Accept(this) &&
+                   (bool)ternaryExpressionAst.ElseOperand.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
@@ -334,7 +355,7 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    internal class GetSafeValueVisitor : ICustomAstVisitor
+    internal class GetSafeValueVisitor : ICustomAstVisitor2
     {
         internal enum SafeValueContext
         {
@@ -433,6 +454,20 @@ namespace System.Management.Automation.Language
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { throw PSTraceSource.NewArgumentException("ast"); }
 
         //
         // This is similar to logic used deep in the engine for slicing something that can be sliced
@@ -607,6 +642,18 @@ namespace System.Management.Automation.Language
             }
 
             throw PSTraceSource.NewArgumentException("ast");
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            if (s_context != null)
+            {
+                return Compiler.GetExpressionValue(ternaryExpressionAst, true, s_context, null);
+            }
+            else
+            {
+                throw PSTraceSource.NewArgumentException("ast");
+            }
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
