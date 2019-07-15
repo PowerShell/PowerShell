@@ -1,7 +1,6 @@
 parameters:
   vmImage: 'win1803'
   jobName: 'Nanoserver_Tests'
-  container: 'mcr.microsoft.com/powershell:nanoserver-1803'
   continueOnError: false
 
 jobs:
@@ -12,7 +11,6 @@ jobs:
 
   pool:
     vmImage: ${{ parameters.vmImage }}
-  #container: ${{ parameters.container }}
 
   displayName: ${{ parameters.jobName }}
 
