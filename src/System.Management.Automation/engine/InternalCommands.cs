@@ -6,10 +6,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -346,44 +348,83 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
+        private PSTaskPool _taskPool;
+        private PSTaskDataStreamWriter _taskDataStreamWriter;
+        private Dictionary<string, object> _usingValuesMap;
+
         private void InitParallelParameterSet()
         {
-            // TODO:
-            // Initialize PSTaskPool
-            // Process script block Ast using variable expressions
-            //      Create usingValuesMap
-            //      or should variables be passed in as ISS entries or usingValueMap arguments?
+            bool allowUsingExpression = (this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(ScriptBlock, allowUsingExpression, this.Context, null);
+
+            if (AsJob)
+            {
+                // TODO: Create parent job
+                // _parentThreadJob (TaskJob?) = ...
+                // _taskPool = new PSTaskPool(ThrottleLimit, dataStreamWriter);
+            }
+            else
+            {
+                _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
+                _taskPool = new PSTaskPool(ThrottleLimit, _taskDataStreamWriter);
+                _taskPool.TaskComplete += new EventHandler<PSTaskCompleteEventArgs>(HandleTaskComplete);
+                // TODO: Add timeout timer as needed.
+            }
+        }
+
+        private void HandleTaskComplete(object sender, PSTaskCompleteEventArgs args)
+        {
+            args.Task.Dispose();
         }
 
         private void ProcessParallelParameterSet()
         {
-            // TODO:
-            // Create PSTask for each pipeline input
-            //      Hook up data streams object collect/writer and host (pass in cmdlet based object stream writer)
-            //      Need to figure out how to pass in dollarUnderbar variable
-            //          Currently no way to pass in via PowerShell object, need to find a way to do this
-            //              PowerShell -> LocalPipe -> Pipeline processing -> Scriptblock processing -> Invoke scriptblock, pass in dollarUnderbar (ScriptCommandProcessor.cs)
-            //      Create usingValuesMap parameter as needed
-            //      
-            // Sync:   Hand each pipeline input to PSTaskPool, block as necessary
-            //         Catch any exception and Write as ErrorRecord object to error data stream
-            // Async:  Create PSThreadChildJob wrapper for and add parent job, and to job queue
+            var task = new System.Management.Automation.PSTasks.PSTask(
+                ScriptBlock,
+                _usingValuesMap,
+                InputObject,
+                _taskDataStreamWriter,
+                this);
+
+            if (AsJob)
+            {
+                // TODO: Create child job and add to parent
+            }
+            else
+            {
+                // Write any streaming data
+                _taskDataStreamWriter.WriteImmediate();
+
+                // Add task to task pool.
+                // Block if the pool is full and wait until task can be added.
+                _taskPool.Add(task);
+            }
         }
 
         private void EndParallelParameterSet()
         {
-            // TODO:
-            // Sync:   Make sure all stream objects are written (see InvokeCommandCommand)
-            // Async:  Write parent job object
+            if (AsJob)
+            {
+                // TODO: Write parent job to output
+            }
+            else
+            {
+                _taskDataStreamWriter.WriteImmediate();
+
+                _taskPool.Close();
+                _taskDataStreamWriter.WaitAndWrite();
+
+                _taskDataStreamWriter.Dispose();
+                _taskPool.Dispose();
+            }
         }
 
         private void StopParallelProcessing()
         {
-            // TODO:
-            // Sync:  Stop processing input (PSTaskPool accepts no more input)
-            //        Send stop to all running PSTasks in PSTaskPool
-            //        Wait for all tasks to stop
-            // Async: NoOp
+            if (!AsJob)
+            {
+                _taskPool.StopAll();
+            }
         }
 
         private void EndBlockParameterSet()

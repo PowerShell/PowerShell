@@ -1,12 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
@@ -31,12 +26,15 @@ namespace System.Management.Automation.PSTasks
         private readonly PSTaskDataStreamWriter _dataStreamWriter;
         private readonly Job2 _job;
         private readonly PSCmdlet _cmdlet;
+        private readonly int _id;
 
         private Runspace _runspace;
         private PowerShell _powershell;
         private PSDataCollection<PSObject> _output;
 
         private const string VERBATIM_ARGUMENT = "--%";
+
+        private static int s_taskId = 0;
 
         #endregion
 
@@ -51,7 +49,10 @@ namespace System.Management.Automation.PSTasks
 
         #region Properties
 
-        PSInvocationState State
+        /// <summary>
+        /// Current running state of the task
+        /// </summary>
+        public PSInvocationState State
         {
             get
             {
@@ -65,11 +66,22 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
+        /// <summary>
+        /// Task Id
+        /// </summary>
+        public int Id
+        {
+            get { return _id; }
+        }
+
         #endregion
 
         #region Constructor
 
-        private PSTask() { }
+        private PSTask() 
+        { 
+            _id = Interlocked.Increment(ref s_taskId);
+        }
 
         /// <summary>
         /// Constructor for data streaming
@@ -79,7 +91,7 @@ namespace System.Management.Automation.PSTasks
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
             PSTaskDataStreamWriter dataStreamWriter,
-            PSCmdlet psCmdlet)
+            PSCmdlet psCmdlet) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
@@ -96,7 +108,7 @@ namespace System.Management.Automation.PSTasks
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
             Job2 job,
-            PSCmdlet psCmdlet)
+            PSCmdlet psCmdlet) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
@@ -141,6 +153,8 @@ namespace System.Management.Automation.PSTasks
             //       _localsTuple = scriptBlock.MakeLocalsTuple(_runOptimizedCode);
             //       _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
             //      See: ScriptCommandProcessor.cs
+            // TODO: Also update argument binding using variable look up to detect ScriptBlock using variable
+            //       and recreate ScriptBlock instance using Ast
             iss.Variables.Add(
                 new SessionStateVariableEntry("DollarUnderbar", _dollarUnderbar, string.Empty)
             );
@@ -167,15 +181,16 @@ namespace System.Management.Automation.PSTasks
             _powershell.InvocationStateChanged += new EventHandler<PSInvocationStateChangedEventArgs>(HandleStateChanged);
 
             // Start the script running in a new thread
+            _powershell.AddScript(_scriptBlockToRun.ToString());
             _powershell.BeginInvoke<object, PSObject>(null, _output);
         }
 
         /// <summary>
-        /// Stop running task
+        /// Signals the running task to stop
         /// </summary>
-        public void Stop()
+        public void SignalStop()
         {
-            _powershell.Stop();
+            _powershell.BeginStop(null, null);
         }
 
         #endregion
@@ -322,25 +337,24 @@ namespace System.Management.Automation.PSTasks
 
         private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
         {
-            // Treat any terminating exception as a non-terminating error record
-            var newStateInfo = stateChangeInfo.InvocationStateInfo;
-            if (newStateInfo.Reason != null)
+            if (_dataStreamWriter != null)
             {
-                var errorRecord = new ErrorRecord(
-                    newStateInfo.Reason,
-                    "PSTaskException",
-                    ErrorCategory.InvalidOperation,
-                    this);
+                // Treat any terminating exception as a non-terminating error record
+                var newStateInfo = stateChangeInfo.InvocationStateInfo;
+                if (newStateInfo.Reason != null)
+                {
+                    var errorRecord = new ErrorRecord(
+                        newStateInfo.Reason,
+                        "PSTaskException",
+                        ErrorCategory.InvalidOperation,
+                        this);
 
-                if (_dataStreamWriter != null)
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Error, errorRecord)
-                    );
-                }
-                else
-                {
-                    // TODO: Jobs
+                    if (_dataStreamWriter != null)
+                    {
+                        _dataStreamWriter.Add(
+                            new PSStreamObject(PSStreamObjectType.Error, errorRecord)
+                        );
+                    }
                 }
             }
 
@@ -433,8 +447,6 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public void Close()
         {
-            CheckCmdletThread();
-
             _dataStream.Complete();
         }
 
@@ -470,9 +482,219 @@ namespace System.Management.Automation.PSTasks
 
     #region PSTaskPool
 
-    internal sealed class PSTaskPool
+    /// <summary>
+    /// Event arguments for TaskComplete event
+    /// </summary>
+    internal sealed class PSTaskCompleteEventArgs : EventArgs
     {
-        // TODO:
+        public PSTask Task
+        {
+            get;
+            private set;
+        }
+
+        private PSTaskCompleteEventArgs() { }
+
+        public PSTaskCompleteEventArgs(PSTask task)
+        {
+            Task = task;
+        }
+    }
+
+    /// <summary>
+    /// Pool for running PSTasks, with limit of total number of running tasks at a time
+    /// </summary>
+    internal sealed class PSTaskPool : IDisposable
+    {
+        #region Members
+
+        private readonly int _sizeLimit;
+        private bool _isOpen;
+        private readonly object _syncObject;
+        private readonly ManualResetEvent _addAvailable;
+        private readonly ManualResetEvent _stopAll;
+        private readonly PSTaskDataStreamWriter _dataStreamWriter;
+        private readonly Dictionary<int, PSTask> _taskPool;
+
+        #endregion
+
+        #region Constructor
+
+        private PSTaskPool() { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PSTaskPool(int size, PSTaskDataStreamWriter dataStreamWriter)
+        {
+
+            _sizeLimit = size;
+            _dataStreamWriter = dataStreamWriter;
+            _isOpen = true;
+            _syncObject = new object();
+            _addAvailable = new ManualResetEvent(true);
+            _stopAll = new ManualResetEvent(false);
+            _taskPool = new Dictionary<int, PSTask>(size);
+        }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Event that fires when a running task completes
+        /// </summary>
+        public event EventHandler<PSTaskCompleteEventArgs> TaskComplete;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Returns true if pool is currently open for accepting tasks
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Dispose task pool
+        /// </summary>
+        public void Dispose()
+        {
+            _addAvailable.Dispose();
+            _stopAll.Dispose();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Method to add a task to the pool
+        /// If the pool is full, then this method blocks until room is available
+        /// This method is not multi-thread safe and assumes only one thread waits and adds tasks
+        /// </summary>
+        public bool Add(PSTask task)
+        {
+            if (! _isOpen)
+            {
+                return false;
+            }
+
+            // Block until either room is available or a stop is commanded
+            var index = WaitHandle.WaitAny(new WaitHandle[] {
+                _addAvailable,  // index 0
+                _stopAll        // index 1
+            });
+            
+            if (index == 1)
+            {
+                return false;
+            }
+
+            task.StateChanged += new EventHandler<PSInvocationStateChangedEventArgs>(HandleTaskStateChanged);
+
+            lock (_syncObject)
+            {
+                _taskPool.Add(task.Id, task);
+                if (_taskPool.Count == _sizeLimit)
+                {
+                    _addAvailable.Reset();
+                }
+            }
+
+            task.Start();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Signals all running tasks to stop and closes pool for any new tasks
+        /// </summary>
+        public void StopAll()
+        {
+            // Accept no more input
+            Close();
+            _stopAll.Set();
+            
+            // Send stop signal to any running tasks
+            lock (_syncObject)
+            {
+                foreach (var task in _taskPool.Values)
+                {
+                    task.SignalStop();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Closes the pool and prevents any new tasks from being added
+        /// </summary>
+        public void Close()
+        {
+            _isOpen = false;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
+        {
+            var task = sender as PSTask;
+            Dbg.Assert(task != null, "State changed sender must always be PSTask");
+            var stateInfo = args.InvocationStateInfo;
+            switch (stateInfo.State)
+            {
+                // Look for completed state and remove
+                case PSInvocationState.Completed:
+                case PSInvocationState.Stopped:
+                case PSInvocationState.Failed:
+                    lock (_syncObject)
+                    {
+                        _taskPool.Remove(task.Id);
+                        if (_taskPool.Count == (_sizeLimit - 1))
+                        {
+                            _addAvailable.Set();
+                        }
+                    }
+                    task.StateChanged -= new EventHandler<PSInvocationStateChangedEventArgs>(HandleTaskStateChanged);
+                    try
+                    {
+                        TaskComplete.Invoke(
+                            this,
+                            new PSTaskCompleteEventArgs(task)
+                        );
+                    }
+                    catch
+                    {
+                        Dbg.Assert(false, "Exceptions should not be thrown on event thread");
+                    }
+                    CheckForComplete();
+                    break;
+            }
+        }
+
+        private void CheckForComplete()
+        {
+            lock (_syncObject)
+            {
+                if (!_isOpen && _taskPool.Count == 0)
+                {
+                    _dataStreamWriter.Close();
+
+                    // TODO: Callback?
+                }
+            }
+        }
+
+        #endregion
     }
 
     #endregion
