@@ -17,8 +17,8 @@ jobs:
   displayName: ${{ parameters.jobName }}
 
   steps:
-  - pwsh: |
-      Get-ChildItem -Path env:
+  - script: |
+      set
     displayName: Capture environment
     condition: succeededOrFailed()
 
