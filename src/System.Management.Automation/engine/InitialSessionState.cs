@@ -4119,7 +4119,7 @@ param(
     [string]
     ${Path},
 
-    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','Workflow','DscResource','Class','Configuration')]
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','DscResource','Class','Configuration')]
     [string[]]
     ${Category},
 
@@ -4616,7 +4616,9 @@ end {
                     new SessionStateAliasEntry("dir", "Get-ChildItem", string.Empty, AllScope),
                     new SessionStateAliasEntry("echo", "Write-Output", string.Empty, AllScope),
                     new SessionStateAliasEntry("fc", "Format-Custom", string.Empty, ReadOnly),
+#if !UNIX
                     new SessionStateAliasEntry("kill", "Stop-Process"),
+#endif
                     new SessionStateAliasEntry("pwd", "Get-Location"),
                     new SessionStateAliasEntry("type", "Get-Content"),
 // #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts

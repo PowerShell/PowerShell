@@ -1661,6 +1661,9 @@ namespace System.Management.Automation.Language
                     case '\n':
                         UngetChar();
 
+                        // Detect a line comment that disguises itself to look like the beginning of a signature block.
+                        // This could be used to hide code at the bottom of a script, since people might assume there is nothing else after the signature.
+                        //
                         // The token similarity threshold was chosen by instrumenting the tokenizer and
                         // analyzing every comment from PoshCode, Technet Script Center, and Windows.
                         //
@@ -1677,15 +1680,16 @@ namespace System.Management.Automation.Language
                         //
                         // There were only 279 (out of 269,387) comments with a similarity of 11,12,13,14, or 15.
                         // At a similarity of 16-77, there were thousands of comments per similarity bucket.
-                        //
-                        // System.IO.File.AppendAllText(@"c:\temp\signature_similarity.txt", "" + sawBeginTokenSimilarity + ":" + commentLineComparison);
 
                         const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
                         const int beginTokenSimilarityThreshold = 10;
 
-                        // Quick exit - the comment line is more than 'threshold' longer. Therefore,
+                        const int beginTokenSimilarityUpperBound = 34; // beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold
+                        const int beginTokenSimilarityLowerBound = 14; // beginSignatureTextNoSpace.Length - beginTokenSimilarityThreshold
+
+                        // Quick exit - the comment line is more than 'threshold' longer, or is less than 'threshold' shorter. Therefore,
                         // its similarity will be over the threshold.
-                        if (commentLine.Length > (beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold))
+                        if (commentLine.Length > beginTokenSimilarityUpperBound || commentLine.Length < beginTokenSimilarityLowerBound)
                         {
                             sawBeginSig = false;
                         }
@@ -1697,10 +1701,20 @@ namespace System.Management.Automation.Language
                             //
                             // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
                             // about 4.45 ms with the more simplistic algorithm.
-                            //
-                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
 
-                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
+                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
+                            if (_beginTokenSimilarity2dArray == null)
+                            {
+                                // Create the 2 dimensional array for edit distance calculation if it hasn't been created yet.
+                                _beginTokenSimilarity2dArray = new int[beginTokenSimilarityUpperBound + 1, beginSignatureTextNoSpace.Length + 1];
+                            }
+                            else
+                            {
+                                // Zero out the 2 dimensional array before using it.
+                                Array.Clear(_beginTokenSimilarity2dArray, 0, _beginTokenSimilarity2dArray.Length);
+                            }
+
+                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace, _beginTokenSimilarity2dArray);
                             sawBeginSig = sawBeginTokenSimilarity < beginTokenSimilarityThreshold;
                         }
 
@@ -1716,6 +1730,9 @@ namespace System.Management.Automation.Language
         #endregion Utilities
 
         #region Object reuse
+
+        // A two-dimensional integer array reused for calculating string similarity.
+        private int[,] _beginTokenSimilarity2dArray;
 
         private readonly Queue<StringBuilder> _stringBuilders = new Queue<StringBuilder>();
 
@@ -1796,14 +1813,14 @@ namespace System.Management.Automation.Language
 
         // Implementation of the Levenshtein Distance algorithm
         // https://en.wikipedia.org/wiki/Levenshtein_distance
-        private static int GetStringSimilarity(string first, string second)
+        private static int GetStringSimilarity(string first, string second, int[,] distanceMap = null)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(first) && !string.IsNullOrEmpty(second), "Caller never calls us with empty strings");
 
             // Store a distance map to store the number of edits required to
             // convert the first <row> letters of First to the first <column>
             // letters of Second.
-            int[,] distanceMap = new int[first.Length + 1, second.Length + 1];
+            distanceMap ??= new int[first.Length + 1, second.Length + 1];
 
             // Initialize the first row and column of the matrix - the number
             // of edits required when one of the strings is empty is just

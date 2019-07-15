@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +20,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-
 using PathType = System.IO.Path;
 
 namespace Microsoft.PowerShell.Commands
@@ -29,7 +27,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Languages supported for code generation.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
     public enum Language
     {
         /// <summary>
@@ -98,7 +95,6 @@ namespace Microsoft.PowerShell.Commands
         /// The source code of this generated method / member.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = FromMemberParameterSetName)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] MemberDefinition
         {
             get
@@ -133,7 +129,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [ValidateNotNull()]
         [Alias("Using")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
         /// <summary>
@@ -141,7 +136,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = FromPathParameterSetName)]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path
         {
             get
@@ -189,7 +183,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("PSPath", "LP")]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get
@@ -277,7 +270,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = FromAssemblyNameParameterSetName)]
         [Alias("AN")]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] AssemblyName { get; set; }
 
         private bool _loadAssembly = false;
@@ -298,7 +290,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("RA")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ReferencedAssemblies
         {
             get { return _referencedAssemblies; }
@@ -813,7 +804,6 @@ namespace Microsoft.PowerShell.Commands
         // However, this does give us a massive usability improvement, as users can just say
         // Add-Type -AssemblyName Forms (instead of System.Windows.Forms)
         // This is just long, not unmaintainable.
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         private Assembly LoadAssemblyHelper(string assemblyName)
         {
             Assembly loadedAssembly = null;

@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -27,13 +26,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the lines found before a match.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] PreContext { get; set; }
 
         /// <summary>
         /// Gets or sets the lines found after a match.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] PostContext { get; set; }
 
         /// <summary>
@@ -41,7 +38,6 @@ namespace Microsoft.PowerShell.Commands
         /// overlapping context and thus can be used to
         /// display contiguous match regions.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DisplayPreContext { get; set; }
 
         /// <summary>
@@ -49,7 +45,6 @@ namespace Microsoft.PowerShell.Commands
         /// overlapping context and thus can be used to
         /// display contiguous match regions.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DisplayPostContext { get; set; }
 
         /// <summary>
@@ -266,7 +261,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a list of all Regex matches on the matching line.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Match[] Matches { get; set; } = new Match[] { };
 
         /// <summary>
@@ -423,7 +417,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new NotImplementedException();
             }
 
-            [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             public void CopyTo(T[] array, int arrayIndex)
             {
                 if (array == null)
@@ -1006,7 +999,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
         [FileinfoToString]
         [Alias("PSPath", "LP")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get => Path;

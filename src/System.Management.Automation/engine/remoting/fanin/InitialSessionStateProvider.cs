@@ -52,8 +52,6 @@ namespace System.Management.Automation.Remoting
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
         internal const string MODULESTOIMPORT = "ModulesToImport";
         internal const string HOSTMODE = "hostmode";
-        internal const string WORKFLOWCOREASSEMBLY = "Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
-        internal const string PSWORKFLOWMODULE = "%windir%\\system32\\windowspowershell\\v1.0\\Modules\\PSWorkflow";
         internal const string CONFIGFILEPATH = "configfilepath";
         internal const string CONFIGFILEPATH_CamelCase = "ConfigFilePath";
 

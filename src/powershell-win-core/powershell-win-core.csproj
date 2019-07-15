@@ -12,11 +12,11 @@
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
   </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
 
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
 
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="2.0" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 

@@ -156,6 +156,7 @@
           <Value>ps</Value>
           <Value>op</Value>
           <Value>my</Value>
+          <Value>sb</Value>
         </CollectionProperty>
       </AnalyzerSettings>
     </Analyzer>

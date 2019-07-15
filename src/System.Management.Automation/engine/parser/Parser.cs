@@ -4514,7 +4514,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (token.Kind == TokenKind.Identifier)
+            if (TryUseTokenAsSimpleName(token))
             {
                 SkipToken();
                 var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
@@ -4558,6 +4558,19 @@ namespace System.Management.Automation.Language
             }
 
             return null;
+        }
+
+        private bool TryUseTokenAsSimpleName(Token token)
+        {
+            if (token.Kind == TokenKind.Identifier
+                || token.Kind == TokenKind.DynamicKeyword
+                || token.TokenFlags.HasFlag(TokenFlags.Keyword))
+            {
+                token.TokenFlags = TokenFlags.None;
+                return true;
+            }
+
+            return false;
         }
 
         private void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)

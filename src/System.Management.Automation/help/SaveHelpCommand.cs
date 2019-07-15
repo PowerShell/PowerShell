@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Deal with wildcards
 
-                            int index = path.IndexOf("*", StringComparison.OrdinalIgnoreCase);
+                            int index = path.IndexOf('*');
 
                             if (index == 0)
                             {

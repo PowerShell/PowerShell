@@ -993,6 +993,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.data | Should -Match 'bar'
             $result.headers.'Content-Type' | Should -BeExactly $contentType
         }
+
+        It "Verifies Invoke-WebRequest applies -ContentType when no -Body is present" {
+            $contentType = 'application/json'
+            $uri = Get-WebListenerUrl -Test 'Get'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'GET' -ContentType $contentType
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.data | Should -BeNullOrEmpty
+            $result.headers.'Content-Type' | Should -BeExactly $contentType
+        }
+
+        It "Verifies Invoke-WebRequest applies an invalid -ContentType when no -Body is present and -SkipHeaderValidation is present" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Get'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'GET' -ContentType $contentType -SkipHeaderValidation
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.data | Should -BeNullOrEmpty
+            $result.headers.'Content-Type' | Should -BeExactly $contentType
+        }
     }
 
     #region charset encoding tests
@@ -2386,6 +2408,26 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             # Match used due to inconsistent newline rendering
             $result.data | Should -Match 'bar'
+            $result.headers.'Content-Type' | Should -BeExactly $contentType
+        }
+
+        It "Verifies Invoke-RestMethod applies -ContentType when no -Body is present" {
+            $contentType = 'application/json'
+            $uri = Get-WebListenerUrl -Test 'Get'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'GET' -ContentType $contentType
+
+            $result.data | Should -BeNullOrEmpty
+            $result.headers.'Content-Type' | Should -BeExactly $contentType
+        }
+
+        It "Verifies Invoke-RestMethod applies an invalid -ContentType when no -Body is present and -SkipHeaderValidation is present" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Get'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'GET' -ContentType $contentType -SkipHeaderValidation
+
+            $result.data | Should -BeNullOrEmpty
             $result.headers.'Content-Type' | Should -BeExactly $contentType
         }
     }

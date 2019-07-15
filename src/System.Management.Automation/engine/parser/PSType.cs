@@ -17,6 +17,7 @@ namespace System.Management.Automation.Language
     internal class TypeDefiner
     {
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
+        internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";
 
         private static int s_globalCounter = 0;
         private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =

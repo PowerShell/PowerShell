@@ -855,7 +855,7 @@ namespace Microsoft.PowerShell.Commands
                                 associatedPath = associatedPath.Remove(0, 3);
                                 associatedPath = "\\" + associatedPath;
                             }
-                            else if (associatedPath.EndsWith(":", StringComparison.OrdinalIgnoreCase))
+                            else if (associatedPath.EndsWith(':'))
                             {
                                 // The substed path is the root path of a drive. For example: subst Y: C:\
                                 associatedPath += Path.DirectorySeparatorChar;
@@ -2001,7 +2001,8 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                ? (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo) &&
+                    InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(fileInfo.FullName))
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -5337,13 +5338,13 @@ namespace Microsoft.PowerShell.Commands
         {
             string testPath = path.Replace('/', '\\');
             if (
-                (testPath.IndexOf("\\", StringComparison.OrdinalIgnoreCase) < 0) ||
-                testPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                testPath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
-                (testPath.IndexOf("\\.\\", StringComparison.OrdinalIgnoreCase) > 0) ||
-                (testPath.IndexOf("\\..\\", StringComparison.OrdinalIgnoreCase) > 0))
+                !testPath.Contains('\\') ||
+                testPath.StartsWith(".\\", StringComparison.Ordinal) ||
+                testPath.StartsWith("..\\", StringComparison.Ordinal) ||
+                testPath.EndsWith("\\.", StringComparison.Ordinal) ||
+                testPath.EndsWith("\\..", StringComparison.Ordinal) ||
+                testPath.Contains("\\.\\", StringComparison.Ordinal) ||
+                testPath.Contains("\\..\\", StringComparison.Ordinal))
             {
                 try
                 {

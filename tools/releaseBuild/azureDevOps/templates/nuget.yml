@@ -15,6 +15,7 @@ jobs:
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
     winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
+    winFxdWinDesktopPath: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
@@ -57,6 +58,12 @@ jobs:
       destinationFolder: '$(winFxdPath)'
 
   - task: ExtractFiles@1
+    displayName: 'Extract files win-fxdependentWinDesktop'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependentWinDesktop.zip'
+      destinationFolder: '$(winFxdWinDesktopPath)'
+
+  - task: ExtractFiles@1
     displayName: 'Extract files linux-fxdependent'
     inputs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
@@ -88,6 +95,7 @@ jobs:
   - powershell: |
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
+      Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
   - powershell: |
@@ -95,10 +103,10 @@ jobs:
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
 
       # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
 
       # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
     displayName: 'Create Global tool packages'
 
   - powershell: |
