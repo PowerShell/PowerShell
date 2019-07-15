@@ -1610,7 +1610,7 @@ namespace Microsoft.PowerShell
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-            if (staMode)
+            if (staMode && !Platform.IsNanoServer)
             {
                 runspace.ApartmentState = ApartmentState.STA;
             }

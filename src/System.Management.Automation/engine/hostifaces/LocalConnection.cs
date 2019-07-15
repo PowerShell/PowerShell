@@ -150,15 +150,20 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
                         {
-#if CORECLR                 // No ApartmentState.STA Support In CoreCLR
-                            bool allowed = value == PSThreadOptions.ReuseThread;
-#else
-                            // if the runspace is already opened we only allow changing the options if
-                            // the apartment state is MTA and the new value is ReuseThread
-                            bool allowed = (this.ApartmentState == ApartmentState.MTA || this.ApartmentState == ApartmentState.Unknown) // Unknown is the same as MTA
-                                           &&
-                                           value == PSThreadOptions.ReuseThread;
-#endif
+                            bool allowed = false;
+
+                            if (Platform.IsNanoServer)
+                            {
+                                allowed = value == PSThreadOptions.ReuseThread;
+                            }
+                            else
+                            {
+                                // if the runspace is already opened we only allow changing the options if
+                                // the apartment state is MTA and the new value is ReuseThread
+                                allowed = (this.ApartmentState == ApartmentState.MTA || this.ApartmentState == ApartmentState.Unknown) // Unknown is the same as MTA
+                                    &&
+                                    value == PSThreadOptions.ReuseThread;
+                            }
 
                             if (!allowed)
                             {

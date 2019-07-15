@@ -717,7 +717,7 @@ namespace StackTest {
 
     Context "ApartmentState WPF tests" -Tag Slow {
 
-        It "WPF requires STA and will work" -Skip:(!$IsWindows) {
+        It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
             add-type -AssemblyName presentationframework
 
             $xaml = [xml]@"
@@ -740,7 +740,7 @@ namespace StackTest {
 
     Context "ApartmentState tests" {
 
-        It "Default apartment state for main thread is STA" -Skip:(!$IsWindows) {
+        It "Default apartment state for main thread is STA" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
             [System.Threading.Thread]::CurrentThread.GetApartmentState() | Should -BeExactly "STA"
         }
 
@@ -750,7 +750,7 @@ namespace StackTest {
             $ps.Invoke() | Should -BeExactly "MTA"
         }
 
-        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
+        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
             @{ apartment = "STA"; switch = "-sta" }
             @{ apartment = "MTA"; switch = "-mta" }
         ) {
@@ -759,7 +759,7 @@ namespace StackTest {
             & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
         }
 
-        It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows) -TestCases @(
+        It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows -and ![System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
             @{ switch = "-sta" }
             @{ switch = "-mta" }
         ) {

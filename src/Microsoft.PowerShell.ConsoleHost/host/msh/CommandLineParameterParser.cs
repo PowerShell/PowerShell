@@ -939,11 +939,13 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
-#if UNIX
-                    WriteCommandLineError(
-                        CommandLineParameterParserStrings.STANotImplemented);
-                    break;
-#else
+                    if (Platform.IsNanoServer || !Platform.IsWindows)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.STANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -953,17 +955,16 @@ namespace Microsoft.PowerShell
                     }
 
                     _staMode = true;
-#endif
                 }
-                // Win8: 182409 PowerShell 3.0 should run in STA mode by default..so, consequently adding the switch -mta.
-                // Not deleting -sta for backward compatability reasons
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-#if UNIX
-                    WriteCommandLineError(
-                        CommandLineParameterParserStrings.MTANotImplemented);
-                    break;
-#else
+                    if (Platform.IsNanoServer || !Platform.IsWindows)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MTANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -973,7 +974,6 @@ namespace Microsoft.PowerShell
                     }
 
                     _staMode = false;
-#endif
                 }
                 else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
                 {
