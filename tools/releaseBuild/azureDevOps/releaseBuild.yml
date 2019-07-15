@@ -119,13 +119,13 @@ jobs:
 
 - template: templates/mac-package-signing.yml
 
-- template: templates/compliance.yml
-  parameters:
-    parentJobs:
-      - build_windows_x64
-      - build_windows_x86
-      - build_windows_fxdependent
-      - build_windows_fxdependentWinDesktop
+#- template: templates/compliance.yml
+#  parameters:
+#    parentJobs:
+#      - build_windows_x64
+#      - build_windows_x86
+#      - build_windows_fxdependent
+#      - build_windows_fxdependentWinDesktop
 
 - template: templates/nuget.yml
   parameters:
