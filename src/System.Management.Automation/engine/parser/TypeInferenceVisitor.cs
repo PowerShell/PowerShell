@@ -2328,7 +2328,7 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor2.VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
-            return InferTypes(ternaryExpressionAst.IfOperand).Concat(InferTypes(ternaryExpressionAst.ElseOperand));
+            return InferTypes(ternaryExpressionAst.IfTrue).Concat(InferTypes(ternaryExpressionAst.IfFalse));
         }
 
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)

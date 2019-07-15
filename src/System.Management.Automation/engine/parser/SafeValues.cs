@@ -208,8 +208,8 @@ namespace System.Management.Automation.Language
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
             return (bool)ternaryExpressionAst.Condition.Accept(this) &&
-                   (bool)ternaryExpressionAst.IfOperand.Accept(this) &&
-                   (bool)ternaryExpressionAst.ElseOperand.Accept(this);
+                   (bool)ternaryExpressionAst.IfTrue.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfFalse.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)

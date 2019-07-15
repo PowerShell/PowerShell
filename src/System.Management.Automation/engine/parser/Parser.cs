@@ -6477,8 +6477,8 @@ namespace System.Management.Automation.Language
                 // Allowing a generic token like '12?' or '12:' is not useful in the current situation,
                 // so we force to start a new token upon seeing '?' and ':' when scanning for a number,
                 // hoping to find a ternary expression.
-                ExpressionAst ifOperand = ExpressionRule(endNumbeOnTernaryOpChars: true);
-                if (ifOperand == null)
+                ExpressionAst ifTrue = ExpressionRule(endNumbeOnTernaryOpChars: true);
+                if (ifTrue == null)
                 {
                     // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
                     IScriptExtent extent = After(token);
@@ -6488,11 +6488,11 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         token.Text);
-                    ifOperand = new ErrorExpressionAst(extent);
+                    ifTrue = new ErrorExpressionAst(extent);
                 }
                 else
                 {
-                    componentAsts.Add(ifOperand);
+                    componentAsts.Add(ifTrue);
                 }
 
                 SkipNewlines();
@@ -6503,8 +6503,8 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: we have done the expression parsing and should tr parsing something else.
                     UngetToken(token);
 
-                    // Don't bother reporting this error if we already reported an empty if-operand error.
-                    if (!(ifOperand is ErrorExpressionAst))
+                    // Don't bother reporting this error if we already reported an empty 'IfTrue' operand error.
+                    if (!(ifTrue is ErrorExpressionAst))
                     {
                         ReportIncompleteInput(
                             token.Extent,
@@ -6517,8 +6517,8 @@ namespace System.Management.Automation.Language
 
                 SkipNewlines();
 
-                ExpressionAst elseOperand = ExpressionRule(endNumbeOnTernaryOpChars: true);
-                if (elseOperand == null)
+                ExpressionAst ifFalse = ExpressionRule(endNumbeOnTernaryOpChars: true);
+                if (ifFalse == null)
                 {
                     // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
                     IScriptExtent extent = After(token);
@@ -6528,10 +6528,10 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         token.Text);
-                    elseOperand = new ErrorExpressionAst(extent);
+                    ifFalse = new ErrorExpressionAst(extent);
                 }
 
-                return new TernaryExpressionAst(ExtentOf(condition, elseOperand), condition, ifOperand, elseOperand);
+                return new TernaryExpressionAst(ExtentOf(condition, ifFalse), condition, ifTrue, ifFalse);
             }
             finally
             {

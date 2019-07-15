@@ -4991,8 +4991,8 @@ namespace System.Management.Automation.Language
                         Compile(ternaryExpressionAst.Condition),
                         s_getCurrentPipe),
                     CaptureAstContext.Condition).Convert(typeof(bool)),
-                Expression.Assign(tmp, Compile(ternaryExpressionAst.IfOperand).Convert(typeof(object))),
-                Expression.Assign(tmp, Compile(ternaryExpressionAst.ElseOperand).Convert(typeof(object))));
+                Expression.Assign(tmp, Compile(ternaryExpressionAst.IfTrue).Convert(typeof(object))),
+                Expression.Assign(tmp, Compile(ternaryExpressionAst.IfFalse).Convert(typeof(object))));
 
             return Expression.Block(new[] { tmp }, expr, tmp);
         }
