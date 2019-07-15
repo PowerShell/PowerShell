@@ -49,14 +49,16 @@ jobs:
       $rootPath = split-Path -path $path
       $mount = 'C:\powershell'
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
-      Write-verbose "begin - capture mount contents" -verbose
-      docker run --rm -v ${rootPath}:C:\powershell ${{ parameters.container }} 'C:\Program Files\PowerShell\pwsh' -c "get-childitem -path ${mount}\pwsh.exe -recurse -erroraction ignore"
-      Write-verbose "end - capture mount contents" -verbose
-      Describe "verify pwsh" {
-        it "verify version " {
-          $version = docker run --rm -v "${rootPath}:${mount}" ${{ parameters.container }} "${mount}\publish\pwsh" -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
-          $version | Should -match '^8\.'
-        }
-      }
+      Invoke-Pester -Path ./test/nanoserver -OutputFormat NUnitXml -OutputFile ./test-nanoserver.xml
     displayName: Test
     condition: succeeded()
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    displayName: Publish $(ImageName) Test Results **\test*.xml
+    inputs:
+      testRunner: NUnit
+      testResultsFiles: '**\test*.xml'
+      testRunTitle: nanoserver
+      mergeTestResults: true
+      failTaskOnFailedTests: true
