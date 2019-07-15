@@ -47,7 +47,6 @@ jobs:
       $path = split-path -path $options.Output
       Write-Verbose "Path: '$path'" -Verbose
       $rootPath = split-Path -path $path
-      $mount = 'C:\powershell'
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-Pester -Path ./test/nanoserver -OutputFormat NUnitXml -OutputFile ./test-nanoserver.xml
     displayName: Test
@@ -55,7 +54,7 @@ jobs:
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
-    displayName: Publish $(ImageName) Test Results **\test*.xml
+    displayName: Publish Nanoserver Test Results **\test*.xml
     inputs:
       testRunner: NUnit
       testResultsFiles: '**\test*.xml'
