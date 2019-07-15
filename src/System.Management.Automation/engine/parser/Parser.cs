@@ -2254,10 +2254,22 @@ namespace System.Management.Automation.Language
             // G  flow-control-statement:
             // G      'throw'    pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineChainRule();
+            PipelineBaseAst pipeline = PipelineRule(allowBackground: true);
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
+
+            // If the next token is a statement chain operator,
+            // just report the error and keep parsing
+            Token nextToken = PeekToken();
+            if (nextToken.Kind == TokenKind.AndAnd || nextToken.Kind == TokenKind.OrOr)
+            {
+                ReportError(
+                    nextToken.Extent,
+                    nameof(ParserStrings.StatementChainOperatorAfterThrow),
+                    ParserStrings.StatementChainOperatorAfterThrow);
+            }
+
             return new ThrowStatementAst(extent, pipeline);
         }
 
@@ -5938,7 +5950,9 @@ namespace System.Management.Automation.Language
             return (PipelineBaseAst)StatementChainRule(mustBePipeline: true);
         }
 
-        private PipelineBaseAst PipelineRule(ExpressionAst startExpression = null)
+        private PipelineBaseAst PipelineRule(
+            ExpressionAst startExpression = null,
+            bool allowBackground = false)
         {
             // G  pipeline:
             // G      assignment-expression
@@ -6117,7 +6131,7 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.Ampersand:
                         // PSBashCommandOperators experimental feature
-                        if (s_bashOperatorsEnabled)
+                        if (!allowBackground && s_bashOperatorsEnabled)
                         {
                             // Handled by invoking rule
                             scanning = false;

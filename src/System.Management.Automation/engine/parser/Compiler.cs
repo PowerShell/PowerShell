@@ -3088,6 +3088,12 @@ namespace System.Management.Automation.Language
             AssignmentStatementAst assignmentStatementAst,
             MergeRedirectExprs generateRedirectExprs = null)
         {
+            if (assignmentStatementAst.Right is StatementChainAst
+                || assignmentStatementAst.Right is PipelineChainAst)
+            {
+                return CompilePartialResultAssignment(assignmentStatementAst);
+            }
+
             var arrayLHS = assignmentStatementAst.Left as ArrayLiteralAst;
             var parenExpressionAst = assignmentStatementAst.Left as ParenExpressionAst;
             if (parenExpressionAst != null)
@@ -3117,6 +3123,105 @@ namespace System.Management.Automation.Language
                         };
 
             return Expression.Block(exprs);
+        }
+
+        private Expression CompilePartialResultAssignment(AssignmentStatementAst assignmentStatementAst)
+        {
+            // The normal assignment logic won't work for us,
+            // since capture/assign presumes the entire right-hand expression must either fail or succeed.
+            // Even CaptureAstContext.AssignmentWithResultPreservation throws
+            // when a captured expression that throws is evaluated,
+            // causing assignment not to happen.
+            //
+            // Instead, we need to create a temporary pipe,
+            // incrementally fill it with the expression result
+            // and in any event assign the result to the given variable.
+            // The logic looks like:
+            //    List<object> resultList;
+            //    Pipe oldPipe;
+            //    try {
+            //        oldPipe = funcContext._currentPipe;
+            //        resultList = new List<object>();
+            //        funcContext._currentPipe = new Pipe(resultList);
+            //        SetVariableListForTemporaryPipe(oldPipe, funcContext._currentPipe);
+            //        <rhs expression with temp pipe implicit>
+            //    } finally {
+            //        <assign lhs from result list>
+            //        funcContext._currentPipe = oldipe;
+            //    }
+
+            ParameterExpression resultList = NewTemp(typeof(List<object>), nameof(resultList));
+            ParameterExpression oldPipe = NewTemp(typeof(Pipe), nameof(oldPipe));
+
+            var temps = new ParameterExpression[]
+            {
+                resultList,
+                oldPipe
+            };
+            
+            // The try block main body
+            var tryBodyExprs = new Expression[]
+            {
+                Expression.Assign(oldPipe, s_getCurrentPipe),
+                Expression.Assign(
+                    resultList,
+                    Expression.New(CachedReflectionInfo.ObjectList_ctor)),
+                Expression.Assign(
+                    s_getCurrentPipe,
+                    Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)),
+                Expression.Call(
+                    oldPipe,
+                    CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe,
+                    s_getCurrentPipe),
+                Compile(assignmentStatementAst.Right)
+            };
+
+            // Deal with LHS array assignment like $x, $y, $z = stmt
+            ArrayLiteralAst arrayLhs = null;
+            switch (assignmentStatementAst.Left)
+            {
+                case ArrayLiteralAst arrayLiteralAst:
+                    arrayLhs = arrayLiteralAst;
+                    break;
+
+                case ParenExpressionAst parenExpressionAst:
+                    arrayLhs = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
+                    break;
+            }
+
+            Expression finalAssignmentValue;
+            if (arrayLhs != null)
+            {
+                // For array results, we can skip the pipeline result call
+                finalAssignmentValue = DynamicExpression.Dynamic(
+                    PSArrayAssignmentRHSBinder.Get(arrayLhs.Elements.Count),
+                    typeof(IList),
+                    resultList);
+            }
+            else
+            {
+                finalAssignmentValue = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
+            }
+
+            // The assignment, occurring in the final block
+            var finallyBlockExprs = new Expression[]
+            {
+                ReduceAssignment(
+                    (ISupportsAssignment)assignmentStatementAst.Left,
+                    assignmentStatementAst.Operator,
+                    finalAssignmentValue),
+                Expression.Assign(s_getCurrentPipe, oldPipe)
+            };
+
+            return Expression.Block(
+                temps,
+                new Expression[]
+                {
+                    UpdatePosition(assignmentStatementAst),
+                    Expression.TryFinally(
+                        Expression.Block(tryBodyExprs),
+                        Expression.Block(finallyBlockExprs))
+                });
         }
 
         public object VisitStatementChain(StatementChainAst statementChainAst)
@@ -3166,34 +3271,14 @@ namespace System.Management.Automation.Language
             //         goto DispatchNextStatementTarget;
             //     }
             // LN:
+            // 
+            // Note that we deliberately do not push trap handlers
+            // so that those can be handled by the enclosing statement block instead.
 
             var exprs = new List<Expression>(); 
 
-            ParameterExpression trapHandlersPushed = null;
-            if (_trapNestingCount > 0)
-            {
-                // If this statement block has no traps, but a parent block does, we need to make sure that process the
-                // trap at the correct level in case we continue.  For example:
-                //     trap { continue }
-                //     if (1) {
-                //         throw 1
-                //         "Shouldn't continue here"
-                //     }
-                //     "Should continue here"
-                // In this example, the trap just continues, but we want to continue after the 'if' statement, not after
-                // the 'throw' statement.
-                // We push null onto the active trap handlers to let ExceptionHandlingOps.CheckActionPreference know it
-                // shouldn't process traps (but should still query the user if appropriate), and just rethrow so we can
-                // unwind to the block with the trap.
-
-                exprs.Add(Expression.Call(_functionContext, CachedReflectionInfo.FunctionContext_PushTrapHandlers,
-                                            ExpressionCache.NullTypeArray, ExpressionCache.NullDelegateArray, ExpressionCache.NullTypeArray));
-                trapHandlersPushed = NewTemp(typeof(bool), "trapHandlersPushed");
-                exprs.Add(Expression.Assign(trapHandlersPushed, ExpressionCache.Constant(true)));
-            }
-
             // int chainIndex = 0;
-            ParameterExpression dispatchIndex = Expression.Variable(typeof(int), "chainIndex");
+            ParameterExpression dispatchIndex = Expression.Variable(typeof(int), nameof(dispatchIndex));
             var temps = new ParameterExpression[] { dispatchIndex };
             exprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(0)));
 
@@ -3262,7 +3347,6 @@ namespace System.Management.Automation.Language
 
                     case StatementChainAst statementChain:
                         tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(statementChain.LhsStatement)));
-                        CompileTrappableExpression(tryBodyExprs, statementChain.LhsStatement);
                         rhs = statementChain.RhsStatement;
                         currentChainOperator = statementChain.Operator;
                         continue;
@@ -3288,7 +3372,7 @@ namespace System.Management.Automation.Language
             tryBodyExprs[0] = Expression.Switch(dispatchIndex, switchCases.ToArray());
 
             // Create the catch block for flow control and action preference
-            ParameterExpression exception = Expression.Variable(typeof(Exception), "exception");
+            ParameterExpression exception = Expression.Variable(typeof(Exception), nameof(exception));
             MethodCallExpression callCheckActionPreference = Expression.Call(
                 CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
                 Compiler._functionContext,
@@ -3305,25 +3389,6 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Label(afterLabel));
 
             BlockExpression fullyExpandedBlock = Expression.Block(typeof(void), temps, exprs);
-
-            if (_trapNestingCount > 0)
-            {
-                var parameterExprs = new ParameterExpression[] { trapHandlersPushed };
-                var finallyBlockExprs = new Expression[]
-                {
-                    Expression.IfThen(
-                        trapHandlersPushed, 
-                        Expression.Call(
-                            _functionContext,
-                            CachedReflectionInfo.FunctionContext_PopTrapHandlers))
-                };
-
-                fullyExpandedBlock = Expression.Block(
-                    parameterExprs,
-                    Expression.TryFinally(
-                        fullyExpandedBlock,
-                        Expression.Block(finallyBlockExprs)));
-            }
 
             return fullyExpandedBlock;
         }

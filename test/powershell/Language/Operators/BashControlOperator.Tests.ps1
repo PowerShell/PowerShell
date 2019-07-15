@@ -96,25 +96,6 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = 'function Test-ControlFlow { foreach ($v in 0,1,2) { testexe -returncode $v || return 10 } }; Test-ControlFlow'; Output = @('0', '1', 10) }
         )
 
-        $throwTestCases = @(
-            # Command that throws
-            @{ Statement = "testexe -returncode 0 && Test-TerminatingBadCommand"; Output = @('0'); ErrorID = 'BAD,Test-TerminatingBadCommand' }
-            @{ Statement = "Test-TerminatingBadCommand && testexe -returncode 0"; Output = @(); ErrorID = 'BAD,Test-TerminatingBadCommand' }
-            @{ Statement = "Test-TerminatingBadCommand || testexe -returncode 0"; Output = @(); ErrorID = 'BAD,Test-TerminatingBadCommand' }
-            @{ Statement = "testexe -returncode 0 || Test-TerminatingBadCommand"; Output = @('0') }
-
-            # Throw directly
-            @{ Statement = "testexe -returncode 0 && throw 'Bad'"; Output = @('0'); ErrorID = 'Bad' }
-            @{ Statement = "testexe -returncode 0 || throw 'Bad'"; Output = @('0') }
-
-            # Confusing edge case in PS syntax
-            @{ Statement = 'testexe -returncode 0 && throw "Bad" &'; ErrorID = 'System.Management.Automation.PSRemotingJob' }
-
-            # Where pipeline is subordinate to `throw`
-            @{ Statement = 'throw "Bad" || testexe -returncode 0'; ErrorId = 'Bad' }
-            @{ Statement = 'throw "Bad" && testexe -returncode 0'; ErrorId = 'Bad 0' }
-        )
-
         $variableTestCases = @(
             @{ Statement = '$x = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0','1' } }
             @{ Statement = '$x = testexe -returncode 0 || testexe -returncode 1'; Variables = @{ x = '0' } }
@@ -131,6 +112,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         $invalidSyntaxCases = @(
             @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'X' }
             @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'X' }
+            @{ Statement = 'testexe -returncode 0 && throw "Bad" || testexe -returncode 1'; ErrorID = 'X' }
         )
     }
 
@@ -144,21 +126,6 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         param($Statement, $Output)
 
         Invoke-Expression -Command $Statement 2>$null | Should -Be $Output
-    }
-
-    It "Gets the correct output and errorID with terminating statement '<Statement>'" -TestCases $throwTestCases {
-        param($Statement, $Output, $ErrorID)
-
-        try
-        {
-            $result = Invoke-Expression -Command $Statement
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be $ErrorID
-        }
-
-        $result | Should -Be $Output
     }
 
     It "Sets the variable correctly with statement '<Statement>'" -TestCases $variableTestCases {
@@ -189,6 +156,122 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
 
         { Invoke-Expression -Command $Statement } | Should -Throw -ErrorId $ErrorID
     }
+
+    Context "Runtime error semantics" {
+        It "Returns a partial result with a terminating command" {
+            try
+            {
+                $result = testexe -returncode 0 && Test-TerminatingBadCommand
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'BAD,Test-TerminatingBadCommand'
+            }
+
+            $result | Should -Be 0
+        }
+
+        It "Returns a partial result with a terminating command following ||" {
+            try
+            {
+                $result = testexe -returncode 1 || Test-TerminatingBadCommand
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'BAD,Test-TerminatingBadCommand'
+            }
+
+            $result | Should -Be 1
+        }
+
+        It "Does not continue execution when terminating command comes first" {
+            try
+            {
+                $result = Test-TerminatingBadCommand && testexe -returncode 0
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'BAD,Test-TerminatingBadCommand'
+            }
+
+            $result | Should -BeNullOrEmpty
+        }
+
+        It "Does not continue execution when terminating command followed by ||" {
+            try
+            {
+                $result = Test-TerminatingBadCommand || testexe -returncode 0
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'BAD,Test-TerminatingBadCommand'
+            }
+
+            $result | Should -BeNullOrEmpty
+        }
+
+        It "Correctly turns a throw value into a job -- edge case" {
+            {
+                testexe -returncode 0 && throw 'Bad' &
+            } | Should -Throw -ErrorId 'System.Management.Automation.PSRemotingJob'
+        }
+
+        It "Handles ErrorAction Stop direction properly" {
+            try
+            {
+                $result = testexe -returncode 0 && Write-Error 'Bad' -ErrorAction Stop
+            }
+            catch
+            {
+            }
+
+            $result | Should -Be 0
+        }
+
+        It "Handles ErrorAction Ignore direction properly" {
+            try
+            {
+                $result = Get-ChildItem 'doesnotexist' -ErrorAction Ignore || testexe -returncode 0
+            }
+            catch
+            {
+            }
+
+            $result | Should -Be 0
+        }
+
+        It "Handles a continue trap properly" {
+            trap
+            {
+                $_.FullyQualifiedErrorId
+                continue
+            }
+
+            $result = Test-TerminatingBadCommand || Write-Output 'Hello'
+            $result[0] | Should -Be 'BAD,Test-TerminatingBadCommand'
+            $result[1] | Should -Be 'Hello'
+        }
+
+        It "Handles a break trap properly" {
+            try
+            {
+                trap
+                {
+                    $_.FullyQualifiedErrorId
+                    break
+                }
+
+                $result = Test-TerminatingBadCommand || Write-Output 'Hello'
+            }
+            catch
+            {
+
+            }
+
+            $result | Should -Be 'BAD,Test-TerminatingBadCommand'
+        }
+    }
+
 
     Context "File redirection with && and ||" {
         BeforeAll {

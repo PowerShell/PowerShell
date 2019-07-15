@@ -1515,4 +1515,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="BackgroundOperatorInStatementChain" xml:space="preserve">
     <value>Background operators can only be used at the end of a statement chain.</value>
   </data>
+  <data name="StatementChainOperatorAfterThrow" xml:space="preserve">
+    <value>Pipeline chain operators '&amp;&amp;' and '||' may not be used after 'throw'.</value>
+  </data>
 </root>
