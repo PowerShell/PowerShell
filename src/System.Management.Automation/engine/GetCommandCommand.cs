@@ -714,14 +714,11 @@ namespace Microsoft.PowerShell.Commands
                 options |= SearchResolutionOptions.ResolveFunctionPatterns;
             }
 
-            foreach (string commandName in commandNames)
+            foreach (string name in commandNames)
             {
                 try
                 {
-                    if (commandName.AsSpan().Trim().IsEmpty)
-                    {
-                        continue;
-                    }
+                    string commandName = name.Trim();
 
                     // Determine if the command name is module-qualified, and search
                     // available modules for the command.
