@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
         function TestGetCommand-DynamicParametersDCR
@@ -28,7 +29,7 @@ Describe "Get-Command Tests" -Tags "CI" {
                      "return1" {
                         $attr = [System.Management.Automation.ParameterAttribute]::new()
                         $attr.Mandatory = $true
-				        $dynamicParameter = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$attr)
+                        $dynamicParameter = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$attr)
                         $dynamicParamDictionary.Add("OneString",$dynamicParameter)
                         break
                     }
@@ -262,5 +263,9 @@ Describe "Get-Command Tests" -Tags "CI" {
         $results = Get-Command -Verb get -Noun content -encoding UTF8 -Synop
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
         VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType System.Text.Encoding
+    }
+
+    It "Get-Command `" `" does not throw" -Pending {
+        Get-Command " " | Should -Not -Throw
     }
 }

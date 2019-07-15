@@ -599,9 +599,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _commandType = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Alias | CommandTypes.Configuration;
 
-            Collection<string> commandNames = new Collection<string>();
-            commandNames.Add("*");
-            AccumulateMatchingCommands(commandNames);
+            AccumulateMatchingCommands(new string[] { "*" });
         }
 
         private bool IsNounVerbMatch(CommandInfo command)
@@ -681,13 +679,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AccumulateMatchingCommands()
         {
-            Collection<string> commandNames =
-                SessionStateUtilities.ConvertArrayToCollection<string>(this.Name);
-
-            if (commandNames.Count == 0)
-            {
-                commandNames.Add("*");
-            }
+            var commandNames = Name.Length == 0 ? new string[] { "*" } : Name;
 
             AccumulateMatchingCommands(commandNames);
         }
@@ -726,6 +718,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    if (commandName.AsSpan().Trim().IsEmpty)
+                    {
+                        continue;
+                    }
+
                     // Determine if the command name is module-qualified, and search
                     // available modules for the command.
                     string moduleName;
