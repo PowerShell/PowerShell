@@ -3,9 +3,9 @@
 
 using System;
 using System.Diagnostics;
+using System.Management.Automation;
 using System.Reflection;
 using System.Threading;
-using System.Management.Automation;
 
 using static Microsoft.PowerShell.ComInterfaces;
 
