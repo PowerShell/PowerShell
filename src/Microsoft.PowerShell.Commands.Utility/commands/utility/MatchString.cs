@@ -1191,7 +1191,9 @@ namespace Microsoft.PowerShell.Commands
         private int _postContext = 0;
 
         // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
+        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) 
+            ? _noContextTracker 
+            : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
         // directly into the cmdlet. File processing doesn't need
