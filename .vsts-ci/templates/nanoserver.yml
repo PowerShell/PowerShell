@@ -50,7 +50,7 @@ jobs:
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
       Describe "verify pwsh" {
         it "verify version " {
-          $version = docker run --rm -v $rootPath:C:\powersshell ${{ parameters.container }} C:\powershell\pwsh -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+          $version = docker run --rm -v $rootPath:/powersshell ${{ parameters.container }} C:\powershell\pwsh -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
           $version | Should -match '^7\.'
         }
       }
