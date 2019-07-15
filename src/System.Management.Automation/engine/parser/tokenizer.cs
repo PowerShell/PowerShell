@@ -1343,23 +1343,21 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        internal bool IsPipeContinuance(IScriptExtent extent)
+        internal bool IsPipeContinuation(IScriptExtent extent)
         {
             // If the first non-whitespace & non-comment (regular or block) character following a newline is a pipe, we have
-            // pipe continuance.
-            return extent.EndOffset < _script.Length &&
-                   ContinuanceAfterExtent(extent, continuanceChar: '|', skipComment: true);
+            // pipe continuation.
+            return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '|');
         }
 
-        internal bool IsTernaryContinuance(IScriptExtent extent)
+        internal bool IsTernaryContinuation(IScriptExtent extent)
         {
             // If the first non-whitespace character following a newline is a question mark, we have
-            // ternary continuance
-            return extent.EndOffset < _script.Length &&
-                   ContinuanceAfterExtent(extent, continuanceChar: '?', skipComment: false);
+            // ternary continuation.
+            return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '?');
         }
 
-        private bool ContinuanceAfterExtent(IScriptExtent extent, char continuanceChar, bool skipComment)
+        private bool ContinuationAfterExtent(IScriptExtent extent, char continuationChar)
         {
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
@@ -1382,7 +1380,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1394,7 +1392,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1405,27 +1403,24 @@ namespace System.Management.Automation.Language
 
                 lastNonWhitespaceIsNewline = false;
 
-                if (skipComment)
+                if (c == '#')
                 {
-                    if (c == '#')
-                    {
-                        // SkipLineComment will return the position after the comment end
-                        // which is either at the end of the file, or a cr or lf.
-                        i = SkipLineComment(i + 1);
-                        continue;
-                    }
-
-                    if (c == '<' && _script[i + 1] == '#')
-                    {
-                        i = SkipBlockComment(i + 2);
-                        continue;
-                    }
+                    // SkipLineComment will return the position after the comment end
+                    // which is either at the end of the file, or a cr or lf.
+                    i = SkipLineComment(i + 1);
+                    continue;
                 }
 
-                return c == continuanceChar;
+                if (c == '<' && _script[i + 1] == '#')
+                {
+                    i = SkipBlockComment(i + 2);
+                    continue;
+                }
+
+                return c == continuationChar;
             }
 
-            return _script[_script.Length - 1] == continuanceChar;
+            return _script[_script.Length - 1] == continuationChar;
         }
 
         private int SkipLineComment(int i)
