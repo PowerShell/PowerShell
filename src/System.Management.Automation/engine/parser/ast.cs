@@ -7108,24 +7108,24 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="condition">The condition operand.</param>
-        /// <param name="ifClause">The if clause.</param>
-        /// <param name="elseClause">The else clause.</param>
-        public TernaryExpressionAst(IScriptExtent extent, ExpressionAst condition, ExpressionAst ifClause, ExpressionAst elseClause)
+        /// <param name="ifTrue">The if clause.</param>
+        /// <param name="ifFalse">The else clause.</param>
+        public TernaryExpressionAst(IScriptExtent extent, ExpressionAst condition, ExpressionAst ifTrue, ExpressionAst ifFalse)
             : base(extent)
         {
-            if (condition == null || ifClause == null || elseClause == null)
+            if (condition == null || ifTrue == null || ifFalse == null)
             {
-                throw PSTraceSource.NewArgumentNullException(condition == null ? nameof(condition) : ifClause == null ? nameof(ifClause) : nameof(elseClause));
+                throw PSTraceSource.NewArgumentNullException(condition == null ? nameof(condition) : ifTrue == null ? nameof(ifTrue) : nameof(ifFalse));
             }
 
             Condition = condition;
             SetParent(condition);
 
-            IfOperand = ifClause;
-            SetParent(ifClause);
+            IfTrue = ifTrue;
+            SetParent(ifTrue);
 
-            ElseOperand = elseClause;
-            SetParent(elseClause);
+            IfFalse = ifFalse;
+            SetParent(ifFalse);
         }
 
         /// <summary>
@@ -7136,12 +7136,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The ast for the if-operand of the ternary expression. The property is never null.
         /// </summary>
-        public ExpressionAst IfOperand { get; }
+        public ExpressionAst IfTrue { get; }
 
         /// <summary>
         /// The ast for the else-operand of the ternary expression. The property is never null.
         /// </summary>
-        public ExpressionAst ElseOperand { get; }
+        public ExpressionAst IfFalse { get; }
 
         /// <summary>
         /// Copy the TernaryExpressionAst instance.
@@ -7149,8 +7149,8 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var newCondition = CopyElement(Condition);
-            var newIfClause = CopyElement(IfOperand);
-            var newElseClause = CopyElement(ElseOperand);
+            var newIfClause = CopyElement(IfTrue);
+            var newElseClause = CopyElement(IfFalse);
             return new TernaryExpressionAst(this.Extent, newCondition, newIfClause, newElseClause);
         }
 
@@ -7173,9 +7173,9 @@ namespace System.Management.Automation.Language
                 if (action == AstVisitAction.Continue)
                     action = Condition.InternalVisit(visitor2);
                 if (action == AstVisitAction.Continue)
-                    action = IfOperand.InternalVisit(visitor2);
+                    action = IfTrue.InternalVisit(visitor2);
                 if (action == AstVisitAction.Continue)
-                    action = ElseOperand.InternalVisit(visitor2);
+                    action = IfFalse.InternalVisit(visitor2);
             }
 
             return visitor.CheckForPostAction(this, action);
