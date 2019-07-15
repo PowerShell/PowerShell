@@ -47,10 +47,14 @@ jobs:
       $path = split-path -path $options.Output
       Write-Verbose "Path: '$path'" -Verbose
       $rootPath = split-Path -path $path
+      $mount = 'C:\powershell'
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+      Write-verbose "begin - capture mount contents" -verbose
+      docker run --rm -v ${rootPath}:C:\powershell ${{ parameters.container }} 'C:\Program Files\PowerShell\pwsh' -c "get-childitem -path ${mount}\* -recurse -erroraction ignore"
+      Write-verbose "end - capture mount contents" -verbose
       Describe "verify pwsh" {
         it "verify version " {
-          $version = docker run --rm -v ${rootPath}:C:\powershell ${{ parameters.container }} C:\powershell\pwsh -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+          $version = docker run --rm -v "${rootPath}:${mount}" ${{ parameters.container }} "${mount}\pwsh" -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
           $version | Should -match '^7\.'
         }
       }
