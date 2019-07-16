@@ -3,7 +3,7 @@
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSBashCommandOperators')
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSPipelineChainOperators')
         if ($skipTest)
         {
             Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints' to be enabled." -Verbose
@@ -265,7 +265,6 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             }
             catch
             {
-
             }
 
             $result | Should -Be 'BAD,Test-TerminatingBadCommand'

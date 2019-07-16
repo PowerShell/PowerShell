@@ -3,6 +3,6 @@
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
     "PSForEachObjectParallel": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/Foreach-Object-Parallel.Tests.ps1", "test/powershell/Modules/Microsoft.PowerShell.Security/ConstrainedLanguageRestriction.Tests.ps1" ],
     "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints": ["test/powershell/Modules/Microsoft.PowerShell.Utility/New-PSBreakpoint.Tests.ps1"],
-    "PSBashCommandOperators": [ "test/powershell/Language/Operators/BashControlOperator.Tests.ps1" ]
+    "PSPipelineChainOperators": [ "test/powershell/Language/Operators/BashControlOperator.Tests.ps1" ]
   }
 }

@@ -35,7 +35,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
-        private static bool s_bashOperatorsEnabled = ExperimentalFeature.IsEnabled("PSBashCommandOperators");
+        private static bool s_bashOperatorsEnabled = ExperimentalFeature.IsEnabled("PSPipelineChainOperators");
 
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
@@ -6108,7 +6108,7 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
-                        // PSBashCommandOperators experimental feature
+                        // PSPipelineChainOperators experimental feature
                         if (s_bashOperatorsEnabled)
                         {
                             // Handled by invoking rule
@@ -6130,7 +6130,7 @@ namespace System.Management.Automation.Language
                         break;
 
                     case TokenKind.Ampersand:
-                        // PSBashCommandOperators experimental feature
+                        // PSPipelineChainOperators experimental feature
                         if (!allowBackground && s_bashOperatorsEnabled)
                         {
                             // Handled by invoking rule
