@@ -73,6 +73,8 @@ stages:
     parameters:
       pool: 'Hosted VS2017'
 
+  - template: templates/nanoserver.yml
+
 - stage: PackagingWin
   displayName: Packaging for Windows
   dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
