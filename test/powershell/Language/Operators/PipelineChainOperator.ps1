@@ -92,6 +92,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '$x = testexe -returncode 0 || testexe -returncode 1'; Variables = @{ x = '0' } }
             @{ Statement = '$x = testexe -returncode 1 || testexe -returncode 0'; Variables = @{ x = '1','0' } }
             @{ Statement = '$x = testexe -returncode 1 && testexe -returncode 0'; Variables = @{ x = '1' } }
+            @{ Statement = '$x = @(1); $x += testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = 1,'0','1' } }
         )
 
         $jobTestCases = @(
@@ -146,6 +147,110 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         param($Statement, $ErrorID)
 
         { Invoke-Expression -Command $Statement } | Should -Throw -ErrorId $ErrorID
+    }
+
+    It "Returns a single object not in a collection" {
+        $result = testexe -returncode 1 && testexe -returncode 0
+        $result.GetType().FullName | Should -BeExactly 'System.String'
+        $result | Should -BeExactly '1'
+    }
+
+    It "Returns a multiple objects in an array" {
+        $result = testexe -returncode 0 && testexe -returncode 1
+        $result.GetType().FullName | Should -BeExactly 'System.Object[]'
+        $result[0] | Should -BeExactly '0'
+        $result[1] | Should -BeExactly '1'
+    }
+
+    It "Handles nested assignment" {
+        $x = $y = testexe -returncode 0 && 'Hello'
+
+        $x[0] | Should -BeExactly '0'
+        $x[1] | Should -BeExactly 'Hello'
+        $y[0] | Should -BeExactly '0'
+        $y[1] | Should -BeExactly 'Hello'
+    }
+
+    It "Evaluates correctly in conditions" {
+        if ($true && $true)
+        {
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
+    }
+
+    It "Evaluates failing commands correctly in conditions" {
+        if ('Hello' && testexe -returncode 1)
+        {
+            # This should always be true after conditions
+            $? | Should -Be $true
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
+    }
+
+    It "Evaluates failing commands correctly in conditions" {
+        if ('Hello' && Write-Error 'Bad' -ErrorAction Ignore)
+        {
+            # This should always be true after conditions
+            $? | Should -Be $true
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
+    }
+
+    It "Evaluates failing commands correctly in conditions" {
+        if (Write-Error 'Bad' -ErrorAction Ignore && 'Hello')
+        {
+            $false | Should -BeTrue
+            return
+        }
+
+        $true | Should -BeTrue
+    }
+
+    It "Evaluates failing commands correctly in conditions" {
+        if (Write-Error 'Bad' -ErrorAction Ignore || 'Hello')
+        {
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
+    }
+
+    It "Evaluates assignment correctly in conditions" {
+        if ($x = 'Hello' && testexe -returncode 1)
+        {
+            # This should always be true after conditions
+            $? | Should -Be $true
+            $x[0] | Should -Be 'Hello'
+            $x[1] | Should -Be '1'
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
+    }
+
+    It "Evaluates assignment correctly in conditions" {
+        if ($y = $x = 'Hello' && testexe -returncode 1)
+        {
+            # This should always be true after conditions
+            $? | Should -Be $true
+            $x[0] | Should -Be 'Hello'
+            $x[1] | Should -Be '1'
+            $true | Should -BeTrue
+            return
+        }
+
+        $false | Should -BeTrue
     }
 
     Context "Runtime error semantics" {
@@ -304,6 +409,40 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
 
                 $file | Should -FileContentMatchMultiline $expectedValue
             }
+        }
+    }
+
+    Context "Control flow logic" {
+        It "Breaks from a loop" {
+            for ($i = 0; $i -lt 10; $i++)
+            {
+                testexe -returncode $i || break
+            }
+
+            $i | Should -Be 1
+        }
+
+        It "Continues in a loop" {
+            for ($i = 0; $i -lt 10; $i++)
+            {
+                testexe -returncode $i && continue
+                break
+            }
+
+            $i | Should -Be 1
+        }
+
+        It "Returns from a function" {
+            function TestFunc($value)
+            {
+                testexe -returncode $value && return 'Good'
+            }
+
+            $goodResult = TestFunc 0
+            $goodResult[0] | Should -Be '0'
+            $goodResult[1] | Should -Be 'Good'
+
+            TestFunc 10 | Should -Be '10'
         }
     }
 }
