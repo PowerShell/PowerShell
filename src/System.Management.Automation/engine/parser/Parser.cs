@@ -35,8 +35,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
-        private static bool s_bashOperatorsEnabled = ExperimentalFeature.IsEnabled("PSPipelineChainOperators");
-
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
@@ -5716,20 +5714,6 @@ namespace System.Management.Automation.Language
             // G      '||'
             // G      '&&'
 
-            // If this feature is not enabled, just use the traditional pipeline rule
-            if (!s_bashOperatorsEnabled)
-            {
-                return PipelineRule();
-            }
-
-            /*
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                System.Console.WriteLine($"{System.Diagnostics.Process.GetCurrentProcess().Id}");
-                Threading.Thread.Sleep(1000);
-            }
-            */
-
             Token assignToken = null;
             ExpressionAst expr;
 
@@ -5975,26 +5959,15 @@ namespace System.Management.Automation.Language
             while (scanning)
             {
                 CommandBaseAst commandAst;
-                Token assignToken = null;
 
                 if (expr == null)
                 {
+                    // Look for an expression at the beginning of a pipeline
                     var oldTokenizerMode = _tokenizer.Mode;
                     try
                     {
                         SetTokenizerMode(TokenizerMode.Expression);
                         expr = ExpressionRule();
-                        if (!s_bashOperatorsEnabled && expr != null)
-                        {
-                            // We peek here because we are in expression mode, otherwise =0 will get scanned
-                            // as a single token.
-                            var token = PeekToken();
-                            if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
-                            {
-                                SkipToken();
-                                assignToken = token;
-                            }
-                        }
                     }
                     finally
                     {
@@ -6011,28 +5984,6 @@ namespace System.Management.Automation.Language
                         ReportError(expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
-                    }
-
-                    if (!s_bashOperatorsEnabled && assignToken != null)
-                    {
-                        SkipNewlines();
-                        StatementAst statement = StatementRule();
-
-                        if (statement == null)
-                        {
-                            // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
-                            // pipeline, so just keep parsing.
-
-                            IScriptExtent errorExtent = After(assignToken);
-                            ReportIncompleteInput(errorExtent,
-                                nameof(ParserStrings.ExpectedValueExpression),
-                                ParserStrings.ExpectedValueExpression,
-                                assignToken.Kind.Text());
-                            statement = new ErrorStatementAst(errorExtent);
-                        }
-
-                        return new AssignmentStatementAst(ExtentOf(expr, statement),
-                            expr, assignToken.Kind, statement, assignToken.Extent);
                     }
 
                     RedirectionAst[] redirections = null;
@@ -6102,36 +6053,14 @@ namespace System.Management.Automation.Language
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
                     case TokenKind.EndOfInput:
+                    case TokenKind.AndAnd:
+                    case TokenKind.OrOr:
                         // Handled by invoking rule
                         scanning = false;
                         continue;
 
-                    case TokenKind.AndAnd:
-                    case TokenKind.OrOr:
-                        // PSPipelineChainOperators experimental feature
-                        if (s_bashOperatorsEnabled)
-                        {
-                            // Handled by invoking rule
-                            scanning = false;
-                            continue;
-                        }
-
-                        SkipToken();
-                        SkipNewlines();
-                        ReportError(nextToken.Extent,
-                            nameof(ParserStrings.InvalidEndOfLine),
-                            ParserStrings.InvalidEndOfLine,
-                            nextToken.Text);
-
-                        if (PeekToken().Kind == TokenKind.EndOfInput)
-                        {
-                            scanning = false;
-                        }
-                        break;
-
                     case TokenKind.Ampersand:
-                        // PSPipelineChainOperators experimental feature
-                        if (!allowBackground && s_bashOperatorsEnabled)
+                        if (!allowBackground)
                         {
                             // Handled by invoking rule
                             scanning = false;
