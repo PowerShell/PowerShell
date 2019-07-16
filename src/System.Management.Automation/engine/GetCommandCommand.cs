@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AccumulateMatchingCommands()
         {
-            var commandNames = (Name != null && Name.Length != 0) ? Name : new string[] { "*" };
+            var commandNames = string.IsNullOrEmpty(Name) ? new string[] { "*" } : Name;
 
             AccumulateMatchingCommands(commandNames);
         }
