@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Management.Automation;
 using System.Reflection;
 using System.Threading;
 
@@ -20,6 +21,13 @@ namespace Microsoft.PowerShell
         // not over-optimize this and always create the JumpList as a non-blocking background STA thread instead.
         internal static void CreateRunAsAdministratorJumpList()
         {
+            // The STA apartment state is not supported on NanoServer and Windows IoT.
+            // Plus, there is not need to create jump list in those environment anyways.
+            if (Platform.IsNanoServer || Platform.IsIoT)
+            {
+                return;
+            }
+
             // Some COM APIs are implicitly STA only, therefore the executing thread must run in STA.
             var thread = new Thread(() =>
             {
