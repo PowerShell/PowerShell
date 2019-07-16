@@ -2001,7 +2001,8 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                ? (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo) &&
+                    InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(fileInfo.FullName))
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;

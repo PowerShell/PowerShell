@@ -65,8 +65,9 @@ namespace System.Management.Automation
         // wildcard pattern
         internal string Pattern { get; }
 
-        // options that control match behavior
-        internal WildcardOptions Options { get; } = WildcardOptions.None;
+        // Options that control match behavior.
+        // Default is WildcardOptions.None.
+        internal WildcardOptions Options { get; }
 
         /// <summary>
         /// Wildcard pattern converted to regex pattern.
@@ -86,15 +87,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <returns>The constructed WildcardPattern object.</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
-        public WildcardPattern(string pattern)
+        public WildcardPattern(string pattern) : this(pattern, WildcardOptions.None)
         {
-            if (pattern == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("pattern");
-            }
-
-            Pattern = pattern;
         }
 
         /// <summary>
@@ -105,13 +99,11 @@ namespace System.Management.Automation
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <param name="options">Wildcard options.</param>
         /// <returns>The constructed WildcardPattern object.</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
-        public WildcardPattern(string pattern,
-                               WildcardOptions options)
+        public WildcardPattern(string pattern, WildcardOptions options)
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             Pattern = pattern;
@@ -143,20 +135,8 @@ namespace System.Management.Automation
         /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
-            if (_isMatch != null)
+            StringComparison GetStringComparison()
             {
-                return;
-            }
-
-            if (Pattern.Length == 1 && Pattern[0] == '*')
-            {
-                _isMatch = s_matchAll;
-                return;
-            }
-
-            if (Pattern.IndexOfAny(s_specialChars) == -1)
-            {
-                // No special characters present in the pattern, so we can just do a string comparison.
                 StringComparison stringComparison;
                 if (Options.HasFlag(WildcardOptions.IgnoreCase))
                 {
@@ -171,7 +151,33 @@ namespace System.Management.Automation
                         : StringComparison.CurrentCulture;
                 }
 
-                _isMatch = str => string.Equals(str, Pattern, stringComparison);
+                return stringComparison;
+            }
+
+            if (_isMatch != null)
+            {
+                return;
+            }
+
+            if (Pattern.Length == 1 && Pattern[0] == '*')
+            {
+                _isMatch = s_matchAll;
+                return;
+            }
+
+            int index = Pattern.IndexOfAny(s_specialChars);
+            if (index == -1)
+            {
+                // No special characters present in the pattern, so we can just do a string comparison.
+                _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
+                return;
+            }
+
+            if (index == Pattern.Length - 1 && Pattern[index] == '*')
+            {
+                // No special characters present in the pattern before last position and last character is asterisk.
+                var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
+                _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
                 return;
             }
 

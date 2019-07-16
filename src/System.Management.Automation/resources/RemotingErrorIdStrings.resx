@@ -973,9 +973,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="SetEnabledTrueTarget" xml:space="preserve">
     <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
   </data>
-  <data name="PSJobProxyInvalidReasonException" xml:space="preserve">
-    <value>Reason in a deserialized Job object is not valid.</value>
-  </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
     <value>Aliases to be defined when applied to a session</value>
   </data>
