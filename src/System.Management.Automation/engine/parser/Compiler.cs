@@ -4986,10 +4986,8 @@ namespace System.Management.Automation.Language
         {
             var expr = Expression.Condition(
                 CaptureAstResults(
-                    CallAddPipe(
-                        Compile(ternaryExpressionAst.Condition),
-                        s_getCurrentPipe),
-                    CaptureAstContext.Condition).Convert(typeof(bool)),
+                    CallAddPipe(Compile(ternaryExpressionAst.Condition), s_getCurrentPipe),
+                    CaptureAstContext.Condition),
                 Compile(ternaryExpressionAst.IfTrue).Convert(typeof(object)),
                 Compile(ternaryExpressionAst.IfFalse).Convert(typeof(object)));
 
