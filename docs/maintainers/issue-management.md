@@ -2,7 +2,8 @@
 
 ## Security Vulnerabilities
 
-If you believe that there is a security vulnerability in PowerShell, first follow the [vulnerability issue reporting policy](../../.github/SECURITY.md) before submitting an issue.
+If you believe that there is a security vulnerability in PowerShell,
+first follow the [vulnerability issue reporting policy](../../.github/SECURITY.md) before submitting an issue.
 
 ## Long-living issue labels
 
