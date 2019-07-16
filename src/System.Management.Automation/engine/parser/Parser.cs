@@ -5814,21 +5814,6 @@ namespace System.Management.Automation.Language
 
                     if (usedControlFlowStatement)
                     {
-                        nextToken = PeekToken();
-                        switch (nextToken.Kind)
-                        {
-                            case TokenKind.AndAnd:
-                            case TokenKind.OrOr:
-                                SkipToken();
-                                ReportError(nextToken.Extent, nameof(ParserStrings.ControlFlowInStatementChain), ParserStrings.ControlFlowInStatementChain);
-                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
-
-                            case TokenKind.Ampersand:
-                                SkipToken();
-                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorAfterControlFlow), ParserStrings.BackgroundOperatorAfterControlFlow);
-                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
-                        }
-
                         return new StatementChainAst(
                             ExtentOf(currentPipelineChain, nextStatement),
                             currentPipelineChain,
