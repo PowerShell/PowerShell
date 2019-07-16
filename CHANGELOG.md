@@ -250,6 +250,27 @@
 - Update docs for `6.2.0-rc.1` release (#9022)
 - Update release template (#8996)
 
+## v6.2.2 - 07/16/2019
+
+### Breaking Changes
+
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 8969)
+
+### Engine Updates and Fixes
+
+- Create `JumpList` in STA thread as some COM APIs are strictly STA only to avoid sporadic CLR crashes (#10057, #9928) (Thanks @bergmeister!)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9082, 9088, 9092)
+- Make `Hashtable` case insensitivity test use current culture rather than shell to set culture (Internal 8529)
+- Add automated RPM signing to release build (#10013)
+- Update copyright symbol for NuGet packages (#9936)
+- Bump `Microsoft.ApplicationInsights` from `2.9.1` to `2.10.0` (#9757)
+- Switch from BMP to PNG for graphical MSI installer assets (#9606)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9789)
+- Enable building of MSIX package (#9289, #9715)
+
 ## v6.2.1 - 05/21/2019
 
 ### Engine Updates and Fixes
@@ -992,6 +1013,21 @@
 - Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## 6.1.5 - 2019-07-16
+
+### Breaking changes
+
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 8968)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9087)
+- Add automated RPM signing to release build (#10013)
+- Update copyright symbol for NuGet packages (#9936)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9790)
+- Integrate building NuGet package in the coordinated build (#8947) (#9708)
+- Bump `Newtonsoft.Json` (#9662)
 
 ## 6.1.4 - 2019-05-21
 
