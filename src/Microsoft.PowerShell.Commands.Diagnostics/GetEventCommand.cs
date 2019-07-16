@@ -608,11 +608,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string logPattern in _listLog)
                 {
                     bool bMatchFound = false;
+                    WildcardPattern wildLogPattern = new WildcardPattern(logPattern, WildcardOptions.IgnoreCase);
 
                     foreach (string logName in eventLogSession.GetLogNames())
                     {
-                        WildcardPattern wildLogPattern = new WildcardPattern(logPattern, WildcardOptions.IgnoreCase);
-
                         if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
                             && string.Equals(logPattern, logName, StringComparison.CurrentCultureIgnoreCase))
                             ||
@@ -679,11 +678,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string provPattern in _listProvider)
                 {
                     bool bMatchFound = false;
+                    WildcardPattern wildProvPattern = new WildcardPattern(provPattern, WildcardOptions.IgnoreCase);
 
                     foreach (string provName in eventLogSession.GetProviderNames())
                     {
-                        WildcardPattern wildProvPattern = new WildcardPattern(provPattern, WildcardOptions.IgnoreCase);
-
                         if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
                             && string.Equals(provPattern, provName, StringComparison.CurrentCultureIgnoreCase))
                             ||
@@ -2059,10 +2057,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (string logPattern in logPatterns)
             {
                 bool bMatched = false;
+                WildcardPattern wildLogPattern = new WildcardPattern(logPattern, WildcardOptions.IgnoreCase);
+
                 foreach (string actualLogName in eventLogSession.GetLogNames())
                 {
-                    WildcardPattern wildLogPattern = new WildcardPattern(logPattern, WildcardOptions.IgnoreCase);
-
                     if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
                         && (logPattern.Equals(actualLogName, StringComparison.CurrentCultureIgnoreCase)))
                         ||
@@ -2128,10 +2126,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (string provPattern in providerPatterns)
             {
                 bool bMatched = false;
+                WildcardPattern wildProvPattern = new WildcardPattern(provPattern, WildcardOptions.IgnoreCase);
+
                 foreach (string provName in eventLogSession.GetProviderNames())
                 {
-                    WildcardPattern wildProvPattern = new WildcardPattern(provPattern, WildcardOptions.IgnoreCase);
-
                     if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
                       && (provPattern.Equals(provName, StringComparison.CurrentCultureIgnoreCase)))
                       ||

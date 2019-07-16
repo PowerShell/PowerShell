@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
@@ -172,7 +171,6 @@ namespace Microsoft.PowerShell.Commands
         /// Any tags to be associated with this information.
         /// </summary>
         [Parameter(Position = 1)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Tags { get; set; }
 
         /// <summary>

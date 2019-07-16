@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
+
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -8,14 +10,15 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         if ($IsWindows) {
             $userName = "testuserservices"
-            $testPass = "Secret123!"
-            net user $userName $testPass /add > $null
-            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-            $creds = [pscredential]::new(".\$userName", $password)
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
+            $creds    = [pscredential]::new(".\$userName", $testPass)
+            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+            $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
+            net user $userName $creds.GetNetworkCredential().Password /add > $null
 
             $testservicename1 = "testservice1"
             $testservicename2 = "testservice2"
-            $svcbinaryname = "TestService"
+            $svcbinaryname    = "TestService"
             $svccmd = Get-Command $svcbinaryname
             $svccmd | Should -Not -BeNullOrEmpty
             $svcfullpath = $svccmd.Path
@@ -72,10 +75,32 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         @{
             script  = {Set-Service foo -StartupType bar -ErrorAction Stop};
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
+        },
+        @{
+            script  = {Set-Service -Name $testservicename1 -SecurityDescriptorSddl $WrongSecurityDescriptorSddl };
+            errorid = "System.ArgumentException,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
         param($script, $errorid)
         { & $script } | Should -Throw -ErrorId $errorid
+    }
+
+
+    It "Sets securitydescriptor of service using Set-Service " {
+        Set-Service -Name $TestServiceName1 -SecurityDescriptor $SecurityDescriptorSddl
+        $Counter      = 0
+        $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
+
+        # Selecting the first item in the output array as below command gives plain text output from the native sc.exe.
+        $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $TestServiceName1)[1]
+
+        $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
+        $UpdatedSDDL.Group | Should -Be $ExpectedSDDL.Group
+        $UpdatedSDDL.DiscretionaryAcl.Count | Should -Be $ExpectedSDDL.DiscretionaryAcl.Count
+        $UpdatedSDDL.DiscretionaryAcl | ForEach-Object -Process {
+            $_ | Should -Be $ExpectedSDDL.DiscretionaryAcl[$Counter]
+            $Counter++
+        }
     }
 
     It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
@@ -138,16 +163,15 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         $newServiceCommand.$parameter | Should -Be $value
     }
 
-    It "Set-Service can change credentials of a service" {
+    It "Set-Service can change credentials of a service" -Pending {
         try {
             $startUsername = "user1"
             $endUsername = "user2"
-            $testPass = "Secret123!"
             $servicename = "testsetcredential"
-            net user $startUsername $testPass /add > $null
-            net user $endUsername $testPass /add > $null
-            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-            $creds = [pscredential]::new(".\$startUsername", $password)
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
+            $creds = [pscredential]::new(".\$endUsername", $testPass)
+            net user $startUsername $creds.GetNetworkCredential().Password /add > $null
+            net user $endUsername $creds.GetNetworkCredential().Password /add > $null
             $parameters = @{
                 Name           = $servicename;
                 BinaryPathName = "$PSHOME\pwsh.exe";
@@ -159,7 +183,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
             $service.StartName | Should -BeExactly $creds.UserName
 
-            $creds = [pscredential]::new(".\$endUsername", $password)
             Set-Service -Name $servicename -Credential $creds
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
             $service.StartName | Should -BeExactly $creds.UserName
@@ -259,7 +282,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
-    It "Get-Service can get the '<property>' of a service" -TestCases @(
+    It "Get-Service can get the '<property>' of a service" -Pending -TestCases @(
         @{property = "Description";    value = "This is a test description"}
         @{property = "BinaryPathName"; value = "$PSHOME\powershell.exe";},
         @{property = "UserName";       value = $creds.UserName; parameters = @{ Credential = $creds }},
