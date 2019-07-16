@@ -451,7 +451,11 @@ namespace System.Management.Automation.Language
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
             CheckIsConstant(ternaryExpressionAst, "Caller to verify ast is constant");
-            return CompileAndInvoke(ternaryExpressionAst);
+
+            object condition = ternaryExpressionAst.Condition.Accept(this);
+            return LanguagePrimitives.IsTrue(condition)
+                ? ternaryExpressionAst.IfTrue.Accept(this)
+                : ternaryExpressionAst.IfFalse.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
