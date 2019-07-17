@@ -119,6 +119,8 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
+        internal static readonly MethodInfo EnumerableOps_FlattenObjectArray =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.FlattenObjectArray), staticFlags);
 
         internal static readonly ConstructorInfo ErrorRecord__ctor =
             typeof(ErrorRecord).GetConstructor(instanceFlags | BindingFlags.Public, null, CallingConventions.Standard,
@@ -3214,13 +3216,14 @@ namespace System.Management.Automation.Language
             Expression finalValueCall = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
             // The assignment, occurring in the finally block
-            var finallyBlockExprs = new List<Expression>(variablesToAssign.Count + 2)
+            var finallyBlockExprs = new List<Expression>(3)
             {
                 Expression.Assign(s_getCurrentPipe, oldPipe),
                 Expression.Assign(valueResult, finalValueCall)
             };
 
-            for (int i = 0; i < variablesToAssign.Count; i++)
+            Expression assignmentExpression = valueResult;
+            for (int i = variablesToAssign.Count - 1; i >= 0; i--)
             {
                 ExpressionAst lhsExpressionAst = variablesToAssign[i].Item1;
                 TokenKind assignmentOperator = variablesToAssign[i].Item2;
@@ -3238,21 +3241,23 @@ namespace System.Management.Automation.Language
                         break;
                 }
 
-                Expression valueToAssign = valueResult;
                 if (arrayLhs != null)
                 {
-                    valueToAssign = DynamicExpression.Dynamic(
+                    assignmentExpression = DynamicExpression.Dynamic(
                         PSArrayAssignmentRHSBinder.Get(arrayLhs.Elements.Count),
                         typeof(IList),
-                        valueToAssign);
+                        assignmentExpression);
                 }
 
-                finallyBlockExprs.Add(
+                assignmentExpression = Expression.Call(
+                    CachedReflectionInfo.EnumerableOps_FlattenObjectArray,
                     ReduceAssignment(
                         (ISupportsAssignment)lhsExpressionAst,
                         assignmentOperator,
-                        valueToAssign));
+                        assignmentExpression));
             }
+
+            finallyBlockExprs.Add(assignmentExpression);
 
             return Expression.Block(
                 temps,

@@ -5766,6 +5766,7 @@ namespace System.Management.Automation.Language
             StatementChainOperator nextChainOperator = StatementChainOperator.None;
             ExpressionAst startExpression = expr;
             bool background = false;
+            Token lastToken = null;
             while (true)
             {
                 // Remember the last operator to chain the coming pipeline
@@ -5822,15 +5823,31 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                // If there's no next statement, return the statement chain currently parsed
-                // TODO: Determine the correct action here
                 if (nextStatement == null)
                 {
-                    return null;
+                    if (lastToken == null)
+                    {
+                        // We haven't seen a chain token, so the caller must manage this
+                        return null;
+                    }
+
+                    // Otherwise, we need to report that we were
+                    // expecting something after the last non-statement token
+                    IScriptExtent errorPosition = After(lastToken);
+                    ReportIncompleteInput(errorPosition,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        lastToken.Text);
+                    return new PipelineChainAst(
+                        ExtentOf(currentPipelineChain, lastToken),
+                        currentPipelineChain,
+                        new ErrorStatementAst(errorPosition),
+                        currentChainOperator);
                 }
 
                 // Look ahead for a chain operator
                 nextToken = PeekToken();
+                lastToken = nextToken;
                 switch (nextToken.Kind)
                 {
                     case TokenKind.AndAnd:
@@ -5855,7 +5872,7 @@ namespace System.Management.Automation.Language
                             case TokenKind.OrOr:
                                 SkipToken();
                                 ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInStatementChain), ParserStrings.BackgroundOperatorInStatementChain);
-                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextStatement, nextToken.Extent));
                         }
                         background = true;
                         goto default;
