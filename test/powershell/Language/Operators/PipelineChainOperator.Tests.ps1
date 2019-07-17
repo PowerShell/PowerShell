@@ -95,7 +95,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '$x = @(1); $x += testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = 1,'0','1' } }
             @{ Statement = '$x = $y = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0','1'; y = '0','1' } }
             @{ Statement = '$x, $y = $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0'; y = '1'; z = '0','1' } }
-            @{ Statement = '$x = @(1); $v = $w, $y = $x += $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ v = '1','0','1'; w = '1'; y = '0','1'; x = '1','0','1'; z = '0','1' } }
+            @{ Statement = '$x = @(1); $v = $w, $y = $x += $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ v = '1',@('0','1'); w = '1'; y = '0','1'; x = '1','0','1'; z = '0','1' } }
         )
 
         $jobTestCases = @(
@@ -159,11 +159,40 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         $result | Should -BeExactly '1'
     }
 
-    It "Returns a multiple objects in an array" {
+    It "Returns multiple objects in an array" {
         $result = testexe -returncode 0 && testexe -returncode 1
         $result.GetType().FullName | Should -BeExactly 'System.Object[]'
         $result[0] | Should -BeExactly '0'
         $result[1] | Should -BeExactly '1'
+    }
+
+    It "Flattens values from separate pipelines" {
+        $x = 1 && @(2,3)
+
+        $x.Count | Should -Be 3
+        $x[0] | Should -Be 1
+        $x[1] | Should -Be 2
+        $x[2] | Should -Be 3
+    }
+
+    It "Does not flatten nested values from separate pipelines" {
+        $x = 1 && ,@(2,3)
+
+        $x.Count | Should -Be 2
+        $x[0] | Should -Be 1
+        $x[1][0] | Should -Be 2
+        $x[1][1] | Should -Be 3
+    }
+
+    It "Does not flatten values within a pipeline" {
+        $x = 1 && 2,@(3,4)
+
+        $x.Count | Should -Be 3
+
+        $x[0] | Should -Be 1
+        $x[1] | Should -Be 2
+        $x[2][0] | Should -Be 3
+        $x[2][1] | Should -Be 4
     }
 
     It "Handles nested assignment" {

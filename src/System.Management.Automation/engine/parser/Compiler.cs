@@ -119,8 +119,6 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
-        internal static readonly MethodInfo EnumerableOps_FlattenObjectArray =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.FlattenObjectArray), staticFlags);
 
         internal static readonly ConstructorInfo ErrorRecord__ctor =
             typeof(ErrorRecord).GetConstructor(instanceFlags | BindingFlags.Public, null, CallingConventions.Standard,
@@ -3223,6 +3221,8 @@ namespace System.Management.Automation.Language
                 // The reassignment of the old pipe
                 Expression.Assign(s_getCurrentPipe, oldPipe),
                 // Drain the temporary pipe we used into the right value and store the result
+                // in case the whole assignment expression value is needed by an enclosing context
+                // (like a conditional)
                 Expression.Assign(valueResult,
                     Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList))
             };
@@ -3257,11 +3257,9 @@ namespace System.Management.Automation.Language
                         assignmentExpression);
                 }
 
-                // Here we:
-                //   1. Assign the expression of the original value or previous assignment call to the current LHS
-                //   2. Flatten the result as if we had sent the output through the pipeline
-                assignmentExpression = Expression.Call(
-                    CachedReflectionInfo.EnumerableOps_FlattenObjectArray,
+                // Assign the expression to the current LHS
+                assignmentExpression = Expression.Block(
+                    UpdatePosition(lhsExpressionAst.Parent),
                     ReduceAssignment(
                         (ISupportsAssignment)lhsExpressionAst,
                         assignmentOperator,

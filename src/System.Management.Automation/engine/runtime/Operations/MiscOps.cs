@@ -3018,48 +3018,6 @@ namespace System.Management.Automation
             return result.ToArray();
         }
 
-        internal static object FlattenObjectArray(object o)
-        {
-            if (o == null)
-            {
-                return null;
-            }
-
-            if (!(o is object[] arr))
-            {
-                return o;
-            }
-
-            bool hasSubArrays = false;
-            foreach (object element in arr)
-            {
-                if (element is object[])
-                {
-                    hasSubArrays = true;
-                    break;
-                }
-            }
-
-            if (!hasSubArrays)
-            {
-                return arr;
-            }
-
-            var acc = new List<object>(arr.Length);
-            foreach (object element in arr)
-            {
-                if (element is object[] subarr)
-                {
-                    acc.AddRange(subarr);
-                    continue;
-                }
-
-                acc.Add(element);
-            }
-
-            return acc.ToArray();
-        }
-
         private static void FlattenResults(object o, List<object> result)
         {
             var e = LanguagePrimitives.GetEnumerator(o);
