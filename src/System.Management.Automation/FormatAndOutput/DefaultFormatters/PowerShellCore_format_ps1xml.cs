@@ -254,6 +254,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
+                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -1436,6 +1440,35 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.ByteCollection",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Offset", width: 16)
+                    .AddHeader(Alignment.Center, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
+                    .AddHeader(Alignment.Left, label: "Ascii", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Offset64")
+                        .AddScriptBlockColumn(@"
+                            $sb = [System.Text.StringBuilder]::new()
+                            foreach ($Byte in $_.Bytes) {
+                                $sb.AppendFormat('{0:X2} ', $Byte)
+                            }
+
+                            $sb.ToString().Trim()
+                        ")
+                        .AddScriptBlockColumn(@"
+                            $sb = [System.Text.StringBuilder]::new()
+                            foreach ($Byte in $_.Bytes) {
+                                $sb.Append([char]$Byte)
+                            }
+
+                            $sb.ToString()
+                        ")
+                    .EndRowDefinition()
+                .EndTable());
         }
     }
 }
