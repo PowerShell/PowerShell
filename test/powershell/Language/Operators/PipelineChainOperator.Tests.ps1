@@ -93,6 +93,8 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '$x = testexe -returncode 1 || testexe -returncode 0'; Variables = @{ x = '1','0' } }
             @{ Statement = '$x = testexe -returncode 1 && testexe -returncode 0'; Variables = @{ x = '1' } }
             @{ Statement = '$x = @(1); $x += testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = 1,'0','1' } }
+            @{ Statement = '$x = $y = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0','1'; y = '0','1' } }
+            @{ Statement = '$x, $y = $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0'; y = '1'; z = '0','1' } }
         )
 
         $jobTestCases = @(
@@ -371,12 +373,12 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     Context "File redirection with && and ||" {
         BeforeAll {
             $redirectionTestCases = @(
-                @{ Statement = "testexe -returncode 0 > $TestDrive/1.txt && testexe -returncode 1 > $TestDrive/2.txt"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 1 > $TestDrive/1.txt && testexe -returncode 1 > $TestDrive/2.txt"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "testexe -returncode 1 > $TestDrive/1.txt || testexe -returncode 1 > $TestDrive/2.txt"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 0 > $TestDrive/1.txt || testexe -returncode 1 > $TestDrive/2.txt"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > $TestDrive/3.txt"; Files = @{ "$TestDrive/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
-                @{ Statement = "(testexe -returncode 0 > $TestDrive/1.txt && testexe -returncode 1 > $TestDrive/2.txt) > $TestDrive/3.txt"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '' } }
+                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = $null } }
+                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = $null } }
+                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
+                @{ Statement = "(testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '' } }
             )
         }
 

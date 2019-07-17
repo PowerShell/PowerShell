@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+ // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -3081,19 +3081,41 @@ namespace System.Management.Automation.Language
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
+            if (RequiresPartialAssignmentHandling(assignmentStatementAst))
+            {
+                return CompilePartialResultAssignment(assignmentStatementAst);
+            }
+
             return CompileAssignment(assignmentStatementAst);
+        }
+
+        private bool RequiresPartialAssignmentHandling(AssignmentStatementAst assignmentStatementAst)
+        {
+            StatementAst rhsStatementAst = assignmentStatementAst.Right;
+            while (true)
+            {
+                switch (rhsStatementAst)
+                {
+                    case AssignmentStatementAst subAssignmentAst:
+                        rhsStatementAst = subAssignmentAst.Right;
+                        continue;
+
+                    case StatementChainAst statementChainAst:
+                        return true;
+
+                    case PipelineChainAst pipelineChainAst:
+                        return !pipelineChainAst.Background;
+
+                    default:
+                        return false;
+                }
+            }
         }
 
         private Expression CompileAssignment(
             AssignmentStatementAst assignmentStatementAst,
             MergeRedirectExprs generateRedirectExprs = null)
         {
-            if (assignmentStatementAst.Right is StatementChainAst
-                || assignmentStatementAst.Right is PipelineChainAst)
-            {
-                return CompilePartialResultAssignment(assignmentStatementAst);
-            }
-
             var arrayLHS = assignmentStatementAst.Left as ArrayLiteralAst;
             var parenExpressionAst = assignmentStatementAst.Left as ParenExpressionAst;
             if (parenExpressionAst != null)
@@ -3150,13 +3172,26 @@ namespace System.Management.Automation.Language
             //        funcContext._currentPipe = oldipe;
             //    }
 
+            var variablesToAssign = new List<(ExpressionAst, TokenKind)>();
+            StatementAst baseStatementAst = null;
+            AssignmentStatementAst currentAssignmentAst = assignmentStatementAst;
+            while (currentAssignmentAst != null)
+            {
+                variablesToAssign.Add((currentAssignmentAst.Left, currentAssignmentAst.Operator));
+
+                baseStatementAst = currentAssignmentAst.Right;
+                currentAssignmentAst = baseStatementAst as AssignmentStatementAst;
+            }
+
             ParameterExpression resultList = NewTemp(typeof(List<object>), nameof(resultList));
             ParameterExpression oldPipe = NewTemp(typeof(Pipe), nameof(oldPipe));
+            ParameterExpression valueResult = NewTemp(typeof(object), nameof(valueResult));
 
             var temps = new ParameterExpression[]
             {
                 resultList,
-                oldPipe
+                oldPipe,
+                valueResult
             };
             
             // The try block main body
@@ -3173,45 +3208,51 @@ namespace System.Management.Automation.Language
                     oldPipe,
                     CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe,
                     s_getCurrentPipe),
-                Compile(assignmentStatementAst.Right)
+                Compile(baseStatementAst)
             };
 
-            // Deal with LHS array assignment like $x, $y, $z = stmt
-            ArrayLiteralAst arrayLhs = null;
-            switch (assignmentStatementAst.Left)
-            {
-                case ArrayLiteralAst arrayLiteralAst:
-                    arrayLhs = arrayLiteralAst;
-                    break;
+            Expression finalValueCall = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
-                case ParenExpressionAst parenExpressionAst:
-                    arrayLhs = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
-                    break;
-            }
-
-            Expression finalAssignmentValue;
-            if (arrayLhs != null)
+            // The assignment, occurring in the finally block
+            var finallyBlockExprs = new List<Expression>(variablesToAssign.Count + 2)
             {
-                // For array results, we can skip the pipeline result call
-                finalAssignmentValue = DynamicExpression.Dynamic(
-                    PSArrayAssignmentRHSBinder.Get(arrayLhs.Elements.Count),
-                    typeof(IList),
-                    resultList);
-            }
-            else
-            {
-                finalAssignmentValue = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
-            }
-
-            // The assignment, occurring in the final block
-            var finallyBlockExprs = new Expression[]
-            {
-                ReduceAssignment(
-                    (ISupportsAssignment)assignmentStatementAst.Left,
-                    assignmentStatementAst.Operator,
-                    finalAssignmentValue),
-                Expression.Assign(s_getCurrentPipe, oldPipe)
+                Expression.Assign(s_getCurrentPipe, oldPipe),
+                Expression.Assign(valueResult, finalValueCall)
             };
+
+            for (int i = 0; i < variablesToAssign.Count; i++)
+            {
+                ExpressionAst lhsExpressionAst = variablesToAssign[i].Item1;
+                TokenKind assignmentOperator = variablesToAssign[i].Item2;
+
+                // Deal with LHS array assignment like $x, $y, $z = stmt
+                ArrayLiteralAst arrayLhs = null;
+                switch (lhsExpressionAst)
+                {
+                    case ArrayLiteralAst arrayLiteralAst:
+                        arrayLhs = arrayLiteralAst;
+                        break;
+
+                    case ParenExpressionAst parenExpressionAst:
+                        arrayLhs = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
+                        break;
+                }
+
+                Expression valueToAssign = valueResult;
+                if (arrayLhs != null)
+                {
+                    valueToAssign = DynamicExpression.Dynamic(
+                        PSArrayAssignmentRHSBinder.Get(arrayLhs.Elements.Count),
+                        typeof(IList),
+                        valueToAssign);
+                }
+
+                finallyBlockExprs.Add(
+                    ReduceAssignment(
+                        (ISupportsAssignment)lhsExpressionAst,
+                        assignmentOperator,
+                        valueToAssign));
+            }
 
             return Expression.Block(
                 temps,
@@ -3220,7 +3261,9 @@ namespace System.Management.Automation.Language
                     UpdatePosition(assignmentStatementAst),
                     Expression.TryFinally(
                         Expression.Block(tryBodyExprs),
-                        Expression.Block(finallyBlockExprs))
+                        Expression.Block(finallyBlockExprs)),
+                    // Include the value so that the assignment itself has the proper value for use in conditions
+                    valueResult
                 });
         }
 
