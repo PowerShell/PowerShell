@@ -1164,6 +1164,31 @@ try
         }
     }
 
+    Describe "Enter-PSHostProcess cmdlet should be disabled on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies that Enter-PSHostProcess is disabled with lock down policy" {
+
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Enter-PSHostProcess -Id 5555 -ErrorAction Stop
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly 'EnterPSHostProcessCmdletDisabled,Microsoft.PowerShell.Commands.EnterPSHostProcessCommand'
+        }
+    }
+
     # End Describe blocks
 }
 finally
