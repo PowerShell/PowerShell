@@ -95,6 +95,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '$x = @(1); $x += testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = 1,'0','1' } }
             @{ Statement = '$x = $y = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0','1'; y = '0','1' } }
             @{ Statement = '$x, $y = $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0'; y = '1'; z = '0','1' } }
+            @{ Statement = '$x = @(1); $v = $w, $y = $x += $z = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ v = '1','0','1'; w = '1'; y = '0','1'; x = '1','0','1'; z = '0','1' } }
         )
 
         $jobTestCases = @(
@@ -104,9 +105,10 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         )
 
         $invalidSyntaxCases = @(
-            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'X' }
-            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'X' }
-            @{ Statement = 'testexe -returncode 0 && throw "Bad" || testexe -returncode 1'; ErrorID = 'X' }
+            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'BackgroundOperatorInStatementChain,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
+            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'MissingExpression,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
+            @{ Statement = 'testexe -returncode 0 && throw "Bad" || testexe -returncode 1'; ErrorID = 'StatementChainOperatorAfterThrow,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
+            @{ Statement = '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'; ErrorID = 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
         )
     }
 
