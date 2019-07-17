@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
         DefaultParameterSetName = "ScriptBlockSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
         RemotingCapability = RemotingCapability.None)]
-    public sealed class ForEachObjectCommand : PSCmdlet
+    public sealed class ForEachObjectCommand : PSCmdlet, IDisposable
     {
         #region Private Members
 
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default value is 0, indicating no timeout.
         /// </summary>
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, (Int32.MaxValue/1000))]
         public int TimeoutSeconds
         {
             get;
@@ -346,11 +346,38 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        #region IDisposable
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            // Ensure all parallel task objects are disposed
+            if (_taskTimer != null)
+            {
+                _taskTimer.Dispose();
+            }
+            if (_taskDataStreamWriter != null)
+            {
+                _taskDataStreamWriter.Dispose();
+            }
+            if (_taskPool != null)
+            {
+                _taskPool.Dispose();
+            }
+        }
+
+        #endregion
+        
         #region Private Methods
+
+        #region PSTasks
 
         private PSTaskPool _taskPool;
         private PSTaskDataStreamWriter _taskDataStreamWriter;
         private Dictionary<string, object> _usingValuesMap;
+        private System.Threading.Timer _taskTimer;
 
         private void InitParallelParameterSet()
         {
@@ -367,14 +394,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
                 _taskPool = new PSTaskPool(ThrottleLimit, _taskDataStreamWriter);
-                _taskPool.TaskComplete += new EventHandler<PSTaskCompleteEventArgs>(HandleTaskComplete);
-                // TODO: Add timeout timer as needed.
+                if (TimeoutSeconds != 0)
+                {
+                    // TODO: Throw a 'timeout' exception?  Already get pipeline stopped exception.
+                    _taskTimer = new System.Threading.Timer(
+                        (_) => _taskPool.StopAll(),
+                        null,
+                        (TimeoutSeconds * 1000),
+                        System.Threading.Timeout.Infinite);
+                }
             }
-        }
-
-        private void HandleTaskComplete(object sender, PSTaskCompleteEventArgs args)
-        {
-            args.Task.Dispose();
         }
 
         private void ProcessParallelParameterSet()
@@ -413,9 +442,6 @@ namespace Microsoft.PowerShell.Commands
 
                 _taskPool.Close();
                 _taskDataStreamWriter.WaitAndWrite();
-
-                _taskDataStreamWriter.Dispose();
-                _taskPool.Dispose();
             }
         }
 
@@ -426,6 +452,8 @@ namespace Microsoft.PowerShell.Commands
                 _taskPool.StopAll();
             }
         }
+
+        #endregion
 
         private void EndBlockParameterSet()
         {

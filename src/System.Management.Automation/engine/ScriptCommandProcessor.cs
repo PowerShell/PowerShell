@@ -235,7 +235,15 @@ namespace System.Management.Automation
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
+        private object _dollarUnderbar;
         private FunctionContext _functionContext;
+
+        internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)
+            : base(scriptBlock, context, useNewScope, origin, sessionState)
+        {
+            Init();
+            _dollarUnderbar = dollarUnderbar;
+        }
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState)
             : base(scriptBlock, context, useNewScope, origin, sessionState)
@@ -512,6 +520,10 @@ namespace System.Management.Automation
                     if (dollarUnderbar != AutomationNull.Value)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
+                    }
+                    else if (_dollarUnderbar != AutomationNull.Value)
+                    {
+                        _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, _dollarUnderbar, _context);
                     }
 
                     if (inputToProcess != AutomationNull.Value)

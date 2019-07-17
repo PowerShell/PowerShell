@@ -14,7 +14,7 @@ namespace System.Management.Automation.PSTasks
     #region PSTask
 
     /// <summary>
-    /// Class to encapsulate running a PowerShell script concurrently in a cmdlet context
+    /// Class to encapsulate running a PowerShell script concurrently in a cmdlet or job context
     /// </summary>
     internal sealed class PSTask : IDisposable
     {
@@ -25,7 +25,6 @@ namespace System.Management.Automation.PSTasks
         private readonly object _dollarUnderbar;
         private readonly PSTaskDataStreamWriter _dataStreamWriter;
         private readonly Job2 _job;
-        private readonly PSCmdlet _cmdlet;
         private readonly int _id;
 
         private Runspace _runspace;
@@ -97,7 +96,6 @@ namespace System.Management.Automation.PSTasks
             _usingValuesMap = usingValuesMap;
             _dollarUnderbar = dollarUnderbar;
             _dataStreamWriter = dataStreamWriter;
-            _cmdlet = psCmdlet;
         }
 
         /// <summary>
@@ -114,7 +112,6 @@ namespace System.Management.Automation.PSTasks
             _usingValuesMap = usingValuesMap;
             _dollarUnderbar = dollarUnderbar;
             _job = job;
-            _cmdlet = psCmdlet;
         }
 
         #endregion
@@ -139,26 +136,15 @@ namespace System.Management.Automation.PSTasks
         {
             if (_powershell != null)
             {
-                // TODO: Localize message
-                throw new PSInvalidOperationException("This task has already been started.  A task can be started only once.");
+                Dbg.Assert(false, "A PSTask can be started only once.");
+                return;
             }
 
             // Create and open Runspace for this task to run in
             var iss = InitialSessionState.CreateDefault2();
             iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
                 ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
-            // TODO: Fix dollarUnderbar variable so that it gets passed correctly to the script block
-            //       It needs to be passed to a compiled script block's localsTuple (will likely need ps.Invoke override):
-            //       scriptBlock.Compile();
-            //       _localsTuple = scriptBlock.MakeLocalsTuple(_runOptimizedCode);
-            //       _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
-            //      See: ScriptCommandProcessor.cs
-            // TODO: Also update argument binding using variable look up to detect ScriptBlock using variable
-            //       and recreate ScriptBlock instance using Ast
-            iss.Variables.Add(
-                new SessionStateVariableEntry("DollarUnderbar", _dollarUnderbar, string.Empty)
-            );
-            _runspace = RunspaceFactory.CreateRunspace(_cmdlet.Host, iss);
+            _runspace = RunspaceFactory.CreateRunspace(iss);
             _runspace.Open();
 
             // Create the PowerShell command pipeline for the provided script block
@@ -178,10 +164,15 @@ namespace System.Management.Automation.PSTasks
             }
 
             // State change handler
-            _powershell.InvocationStateChanged += new EventHandler<PSInvocationStateChangedEventArgs>(HandleStateChanged);
+            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
 
             // Start the script running in a new thread
             _powershell.AddScript(_scriptBlockToRun.ToString());
+            _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
+            if (_usingValuesMap != null && _usingValuesMap.Count > 0)
+            {
+                _powershell.AddParameter(VERBATIM_ARGUMENT, _usingValuesMap);
+            }
             _powershell.BeginInvoke<object, PSObject>(null, _output);
         }
 
@@ -202,138 +193,162 @@ namespace System.Management.Automation.PSTasks
             Dbg.Assert(_dataStreamWriter != null, "Data stream writer cannot be null");
 
             // Writer data stream handlers
-            _output.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _output.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Output, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Error.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Error.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Error, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Warning.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Warning.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.WarningRecord, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Verbose.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Verbose.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
-                    );
-                }
-            };
-
-            _powershell.Streams.Debug.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Debug.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Debug, item.Message)
-                    );
-                }
-            };
-
-            _powershell.Streams.Information.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Debug.ReadAll())
-                {
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Information, item)
-                    );
-                }
-            }; 
+            _output.DataAdded += (sender, args) => HandleOutputData(sender, args);
+            _powershell.Streams.Error.DataAdded += (sender, args) => HandleErrorData(sender, args);
+            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData(sender, args);
+            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData(sender, args);
+            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData(sender, args);
+            _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData(sender, args);
         }
 
         private void InitializePowerShellforJobs()
         {
-            Dbg.Assert(_job != null, "Data stream writer cannot be null");
+            Dbg.Assert(_job != null, "Job object cannot be null");
 
             // Job data stream handlers
-            _output.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _output.ReadAll())
-                {
-                    _job.Output.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.Output, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Error.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Error.ReadAll())
-                {
-                    _job.Error.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.Error, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Warning.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Warning.ReadAll())
-                {
-                    _job.Warning.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.WarningRecord, item)
-                    );
-                }
-            };
-
-            _powershell.Streams.Verbose.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Verbose.ReadAll())
-                {
-                    _job.Verbose.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
-                    );
-                }
-            };
-
-            _powershell.Streams.Debug.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Debug.ReadAll())
-                {
-                    _job.Debug.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.Debug, item.Message)
-                    );
-                }
-            };
-
-            _powershell.Streams.Information.DataAdded += (sender, args) =>
-            {
-                foreach (var item in _powershell.Streams.Information.ReadAll())
-                {
-                    _job.Information.Add(item);
-                    _job.Results.Add(
-                        new PSStreamObject(PSStreamObjectType.Information, item)
-                    );
-                }
-            };
+            _output.DataAdded += (sender, args) => HandleJobOutputData(sender, args);
+            _powershell.Streams.Error.DataAdded += (sender, args) => HandleJobErrorData(sender, args);
+            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleJobWarningData(sender, args);
+            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleJobVerboseData(sender, args);
+            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleJobDebugData(sender, args);
+            _powershell.Streams.Information.DataAdded += (sender, args) => HandleJobInformationData(sender, args);
         }
+
+        #region Event handlers
+
+        #region Writer data stream handlers
+
+        private void HandleOutputData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _output.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Output, item)
+                );
+            }
+        }
+
+        private void HandleErrorData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Error.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Error, item)
+                );
+            }
+        }
+
+        private void HandleWarningData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Warning.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Warning, item.Message)
+                );
+            }
+        }
+
+        private void HandleVerboseData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Verbose.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
+                );
+            }
+        }
+
+        private void HandleDebugData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Debug.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Debug, item.Message)
+                );
+            }
+        }
+
+        private void HandleInformationData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Information.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Information, item)
+                );
+            }
+        }
+
+        #endregion
+
+        #region Job data stream handlers
+
+        private void HandleJobOutputData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _output.ReadAll())
+            {
+                _job.Output.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Output, item)
+                );
+            }
+        }
+
+        private void HandleJobErrorData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Error.ReadAll())
+            {
+                _job.Error.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Error, item)
+                );
+            }
+        }
+
+        private void HandleJobWarningData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Warning.ReadAll())
+            {
+                _job.Warning.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Warning, item.Message)
+                );
+            }
+        }
+
+        private void HandleJobVerboseData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Verbose.ReadAll())
+            {
+                _job.Verbose.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
+                );
+            }
+        }
+
+        private void HandleJobDebugData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Debug.ReadAll())
+            {
+                _job.Debug.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Debug, item.Message)
+                );
+            }
+        }
+
+        private void HandleJobInformationData(object sender, DataAddedEventArgs args)
+        {
+            foreach (var item in _powershell.Streams.Information.ReadAll())
+            {
+                _job.Information.Add(item);
+                _job.Results.Add(
+                    new PSStreamObject(PSStreamObjectType.Information, item)
+                );
+            }
+        }
+
+        #endregion
 
         private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
         {
@@ -349,17 +364,16 @@ namespace System.Management.Automation.PSTasks
                         ErrorCategory.InvalidOperation,
                         this);
 
-                    if (_dataStreamWriter != null)
-                    {
-                        _dataStreamWriter.Add(
-                            new PSStreamObject(PSStreamObjectType.Error, errorRecord)
-                        );
-                    }
+                    _dataStreamWriter.Add(
+                        new PSStreamObject(PSStreamObjectType.Error, errorRecord)
+                    );
                 }
             }
 
             StateChanged.Invoke(this, stateChangeInfo);
         }
+
+        #endregion
 
         #endregion
     }
@@ -423,6 +437,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Waits for data stream objects to be added to the collection, and writes them
         /// to the cmdlet data stream.
+        /// This method returns only after the writer has been closed.
         /// </summary>
         public void WaitAndWrite()
         {
@@ -431,14 +446,13 @@ namespace System.Management.Automation.PSTasks
             while (true)
             {
                 _dataStream.WaitHandle.WaitOne();
+                WriteImmediate();
 
                 if (!_dataStream.IsOpen)
                 {
+                    WriteImmediate();
                     break;
                 }
-
-                // Data ready to write
-                WriteImmediate();
             }
         }
 
@@ -458,8 +472,7 @@ namespace System.Management.Automation.PSTasks
         {
             if (Thread.CurrentThread.ManagedThreadId != _cmdletThreadId)
             {
-                // TODO: Localize message
-                throw new PSInvalidOperationException("The method cannot be called from this thread. This method can only be called from the same cmdlet thread that created this object instance.");
+                throw new PSInvalidOperationException(InternalCommandStrings.PSTaskStreamWriterWrongThread);
             }
         }
 
@@ -482,6 +495,8 @@ namespace System.Management.Automation.PSTasks
 
     #region PSTaskPool
 
+    #region PSTaskCompleteEventArgs
+
     /// <summary>
     /// Event arguments for TaskComplete event
     /// </summary>
@@ -501,8 +516,10 @@ namespace System.Management.Automation.PSTasks
         }
     }
 
+    #endregion
+
     /// <summary>
-    /// Pool for running PSTasks, with limit of total number of running tasks at a time
+    /// Pool for running PSTasks, with limit of total number of running tasks at a time.
     /// </summary>
     internal sealed class PSTaskPool : IDisposable
     {
@@ -527,7 +544,6 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public PSTaskPool(int size, PSTaskDataStreamWriter dataStreamWriter)
         {
-
             _sizeLimit = size;
             _dataStreamWriter = dataStreamWriter;
             _isOpen = true;
@@ -576,9 +592,9 @@ namespace System.Management.Automation.PSTasks
         #region Public Methods
 
         /// <summary>
-        /// Method to add a task to the pool
-        /// If the pool is full, then this method blocks until room is available
-        /// This method is not multi-thread safe and assumes only one thread waits and adds tasks
+        /// Method to add a task to the pool.
+        /// If the pool is full, then this method blocks until room is available.
+        /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
         public bool Add(PSTask task)
         {
@@ -598,18 +614,23 @@ namespace System.Management.Automation.PSTasks
                 return false;
             }
 
-            task.StateChanged += new EventHandler<PSInvocationStateChangedEventArgs>(HandleTaskStateChanged);
+            task.StateChanged += (sender, args) => HandleTaskStateChanged(sender, args);
 
             lock (_syncObject)
             {
+                if (! _isOpen)
+                {
+                    return false;
+                }
+
                 _taskPool.Add(task.Id, task);
                 if (_taskPool.Count == _sizeLimit)
                 {
                     _addAvailable.Reset();
                 }
-            }
 
-            task.Start();
+                task.Start();
+            }
 
             return true;
         }
@@ -623,12 +644,12 @@ namespace System.Management.Automation.PSTasks
             Close();
             _stopAll.Set();
             
-            // Send stop signal to any running tasks
+            // Stop all running tasks
             lock (_syncObject)
             {
                 foreach (var task in _taskPool.Values)
                 {
-                    task.SignalStop();
+                    task.Dispose();
                 }
             }
         }
@@ -639,6 +660,7 @@ namespace System.Management.Automation.PSTasks
         public void Close()
         {
             _isOpen = false;
+            CheckForComplete();
         }
 
         #endregion
@@ -664,10 +686,10 @@ namespace System.Management.Automation.PSTasks
                             _addAvailable.Set();
                         }
                     }
-                    task.StateChanged -= new EventHandler<PSInvocationStateChangedEventArgs>(HandleTaskStateChanged);
+                    task.StateChanged -= (sender, args) => HandleTaskStateChanged(sender, args);
                     try
                     {
-                        TaskComplete.Invoke(
+                        TaskComplete.SafeInvoke(
                             this,
                             new PSTaskCompleteEventArgs(task)
                         );
@@ -676,6 +698,7 @@ namespace System.Management.Automation.PSTasks
                     {
                         Dbg.Assert(false, "Exceptions should not be thrown on event thread");
                     }
+                    task.Dispose();
                     CheckForComplete();
                     break;
             }
@@ -688,8 +711,6 @@ namespace System.Management.Automation.PSTasks
                 if (!_isOpen && _taskPool.Count == 0)
                 {
                     _dataStreamWriter.Close();
-
-                    // TODO: Callback?
                 }
             }
         }

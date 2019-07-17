@@ -165,4 +165,7 @@
   <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
     <value>The specified operator requires both the -Property and -Value parameters. Provide values for both parameters, and then try the command again.</value>
   </data>
+  <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
+    <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
+  </data>
 </root>
