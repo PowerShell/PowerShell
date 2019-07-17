@@ -3083,6 +3083,7 @@ namespace System.Management.Automation.Language
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
+            // Pipeline chains can have partial assignment results and need to be handled differently
             if (RequiresPartialAssignmentHandling(assignmentStatementAst))
             {
                 return CompilePartialResultAssignment(assignmentStatementAst);
@@ -3159,7 +3160,7 @@ namespace System.Management.Automation.Language
             //
             // Instead, we need to create a temporary pipe,
             // incrementally fill it with the expression result
-            // and in any event assign the result to the given variable.
+            // and in any event assign the result to the given variables;
             // The logic looks like:
             //    List<object> resultList;
             //    Pipe oldPipe;
@@ -3174,6 +3175,9 @@ namespace System.Management.Automation.Language
             //        funcContext._currentPipe = oldipe;
             //    }
 
+            // First we need to get all the variables we intend to assign.
+            // This builds the list of them from the outside in,
+            // so in $x = $y = $z = expr, $x is 0, $y is 1 and $z is 2.
             var variablesToAssign = new List<(ExpressionAst, TokenKind)>();
             StatementAst baseStatementAst = null;
             AssignmentStatementAst currentAssignmentAst = assignmentStatementAst;
@@ -3185,10 +3189,10 @@ namespace System.Management.Automation.Language
                 currentAssignmentAst = baseStatementAst as AssignmentStatementAst;
             }
 
+            // Set up parameters to remember values we need to reuse
             ParameterExpression resultList = NewTemp(typeof(List<object>), nameof(resultList));
             ParameterExpression oldPipe = NewTemp(typeof(Pipe), nameof(oldPipe));
             ParameterExpression valueResult = NewTemp(typeof(object), nameof(valueResult));
-
             var temps = new ParameterExpression[]
             {
                 resultList,
@@ -3213,15 +3217,18 @@ namespace System.Management.Automation.Language
                 Compile(baseStatementAst)
             };
 
-            Expression finalValueCall = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
-
-            // The assignment, occurring in the finally block
+            // Build the finally block, which will have three statements
             var finallyBlockExprs = new List<Expression>(3)
             {
+                // The reassignment of the old pipe
                 Expression.Assign(s_getCurrentPipe, oldPipe),
-                Expression.Assign(valueResult, finalValueCall)
+                // Drain the temporary pipe we used into the right value and store the result
+                Expression.Assign(valueResult,
+                    Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList))
             };
 
+            // Now perform the assignment of the result to all the assignable things on the left hand side
+            // We move from the innermost assignment out, since things like += could change the value as we move left
             Expression assignmentExpression = valueResult;
             for (int i = variablesToAssign.Count - 1; i >= 0; i--)
             {
@@ -3241,6 +3248,7 @@ namespace System.Management.Automation.Language
                         break;
                 }
 
+                // Handle destructuring assignment like $x, $y = ...
                 if (arrayLhs != null)
                 {
                     assignmentExpression = DynamicExpression.Dynamic(
@@ -3249,6 +3257,9 @@ namespace System.Management.Automation.Language
                         assignmentExpression);
                 }
 
+                // Here we:
+                //   1. Assign the expression of the original value or previous assignment call to the current LHS
+                //   2. Flatten the result as if we had sent the output through the pipeline
                 assignmentExpression = Expression.Call(
                     CachedReflectionInfo.EnumerableOps_FlattenObjectArray,
                     ReduceAssignment(
@@ -3257,6 +3268,7 @@ namespace System.Management.Automation.Language
                         assignmentExpression));
             }
 
+            // Add the final compiled assignment
             finallyBlockExprs.Add(assignmentExpression);
 
             return Expression.Block(

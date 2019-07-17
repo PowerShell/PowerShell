@@ -130,7 +130,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         Invoke-Expression -Command $Statement
         foreach ($variableName in $Variables.get_Keys())
         {
-            (Get-Variable -Name $variableName -ErrorAction Ignore).Value | Should -Be $Variables[$variableName]
+            (Get-Variable -Name $variableName -ErrorAction Ignore).Value | Should -Be $Variables[$variableName] -Because "variable is '`$$variableName'"
         }
     }
 
