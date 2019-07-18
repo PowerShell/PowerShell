@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell
         private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
         // Telemetry client to be reused when we start sending more telemetry
-        private static TelemetryClient _telemetryClient = null;
+        private static TelemetryClient _telemetryClient = new TelemetryClient();
 
         // Set this to true to reduce the latency of sending the telemetry
         private static bool _developerMode = true;
@@ -86,6 +86,9 @@ namespace Microsoft.PowerShell
                 "PSReadLine",
                 "ThreadJob",
         };
+
+        /// <summary>Can we send telemetry</summary>
+        public static bool CanSendTelemetry = GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
         private static HashSet<string> knownModules = new HashSet<string>(knownModuleNames, StringComparer.OrdinalIgnoreCase);
 
@@ -125,16 +128,11 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
+                // var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
-                if (!enabled)
+                if (! CanSendTelemetry)
                 {
                     return;
-                }
-
-                if (_telemetryClient == null)
-                {
-                    _telemetryClient = new TelemetryClient();
                 }
 
                 _telemetryClient.TrackEvent(eventName, payload, null);
@@ -145,20 +143,17 @@ namespace Microsoft.PowerShell
             }
         }
 
-        /// <summary>send special telemetry</summary>
+        /// <summary>send telemetry as a metric</summary>
         public static void SendTelemetryMetric(AITelemetryType metricId, string dim1, string dim2)
         {
-            var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
+            // var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
-            if (!enabled)
+            if (! CanSendTelemetry)
             {
                 return;
             }
-            if (_telemetryClient == null)
-            {
-                _telemetryClient = new TelemetryClient();
-            }
-        string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
+
+            string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
             _telemetryClient.GetMetric(metricName, "execution", "name").TrackValue(1, dim1, dim2);
         }
 
@@ -176,16 +171,13 @@ namespace Microsoft.PowerShell
 
             string uuid;
             try {
-                uuid = GetUserId();
+                uuid = GetUniqueUserId();
             }
             catch {
                 return;
             }
 
-            if (_telemetryClient == null)
-            {
-                _telemetryClient = new TelemetryClient();
-            }
+
             string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
             switch (metricId)
             {
@@ -220,14 +212,45 @@ namespace Microsoft.PowerShell
             }
         }
 
+        private static bool canReportExperimentalFeature(string experimentalFeatureName)
+        {
+            // don't bother to check if we can't send telemetry
+            if ( ! CanSendTelemetry ) 
+            {
+                return false;
+            }
+
+            foreach ( string knownModuleName in knownModuleNames )
+            {
+                // An experimental feature in a module is guaranteed to start with the module name
+                // but we can't look up the experimental feature in the hash because there will be more than just the module name.
+                if ( experimentalFeatureName.StartsWith(knownModuleName, StringComparison.OrdinalIgnoreCase ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Create the startup payload and send it up.
+        /// This is done only once during for the console host
         /// </summary>
-        public static void SendPSCoreStartupTelemetry()
+        /// <param name="mode">The "mode" of the startup.</param>
+        public static void SendPSCoreStartupTelemetry(string mode)
         {
             var properties = new Dictionary<string, string>();
+            properties.Add("SessionId", sessionId.ToString());
+            properties.Add("UUID", GetUniqueUserId());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
+            properties.Add("OSDetail", Environment.GetEnvironmentVariable("PSDestChannel"));
+            if ( mode == null || mode == string.Empty ) {
+                properties.Add("StartMode", "unknown");
+            }
+            else {
+                properties.Add("StartMode", mode);
+            }
             SendTelemetry("ConsoleHostStartup", properties);
         }
 
@@ -269,8 +292,9 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Retrieve the user id from the persisted file, if it doesn't exist create it
+        /// Generate a guid which will be used as the UUID
         /// </summary>
-        private static string GetUserId()
+        private static string GetUniqueUserId()
         {
             if ( uniqueUserIdentifier != Guid.Empty ) {
                 return uniqueUserIdentifier.ToString();

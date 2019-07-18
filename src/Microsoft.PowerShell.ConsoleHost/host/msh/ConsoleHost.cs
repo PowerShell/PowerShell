@@ -196,12 +196,14 @@ namespace Microsoft.PowerShell
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
                         s_cpp.ConfigurationName);
@@ -209,12 +211,14 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SSHServerMode)
                 {
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
                         s_cpp.ConfigurationName);
@@ -238,7 +242,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
