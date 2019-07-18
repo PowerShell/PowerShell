@@ -1932,14 +1932,6 @@ namespace System.Management.Automation.Language
             CaptureAstContext context,
             MergeRedirectExprs generateRedirectExprs = null)
         {
-            return CaptureAstResults(Compile(ast), context, generateRedirectExprs);
-        }
-
-        private Expression CaptureAstResults(
-            Expression genCode,
-            CaptureAstContext context,
-            MergeRedirectExprs generateRedirectExprs = null)
-        {
             Expression result;
 
             // We'll generate code like:
@@ -1974,7 +1966,7 @@ namespace System.Management.Automation.Language
                 generateRedirectExprs(exprs, finallyExprs);
             }
 
-            exprs.Add(genCode);
+            exprs.Add(Compile(ast));
 
             switch (context)
             {
@@ -4985,9 +4977,7 @@ namespace System.Management.Automation.Language
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
             var expr = Expression.Condition(
-                CaptureAstResults(
-                    CallAddPipe(Compile(ternaryExpressionAst.Condition), s_getCurrentPipe),
-                    CaptureAstContext.Condition),
+                Compile(ternaryExpressionAst.Condition).Convert(typeof(bool)),
                 Compile(ternaryExpressionAst.IfTrue).Convert(typeof(object)),
                 Compile(ternaryExpressionAst.IfFalse).Convert(typeof(object)));
 
