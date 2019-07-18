@@ -396,7 +396,6 @@ namespace Microsoft.PowerShell.Commands
                 _taskPool = new PSTaskPool(ThrottleLimit, _taskDataStreamWriter);
                 if (TimeoutSeconds != 0)
                 {
-                    // TODO: Throw a 'timeout' exception?  Already get pipeline stopped exception.
                     _taskTimer = new System.Threading.Timer(
                         (_) => _taskPool.StopAll(),
                         null,

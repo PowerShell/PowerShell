@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
@@ -34,6 +35,7 @@ namespace System.Management.Automation.PSTasks
         private const string VERBATIM_ARGUMENT = "--%";
 
         private static int s_taskId = 0;
+        private const string RunspaceName = "PSTask";
 
         #endregion
 
@@ -145,6 +147,7 @@ namespace System.Management.Automation.PSTasks
             iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
                 ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
             _runspace = RunspaceFactory.CreateRunspace(iss);
+            _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
             _runspace.Open();
 
             // Create the PowerShell command pipeline for the provided script block
