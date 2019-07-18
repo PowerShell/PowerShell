@@ -5343,27 +5343,6 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Describes the kind of control flow statement chain by the operator used.
-    /// </summary>
-    public enum StatementChainOperator
-    {
-        /// <summary>
-        /// No operator (to be used in place of null)
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// The &amp;&amp; operator.
-        /// </summary>
-        AndAnd,
-
-        /// <summary>
-        /// The || operator.
-        /// </summary>
-        OrOr,
-    }
-
-    /// <summary>
     /// A command-oriented flow-controlled pipeline chain.
     /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
     /// </summary>
@@ -5380,7 +5359,7 @@ namespace System.Management.Automation.Language
             IScriptExtent extent,
             PipelineBaseAst lhsStatement,
             StatementAst rhsStatement,
-            StatementChainOperator chainOperator)
+            TokenKind chainOperator)
             : base(extent)
         {
             if (lhsStatement == null)
@@ -5391,6 +5370,11 @@ namespace System.Management.Automation.Language
             if (rhsStatement == null)
             {
                 throw new ArgumentNullException(nameof(rhsStatement));
+            }
+
+            if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
+            {
+                throw new ArgumentException(nameof(chainOperator));
             }
 
             LhsStatement = lhsStatement;
@@ -5414,7 +5398,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The chaining operator used.
         /// </summary>
-        public StatementChainOperator Operator { get; }
+        public TokenKind Operator { get; }
 
         /// <summary>
         /// Create a copy of this Ast.
@@ -5476,7 +5460,7 @@ namespace System.Management.Automation.Language
             IScriptExtent extent,
             PipelineBaseAst lhsPipeline,
             PipelineBaseAst rhsPipeline,
-            StatementChainOperator chainOperator,
+            TokenKind chainOperator,
             bool background = false)
             : base(extent)
         {
@@ -5488,6 +5472,11 @@ namespace System.Management.Automation.Language
             if (rhsPipeline == null)
             {
                 throw new ArgumentNullException(nameof(rhsPipeline));
+            }
+
+            if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
+            {
+                throw new ArgumentException(nameof(chainOperator));
             }
 
             LhsPipeline = lhsPipeline;
@@ -5512,7 +5501,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The chaining operator used.
         /// </summary>
-        public StatementChainOperator Operator { get; }
+        public TokenKind Operator { get; }
 
         /// <summary>
         /// 

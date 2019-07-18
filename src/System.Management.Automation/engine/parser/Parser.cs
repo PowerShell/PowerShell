@@ -5761,19 +5761,14 @@ namespace System.Management.Automation.Language
                     expr, assignToken.Kind, statement, assignToken.Extent);
             }
 
-            PipelineBaseAst currentPipelineChain = null;
-            StatementChainOperator currentChainOperator = StatementChainOperator.None;
-            StatementChainOperator nextChainOperator = StatementChainOperator.None;
             ExpressionAst startExpression = expr;
+            PipelineBaseAst currentPipelineChain = null;
+            Token currentChainOperatorToken = null;
+            Token nextToken = null;
             bool background = false;
-            Token lastToken = null;
             while (true)
             {
-                // Remember the last operator to chain the coming pipeline
-                currentChainOperator = nextChainOperator;
-
                 StatementAst nextStatement;
-                Token nextToken;
                 if (mustBePipeline || startExpression != null)
                 {
                     nextStatement = PipelineRule(startExpression);
@@ -5819,45 +5814,39 @@ namespace System.Management.Automation.Language
                             ExtentOf(currentPipelineChain, nextStatement),
                             currentPipelineChain,
                             nextStatement,
-                            currentChainOperator);
+                            currentChainOperatorToken.Kind);
                     }
                 }
 
                 if (nextStatement == null)
                 {
-                    if (lastToken == null)
+                    if (currentChainOperatorToken == null)
                     {
-                        // We haven't seen a chain token, so the caller must manage this
+                        // We haven't seen a chain token, so the caller is responsible
+                        // for expecting a pipeline and must manage this
                         return null;
                     }
 
                     // Otherwise, we need to report that we were
                     // expecting something after the last non-statement token
-                    IScriptExtent errorPosition = After(lastToken);
+                    IScriptExtent errorPosition = After(currentChainOperatorToken);
                     ReportIncompleteInput(errorPosition,
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
-                        lastToken.Text);
+                        currentChainOperatorToken.Text);
                     return new PipelineChainAst(
-                        ExtentOf(currentPipelineChain, lastToken),
+                        ExtentOf(currentPipelineChain, currentChainOperatorToken),
                         currentPipelineChain,
                         new ErrorStatementAst(errorPosition),
-                        currentChainOperator);
+                        currentChainOperatorToken.Kind);
                 }
 
                 // Look ahead for a chain operator
                 nextToken = PeekToken();
-                lastToken = nextToken;
                 switch (nextToken.Kind)
                 {
                     case TokenKind.AndAnd:
-                        nextChainOperator = StatementChainOperator.AndAnd;
-                        SkipToken();
-                        SkipNewlines();
-                        break;
-
                     case TokenKind.OrOr:
-                        nextChainOperator = StatementChainOperator.OrOr;
                         SkipToken();
                         SkipNewlines();
                         break;
@@ -5880,6 +5869,7 @@ namespace System.Management.Automation.Language
                     // No more chain operators -- return
                     default:
                         // If we haven't seen a chain yet, pass through the pipeline
+                        // Simplifies the AST and prevents allocation
                         if (currentPipelineChain == null)
                         {
                             if (!background)
@@ -5896,7 +5886,7 @@ namespace System.Management.Automation.Language
                             ExtentOf(currentPipelineChain.Extent, nextStatement.Extent),
                             currentPipelineChain,
                             (PipelineBaseAst)nextStatement,
-                            currentChainOperator,
+                            currentChainOperatorToken.Kind,
                             background);
                 }
 
@@ -5908,7 +5898,10 @@ namespace System.Management.Automation.Language
                         ExtentOf(currentPipelineChain.Extent, nextStatement.Extent),
                         currentPipelineChain,
                         nextPipelineChain,
-                        currentChainOperator);
+                        currentChainOperatorToken.Kind);
+
+                // Remember the last operator to chain the coming pipeline
+                currentChainOperatorToken = nextToken;
 
                 // Look ahead to report incomplete input if needed
                 if (PeekToken().Kind == TokenKind.EndOfInput)

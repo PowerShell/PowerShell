@@ -3303,7 +3303,7 @@ namespace System.Management.Automation.Language
         private Expression CompileStatementChain(
             StatementAst lhsStatement,
             StatementAst rhsStatement,
-            StatementChainOperator chainOperator)
+            TokenKind chainOperator)
         {
             // We want to generate code like:
             //
@@ -3368,7 +3368,7 @@ namespace System.Management.Automation.Language
             // ...
             StatementAst rhs = rhsStatement;
             bool stillUnrolling = true;
-            StatementChainOperator currentChainOperator = chainOperator;
+            TokenKind currentChainOperator = chainOperator;
             int chainIndex = 1;
             do
             {
@@ -3390,7 +3390,11 @@ namespace System.Management.Automation.Language
                 // Increment chain index for next iteration
                 chainIndex++;
 
-                Expression dollarQuestionCheck = currentChainOperator == StatementChainOperator.AndAnd
+                Diagnostics.Assert(
+                    currentChainOperator == TokenKind.AndAnd || currentChainOperator == TokenKind.OrOr,
+                    "Chain operators must be either && or ||");
+
+                Expression dollarQuestionCheck = currentChainOperator == TokenKind.AndAnd
                     ? s_getDollarQuestion
                     : Expression.Not(s_getDollarQuestion);
 
