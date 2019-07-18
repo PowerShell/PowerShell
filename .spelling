@@ -699,6 +699,7 @@ timcurwick
 timestamp
 timothywlewis
 -title
+tokenizing
 tomconte
 toolchain
 toolset
@@ -716,6 +717,7 @@ unregister-event
 unregister-packagesource
 unregister-psrepository
 unregister-pssessionconfiguration
+untracked
 un-versioned
 update-formatdata
 update-modulemanifest
@@ -751,6 +753,7 @@ v6.1.0
 v6.1.1
 v6.2.0
 v6.2.1
+v6.2.2
 validatenotnullorempty
 versioned
 versioning
@@ -830,6 +833,7 @@ SytzeAndr
 yashrajbharti
  - CHANGELOG.md
 aavdberg
+asrosent
 azkarmoulana
 chucklu
 Claustn
@@ -842,8 +846,11 @@ jeis2497052
 Jocapear
 lassehastrup
 markwragg
+nbkalex
+NeoBeum
 nycjan
 paalbra
+robdy
 SeeminglyScience
 StingyJack
 ThreeFive-O

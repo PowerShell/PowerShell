@@ -10,8 +10,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         if ($IsWindows) {
             $userName = "testuserservices"
-            $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
-            $testPass = (New-Object -TypeName Net.NetworkCredential("", $Password)).SecurePassword
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
             $creds    = [pscredential]::new(".\$userName", $testPass)
             $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
             $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
@@ -164,13 +163,12 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         $newServiceCommand.$parameter | Should -Be $value
     }
 
-    It "Set-Service can change credentials of a service" {
+    It "Set-Service can change credentials of a service" -Pending {
         try {
             $startUsername = "user1"
             $endUsername = "user2"
             $servicename = "testsetcredential"
-            $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
-            $testPass = (New-Object -TypeName Net.NetworkCredential("", $Password)).SecurePassword
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
             $creds = [pscredential]::new(".\$endUsername", $testPass)
             net user $startUsername $creds.GetNetworkCredential().Password /add > $null
             net user $endUsername $creds.GetNetworkCredential().Password /add > $null
@@ -284,7 +282,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
-    It "Get-Service can get the '<property>' of a service" -TestCases @(
+    It "Get-Service can get the '<property>' of a service" -Pending -TestCases @(
         @{property = "Description";    value = "This is a test description"}
         @{property = "BinaryPathName"; value = "$PSHOME\powershell.exe";},
         @{property = "UserName";       value = $creds.UserName; parameters = @{ Credential = $creds }},

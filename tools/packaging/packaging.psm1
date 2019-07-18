@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -41,7 +41,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ("zip" -eq $Type -or "fxdependent" -eq $Type) {
+        if ("zip" -eq $Type -or "fxdependent" -eq $Type -or "fxdependent-win-desktop" -eq $Type) {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -88,6 +88,9 @@ function Start-PSPackage {
         if ($Type -eq 'fxdependent') {
             $NameSuffix = "win-fxdependent"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+        } elseif ($Type -eq 'fxdependent-win-desktop') {
+            $NameSuffix = "win-fxdependentWinDesktop"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
@@ -120,7 +123,7 @@ function Start-PSPackage {
             $actualParams += '-PSModuleRestore'
         }
 
-        $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
+        $precheckFailed = if ($Type -like 'fxdependent*' -or $Type -eq 'tar-alpine') {
             ## We do not check for runtime and crossgen for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
@@ -152,7 +155,7 @@ function Start-PSPackage {
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
-            if ($Type -ne 'fxdependent') {
+            if ($Type -notlike 'fxdependent*') {
                 $params += '-CrossGen'
             }
 
@@ -164,6 +167,8 @@ function Start-PSPackage {
 
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
+            } elseif ($Type -eq 'fxdependent-win-desktop') {
+                $params += '-Runtime', 'fxdependent-win-desktop'
             } else {
                 $params += '-Runtime', $Runtime
             }
@@ -282,7 +287,8 @@ function Start-PSPackage {
                     New-ZipPackage @Arguments
                 }
             }
-            "fxdependent" {
+
+            { $_ -like "fxdependent*" } {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
                     Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
@@ -3230,6 +3236,7 @@ function New-GlobalToolNupkg
     param(
         [Parameter(Mandatory)] [string] $LinuxBinPath,
         [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
         [Parameter(Mandatory)] [string] $PackageVersion,
         [Parameter(Mandatory)] [string] $DestinationPath,
         [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
@@ -3241,13 +3248,13 @@ function New-GlobalToolNupkg
     Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
 
     ## Remove unnecessary xml files
-    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath -Filter *.xml | Remove-Item -Verbose
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath -Filter *.xml | Remove-Item -Verbose
 
     if ($UnifiedPackage)
     {
         Write-Log "Creating a unified package"
         $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell"; Type = "Unified"}
-        $ShimDllPath = Join-Path $WindowsBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
+        $ShimDllPath = Join-Path $WindowsDesktopBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
     }
     else
     {
@@ -3256,6 +3263,9 @@ function New-GlobalToolNupkg
 
         Write-Log "Reducing size of Windows package"
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
+
+        Write-Log "Reducing size of WindowsDesktop package"
+        ReduceFxDependentPackage -Path $WindowsDesktopBinPath -KeepWindowsRuntimes
 
         Write-Log "Creating a Linux and Windows packages"
         $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.Alpine"; Type = "PowerShell.Linux.Alpine"}
@@ -3279,8 +3289,8 @@ function New-GlobalToolNupkg
                 $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
                 $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
 
-                Write-Log "Copying runtime assemblies from $WindowsBinPath"
-                Copy-Item "$WindowsBinPath\*" -Destination $winFolder -Recurse
+                Write-Log "Copying runtime assemblies from $WindowsDesktopBinPath"
+                Copy-Item "$WindowsDesktopBinPath\*" -Destination $winFolder -Recurse
 
                 Write-Log "Copying runtime assemblies from $LinuxBinPath"
                 Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
@@ -3341,8 +3351,8 @@ function New-GlobalToolNupkg
 
             "PowerShell.Windows.x64"
             {
-                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
-                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Write-Log "Copying runtime assemblies from $WindowsDesktopBinPath for $packageType"
+                Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
                 Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }

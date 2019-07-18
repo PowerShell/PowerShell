@@ -780,90 +780,89 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=2&type=${type}"
     }
 
-    #region Redirect tests
+    Context "Redirect" {
+        It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
 
-    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
-        $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
+            $response.Error | Should -BeNullOrEmpty
+            $response.Content.Headers."Authorization" | Should -BeExactly "test"
+        }
 
-        $response.Error | Should -BeNullOrEmpty
-        $response.Content.Headers."Authorization" | Should -BeExactly "test"
+        It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Content.Headers."Authorization" | Should -BeExactly "test"
+        }
+
+        It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -Uri $uri
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been removed.
+            $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
+        }
+
+        # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
+        # Some names overlap in underlying value.
+        It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been removed.
+            $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
+            # ensure POST was changed to GET for selected redirections and remains as POST for others.
+            $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest -PreserveAuthorizationOnRedirect keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been removed.
+            $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+            # ensure POST was changed to GET for selected redirections and remains as POST for others.
+            $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            # Skip relative test as it is not a valid response type.
+            if ($redirectType -eq 'relative') { return }
+
+            # When an Authorization request header is present,
+            # and -PreserveAuthorizationOnRedirect is not present,
+            # PowerShell should throw an HTTP Response Exception
+            # for a redirect response which does not contain a Location response header.
+            # The correct redirect status code should be included in the exception.
+
+            $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+            $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+            $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
+            $response = ExecuteWebCommand -command $command
+
+            $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+            $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
+            $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+        }
     }
 
-    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
-        param($redirectType)
-        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
-        $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
-
-        $response.Error | Should -BeNullOrEmpty
-        $response.Content.Headers."Authorization" | Should -BeExactly "test"
-    }
-
-    It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
-        param($redirectType)
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
-        $response = ExecuteRedirectRequest -Uri $uri
-
-        $response.Error | Should -BeNullOrEmpty
-        # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
-        $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
-    }
-
-    # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
-    # Some names overlap in underlying value.
-    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
-        $response = ExecuteRedirectRequest -Uri $uri -Method 'POST'
-
-        $response.Error | Should -BeNullOrEmpty
-        # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
-        $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
-        # ensure POST was changed to GET for selected redirections and remains as POST for others.
-        $response.Content.Method | Should -Be $redirectedMethod
-    }
-
-    It "Validates Invoke-WebRequest -PreserveAuthorizationOnRedirect keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
-        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -Method 'POST'
-
-        $response.Error | Should -BeNullOrEmpty
-        # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
-        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
-        # ensure POST was changed to GET for selected redirections and remains as POST for others.
-        $response.Content.Method | Should -Be $redirectedMethod
-    }
-
-    It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
-        # Skip relative test as it is not a valid response type.
-        if ($redirectType -eq 'relative') { return }
-
-        # When an Authorization request header is present,
-        # and -PreserveAuthorizationOnRedirect is not present,
-        # PowerShell should throw an HTTP Response Exception
-        # for a redirect response which does not contain a Location response header.
-        # The correct redirect status code should be included in the exception.
-
-        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
-        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
-        $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
-        $response = ExecuteWebCommand -command $command
-
-        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
-        $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
-        $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
-    }
-
-    #endregion Redirect tests
 
     Context "Invoke-WebRequest SkipHeaderVerification Tests" {
         BeforeAll {
@@ -1168,75 +1167,76 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     #endregion charset encoding tests
 
     #region Content Header Inclusion
+    Context "Content Header" {
+        It "Verifies Invoke-WebRequest includes Content headers in Headers property" {
+            $query = @{
+                contenttype = 'text/plain'
+                body        = 'OK'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $command = "Invoke-WebRequest -Uri '$uri'"
+            $result = ExecuteWebCommand -command $command
+            ValidateResponse $result
 
-    It "Verifies Invoke-WebRequest includes Content headers in Headers property" {
-        $query = @{
-            contenttype = 'text/plain'
-            body        = 'OK'
+            $result.Output.Headers.'Content-Type' | Should -Be 'text/plain'
+            $result.Output.Headers.'Content-Length' | Should -Be 2
         }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $command = "Invoke-WebRequest -Uri '$uri'"
-        $result = ExecuteWebCommand -command $command
-        ValidateResponse $result
 
-        $result.Output.Headers.'Content-Type' | Should -Be 'text/plain'
-        $result.Output.Headers.'Content-Length' | Should -Be 2
-    }
+        It "Verifies Invoke-WebRequest includes Content headers in RawContent property" {
+            $query = @{
+                contenttype = 'text/plain'
+                body        = 'OK'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $command = "Invoke-WebRequest -Uri '$uri'"
+            $result = ExecuteWebCommand -command $command
+            ValidateResponse $result
 
-    It "Verifies Invoke-WebRequest includes Content headers in RawContent property" {
-        $query = @{
-            contenttype = 'text/plain'
-            body        = 'OK'
+            $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Type: text/plain'))
+            $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Length: 2'))
         }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $command = "Invoke-WebRequest -Uri '$uri'"
-        $result = ExecuteWebCommand -command $command
-        ValidateResponse $result
 
-        $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Type: text/plain'))
-        $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Length: 2'))
-    }
+        It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
+            $query = @{
+                contenttype = 'text/plain'
+                body        = 'OK'
+                headers     = @{
+                    'X-Fake-Header' = @('testvalue01', 'testvalue02')
+                } | ConvertTo-Json -Compress
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $command = "Invoke-WebRequest -Uri '$uri'"
+            $result = ExecuteWebCommand -command $command
+            ValidateResponse $result
 
-    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
-        $query = @{
-            contenttype = 'text/plain'
-            body        = 'OK'
-            headers     = @{
-                'X-Fake-Header' = @('testvalue01', 'testvalue02')
-            } | ConvertTo-Json -Compress
+            $result.Output.Headers.'X-Fake-Header'.Count | Should -Be 2
+            $result.Output.Headers.'X-Fake-Header'.Contains('testvalue01') | Should -BeTrue
+            $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should -BeTrue
+            $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue01'))
+            $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue02'))
         }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $command = "Invoke-WebRequest -Uri '$uri'"
-        $result = ExecuteWebCommand -command $command
-        ValidateResponse $result
 
-        $result.Output.Headers.'X-Fake-Header'.Count | Should -Be 2
-        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue01') | Should -BeTrue
-        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should -BeTrue
-        $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue01'))
-        $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue02'))
-    }
+        It "Verifies Invoke-WebRequest does not sent expect 100-continue headers by default" {
+            $uri = Get-WebListenerUrl -Test 'Get'
 
-    It "Verifies Invoke-WebRequest does not sent expect 100-continue headers by default" {
-        $uri = Get-WebListenerUrl -Test 'Get'
+            $response = Invoke-WebRequest -Uri $uri
+            $result = $response.Content | ConvertFrom-Json
 
-        $response = Invoke-WebRequest -Uri $uri
-        $result = $response.Content | ConvertFrom-Json
+            $result.headers.Expect | Should -BeNullOrEmpty
+            $result.method | Should -BeExactly "GET"
+            $result.url | Should -BeExactly $uri.ToString()
+        }
 
-        $result.headers.Expect | Should -BeNullOrEmpty
-        $result.method | Should -BeExactly "GET"
-        $result.url | Should -BeExactly $uri.ToString()
-    }
+        It "Verifies Invoke-WebRequest sends expect 100-continue header when defined in -Headers" {
+            $uri = Get-WebListenerUrl -Test 'Get'
 
-    It "Verifies Invoke-WebRequest sends expect 100-continue header when defined in -Headers" {
-        $uri = Get-WebListenerUrl -Test 'Get'
+            $response = Invoke-WebRequest -Uri $uri -Headers @{Expect = '100-continue'}
+            $result = $response.Content | ConvertFrom-Json
 
-        $response = Invoke-WebRequest -Uri $uri -Headers @{Expect = '100-continue'}
-        $result = $response.Content | ConvertFrom-Json
-
-        $result.headers.Expect | Should -BeExactly '100-continue'
-        $result.method | Should -BeExactly "GET"
-        $result.url | Should -BeExactly $uri.ToString()
+            $result.headers.Expect | Should -BeExactly '100-continue'
+            $result.method | Should -BeExactly "GET"
+            $result.url | Should -BeExactly $uri.ToString()
+        }
     }
 
     #endregion Content Header Inclusion
@@ -1863,6 +1863,66 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.output.StatusCode | Should -Be "200"
             $jsonResult = $result.output.Content | ConvertFrom-Json
             $jsonResult.SessionId | Should -BeExactly $sessionId
+        }
+    }
+
+    Context "Denial of service" -Tag 'DOS' {
+        It "Image Parsing" {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType='img'
+                dosLength='5000'
+            }
+            $script:content = ''
+            [TimeSpan] $timeSpan = Measure-Command {
+                $response = Invoke-WebRequest -Uri $dosUri
+                $script:content = $response.content
+                $response.Images | out-null
+            }
+
+            $script:content | should -Not -BeNullOrEmpty
+
+            # pathological regex
+            $regex = [RegEx]::new('<img\s+[^>]*>')
+
+            [TimeSpan] $pathologicalTimeSpan = Measure-Command {
+                $regex.Match($content)
+            }
+
+            $pathologicalRatio = $pathologicalTimeSpan.TotalMilliseconds/$timeSpan.TotalMilliseconds
+            Write-Verbose "Pathological ratio: $pathologicalRatio" -Verbose
+
+            # dosLength 4,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 12
+            # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
+            # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
+            $pathologicalRatio | Should -BeGreaterThan 10
+        }
+        It "Charset Parsing" {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType='charset'
+                dosLength='2850'
+            }
+            $script:content = ''
+            [TimeSpan] $timeSpan = Measure-Command {
+                $response = Invoke-WebRequest -Uri $dosUri
+                $script:content = $response.content
+            }
+
+            # Pathological regex
+            $regex = [RegEx]::new('<meta\s[.\n]*[^><]*charset\s*=\s*["''\n]?(?<charset>[A-Za-z].[^\s"''\n<>]*)[\s"''\n>]')
+
+            $script:content | should -Not -BeNullOrEmpty
+
+            [TimeSpan] $pathologicalTimeSpan = Measure-Command {
+                $regex.Match($content)
+            }
+
+            $pathologicalRatio = $pathologicalTimeSpan.TotalMilliseconds/$timeSpan.TotalMilliseconds
+            Write-Verbose "Pathological ratio: $pathologicalRatio" -Verbose
+
+            # dosLength 2,750 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 13
+            # dosLength 2,850 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 22
+            # dosLength 3,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 31
+            $pathologicalRatio | Should -BeGreaterThan 10
         }
     }
 }

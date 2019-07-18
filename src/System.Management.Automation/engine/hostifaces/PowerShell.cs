@@ -3897,29 +3897,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This has been added as a work around for Windows8 bug 803461.
-        /// It should be used only for the PSJobProxy API.
-        ///
-        /// Resets the instance ID of the command to a new guid.
-        /// If this is not done, then there is a race condition on the server
-        /// in the following circumstances:
-        ///
-        ///   ps.BeginInvoke(...);
-        ///   ps.Stop()
-        ///   ps.Commands.Clear();
-        ///   ps.AddCommand("Foo");
-        ///   ps.Invoke();
-        ///
-        /// In these conditions, stop returns before the server is done cleaning up.
-        /// The subsequent invoke will cause an error because the guid already
-        /// identifies a command in progress.
-        /// </summary>
-        internal void GenerateNewInstanceId()
-        {
-            InstanceId = Guid.NewGuid();
-        }
-
-        /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
@@ -5934,55 +5911,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-
-        #region V3 Extensions
-
-        /// <summary>
-        /// Returns a job object which can be used to
-        /// control the invocation of the command with
-        /// AsJob Parameter.
-        /// </summary>
-        /// <returns>Job object.</returns>
-        public PSJobProxy AsJobProxy()
-        {
-            // if there are no commands added
-            // throw an invalid operation exception
-            if (this.Commands.Commands.Count == 0)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandRequiresACommand);
-            }
-
-            // if there is more than one command in the
-            // command collection throw an error
-            if (this.Commands.Commands.Count > 1)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandNotSupported);
-            }
-
-            // check if the AsJob parameter has already
-            // been added. If not, add the same
-            bool found = false;
-            foreach (CommandParameter parameter in this.Commands.Commands[0].Parameters)
-            {
-                if (string.Compare(parameter.Name, "AsJob", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    found = true;
-                }
-            }
-
-            if (!found)
-            {
-                AddParameter("AsJob");
-            }
-
-            // initialize the job invoker and return the same
-            PSJobProxy job = new PSJobProxy(this.Commands.Commands[0].CommandText);
-            job.InitializeJobProxy(this.Commands, this.Runspace, this.RunspacePool);
-
-            return job;
-        }
-
-        #endregion V3 Extensions
 
 #if !CORECLR // PSMI Not Supported On CSS
         #region Win Blue Extensions

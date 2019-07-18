@@ -89,6 +89,13 @@ jobs:
       msi: no
       msix: no
 
+  - template: upload.yml
+    parameters:
+      architecture: fxdependentWinDesktop
+      version: $(version)
+      msi: no
+      msix: no
+
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
 

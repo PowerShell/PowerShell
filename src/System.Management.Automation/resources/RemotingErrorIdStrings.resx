@@ -973,9 +973,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="SetEnabledTrueTarget" xml:space="preserve">
     <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
   </data>
-  <data name="PSJobProxyInvalidReasonException" xml:space="preserve">
-    <value>Reason in a deserialized Job object is not valid.</value>
-  </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
     <value>Aliases to be defined when applied to a session</value>
   </data>
@@ -1686,5 +1683,8 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
     <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+  </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
   </data>
 </root>

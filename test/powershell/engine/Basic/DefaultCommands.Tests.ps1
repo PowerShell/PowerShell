@@ -94,7 +94,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "ise",                              "powershell_ise.exe",               $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwmi",                             "Invoke-WMIMethod",                 $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwr",                              "Invoke-WebRequest",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
+"Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "lp",                               "Out-Printer",                      $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "ls",                               "Get-ChildItem",                    $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "man",                              "help",                             $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
