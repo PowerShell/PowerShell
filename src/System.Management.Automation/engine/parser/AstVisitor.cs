@@ -150,6 +150,8 @@ namespace System.Management.Automation.Language
     /// <summary/>
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
+        private object DefaultVisit(Ast ast) => null;
+
         /// <summary/>
         object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst);
 
@@ -172,7 +174,7 @@ namespace System.Management.Automation.Language
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
 
         /// <summary/>
-        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => null;
+        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
     }
 
 #if DEBUG

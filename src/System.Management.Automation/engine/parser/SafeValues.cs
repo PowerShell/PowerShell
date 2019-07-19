@@ -647,9 +647,12 @@ namespace System.Management.Automation.Language
 
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
-            return s_context != null
-                ? Compiler.GetExpressionValue(ternaryExpressionAst, true, s_context, null)
-                : throw PSTraceSource.NewArgumentException("ast");
+            if (s_context == null)
+            {
+                throw PSTraceSource.NewArgumentException("ast");
+            }
+
+            return Compiler.GetExpressionValue(ternaryExpressionAst, true, s_context, null);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
@@ -662,18 +665,24 @@ namespace System.Management.Automation.Language
 
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
-            return s_context != null
-                ? Compiler.GetExpressionValue(unaryExpressionAst, true, s_context, null)
-                : throw PSTraceSource.NewArgumentException("ast");
+            if (s_context == null)
+            {
+                throw PSTraceSource.NewArgumentException("ast");
+            }
+
+            return Compiler.GetExpressionValue(unaryExpressionAst, true, s_context, null);
         }
 
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
             // at this point, we know we're safe because we checked both the type and the child,
             // so now we can just call the compiler and indicate that it's trusted (at this point)
-            return s_context != null
-                ? Compiler.GetExpressionValue(convertExpressionAst, true, s_context, null)
-                : throw PSTraceSource.NewArgumentException("ast");
+            if (s_context == null)
+            {
+                throw PSTraceSource.NewArgumentException("ast");
+            }
+
+            return Compiler.GetExpressionValue(convertExpressionAst, true, s_context, null);
         }
 
         public object VisitConstantExpression(ConstantExpressionAst constantExpressionAst)

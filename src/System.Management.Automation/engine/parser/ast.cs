@@ -7113,19 +7113,13 @@ namespace System.Management.Automation.Language
         public TernaryExpressionAst(IScriptExtent extent, ExpressionAst condition, ExpressionAst ifTrue, ExpressionAst ifFalse)
             : base(extent)
         {
-            if (condition == null || ifTrue == null || ifFalse == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(condition == null ? nameof(condition) : ifTrue == null ? nameof(ifTrue) : nameof(ifFalse));
-            }
+            Condition = condition ?? throw PSTraceSource.NewArgumentNullException(nameof(condition));
+            IfTrue = ifTrue ?? throw PSTraceSource.NewArgumentNullException(nameof(ifTrue));
+            IfFalse = ifFalse ?? throw PSTraceSource.NewArgumentNullException(nameof(ifFalse));
 
-            Condition = condition;
-            SetParent(condition);
-
-            IfTrue = ifTrue;
-            SetParent(ifTrue);
-
-            IfFalse = ifFalse;
-            SetParent(ifFalse);
+            SetParent(Condition);
+            SetParent(IfTrue);
+            SetParent(IfFalse);
         }
 
         /// <summary>
@@ -7158,8 +7152,12 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitTernaryExpression(this) : null;
+            if (visitor is ICustomAstVisitor2 visitor2)
+            {
+                return visitor2.VisitTernaryExpression(this);
+            }
+
+            return null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -7169,13 +7167,24 @@ namespace System.Management.Automation.Language
             {
                 action = visitor2.VisitTernaryExpression(this);
                 if (action == AstVisitAction.SkipChildren)
+                {
                     return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+
                 if (action == AstVisitAction.Continue)
+                {
                     action = Condition.InternalVisit(visitor2);
+                }
+
                 if (action == AstVisitAction.Continue)
+                {
                     action = IfTrue.InternalVisit(visitor2);
+                }
+
                 if (action == AstVisitAction.Continue)
+                {
                     action = IfFalse.InternalVisit(visitor2);
+                }
             }
 
             return visitor.CheckForPostAction(this, action);
