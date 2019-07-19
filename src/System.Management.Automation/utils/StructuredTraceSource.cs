@@ -924,11 +924,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal void WriteLine(string format, string arg1)
-        {
-            WriteLine(format, (object)arg1);
-        }
-
         internal void WriteLine(string format, bool arg1)
         {
             WriteLine(format, (object)arg1.ToString());
@@ -995,31 +990,6 @@ namespace System.Management.Automation
                     format,
                     new object[] { arg1, arg2 });
             }
-        }
-
-        internal void WriteLine(string format, string arg1, string arg2)
-        {
-            WriteLine(format, (object)arg1, (object)arg2);
-        }
-
-        internal void WriteLine(string format, string arg1, object arg2)
-        {
-            WriteLine(format, (object)arg1, arg2);
-        }
-
-        internal void WriteLine(string format, object arg1, string arg2)
-        {
-            WriteLine(format, arg1, (object)arg2);
-        }
-
-        internal void WriteLine(string format, bool arg1, string arg2)
-        {
-            WriteLine(format, (object)arg1.ToString(), (object)arg2);
-        }
-
-        internal void WriteLine(string format, int arg1, string arg2)
-        {
-            WriteLine(format, (object)arg1.ToString(), (object)arg2);
         }
 
         /// <summary>
