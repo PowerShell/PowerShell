@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using Debug = System.Diagnostics.Debug;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Internal;
@@ -24,27 +26,10 @@ namespace Microsoft.PowerShell.Commands
     /// execution point.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
-    [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,
+    [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSetName,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=330208")]
-    public sealed class DebugJobCommand : PSCmdlet
+    public sealed class DebugJobCommand : PSRemoteDebugCmdlet
     {
-        #region Strings
-
-        private const string JobParameterSet = "JobParameterSet";
-        private const string JobNameParameterSet = "JobNameParameterSet";
-        private const string JobIdParameterSet = "JobIdParameterSet";
-        private const string JobInstanceIdParameterSet = "JobInstanceIdParameterSet";
-
-        #endregion
-
-        #region Private members
-
-        private Job _job;
-        private Debugger _debugger;
-        private PSDataCollection<PSStreamObject> _debugCollection;
-
-        #endregion
-
         #region Parameters
 
         /// <summary>
@@ -54,114 +39,43 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
-                   ParameterSetName = DebugJobCommand.JobParameterSet)]
-        public Job Job
-        {
-            get;
-            set;
-        }
+                   ParameterSetName = DefaultParameterSetName)]
+        public Job Job { get; set; }
 
-        /// <summary>
-        /// The Job object name to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugJobCommand.JobNameParameterSet)]
-        public string Name
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The Job object Id to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugJobCommand.JobIdParameterSet)]
-        public int Id
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The Job object InstanceId to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugJobCommand.JobInstanceIdParameterSet)]
-        public Guid InstanceId
-        {
-            get;
-            set;
-        }
-
-        #endregion
+        #endregion Parameters
 
         #region Overrides
 
         /// <summary>
-        /// End processing.  Do work.
+        /// The message to display when the debugger is first attached to the job.
+        /// </summary>
+        protected override string DebuggingStartedMessage => string.Format(CultureInfo.InvariantCulture, DebuggerStrings.DebuggingJob, Job.Name);
+
+        /// <summary>
+        /// End processing. Do work.
         /// </summary>
         protected override void EndProcessing()
         {
             switch (ParameterSetName)
             {
-                case DebugJobCommand.JobParameterSet:
-                    _job = Job;
+                case NameParameterSetName:
+                    Job = GetJobByName(Name);
                     break;
 
-                case DebugJobCommand.JobNameParameterSet:
-                    _job = GetJobByName(Name);
+                case IdParameterSetName:
+                    Job = GetJobById(Id);
                     break;
 
-                case DebugJobCommand.JobIdParameterSet:
-                    _job = GetJobById(Id);
-                    break;
-
-                case DebugJobCommand.JobInstanceIdParameterSet:
-                    _job = GetJobByInstanceId(InstanceId);
+                case InstanceIdParameterSetName:
+                    Job = GetJobByInstanceId(InstanceId);
                     break;
             }
 
-            if (!ShouldProcess(_job.Name, VerbsDiagnostic.Debug))
+            Debug.Assert(Job != null);
+
+            if (!ShouldProcess(Job.Name, VerbsDiagnostic.Debug))
             {
                 return;
-            }
-
-            Runspace runspace = LocalRunspace.DefaultRunspace;
-            if (runspace == null || runspace.Debugger == null)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException(RemotingErrorIdStrings.CannotDebugJobNoHostDebugger),
-                        "DebugJobNoHostDebugger",
-                        ErrorCategory.InvalidOperation,
-                        this)
-                    );
-            }
-
-            if ((runspace.Debugger.DebugMode == DebugModes.Default) || (runspace.Debugger.DebugMode == DebugModes.None))
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException(RemotingErrorIdStrings.CannotDebugJobInvalidDebuggerMode),
-                        "DebugJobWrongDebugMode",
-                        ErrorCategory.InvalidOperation,
-                        this)
-                    );
-            }
-
-            if (this.Host == null || this.Host.UI == null)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException(RemotingErrorIdStrings.CannotDebugJobNoHostUI),
-                        "DebugJobNoHostAvailable",
-                        ErrorCategory.InvalidOperation,
-                        this)
-                    );
             }
 
             if (!CheckForDebuggableJob())
@@ -175,55 +89,110 @@ namespace Microsoft.PowerShell.Commands
                     );
             }
 
-            // Set up host script debugger to debug the job.
-            _debugger = runspace.Debugger;
-            _debugger.DebugJob(_job);
-
-            // Blocking call.  Send job output to host UI while debugging and wait for Job completion.
-            WaitAndReceiveJobOutput();
+            base.EndProcessing();
         }
 
         /// <summary>
-        /// Stop processing.
+        /// Starts the job debugging session.
         /// </summary>
-        protected override void StopProcessing()
+        protected override void StartDebugging()
         {
-            // Cancel job debugging.
-            Debugger debugger = _debugger;
-            if ((debugger != null) && (_job != null))
-            {
-                debugger.StopDebugJob(_job);
-            }
+            InitDebuggingSignal();
 
-            // Unblock the data collection.
-            PSDataCollection<PSStreamObject> debugCollection = _debugCollection;
-            if (debugCollection != null)
+            Job.StateChanged += Job_StateChanged;
+
+            // Set up host script debugger to debug the job.
+            Debugger.DebugJob(Job, disableBreakAll: NoInitialBreak);
+        }
+
+        /// <summary>
+        /// Adds event handlers to the job and debugger for output data processing.
+        /// </summary>
+        protected override void AddDataEventHandlers()
+        {
+            if (Job.ChildJobs.Count == 0)
             {
-                debugCollection.Complete();
+                // No child jobs, monitor this job's results collection.
+                Job.Results.DataAdding += Results_DataAdding;
+            }
+            else
+            {
+                // Monitor each child job's results collections.
+                foreach (var childJob in Job.ChildJobs)
+                {
+                    childJob.Results.DataAdding += Results_DataAdding;
+                }
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Terminate the job on exception.
+        /// </summary>
+        /// <param name="_"></param>
+        protected override void HandleDataProcessingException(Exception _)
+        {
+            // Terminate job on exception.
+            if (Job != null && !Job.IsFinished)
+            {
+                Job.StopJob();
+            }
+        }
+
+        /// <summary>
+        /// Removes event handlers from the job and debugger that were added for output data processing.
+        /// </summary>
+        protected override void RemoveDataEventHandlers()
+        {
+            if (Job.ChildJobs.Count == 0)
+            {
+                // Remove single job DataAdding event handler.
+                Job.Results.DataAdding -= Results_DataAdding;
+            }
+            else
+            {
+                // Remove each child job's DataAdding event handler.
+                foreach (var childJob in Job.ChildJobs)
+                {
+                    childJob.Results.DataAdding -= Results_DataAdding;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Stop the job debugging session.
+        /// </summary>
+        protected override void StopDebugging()
+        {
+            Job.StateChanged -= Job_StateChanged;
+
+            if (Job != null)
+            {
+                Debugger?.StopDebugJob(Job);
+            }
+        }
+
+        #endregion Overrides
 
         #region Private methods
 
         /// <summary>
-        /// Check for debuggable job.  Job must implement IJobDebugger and also
+        /// Check for debuggable job. Job must implement IJobDebugger and also
         /// must be running or in Debug stopped state.
         /// </summary>
         /// <returns></returns>
         private bool CheckForDebuggableJob()
         {
-            // Check passed in job object.
-            bool debuggableJobFound = GetJobDebuggable(_job); ;
-
+            bool debuggableJobFound = GetJobDebuggable(Job);
             if (!debuggableJobFound)
             {
                 // Assume passed in job is a container job and check child jobs.
-                foreach (var cJob in _job.ChildJobs)
+                foreach (var cJob in Job.ChildJobs)
                 {
                     debuggableJobFound = GetJobDebuggable(cJob);
-                    if (debuggableJobFound) { break; }
+                    if (debuggableJobFound)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -241,110 +210,24 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private void WaitAndReceiveJobOutput()
+        private void Job_StateChanged(object sender, JobStateEventArgs stateChangedArgs)
         {
-            _debugCollection = new PSDataCollection<PSStreamObject>();
-            _debugCollection.BlockingEnumerator = true;
-
-            try
+            // If we are leaving a breakpoint, allow the output buffer to be written
+            if (stateChangedArgs.PreviousJobStateInfo.State == JobState.AtBreakpoint)
             {
-                AddEventHandlers();
-
-                // This call blocks (blocking enumerator) until the job completes
-                // or this command is cancelled.
-                foreach (var streamItem in _debugCollection)
-                {
-                    if (streamItem != null)
-                    {
-                        streamItem.WriteStreamObject(this);
-                    }
-                }
+                SetDebuggingSignal();
             }
-            catch (Exception)
+            
+            var job = sender as Job;
+            if (job.IsFinished)
             {
-                // Terminate job on exception.
-                if (!_job.IsFinishedState(_job.JobStateInfo.State))
-                {
-                    _job.StopJob();
-                }
-
-                throw;
-            }
-            finally
-            {
-                RemoveEventHandlers();
-                _debugCollection = null;
+                CloseOutput();
             }
         }
 
-        private void HandleJobStateChangedEvent(object sender, JobStateEventArgs stateChangedArgs)
+        private void Results_DataAdding(object sender, DataAddingEventArgs dataAddingArgs)
         {
-            Job job = sender as Job;
-            if (job.IsFinishedState(stateChangedArgs.JobStateInfo.State))
-            {
-                _debugCollection.Complete();
-            }
-        }
-
-        private void HandleResultsDataAdding(object sender, DataAddingEventArgs dataAddingArgs)
-        {
-            if (_debugCollection.IsOpen)
-            {
-                PSStreamObject streamObject = dataAddingArgs.ItemAdded as PSStreamObject;
-                if (streamObject != null)
-                {
-                    try
-                    {
-                        _debugCollection.Add(streamObject);
-                    }
-                    catch (PSInvalidOperationException) { }
-                }
-            }
-        }
-
-        private void HandleDebuggerNestedDebuggingCancelledEvent(object sender, EventArgs e)
-        {
-            StopProcessing();
-        }
-
-        private void AddEventHandlers()
-        {
-            _job.StateChanged += HandleJobStateChangedEvent;
-            _debugger.NestedDebuggingCancelledEvent += HandleDebuggerNestedDebuggingCancelledEvent;
-
-            if (_job.ChildJobs.Count == 0)
-            {
-                // No child jobs, monitor this job's results collection.
-                _job.Results.DataAdding += HandleResultsDataAdding;
-            }
-            else
-            {
-                // Monitor each child job's results collections.
-                foreach (var childJob in _job.ChildJobs)
-                {
-                    childJob.Results.DataAdding += HandleResultsDataAdding;
-                }
-            }
-        }
-
-        private void RemoveEventHandlers()
-        {
-            _job.StateChanged -= HandleJobStateChangedEvent;
-            _debugger.NestedDebuggingCancelledEvent -= HandleDebuggerNestedDebuggingCancelledEvent;
-
-            if (_job.ChildJobs.Count == 0)
-            {
-                // Remove single job DataAdding event handler.
-                _job.Results.DataAdding -= HandleResultsDataAdding;
-            }
-            else
-            {
-                // Remove each child job's DataAdding event handler.
-                foreach (var childJob in _job.ChildJobs)
-                {
-                    childJob.Results.DataAdding -= HandleResultsDataAdding;
-                }
-            }
+            AddOutput(dataAddingArgs.ItemAdded as PSStreamObject);
         }
 
         private Job GetJobByName(string name)
@@ -469,6 +352,6 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-        #endregion
+        #endregion Private methods
     }
 }

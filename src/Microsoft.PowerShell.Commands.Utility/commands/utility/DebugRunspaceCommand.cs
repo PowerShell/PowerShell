@@ -9,7 +9,6 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
-using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -19,34 +18,17 @@ namespace Microsoft.PowerShell.Commands
     /// If it is debuggable then it breaks into the Runspace debugger in step mode.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
-    [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DebugRunspaceCommand.RunspaceParameterSet,
+    [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSetName,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403731")]
-    public sealed class DebugRunspaceCommand : PSCmdlet
+    public sealed class DebugRunspaceCommand : PSRemoteDebugCmdlet
     {
-        #region Strings
-
-        private const string RunspaceParameterSet = "RunspaceParameterSet";
-        private const string NameParameterSet = "NameParameterSet";
-        private const string IdParameterSet = "IdParameterSet";
-        private const string InstanceIdParameterSet = "InstanceIdParameterSet";
-
-        #endregion
-
         #region Private members
 
-        private Runspace _runspace;
-        private System.Management.Automation.Debugger _debugger;
-        private PSDataCollection<PSStreamObject> _debugBlockingCollection;
-        private PSDataCollection<PSStreamObject> _debugAccumulateCollection;
         private Pipeline _runningPipeline;
         private System.Management.Automation.PowerShell _runningPowerShell;
-
-        // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
-        private bool _debugging;
-        private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
         private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
-        #endregion
+        #endregion Private members
 
         #region Parameters
 
@@ -57,101 +39,47 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
-                   ParameterSetName = DebugRunspaceCommand.RunspaceParameterSet)]
-        public Runspace Runspace
-        {
-            get;
-            set;
-        }
+                   ParameterSetName = DefaultParameterSetName)]
+        public Runspace Runspace { get; set; }
 
-        /// <summary>
-        /// The name of a Runspace to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugRunspaceCommand.NameParameterSet)]
-        public string Name
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The Id of a Runspace to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugRunspaceCommand.IdParameterSet)]
-        public int Id
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The InstanceId of a Runspace to be debugged.
-        /// </summary>
-        [Parameter(Position = 0,
-                   Mandatory = true,
-                   ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
-        public Guid InstanceId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The optional breakpoint objects to use for debugging.
-        /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
-        [Parameter(Position = 1,
-                   ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.RunspaceParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.IdParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.NameParameterSet)]
-        public Breakpoint[] Breakpoint
-        {
-            get;
-            set;
-        }
-
-        #endregion
+        #endregion Parameters
 
         #region Overrides
 
         /// <summary>
-        /// End processing.  Do work.
+        /// The message to display when the debugger is first attached to the job.
+        /// </summary>
+        protected override string DebuggingStartedMessage => string.Format(CultureInfo.InvariantCulture, global::Debugger.RunspaceDebuggingStarted, Runspace.Name);
+
+        /// <summary>
+        /// End processing. Do work.
         /// </summary>
         protected override void EndProcessing()
         {
-            if (ParameterSetName == DebugRunspaceCommand.RunspaceParameterSet)
+            IReadOnlyList<Runspace> runspaces = null;
+
+            switch (ParameterSetName)
             {
-                _runspace = Runspace;
+                case NameParameterSetName:
+                    runspaces = GetRunspaceUtils.GetRunspacesByName(new string[] { Name });
+                    break;
+
+                case IdParameterSetName:
+                    runspaces = GetRunspaceUtils.GetRunspacesById(new int[] { Id });
+                    break;
+
+                case InstanceIdParameterSetName:
+                    runspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { InstanceId });
+                    break;
             }
-            else
+
+            if (runspaces != null)
             {
-                IReadOnlyList<Runspace> runspaces = null;
-
-                switch (ParameterSetName)
-                {
-                    case DebugRunspaceCommand.NameParameterSet:
-                        runspaces = GetRunspaceUtils.GetRunspacesByName(new string[] { Name });
-                        break;
-
-                    case DebugRunspaceCommand.IdParameterSet:
-                        runspaces = GetRunspaceUtils.GetRunspacesById(new int[] { Id });
-                        break;
-
-                    case DebugRunspaceCommand.InstanceIdParameterSet:
-                        runspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { InstanceId });
-                        break;
-                }
-
                 if (runspaces.Count > 1)
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(
-                            new PSArgumentException(Debugger.RunspaceDebuggingTooManyRunspacesFound),
+                            new PSArgumentException(global::Debugger.RunspaceDebuggingTooManyRunspacesFound),
                             "DebugRunspaceTooManyRunspaceFound",
                             ErrorCategory.InvalidOperation,
                             this)
@@ -160,240 +88,172 @@ namespace Microsoft.PowerShell.Commands
 
                 if (runspaces.Count == 1)
                 {
-                    _runspace = runspaces[0];
+                    Runspace = runspaces[0];
                 }
             }
 
-            if (_runspace == null)
+            if (Runspace == null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
-                        new PSArgumentNullException(Debugger.RunspaceDebuggingNoRunspaceFound),
+                        new PSArgumentNullException(global::Debugger.RunspaceDebuggingNoRunspaceFound),
                         "DebugRunspaceNoRunspaceFound",
                         ErrorCategory.InvalidOperation,
                         this)
                     );
             }
 
-            Runspace defaultRunspace = LocalRunspace.DefaultRunspace;
-            if (defaultRunspace == null || defaultRunspace.Debugger == null)
+            if (Runspace == HostRunspace)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
-                        new PSInvalidOperationException(Debugger.RunspaceDebuggingNoHostRunspaceOrDebugger),
-                        "DebugRunspaceNoHostDebugger",
-                        ErrorCategory.InvalidOperation,
-                        this)
-                    );
-            }
-
-            if (_runspace == defaultRunspace)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException(Debugger.RunspaceDebuggingCannotDebugDefaultRunspace),
+                        new PSInvalidOperationException(global::Debugger.RunspaceDebuggingCannotDebugDefaultRunspace),
                         "DebugRunspaceCannotDebugHostRunspace",
                         ErrorCategory.InvalidOperation,
                         this)
                     );
             }
 
-            if (this.Host == null || this.Host.UI == null)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException(Debugger.RunspaceDebuggingNoHost),
-                        "DebugRunspaceNoHostAvailable",
-                        ErrorCategory.InvalidOperation,
-                        this)
-                    );
-            }
-
-            if (!ShouldProcess(_runspace.Name, VerbsDiagnostic.Debug))
+            if (!ShouldProcess(Runspace.Name, VerbsDiagnostic.Debug))
             {
                 return;
             }
 
-            _debugger = defaultRunspace.Debugger;
+            base.EndProcessing();
+        }
 
-            try
+        /// <summary>
+        /// Starts the runspace debugging session.
+        /// </summary>
+        protected override void StartDebugging()
+        {
+            InitDebuggingSignal();
+
+            SetLocalMode(Runspace.Debugger, true);
+            EnableHostDebugger(Runspace, false);
+
+            Runspace.AvailabilityChanged += Runspace_AvailabilityChanged;
+
+            // Set up host script debugger to debug the runspace.
+            Debugger.DebugRunspace(Runspace, disableBreakAll: NoInitialBreak);
+        }
+
+        /// <summary>
+        /// Adds event handlers to the runspace output for output data processing.
+        /// </summary>
+        protected override void AddDataEventHandlers()
+        {
+            _runningPowerShell = Runspace.GetCurrentBasePowerShell();
+            if (_runningPowerShell == null)
             {
-                PrepareRunspace(_runspace);
-
-                // Blocking call.  Send runspace/command output to host UI while debugging and wait for runspace/command completion.
-                WaitAndReceiveRunspaceOutput();
+                _runningPipeline = Runspace.GetCurrentlyRunningPipeline();
+                _runningPowerShell = (_runningPipeline as RemotePipeline)?.PowerShell;
             }
-            finally
+
+            if (_runningPowerShell != null)
             {
-                RestoreRunspace(_runspace);
+                if (_runningPowerShell.OutputBuffer != null)
+                {
+                    _runningPowerShell.OutputBuffer.DataAdding += OutputBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.ErrorBuffer != null)
+                {
+                    _runningPowerShell.ErrorBuffer.DataAdding += ErrorBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.WarningBuffer != null)
+                {
+                    _runningPowerShell.WarningBuffer.DataAdding += WarningBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.VerboseBuffer != null)
+                {
+                    _runningPowerShell.VerboseBuffer.DataAdding += VerboseBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.DebugBuffer != null)
+                {
+                    _runningPowerShell.DebugBuffer.DataAdding += DebugBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.InformationBuffer != null)
+                {
+                    _runningPowerShell.InformationBuffer.DataAdding += InformationBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.ProgressBuffer != null)
+                {
+                    _runningPowerShell.ProgressBuffer.DataAdding += ProgressBuffer_DataAdding;
+                }
+            }
+            else if (_runningPipeline != null)
+            {
+                if (_runningPipeline.Output != null)
+                {
+                    _runningPipeline.Output.DataReady += Output_DataReady;
+                }
+
+                if (_runningPipeline.Error != null)
+                {
+                    _runningPipeline.Error.DataReady += Error_DataReady;
+                }
             }
         }
 
         /// <summary>
-        /// Stop processing.
+        /// Clsoe the runspace on exception.
         /// </summary>
-        protected override void StopProcessing()
+        /// <param name="_"></param>
+        protected override void HandleDataProcessingException(Exception _)
         {
-            _debugging = false;
-
-            // Cancel runspace debugging.
-            System.Management.Automation.Debugger debugger = _debugger;
-            if ((debugger != null) && (_runspace != null))
+            // Close the runspace on exception.
+            if (Runspace.RunspaceStateInfo.State != RunspaceState.Broken && Runspace.RunspaceStateInfo.State != RunspaceState.Closed)
             {
-                debugger.StopDebugRunspace(_runspace);
-            }
-
-            // Unblock the data collection.
-            PSDataCollection<PSStreamObject> debugCollection = _debugBlockingCollection;
-            if (debugCollection != null)
-            {
-                debugCollection.Complete();
-            }
-
-            // Unblock any new command wait.
-            _newRunningScriptEvent.Set();
-        }
-
-        #endregion
-
-        #region Private methods
-
-        private void WaitAndReceiveRunspaceOutput()
-        {
-            _debugging = true;
-
-            try
-            {
-                HostWriteLine(string.Format(CultureInfo.InvariantCulture, Debugger.RunspaceDebuggingStarted, _runspace.Name));
-                HostWriteLine(Debugger.RunspaceDebuggingEndSession);
-                HostWriteLine(string.Empty);
-
-                _runspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
-                _debugger.NestedDebuggingCancelledEvent += HandleDebuggerNestedDebuggingCancelledEvent;
-
-                // Make sure host debugger has debugging turned on.
-                _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
-
-                // Set up host script debugger to debug the runspace.
-                _debugger.DebugRunspace(_runspace, disableBreakAll: Breakpoint?.Length > 0);
-
-                while (_debugging)
-                {
-                    // Wait for running script.
-                    _newRunningScriptEvent.Wait();
-
-                    if (!_debugging) { return; }
-
-                    AddDataEventHandlers();
-
-                    try
-                    {
-                        // Block cmdlet during debugging until either the command finishes
-                        // or the user terminates the debugging session.
-                        foreach (var streamItem in _debugBlockingCollection)
-                        {
-                            streamItem.WriteStreamObject(this);
-                        }
-                    }
-                    finally
-                    {
-                        RemoveDataEventHandlers();
-                    }
-
-                    if (_debugging &&
-                        (!_runspace.InNestedPrompt))
-                    {
-                        HostWriteLine(string.Empty);
-                        HostWriteLine(Debugger.RunspaceDebuggingScriptCompleted);
-                        HostWriteLine(Debugger.RunspaceDebuggingEndSession);
-                        HostWriteLine(string.Empty);
-                    }
-
-                    _newRunningScriptEvent.Reset();
-                }
-            }
-            finally
-            {
-                _runspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
-                _debugger.NestedDebuggingCancelledEvent -= HandleDebuggerNestedDebuggingCancelledEvent;
-                _debugger.StopDebugRunspace(_runspace);
-                _newRunningScriptEvent.Dispose();
+                Runspace.Close();
             }
         }
 
-        private void HostWriteLine(string line)
-        {
-            if ((this.Host != null) && (this.Host.UI != null))
-            {
-                try
-                {
-                    if (this.Host.UI.RawUI != null)
-                    {
-                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, line);
-                    }
-                    else
-                    {
-                        this.Host.UI.WriteLine(line);
-                    }
-                }
-                catch (System.Management.Automation.Host.HostException) { }
-            }
-        }
-
-        private void AddDataEventHandlers()
-        {
-            // Create new collection objects.
-            if (_debugBlockingCollection != null) { _debugBlockingCollection.Dispose(); }
-
-            if (_debugAccumulateCollection != null) { _debugAccumulateCollection.Dispose(); }
-
-            _debugBlockingCollection = new PSDataCollection<PSStreamObject>();
-            _debugBlockingCollection.BlockingEnumerator = true;
-            _debugAccumulateCollection = new PSDataCollection<PSStreamObject>();
-
-            _runningPowerShell = _runspace.GetCurrentBasePowerShell();
-            if (_runningPowerShell != null)
-            {
-                if (_runningPowerShell.OutputBuffer != null)
-                {
-                    _runningPowerShell.OutputBuffer.DataAdding += HandlePowerShellOutputBufferDataAdding;
-                }
-
-                if (_runningPowerShell.ErrorBuffer != null)
-                {
-                    _runningPowerShell.ErrorBuffer.DataAdding += HandlePowerShellErrorBufferDataAdding;
-                }
-            }
-            else
-            {
-                _runningPipeline = _runspace.GetCurrentlyRunningPipeline();
-                if (_runningPipeline != null)
-                {
-                    if (_runningPipeline.Output != null)
-                    {
-                        _runningPipeline.Output.DataReady += HandlePipelineOutputDataReady;
-                    }
-
-                    if (_runningPipeline.Error != null)
-                    {
-                        _runningPipeline.Error.DataReady += HandlePipelineErrorDataReady;
-                    }
-                }
-            }
-        }
-
-        private void RemoveDataEventHandlers()
+        /// <summary>
+        /// Removes event handlers from the runspace output that were added for output data processing.
+        /// </summary>
+        protected override void RemoveDataEventHandlers()
         {
             if (_runningPowerShell != null)
             {
                 if (_runningPowerShell.OutputBuffer != null)
                 {
-                    _runningPowerShell.OutputBuffer.DataAdding -= HandlePowerShellOutputBufferDataAdding;
+                    _runningPowerShell.OutputBuffer.DataAdding -= OutputBuffer_DataAdding;
                 }
 
                 if (_runningPowerShell.ErrorBuffer != null)
                 {
-                    _runningPowerShell.ErrorBuffer.DataAdding -= HandlePowerShellErrorBufferDataAdding;
+                    _runningPowerShell.ErrorBuffer.DataAdding -= ErrorBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.WarningBuffer != null)
+                {
+                    _runningPowerShell.WarningBuffer.DataAdding -= WarningBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.VerboseBuffer != null)
+                {
+                    _runningPowerShell.VerboseBuffer.DataAdding -= VerboseBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.DebugBuffer != null)
+                {
+                    _runningPowerShell.DebugBuffer.DataAdding -= DebugBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.InformationBuffer != null)
+                {
+                    _runningPowerShell.InformationBuffer.DataAdding -= InformationBuffer_DataAdding;
+                }
+
+                if (_runningPowerShell.ProgressBuffer != null)
+                {
+                    _runningPowerShell.ProgressBuffer.DataAdding -= ProgressBuffer_DataAdding;
                 }
 
                 _runningPowerShell = null;
@@ -402,26 +262,41 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_runningPipeline.Output != null)
                 {
-                    _runningPipeline.Output.DataReady -= HandlePipelineOutputDataReady;
+                    _runningPipeline.Output.DataReady -= Output_DataReady;
                 }
 
                 if (_runningPipeline.Error != null)
                 {
-                    _runningPipeline.Error.DataReady -= HandlePipelineErrorDataReady;
+                    _runningPipeline.Error.DataReady -= Error_DataReady;
                 }
 
                 _runningPipeline = null;
             }
         }
 
-        private void HandleRunspaceAvailabilityChanged(object sender, RunspaceAvailabilityEventArgs e)
+        /// <summary>
+        /// Stop the runspace debugging session.
+        /// </summary>
+        protected override void StopDebugging()
+        {
+            Runspace.AvailabilityChanged -= Runspace_AvailabilityChanged;
+            Debugger.StopDebugRunspace(Runspace);
+            SetLocalMode(Runspace.Debugger, false);
+            EnableHostDebugger(Runspace, true);
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void Runspace_AvailabilityChanged(object sender, RunspaceAvailabilityEventArgs e)
         {
             // Ignore nested commands.
             LocalRunspace localRunspace = sender as LocalRunspace;
             if (localRunspace != null)
             {
                 var basePowerShell = localRunspace.GetCurrentBasePowerShell();
-                if ((basePowerShell != null) && (basePowerShell.IsNested))
+                if (basePowerShell != null && basePowerShell.IsNested)
                 {
                     return;
                 }
@@ -432,122 +307,103 @@ namespace Microsoft.PowerShell.Commands
 
             if ((e.RunspaceAvailability == RunspaceAvailability.Available) || (e.RunspaceAvailability == RunspaceAvailability.None))
             {
-                _debugBlockingCollection.Complete();
+                CloseOutput();
             }
             else if ((e.RunspaceAvailability == RunspaceAvailability.Busy) &&
                      ((prevAvailability == RunspaceAvailability.Available) || (prevAvailability == RunspaceAvailability.None)))
             {
-                _newRunningScriptEvent.Set();
+                SetDebuggingSignal();
             }
         }
 
-        private void HandleDebuggerNestedDebuggingCancelledEvent(object sender, EventArgs e)
+        private void OutputBuffer_DataAdding(object sender, DataAddingEventArgs e)
         {
-            StopProcessing();
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Output, e.ItemAdded));
+            }
         }
 
-        private void HandlePipelineOutputDataReady(object sender, EventArgs e)
+        private void ErrorBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Error, e.ItemAdded));
+            }
+        }
+
+        private void WarningBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Warning, e.ItemAdded));
+            }
+        }
+
+        private void VerboseBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Verbose, e.ItemAdded));
+            }
+        }
+
+        private void DebugBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Debug, e.ItemAdded));
+            }
+        }
+
+        private void InformationBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null)
+            {
+                AddOutput(new PSStreamObject(PSStreamObjectType.Information, e.ItemAdded));
+            }
+        }
+
+        private void ProgressBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        {
+            if (e.ItemAdded != null && e.ItemAdded is ProgressRecord)
+            {
+                Host.UI.WriteProgress(0, e.ItemAdded as ProgressRecord);
+            }
+        }
+
+        private void Output_DataReady(object sender, EventArgs e)
         {
             PipelineReader<PSObject> reader = sender as PipelineReader<PSObject>;
-            if (reader != null && reader.IsOpen)
-            {
-                WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Output);
-            }
+            WritePipelineCollection(reader, PSStreamObjectType.Output);
         }
 
-        private void HandlePipelineErrorDataReady(object sender, EventArgs e)
+        private void Error_DataReady(object sender, EventArgs e)
         {
             PipelineReader<object> reader = sender as PipelineReader<object>;
-            if (reader != null && reader.IsOpen)
-            {
-                WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Error);
-            }
+            WritePipelineCollection(reader, PSStreamObjectType.Error);
         }
 
-        private void WritePipelineCollection<T>(Collection<T> collection, PSStreamObjectType psStreamType)
+        private void WritePipelineCollection<T>(PipelineReader<T> reader, PSStreamObjectType psStreamType)
         {
-            foreach (var item in collection)
+            if (reader == null || !reader.IsOpen)
+            {
+                return;
+            }
+
+            foreach (var item in reader.NonBlockingRead())
             {
                 if (item != null)
                 {
-                    AddToDebugBlockingCollection(new PSStreamObject(psStreamType, item));
+                    AddOutput(new PSStreamObject(psStreamType, item));
                 }
             }
-        }
-
-        private void HandlePowerShellOutputBufferDataAdding(object sender, DataAddingEventArgs e)
-        {
-            if (e.ItemAdded != null)
-            {
-                HandlePowerShellPStreamItem(new PSStreamObject(PSStreamObjectType.Output, e.ItemAdded));
-            }
-        }
-
-        private void HandlePowerShellErrorBufferDataAdding(object sender, DataAddingEventArgs e)
-        {
-            if (e.ItemAdded != null)
-            {
-                HandlePowerShellPStreamItem(new PSStreamObject(PSStreamObjectType.Error, e.ItemAdded));
-            }
-        }
-
-        private void HandlePowerShellPStreamItem(PSStreamObject streamItem)
-        {
-            if (!_debugger.InBreakpoint)
-            {
-                // First write any accumulated items.
-                foreach (var item in _debugAccumulateCollection.ReadAll())
-                {
-                    AddToDebugBlockingCollection(item);
-                }
-
-                // Handle new item.
-                if ((_debugBlockingCollection != null) && (_debugBlockingCollection.IsOpen))
-                {
-                    AddToDebugBlockingCollection(streamItem);
-                }
-            }
-            else if (_debugAccumulateCollection.IsOpen)
-            {
-                // Add to accumulator if debugger is stopped in breakpoint.
-                _debugAccumulateCollection.Add(streamItem);
-            }
-        }
-
-        private void AddToDebugBlockingCollection(PSStreamObject streamItem)
-        {
-            if (!_debugBlockingCollection.IsOpen) { return; }
-
-            if (streamItem != null)
-            {
-                try
-                {
-                    _debugBlockingCollection.Add(streamItem);
-                }
-                catch (PSInvalidOperationException) { }
-            }
-        }
-
-        private void PrepareRunspace(Runspace runspace)
-        {
-            SetLocalMode(runspace.Debugger, true);
-            EnableHostDebugger(runspace, false);
-            if (Breakpoint?.Length > 0)
-            {
-                runspace.Debugger?.SetBreakpoints(Breakpoint);
-            }
-        }
-
-        private void RestoreRunspace(Runspace runspace)
-        {
-            SetLocalMode(runspace.Debugger, false);
-            EnableHostDebugger(runspace, true);
         }
 
         private void EnableHostDebugger(Runspace runspace, bool enabled)
         {
             // Only enable and disable the host's runspace if we are in process attach mode.
-            if (_debugger is ServerRemoteDebugger)
+            if (Debugger is ServerRemoteDebugger)
             {
                 LocalRunspace localRunspace = runspace as LocalRunspace;
                 if ((localRunspace != null) && (localRunspace.ExecutionContext != null) && (localRunspace.ExecutionContext.EngineHostInterface != null))

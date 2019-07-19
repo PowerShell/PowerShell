@@ -622,27 +622,77 @@ namespace System.Management.Automation
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">Breakpoints.</param>
-        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
+        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
             throw new PSNotImplementedException();
-        }
 
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public virtual Breakpoint GetBreakpoint(int id)
-        {
+        public virtual Breakpoint GetBreakpoint(int id) =>
             throw new PSNotImplementedException();
-        }
 
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
-        public virtual List<Breakpoint> GetBreakpoints()
-        {
+        public virtual List<Breakpoint> GetBreakpoints() =>
             throw new PSNotImplementedException();
-        }
+
+        /// <summary>
+        /// Sets a command breakpoint in the debugger.
+        /// </summary>
+        /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
+        /// <returns>The command breakpoint that was set.</returns>
+        public virtual CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
+            throw new PSNotImplementedException();
+
+        /// <summary>
+        /// Sets a line breakpoint in the debugger.
+        /// </summary>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
+        /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
+        /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <returns>The line breakpoint that was set.</returns>
+        public virtual LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
+            throw new PSNotImplementedException();
+
+        /// <summary>
+        /// Sets a variable breakpoint in the debugger.
+        /// </summary>
+        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
+        /// <returns>The variable breakpoint that was set.</returns>
+        public virtual VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
+            throw new PSNotImplementedException();
+
+        /// <summary>
+        /// Removes a breakpoint from the debugger.
+        /// </summary>
+        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value is required and may not be null.</param>
+        /// <returns>True if the breakpoint was removed from the debugger; false otherwise.</returns>
+        public virtual bool RemoveBreakpoint(Breakpoint breakpoint) =>
+            throw new PSNotImplementedException();
+
+        /// <summary>
+        /// Enables a breakpoint in the debugger.
+        /// </summary>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
+        /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
+        public virtual Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
+            throw new PSNotImplementedException();
+
+        /// <summary>
+        /// Disables a breakpoint in the debugger.
+        /// </summary>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
+        /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
+        public virtual Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
+            throw new PSNotImplementedException();
 
         /// <summary>
         /// Resets the command processor source information so that it is
@@ -699,6 +749,22 @@ namespace System.Management.Automation
         /// of debuggable child jobs.
         /// </param>
         internal virtual void DebugJob(Job job)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Sets up debugger to debug provided job or its child jobs.
+        /// </summary>
+        /// <param name="job">
+        /// Job object that is either a debuggable job or a container
+        /// of debuggable child jobs.
+        /// </param>
+        /// <param name="disableBreakAll">
+        /// If true, the debugger does not automatically invoke a break
+        /// all when it attaches to the job.
+        /// </param>
+        internal virtual void DebugJob(Job job, bool disableBreakAll)
         {
             throw new PSNotImplementedException();
         }
@@ -764,7 +830,7 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
         /// <param name="runspace">Runspace to debug.</param>
-        /// <param name="disableBreakAll"></param>
+        /// <param name="disableBreakAll">If true, the debugger does not automatically invoke a break all when it attaches to the runspace.</param>
         internal virtual void DebugRunspace(Runspace runspace, bool disableBreakAll)
         {
             throw new PSNotImplementedException();
@@ -1109,7 +1175,7 @@ namespace System.Management.Automation
 
         #endregion Call stack management
 
-        #region adding breakpoints
+        #region setting breakpoints
 
         internal void AddBreakpointCommon(Breakpoint breakpoint)
         {
@@ -1122,30 +1188,14 @@ namespace System.Management.Automation
             OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Set, _idToBreakpoint.Count));
         }
 
-        private Breakpoint AddCommandBreakpoint(CommandBreakpoint breakpoint)
+        private CommandBreakpoint AddCommandBreakpoint(CommandBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
             _commandBreakpoints[breakpoint.Id] = breakpoint;
             return breakpoint;
         }
 
-        internal Breakpoint NewCommandBreakpoint(string path, string command, ScriptBlock action)
-        {
-            WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
-
-            CheckForBreakpointSupport();
-            return AddCommandBreakpoint(new CommandBreakpoint(path, pattern, command, action));
-        }
-
-        internal Breakpoint NewCommandBreakpoint(string command, ScriptBlock action)
-        {
-            WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
-
-            CheckForBreakpointSupport();
-            return AddCommandBreakpoint(new CommandBreakpoint(null, pattern, command, action));
-        }
-
-        private Breakpoint AddLineBreakpoint(LineBreakpoint breakpoint)
+        private LineBreakpoint AddLineBreakpoint(LineBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
             _pendingBreakpoints[breakpoint.Id] = breakpoint;
@@ -1175,22 +1225,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal Breakpoint NewLineBreakpoint(string path, int line, ScriptBlock action)
-        {
-            Diagnostics.Assert(path != null, "caller to verify path is not null");
-
-            CheckForBreakpointSupport();
-            return AddLineBreakpoint(new LineBreakpoint(path, line, action));
-        }
-
-        internal Breakpoint NewStatementBreakpoint(string path, int line, int column, ScriptBlock action)
-        {
-            Diagnostics.Assert(path != null, "caller to verify path is not null");
-
-            CheckForBreakpointSupport();
-            return AddLineBreakpoint(new LineBreakpoint(path, line, column, action));
-        }
-
         internal VariableBreakpoint AddVariableBreakpoint(VariableBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
@@ -1205,16 +1239,34 @@ namespace System.Management.Automation
             return breakpoint;
         }
 
-        internal Breakpoint NewVariableBreakpoint(string path, string variableName, VariableAccessMode accessMode, ScriptBlock action)
+        private void UpdateBreakpoints(FunctionContext functionContext)
         {
-            CheckForBreakpointSupport();
-            return AddVariableBreakpoint(new VariableBreakpoint(path, variableName, accessMode, action));
-        }
+            if (functionContext._breakPoints == null)
+            {
+                // This should be rare - setting a breakpoint inside a script, but debugger hadn't started.
+                SetupBreakpoints(functionContext);
+            }
+            else
+            {
+                // Check pending breakpoints to see if any apply to this script.
+                if (string.IsNullOrEmpty(functionContext._file))
+                { return; }
 
-        internal Breakpoint NewVariableBreakpoint(string variableName, VariableAccessMode accessMode, ScriptBlock action)
-        {
-            CheckForBreakpointSupport();
-            return AddVariableBreakpoint(new VariableBreakpoint(null, variableName, accessMode, action));
+                bool havePendingBreakpoint = false;
+                foreach ((int breakpointId, LineBreakpoint item) in _pendingBreakpoints)
+                {
+                    if (item.IsScriptBreakpoint && item.Script.Equals(functionContext._file, StringComparison.OrdinalIgnoreCase))
+                    {
+                        havePendingBreakpoint = true;
+                        break;
+                    }
+                }
+
+                if (havePendingBreakpoint)
+                {
+                    SetPendingBreakpoints(functionContext);
+                }
+            }
         }
 
         /// <summary>
@@ -1230,40 +1282,23 @@ namespace System.Management.Automation
 
         #region removing breakpoints
 
-        // This is the implementation of the Remove-PSBreakpoint cmdlet.
-        internal void RemoveBreakpoint(Breakpoint breakpoint)
-        {
-            _idToBreakpoint.Remove(breakpoint.Id, out _);
-
-            breakpoint.RemoveSelf(this);
-
-            if (CanDisableDebugger)
-            {
-                SetInternalDebugMode(InternalDebugMode.Disabled);
-            }
-
-            OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Removed, _idToBreakpoint.Count));
-        }
-
-        internal void RemoveVariableBreakpoint(VariableBreakpoint breakpoint)
-        {
+        internal bool RemoveVariableBreakpoint(VariableBreakpoint breakpoint) =>
             _variableBreakpoints[breakpoint.Variable].Remove(breakpoint.Id, out _);
-        }
 
-        internal void RemoveCommandBreakpoint(CommandBreakpoint breakpoint)
-        {
+        internal bool RemoveCommandBreakpoint(CommandBreakpoint breakpoint) =>
             _commandBreakpoints.Remove(breakpoint.Id, out _);
-        }
 
-        internal void RemoveLineBreakpoint(LineBreakpoint breakpoint)
+        internal bool RemoveLineBreakpoint(LineBreakpoint breakpoint)
         {
-            _pendingBreakpoints.Remove(breakpoint.Id, out _);
+            bool removed = _pendingBreakpoints.Remove(breakpoint.Id, out _);
 
             Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> value;
             if (_boundBreakpoints.TryGetValue(breakpoint.Script, out value))
             {
-                value.Item2.Remove(breakpoint.Id, out _);
+                removed = value.Item2.Remove(breakpoint.Id, out _);
             }
+
+            return removed;
         }
 
         #endregion removing breakpoints
@@ -1373,24 +1408,6 @@ namespace System.Management.Automation
             OnDebuggerStop(invocationInfo, breakpoints.ToList<Breakpoint>());
         }
 
-        /// <summary>
-        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
-        /// </summary>
-        /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id)
-        {
-            _idToBreakpoint.TryGetValue(id, out Breakpoint breakpoint);
-            return breakpoint;
-        }
-
-        /// <summary>
-        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
-        /// </summary>
-        public override List<Breakpoint> GetBreakpoints()
-        {
-            return (from bp in _idToBreakpoint.Values orderby bp.Id select bp).ToList();
-        }
-
         // Return the line breakpoints bound in a specific script block (used when a sequence point
         // is hit, to find which breakpoints are set on that sequence point.)
         internal List<LineBreakpoint> GetBoundBreakpoints(IScriptExtent[] sequencePoints)
@@ -1445,30 +1462,6 @@ namespace System.Management.Automation
             return breaks;
         }
 
-        #endregion triggering breakpoints
-
-        #region enabling/disabling breakpoints
-
-        /// <summary>
-        /// Implementation of Enable-PSBreakpoint cmdlet.
-        /// </summary>
-        internal void EnableBreakpoint(Breakpoint bp)
-        {
-            bp.SetEnabled(true);
-            OnBreakpointUpdated(new BreakpointUpdatedEventArgs(bp, BreakpointUpdateType.Enabled, _idToBreakpoint.Count));
-        }
-
-        /// <summary>
-        /// Implementation of Disable-PSBreakpoint cmdlet.
-        /// </summary>
-        internal void DisableBreakpoint(Breakpoint bp)
-        {
-            bp.SetEnabled(false);
-            OnBreakpointUpdated(new BreakpointUpdatedEventArgs(bp, BreakpointUpdateType.Disabled, _idToBreakpoint.Count));
-        }
-
-        #endregion enabling/disabling breakpoints
-
         internal void OnSequencePointHit(FunctionContext functionContext)
         {
             if (_context.ShouldTraceStatement && !_callStack.Last().IsFrameHidden && !functionContext._debuggerStepThrough)
@@ -1520,34 +1513,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void UpdateBreakpoints(FunctionContext functionContext)
-        {
-            if (functionContext._breakPoints == null)
-            {
-                // This should be rare - setting a breakpoint inside a script, but debugger hadn't started.
-                SetupBreakpoints(functionContext);
-            }
-            else
-            {
-                // Check pending breakpoints to see if any apply to this script.
-                if (string.IsNullOrEmpty(functionContext._file)) { return; }
-
-                bool havePendingBreakpoint = false;
-                foreach ((int breakpointId, LineBreakpoint item) in _pendingBreakpoints)
-                {
-                    if (item.IsScriptBreakpoint && item.Script.Equals(functionContext._file, StringComparison.OrdinalIgnoreCase))
-                    {
-                        havePendingBreakpoint = true;
-                        break;
-                    }
-                }
-
-                if (havePendingBreakpoint)
-                {
-                    SetPendingBreakpoints(functionContext);
-                }
-            }
-        }
+        #endregion triggering breakpoints
 
         #endregion internal methods
 
@@ -2419,39 +2385,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetBreakpoints.
-        /// </summary>
-        /// <param name="breakpoints"></param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            if (breakpoints == null)
-            {
-                throw new PSArgumentNullException("breakpoints");
-            }
-
-            foreach (var breakpoint in breakpoints)
-            {
-                if (_idToBreakpoint.ContainsKey(breakpoint.Id)) { continue; }
-
-                switch (breakpoint)
-                {
-                    case LineBreakpoint lineBp:
-                        AddLineBreakpoint(lineBp);
-                        continue;
-                    case CommandBreakpoint cmdBp:
-                        AddCommandBreakpoint(cmdBp);
-                        continue;
-                    case VariableBreakpoint variableBp:
-                        AddVariableBreakpoint(variableBp);
-                        continue;
-                    default:
-                        // Unreachable default block
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
         /// True when debugger is active with breakpoints.
         /// </summary>
         public override bool IsActive
@@ -2613,6 +2546,166 @@ namespace System.Management.Automation
             }
         }
 
+        #region Breakpoints
+
+        /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id)
+        {
+            _idToBreakpoint.TryGetValue(id, out Breakpoint breakpoint);
+            return breakpoint;
+        }
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints()
+        {
+            return (from bp in _idToBreakpoint.Values orderby bp.Id select bp).ToList();
+        }
+
+        /// <summary>
+        /// Set breakpoints in the runspace.
+        /// </summary>
+        /// <param name="breakpoints"></param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            if (breakpoints == null)
+            {
+                throw new PSArgumentNullException("breakpoints");
+            }
+
+            foreach (var breakpoint in breakpoints)
+            {
+                if (_idToBreakpoint.ContainsKey(breakpoint.Id)) { continue; }
+
+                switch (breakpoint)
+                {
+                    case LineBreakpoint lineBp:
+                        AddLineBreakpoint(lineBp);
+                        continue;
+                    case CommandBreakpoint cmdBp:
+                        AddCommandBreakpoint(cmdBp);
+                        continue;
+                    case VariableBreakpoint variableBp:
+                        AddVariableBreakpoint(variableBp);
+                        continue;
+                    default:
+                        // Unreachable default block
+                        Debug.Assert(false, "Unexpected breakpoint type.");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a command breakpoint in the debugger.
+        /// </summary>
+        /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
+        /// <returns></returns>
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null)
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(command), "Caller to verify command is not null or empty.");
+
+            WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
+
+            CheckForBreakpointSupport();
+            return AddCommandBreakpoint(new CommandBreakpoint(path, pattern, command, action));
+        }
+
+        /// <summary>
+        /// Sets a line breakpoint in the debugger.
+        /// </summary>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
+        /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
+        /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <returns></returns>
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null)
+        {
+            Diagnostics.Assert(path != null, "Caller to verify path is not null.");
+            Diagnostics.Assert(line > 0, "Caller to verify line is greater than 0.");
+
+            CheckForBreakpointSupport();
+            return AddLineBreakpoint(new LineBreakpoint(path, line, column, action));
+        }
+
+        /// <summary>
+        /// Sets a variable breakpoint in the debugger.
+        /// </summary>
+        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
+        /// <returns></returns>
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null)
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(variableName), "Caller to verify variableName is not null or empty.");
+
+            CheckForBreakpointSupport();
+            return AddVariableBreakpoint(new VariableBreakpoint(path, variableName, accessMode, action));
+        }
+
+        // This is the implementation of the Remove-PSBreakpoint cmdlet.
+        public override bool RemoveBreakpoint(Breakpoint breakpoint)
+        {
+            Diagnostics.Assert(breakpoint != null, "Caller to verify the breakpoint is not null.");
+
+            if (_idToBreakpoint.Remove(breakpoint.Id, out _) ||
+                breakpoint.RemoveSelf(this) == true)
+            {
+                if (CanDisableDebugger)
+                {
+                    SetInternalDebugMode(InternalDebugMode.Disabled);
+                }
+
+                OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Removed, _idToBreakpoint.Count));
+
+                return true;
+            }
+
+            return false;
+        }
+
+
+        // This is the implementation of the Enable-PSBreakpoint cmdlet.
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint)
+        {
+            Diagnostics.Assert(breakpoint != null, "Caller to verify the breakpoint is not null.");
+
+            if (_idToBreakpoint.TryGetValue(breakpoint.Id, out _))
+            {
+                breakpoint.SetEnabled(true);
+                OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Enabled, _idToBreakpoint.Count));
+
+                return breakpoint;
+            }
+
+            return null;
+        }
+
+        // This is the implementation of the Disable-PSBreakpoint cmdlet.
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint)
+        {
+            Diagnostics.Assert(breakpoint != null, "Caller to verify the breakpoint is not null.");
+
+            if (_idToBreakpoint.TryGetValue(breakpoint.Id, out _))
+            {
+                breakpoint.SetEnabled(false);
+                OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Disabled, _idToBreakpoint.Count));
+
+                return breakpoint;
+            }
+
+            return null;
+        }
+
+        #endregion Breakpoints
+
         #region Job Debugging
 
         /// <summary>
@@ -2623,6 +2716,22 @@ namespace System.Management.Automation
         /// of debuggable child jobs.
         /// </param>
         internal override void DebugJob(Job job)
+        {
+            DebugJob(job, disableBreakAll: false);
+        }
+
+        /// <summary>
+        /// Sets up debugger to debug provided job or its child jobs.
+        /// </summary>
+        /// <param name="job">
+        /// Job object that is either a debuggable job or a container
+        /// of debuggable child jobs.
+        /// </param>
+        /// <param name="disableBreakAll">
+        /// If true, the debugger does not automatically invoke a break
+        /// all when it attaches to the job.
+        /// </param>
+        internal override void DebugJob(Job job, bool disableBreakAll)
         {
             if (job == null) { throw new PSArgumentNullException("job"); }
 
@@ -2636,13 +2745,13 @@ namespace System.Management.Automation
 
             // If a debuggable job was passed in then add it to the
             // job running list.
-            bool jobsAdded = TryAddDebugJob(job);
+            bool jobsAdded = TryAddDebugJob(job, disableBreakAll);
             if (!jobsAdded)
             {
                 // Otherwise treat as parent Job and iterate over child jobs.
                 foreach (Job childJob in job.ChildJobs)
                 {
-                    if (TryAddDebugJob(childJob) && !jobsAdded)
+                    if (TryAddDebugJob(childJob, disableBreakAll) && !jobsAdded)
                     {
                         jobsAdded = true;
                     }
@@ -2655,7 +2764,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool TryAddDebugJob(Job job)
+        private bool TryAddDebugJob(Job job, bool disableBreakAll)
         {
             IJobDebugger debuggableJob = job as IJobDebugger;
             if ((debuggableJob != null) && (debuggableJob.Debugger != null) &&
@@ -2668,7 +2777,7 @@ namespace System.Management.Automation
                 SetDebugJobAsync(debuggableJob, false);
                 AddToJobRunningList(
                     new PSJobStartEventArgs(job, debuggableJob.Debugger, false),
-                    DebuggerResumeAction.StepInto);
+                    disableBreakAll ? DebuggerResumeAction.Continue : DebuggerResumeAction.StepInto);
 
                 // Raise debug stop event if job is already in stopped state.
                 if (jobDebugAlreadyStopped)
@@ -4067,27 +4176,32 @@ namespace System.Management.Automation
             return _wrappedDebugger.ProcessCommand(command, output);
         }
 
-        /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            _wrappedDebugger.SetBreakpoints(breakpoints);
-        }
-
-        /// <summary>
-        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
-        /// </summary>
-        /// <param name="id">Id of the breakpoint you want.</param>
         public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.GetBreakpoint(id);
 
-        /// <summary>
-        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
-        /// </summary>
         public override List<Breakpoint> GetBreakpoints() =>
             _wrappedDebugger.GetBreakpoints();
+
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
+            _wrappedDebugger.SetBreakpoints(breakpoints);
+
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetCommandBreakpoint(command, action, path);
+
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
+            _wrappedDebugger.SetLineBreakpoint(path, line, column, action);
+
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetVariableBreakpoint(variableName, accessMode, action, path);
+
+        public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.RemoveBreakpoint(breakpoint);
+
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.EnableBreakpoint(breakpoint);
+
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.DisableBreakpoint(breakpoint);
 
         /// <summary>
         /// SetDebuggerAction.
@@ -5426,6 +5540,11 @@ namespace System.Management.Automation.Internal
         internal const string GetDebuggerStopArgsFunctionName = "__Get-PSDebuggerStopArgs";
         internal const string SetDebuggerStepMode = "__Set-PSDebuggerStepMode";
         internal const string SetPSUnhandledBreakpointMode = "__Set-PSUnhandledBreakpointMode";
+        internal const string GetPSBreakpointFunctionName = "__Get-PSBreakpoint";
+        internal const string SetPSBreakpointFunctionName = "__Set-PSBreakpoint";
+        internal const string RemovePSBreakpointFunctionName = "__Remove-PSBreakpoint";
+        internal const string EnablePSBreakpointFunctionName = "__Enable-PSBreakpoint";
+        internal const string DisablePSBreakpointFunctionName = "__Disable-PSBreakpoint";
 
         private static SortedSet<string> s_noHistoryCommandNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase)
         {

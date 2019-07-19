@@ -7087,7 +7087,7 @@ namespace Microsoft.PowerShell
             int id = GetPropertyValue<int>(pso, "Id");
             bool enabled = GetPropertyValue<bool>(pso, "Enabled");
             ScriptBlock action = RehydrateScriptBlock(
-                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk));
+                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk));
 
             var bp = new LineBreakpoint(script, line, column, action, id);
             bp.SetEnabled(enabled);
@@ -7096,13 +7096,13 @@ namespace Microsoft.PowerShell
 
         internal static CommandBreakpoint RehydrateCommandBreakpoint(PSObject pso)
         {
-            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk);
+            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk);
             string command = GetPropertyValue<string>(pso, "Command");
             int id = GetPropertyValue<int>(pso, "Id");
             bool enabled = GetPropertyValue<bool>(pso, "Enabled");
             WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
             ScriptBlock action = RehydrateScriptBlock(
-                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk));
+                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk));
 
             var bp = new CommandBreakpoint(script, pattern, command, action, id);
             bp.SetEnabled(enabled);
@@ -7111,13 +7111,13 @@ namespace Microsoft.PowerShell
 
         internal static VariableBreakpoint RehydrateVariableBreakpoint(PSObject pso)
         {
-            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk);
+            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk);
             string variableName = GetPropertyValue<string>(pso, "Variable");
             int id = GetPropertyValue<int>(pso, "Id");
             bool enabled = GetPropertyValue<bool>(pso, "Enabled");
             VariableAccessMode access = GetPropertyValue<VariableAccessMode>(pso, "AccessMode");
             ScriptBlock action = RehydrateScriptBlock(
-                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk));
+                GetPropertyValue<string>(pso, "Action", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk));
 
             var bp = new VariableBreakpoint(script, variableName, access, action, id);
             bp.SetEnabled(enabled);

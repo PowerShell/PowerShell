@@ -789,10 +789,23 @@ namespace System.Management.Automation
         /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
-        public void Add(T item)
-        {
-            InternalAdd(Guid.Empty, item);
-        }
+        public void Add(T item) => InternalAdd(Guid.Empty, item);
+
+        /// <summary>
+        /// Adds a collection of items to the thread-safe buffer.
+        /// </summary>
+        /// <param name="collection">
+        /// Collection of items to add.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Null collections cannot be added.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
+        /// operations to succeed.
+        /// </exception>
+        public void AddRange(ICollection collection) => InternalAddRange(Guid.Empty, collection);
 
         /// <summary>
         /// Removes all items from the buffer.
