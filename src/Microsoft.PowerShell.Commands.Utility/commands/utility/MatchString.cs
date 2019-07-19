@@ -289,10 +289,18 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
-    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
-    [OutputType(typeof(MatchInfo), typeof(bool))]
+    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = ParameterSetFile, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
+    [OutputType(typeof(bool), typeof(MatchInfo), ParameterSetName = new[] { ParameterSetFile, ParameterSetObject, ParameterSetLiteralFile })]
+    [OutputType(typeof(string), ParameterSetName = new[] { ParameterSetFileRaw, ParameterSetObjectRaw, ParameterSetLiteralFileRaw })]
     public sealed class SelectStringCommand : PSCmdlet
     {
+        private const string ParameterSetFile = "File";
+        private const string ParameterSetFileRaw = "FileRaw";
+        private const string ParameterSetObject = "Object";
+        private const string ParameterSetObjectRaw = "ObjectRaw";
+        private const string ParameterSetLiteralFile = "LiteralFile";
+        private const string ParameterSetLiteralFileRaw = "LiteralFileRaw";
+
         /// <summary>
         /// A generic circular buffer.
         /// </summary>
@@ -965,7 +973,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObject)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
         [AllowNull]
         [AllowEmptyString]
         public PSObject InputObject
@@ -988,7 +997,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets files to read from.
         /// Globbing is done on these.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFile)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFileRaw)]
         [FileinfoToString]
         public string[] Path { get; set; }
 
@@ -996,7 +1006,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets literal files to read from.
         /// Globbing is not done on these.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFile)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFileRaw)]
         [FileinfoToString]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -1010,6 +1021,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _isLiteralPath;
+
+        /// <summary>
+        /// Gets or sets a value indicating if only string values containing matched lines should be returned.
+        /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetFileRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetLiteralFileRaw)]
+        public SwitchParameter Raw { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating if a pattern string should be matched literally.
@@ -1028,7 +1048,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if the cmdlet will stop processing at the first successful match and
         /// return true.  If both List and Quiet parameters are given, an exception is thrown.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSetObject)]
+        [Parameter(ParameterSetName = ParameterSetFile)]
+        [Parameter(ParameterSetName = ParameterSetLiteralFile)]
         public SwitchParameter Quiet { get; set; }
 
         /// <summary>
@@ -1160,7 +1182,10 @@ namespace Microsoft.PowerShell.Commands
 
         private int _postContext = 0;
 
-        private IContextTracker GetContextTracker() => (_preContext == 0 && _postContext == 0) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
+        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
+        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) 
+            ? _noContextTracker 
+            : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
         // directly into the cmdlet. File processing doesn't need
@@ -1425,8 +1450,14 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // If -quiet is specified but not -list return true on first match
-            if (Quiet && !List)
+            if (Raw)
+            {
+                foreach (MatchInfo match in contextTracker.EmitQueue)
+                {
+                    WriteObject(match.Line);
+                }
+            }
+            else if (Quiet && !List)
             {
                 WriteObject(true);
             }
