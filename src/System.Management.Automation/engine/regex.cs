@@ -53,6 +53,10 @@ namespace System.Management.Automation
         // char that escapes special chars
         private const char escapeChar = '`';
 
+        // Threshold for stack allocation.
+        // The size is less than MaxShortPath = 260.
+        private const int StackAllocThreshold = 256;
+
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
@@ -209,15 +213,20 @@ namespace System.Management.Automation
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             if (charsNotToEscape == null)
             {
-                throw PSTraceSource.NewArgumentNullException("charsNotToEscape");
+                throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
 
-            char[] temp = new char[pattern.Length * 2 + 1];
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
             for (int i = 0; i < pattern.Length; i++)
@@ -237,13 +246,13 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex > 0)
+            if (tempIndex == pattern.Length)
             {
-                s = new string(temp, 0, tempIndex);
+                s = pattern;
             }
             else
             {
-                s = string.Empty;
+                s = new string(temp.Slice(0, tempIndex));
             }
 
             return s;
@@ -318,10 +327,16 @@ namespace System.Management.Automation
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
-            char[] temp = new char[pattern.Length];
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length] : new char[pattern.Length];
+
             int tempIndex = 0;
             bool prevCharWasEscapeChar = false;
 
@@ -367,13 +382,13 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex > 0)
+            if (tempIndex == pattern.Length)
             {
-                s = new string(temp, 0, tempIndex);
+                s = pattern;
             }
             else
             {
-                s = string.Empty;
+                s = new string(temp.Slice(0, tempIndex));
             }
 
             return s;
