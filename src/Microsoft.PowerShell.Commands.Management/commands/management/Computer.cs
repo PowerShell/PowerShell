@@ -1808,7 +1808,7 @@ $result
             }
             else
             {
-                int dotIndex = computerName.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+                int dotIndex = computerName.IndexOf('.');
                 if (dotIndex == -1)
                 {
                     localUserName = computerName + "\\" + psLocalCredential.UserName;
@@ -1898,7 +1898,7 @@ $result
             string driveApp;
             foreach (string drive in drives)
             {
-                if (!drive.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
+                if (!drive.EndsWith('\\'))
                 {
                     driveApp = string.Concat(drive, "\\");
                 }

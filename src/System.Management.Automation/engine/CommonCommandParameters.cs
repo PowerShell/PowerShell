@@ -237,7 +237,7 @@ namespace System.Management.Automation.Internal
                 string varName = arguments as string;
                 if (varName != null)
                 {
-                    if (varName.StartsWith("+", StringComparison.Ordinal))
+                    if (varName.StartsWith('+'))
                     {
                         varName = varName.Substring(1);
                     }

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Security.Cryptography.Pkcs;
@@ -26,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the recipient of the CMS Message.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, Mandatory = true)]
         public CmsMessageRecipient[] To
         {
@@ -402,7 +400,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the recipient of the CMS Message.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 1)]
         public CmsMessageRecipient[] To
         {

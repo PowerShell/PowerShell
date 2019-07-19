@@ -56,13 +56,13 @@ namespace System.Management.Automation.Runspaces
             {
                 // Loading the resources for System.Management.Automation can be expensive, so force that to
                 // happen early on a background thread.
-                var unused0 = RunspaceInit.OutputEncodingDescription;
+                _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                var unused1 = TypeAccelerators.builtinTypeAccelerators;
+                _ = TypeAccelerators.builtinTypeAccelerators;
 
                 // This will init some tables and could load some assemblies.
-                var unused2 = LanguagePrimitives.GetEnumerator(null);
+                LanguagePrimitives.GetEnumerator(null);
             });
         }
     }
@@ -4119,7 +4119,7 @@ param(
     [string]
     ${Path},
 
-    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','Workflow','DscResource','Class','Configuration')]
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','DscResource','Class','Configuration')]
     [string[]]
     ${Category},
 
@@ -4615,7 +4615,9 @@ end {
                     new SessionStateAliasEntry("dir", "Get-ChildItem", string.Empty, AllScope),
                     new SessionStateAliasEntry("echo", "Write-Output", string.Empty, AllScope),
                     new SessionStateAliasEntry("fc", "Format-Custom", string.Empty, ReadOnly),
+#if !UNIX
                     new SessionStateAliasEntry("kill", "Stop-Process"),
+#endif
                     new SessionStateAliasEntry("pwd", "Get-Location"),
                     new SessionStateAliasEntry("type", "Get-Content"),
 // #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts

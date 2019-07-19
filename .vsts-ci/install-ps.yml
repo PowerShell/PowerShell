@@ -76,8 +76,7 @@ phases:
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
-    # ignoring this due to https://github.com/PowerShell/PowerShell/issues/9285
-    continueOnError: true
+    continueOnError: false
 
 # TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
@@ -85,7 +84,14 @@ phases:
     scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellCentOS
     pool: Hosted Ubuntu 1604
-    container: mcr.microsoft.com/powershell:centos-7
+    container: mcr.microsoft.com/powershell/test-deps:centos-7
+    
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellDebian9
+    pool: Hosted Ubuntu 1604
+    container: mcr.microsoft.com/powershell/test-deps:debian-9
 
 
 # VSTS could not find pwsh in:

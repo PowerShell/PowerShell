@@ -806,8 +806,12 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
-            new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
+
+        private static readonly ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_cachedPoliciesFromRegistry =
+            new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
+
+        private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
@@ -915,6 +919,8 @@ namespace System.Management.Automation
         private static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             PolicyBase policy = null;
+            string policyName = typeof(T).Name;
+
             foreach (ConfigScope scope in preferenceOrder)
             {
                 if (InternalTestHooks.BypassGroupPolicyCaching)
@@ -923,13 +929,10 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    var key = Tuple.Create(scope, typeof(T).Name);
-                    if (!s_cachedPoliciesFromRegistry.TryGetValue(key, out policy))
+                    var subordinateCache = s_cachedPoliciesFromRegistry.GetOrAdd(scope, s_subCacheCreationDelegate);
+                    if (!subordinateCache.TryGetValue(policyName, out policy))
                     {
-                        lock (s_cachedPoliciesFromRegistry)
-                        {
-                            policy = s_cachedPoliciesFromRegistry.GetOrAdd(key, tuple => GetPolicySettingFromGPOImpl<T>(tuple.Item1));
-                        }
+                        policy = subordinateCache.GetOrAdd(policyName, key => GetPolicySettingFromGPOImpl<T>(scope));
                     }
                 }
 
@@ -1033,11 +1036,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // append to result
-                        foreach (PSModuleInfo temp in gmoOutPut)
-                        {
-                            result.Add(temp);
-                        }
+                        result.AddRange(gmoOutPut);
                     }
                 }
             }

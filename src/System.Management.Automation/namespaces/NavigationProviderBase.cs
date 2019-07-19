@@ -905,38 +905,53 @@ namespace System.Management.Automation.Provider
         /// those errors.
         /// </summary>
         /// <param name="path">
-        /// The path to normalize
+        /// The path to normalize.
         /// </param>
         /// <returns>
-        /// Normalized path or the original path
+        /// Normalized path or the original path.
         /// </returns>
         private string NormalizePath(string path)
         {
             // If we have a mix of slashes, then we may introduce an error by normalizing the path.
             // For example: path HKCU:\Test\/ is pointing to a subkey '/' of 'HKCU:\Test', if we
             // normalize it, then we will get a wrong path.
-            bool pathHasForwardSlash = path.IndexOf(StringLiterals.AlternatePathSeparator) != -1;
-            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
-            bool pathHasMixedSlashes = pathHasForwardSlash && pathHasBackSlash;
-            bool shouldNormalizePath = true;
+            //
+            // Fast return if nothing to normalize.
+            if (path.IndexOf(StringLiterals.AlternatePathSeparator) == -1)
+            {
+                return path;
+            }
 
-            string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
+            string normalizedPath;
 
             // There is a mix of slashes & the path is rooted & the path exists without normalization.
             // In this case, we might want to skip the normalization to the path.
-            if (pathHasMixedSlashes && IsAbsolutePath(path) && ItemExists(path))
+            if (pathHasBackSlash && IsAbsolutePath(path) && ItemExists(path))
             {
                 // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
                 //    make sense to the underlying provider, so we skip normalization
                 // 2. The path exists, but not anymore after normalization, then we skip normalization
-                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
-                if (parentEndsWithForwardSlash || !ItemExists(normalizedPath))
+                if (path.EndsWith(StringLiterals.AlternatePathSeparator))
                 {
-                    shouldNormalizePath = false;
+                    return path;
+                }
+
+                normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                if (!ItemExists(normalizedPath))
+                {
+                    return path;
+                }
+                else
+                {
+                    return normalizedPath;
                 }
             }
 
-            return shouldNormalizePath ? normalizedPath : path;
+            normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+            return normalizedPath;
         }
 
         /// <summary>

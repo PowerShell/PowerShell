@@ -4,17 +4,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 using System.Text;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -57,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
     /// Implements a cmdlet that applies a script block
     /// to each element of the pipeline.
     /// </summary>
-    [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
         DefaultParameterSetName = "ScriptBlockSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
         RemotingCapability = RemotingCapability.None)]
@@ -143,7 +139,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The remaining script blocks to apply.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ParameterSetName = "ScriptBlockSet", ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
@@ -186,7 +181,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The arguments passed to a method invocation.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ParameterSetName = "PropertyAndMethodSet", ValueFromRemainingArguments = true)]
         [ValidateTrustedData]
         [Alias("Args")]
@@ -1022,7 +1016,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -ceq.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveEqualSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CEQ")]
         public SwitchParameter CEQ
         {
             set { _binaryOperator = TokenKind.Ceq; }
@@ -1046,7 +1039,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -cne.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotEqualSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CNE")]
         public SwitchParameter CNE
         {
             set { _binaryOperator = TokenKind.Cne; }
@@ -1070,7 +1062,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -cgt.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveGreaterThanSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CGT")]
         public SwitchParameter CGT
         {
             set { _binaryOperator = TokenKind.Cgt; }
@@ -1094,7 +1085,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -clt.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessThanSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CLT")]
         public SwitchParameter CLT
         {
             set { _binaryOperator = TokenKind.Clt; }
@@ -1118,7 +1108,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -cge.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveGreaterOrEqualSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CGE")]
         public SwitchParameter CGE
         {
             set { _binaryOperator = TokenKind.Cge; }
@@ -1142,7 +1131,6 @@ namespace Microsoft.PowerShell.Commands
         /// Case sensitive binary operator -cle.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessOrEqualSet")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "CLE")]
         public SwitchParameter CLE
         {
             set { _binaryOperator = TokenKind.Cle; }
