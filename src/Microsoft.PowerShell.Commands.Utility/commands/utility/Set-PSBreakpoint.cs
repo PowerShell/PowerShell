@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The action to take when hitting this breakpoint.
+        /// Gets or sets the action to take when hitting this breakpoint.
         /// </summary>
         [Parameter(ParameterSetName = CommandParameterSetName)]
         [Parameter(ParameterSetName = LineParameterSetName)]
@@ -31,27 +31,27 @@ namespace Microsoft.PowerShell.Commands
         public ScriptBlock Action { get; set; }
 
         /// <summary>
-        /// The column to set the breakpoint on.
+        /// Gets or sets the column to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 2, ParameterSetName = LineParameterSetName)]
         [ValidateRange(1, int.MaxValue)]
         public int Column { get; set; }
 
         /// <summary>
-        /// The command(s) to set the breakpoint on.
+        /// Gets or sets the command(s) to set the breakpoint on.
         /// </summary>
         [Alias("C")]
         [Parameter(ParameterSetName = CommandParameterSetName, Mandatory = true)]
         public string[] Command { get; set; }
 
         /// <summary>
-        /// The line to set the breakpoint on.
+        /// Gets or sets the line to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = LineParameterSetName, Mandatory = true)]
         public int[] Line { get; set; }
 
         /// <summary>
-        /// The script to set the breakpoint on.
+        /// Gets or sets the script to set the breakpoint on.
         /// </summary>
         [Parameter(ParameterSetName = CommandParameterSetName, Position = 0)]
         [Parameter(ParameterSetName = LineParameterSetName, Mandatory = true, Position = 0)]
@@ -60,14 +60,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] Script { get; set; }
 
         /// <summary>
-        /// The variables to set the breakpoint(s) on.
+        /// Gets or sets the variables to set the breakpoint(s) on.
         /// </summary>
         [Alias("V")]
         [Parameter(ParameterSetName = VariableParameterSetName, Mandatory = true)]
         public string[] Variable { get; set; }
 
         /// <summary>
-        /// The access type for variable breakpoints to break on.
+        /// Gets or sets the access type for variable breakpoints to break on.
         /// </summary>
         [Parameter(ParameterSetName = VariableParameterSetName)]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;
@@ -164,9 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //
             // If it is a command breakpoint...
-            //
             if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 for (int i = 0; i < Command.Length; i++)
@@ -186,9 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            //
             // If it is a variable breakpoint...
-            //
             else if (ParameterSetName.Equals(VariableParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 for (int i = 0; i < Variable.Length; i++)
@@ -208,9 +204,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            //
             // Else it is the default parameter set (Line breakpoint)...
-            //
             else
             {
                 Debug.Assert(ParameterSetName.Equals(LineParameterSetName, StringComparison.OrdinalIgnoreCase));

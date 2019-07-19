@@ -1,15 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using Debug = System.Diagnostics.Debug;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Internal;
-using System.Management.Automation.Runspaces;
+using Debug = System.Diagnostics.Debug;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -71,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            Debug.Assert(Job != null);
+            Debug.Assert(Job != null, "We should always have a job at this point.");
 
             if (!ShouldProcess(Job.Name, VerbsDiagnostic.Debug))
             {
@@ -128,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Terminate the job on exception.
         /// </summary>
-        /// <param name="_"></param>
+        /// <param name="_">Not used.</param>
         protected override void HandleDataProcessingException(Exception _)
         {
             // Terminate job on exception.

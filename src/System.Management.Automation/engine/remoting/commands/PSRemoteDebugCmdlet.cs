@@ -15,19 +15,22 @@ namespace Microsoft.PowerShell.Commands
         #region strings
 
         /// <summary>
-        /// DefaultParameterSetName.
+        /// The default parameter set name.
         /// </summary>
         protected const string DefaultParameterSetName = "Default";
+
         /// <summary>
-        /// NameParameterSetName.
+        /// The "Name" parameter set name.
         /// </summary>
         protected const string NameParameterSetName = "Name";
+
         /// <summary>
-        /// IdParameterSetName.
+        /// The "Id" parameter set name.
         /// </summary>
         protected const string IdParameterSetName = "Id";
+
         /// <summary>
-        /// InstanceIdParameterSetName.
+        /// The "InstanceId" parameter set name.
         /// </summary>
         protected const string InstanceIdParameterSetName = "InstanceId";
 
@@ -36,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The name of the remote target to be debugged.
+        /// Gets or sets the name of the remote target to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -44,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name { get; set; }
 
         /// <summary>
-        /// The Id of the remote target to be debugged.
+        /// Gets or sets the Id of the remote target to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -52,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         public int Id { get; set; }
 
         /// <summary>
-        /// The InstanceId of the remote target to be debugged.
+        /// Gets or sets the InstanceId of the remote target to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -60,10 +63,10 @@ namespace Microsoft.PowerShell.Commands
         public Guid InstanceId { get; set; }
 
         /// <summary>
-        /// Prevents PowerShell from automatically performing a BreakAll when the debugger is attached to the remote target.
+        /// Gets or sets a flag that prevents PowerShell from automatically performing a BreakAll when the debugger is attached to the remote target.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoInitialBreak { get; set; }
 
         #endregion parameters
@@ -119,8 +122,7 @@ namespace Microsoft.PowerShell.Commands
                         new PSInvalidOperationException(DebuggerStrings.DebuggingNoDebugger),
                         "DebugRunspaceNoHostDebugger",
                         ErrorCategory.InvalidOperation,
-                        this)
-                    );
+                        this));
             }
 
             if (Host?.UI == null)
@@ -130,8 +132,7 @@ namespace Microsoft.PowerShell.Commands
                         new PSInvalidOperationException(DebuggerStrings.DebuggingNoHost),
                         "DebugRunspaceNoHostAvailable",
                         ErrorCategory.InvalidOperation,
-                        this)
-                    );
+                        this));
             }
 
             // Make sure host debugger has debugging turned on.
@@ -257,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds an object to the output collection.
         /// </summary>
-        /// <param name="psStreamObject">The object to add</param>
+        /// <param name="psStreamObject">The object to add.</param>
         protected virtual void AddOutput(PSStreamObject psStreamObject)
         {
             if (psStreamObject != null)
@@ -271,7 +272,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             _outputAccumulator.Add(psStreamObject);
                         }
-                        catch (PSInvalidOperationException) { }
+                        catch (PSInvalidOperationException)
+                        {
+                        }
                     }
                 }
                 else if (_output != null && _output.IsOpen)
@@ -286,7 +289,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             _output.AddRange(_outputAccumulator.ReadAll());
                         }
-                        catch (PSInvalidOperationException) { }
+                        catch (PSInvalidOperationException)
+                        {
+                        }
                     }
 
                     // Then handle the new item.
@@ -294,7 +299,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _output.Add(psStreamObject);
                     }
-                    catch (PSInvalidOperationException) { }
+                    catch (PSInvalidOperationException)
+                    {
+                    }
 
                     // Allow the debugger to enter a breakpoint
                     _debuggingSignal?.Set();
@@ -345,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HostWriteLine(string line)
         {
-            if ((Host?.UI != null))
+            if (Host?.UI != null)
             {
                 try
                 {
@@ -358,7 +365,9 @@ namespace Microsoft.PowerShell.Commands
                         Host.UI.WriteLine(line);
                     }
                 }
-                catch (System.Management.Automation.Host.HostException) { }
+                catch (System.Management.Automation.Host.HostException)
+                {
+                }
             }
         }
 

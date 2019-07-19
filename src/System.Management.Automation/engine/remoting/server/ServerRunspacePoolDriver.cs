@@ -1325,11 +1325,9 @@ namespace System.Management.Automation
             string commandText = command.CommandText;
             if (commandText.Equals(DebuggerUtils.GetDebuggerStopArgsFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Get-PSDebuggerStopArgs private virtual command.
                 // No input parameters.
                 // Returns DebuggerStopEventArgs object.
-                //
 
                 // Evaluate this command only if the debugger is activated.
                 if (!isDebuggerActive)
@@ -1341,11 +1339,9 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.SetDebuggerActionFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebuggerAction private virtual command.
                 // DebuggerResumeAction enum input parameter.
                 // Returns void.
-                //
 
                 // Evaluate this command only if the debugger is activated.
                 if (!isDebuggerActive)
@@ -1380,12 +1376,9 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.SetDebugModeFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebugMode private virtual command.
                 // DebugModes enum input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                     (!command.Parameters[0].Name.Equals("Mode", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1413,12 +1406,9 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.SetDebuggerStepMode, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebuggerStepMode private virtual command.
                 // Boolean Enabled input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("Enabled", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1431,12 +1421,9 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.SetPSUnhandledBreakpointMode, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSUnhandledBreakpointMode private virtual command.
                 // UnhandledBreakpointMode input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("UnhandledBreakpointMode", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1464,13 +1451,10 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.GetPSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Get-PSBreakpoint private virtual command.
                 // Input parameters:
                 // [-Id <int>]
                 // Returns Breakpoint object(s).
-                //
-
                 string script = null;
 
                 if (command.Parameters?.Count > 0)
@@ -1487,15 +1471,12 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.SetPSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSBreakpoint private virtual command.
                 // Input parameters:
                 // [-Script] <string[]> [-Line] <int[]> [[-Column] <int>] [-Action <scriptblock>]
                 // [[-Script] <string[]>] -Command <string[]> [-Action <scriptblock>]
                 // [[-Script] <string[]>] -Variable <string[]> [-Action <scriptblock>] [-Mode <VariableAccessMode>]
                 // Returns Breakpoint object.
-                //
-
                 if (command.Parameters == null || command.Parameters.Count == 0)
                 {
                     throw new PSArgumentException("You must provide at least one parameter.");
@@ -1522,6 +1503,7 @@ namespace System.Management.Automation
                         {
                             throw new PSArgumentException(commandParameter.Name);
                         }
+
                         breakpointType = "Line";
                     }
                     else if (commandParameter.Name.Equals("Command", StringComparison.OrdinalIgnoreCase))
@@ -1530,6 +1512,7 @@ namespace System.Management.Automation
                         {
                             throw new PSArgumentException(commandParameter.Name);
                         }
+
                         breakpointType = "Command";
                     }
                     else if (commandParameter.Name.Equals("Variable", StringComparison.OrdinalIgnoreCase))
@@ -1538,6 +1521,7 @@ namespace System.Management.Automation
                         {
                             throw new PSArgumentException(commandParameter.Name);
                         }
+
                         breakpointType = "Variable";
                     }
                 }
@@ -1546,21 +1530,19 @@ namespace System.Management.Automation
                 commands.AddCommand("Set-PSBreakpoint");
                 foreach (var commandParameter in command.Parameters)
                 {
-                    commands.AddParameter(
-                        commandParameter.Name,
-                        commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase)
-                            ? ScriptBlock.Create(commandParameter.Value as string)
-                            : commandParameter.Value);
+                    var parameterValue = commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase)
+                        ? ScriptBlock.Create(commandParameter.Value as string)
+                        : commandParameter.Value;
+
+                    commands.AddParameter(commandParameter.Name, parameterValue);
                 }
             }
             else if (commandText.Equals(DebuggerUtils.RemovePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Remove-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
                 // Returns bool.
-                //
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
@@ -1571,12 +1553,10 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(DebuggerUtils.EnablePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Enable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
                 // Returns bool.
-                //
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
@@ -1584,17 +1564,14 @@ namespace System.Management.Automation
                     "if ($bp -eq $null) {return};" +
                     "$host.Runspace.Debugger.EnableBreakpoint($bp)";
 
-
                 ReplaceVirtualCommandWithScript(commands, script);
             }
             else if (commandText.Equals(DebuggerUtils.DisablePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Disable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
                 // Returns bool.
-                //
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 

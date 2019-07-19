@@ -202,9 +202,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Clsoe the runspace on exception.
+        /// Close the runspace on exception.
         /// </summary>
-        /// <param name="_"></param>
+        /// <param name="_">Not used.</param>
         protected override void HandleDataProcessingException(Exception _)
         {
             // Close the runspace on exception.
