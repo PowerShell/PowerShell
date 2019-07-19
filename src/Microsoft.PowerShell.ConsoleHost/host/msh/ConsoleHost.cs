@@ -4,33 +4,34 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Security;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.Management.Automation.Language;
-
-using Dbg = System.Management.Automation.Diagnostics;
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
+using System.Reflection;
+using System.Runtime;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
-using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -133,7 +134,7 @@ namespace Microsoft.PowerShell
                     Directory.CreateDirectory(profileDir);
                 }
 #endif
-                ClrFacade.SetProfileOptimizationRoot(profileDir);
+                ProfileOptimization.SetProfileRoot(profileDir);
             }
             catch
             {
@@ -143,7 +144,7 @@ namespace Microsoft.PowerShell
 
             uint exitCode = ExitCodeSuccess;
 
-            System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
+            Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             try
             {
@@ -193,38 +194,32 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
-                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
-                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
-                // we always have to execute this call because we do not know if it has been created yet.
-                // The JumpList does persist as long as the filepath of the executable does not change but there
-                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
-                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
-                    ClrFacade.StartProfileOptimization("StartupProfileData-ServerMode");
+                    ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
-                    ClrFacade.StartProfileOptimization("StartupProfileData-NamedPipeServerMode");
+                    ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
                         s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)
                 {
-                    ClrFacade.StartProfileOptimization("StartupProfileData-SSHServerMode");
+                    ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
-                    ClrFacade.StartProfileOptimization("StartupProfileData-SocketServerMode");
+                    ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
                         s_cpp.ConfigurationName);
                     exitCode = 0;
@@ -238,16 +233,17 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
+                    ProfileOptimization.StartProfile(
+                        s_theConsoleHost.LoadPSReadline()
+                            ? "StartupProfileData-Interactive"
+                            : "StartupProfileData-NonInteractive");
+
                     s_theConsoleHost.BindBreakHandler();
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
 
-                    ClrFacade.StartProfileOptimization(
-                        s_theConsoleHost.LoadPSReadline()
-                            ? "StartupProfileData-Interactive"
-                            : "StartupProfileData-NonInteractive");
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
             }
@@ -2833,7 +2829,7 @@ namespace Microsoft.PowerShell
         private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
         private ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
 #endif
-        private System.Threading.Thread _breakHandlerThread;
+        private Thread _breakHandlerThread;
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 

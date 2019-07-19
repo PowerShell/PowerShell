@@ -1467,16 +1467,6 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (Job job in jobs)
             {
-                if (JobManager.IsJobFromAdapter(job.InstanceId, "PSWorkflowJob") &&
-                    job.JobStateInfo.State == JobState.Stopped)
-                {
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteWarning(new WarningRecord(StringUtil.Format(RemotingErrorIdStrings.JobWasStopped, job.Name)), true);
-                    }
-                }
-
                 if (checkForRecurse && _recurse)
                 {
                     WriteJobResultsRecursively(job, registerInsteadOfWrite);

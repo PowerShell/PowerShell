@@ -416,6 +416,119 @@ Describe 'Property Attributes Test' -Tags "CI" {
         It "second value should be b" { $v.ValidValues[1] | Should -Be 'b' }
 }
 
+Describe 'Testing Method Names can be Keywords' -Tags "CI" {
+    BeforeAll {
+        [powershell] $script:PowerShell = [powershell]::Create()
+
+        function Invoke-PowerShell {
+            [CmdletBinding()]
+            param([string] $Script)
+
+            try {
+                $script:PowerShell.AddScript($Script).Invoke()
+            }
+            finally {
+                $script:PowerShell.Commands.Clear()
+            }
+        }
+
+        function Reset-PowerShell {
+            if ($script:PowerShell) {
+                $script:PowerShell.Dispose()
+            }
+
+            $script:PowerShell = [powershell]::Create()
+        }
+    }
+
+    AfterEach {
+        Reset-PowerShell
+    }
+
+    It 'Permits class methods to be named after keywords' {
+        $TestScript = @'
+            class TestMethodNames : IDisposable {
+                [string] Begin() { return "Begin" }
+
+                [string] Process() { return "Process" }
+
+                [string] End() { return "End" }
+
+                hidden $Data = "Secrets"
+
+                Dispose() {
+                    $this.Data = [string]::Empty
+                }
+            }
+            $Object = [TestMethodNames]::new()
+            [PSCustomObject]@{
+                BeginTest   = $Object.Begin()
+                ProcessTest = $Object.Process()
+                EndTest     = $Object.End()
+                CheckData1  = $Object.Data
+                CheckData2  = $( $Object.Dispose(); $Object.Data )
+            }
+'@
+        $Results = Invoke-PowerShell -Script $TestScript
+
+        $Results.BeginTest | Should -BeExactly 'Begin'
+        $Results.ProcessTest | Should -BeExactly 'Process'
+        $Results.EndTest | Should -BeExactly 'End'
+        $Results.CheckData1 | Should -BeExactly 'Secrets'
+        $Results.CheckData2 | Should -BeNullOrEmpty
+    }
+
+    It 'Permits class methods to be named after DynamicKeywords' {
+        $DefineKeyword = @'
+            function GetData {
+                param(
+                    $KeywordData,
+                    $Name,
+                    $Value,
+                    $SourceMetadata
+                )
+                end {
+                    return $PSBoundParameters
+                }
+            }
+
+            $keyword = [System.Management.Automation.Language.DynamicKeyword]::new()
+            $keyword.NameMode = [System.Management.Automation.Language.DynamicKeywordNameMode]::SimpleNameRequired
+            $keyword.Keyword = 'GetData'
+            $keyword.BodyMode = [System.Management.Automation.Language.DynamicKeywordBodyMode]::Hashtable
+
+            $property = [System.Management.Automation.Language.DynamicKeywordProperty]::new()
+            $property.Name = 'Hey'
+            $property.TypeConstraint = 'int'
+            $keyword.Properties.Add('Hey', $property)
+
+            [System.Management.Automation.Language.DynamicKeyword]::AddKeyword($keyword)
+'@
+        $DefineClass = @'
+            class Test {
+                hidden $Data = 'TOP SECRET'
+
+                [string] GetData() {
+                    return $this.Data
+                }
+            }
+'@
+        $TestScript = @'
+            $Object = [Test]::new()
+            $Object.GetData()
+'@
+        Invoke-PowerShell -Script $DefineKeyword
+        Invoke-PowerShell -Script $DefineClass
+
+        Invoke-PowerShell -Script $TestScript | Should -BeExactly 'TOP SECRET'
+    }
+
+    AfterAll {
+        # Ensure we don't leave any dynamic keywords in the session.
+        [System.Management.Automation.Language.DynamicKeyword]::Reset()
+    }
+}
+
 Describe 'Method Attributes Test' -Tags "CI" {
         class C { [Obsolete("aaa")][int]f() { return 1 } }
 

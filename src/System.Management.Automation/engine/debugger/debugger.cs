@@ -994,7 +994,6 @@ namespace System.Management.Automation
             _isLocalSession = null;
 
             _nestedDebuggerStop = false;
-            _writeWFErrorOnce = false;
             _debuggerStopEventArgs.Clear();
             _lastActiveDebuggerAction = DebuggerResumeAction.Continue;
             _currentDebuggerAction = DebuggerResumeAction.Continue;
@@ -1683,7 +1682,6 @@ namespace System.Management.Automation
 
         // Job debugger integration.
         private bool _nestedDebuggerStop;
-        private bool _writeWFErrorOnce;
         private Dictionary<Guid, PSJobStartEventArgs> _runningJobs;
         private ConcurrentStack<Debugger> _activeDebuggers;
         private ConcurrentStack<DebuggerStopEventArgs> _debuggerStopEventArgs;
@@ -3408,20 +3406,6 @@ namespace System.Management.Automation
             }
 
             return false;
-        }
-
-        private void WriteWorkflowDebugNotSupportedError()
-        {
-            if (!_writeWFErrorOnce)
-            {
-                var host = _context.EngineHostInterface.ExternalHost;
-                if (host != null && host.UI != null)
-                {
-                    host.UI.WriteErrorLine(DebuggerStrings.WorkflowDebuggingNotSupported);
-                }
-
-                _writeWFErrorOnce = true;
-            }
         }
 
         #endregion

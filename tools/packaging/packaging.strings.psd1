@@ -50,6 +50,16 @@ case "$1" in
 esac
 '@
 
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
+'@
+
     MacOSLauncherScript = @'
 #!/usr/bin/env bash
 open {0}
@@ -127,7 +137,7 @@ open {0}
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <contentFiles>
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
@@ -163,7 +173,7 @@ open {0}
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <packageTypes>
             <packageType name="DotnetTool" />
         </packageTypes>

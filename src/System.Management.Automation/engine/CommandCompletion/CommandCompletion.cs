@@ -887,7 +887,7 @@ namespace System.Management.Automation
 
                 lastWord = lastWord ?? string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
-                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
+                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
                 string wildWord = lastWord + "*";
@@ -1045,9 +1045,9 @@ namespace System.Management.Automation
             {
                 // These are special cases, as they represent cases where the user expects to
                 // see the full path.
-                if (lastWord.StartsWith("~", StringComparison.OrdinalIgnoreCase) ||
-                    lastWord.StartsWith("\\", StringComparison.OrdinalIgnoreCase) ||
-                    lastWord.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+                if (lastWord.StartsWith('~') ||
+                    lastWord.StartsWith('\\') ||
+                    lastWord.StartsWith('/'))
                 {
                     return true;
                 }

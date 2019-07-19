@@ -36,7 +36,11 @@ namespace System.Management.Automation
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {
             StringBuilder builder = new StringBuilder();
-            string name = GetNameFromFuncDesc(typeinfo, funcdesc);
+
+            // First value is function name
+            int namesCount = funcdesc.cParams + 1;
+            string[] names = new string[funcdesc.cParams + 1];
+            typeinfo.GetNames(funcdesc.memid, names, namesCount, out namesCount);
 
             if (!isPropertyPut)
             {
@@ -46,7 +50,7 @@ namespace System.Management.Automation
             }
 
             // Append the function name
-            builder.Append(name);
+            builder.Append(names[0]);
             builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
@@ -85,6 +89,7 @@ namespace System.Management.Automation
                 else
                 {
                     builder.Append(paramstring);
+                    builder.Append(" " + names[i + 1]);
 
                     if (i < funcdesc.cParams - 1)
                     {

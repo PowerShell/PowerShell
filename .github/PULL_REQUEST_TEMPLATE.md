@@ -30,3 +30,11 @@
     - [ ] N/A or can only be tested interactively
     - **OR**
     - [ ] [Make sure you've added a new test if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
+- **Tooling**
+    - [ ] I have considered the user experience from a tooling perspective and don't believe tooling will be impacted.
+    - **OR**
+    - [ ] I have considered the user experience from a tooling perspective and enumerated concerns in the summary. This may include:
+        - Impact on [PowerShell Editor Services](https://github.com/PowerShell/PowerShellEditorServices) which is used in the [PowerShell extension](https://github.com/PowerShell/vscode-powershell) for VSCode (which runs in a different PS Host).
+        - Impact on Completions (both in the console and in editors) - one of PowerShell's most powerful features.
+        - Impact on [PSScriptAnalyzer](https://github.com/PowerShell/PSScriptAnalyzer) (which provides linting & formatting in the editor extensions).
+        - Impact on [EditorSyntax](https://github.com/PowerShell/EditorSyntax) (which provides syntax highlighting with in VSCode, GitHub, and many other editors).

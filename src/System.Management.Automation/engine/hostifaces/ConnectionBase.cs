@@ -971,30 +971,16 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        internal bool RunActionIfNoRunningPipelinesWithThreadCheck(Action action)
+        internal bool CanRunActionInCurrentPipeline()
         {
-            bool ranit = false;
-            bool shouldRunAction = false;
             lock (_pipelineListLock)
             {
                 // If we have no running pipeline, or if the currently running pipeline is
                 // the same as the current thread, then execute the action.
-
                 var pipelineRunning = _currentlyRunningPipeline as PipelineBase;
-                if (pipelineRunning == null ||
-                    Thread.CurrentThread.Equals(pipelineRunning.NestedPipelineExecutionThread))
-                {
-                    shouldRunAction = true;
-                }
+                return pipelineRunning == null || 
+                    Thread.CurrentThread == pipelineRunning.NestedPipelineExecutionThread;
             }
-
-            if (shouldRunAction)
-            {
-                action();
-                ranit = true;
-            }
-
-            return ranit;
         }
 
         /// <summary>

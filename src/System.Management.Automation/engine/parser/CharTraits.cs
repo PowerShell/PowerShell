@@ -227,6 +227,11 @@ namespace System.Management.Automation.Language
 /*     0x7F */ CharTraits.None,
         };
 
+        public static bool IsCurlyBracket(char c)
+        {
+            return (c == '{' || c == '}');
+        }
+
         // Return true if the character is a whitespace character.
         // Newlines are not whitespace.
         internal static bool IsWhitespace(this char c)

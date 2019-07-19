@@ -975,7 +975,8 @@ namespace System.Management.Automation
                 try
                 {
                     var runspace = (RunspaceBase)context.CurrentRunspace;
-                    shouldGenerateEvent = !runspace.RunActionIfNoRunningPipelinesWithThreadCheck(() =>
+                    if (runspace.CanRunActionInCurrentPipeline())
+                    {
                         InvokeWithPipeImpl(
                             useLocalScope,
                             functionsToDefine,
@@ -986,7 +987,12 @@ namespace System.Management.Automation
                             scriptThis,
                             outputPipe,
                             invocationInfo,
-                            args));
+                            args);
+                    }
+                    else
+                    {
+                        shouldGenerateEvent = true;
+                    }
                 }
                 finally
                 {

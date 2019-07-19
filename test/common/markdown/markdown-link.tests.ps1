@@ -1,17 +1,14 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 Describe "Verify Markdown Links" {
     BeforeAll {
-        # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                    sudo npm install -g markdown-link-check@3.7.2
-                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
-                    sudo rm -rf ~/.npm/_cacache
-                }
+                sudo yarn global add markdown-link-check@3.7.2
+            }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
@@ -49,7 +46,7 @@ Describe "Verify Markdown Links" {
         $jobs.add($group.name,$job)
     }
 
-    Write-Verbose -verbose "Getting and printing results ..."
+    Write-Verbose -verbose "Getting results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
@@ -105,7 +102,8 @@ Describe "Verify Markdown Links" {
                         if($url -match '^http(s)?:')
                         {
                             # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
-                            try{
+                            try
+                            {
                                 $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
                             }
                             catch
