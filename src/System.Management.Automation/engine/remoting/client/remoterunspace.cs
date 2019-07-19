@@ -1,22 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Tracing;
-#if !UNIX
-using System.Security.Principal;
-#endif
-using System.Threading;
 using Microsoft.PowerShell.Commands;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -2013,10 +2003,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
         public override Breakpoint GetBreakpoint(int id) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(DebuggerUtils.GetPSBreakpointFunctionName, new Dictionary<string, object>
-            {
-                { "Id", id },
-            });
+            InvokeVirtualBreakpointFunction<Breakpoint>(
+                DebuggerUtils.GetPSBreakpointFunctionName,
+                new Dictionary<string, object>
+                {
+                    { "Id", id },
+                });
 
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
@@ -2118,14 +2110,17 @@ namespace System.Management.Automation
             {
                 { "Command", command },
             };
+
             if (action != null)
             {
                 functionParameters.Add("Action", action);
             }
+
             if (path != null)
             {
                 functionParameters.Add("Script", path);
             }
+
             return InvokeVirtualBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
@@ -2136,14 +2131,17 @@ namespace System.Management.Automation
                 { "Script", path },
                 { "Line", line },
             };
+
             if (column != 0)
             {
                 functionParameters.Add("Column", column);
             }
+
             if (action != null)
             {
                 functionParameters.Add("Action", action);
             }
+
             return InvokeVirtualBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
@@ -2153,38 +2151,48 @@ namespace System.Management.Automation
             {
                 { "Variable", variableName },
             };
+
             if (accessMode != VariableAccessMode.Write)
             {
                 functionParameters.Add("Mode", accessMode);
             }
+
             if (action != null)
             {
                 functionParameters.Add("Action", action);
             }
+
             if (path != null)
             {
                 functionParameters.Add("Script", path);
             }
+
             return InvokeVirtualBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
         public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<bool>(DebuggerUtils.RemovePSBreakpointFunctionName, new Dictionary<string, object>
-            {
-                { "Id", breakpoint.Id },
-            });
+            InvokeVirtualBreakpointFunction<bool>(
+                DebuggerUtils.RemovePSBreakpointFunctionName,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
 
         public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(DebuggerUtils.EnablePSBreakpointFunctionName, new Dictionary<string, object>
-            {
-                { "Id", breakpoint.Id },
-            });
+            InvokeVirtualBreakpointFunction<Breakpoint>(
+                DebuggerUtils.EnablePSBreakpointFunctionName,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
 
         public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(DebuggerUtils.DisablePSBreakpointFunctionName, new Dictionary<string, object>
-            {
-                { "Id", breakpoint.Id },
-            });
+            InvokeVirtualBreakpointFunction<Breakpoint>(
+                DebuggerUtils.DisablePSBreakpointFunctionName,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
 
         /// <summary>
         /// SetDebuggerAction.
