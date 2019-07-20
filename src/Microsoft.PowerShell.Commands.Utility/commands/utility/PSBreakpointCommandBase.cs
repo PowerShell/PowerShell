@@ -14,12 +14,12 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The runspace where the breakpoints will be used.
+        /// Gets or sets the runspace where the breakpoints will be used.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
-        [Parameter()]
-        [ValidateNotNull()]
-        [Runspace()]
+        [Parameter]
+        [ValidateNotNull]
+        [Runspace]
         public virtual Runspace Runspace { get; set; }
 
         #endregion parameters
@@ -46,6 +46,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write the given breakpoint out to the pipeline, decorated with the runspace instance id if appropriate.
         /// </summary>
+        /// <param name="breakpoint">The breakpoint to write to the pipeline.</param>
         protected virtual void ProcessBreakpoint(Breakpoint breakpoint)
         {
             if (Runspace != Context.CurrentRunspace)
@@ -58,6 +59,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(breakpoint);
             }
+
         }
 
         #endregion protected methods

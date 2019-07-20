@@ -1,9 +1,9 @@
-using System;
-using Debug = System.Diagnostics.Debug;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Management.Automation;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
-using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -83,17 +83,17 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// The host runspace from which the user will debug.
+        /// Gets the host runspace from which the user will debug.
         /// </summary>
         protected Runspace HostRunspace { get; private set; }
 
         /// <summary>
-        /// The host debugger.
+        /// Gets the host debugger.
         /// </summary>
         protected Debugger Debugger { get; private set; }
 
         /// <summary>
-        /// The message to display when the debugger is first attached.
+        /// Gets the message to display when the debugger is first attached.
         /// </summary>
         protected abstract string DebuggingStartedMessage { get; }
 
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle any unexpected exceptions that occur during data processing.
         /// </summary>
-        /// <param name="_">Not used</param>
+        /// <param name="_">Not used.</param>
         protected virtual void HandleDataProcessingException(Exception _) { }
 
         /// <summary>

@@ -25,25 +25,25 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The breakpoint to enable.
+        /// Gets or sets the breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = BreakpointParameterSetName, ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
         public Breakpoint[] Breakpoint { get; set; }
 
         /// <summary>
-        /// The Id of the breakpoint to enable.
+        /// Gets or sets the Id of the breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = IdParameterSetName, ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
         public int[] Id { get; set; }
 
         /// <summary>
-        /// The runspace where the breakpoints will be used.
+        /// Gets or sets the runspace where the breakpoints will be used.
         /// </summary>
         [Parameter(ParameterSetName = IdParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Alias("RunspaceId")]
-        [Runspace()]
+        [Runspace]
         public override Runspace Runspace { get; set; }
 
         #endregion parameters
@@ -79,7 +79,9 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Debug.Assert(ParameterSetName.Equals(IdParameterSetName, StringComparison.OrdinalIgnoreCase));
+                Debug.Assert(
+                    ParameterSetName.Equals(IdParameterSetName, StringComparison.OrdinalIgnoreCase),
+                    $"There should be no other parameter sets besides '{BreakpointParameterSetName}' and '{IdParameterSetName}'.");
 
                 foreach (int id in Id)
                 {
@@ -114,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            Debug.Assert(runspaceInstanceIdProperty.TypeNameOfValue.Equals("System.Guid", StringComparison.OrdinalIgnoreCase));
+            Debug.Assert(runspaceInstanceIdProperty.TypeNameOfValue.Equals("System.Guid", StringComparison.OrdinalIgnoreCase), "Instance ids must be GUIDs.");
 
             var runspaceInstanceId = (Guid)runspaceInstanceIdProperty.Value;
             if (runspaces.ContainsKey(runspaceInstanceId))

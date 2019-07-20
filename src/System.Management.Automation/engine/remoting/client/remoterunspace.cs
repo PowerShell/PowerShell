@@ -2051,14 +2051,17 @@ namespace System.Management.Automation
                         {
                             { "Command", cmdBp.Command },
                         };
+
                         if (cmdBp.Action != null)
                         {
                             cmdBpParams.Add("Action", cmdBp.Action);
                         }
+
                         if (cmdBp.Script != null)
                         {
                             cmdBpParams.Add("Script", cmdBp.Script);
                         }
+
                         InvokeVirtualBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, cmdBpParams);
                         break;
 
@@ -2068,14 +2071,17 @@ namespace System.Management.Automation
                             { "Script", lineBp.Script },
                             { "Line", lineBp.Line },
                         };
+
                         if (lineBp.Column != 0)
                         {
                             lineBpParams.Add("Column", lineBp.Column);
                         }
+
                         if (lineBp.Action != null)
                         {
                             lineBpParams.Add("Action", lineBp.Action);
                         }
+
                         InvokeVirtualBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, lineBpParams);
                         break;
 
@@ -2085,14 +2091,17 @@ namespace System.Management.Automation
                             { "Variable", varBp.Variable },
                             { "Mode", varBp.AccessMode },
                         };
+
                         if (varBp.Action != null)
                         {
                             varBpParams.Add("Action", varBp.Action);
                         }
+
                         if (varBp.Script != null)
                         {
                             varBpParams.Add("Script", varBp.Script);
                         }
+
                         InvokeVirtualBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, varBpParams);
                         break;
 

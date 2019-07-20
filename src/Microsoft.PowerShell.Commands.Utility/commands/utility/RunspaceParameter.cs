@@ -13,7 +13,7 @@ namespace System.Management.Automation.Runspaces
     /// should accept runspaces.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class RunspaceAttribute: ArgumentTransformationAttribute
+    public sealed class RunspaceAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
         /// Transforms the input data to a Runspace.
@@ -31,9 +31,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A runspace object representing the inputData.</returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            if ((engineIntrinsics == null) ||
-                (engineIntrinsics.Host == null) ||
-                (engineIntrinsics.Host.UI == null))
+            if (engineIntrinsics?.Host?.UI == null)
             {
                 throw PSTraceSource.NewArgumentNullException("engineIntrinsics");
             }
@@ -54,27 +52,30 @@ namespace System.Management.Automation.Runspaces
             switch (inputData)
             {
                 case string name:
-                    var nameRunspaces = GetRunspaceUtils.GetRunspacesByName(new string[] { name });
-                    if (nameRunspaces.Count == 1)
+                    var runspacesByName = GetRunspaceUtils.GetRunspacesByName(new string[] { name });
+                    if (runspacesByName.Count == 1)
                     {
-                        return nameRunspaces[0];
+                        return runspacesByName[0];
                     }
+
                     break;
 
                 case int id:
-                    var idRunspaces = GetRunspaceUtils.GetRunspacesById(new int[] { id });
-                    if (idRunspaces.Count == 1)
+                    var runspacesById = GetRunspaceUtils.GetRunspacesById(new int[] { id });
+                    if (runspacesById.Count == 1)
                     {
-                        return idRunspaces[0];
+                        return runspacesById[0];
                     }
+
                     break;
 
                 case Guid guid:
-                    var guidRunspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { guid });
-                    if (guidRunspaces.Count == 1)
+                    var runspacesByGuid = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { guid });
+                    if (runspacesByGuid.Count == 1)
                     {
-                        return guidRunspaces[0];
+                        return runspacesByGuid[0];
                     }
+
                     break;
             }
 
@@ -82,7 +83,9 @@ namespace System.Management.Automation.Runspaces
             return inputData;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets a flag indicating whether or not null optional parameters are transformed.
+        /// </summary>
         public override bool TransformNullOptionalParameters { get { return false; } }
     }
 }
