@@ -1,12 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
 using Microsoft.PowerShell.Commands;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -2107,7 +2116,7 @@ namespace System.Management.Automation
 
                     default:
                         // Unreachable default case
-                        Debug.Assert(false, "Unexpected breakpoint type.");
+                        Dbg.Assert(false, "Unexpected breakpoint type.");
                         break;
                 }
             }
