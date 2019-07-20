@@ -216,6 +216,11 @@ namespace Microsoft.PowerShell.Commands
             if (_disposed == false)
             {
                 _helper.Dispose();
+                if (_fs != null)
+                {
+                    _fs.Dispose();
+                    _fs = null;
+                }
             }
 
             _disposed = true;
@@ -822,9 +827,8 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
             _cmdlet = cmdlet;
             _depth = depth;
-            _stream = stream;
 
-            _xw = CreateXmlWriter(_stream);
+            _xw = CreateXmlWriter(stream);
 
             if (_depth == 0)
             {
@@ -839,8 +843,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion constructor
 
         #region output
-
-        internal Stream _stream;
 
         /// <summary>
         /// XmlWriter used to write the resulting document.
@@ -863,16 +865,10 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CleanUp()
         {
-            if (_stream != null)
+            if (_xw != null)
             {
-                if (_xw != null)
-                {
-                    _xw.Dispose();
-                    _xw = null;
-                }
-
-                _stream.Dispose();
-                _stream = null;
+                _xw.Dispose();
+                _xw = null;
             }
         }
 
@@ -887,12 +883,12 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion output
 
-    #region IDisposable Members
+        #region IDisposable Members
 
-    /// <summary>
-    /// Set to true when object is disposed.
-    /// </summary>
-    private bool _disposed;
+        /// <summary>
+        /// Set to true when object is disposed.
+        /// </summary>
+        private bool _disposed;
 
         /// <summary>
         /// Public dispose method.
