@@ -173,11 +173,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle to file stream.
         /// </summary>
-        internal FileStream _fs;
-
-        internal FileInfo _readOnlyFileInfo;
-
-        internal StreamWriter _sw;
+        private FileStream _fs;
 
         private void CreateFileStream()
         {
@@ -192,8 +188,8 @@ namespace Microsoft.PowerShell.Commands
                 _force,
                 _noclobber,
                 out _fs,
-                out _sw,
-                out _readOnlyFileInfo,
+                out _,
+                out _,
                 _isLiteralPath
                 );
         }
