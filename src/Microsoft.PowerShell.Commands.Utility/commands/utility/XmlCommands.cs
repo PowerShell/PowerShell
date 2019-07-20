@@ -370,19 +370,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_serializer != null)
-                _serializer.Serialize(InputObject);
+            _serializer.Serialize(InputObject);
         }
 
         /// <summary>
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_serializer != null)
-            {
-                _serializer.Done();
-                _serializer = null;
-            }
+            _serializer.Done();
+            _serializer = null;
 
             // Loading to the XML Document
             _ms.Position = 0;
@@ -856,11 +852,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal void Serialize(object inputObject)
         {
-            if (_serializer != null)
-            {
-                _serializer.Serialize(inputObject);
-                _xw.Flush();
-            }
+            _serializer.Serialize(inputObject);
+            _xw.Flush();
         }
 
         internal void CleanUp()
