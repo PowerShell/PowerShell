@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(breakpoint);
             }
-
         }
 
         #endregion protected methods
