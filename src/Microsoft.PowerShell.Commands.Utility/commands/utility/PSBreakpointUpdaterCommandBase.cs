@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region private data
 
-        private Dictionary<Guid, Runspace> runspaces = new Dictionary<Guid, Runspace>();
+        private readonly Dictionary<Guid, Runspace> runspaces = new Dictionary<Guid, Runspace>();
 
         #endregion private data
 
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            var matchingRunspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { runspaceInstanceId });
+            var matchingRunspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid { runspaceInstanceId });
             if (matchingRunspaces.Count != 1)
             {
                 WriteError(

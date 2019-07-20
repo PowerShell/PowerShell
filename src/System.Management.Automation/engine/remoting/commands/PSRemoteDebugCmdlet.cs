@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         #region private members
 
         private bool _debugging;
-        private ManualResetEventSlim _debuggingSignal = null;
+        private ManualResetEventSlim _debuggingSignal;
         private PSDataCollection<PSStreamObject> _output;
         private PSDataCollection<PSStreamObject> _outputAccumulator;
 
@@ -369,6 +369,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (System.Management.Automation.Host.HostException)
                 {
+                    // Swallow any exceptions
                 }
             }
         }

@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void OutputBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void OutputBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ErrorBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void ErrorBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WarningBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void WarningBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void VerboseBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void VerboseBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void DebugBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void DebugBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void InformationBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void InformationBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null)
             {
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ProgressBuffer_DataAdding(object sender, DataAddingEventArgs e)
+        private void ProgressBuffer_DataAdding(object _, DataAddingEventArgs e)
         {
             if (e.ItemAdded != null && e.ItemAdded is ProgressRecord)
             {
