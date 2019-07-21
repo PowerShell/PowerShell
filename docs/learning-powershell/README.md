@@ -116,7 +116,7 @@ Note that all bash commands should continue working on PowerShell session.
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
 [learn-powershell]: https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617294160
 
-[getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
+[getstarted-with-powershell]: https://channel9.msdn.com/Series/Getting-Started-with-Microsoft-PowerShell
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
 [Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/getting-started/fundamental/using-windows-powershell-for-administration?view=powershell-6
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
