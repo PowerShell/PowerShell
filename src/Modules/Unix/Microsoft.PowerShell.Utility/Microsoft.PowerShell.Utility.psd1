@@ -7,8 +7,8 @@ ModuleVersion = "6.1.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion = "3.0"
 CmdletsToExport = @(
-  'Export-Alias', 'Get-Alias', 'Import-Alias', 'New-Alias', 'Remove-Alias', 'Set-Alias', 'Export-Clixml',
-  'Import-Clixml', 'Measure-Command', 'Trace-Command', 'ConvertFrom-Csv', 'ConvertTo-Csv', 'Export-Csv',
+  'Export-Alias', 'Get-Alias', 'Import-Alias', 'New-Alias', 'Remove-Alias', 'Set-Alias', 'Export-Clixml', 'Import-Clixml', 'ConvertTo-Clixml',
+  'ConvertFrom-Clixml', 'Measure-Command', 'Trace-Command', 'ConvertFrom-Csv', 'ConvertTo-Csv', 'Export-Csv',
   'Import-Csv', 'Get-Culture', 'Format-Custom', 'Get-Date', 'Set-Date', 'Write-Debug', 'Wait-Debugger',
   'Register-EngineEvent', 'Write-Error', 'Get-Event', 'New-Event', 'Remove-Event', 'Unregister-Event',
   'Wait-Event', 'Get-EventSubscriber', 'Invoke-Expression', 'Out-File', 'Get-FileHash', 'Export-FormatData',
