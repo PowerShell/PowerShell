@@ -2653,9 +2653,10 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(breakpoint != null, "Caller to verify the breakpoint is not null.");
 
-            if (_idToBreakpoint.Remove(breakpoint.Id, out _) ||
-                breakpoint.RemoveSelf(this) == true)
+            if (_idToBreakpoint.Remove(breakpoint.Id, out _))
             {
+                breakpoint.RemoveSelf(this);
+
                 if (CanDisableDebugger)
                 {
                     SetInternalDebugMode(InternalDebugMode.Disabled);
