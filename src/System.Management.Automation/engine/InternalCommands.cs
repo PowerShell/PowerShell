@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to indicate that foreach iterations should be run in parallel instead of sequentially.
         /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter Parallel
         {
@@ -219,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Script block to run for each pipeline object
         /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateNotNull()]
         public ScriptBlock ScriptBlock
@@ -231,6 +233,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the maximum number of concurrently running scriptblocks on separate threads.
         /// The default number is 5.
         /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(1, Int32.MaxValue)]
         public int ThrottleLimit
@@ -243,6 +246,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies a timeout time in seconds, after which the parallel running scripts will be stopped
         /// The default value is 0, indicating no timeout.
         /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(0, (Int32.MaxValue/1000))]
         public int TimeoutSeconds
@@ -255,6 +259,7 @@ namespace Microsoft.PowerShell.Commands
         /// Flag that returns a job object immediately for the parallel operation, instead of returning after
         /// all foreach processing is completed.
         /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter AsJob
         {
