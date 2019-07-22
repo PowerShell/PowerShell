@@ -1495,7 +1495,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
+    $installObtainUrl = "https://dot.net/v1"    
+    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"    
 
     # Install for Linux and OS X
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
@@ -1508,7 +1509,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                curl -sO $obtainUrl/uninstall/$uninstallScript
+                curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1518,13 +1519,13 @@ function Install-Dotnet {
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
-            curl -sO $obtainUrl/$installScript
+            curl -sO $installObtainUrl/$installScript
             bash ./$installScript -c $Channel -v $Version
         }
     } elseif ($Environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
-        Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+        Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
 
         if (-not $Environment.IsCoreCLR) {
             & ./$installScript -Channel $Channel -Version $Version
