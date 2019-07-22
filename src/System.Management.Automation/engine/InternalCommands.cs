@@ -383,6 +383,22 @@ namespace Microsoft.PowerShell.Commands
         {
             bool allowUsingExpression = (this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(ScriptBlock, allowUsingExpression, this.Context, null);
+            
+            // Validate using values map
+            foreach (var item in _usingValuesMap.Values)
+            {
+                if (item is ScriptBlock)
+                {
+                    this.ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelUsingVariableCannotBeScriptBlock),
+                            "ParallelUsingVariableCannotBeScriptBlock",
+                            ErrorCategory.InvalidType,
+                            this
+                        )
+                    );
+                }
+            }
 
             if (AsJob)
             {
@@ -407,6 +423,21 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessParallelParameterSet()
         {
+            // Validate piped InputObject
+            if (_inputObject.BaseObject is ScriptBlock)
+            {
+                this.WriteError(
+                    new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelPipedInputObjectCannotBeScriptBlock),
+                            "ParallelPipedInputObjectCannotBeScriptBlock",
+                            ErrorCategory.InvalidType,
+                            this
+                        )
+                );
+
+                return;
+            }
+
             var task = new System.Management.Automation.PSTasks.PSTask(
                 ScriptBlock,
                 _usingValuesMap,

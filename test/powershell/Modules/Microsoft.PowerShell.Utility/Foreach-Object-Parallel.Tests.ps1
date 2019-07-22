@@ -3,6 +3,11 @@
 
 Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
+    BeforeAll {
+
+        $sb = { "Hello!" }
+    }
+
     It "Verifies dollar underbar variable" {
 
         $expected = 1..10
@@ -59,6 +64,16 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
         $expectedInformation = 1..1 | ForEach-Object -Parallel -ScriptBlock { Write-Information "Information!" } 6>&1
         $expectedInformation.MessageData | Should -BeExactly 'Information!'
+    }
+
+    It 'Verifies error for using script block variable' {
+
+        { 1..1 | ForEach-Object -Parallel -ScriptBlock { $using:sb } } | Should -Throw -ErrorId 'ParallelUsingVariableCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
+    It 'Verifies error for script block piped variable' {
+    
+        { $sb | ForEach-Object -Parallel -ScriptBlock { "Hello" } -ErrorAction Stop } | Should -Throw -ErrorId 'ParallelPipedInputObjectCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
     }
 }
 

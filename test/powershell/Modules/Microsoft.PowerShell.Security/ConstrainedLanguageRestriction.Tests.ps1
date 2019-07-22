@@ -878,6 +878,26 @@ try
         }
     }
 
+    Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
+
+            try 
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = 1..1 | ForEach-Object -Parallel -ScriptBlock { $ExecutionContext.SessionState.LanguageMode }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $results | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
     Describe "Dot sourced script block functions from trusted script files should not run FullLanguage in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {

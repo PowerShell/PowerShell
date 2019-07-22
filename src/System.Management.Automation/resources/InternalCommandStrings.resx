@@ -168,4 +168,10 @@
   <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
     <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
   </data>
+  <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
+    <value>A ForEach-Object -Parallel using variable cannot be a script block. Script blocks have undefined behavior when used in parallel.</value>
+  </data>
+  <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
+    <value>A ForEach-Object -Parallel piped input object cannot be a script block. Script blocks have undefined behavior when used in parallel.</value>
+  </data>
 </root>
