@@ -4402,7 +4402,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
+            s_tracer.WriteLine("result = {0}; childName = {1}", result.ToString(), childName);
             return result;
         }
 

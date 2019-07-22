@@ -980,7 +980,7 @@ namespace System.Management.Automation
                     {
                         ParameterBinderBase.bindingTracer.WriteLine(
                             "{0} valid parameter sets, using the DEFAULT PARAMETER SET: [{0}]",
-                            this.BindableParameters.ParameterSetCount,
+                            this.BindableParameters.ParameterSetCount.ToString(),
                             _commandMetadata.DefaultParameterSetName);
 
                         _currentParameterSetFlag =
