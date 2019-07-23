@@ -1339,8 +1339,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool IsProviderQualifiedPath(string path)
         {
-            string providerId = null;
-            return IsProviderQualifiedPath(path, out providerId);
+            return IsProviderQualifiedPath(path, out _);
         }
 
         /// <summary>
