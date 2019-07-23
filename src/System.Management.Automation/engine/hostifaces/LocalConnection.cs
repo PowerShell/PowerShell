@@ -146,35 +146,45 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (value != _createThreadOptions)
+                    if (value == _createThreadOptions)
                     {
-                        if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
-                        {
-                            bool allowed = false;
-
-                            if (Platform.IsNanoServer || Platform.IsIoT)
-                            {
-                                allowed = value == PSThreadOptions.ReuseThread;
-                            }
-                            else
-                            {
-                                // if the runspace is already opened we only allow changing the options if
-                                // the apartment state is MTA and the new value is ReuseThread
-                                allowed = (this.ApartmentState == ApartmentState.MTA || this.ApartmentState == ApartmentState.Unknown) // Unknown is the same as MTA
-                                    &&
-                                    value == PSThreadOptions.ReuseThread;
-                            }
-
-                            if (!allowed)
-                            {
-                                throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
-                            }
-                        }
-
-                        _createThreadOptions = value;
+                        return;
                     }
+
+                    if (IsInvalidThreadOptionsConfiguration(value))
+                    {
+                        throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
+                    }
+
+                    _createThreadOptions = value;
                 }
             }
+        }
+
+        private bool IsInvalidThreadOptionsConfiguration(PSThreadOptions options)
+        {
+            if (this.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
+            {
+                return true;
+            }
+
+            // If the runspace is already opened, we only allow changing options when:
+            //  - The new value is ReuseThread, and
+            //  - The apartment state is MTA
+
+            if (options != PSThreadOptions.ReuseThread)
+            {
+                return false;
+            }
+
+            if (!Platform.IsWindowsDesktop)
+            {
+                // NanoServer and IoT are always MTA
+                return true;
+            }
+
+            return this.ApartmentState == ApartmentState.MTA
+                || this.ApartmentState == ApartmentState.Unknown; // Unknown is the same as MTA
         }
 
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;

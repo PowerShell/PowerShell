@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -2043,7 +2044,7 @@ else
         /// ApartmentState of the Runspace created for the shell.
         /// </summary>
         [Parameter()]
-        public System.Threading.ApartmentState ThreadApartmentState
+        public ApartmentState ThreadApartmentState
         {
             get
             {
@@ -2052,13 +2053,13 @@ else
                     return threadAptState.Value;
                 }
 
-                return System.Threading.ApartmentState.Unknown;
+                return ApartmentState.Unknown;
             }
 
             set { threadAptState = value; }
         }
 
-        internal System.Threading.ApartmentState? threadAptState;
+        internal ApartmentState? threadAptState;
 
         /// <summary>
         /// ThreadOptions of the Runspace created for the shell.

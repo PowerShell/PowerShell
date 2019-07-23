@@ -1451,7 +1451,7 @@ namespace Microsoft.PowerShell
 
                 if (staMode)
                 {
-                    // don't recycle the Runspace in STA mode
+                    // don't continue the session in STA mode
                     ShouldEndSession = true;
                 }
             }
@@ -1610,7 +1610,7 @@ namespace Microsoft.PowerShell
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-            if (staMode && !Platform.IsNanoServer)
+            if (staMode && Platform.IsWindowsDesktop)
             {
                 runspace.ApartmentState = ApartmentState.STA;
             }
