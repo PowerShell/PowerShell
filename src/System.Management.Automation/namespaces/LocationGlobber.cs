@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsProviderQualifiedPath(string path)
+        internal static bool IsProviderQualifiedPath(ReadOnlySpan<char> path)
         {
             return IsProviderQualifiedPath(path, out _);
         }
@@ -1359,14 +1359,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsProviderQualifiedPath(string path, out ReadOnlySpan<char> providerId)
+        internal static bool IsProviderQualifiedPath(ReadOnlySpan<char> path, out ReadOnlySpan<char> providerId)
         {
-            // Verify parameters
-            if (path == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
             providerId = ReadOnlySpan<char>.Empty;
             bool result = false;
 
@@ -1406,7 +1400,7 @@ namespace System.Management.Automation
                     result = true;
 
                     // Get the provider ID
-                    providerId = path.AsSpan().Slice(0, index);
+                    providerId = path.Slice(0, index);
 #if DEBUG
                     s_tracer.WriteLine("providerId = {0}", providerId.ToString());
 #endif
