@@ -174,4 +174,7 @@
   <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
     <value>A ForEach-Object -Parallel piped input object cannot be a script block. Script blocks have undefined behavior when used in parallel.</value>
   </data>
+  <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
+    <value>The 'TimeoutSeconds' parameter cannot be used with the 'AsJob' parameter.</value>
+  </data>
 </root>

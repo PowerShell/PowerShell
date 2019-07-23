@@ -383,6 +383,7 @@ namespace Microsoft.PowerShell.Commands
         private PSTaskDataStreamWriter _taskDataStreamWriter;
         private Dictionary<string, object> _usingValuesMap;
         private System.Threading.Timer _taskTimer;
+        private PSTaskJob _taskJob;
 
         private void InitParallelParameterSet()
         {
@@ -399,22 +400,34 @@ namespace Microsoft.PowerShell.Commands
                             new PSArgumentException(InternalCommandStrings.ParallelUsingVariableCannotBeScriptBlock),
                             "ParallelUsingVariableCannotBeScriptBlock",
                             ErrorCategory.InvalidType,
-                            this
-                        )
+                            this)
                     );
                 }
             }
 
             if (AsJob)
             {
-                // TODO: Create parent job
-                // _parentThreadJob (TaskJob?) = ...
-                // _taskPool = new PSTaskPool(ThrottleLimit, dataStreamWriter);
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(TimeoutSeconds)))
+                {
+                    this.ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelCannotUseTimeoutWithJob),
+                            "ParallelCannotUseTimeoutWithJob",
+                            ErrorCategory.InvalidOperation,
+                            this)
+                    );
+                }
+
+                _taskJob = new PSTaskJob(ThrottleLimit);
             }
             else
             {
                 _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
-                _taskPool = new PSTaskPool(ThrottleLimit, _taskDataStreamWriter);
+                _taskPool = new PSTaskPool(ThrottleLimit);
+                _taskPool.PoolComplete += (sender, args) =>
+                {
+                    _taskDataStreamWriter.Close();
+                };
                 if (TimeoutSeconds != 0)
                 {
                     _taskTimer = new System.Threading.Timer(
@@ -436,28 +449,31 @@ namespace Microsoft.PowerShell.Commands
                             new PSArgumentException(InternalCommandStrings.ParallelPipedInputObjectCannotBeScriptBlock),
                             "ParallelPipedInputObjectCannotBeScriptBlock",
                             ErrorCategory.InvalidType,
-                            this
-                        )
+                            this)
                 );
 
                 return;
             }
 
-            var task = new System.Management.Automation.PSTasks.PSTask(
-                ScriptBlock,
-                _usingValuesMap,
-                InputObject,
-                _taskDataStreamWriter,
-                this);
-
             if (AsJob)
             {
-                // TODO: Create child job and add to parent
+                var taskChildJob = new PSTaskChildJob(
+                    ScriptBlock,
+                    _usingValuesMap,
+                    InputObject);
+
+                _taskJob.AddJob(taskChildJob);
             }
             else
             {
                 // Write any streaming data
                 _taskDataStreamWriter.WriteImmediate();
+
+                var task = new System.Management.Automation.PSTasks.PSTask(
+                     ScriptBlock,
+                     _usingValuesMap,
+                     InputObject,
+                     _taskDataStreamWriter);
 
                 // Add task to task pool.
                 // Block if the pool is full and wait until task can be added.
@@ -469,7 +485,9 @@ namespace Microsoft.PowerShell.Commands
         {
             if (AsJob)
             {
-                // TODO: Write parent job to output
+                _taskJob.Start();
+                JobRepository.Add(_taskJob);
+                WriteObject(_taskJob);
             }
             else
             {

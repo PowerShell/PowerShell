@@ -25,7 +25,7 @@ namespace System.Management.Automation.PSTasks
         private readonly Dictionary<string, object> _usingValuesMap;
         private readonly object _dollarUnderbar;
         private readonly PSTaskDataStreamWriter _dataStreamWriter;
-        private readonly Job2 _job;
+        private readonly Job _job;
         private readonly int _id;
 
         private Runspace _runspace;
@@ -91,8 +91,7 @@ namespace System.Management.Automation.PSTasks
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
-            PSTaskDataStreamWriter dataStreamWriter,
-            PSCmdlet psCmdlet) : this()
+            PSTaskDataStreamWriter dataStreamWriter) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
@@ -107,8 +106,7 @@ namespace System.Management.Automation.PSTasks
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
-            Job2 job,
-            PSCmdlet psCmdlet) : this()
+            Job job) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
@@ -184,7 +182,10 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public void SignalStop()
         {
-            _powershell.BeginStop(null, null);
+            if (_powershell != null)
+            {
+                _powershell.BeginStop(null, null);
+            }
         }
 
         #endregion
@@ -498,29 +499,6 @@ namespace System.Management.Automation.PSTasks
 
     #region PSTaskPool
 
-    #region PSTaskCompleteEventArgs
-
-    /// <summary>
-    /// Event arguments for TaskComplete event
-    /// </summary>
-    internal sealed class PSTaskCompleteEventArgs : EventArgs
-    {
-        public PSTask Task
-        {
-            get;
-            private set;
-        }
-
-        private PSTaskCompleteEventArgs() { }
-
-        public PSTaskCompleteEventArgs(PSTask task)
-        {
-            Task = task;
-        }
-    }
-
-    #endregion
-
     /// <summary>
     /// Pool for running PSTasks, with limit of total number of running tasks at a time.
     /// </summary>
@@ -533,7 +511,6 @@ namespace System.Management.Automation.PSTasks
         private readonly object _syncObject;
         private readonly ManualResetEvent _addAvailable;
         private readonly ManualResetEvent _stopAll;
-        private readonly PSTaskDataStreamWriter _dataStreamWriter;
         private readonly Dictionary<int, PSTask> _taskPool;
 
         #endregion
@@ -545,10 +522,9 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Constructor
         /// </summary>
-        public PSTaskPool(int size, PSTaskDataStreamWriter dataStreamWriter)
+        public PSTaskPool(int size)
         {
             _sizeLimit = size;
-            _dataStreamWriter = dataStreamWriter;
             _isOpen = true;
             _syncObject = new object();
             _addAvailable = new ManualResetEvent(true);
@@ -561,9 +537,9 @@ namespace System.Management.Automation.PSTasks
         #region Events
 
         /// <summary>
-        /// Event that fires when a running task completes
+        /// Event that fires when pool is closed and drained of all tasks
         /// </summary>
-        public event EventHandler<PSTaskCompleteEventArgs> TaskComplete;
+        public event EventHandler<EventArgs> PoolComplete;
 
         #endregion
 
@@ -639,6 +615,14 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
+        /// Add child job task to task pool
+        /// </summary>
+        public bool Add(PSTaskChildJob childJob)
+        {
+            return Add(childJob.Task);
+        }
+
+        /// <summary>
         /// Signals all running tasks to stop and closes pool for any new tasks
         /// </summary>
         public void StopAll()
@@ -690,17 +674,6 @@ namespace System.Management.Automation.PSTasks
                         }
                     }
                     task.StateChanged -= (sender, args) => HandleTaskStateChanged(sender, args);
-                    try
-                    {
-                        TaskComplete.SafeInvoke(
-                            this,
-                            new PSTaskCompleteEventArgs(task)
-                        );
-                    }
-                    catch
-                    {
-                        Dbg.Assert(false, "Exceptions should not be thrown on event thread");
-                    }
                     task.Dispose();
                     CheckForComplete();
                     break;
@@ -713,8 +686,293 @@ namespace System.Management.Automation.PSTasks
             {
                 if (!_isOpen && _taskPool.Count == 0)
                 {
-                    _dataStreamWriter.Close();
+                    try
+                    {
+                        PoolComplete.SafeInvoke(
+                            this, 
+                            new EventArgs()
+                        );
+                    }
+                    catch 
+                    {
+                        Dbg.Assert(false, "Exceptions should not be thrown on event thread");
+                    }
                 }
+            }
+        }
+
+        #endregion
+    }
+
+    #endregion
+
+    #region PSTaskJobs
+
+    /// <summary>
+    /// Job for running ForEach-Object parallel task child jobs asynchronously
+    /// </summary>
+    internal sealed class PSTaskJob : Job
+    {
+        #region Members
+
+        private readonly PSTaskPool _taskPool;
+        private bool _isOpen;
+        private bool _stopSignaled;
+
+        #endregion
+
+        #region Constructor
+
+        private PSTaskJob() { }
+
+        public PSTaskJob(int throttleLimit) : base(string.Empty, string.Empty)
+        {
+            _taskPool = new PSTaskPool(throttleLimit);
+            _isOpen = true;
+            PSJobTypeName = nameof(PSTaskJob);
+
+            _taskPool.PoolComplete += (sender, args) =>
+            {
+                try
+                {
+                    if (_stopSignaled)
+                    {
+                        SetJobState(JobState.Stopped, new PipelineStoppedException());
+                        return;
+                    }
+
+                    // Final state will be 'Complete', only if all child jobs completed successfully.
+                    JobState finalState = JobState.Completed;
+                    foreach (var childJob in ChildJobs)
+                    {
+                        if (childJob.JobStateInfo.State != JobState.Completed)
+                        {
+                            finalState = JobState.Failed;
+                            break;
+                        }
+                    }
+                    SetJobState(finalState);
+                }
+                catch (ObjectDisposedException) { }
+            };
+        }
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Location
+        /// </summary>
+        public override string Location
+        {
+            get { return "PowerShell"; }
+        }
+
+        /// <summary>
+        /// HasMoreData
+        /// </summary>
+        public override bool HasMoreData
+        {
+            get 
+            { 
+                foreach (var childJob in ChildJobs)
+                {
+                    if (childJob.HasMoreData)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// StatusMessage
+        /// </summary>
+        public override string StatusMessage
+        {
+            get { return string.Empty; }
+        }
+
+        /// <summary>
+        /// StopJob
+        /// </summary>
+        public override void StopJob()
+        {
+            _stopSignaled = true;
+            SetJobState(JobState.Stopping);
+            
+            _taskPool.StopAll();
+            SetJobState(JobState.Stopped);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _taskPool.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Add a child job to the collection.
+        /// </summary>
+        public bool AddJob(PSTaskChildJob childJob)
+        {
+            if (! _isOpen)
+            {
+                return false;
+            }
+
+            ChildJobs.Add(childJob);
+            return true;
+        }
+
+        /// <summary>
+        /// Closes this parent job to adding more child jobs and starts
+        /// the child jobs running with the provided throttle limit.
+        /// </summary>
+        public void Start()
+        {
+            _isOpen = false;
+            SetJobState(JobState.Running);
+
+            // Submit jobs to the task pool, blocking when throttle limit is reached.
+            // This thread will end once all jobs reach a finished state by either running
+            // to completion, terminating with error, or stopped.
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                (state) => 
+                {
+                    foreach (var childJob in ChildJobs)
+                    {
+                        _taskPool.Add((PSTaskChildJob) childJob);
+                    }
+                    _taskPool.Close();
+                }
+            );
+        }
+
+        #endregion
+    }
+
+    
+    /// <summary>
+    /// Task child job that wraps asynchronously running tasks
+    /// </summary>
+    internal sealed class PSTaskChildJob : Job
+    {
+        #region Members
+
+        private readonly PSTask _task;
+
+        #endregion
+
+        #region Constructor
+
+        private PSTaskChildJob() { }
+
+        public PSTaskChildJob(
+            ScriptBlock scriptBlock,
+            Dictionary<string, object> usingValuesMap,
+            object dollarUnderbar)
+            : base(scriptBlock.ToString(), string.Empty)
+
+        {
+            PSJobTypeName = nameof(PSTaskChildJob);
+            _task = new PSTask(scriptBlock, usingValuesMap, dollarUnderbar, this);
+            _task.StateChanged += (sender, args) => HandleTaskStateChange(sender, args);
+        }
+
+        #endregion
+
+        #region Properties
+
+        internal PSTask Task
+        {
+            get { return _task; }
+        }
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Location
+        /// </summary>
+        public override string Location
+        {
+            get { return "PowerShell"; }
+        }
+
+        /// <summary>
+        /// HasMoreData
+        /// </summary>
+        public override bool HasMoreData
+        {
+            get 
+            { 
+                return (this.Output.Count > 0 ||
+                        this.Error.Count > 0 ||
+                        this.Progress.Count > 0 ||
+                        this.Verbose.Count > 0 ||
+                        this.Debug.Count > 0 ||
+                        this.Warning.Count > 0 ||
+                        this.Information.Count > 0);
+            }
+        }
+
+        /// <summary>
+        /// StatusMessage
+        /// </summary>
+        public override string StatusMessage
+        {
+            get { return string.Empty; }
+        }
+
+        /// <summary>
+        /// StopJob
+        /// </summary>
+        public override void StopJob()
+        {
+            _task.SignalStop();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void HandleTaskStateChange(object sender, PSInvocationStateChangedEventArgs args)
+        {
+            var stateInfo = args.InvocationStateInfo;
+
+            switch (stateInfo.State)
+            {
+                case PSInvocationState.Running:
+                    SetJobState(JobState.Running);
+                    break;
+
+                case PSInvocationState.Stopped:
+                    SetJobState(JobState.Stopped, stateInfo.Reason);
+                    break;
+
+                case PSInvocationState.Failed:
+                    SetJobState(JobState.Failed, stateInfo.Reason);
+                    break;
+
+                case PSInvocationState.Completed:
+                    SetJobState(JobState.Completed, stateInfo.Reason);
+                    break;
             }
         }
 
