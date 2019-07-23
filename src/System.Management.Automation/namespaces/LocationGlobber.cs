@@ -4516,16 +4516,10 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (IsProviderQualifiedPath(path))
+            if (IsProviderQualifiedPath(path, out string providerId))
             {
                 // Strip off the provider portion of the path
-
-                int index = path.IndexOf(StringLiterals.ProviderPathSeparator, StringComparison.Ordinal);
-
-                if (index != -1)
-                {
-                    path = path.Substring(index + StringLiterals.ProviderPathSeparator.Length);
-                }
+                path = path.Substring(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
             }
 
             if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
