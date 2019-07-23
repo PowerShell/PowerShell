@@ -123,7 +123,6 @@ Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
     }
         
     Context 'Managing breakpoints in a remote runspace' {
-
         It 'Can set breakpoints' {
             Set-PSBreakpoint -Command Write-Verbose -Action { break } -Runspace $jobRunspace | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
             Set-PSBreakpoint -Variable DebugPreference -Mode ReadWrite -Action { break } -Runspace $jobRunspace | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
@@ -135,7 +134,11 @@ Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
             }
         }
         It 'Breakpoints are triggered by the remote debugger' {
-            Start-Sleep -Seconds 1 # Give the job a second to hit one of the breakpoints if it hasn't already
+            $startTime = [DateTime]::UtcNow
+            $maxTimeToWait = [TimeSpan]'00:00:20'
+            while ($job.State -ne 'AtBreakpoint' -and ([DateTime]::UtcNow - $startTime) -lt $maxTimeToWait) {
+                Start-Sleep -Milliseconds 100 # Give the job a bit of time to hit a breakpoint
+            }
             $job.State | Should -Be 'AtBreakpoint'
         }
         It 'Can disable breakpoints in a pipeline' {
