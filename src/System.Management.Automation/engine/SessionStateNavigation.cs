@@ -172,9 +172,9 @@ namespace System.Management.Automation
 
                 bool isProviderQualified = false;
                 bool isDriveQualified = false;
-                string pathNoQualifier = RemoveQualifier(path, provider, Globber, out ReadOnlySpan<char> qualifier, out isProviderQualified, out isDriveQualified);
+                ReadOnlySpan<char> pathNoQualifier = RemoveQualifier(path, provider, Globber, out ReadOnlySpan<char> qualifier, out isProviderQualified, out isDriveQualified);
 
-                string result = GetParentPath(provider, pathNoQualifier, root, context);
+                string result = GetParentPath(provider, pathNoQualifier.ToString(), root, context);
 
                 if (!qualifier.IsEmpty && !string.IsNullOrEmpty(result))
                 {
@@ -241,13 +241,13 @@ namespace System.Management.Automation
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        private static string RemoveQualifier(string path, ProviderInfo provider, LocationGlobber globber, out ReadOnlySpan<char> qualifier, out bool isProviderQualified, out bool isDriveQualified)
+        private static ReadOnlySpan<char> RemoveQualifier(ReadOnlySpan<char> path, ProviderInfo provider, LocationGlobber globber, out ReadOnlySpan<char> qualifier, out bool isProviderQualified, out bool isDriveQualified)
         {
             Dbg.Diagnostics.Assert(
                 path != null,
                 "Path should be verified by the caller");
 
-            string result = path;
+            ReadOnlySpan<char> result = path;
             qualifier = null;
             isProviderQualified = false;
             isDriveQualified = false;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
                 isProviderQualified = true;
 
                 // remove the qualifier
-                result = path.Substring(qualifier.Length + 2);
+                result = path.Slice(qualifier.Length + 2);
             }
             else
             {
@@ -270,11 +270,11 @@ namespace System.Management.Automation
                     // Porting note: on non-windows there is no colon for qualified paths
                     if (provider.VolumeSeparatedByColon)
                     {
-                        result = path.Substring(tempQualifier.Length + 1);
+                        result = path.Slice(tempQualifier.Length + 1);
                     }
                     else
                     {
-                        result = path.Substring(tempQualifier.Length);
+                        result = path.Slice(tempQualifier.Length);
                     }
                 }
             }
