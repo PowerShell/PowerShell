@@ -151,9 +151,12 @@ namespace System.Management.Automation.Runspaces
                         return;
                     }
 
-                    if (IsInvalidThreadOptionsConfiguration(value))
+                    if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
                     {
-                        throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
+                        if (IsInvalidThreadOptionsConfiguration(value))
+                        {
+                            throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
+                        }
                     }
 
                     _createThreadOptions = value;
@@ -163,11 +166,6 @@ namespace System.Management.Automation.Runspaces
 
         private bool IsInvalidThreadOptionsConfiguration(PSThreadOptions options)
         {
-            if (this.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
-            {
-                return true;
-            }
-
             // If the runspace is already opened, we only allow changing options when:
             //  - The new value is ReuseThread, and
             //  - The apartment state is MTA
