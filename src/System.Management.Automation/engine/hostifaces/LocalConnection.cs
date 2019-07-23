@@ -172,7 +172,7 @@ namespace System.Management.Automation.Runspaces
             //  - The new value is ReuseThread, and
             //  - The apartment state is MTA
 
-            if (options != PSThreadOptions.ReuseThread)
+            if (options == PSThreadOptions.ReuseThread)
             {
                 return false;
             }
