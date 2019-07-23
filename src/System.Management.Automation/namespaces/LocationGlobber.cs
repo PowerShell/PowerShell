@@ -4565,21 +4565,13 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = _sessionState.Drive.Current.Provider;
 
-                if (IsProviderQualifiedPath(path))
+                if (IsProviderQualifiedPath(path, out ReadOnlySpan<char> providerId))
                 {
-                    // Strip off the provider portion of the path
-
-                    int index = path.IndexOf(StringLiterals.ProviderPathSeparator, StringComparison.Ordinal);
-
-                    if (index != -1)
+                    if (!providerId.IsEmpty)
                     {
-                        // Since the provider was specified store it and remove it
-                        // from the path.
-
-                        string providerName = path.Substring(0, index);
-
-                        provider = _sessionState.Internal.GetSingleProvider(providerName);
-                        path = path.Substring(index + StringLiterals.ProviderPathSeparator.Length);
+                        // Since the provider was specified store it and remove it from the path.
+                        path = path.Substring(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
+                        provider = _sessionState.Internal.GetSingleProvider(providerId.ToString());
                     }
                 }
 
