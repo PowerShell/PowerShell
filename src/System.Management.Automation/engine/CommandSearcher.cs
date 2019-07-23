@@ -1389,12 +1389,8 @@ namespace System.Management.Automation
         /// True if the command name is either a provider-qualified or PowerShell drive-qualified
         /// path. False otherwise.
         /// </returns>
-        private static bool IsQualifiedPSPath(string commandName)
+        private static bool IsQualifiedPSPath(ReadOnlySpan<char> commandName)
         {
-            Dbg.Assert(
-                !string.IsNullOrEmpty(commandName),
-                "The caller should have verified the commandName");
-
             bool result =
                 LocationGlobber.IsAbsolutePath(commandName) ||
                 LocationGlobber.IsProviderQualifiedPath(commandName) ||
