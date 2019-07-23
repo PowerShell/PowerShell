@@ -4518,13 +4518,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsProviderDirectPath(string path)
+        internal static bool IsProviderDirectPath(ReadOnlySpan<char> path)
         {
-            if (path == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
             return path.StartsWith(StringLiterals.DefaultRemotePathPrefix, StringComparison.Ordinal) ||
                    path.StartsWith(StringLiterals.AlternateRemotePathPrefix, StringComparison.Ordinal);
         }
