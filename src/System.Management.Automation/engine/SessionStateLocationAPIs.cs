@@ -272,10 +272,7 @@ namespace System.Management.Automation
             PSDriveInfo previousWorkingDrive = CurrentDrive;
 
             // First check to see if the path is a home path
-            if (LocationGlobber.IsHomePath(path))
-            {
-                path = Globber.GetHomeRelativePath(path);
-            }
+            path = Globber.GetHomeRelativePath(path);
 
             if (LocationGlobber.IsProviderDirectPath(path))
             {

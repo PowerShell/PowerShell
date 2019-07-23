@@ -189,17 +189,12 @@ namespace System.Management.Automation
                 TraceFilters(context);
 
                 // First check to see if the path starts with a ~ (home)
-
-                if (IsHomePath(path))
+                using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
                 {
-                    using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
-                    {
-                        path = GetHomeRelativePath(path);
-                    }
+                    path = GetHomeRelativePath(path);
                 }
 
                 // Now determine how to parse the path
-
                 bool isProviderDirectPath = IsProviderDirectPath(path);
                 bool isProviderQualifiedPath = IsProviderQualifiedPath(path);
                 if (isProviderDirectPath || isProviderQualifiedPath)
@@ -1230,12 +1225,9 @@ namespace System.Management.Automation
             drive = null;
 
             // First check to see if the path starts with a ~ (home)
-            if (IsHomePath(path))
+            using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
             {
-                using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
-                {
-                    path = GetHomeRelativePath(path);
-                }
+                path = GetHomeRelativePath(path);
             }
 
             // Now check to see if it is a provider-direct path (starts with // or \\)
@@ -4578,6 +4570,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates the path for the home location for a provider when given a
         /// path starting with ~ or "provider:~" followed by a relative path.
+        /// Otherwise return unchanged argument.
         /// </summary>
         /// <param name="path">
         /// The path to generate into a home path.
