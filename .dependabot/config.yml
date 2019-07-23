@@ -75,13 +75,6 @@ update_configs:
       - "CL-BuildPackaging"
     target_branch: "release/v6.2.2"
 
-  - package_manager: "javascript"
-    directory: "/test/common/markdown"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.2"
-
 # scans for vNext servicing
   - package_manager: "dotnet:nuget"
     directory: "/"
