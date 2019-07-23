@@ -2666,38 +2666,75 @@ namespace Microsoft.PowerShell
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
         //
-        // This code only handles the most common formatting sequences, which are
-        // all of the pattern:
-        //     ESC '[' digits+ (';' digits)* 'm'
+        // This code only handles the following formatting sequences, corresponding to
+        // the patterns:
+        //     CSI params? 'm'               // SGR: Select Graphics Rendition
+        //     CSI params? '#' [{}pq]        // XTPUSHSGR ('{'), XTPOPSGR ('}'), or their aliases ('p' and 'q')
         //
-        // There are many other VT100 escape sequences, but this simple pattern
-        // is sufficient for our formatting system.  We won't handle cursor movements
-        // or other attempts at animation.
+        // Where:
+        //     CSI:    ESC '[' OR \x009b     // (C0 or C1 CSI)
+        //     params: digit+ (';' params)?
         //
-        // Note that offset is adjusted past the escape sequence.
+        // There are many other VT100 escape sequences, but these text attribute sequences
+        // (color-related, underline, etc.) are sufficient for our formatting system.  We
+        // won't handle cursor movements or other attempts at animation.
+        //
+        // Note that offset is adjusted past the escape sequence, or at least one
+        // character forward if there is no escape sequence at the specified position.
         internal static int ControlSequenceLength(string str, ref int offset)
         {
             var start = offset;
-            if (str[offset++] != (char)0x1B)
-                return 0;
 
-            if (offset >= str.Length || str[offset] != '[')
-                return 0;
-
-            offset += 1;
-            while (offset < str.Length)
+            // First, check for the CSI:
+            if ((str[offset] == (char) 0x1b) && (str.Length > (offset + 1)) && (str[offset + 1] == '[')) // C0 CSI
             {
-                var c = str[offset++];
-                if (c == 'm')
-                    break;
-
-                if (char.IsDigit(c) || c == ';')
-                    continue;
-
+                offset += 2;
+            }
+            else if (str[offset] == (char) 0x9b) // C1 CSI
+            {
+                offset += 1;
+            }
+            else
+            {
+                // We need to skip over at least the current character.
+                offset += 1;
                 return 0;
             }
 
-            return offset - start;
+            if (offset >= str.Length)
+                return 0;
+
+            // Next, handle possible numeric arguments:
+            char c;
+            do {
+                c = str[offset++];
+            } while ((offset < str.Length) && (char.IsDigit(c) || c == ';'));
+
+            // Finally, handle the command characters for the specific sequences we
+            // handle:
+            if (c == 'm')
+            {
+                // SGR: Select Graphics Rendition
+                return offset - start;
+            }
+            else if (c == '#')
+            {
+                // Maybe XTPUSHSGR or XTPOPSGR, but we need to read another char. Offset
+                // is already positioned on the next char (or past the end).
+                if (offset >= str.Length)
+                    return 0;
+
+                c = str[offset++];
+                if ((c == '{') || // XTPUSHSGR
+                    (c == '}') || // XTPOPSGR
+                    (c == 'p') || // alias for XTPUSHSGR
+                    (c == 'q'))   // alias for XTPOPSGR
+                {
+                    return offset - start;
+                }
+            }
+
+            return 0;
         }
 
         /// <summary>
