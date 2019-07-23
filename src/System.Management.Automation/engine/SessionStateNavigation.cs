@@ -172,7 +172,7 @@ namespace System.Management.Automation
 
                 bool isProviderQualified = false;
                 bool isDriveQualified = false;
-                string pathNoQualifier = RemoveQualifier(path, provider, out ReadOnlySpan<char> qualifier, out isProviderQualified, out isDriveQualified);
+                string pathNoQualifier = RemoveQualifier(path, provider, Globber, out ReadOnlySpan<char> qualifier, out isProviderQualified, out isDriveQualified);
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
@@ -189,7 +189,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string AddQualifier(ReadOnlySpan<char> path, ProviderInfo provider, ReadOnlySpan<char> qualifier, bool isProviderQualified, bool isDriveQualified)
+        private static string AddQualifier(ReadOnlySpan<char> path, ProviderInfo provider, ReadOnlySpan<char> qualifier, bool isProviderQualified, bool isDriveQualified)
         {
             string result;
 
@@ -226,6 +226,9 @@ namespace System.Management.Automation
         /// <param name="provider">
         /// The provider that should handle the RemoveQualifier call.
         /// </param>
+        /// <param name="globber">
+        /// The globber to check that the path is absolute.
+        /// </param>
         /// <param name="qualifier">
         /// Returns the qualifier of the path.
         /// </param>
@@ -238,7 +241,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        private string RemoveQualifier(string path, ProviderInfo provider, out ReadOnlySpan<char> qualifier, out bool isProviderQualified, out bool isDriveQualified)
+        private static string RemoveQualifier(string path, ProviderInfo provider, LocationGlobber globber, out ReadOnlySpan<char> qualifier, out bool isProviderQualified, out bool isDriveQualified)
         {
             Dbg.Diagnostics.Assert(
                 path != null,
@@ -258,7 +261,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (Globber.IsAbsolutePath(path, out string tempQualifier))
+                if (globber.IsAbsolutePath(path, out string tempQualifier))
                 {
                     isDriveQualified = true;
                     qualifier = tempQualifier.AsSpan();
