@@ -2686,12 +2686,14 @@ namespace Microsoft.PowerShell
             var start = offset;
 
             // First, check for the CSI:
-            if ((str[offset] == (char) 0x1b) && (str.Length > (offset + 1)) && (str[offset + 1] == '[')) // C0 CSI
+            if ((str[offset] == (char)0x1b) && (str.Length > (offset + 1)) && (str[offset + 1] == '['))
             {
+                // C0 CSI
                 offset += 2;
             }
-            else if (str[offset] == (char) 0x9b) // C1 CSI
+            else if (str[offset] == (char)0x9b)
             {
+                // C1 CSI
                 offset += 1;
             }
             else
@@ -2702,13 +2704,17 @@ namespace Microsoft.PowerShell
             }
 
             if (offset >= str.Length)
+            {
                 return 0;
+            }
 
             // Next, handle possible numeric arguments:
             char c;
-            do {
+            do
+            {
                 c = str[offset++];
-            } while ((offset < str.Length) && (char.IsDigit(c) || c == ';'));
+            }
+            while ((offset < str.Length) && (char.IsDigit(c) || c == ';'));
 
             // Finally, handle the command characters for the specific sequences we
             // handle:
@@ -2722,13 +2728,19 @@ namespace Microsoft.PowerShell
                 // Maybe XTPUSHSGR or XTPOPSGR, but we need to read another char. Offset
                 // is already positioned on the next char (or past the end).
                 if (offset >= str.Length)
+                {
                     return 0;
+                }
 
+                // '{' : XTPUSHSGR
+                // '}' : XTPOPSGR
+                // 'p' : alias for XTPUSHSGR
+                // 'q' : alias for XTPOPSGR
                 c = str[offset++];
-                if ((c == '{') || // XTPUSHSGR
-                    (c == '}') || // XTPOPSGR
-                    (c == 'p') || // alias for XTPUSHSGR
-                    (c == 'q'))   // alias for XTPOPSGR
+                if ((c == '{') ||
+                    (c == '}') ||
+                    (c == 'p') ||
+                    (c == 'q'))
                 {
                     return offset - start;
                 }
