@@ -254,17 +254,13 @@ namespace System.Management.Automation
             isProviderQualified = false;
             isDriveQualified = false;
 
-            if (LocationGlobber.IsProviderQualifiedPath(path, out qualifier))
+            if (LocationGlobber.IsProviderQualifiedPath(path, out ReadOnlySpan<char> tempQualifier))
             {
                 isProviderQualified = true;
 
-                int index = path.IndexOf("::", StringComparison.Ordinal);
-
-                if (index != -1)
-                {
-                    // remove the qualifier
-                    result = path.Substring(index + 2);
-                }
+                // remove the qualifier
+                result = path.Substring(tempQualifier.Length + 2);
+                qualifier = tempQualifier.ToString();
             }
             else
             {

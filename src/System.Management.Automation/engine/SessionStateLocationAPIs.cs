@@ -243,7 +243,6 @@ namespace System.Management.Automation
             string originalPath = path;
             string driveName = null;
             ProviderInfo provider = null;
-            string providerId = null;
 
             switch (originalPath)
             {
@@ -282,9 +281,9 @@ namespace System.Management.Automation
                 provider = CurrentLocation.Provider;
                 CurrentDrive = provider.HiddenDrive;
             }
-            else if (LocationGlobber.IsProviderQualifiedPath(path, out providerId))
+            else if (LocationGlobber.IsProviderQualifiedPath(path, out ReadOnlySpan<char> providerId))
             {
-                provider = GetSingleProvider(providerId);
+                provider = GetSingleProvider(providerId.ToString());
                 CurrentDrive = provider.HiddenDrive;
             }
             else
@@ -384,13 +383,13 @@ namespace System.Management.Automation
                 string currentPath = path;
                 try
                 {
-                    string providerName = null;
-                    currentPathisProviderQualifiedPath = LocationGlobber.IsProviderQualifiedPath(resolvedPath.Path, out providerName);
+                    currentPathisProviderQualifiedPath = LocationGlobber.IsProviderQualifiedPath(resolvedPath.Path, out ReadOnlySpan<char> tempProviderName);
                     if (currentPathisProviderQualifiedPath)
                     {
                         // The path should be the provider-qualified path without the provider ID
                         // or ::
                         string providerInternalPath = LocationGlobber.RemoveProviderQualifier(resolvedPath.Path);
+                        string providerName = tempProviderName.ToString();
 
                         try
                         {
