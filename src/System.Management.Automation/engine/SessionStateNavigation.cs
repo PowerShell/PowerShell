@@ -172,12 +172,11 @@ namespace System.Management.Automation
 
                 bool isProviderQualified = false;
                 bool isDriveQualified = false;
-                string qualifier = null;
-                string pathNoQualifier = RemoveQualifier(path, provider, out qualifier, out isProviderQualified, out isDriveQualified);
+                string pathNoQualifier = RemoveQualifier(path, provider, out ReadOnlySpan<char> qualifier, out isProviderQualified, out isDriveQualified);
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
-                if (!string.IsNullOrEmpty(qualifier) && !string.IsNullOrEmpty(result))
+                if (!qualifier.IsEmpty && !string.IsNullOrEmpty(result))
                 {
                     result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
                 }
@@ -239,7 +238,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        private string RemoveQualifier(string path, ProviderInfo provider, out string qualifier, out bool isProviderQualified, out bool isDriveQualified)
+        private string RemoveQualifier(string path, ProviderInfo provider, out ReadOnlySpan<char> qualifier, out bool isProviderQualified, out bool isDriveQualified)
         {
             Dbg.Diagnostics.Assert(
                 path != null,
@@ -250,30 +249,29 @@ namespace System.Management.Automation
             isProviderQualified = false;
             isDriveQualified = false;
 
-            if (LocationGlobber.IsProviderQualifiedPath(path, out ReadOnlySpan<char> tempQualifier))
+            if (LocationGlobber.IsProviderQualifiedPath(path, out qualifier))
             {
                 isProviderQualified = true;
 
                 // remove the qualifier
-                result = path.Substring(tempQualifier.Length + 2);
-                qualifier = tempQualifier.ToString();
+                result = path.Substring(qualifier.Length + 2);
             }
             else
             {
-                if (Globber.IsAbsolutePath(path, out qualifier))
+                if (Globber.IsAbsolutePath(path, out string tempQualifier))
                 {
                     isDriveQualified = true;
+                    qualifier = tempQualifier.AsSpan();
 
                     // Remove the drive name and colon, or just the drive name
-
                     // Porting note: on non-windows there is no colon for qualified paths
                     if (provider.VolumeSeparatedByColon)
                     {
-                        result = path.Substring(qualifier.Length + 1);
+                        result = path.Substring(tempQualifier.Length + 1);
                     }
                     else
                     {
-                        result = path.Substring(qualifier.Length);
+                        result = path.Substring(tempQualifier.Length);
                     }
                 }
             }
