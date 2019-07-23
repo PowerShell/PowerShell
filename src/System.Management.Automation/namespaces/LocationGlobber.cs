@@ -1405,7 +1405,8 @@ namespace System.Management.Automation
                     s_tracer.WriteLine("providerId = {0}", providerId.ToString());
 #endif
                 }
-            } while (false);
+            }
+            while (false);
 
             return result;
         }
@@ -1419,7 +1420,7 @@ namespace System.Management.Automation
         /// alternate path separator) in order for PowerShell to be slash agnostic.
         /// </remarks>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <returns>
         /// Returns true if we're on a single root filesystem and the path is absolute.
@@ -1437,10 +1438,10 @@ namespace System.Management.Automation
         /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <returns>
-        /// true if the path is an absolute path, false otherwise.
+        /// True if the path is an absolute path, false otherwise.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -1515,14 +1516,14 @@ namespace System.Management.Automation
         /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <param name="driveName">
         /// If the path is absolute, this out parameter will be the
         /// drive name of the drive that is referenced.
         /// </param>
         /// <returns>
-        /// true if the path is an absolute path, false otherwise.
+        /// True if the path is an absolute path, false otherwise.
         /// </returns>
         internal bool IsAbsolutePath(ReadOnlySpan<char> path, out string driveName)
         {
