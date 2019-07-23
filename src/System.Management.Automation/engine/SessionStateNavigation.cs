@@ -190,34 +190,30 @@ namespace System.Management.Automation
             }
         }
 
-        private string AddQualifier(string path, ProviderInfo provider, string qualifier, bool isProviderQualified, bool isDriveQualified)
+        private string AddQualifier(ReadOnlySpan<char> path, ProviderInfo provider, ReadOnlySpan<char> qualifier, bool isProviderQualified, bool isDriveQualified)
         {
-            string result = path;
+            string result;
 
-            string formatString = "{1}";
             if (isProviderQualified)
             {
-                formatString = "{0}::{1}";
+                result = string.Concat(qualifier, "::", path);
             }
             else if (isDriveQualified)
             {
                 // Porting note: on non-windows filesystem paths, there should be no colon in the path
                 if (provider.VolumeSeparatedByColon)
                 {
-                    formatString = "{0}:{1}";
+                    result = string.Concat(qualifier, ":", path);
                 }
                 else
                 {
-                    formatString = "{0}{1}";
+                    result = string.Concat(qualifier, path);
                 }
             }
-
-            result =
-                string.Format(
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    formatString,
-                    qualifier,
-                    path);
+            else
+            {
+                result = path.ToString();
+            }
 
             return result;
         }
