@@ -1359,16 +1359,15 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsProviderQualifiedPath(string path, out string providerId)
+        internal static bool IsProviderQualifiedPath(string path, out ReadOnlySpan<char> providerId)
         {
             // Verify parameters
-
             if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            providerId = null;
+            providerId = ReadOnlySpan<char>.Empty;
             bool result = false;
 
             do
@@ -1376,7 +1375,6 @@ namespace System.Management.Automation
                 if (path.Length == 0)
                 {
                     // The current working directory is specified
-
                     result = false;
                     break;
                 }
@@ -1387,7 +1385,6 @@ namespace System.Management.Automation
                     // The .\ prefix basically escapes anything that follows
                     // so treat it as a relative path no matter what comes
                     // after it.
-
                     result = false;
                     break;
                 }
@@ -1397,7 +1394,6 @@ namespace System.Management.Automation
                 {
                     // If there is no : then the path is relative to the
                     // current working drive
-
                     result = false;
                     break;
                 }
@@ -1405,16 +1401,15 @@ namespace System.Management.Automation
                 // If the :: is the first two character in the path then we
                 // must assume that it is part of the path, and not
                 // delimiting the drive name.
-
                 if (index > 0)
                 {
                     result = true;
 
                     // Get the provider ID
-
-                    providerId = path.Substring(0, index);
-
-                    s_tracer.WriteLine("providerId = {0}", providerId);
+                    providerId = path.AsSpan().Slice(0, index);
+#if DEBUG
+                    s_tracer.WriteLine("providerId = {0}", providerId.ToString());
+#endif
                 }
             } while (false);
 
@@ -4515,7 +4510,7 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (IsProviderQualifiedPath(path, out string providerId))
+            if (IsProviderQualifiedPath(path, out ReadOnlySpan<char> providerId))
             {
                 // Strip off the provider portion of the path
                 path = path.Substring(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
