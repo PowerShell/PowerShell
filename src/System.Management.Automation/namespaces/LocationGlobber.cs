@@ -4485,16 +4485,19 @@ namespace System.Management.Automation
                 path = path.Slice(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
             }
 
-            if (path.Length != 0 && path[0] == StringLiterals.HomePath)
+            var length = path.Length;
+            if (length != 0 && path[0] == StringLiterals.HomePath)
             {
-                // Support the single "~"
-                if (path.Length == 1)
+                if (length == 1)
+                {
+                    // Support the single "~"
                     result = true;
-                // Support "~/" or "~\"
-                else if ((path.Length > 1) &&
-                        (path[1] == '\\' ||
-                         path[1] == '/'))
+                }
+                else if ((length > 1) && (path[1] == '\\' || path[1] == '/'))
+                {
+                    // Support "~/" or "~\"
                     result = true;
+                }
             }
 
             return result;
