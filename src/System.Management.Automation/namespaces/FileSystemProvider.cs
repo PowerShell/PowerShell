@@ -4928,7 +4928,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
-        private static bool IsAbsolutePath(string path)
+        private static bool IsAbsolutePath(ReadOnlySpan<char> path)
         {
             bool result = false;
 

@@ -1430,11 +1430,10 @@ namespace System.Management.Automation
         /// <returns>
         /// Returns true if we're on a single root filesystem and the path is absolute.
         /// </returns>
-        internal static bool IsSingleFileSystemAbsolutePath(string path)
+        internal static bool IsSingleFileSystemAbsolutePath(ReadOnlySpan<char> path)
         {
 #if UNIX
-            return path.StartsWith(StringLiterals.DefaultPathSeparator)
-                || path.StartsWith(StringLiterals.AlternatePathSeparator);
+            return path.Length != 0 && (path[0] == StringLiterals.DefaultPathSeparator || path[0] == StringLiterals.AlternatePathSeparator);
 #else
             return false;
 #endif
@@ -1452,15 +1451,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsAbsolutePath(string path)
+        internal static bool IsAbsolutePath(ReadOnlySpan<char> path)
         {
-            // Verify parameters
-
-            if (path == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
             bool result = false;
 
             do
@@ -1468,7 +1460,6 @@ namespace System.Management.Automation
                 if (path.Length == 0)
                 {
                     // The current working directory is specified
-
                     result = false;
                     break;
                 }
@@ -1480,7 +1471,6 @@ namespace System.Management.Automation
                     // The .\ prefix basically escapes anything that follows
                     // so treat it as a relative path no matter what comes
                     // after it.
-
                     result = false;
                     break;
                 }
@@ -1498,7 +1488,6 @@ namespace System.Management.Automation
                 {
                     // If there is no : then the path is relative to the
                     // current working drive
-
                     result = false;
                     break;
                 }
@@ -1506,15 +1495,14 @@ namespace System.Management.Automation
                 // If the : is the first character in the path then we
                 // must assume that it is part of the path, and not
                 // delimiting the drive name.
-
                 if (index > 0)
                 {
                     // see if there are any path separators before the colon which would mean the
                     // colon is part of a file or folder name and not a drive: ./foo:bar vs foo:bar
-                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index - 1);
+                    int separator = path.Slice(0, index - 1).IndexOf(StringLiterals.DefaultPathSeparator);
                     if (separator == -1)
                     {
-                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index - 1);
+                        separator = path.Slice(0, index - 1).IndexOf(StringLiterals.AlternatePathSeparator);
                     }
 
                     if (separator == -1 || index < separator)
@@ -1523,7 +1511,8 @@ namespace System.Management.Automation
                         result = true;
                     }
                 }
-            } while (false);
+            }
+            while (false);
 
             return result;
         }
@@ -1541,15 +1530,8 @@ namespace System.Management.Automation
         /// <returns>
         /// true if the path is an absolute path, false otherwise.
         /// </returns>
-        internal bool IsAbsolutePath(string path, out string driveName)
+        internal bool IsAbsolutePath(ReadOnlySpan<char> path, out string driveName)
         {
-            // Verify parameters
-
-            if (path == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
             bool result = false;
 
             if (_sessionState.Drive.Current != null)
@@ -1566,7 +1548,6 @@ namespace System.Management.Automation
                 if (path.Length == 0)
                 {
                     // The current working directory is specified
-
                     result = false;
                     break;
                 }
@@ -1577,7 +1558,6 @@ namespace System.Management.Automation
                     // The .\ prefix basically escapes anything that follows
                     // so treat it as a relative path no matter what comes
                     // after it.
-
                     result = false;
                     break;
                 }
@@ -1596,7 +1576,6 @@ namespace System.Management.Automation
                 {
                     // If there is no : then the path is relative to the
                     // current working drive
-
                     result = false;
                     break;
                 }
@@ -1604,15 +1583,15 @@ namespace System.Management.Automation
                 // If the : is the first character in the path then we
                 // must assume that it is part of the path, and not
                 // delimiting the drive name.
-
                 if (index > 0)
                 {
                     // We must have a drive specified
-                    driveName = path.Substring(0, index);
+                    driveName = path.Slice(0, index).ToString();
 
                     result = true;
                 }
-            } while (false);
+            }
+            while (false);
 
 #if DEBUG
             if (result)
