@@ -4522,7 +4522,7 @@ namespace System.Management.Automation
                 path = path.Substring(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
             }
 
-            if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+            if (path.StartsWith(StringLiterals.HomePath))
             {
                 // Support the single "~"
                 if (path.Length == 1)
@@ -4622,7 +4622,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+                if (path.StartsWith(StringLiterals.HomePath))
                 {
                     // Strip of the ~ and the \ or / if present
 

@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The character used in a path to indicate the home location.
         /// </summary>
-        internal const string HomePath = "~";
+        internal const char HomePath = '~';
 
         /// <summary>
         /// Name of the global variable table in Variable scopes of session state.
