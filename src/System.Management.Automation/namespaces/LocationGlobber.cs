@@ -4475,22 +4475,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// Is <paramref name="path"/> is null.
         /// </exception>
-        internal static bool IsHomePath(string path)
+        internal static bool IsHomePath(ReadOnlySpan<char> path)
         {
-            if (path == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
             bool result = false;
 
             if (IsProviderQualifiedPath(path, out ReadOnlySpan<char> providerId))
             {
                 // Strip off the provider portion of the path
-                path = path.Substring(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
+                path = path.Slice(providerId.Length + StringLiterals.ProviderPathSeparator.Length);
             }
 
-            if (path.StartsWith(StringLiterals.HomePath))
+            if (path.Length != 0 && path[0] == StringLiterals.HomePath)
             {
                 // Support the single "~"
                 if (path.Length == 1)
