@@ -274,7 +274,7 @@
     <value>ALIASES</value>
   </data>
   <data name="GetLatestHelpContent" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
+    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial Help.
     -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
     -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
        go to {1}.</value>
@@ -325,7 +325,7 @@
     <value>Downloading Help Content...</value>
   </data>
   <data name="UpdateProgressInstalling" xml:space="preserve">
-    <value>Installing Help content...</value>
+    <value>Installing Help Content...</value>
   </data>
   <data name="UpdateProgressLocating" xml:space="preserve">
     <value>Locating Help Content...</value>
@@ -340,7 +340,7 @@
     <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
-    <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
+    <value>Help content cannot be found. Make sure the server is available and the Help content location is properly defined in the HelpInfo XML.</value>
   </data>
   <data name="HelpInfoUriNotFound" xml:space="preserve">
     <value>The Update-Help command failed because the specified module does not support updatable help. Use Get-Help -Online or look online for help for the commands in this module.</value>
@@ -358,13 +358,13 @@
     <value>Error extracting Help content.</value>
   </data>
   <data name="InstallationFailed" xml:space="preserve">
-    <value>Error installing help content.</value>
+    <value>Error installing Help content.</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
     <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
   </data>
   <data name="HelpContentXmlValidationFailure" xml:space="preserve">
-    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help Content.</value>
+    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help content.</value>
   </data>
   <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
     <value>The HelpInfo XML is not valid. Specify valid HelpInfo XML.</value>
@@ -412,11 +412,11 @@
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
     <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
-To save help again, add the Force parameter to your command.</value>
+To save Help again, add the Force parameter to your command.</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
     <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
-To update help again, add the Force parameter to your command.</value>
+To update Help again, add the Force parameter to your command.</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
     <value>The most current Help files are already installed.</value>
@@ -428,13 +428,13 @@ To update help again, add the Force parameter to your command.</value>
     <value>Updated {0}</value>
   </data>
   <data name="InvalidHelpInfoUri" xml:space="preserve">
-    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
+    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the Help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
   </data>
   <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
     <value>Help content must be in the namespace {0}.</value>
   </data>
   <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
+    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial Help.
     -- To download and install Help files for the module that includes this cmdlet, use Update-Help.</value>
   </data>
   <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
@@ -447,7 +447,7 @@ To update help again, add the Force parameter to your command.</value>
     <value>The HelpInfoURI {0} does not start with HTTP.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
-    <value>The root level element of the help content must be "helpItems".</value>
+    <value>The root level element of the Help content must be "helpItems".</value>
   </data>
   <data name="UpdateHelpPromptBody" xml:space="preserve">
     <value>The Update-Help cmdlet downloads the most current Help files for PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see https://go.microsoft.com/fwlink/?LinkId=210614.</value>
