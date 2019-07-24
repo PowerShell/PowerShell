@@ -3520,7 +3520,7 @@ namespace System.Management.Automation.Language
     public class FunctionDefinitionAst : StatementAst, IParameterMetadataProvider
     {
         /// <summary>
-        /// Construct a function definition.
+        /// Initializes a new instance of the <cref="FunctionDefinitionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the function definition, starting with the function or filter keyword, ending at the closing curly.
@@ -3535,11 +3535,15 @@ namespace System.Management.Automation.Language
         /// If <paramref name="extent"/>, <paramref name="name"/>, or <paramref name="body"/> is null, or
         /// if <paramref name="name"/> is an empty string.
         /// </exception>
-        public FunctionDefinitionAst(IScriptExtent extent,
-                                     bool isFilter,
-                                     string name,
-                                     IEnumerable<ParameterAst> parameters,
-                                     ScriptBlockAst body)
+        /// <remarks>
+        /// This class represents a function definition in PowerShell.
+        /// </remarks>
+        public FunctionDefinitionAst(
+            IScriptExtent extent,
+            bool isFilter,
+            string name,
+            IEnumerable<ParameterAst> parameters,
+            ScriptBlockAst body)
             : base(extent)
         {
             if (string.IsNullOrEmpty(name))
@@ -3565,16 +3569,18 @@ namespace System.Management.Automation.Language
             SetParent(body);
         }
 
-        internal FunctionDefinitionAst(IScriptExtent extent,
-                                       bool isFilter,
-                                       Token functionNameToken,
-                                       IEnumerable<ParameterAst> parameters,
-                                       ScriptBlockAst body)
-            : this(extent,
-                   isFilter,
-                   (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
-                   parameters,
-                   body)
+        internal FunctionDefinitionAst(
+            IScriptExtent extent,
+            bool isFilter,
+            Token functionNameToken,
+            IEnumerable<ParameterAst> parameters,
+            ScriptBlockAst body)
+            : this(
+                extent,
+                isFilter,
+                (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
+                parameters,
+                body)
         {
             NameExtent = functionNameToken.Extent;
         }
@@ -7279,7 +7285,7 @@ namespace System.Management.Automation.Language
 
         // This should remain empty until block statements are needed in PowerShell. The only tokens that supported
         // them in the past were deprecated along with workflow in PowerShell 7.
-        private static SortedSet<TokenKind> tokenKindsThatSupportBlockStatements = new SortedSet<TokenKind> {};
+        private static SortedSet<TokenKind> tokenKindsThatSupportBlockStatements = new SortedSet<TokenKind>();
 
         /// <summary>
         /// The scriptblockexpression that has a keyword applied to it. This property is nerver null.
