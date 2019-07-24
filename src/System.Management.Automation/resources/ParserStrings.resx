@@ -392,9 +392,6 @@ Possible matches are</value>
   <data name="IncompleteSwitchStatement" xml:space="preserve">
     <value>The switch statement was incomplete.</value>
   </data>
-  <data name="ParallelNotSupported" xml:space="preserve">
-    <value>The '-parallel' parameter can be used only within a workflow.</value>
-  </data>
   <data name="MissingFilenameOption" xml:space="preserve">
     <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
   </data>
@@ -911,9 +908,6 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="MissingStatementAfterKeyword" xml:space="preserve">
     <value>Missing statement body after keyword '{0}'.</value>
   </data>
-  <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel and sequence blocks are not allowed in restricted language mode or a Data section.</value>
-  </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
     <value>Unexpected keyword '{0}'.</value>
   </data>
@@ -1201,9 +1195,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="DynamicKeywordPostParseException" xml:space="preserve">
     <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
-  </data>
-  <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell 6+.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
     <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
@@ -1499,5 +1490,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="BlockStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Block statements are not allowed in restricted language mode or a Data section.</value>
   </data>
 </root>

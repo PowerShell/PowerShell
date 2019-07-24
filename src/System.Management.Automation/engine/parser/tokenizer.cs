@@ -624,11 +624,10 @@ namespace System.Management.Automation.Language
         /*6*/    "throw",                   "begin",            "process",          "end",                        /*6*/
         /*7*/    "dynamicparam",            "function",         "filter",           "param",                      /*7*/
         /*8*/    "class",                   "define",           "var",              "using",                      /*8*/
-        /*9*/    "workflow",                "parallel",         "sequence",         "inlinescript",               /*9*/
-        /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
-        /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
-        /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                                                                                          /*D*/
+        /*9*/    "configuration",           "public",           "private",          "static",                     /*9*/
+        /*A*/    "interface",               "enum",             "namespace",        "module",                     /*A*/
+        /*B*/    "type",                    "assembly",         "command",          "hidden",                     /*B*/
+        /*C*/    "base",                                                                                          /*C*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
@@ -640,11 +639,10 @@ namespace System.Management.Automation.Language
         /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,  TokenKind.End,                /*6*/
         /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,   TokenKind.Param,              /*7*/
         /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,      TokenKind.Using,              /*8*/
-        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence, TokenKind.InlineScript,       /*9*/
-        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*A*/
-        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*B*/
-        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*C*/
-        /*D*/    TokenKind.Base,                                                                                  /*D*/
+        /*9*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*9*/
+        /*A*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*A*/
+        /*B*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*B*/
+        /*C*/    TokenKind.Base,                                                                                  /*C*/
         };
 
         internal static readonly string[] _operatorText = new string[] {
@@ -722,7 +720,6 @@ namespace System.Management.Automation.Language
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
         internal bool WantSimpleName { get; set; }
-        internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
         internal Token FirstToken { get; private set; }
 
@@ -4392,8 +4389,7 @@ namespace System.Management.Automation.Language
                 sb = null;
                 if (s_keywordTable.TryGetValue(ident, out tokenKind))
                 {
-                    if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
-                        return NewToken(tokenKind);
+                    return NewToken(tokenKind);
                 }
 
                 if (DynamicKeyword.ContainsKeyword(ident) && !DynamicKeyword.IsHiddenKeyword(ident))

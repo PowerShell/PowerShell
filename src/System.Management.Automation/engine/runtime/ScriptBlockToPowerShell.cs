@@ -173,7 +173,7 @@ namespace System.Management.Automation
 
     internal class UsingExpressionAstSearcher : AstSearcher
     {
-        internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
+        internal static IEnumerable<Ast> FindAllUsingExpression(Ast ast)
         {
             Diagnostics.Assert(ast != null, "caller to verify arguments");
 
@@ -189,12 +189,6 @@ namespace System.Management.Automation
 
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst ast)
         {
-            // Skip the workflow. We are not interested in the UsingExpressions in a workflow
-            if (ast.IsWorkflow)
-            {
-                return AstVisitAction.SkipChildren;
-            }
-
             return CheckScriptBlock(ast);
         }
     }
@@ -346,7 +340,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
 
-            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(body).ToList();
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpression(body).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;
@@ -458,10 +452,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if the given UsingExpression is in a different scope from the previous UsingExpression that we analyzed.
         /// </summary>
-        /// <remarks>
-        /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
-        /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
-        /// </remarks>
         /// <param name="usingExpr">The UsingExpression to analyze.</param>
         /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst.</param>
         /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions.</param>

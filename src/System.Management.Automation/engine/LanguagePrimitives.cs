@@ -559,7 +559,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method takes a an arbitrary object and wraps it in a PSDataCollection of PSObject.
-        /// This simplifies interacting with the PowerShell workflow activities.
         /// </summary>
         /// <param name="inputValue"></param>
         /// <returns></returns>
@@ -1771,7 +1770,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generic convertto that simplifies working with workflow.
+        /// Generic conversion method.
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="valueToConvert"></param>

@@ -443,30 +443,11 @@ namespace System.Management.Automation.Language
                 CheckForDuplicateParameters(functionDefinitionAst.Parameters);
             }
 
-            if (functionDefinitionAst.IsWorkflow)
-            {
-                _parser.ReportError(functionDefinitionAst.Extent,
-                    nameof(ParserStrings.WorkflowNotSupportedInPowerShellCore),
-                    ParserStrings.WorkflowNotSupportedInPowerShellCore);
-            }
-
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst)
         {
-            // Parallel flag not allowed
-            if ((switchStatementAst.Flags & SwitchFlags.Parallel) == SwitchFlags.Parallel)
-            {
-                bool reportError = !switchStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(switchStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
-            }
-
             return AstVisitAction.Continue;
         }
 
@@ -491,18 +472,6 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
         {
-            // Parallel flag not allowed
-            if ((forEachStatementAst.Flags & ForEachFlags.Parallel) == ForEachFlags.Parallel)
-            {
-                bool reportError = !forEachStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(forEachStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
-            }
-
             // Throttle limit must be combined with Parallel flag
             if ((forEachStatementAst.ThrottleLimit != null) &&
                 ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
@@ -1134,11 +1103,6 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst)
         {
-            if (blockStatementAst.IsInWorkflow())
-            {
-                return AstVisitAction.Continue;
-            }
-
             _parser.ReportError(blockStatementAst.Kind.Extent,
                 nameof(ParserStrings.UnexpectedKeyword),
                 ParserStrings.UnexpectedKeyword,
@@ -2354,8 +2318,8 @@ namespace System.Management.Automation.Language
         {
             // Keyword blocks are not allowed
             ReportError(blockStatementAst,
-                nameof(ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection),
-                ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection);
+                nameof(ParserStrings.BlockStatementNotSupportedInDataSection),
+                ParserStrings.BlockStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }

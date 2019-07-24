@@ -516,17 +516,7 @@ namespace System.Management.Automation.Language
         /// <summary>The 'while' keyword.</summary>
         While = 150,
 
-        /// <summary>The 'workflow' keyword.</summary>
-        Workflow = 151,
-
-        /// <summary>The 'parallel' keyword.</summary>
-        Parallel = 152,
-
-        /// <summary>The 'sequence' keyword.</summary>
-        Sequence = 153,
-
-        /// <summary>The 'InlineScript' keyword</summary>
-        InlineScript = 154,
+        // Keywords 151-154 were part of the workflow functionality that was removed in PowerShell 7.
 
         /// <summary>The "configuration" keyword</summary>
         Configuration = 155,
@@ -903,10 +893,6 @@ namespace System.Management.Automation.Language
             /*                Using */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                  Var */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                While */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Workflow */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Parallel */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Sequence */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*         InlineScript */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*        Configuration */ TokenFlags.Keyword,
             /*    <dynamic keyword> */ TokenFlags.Keyword,
             /*               Public */ TokenFlags.Keyword,
@@ -1101,10 +1087,6 @@ namespace System.Management.Automation.Language
             /*                Using */ "using",
             /*                  Var */ "var",
             /*                While */ "while",
-            /*             Workflow */ "workflow",
-            /*             Parallel */ "parallel",
-            /*             Sequence */ "sequence",
-            /*         InlineScript */ "inlinescript",
             /*        Configuration */ "configuration",
             /*    <dynamic keyword> */ "<dynamic keyword>",
             /*               Public */ "public",
@@ -1133,10 +1115,10 @@ namespace System.Management.Automation.Language
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
                                "Table out of sync with enum - flags Begin");
-            Diagnostics.Assert(GetTraits(TokenKind.Workflow) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
-                               "Table out of sync with enum - flags Workflow");
-            Diagnostics.Assert(GetTraits(TokenKind.Sequence) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
-                               "Table out of sync with enum - flags Sequence");
+            Diagnostics.Assert(GetTraits(TokenKind.While) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
+                               "Table out of sync with enum - flags While");
+            Diagnostics.Assert(GetTraits(TokenKind.Configuration) == TokenFlags.Keyword,
+                               "Table out of sync with enum - flags Configuration");
             Diagnostics.Assert(GetTraits(TokenKind.Shr) == (TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold),
                                "Table out of sync with enum - flags Shr");
             Diagnostics.Assert(s_tokenText[(int)TokenKind.Shr].Equals("-shr", StringComparison.OrdinalIgnoreCase),
