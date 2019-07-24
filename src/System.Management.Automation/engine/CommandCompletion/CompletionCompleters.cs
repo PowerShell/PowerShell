@@ -207,7 +207,7 @@ namespace System.Management.Automation
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
-            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
+            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.Configuration.ToString() };
         internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
         {
             string syntax = name, listItem = name;

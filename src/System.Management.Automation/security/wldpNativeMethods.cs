@@ -503,9 +503,6 @@ namespace System.Management.Automation.Security
             return returnValue;
         }
 
-        // Overrides for features that should only be enabled in debug mode
-        internal static bool XamlWorkflowSupported { get; set; }
-
         /// <summary>
         /// Native constants for dealing with the lockdown policy.
         /// </summary>

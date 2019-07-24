@@ -580,7 +580,7 @@ namespace System.Management.Automation
                 if (val is ActionPreference)
                 {
                     ActionPreference preference = (ActionPreference)val;
-                    if ((preference == ActionPreference.Ignore) || (preference == ActionPreference.Suspend))
+                    if (preference == ActionPreference.Ignore)
                     {
                         // Reset the variable value
                         EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultPref);

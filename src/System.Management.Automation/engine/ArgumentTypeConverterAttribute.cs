@@ -152,11 +152,6 @@ namespace System.Management.Automation
                         if (_convertTypes[i] == typeof(ActionPreference))
                         {
                             ActionPreference resultPreference = (ActionPreference)result;
-
-                            if (resultPreference == ActionPreference.Suspend)
-                            {
-                                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.UnsupportedPreferenceVariable, resultPreference);
-                            }
                         }
                     }
                 }

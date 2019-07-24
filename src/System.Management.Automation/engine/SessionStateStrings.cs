@@ -116,12 +116,12 @@ namespace System.Management.Automation
         internal const string PowerShellDataFileExtension = ".psd1";
 
         /// <summary>
-        /// The file extension (including the dot) of an workflow dependent assembly.
+        /// The file extension (including the dot) of a binary module.
         /// </summary>
         internal const string PowerShellILAssemblyExtension = ".dll";
 
         /// <summary>
-        /// The file extension (including the dot) of an workflow dependent Ngen assembly.
+        /// The file extension (including the dot) of a binary module Ngen assembly.
         /// </summary>
         internal const string PowerShellNgenAssemblyExtension = ".ni.dll";
 
