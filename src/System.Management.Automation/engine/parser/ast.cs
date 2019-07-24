@@ -3520,7 +3520,7 @@ namespace System.Management.Automation.Language
     public class FunctionDefinitionAst : StatementAst, IParameterMetadataProvider
     {
         /// <summary>
-        /// Initializes a new instance of the <cref="FunctionDefinitionAst"/> class.
+        /// Initializes a new instance of the <see cref="FunctionDefinitionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the function definition, starting with the function or filter keyword, ending at the closing curly.
