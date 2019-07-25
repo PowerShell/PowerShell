@@ -179,8 +179,7 @@ namespace System.Management.Automation.Runspaces
                         // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
-#if !CORECLR
-                        // No ApartmentState in CoreCLR
+
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -192,11 +191,13 @@ namespace System.Management.Automation.Runspaces
                             apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartment state
                         }
 
-                        if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+                        if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
 #endif
+
                         invokeThread.Start();
 
                         break;
@@ -1188,15 +1189,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the worker thread and waits for it to be ready.
         /// </summary>
-#if CORECLR
-        internal PipelineThread()
-        {
-            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
-            _workItem = null;
-            _workItemReady = new AutoResetEvent(false);
-            _closed = false;
-        }
-#else
         internal PipelineThread(ApartmentState apartmentState)
         {
             _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
@@ -1204,12 +1196,13 @@ namespace System.Management.Automation.Runspaces
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
 
-            if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+            if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
             {
                 _worker.SetApartmentState(apartmentState);
             }
-        }
 #endif
+        }
 
         /// <summary>
         /// Returns the worker thread.

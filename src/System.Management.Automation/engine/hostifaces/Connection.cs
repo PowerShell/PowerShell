@@ -582,7 +582,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const ApartmentState DefaultApartmentState = ApartmentState.Unknown;
 
         /// <summary>
@@ -613,7 +612,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is create for each invocation.

@@ -3459,16 +3459,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RunOnMTAThread(ThreadStart threadProc)
         {
-            //
-            // By default, non-OneCore PowerShell is launched with ApartmentState being STA.
-            // In this case, we need to create a separate thread, set its ApartmentState to MTA,
-            // and do the work.
-            //
-            // For OneCore PowerShell, its ApartmentState is always MTA.
-            //
-#if CORECLR
-            threadProc();
-#else
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
             {
                 threadProc();
@@ -3481,7 +3471,6 @@ namespace System.Management.Automation.Runspaces
                 executionThread.Start();
                 executionThread.Join();
             }
-#endif
         }
 
         /// <summary>

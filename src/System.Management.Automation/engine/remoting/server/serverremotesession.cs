@@ -856,9 +856,7 @@ namespace System.Management.Automation.Remoting
             int minRunspaces = RemotingDecoder.GetMinRunspaces(rcvdData.Data);
             int maxRunspaces = RemotingDecoder.GetMaxRunspaces(rcvdData.Data);
             PSThreadOptions threadOptions = RemotingDecoder.GetThreadOptions(rcvdData.Data);
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState = RemotingDecoder.GetApartmentState(rcvdData.Data);
-#endif
             HostInfo hostInfo = RemotingDecoder.GetHostInfo(rcvdData.Data);
 
             if (_runspacePoolDriver != null)
@@ -878,9 +876,7 @@ namespace System.Management.Automation.Remoting
                 minRunspaces,
                 maxRunspaces,
                 threadOptions,
-#if !CORECLR // No ApartmentState In CoreCLR
                 apartmentState,
-#endif
                 hostInfo,
                 rsSessionStateToUse,
                 applicationPrivateData,
