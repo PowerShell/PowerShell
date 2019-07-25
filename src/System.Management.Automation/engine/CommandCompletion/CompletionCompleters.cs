@@ -4569,9 +4569,6 @@ namespace System.Management.Automation
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
-        private static readonly char[] s_charactersRequiringQuotes = new char[] {
-            '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
-        };
 
         internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
