@@ -5,7 +5,22 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
     BeforeAll {
 
-        $sb = { "Hello!" }
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else {
+            $sb = { "Hello!" }
+        }
+    }
+
+    AfterAll {
+
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
     }
 
     It "Verifies dollar underbar variable" {
@@ -100,6 +115,23 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 }
 
 Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
+
+    BeforeAll {
+
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
 
     It 'Verifies TimeoutSeconds parameter is excluded from AsJob' {
 
@@ -229,6 +261,23 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
 }
 
 Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
+
+    BeforeAll {
+
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
 
     It 'Verifies job queuing and throttle limit' {
 
