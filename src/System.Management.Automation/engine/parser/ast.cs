@@ -3591,6 +3591,16 @@ namespace System.Management.Automation.Language
         public bool IsFilter { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether or not the function is actually a workflow.
+        /// </summary>
+        /// <remarks>
+        /// This property has been deprecated. It should be removed once PowerShellGet
+        /// is updated to check the PowerShell version before looking at the IsWorkflow
+        /// property.
+        /// </remarks>
+        public bool IsWorkflow { get { return false; } }
+
+        /// <summary>
         /// The name of the function or filter.  This property is never null or empty.
         /// </summary>
         public string Name { get; private set; }
