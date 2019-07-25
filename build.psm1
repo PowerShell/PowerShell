@@ -446,6 +446,32 @@ Fix steps:
         Pop-Location
     }
 
+    # publish powershell.config.json
+    # only Windows currently has a default config file that needs to be merged if Preview
+    $version = (git --git-dir="$PSSCriptRoot/.git" describe) -Replace '^v'
+    $previewConfigPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell/powershell-preview.config.json"
+    $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+    if ($Environment.IsWindows) {
+        $configPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell-win-core/powershell.config.json"
+        if (Test-IsPreview $version) {
+            $config = Get-Content $configPath | ConvertFrom-Json
+            $previewConfig = Get-Content $previewConfigPath | ConvertFrom-Json
+            foreach ($property in $previewConfig.psobject.Properties) {
+                $config | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value
+            }
+
+            Set-Content -Path configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+        }
+        else {
+            Copy-Item -Path $configPath -Destination $configPublishPath -Force -ErrorAction Stop
+        }
+    }
+    else {
+        if (Test-IsPreview $version) {
+            Copy-Item -Path $previewConfigPath -Destination $configPublishPath -Force -ErrorAction Stop
+        }
+    }
+
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
@@ -1506,8 +1532,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dot.net/v1"    
-    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"    
+    $installObtainUrl = "https://dot.net/v1"
+    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
