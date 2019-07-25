@@ -591,7 +591,8 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Int32'
     }
 
-    It "Infers type from block statement" {
+    # This test should be skipped until block statements are brought back into PowerShell
+    It "Infers type from block statement" -Skip:$true {
         $errors = $null
         $tokens = $null
         $ast = [Language.Parser]::ParseInput("parallel {1}", [ref] $tokens, [ref] $errors)
