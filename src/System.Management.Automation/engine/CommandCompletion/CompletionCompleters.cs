@@ -4690,7 +4690,7 @@ namespace System.Management.Automation
             else
             {
                 provider = wordToComplete.Substring(0, colon + 1);
-                if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
+                if (colon == 0 || s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
                     pattern = "variable:" + wordToComplete.Substring(colon + 1) + "*";
                 }
