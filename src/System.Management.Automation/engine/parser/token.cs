@@ -710,6 +710,11 @@ namespace System.Management.Automation.Language
         /// The token is a statement but does not support attributes.
         /// </summary>
         StatementDoesntSupportAttributes = 0x01000000,
+
+        /// <summary>
+        /// The token has been deprecated.
+        /// </summary>
+        Deprecated = 0x10000000,
     }
 
     /// <summary>
@@ -893,6 +898,10 @@ namespace System.Management.Automation.Language
             /*                Using */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                  Var */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                While */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
+            /*             Workflow */ TokenFlags.Deprecated,
+            /*             Parallel */ TokenFlags.Deprecated,
+            /*             Sequence */ TokenFlags.Deprecated,
+            /*         InlineScript */ TokenFlags.Deprecated,
             /*        Configuration */ TokenFlags.Keyword,
             /*    <dynamic keyword> */ TokenFlags.Keyword,
             /*               Public */ TokenFlags.Keyword,
@@ -1087,6 +1096,10 @@ namespace System.Management.Automation.Language
             /*                Using */ "using",
             /*                  Var */ "var",
             /*                While */ "while",
+            /*             Workflow */ "DEPRECATED",
+            /*             Parallel */ "DEPRECATED",
+            /*             Sequence */ "DEPRECATED",
+            /*         InlineScript */ "DEPRECATED",
             /*        Configuration */ "configuration",
             /*    <dynamic keyword> */ "<dynamic keyword>",
             /*               Public */ "public",
