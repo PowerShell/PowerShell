@@ -6588,14 +6588,8 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var completionText = memberInfo.Name;
-
-                    // Handle scenarios like this: $aa | add-member 'a b' 23; $aa.a<tab>
-                    if (completionText.IndexOfAny(s_charactersRequiringQuotes) != -1)
-                    {
-                        completionText = completionText.Replace("'", "''");
-                        completionText = "'" + completionText + "'";
-                    }
+                    // QuoteMemberName handles scenarios like this: $aa | add-member 'a b' 23; $aa.a<tab>
+                    var completionText = CodeGeneration.QuoteMemberName(memberInfo.Name);
 
                     var isMethod = memberInfo is PSMethodInfo;
                     if (isMethod)
@@ -6638,14 +6632,8 @@ namespace System.Management.Automation
 
                         if (pattern.IsMatch(key))
                         {
-                            // Handle scenarios like this: $hashtable["abc#d"] = 100; $hashtable.ab<tab>
-                            if (key.IndexOfAny(s_charactersRequiringQuotes) != -1)
-                            {
-                                key = key.Replace("'", "''");
-                                key = "'" + key + "'";
-                            }
-
-                            results.Add(new CompletionResult(key, key, CompletionResultType.Property, key));
+                            // QuoteMemberName handles scenarios like this: $hashtable["abc#d"] = 100; $hashtable.ab<tab>
+                            results.Add(new CompletionResult(CodeGeneration.QuoteMemberName(key), key, CompletionResultType.Property, key));
                         }
                     }
                 }
