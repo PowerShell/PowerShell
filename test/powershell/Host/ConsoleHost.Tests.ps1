@@ -795,7 +795,7 @@ public enum ShowWindowCommands : int
 }
 
 Describe "Console host api tests" -Tag CI {
-    Context "String escape sequences" {
+    Context "String escape and control sequences" {
         $esc = [char]0x1b
         $csi = [char]0x9b
         $testCases =

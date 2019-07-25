@@ -2672,8 +2672,10 @@ namespace Microsoft.PowerShell
         //     CSI params? '#' [{}pq]        // XTPUSHSGR ('{'), XTPOPSGR ('}'), or their aliases ('p' and 'q')
         //
         // Where:
-        //     CSI:    ESC '[' OR \x009b     // (C0 or C1 CSI)
         //     params: digit+ (';' params)?
+        //     CSI:     C0_CSI | C1_CSI
+        //     C0_CSI:  \x001b '['            // ESC '['
+        //     C1_CSI:  \x009b
         //
         // There are many other VT100 escape sequences, but these text attribute sequences
         // (color-related, underline, etc.) are sufficient for our formatting system.  We
@@ -2698,7 +2700,8 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // We need to skip over at least the current character.
+                // No CSI at the current location, so we are done looking, but we still
+                // need to advance offset.
                 offset += 1;
                 return 0;
             }
@@ -2723,15 +2726,16 @@ namespace Microsoft.PowerShell
                 // SGR: Select Graphics Rendition
                 return offset - start;
             }
-            else if (c == '#')
-            {
-                // Maybe XTPUSHSGR or XTPOPSGR, but we need to read another char. Offset
-                // is already positioned on the next char (or past the end).
-                if (offset >= str.Length)
-                {
-                    return 0;
-                }
 
+            // Maybe XTPUSHSGR or XTPOPSGR, but we need to read another char. Offset is
+            // already positioned on the next char (or past the end).
+            if (offset >= str.Length)
+            {
+                return 0;
+            }
+
+            if (c == '#')
+            {
                 // '{' : XTPUSHSGR
                 // '}' : XTPOPSGR
                 // 'p' : alias for XTPUSHSGR
