@@ -472,15 +472,6 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
         {
-            // Throttle limit must be combined with Parallel flag
-            if ((forEachStatementAst.ThrottleLimit != null) &&
-                ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
-            {
-                _parser.ReportError(forEachStatementAst.Extent,
-                    nameof(ParserStrings.ThrottleLimitRequiresParallelFlag),
-                    ParserStrings.ThrottleLimitRequiresParallelFlag);
-            }
-
             return AstVisitAction.Continue;
         }
 

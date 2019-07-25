@@ -3222,18 +3222,9 @@ namespace System.Management.Automation.Language
         private StatementAst ForeachStatementRule(LabelToken labelToken, Token forEachToken)
         {
             // G  foreach-statement:
-            // G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
+            // G      'foreach'   new-lines:opt   '('
             // G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline
             // G          new-lines:opt   ')'   statement-block
-            // G  foreach-parameters:
-            // G      foreach-parameter
-            // G      foreach-parameters   foreach-parameter
-            // G  foreach-parameter:
-            // G      '-parallel'
-            // G      '-throttlelimit' new-lines:opt   foreach-throttlelimit
-            // G  foreach-throttlelimit:
-            // G      command-argument
-            // G      primary-expression
 
             IScriptExtent startOfStatement = labelToken != null ? labelToken.Extent : forEachToken.Extent;
             IScriptExtent endErrorStatement = null;
@@ -3241,45 +3232,7 @@ namespace System.Management.Automation.Language
             SkipNewlines();
 
             // Process parameters on foreach
-            Token foreachParameterToken = PeekToken();
             ForEachFlags flags = ForEachFlags.None;
-            ExpressionAst throttleLimit = null;
-
-            while (foreachParameterToken.Kind == TokenKind.Parameter)
-            {
-                SkipToken();
-
-                if (IsSpecificParameter(foreachParameterToken, "parallel"))
-                {
-                    flags |= ForEachFlags.Parallel;
-                }
-                else if (IsSpecificParameter(foreachParameterToken, "throttlelimit"))
-                {
-                    SkipNewlines();
-                    throttleLimit = GetSingleCommandArgument(CommandArgumentContext.CommandArgument);
-                    if (throttleLimit == null)
-                    {
-                        // ErrorRecovery: pretend we saw the throttle limit and continue.
-
-                        ReportIncompleteInput(After(foreachParameterToken),
-                            nameof(ParserStrings.MissingThrottleLimit),
-                            ParserStrings.MissingThrottleLimit);
-                    }
-                }
-                else
-                {
-                    // ErrorRecovery: just ignore the token, continue parsing.
-
-                    endErrorStatement = foreachParameterToken.Extent;
-                    ReportError(foreachParameterToken.Extent,
-                        nameof(ParserStrings.InvalidForeachFlag),
-                        ParserStrings.InvalidForeachFlag,
-                        ((ParameterToken)foreachParameterToken).ParameterName);
-                }
-
-                SkipNewlines();
-                foreachParameterToken = PeekToken();
-            }
 
             Token lParen = NextToken();
             if (lParen.Kind != TokenKind.LParen)
@@ -3378,7 +3331,7 @@ namespace System.Management.Automation.Language
             return new ForEachStatementAst(ExtentOf(startOfStatement, body),
                 labelToken != null ? labelToken.LabelText : null,
                 flags,
-                throttleLimit, variableAst, pipeline, body);
+                variableAst, pipeline, body);
         }
 
         private StatementAst ForStatementRule(LabelToken labelToken, Token forToken)
