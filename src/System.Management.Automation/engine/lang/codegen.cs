@@ -106,5 +106,36 @@ namespace System.Management.Automation.Language
                 .Replace("}", "`}")
                 .Replace("{", "`{");
         }
+
+        /// <summary>
+        /// Single-quote and escape a member name if it requires quoting, otherwise passing it unmodified.
+        /// For example: QuoteMemberName(userContent)
+        /// </summary>
+        /// <param name="value">The content to be used as a member name in a member access.</param>
+        /// <returns>Content quoted and escaped if required for use as a member name.</returns>
+        public static string QuoteMemberName(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+
+            // determine if any character is not a standard indentifier character
+            bool requiresQuote = !value[0].IsIdentifierStart();
+            if (!requiresQuote)
+            {
+                foreach (char c in value.Substring(1))
+                {
+                    if (!c.IsIdentifierFollow())
+                    {
+                        requiresQuote = true;
+                        break;
+                    }
+                }
+            }
+
+            // quote the content if required.
+            return requiresQuote ?
+                "'" + EscapeSingleQuotedStringContent(value) + "'" :
+                value;
+        }
     }
 }
