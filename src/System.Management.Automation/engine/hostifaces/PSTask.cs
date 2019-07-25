@@ -750,21 +750,24 @@ namespace System.Management.Automation.PSTasks
 
         private void CheckForComplete()
         {
+            bool isTaskPoolComplete;
             lock (_syncObject)
             {
-                if (!_isOpen && _taskPool.Count == 0)
+                isTaskPoolComplete = (!_isOpen && _taskPool.Count == 0);
+            }
+
+            if (isTaskPoolComplete)
+            {
+                try
                 {
-                    try
-                    {
-                        PoolComplete.SafeInvoke(
-                            this, 
-                            new EventArgs()
-                        );
-                    }
-                    catch 
-                    {
-                        Dbg.Assert(false, "Exceptions should not be thrown on event thread");
-                    }
+                    PoolComplete.SafeInvoke(
+                        this, 
+                        new EventArgs()
+                    );
+                }
+                catch 
+                {
+                    Dbg.Assert(false, "Exceptions should not be thrown on event thread");
                 }
             }
         }

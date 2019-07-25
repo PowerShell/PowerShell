@@ -224,7 +224,7 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $job = 1..1 | ForEach-Object -Parallel -AsJob -ScriptBlock {"Hello"}
         $job.Command | Should -BeExactly '"Hello"'
         $job.ChildJobs[0].Command | Should -BeExactly '"Hello"'
-        $job | Remove-Job
+        $job | Wait-Job | Remove-Job
     }
 }
 
