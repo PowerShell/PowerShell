@@ -6472,32 +6472,6 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool CompletionRequiresQuotes(string completion, bool escape)
-        {
-            // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
-            // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
-
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
-
-            char[] charToCheck = escape ? new[] { '$', '[', ']', '`' } : new[] { '$', '`' };
-
-            // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
-            // Or if the completion is a keyword, we ignore the errors
-            bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
-            if ((!requireQuote && tokens[0] is StringToken) ||
-                (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
-            {
-                requireQuote = false;
-                var value = tokens[0].Text;
-                if (value.IndexOfAny(charToCheck) != -1)
-                    requireQuote = true;
-            }
-
-            return requireQuote;
-        }
-
         private static bool ProviderSpecified(string path)
         {
             var index = path.IndexOf(':');
