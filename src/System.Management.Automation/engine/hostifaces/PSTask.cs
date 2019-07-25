@@ -15,187 +15,43 @@ namespace System.Management.Automation.PSTasks
     #region PSTask
 
     /// <summary>
-    /// Class to encapsulate running a PowerShell script concurrently in a cmdlet or job context
+    /// Class to encapsulate synchronous running scripts in parallel
     /// </summary>
-    internal sealed class PSTask : IDisposable
+    internal sealed class PSTask : PSTaskBase
     {
         #region Members
 
-        private readonly ScriptBlock _scriptBlockToRun;
-        private readonly Dictionary<string, object> _usingValuesMap;
-        private readonly object _dollarUnderbar;
         private readonly PSTaskDataStreamWriter _dataStreamWriter;
-        private readonly Job _job;
-        private readonly int _id;
-
-        private Runspace _runspace;
-        private PowerShell _powershell;
-        private PSDataCollection<PSObject> _output;
-
-        private const string VERBATIM_ARGUMENT = "--%";
-
-        private static int s_taskId = 0;
-        private const string RunspaceName = "PSTask";
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Event that fires when the task running state changes
-        /// </summary>
-        public event EventHandler<PSInvocationStateChangedEventArgs> StateChanged;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Current running state of the task
-        /// </summary>
-        public PSInvocationState State
-        {
-            get
-            {
-                PowerShell ps = _powershell;
-                if (ps != null)
-                {
-                    return ps.InvocationStateInfo.State;
-                }
-
-                return PSInvocationState.NotStarted;
-            }
-        }
-
-        /// <summary>
-        /// Task Id
-        /// </summary>
-        public int Id
-        {
-            get { return _id; }
-        }
 
         #endregion
 
         #region Constructor
 
-        private PSTask() 
-        { 
-            _id = Interlocked.Increment(ref s_taskId);
-        }
-
         /// <summary>
-        /// Constructor for data streaming
+        /// Constructor
         /// </summary>
         public PSTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
-            PSTaskDataStreamWriter dataStreamWriter) : this()
+            PSTaskDataStreamWriter dataStreamWriter) 
+            : base(
+                scriptBlock,
+                usingValuesMap,
+                dollarUnderbar)
         {
-            _scriptBlockToRun = scriptBlock;
-            _usingValuesMap = usingValuesMap;
-            _dollarUnderbar = dollarUnderbar;
             _dataStreamWriter = dataStreamWriter;
         }
 
-        /// <summary>
-        /// Constructor for jobs
-        /// </summary>
-        public PSTask(
-            ScriptBlock scriptBlock,
-            Dictionary<string, object> usingValuesMap,
-            object dollarUnderbar,
-            Job job) : this()
-        {
-            _scriptBlockToRun = scriptBlock;
-            _usingValuesMap = usingValuesMap;
-            _dollarUnderbar = dollarUnderbar;
-            _job = job;
-        }
-
         #endregion
 
-        #region IDisposable
-
-        public void Dispose()
-        {
-            _runspace.Dispose();
-            _powershell.Dispose();
-            _output.Dispose();
-        }
-
-        #endregion
-
-        #region Public Methods
+        #region Overrides
 
         /// <summary>
-        /// Start task
+        /// Initialize PowerShell object
         /// </summary>
-        public void Start()
+        protected override void InitializePowershell()
         {
-            if (_powershell != null)
-            {
-                Dbg.Assert(false, "A PSTask can be started only once.");
-                return;
-            }
-
-            // Create and open Runspace for this task to run in
-            var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
-                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
-            _runspace = RunspaceFactory.CreateRunspace(iss);
-            _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
-            _runspace.Open();
-
-            // Create the PowerShell command pipeline for the provided script block
-            // The script will run on the provided Runspace in a new thread by default
-            _powershell = PowerShell.Create();
-            _powershell.Runspace = _runspace;
-
-            // Initialize PowerShell object data streams and event handlers
-            _output = new PSDataCollection<PSObject>();
-            if (_dataStreamWriter != null)
-            {
-                InitializePowerShellforDataStreaming();
-            }
-            else
-            {
-                InitializePowerShellforJobs();
-            }
-
-            // State change handler
-            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
-
-            // Start the script running in a new thread
-            _powershell.AddScript(_scriptBlockToRun.ToString());
-            _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
-            if (_usingValuesMap != null && _usingValuesMap.Count > 0)
-            {
-                _powershell.AddParameter(VERBATIM_ARGUMENT, _usingValuesMap);
-            }
-            _powershell.BeginInvoke<object, PSObject>(null, _output);
-        }
-
-        /// <summary>
-        /// Signals the running task to stop
-        /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void InitializePowerShellforDataStreaming()
-        {
-            Dbg.Assert(_dataStreamWriter != null, "Data stream writer cannot be null");
-
             // Writer data stream handlers
             _output.DataAdded += (sender, args) => HandleOutputData(sender, args);
             _powershell.Streams.Error.DataAdded += (sender, args) => HandleErrorData(sender, args);
@@ -203,22 +59,12 @@ namespace System.Management.Automation.PSTasks
             _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData(sender, args);
             _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData(sender, args);
             _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData(sender, args);
+
+            // State change handler
+            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
         }
 
-        private void InitializePowerShellforJobs()
-        {
-            Dbg.Assert(_job != null, "Job object cannot be null");
-
-            // Job data stream handlers
-            _output.DataAdded += (sender, args) => HandleJobOutputData(sender, args);
-            _powershell.Streams.Error.DataAdded += (sender, args) => HandleJobErrorData(sender, args);
-            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleJobWarningData(sender, args);
-            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleJobVerboseData(sender, args);
-            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleJobDebugData(sender, args);
-            _powershell.Streams.Information.DataAdded += (sender, args) => HandleJobInformationData(sender, args);
-        }
-
-        #region Event handlers
+        #endregion       
 
         #region Writer data stream handlers
 
@@ -280,6 +126,85 @@ namespace System.Management.Automation.PSTasks
                     new PSStreamObject(PSStreamObjectType.Information, item)
                 );
             }
+        }
+        
+        #endregion
+
+        #region Event handlers
+
+        private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
+        {
+            if (_dataStreamWriter != null)
+            {
+                // Treat any terminating exception as a non-terminating error record
+                var newStateInfo = stateChangeInfo.InvocationStateInfo;
+                if (newStateInfo.Reason != null)
+                {
+                    var errorRecord = new ErrorRecord(
+                        newStateInfo.Reason,
+                        "PSTaskException",
+                        ErrorCategory.InvalidOperation,
+                        this);
+
+                    _dataStreamWriter.Add(
+                        new PSStreamObject(PSStreamObjectType.Error, errorRecord)
+                    );
+                }
+            }
+
+            RaiseStateChangedEvent(stateChangeInfo);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Class to encapsulate asynchronous running scripts in parallel as jobs
+    /// </summary>
+    internal sealed class PSJobTask : PSTaskBase
+    {
+        #region Members
+
+        private readonly Job _job;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PSJobTask(
+            ScriptBlock scriptBlock,
+            Dictionary<string, object> usingValuesMap,
+            object dollarUnderbar,
+            Job job) : base(
+                scriptBlock,
+                usingValuesMap,
+                dollarUnderbar)
+        {
+            _job = job;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Initialize PowerShell object
+        /// </summary>
+        protected override void InitializePowershell()
+        {
+            // Job data stream handlers
+            _output.DataAdded += (sender, args) => HandleJobOutputData(sender, args);
+            _powershell.Streams.Error.DataAdded += (sender, args) => HandleJobErrorData(sender, args);
+            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleJobWarningData(sender, args);
+            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleJobVerboseData(sender, args);
+            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleJobDebugData(sender, args);
+            _powershell.Streams.Information.DataAdded += (sender, args) => HandleJobInformationData(sender, args);
+
+            // State change handler
+            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
         }
 
         #endregion
@@ -354,30 +279,173 @@ namespace System.Management.Automation.PSTasks
 
         #endregion
 
+        #region Event handlers
+
         private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
         {
-            if (_dataStreamWriter != null)
-            {
-                // Treat any terminating exception as a non-terminating error record
-                var newStateInfo = stateChangeInfo.InvocationStateInfo;
-                if (newStateInfo.Reason != null)
-                {
-                    var errorRecord = new ErrorRecord(
-                        newStateInfo.Reason,
-                        "PSTaskException",
-                        ErrorCategory.InvalidOperation,
-                        this);
-
-                    _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Error, errorRecord)
-                    );
-                }
-            }
-
-            StateChanged.Invoke(this, stateChangeInfo);
+            RaiseStateChangedEvent(stateChangeInfo);
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Base class to encapsulate running a PowerShell script concurrently in a cmdlet or job context
+    /// </summary>
+    internal abstract class PSTaskBase : IDisposable
+    {
+        #region Members
+
+        private readonly ScriptBlock _scriptBlockToRun;
+        private readonly Dictionary<string, object> _usingValuesMap;
+        private readonly object _dollarUnderbar;
+        private readonly int _id;
+        private Runspace _runspace;
+        protected PowerShell _powershell;
+        protected PSDataCollection<PSObject> _output;
+
+        private const string VERBATIM_ARGUMENT = "--%";
+        private const string RunspaceName = "PSTask";
+
+        private static int s_taskId = 0;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Event that fires when the task running state changes
+        /// </summary>
+        public event EventHandler<PSInvocationStateChangedEventArgs> StateChanged;
+
+        internal void RaiseStateChangedEvent(PSInvocationStateChangedEventArgs args)
+        {
+            StateChanged.SafeInvoke(this, args);
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Current running state of the task
+        /// </summary>
+        public PSInvocationState State
+        {
+            get
+            {
+                PowerShell ps = _powershell;
+                if (ps != null)
+                {
+                    return ps.InvocationStateInfo.State;
+                }
+
+                return PSInvocationState.NotStarted;
+            }
+        }
+
+        /// <summary>
+        /// Task Id
+        /// </summary>
+        public int Id
+        {
+            get { return _id; }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        private PSTaskBase() 
+        { 
+            _id = Interlocked.Increment(ref s_taskId);
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PSTaskBase(
+            ScriptBlock scriptBlock,
+            Dictionary<string, object> usingValuesMap,
+            object dollarUnderbar) : this()
+        {
+            _scriptBlockToRun = scriptBlock;
+            _usingValuesMap = usingValuesMap;
+            _dollarUnderbar = dollarUnderbar;
+        }
+
+        #endregion
+
+        #region Abstract Methods
+
+        /// <summary>
+        /// Initialize PowerShell object
+        /// </summary>
+        protected abstract void InitializePowershell();
+
+        #endregion
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            _runspace.Dispose();
+            _powershell.Dispose();
+            _output.Dispose();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Start task
+        /// </summary>
+        public void Start()
+        {
+            if (_powershell != null)
+            {
+                Dbg.Assert(false, "A PSTask can be started only once.");
+                return;
+            }
+
+            // Create and open Runspace for this task to run in
+            var iss = InitialSessionState.CreateDefault2();
+            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
+                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+            _runspace = RunspaceFactory.CreateRunspace(iss);
+            _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
+            _runspace.Open();
+
+            // Create the PowerShell command pipeline for the provided script block
+            // The script will run on the provided Runspace in a new thread by default
+            _powershell = PowerShell.Create();
+            _powershell.Runspace = _runspace;
+
+            // Initialize PowerShell object data streams and event handlers
+            _output = new PSDataCollection<PSObject>();
+            InitializePowershell();
+
+            // Start the script running in a new thread
+            _powershell.AddScript(_scriptBlockToRun.ToString());
+            _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
+            if (_usingValuesMap != null && _usingValuesMap.Count > 0)
+            {
+                _powershell.AddParameter(VERBATIM_ARGUMENT, _usingValuesMap);
+            }
+            _powershell.BeginInvoke<object, PSObject>(null, _output);
+        }
+
+        /// <summary>
+        /// Signals the running task to stop
+        /// </summary>
+        public void SignalStop()
+        {
+            if (_powershell != null)
+            {
+                _powershell.BeginStop(null, null);
+            }
+        }
 
         #endregion
     }
@@ -387,7 +455,7 @@ namespace System.Management.Automation.PSTasks
     #region PSTaskDataStreamWriter
 
     /// <summary>
-    /// Class that handles writing data stream objects to a cmdlet
+    /// Class that handles writing task data stream objects to a cmdlet
     /// </summary>
     internal sealed class PSTaskDataStreamWriter : IDisposable
     {
@@ -511,7 +579,7 @@ namespace System.Management.Automation.PSTasks
         private readonly object _syncObject;
         private readonly ManualResetEvent _addAvailable;
         private readonly ManualResetEvent _stopAll;
-        private readonly Dictionary<int, PSTask> _taskPool;
+        private readonly Dictionary<int, PSTaskBase> _taskPool;
 
         #endregion
 
@@ -529,7 +597,7 @@ namespace System.Management.Automation.PSTasks
             _syncObject = new object();
             _addAvailable = new ManualResetEvent(true);
             _stopAll = new ManualResetEvent(false);
-            _taskPool = new Dictionary<int, PSTask>(size);
+            _taskPool = new Dictionary<int, PSTaskBase>(size);
         }
 
         #endregion
@@ -572,10 +640,10 @@ namespace System.Management.Automation.PSTasks
 
         /// <summary>
         /// Method to add a task to the pool.
-        /// If the pool is full, then this method blocks until room is available.
+        /// If the pool is full, then this method blocks until space is available.
         /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
-        public bool Add(PSTask task)
+        public bool Add(PSTaskBase task)
         {
             if (! _isOpen)
             {
@@ -656,8 +724,8 @@ namespace System.Management.Automation.PSTasks
 
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
-            var task = sender as PSTask;
-            Dbg.Assert(task != null, "State changed sender must always be PSTask");
+            var task = sender as PSTaskBase;
+            Dbg.Assert(task != null, "State changed sender must always be PSTaskBase");
             var stateInfo = args.InvocationStateInfo;
             switch (stateInfo.State)
             {
@@ -725,36 +793,15 @@ namespace System.Management.Automation.PSTasks
 
         private PSTaskJob() { }
 
-        public PSTaskJob(int throttleLimit) : base(string.Empty, string.Empty)
+        public PSTaskJob(
+            string command,
+            int throttleLimit) : base(command, string.Empty)
         {
             _taskPool = new PSTaskPool(throttleLimit);
             _isOpen = true;
             PSJobTypeName = nameof(PSTaskJob);
 
-            _taskPool.PoolComplete += (sender, args) =>
-            {
-                try
-                {
-                    if (_stopSignaled)
-                    {
-                        SetJobState(JobState.Stopped, new PipelineStoppedException());
-                        return;
-                    }
-
-                    // Final state will be 'Complete', only if all child jobs completed successfully.
-                    JobState finalState = JobState.Completed;
-                    foreach (var childJob in ChildJobs)
-                    {
-                        if (childJob.JobStateInfo.State != JobState.Completed)
-                        {
-                            finalState = JobState.Failed;
-                            break;
-                        }
-                    }
-                    SetJobState(finalState);
-                }
-                catch (ObjectDisposedException) { }
-            };
+            _taskPool.PoolComplete += (sender, args) => HandleTaskPoolComplete(sender, args);
         }
 
         #endregion
@@ -864,9 +911,37 @@ namespace System.Management.Automation.PSTasks
         }
 
         #endregion
+
+        #region Private Methods
+
+        private void HandleTaskPoolComplete(object sender, EventArgs args)
+        {
+            try
+            {
+                if (_stopSignaled)
+                {
+                    SetJobState(JobState.Stopped, new PipelineStoppedException());
+                    return;
+                }
+
+                // Final state will be 'Complete', only if all child jobs completed successfully.
+                JobState finalState = JobState.Completed;
+                foreach (var childJob in ChildJobs)
+                {
+                    if (childJob.JobStateInfo.State != JobState.Completed)
+                    {
+                        finalState = JobState.Failed;
+                        break;
+                    }
+                }
+                SetJobState(finalState);
+            }
+            catch (ObjectDisposedException) { }
+        }
+
+        #endregion
     }
 
-    
     /// <summary>
     /// Task child job that wraps asynchronously running tasks
     /// </summary>
@@ -874,7 +949,7 @@ namespace System.Management.Automation.PSTasks
     {
         #region Members
 
-        private readonly PSTask _task;
+        private readonly PSJobTask _task;
 
         #endregion
 
@@ -882,6 +957,9 @@ namespace System.Management.Automation.PSTasks
 
         private PSTaskChildJob() { }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public PSTaskChildJob(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
@@ -890,7 +968,7 @@ namespace System.Management.Automation.PSTasks
 
         {
             PSJobTypeName = nameof(PSTaskChildJob);
-            _task = new PSTask(scriptBlock, usingValuesMap, dollarUnderbar, this);
+            _task = new PSJobTask(scriptBlock, usingValuesMap, dollarUnderbar, this);
             _task.StateChanged += (sender, args) => HandleTaskStateChange(sender, args);
         }
 
@@ -898,7 +976,10 @@ namespace System.Management.Automation.PSTasks
 
         #region Properties
 
-        internal PSTask Task
+        /// <summary>
+        /// Child job task
+        /// </summary>
+        internal PSTaskBase Task
         {
             get { return _task; }
         }

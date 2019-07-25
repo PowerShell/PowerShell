@@ -418,7 +418,9 @@ namespace Microsoft.PowerShell.Commands
                     );
                 }
 
-                _taskJob = new PSTaskJob(ThrottleLimit);
+                _taskJob = new PSTaskJob(
+                    ScriptBlock.ToString(),
+                    ThrottleLimit);
             }
             else
             {

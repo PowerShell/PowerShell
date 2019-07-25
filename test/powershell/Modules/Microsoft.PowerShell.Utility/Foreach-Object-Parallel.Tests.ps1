@@ -91,6 +91,12 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     
         { $sb | ForEach-Object -Parallel -ScriptBlock { "Hello" } -ErrorAction Stop } | Should -Throw -ErrorId 'ParallelPipedInputObjectCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
     }
+
+    It 'Verifies that parallel script blocks run in FullLanguage mode by default' {
+
+        $results = 1..1 | ForEach-Object -Parallel -ScriptBlock { $ExecutionContext.SessionState.LanguageMode }
+        $results | Should -BeExactly 'FullLanguage'
+    }
 }
 
 Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
@@ -211,6 +217,14 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $results = $job | Wait-Job | Receive-Job 6>&1
         $job | Remove-Job
         $results.MessageData | Should -BeExactly "Information:1"
+    }
+
+    It 'Verifies job Command property' {
+
+        $job = 1..1 | ForEach-Object -Parallel -AsJob -ScriptBlock {"Hello"}
+        $job.Command | Should -BeExactly '"Hello"'
+        $job.ChildJobs[0].Command | Should -BeExactly '"Hello"'
+        $job | Remove-Job
     }
 }
 
