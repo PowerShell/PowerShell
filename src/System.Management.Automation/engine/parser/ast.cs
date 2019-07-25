@@ -4117,11 +4117,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         None = 0x00,
 
-        /// <summary>
-        /// The -parallel flag.
-        /// </summary>
-        Parallel = 0x01,
-
         // If any flags are added that impact evaluation of items during the foreach statement, then
         // a binder (and caching strategy) needs to be added similar to SwitchClauseEvalBinder.
     }
@@ -4164,45 +4159,9 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Construct a foreach statement.
-        /// </summary>
-        /// <param name="extent">
-        /// The extent of the statement, starting from the optional label or the foreach keyword and ending at the closing curly brace.
-        /// </param>
-        /// <param name="label">The optionally null label.</param>
-        /// <param name="flags">Any flags that affect how the foreach statement is processed.</param>
-        /// <param name="throttleLimit">The limit to be obeyed during parallel processing, if any.</param>
-        /// <param name="variable">The variable set on each iteration of the loop.</param>
-        /// <param name="expression">The pipeline generating values to iterate through.</param>
-        /// <param name="body">The body to execute for each element written from pipeline.</param>
-        /// <exception cref="PSArgumentNullException">
-        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="variable"/> is null.
-        /// </exception>
-        public ForEachStatementAst(IScriptExtent extent,
-                                   string label,
-                                   ForEachFlags flags,
-                                   ExpressionAst throttleLimit,
-                                   VariableExpressionAst variable,
-                                   PipelineBaseAst expression,
-                                   StatementBlockAst body)
-            : this(extent, label, flags, variable, expression, body)
-        {
-            this.ThrottleLimit = throttleLimit;
-            if (throttleLimit != null)
-            {
-                SetParent(throttleLimit);
-            }
-        }
-
-        /// <summary>
         /// The name of the variable set for each item as the loop iterates.  This property is never null.
         /// </summary>
         public VariableExpressionAst Variable { get; private set; }
-
-        /// <summary>
-        /// The limit to be obeyed during parallel processing, if any.
-        /// </summary>
-        public ExpressionAst ThrottleLimit { get; private set; }
 
         /// <summary>
         /// The flags, if any specified on the foreach statement.
@@ -4217,13 +4176,6 @@ namespace System.Management.Automation.Language
             var newVariable = CopyElement(this.Variable);
             var newExpression = CopyElement(this.Condition);
             var newBody = CopyElement(this.Body);
-
-            if (this.ThrottleLimit != null)
-            {
-                var newThrottleLimit = CopyElement(this.ThrottleLimit);
-                return new ForEachStatementAst(this.Extent, this.Label, this.Flags, newThrottleLimit,
-                                               newVariable, newExpression, newBody);
-            }
 
             return new ForEachStatementAst(this.Extent, this.Label, this.Flags, newVariable, newExpression, newBody);
         }
