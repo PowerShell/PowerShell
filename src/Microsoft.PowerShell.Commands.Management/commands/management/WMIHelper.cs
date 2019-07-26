@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             thread.IsBackground = true;
-            // thread.SetApartmentState( ApartmentState.STA);
+            thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
         }
 

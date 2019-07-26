@@ -95,46 +95,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-#if CORECLR // No ApartmentState In CoreCLR
-        /// <summary>
-        /// Creates the runspace pool driver.
-        /// </summary>
-        /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
-        /// <param name="transportManager">transport manager associated with this
-        /// runspace pool driver</param>
-        /// <param name="maxRunspaces">Maximum runspaces to open.</param>
-        /// <param name="minRunspaces">Minimum runspaces to open.</param>
-        /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
-        /// <param name="hostInfo">Host information about client side host.</param>
-        /// <param name="configData">
-        /// Contains:
-        /// 1. Script to run after a RunspacePool/Runspace is created in this session.
-        /// For RunspacePool case, every newly created Runspace (in the pool) will run
-        /// this script.
-        /// 2. ThreadOptions for RunspacePool/Runspace
-        /// 3. ThreadApartment for RunspacePool/Runspace
-        /// </param>
-        /// <param name="initialSessionState">Configuration of the runspace.</param>
-        /// <param name="applicationPrivateData">Application private data.</param>
-        /// <param name="isAdministrator">True if the driver is being created by an administrator.</param>
-        /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
-        /// <param name="psClientVersion">Client PowerShell version.</param>
-        /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
-        internal ServerRunspacePoolDriver(
-            Guid clientRunspacePoolId,
-            int minRunspaces,
-            int maxRunspaces,
-            PSThreadOptions threadOptions,
-            HostInfo hostInfo,
-            InitialSessionState initialSessionState,
-            PSPrimitiveDictionary applicationPrivateData,
-            ConfigurationDataFromXML configData,
-            AbstractServerSessionTransportManager transportManager,
-            bool isAdministrator,
-            RemoteSessionCapability serverCapability,
-            Version psClientVersion,
-            string configurationName)
-#else
         /// <summary>
         /// Creates the runspace pool driver.
         /// </summary>
@@ -175,7 +135,6 @@ namespace System.Management.Automation
             RemoteSessionCapability serverCapability,
             Version psClientVersion,
             string configurationName)
-#endif
         {
             Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
@@ -213,7 +172,6 @@ namespace System.Management.Automation
                 RunspacePool.ThreadOptions = threadOptions;
             }
 
-#if !CORECLR // No ApartmentState In CoreCLR
             // Set Thread ApartmentState for this RunspacePool
             ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
 
@@ -225,7 +183,6 @@ namespace System.Management.Automation
             {
                 RunspacePool.ApartmentState = apartmentState;
             }
-#endif
 
             // If we have a runspace pool with a single runspace then we can run nested pipelines on
             // on it in a single pipeline invoke thread.
@@ -579,9 +536,7 @@ namespace System.Management.Automation
                 Guid.Empty,
                 this.InstanceId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 args.Runspace.ApartmentState,
-#endif
                 hostInfo,
                 RemoteStreamOptions.AddInvocationInfo,
                 false,
@@ -760,9 +715,7 @@ namespace System.Management.Automation
             // invoked from within the driver
             HostInfo hostInfo = RemotingDecoder.GetHostInfo(data.Data);
 
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState = RemotingDecoder.GetApartmentState(data.Data);
-#endif
 
             RemoteStreamOptions streamOptions = RemotingDecoder.GetRemoteStreamOptions(data.Data);
             PowerShell powershell = RemotingDecoder.GetPowerShell(data.Data);
@@ -824,9 +777,7 @@ namespace System.Management.Automation
                         data.PowerShellId,
                         data.RunspacePoolId,
                         this,
-#if !CORECLR // No ApartmentState In CoreCLR
                         apartmentState,
-#endif
                         hostInfo,
                         streamOptions,
                         addToHistory,
@@ -883,9 +834,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             hostInfo,
                             streamOptions,
                             addToHistory,
@@ -904,9 +853,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             _remoteHost,
                             hostInfo,
                             streamOptions,
@@ -937,9 +884,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             hostInfo,
                             streamOptions,
                             addToHistory,
@@ -971,9 +916,7 @@ namespace System.Management.Automation
                 data.PowerShellId,
                 data.RunspacePoolId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 apartmentState,
-#endif
                 hostInfo,
                 streamOptions,
                 addToHistory,
@@ -1085,9 +1028,7 @@ namespace System.Management.Automation
                     data.PowerShellId,
                     data.RunspacePoolId,
                     this,
-#if !CORECLR // No ApartmentState In CoreCLR
                     ApartmentState.Unknown,
-#endif
                     useRunspaceHost,
                     0 /* stream options */,
                     false /* addToHistory */,
@@ -1224,9 +1165,7 @@ namespace System.Management.Automation
                 powershellId,
                 runspacePoolId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 ApartmentState.MTA,
-#endif
                 hostInfo,
                 streamOptions,
                 addToHistory,
@@ -2519,9 +2458,7 @@ namespace System.Management.Automation
             Guid powershellId,
             Guid runspacePoolId,
             ServerRunspacePoolDriver runspacePoolDriver,
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState,
-#endif
             ServerRemoteHost remoteHost,
             HostInfo hostInfo,
             RemoteStreamOptions streamOptions,
@@ -2557,9 +2494,7 @@ namespace System.Management.Automation
                     powershellId,
                     runspacePoolId,
                     runspacePoolDriver,
-#if !CORECLR // No ApartmentState In CoreCLR
                     apartmentState,
-#endif
                     hostInfo,
                     streamOptions,
                     addToHistory,

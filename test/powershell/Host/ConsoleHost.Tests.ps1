@@ -240,7 +240,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 '@
             $testFilePath = Join-Path $TestDrive "test.ps1"
             Set-Content -Path $testFilePath -Value $testScript
-            $observed = echo hello | pwsh $testFilePath e -
+            $observed = echo hello | pwsh -noprofile $testFilePath e -
             $observed | Should -BeExactly "h-llo"
         }
     }
@@ -711,8 +711,62 @@ namespace StackTest {
             $longPipeName = [string]::new("A", 200)
 
             "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
-            # 64 is the ExitCode for BadCommandLineParameter
-            $LASTEXITCODE | Should -Be 64
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+        }
+    }
+
+    Context "ApartmentState WPF tests" -Tag Slow {
+
+        It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            add-type -AssemblyName presentationframework
+
+            $xaml = [xml]@"
+            <Window
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
+                Width = "400" Height = "300" ShowInTaskbar = "True">
+            </Window>
+"@
+
+            $reader = [System.Xml.XmlNodeReader]::new($xaml)
+            $Window = [System.Windows.Markup.XamlReader]::Load($reader)
+            # This will throw an exception if MTA
+            { $Window.Show() } | Should -Not -Throw
+            $Window.Close()
+        }
+
+    }
+
+    Context "ApartmentState tests" {
+
+        It "Default apartment state for main thread is STA" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            [System.Threading.Thread]::CurrentThread.GetApartmentState() | Should -BeExactly "STA"
+        }
+
+        It "Default apartment state for new runspace is MTA" -Skip:(!$IsWindows) {
+            $ps = [powershell]::Create()
+            $ps.AddScript({[System.Threading.Thread]::CurrentThread.GetApartmentState()})
+            $ps.Invoke() | Should -BeExactly "MTA"
+        }
+
+        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
+            @{ apartment = "STA"; switch = "-sta" }
+            @{ apartment = "MTA"; switch = "-mta" }
+        ) {
+            param ($apartment, $switch)
+
+            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
+        }
+
+        It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows -and ![System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
+            @{ switch = "-sta" }
+            @{ switch = "-mta" }
+        ) {
+            param ($switch)
+
+            & $powershell $switch -noprofile -command exit
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
 }
@@ -855,7 +909,7 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         param ( $dirname )
         try {
             Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
-            $result = & $powershell -c '(Get-Item .).Name'
+            $result = & $powershell -noprofile -c '(Get-Item .).Name'
             $result | Should -BeExactly $dirname
         }
         finally {
