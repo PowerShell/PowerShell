@@ -347,10 +347,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Task Id
         /// </summary>
-        public int Id
-        {
-            get { return _id; }
-        }
+        public int Id { get { return _id; } }
 
         #endregion
 
@@ -465,6 +462,18 @@ namespace System.Management.Automation.PSTasks
         private readonly PSDataCollection<PSStreamObject> _dataStream;
         private readonly int _cmdletThreadId;
         
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Wait-able handle that signals when new data has been added to
+        /// the data stream collection.
+        internal WaitHandle DataAddedWaitHandle
+        {
+            get { return _dataStream.WaitHandle; }
+        }
+
         #endregion
 
         #region Constructor
@@ -643,43 +652,74 @@ namespace System.Management.Automation.PSTasks
         /// If the pool is full, then this method blocks until space is available.
         /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
-        public bool Add(PSTaskBase task)
+        public bool Add(
+            PSTaskBase task, 
+            PSTaskDataStreamWriter dataStreamWriter = null)
         {
             if (! _isOpen)
             {
                 return false;
             }
 
-            // Block until either room is available or a stop is commanded
-            var index = WaitHandle.WaitAny(new WaitHandle[] {
-                _addAvailable,  // index 0
-                _stopAll        // index 1
-            });
-            
-            if (index == 1)
+            WaitHandle[] waitHandles;
+            if (dataStreamWriter != null)
             {
-                return false;
+                waitHandles = new WaitHandle[] {
+                    _addAvailable,                          // index 0
+                    _stopAll,                               // index 1
+                    dataStreamWriter.DataAddedWaitHandle    // index 2
+                };
+            }
+            else
+            {
+                waitHandles = new WaitHandle[] {
+                    _addAvailable,                          // index 0
+                    _stopAll,                               // index 1
+                };
             }
 
-            task.StateChanged += (sender, args) => HandleTaskStateChanged(sender, args);
-
-            lock (_syncObject)
+            // Block until either room is available, data is ready for writing, or a stop command
+            while (true)
             {
-                if (! _isOpen)
+                var index = WaitHandle.WaitAny(waitHandles);
+
+                // Add new task
+                if (index == 0)
+                {
+                    task.StateChanged += (sender, args) => HandleTaskStateChanged(sender, args);
+
+                    lock (_syncObject)
+                    {
+                        if (! _isOpen)
+                        {
+                            return false;
+                        }
+
+                        _taskPool.Add(task.Id, task);
+                        if (_taskPool.Count == _sizeLimit)
+                        {
+                            _addAvailable.Reset();
+                        }
+
+                        task.Start();
+                    }
+
+                    return true;
+                }
+
+                // Stop all
+                if (index == 1)
                 {
                     return false;
                 }
-
-                _taskPool.Add(task.Id, task);
-                if (_taskPool.Count == _sizeLimit)
+                
+                // Data ready for writing
+                if (index == 2)
                 {
-                    _addAvailable.Reset();
+                    dataStreamWriter.WriteImmediate();
+                    continue;
                 }
-
-                task.Start();
             }
-
-            return true;
         }
 
         /// <summary>

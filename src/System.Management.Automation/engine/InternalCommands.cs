@@ -211,11 +211,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        public SwitchParameter Parallel
-        {
-            get;
-            set;
-        }
+        public SwitchParameter Parallel { get; set; }
 
         /// <summary>
         /// Script block to run for each pipeline object
@@ -223,11 +219,7 @@ namespace Microsoft.PowerShell.Commands
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateNotNull()]
-        public ScriptBlock ScriptBlock
-        {
-            get;
-            set;
-        }
+        public ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
         /// Specifies the maximum number of concurrently running scriptblocks on separate threads.
@@ -236,11 +228,7 @@ namespace Microsoft.PowerShell.Commands
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(1, Int32.MaxValue)]
-        public int ThrottleLimit
-        {
-            get;
-            set;
-        } = 5;
+        public int ThrottleLimit { get; set; } = 5;
 
         /// <summary>
         /// Specifies a timeout time in seconds, after which the parallel running scripts will be stopped
@@ -249,11 +237,7 @@ namespace Microsoft.PowerShell.Commands
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(0, (Int32.MaxValue/1000))]
-        public int TimeoutSeconds
-        {
-            get;
-            set;
-        }
+        public int TimeoutSeconds { get; set; }
 
         /// <summary>
         /// Flag that returns a job object immediately for the parallel operation, instead of returning after
@@ -261,11 +245,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        public SwitchParameter AsJob
-        {
-            get;
-            set;
-        }
+        public SwitchParameter AsJob { get; set; }
 
         #endregion
 
@@ -479,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add task to task pool.
                 // Block if the pool is full and wait until task can be added.
-                _taskPool.Add(task);
+                _taskPool.Add(task, _taskDataStreamWriter);
             }
         }
 
