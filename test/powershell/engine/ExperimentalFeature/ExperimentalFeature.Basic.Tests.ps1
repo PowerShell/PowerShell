@@ -1,6 +1,52 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Describe "Default enablement of Experimental Features" -Tags CI {
+    BeforeAll {
+        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+
+        Function BeEnabled {
+            [CmdletBinding()]
+            Param(
+                $ActualValue,
+                $Name,
+                [switch]$Negate
+            )
+
+            $failure = if ($Negate) {
+                "Expected: Feature $Name to be Enabled"
+            }
+            else {
+                "Expected: Feature $Name to not be Enabled"
+            }
+
+            return [PSCustomObject]@{
+                Succeeded = if ($Negate) {
+                    $ActualValue -eq $false
+                }
+                else {
+                    $ActualValue -eq $true
+                }
+                FailureMessage = $failure
+            }
+        }
+
+        Add-AssertionOperator -Name 'BeEnabled' -Test $Function:BeEnabled
+    }
+
+    It "On stable builds, Experimental Features are not enabled" -Skip:($isPreview) {
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+        }
+    }
+
+    It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+        }
+    }
+}
+
 Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
 
     BeforeAll {
@@ -34,10 +80,6 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         } else {
             Remove-Module -ModuleInfo $moduleInfo -Force -ErrorAction SilentlyContinue
         }
-    }
-
-    It "No experimental feature is enabled" {
-        $EnabledExperimentalFeatures.Count | Should -Be 0
     }
 
     It "Replace existing command <Name> - version one should be shown" -TestCases @(
