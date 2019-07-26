@@ -480,6 +480,14 @@ namespace Microsoft.PowerShell.Commands
 
         private ScriptBlock _initScript;
 
+
+        /// <summary>
+        /// Working directory of the process.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string WorkingDirectory { get; set; }
+
         /// <summary>
         /// Launches the background job as a 32-bit process. This can be used on
         /// 64-bit systems to launch a 32-bit wow process for the background job.
@@ -650,6 +658,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (WorkingDirectory != null)
+            {
+                // WorkingDirectory -> Not Exist -> Throw Error
+                WorkingDirectory = PathUtils.ResolveFilePath(WorkingDirectory, this);
+                if (!Directory.Exists(WorkingDirectory))
+                {
+                    string message = "TODO: CRITICAL Improve error message";//StringUtil.Format(ProcessResources.InvalidInput, "WorkingDirectory");
+                    ErrorRecord er = new ErrorRecord(new DirectoryNotFoundException(message), "DirectoryNotFoundException", ErrorCategory.InvalidOperation, null);
+                    WriteError(er);
+                    return;
+                }
+            }
+            else
+            {
+                // Working Directory not specified -> Assign Current Path.
+                WorkingDirectory =  PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this);
+            }
+
+            WriteWarning(WorkingDirectory);
+
             if (ParameterSetName == DefinitionNameParameterSet)
             {
                 // Get the Job2 object from the Job Manager for this definition name and start the job.
@@ -687,7 +715,10 @@ namespace Microsoft.PowerShell.Commands
 
                     resolvedPath = paths[0];
                 }
-
+                
+                WriteWarning("I am debuggin here");
+                WriteWarning($"{resolvedPath}");
+                WriteWarning($"{_definitionPath}");
                 List<Job2> jobs = JobManager.GetJobToStart(_definitionName, resolvedPath, _definitionType, this, false);
 
                 if (jobs.Count == 0)
