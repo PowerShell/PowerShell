@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Add-Type" -Tags "CI" {
     BeforeAll {
         $guid = [Guid]::NewGuid().ToString().Replace("-","")
@@ -209,6 +210,9 @@ public class AttributeTest$guid : PSCmdlet
 
     It "Throw if the type already exists" {
         Add-Type -TypeDefinition "public class Foo$guid {}"
+
+        # The cmdlet writes TYPE_ALREADY_EXISTS for every duplicated type and then terminates with COMPILER_ERRORS.
+        # So here we check 2 errors.
         { Add-Type -TypeDefinition "public class Foo$guid { public int Bar {get {return 42;} }" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
         $error[1].FullyQualifiedErrorId | Should -BeExactly "TYPE_ALREADY_EXISTS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
