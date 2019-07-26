@@ -1,0 +1,10 @@
+{
+  "Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned",
+  "ExperimentalFeatures": [
+    "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints",
+    "PSCommandNotFoundSuggestion",
+    "PSImplicitRemotingBatching",
+    "PSTempDrive",
+    "PSUseAbbreviationExpansion"
+  ]
+}

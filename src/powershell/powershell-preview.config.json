@@ -2,8 +2,6 @@
     "ExperimentalFeatures": [
         "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints",
         "PSCommandNotFoundSuggestion",
-        "PSImplicitRemotingBatching",
-        "PSTempDrive",
-        "PSUseAbbreviationExpansion"
+        "PSImplicitRemotingBatching"
     ]
 }

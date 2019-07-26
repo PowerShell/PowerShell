@@ -448,11 +448,11 @@ Fix steps:
 
     # publish powershell.config.json
     # only Windows currently has a default config file that needs to be merged if Preview
-    $version = (git --git-dir="$PSSCriptRoot/.git" describe) -Replace '^v'
+    $version = git --git-dir="$PSSCriptRoot/.git" describe
     $previewConfigPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell/powershell-preview.config.json"
     $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
     if ($Environment.IsWindows) {
-        $configPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell-win-core/powershell.config.json"
+        $configPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell/powershell.config.json"
         if (Test-IsPreview $version) {
             $config = Get-Content $configPath | ConvertFrom-Json
             $previewConfig = Get-Content $previewConfigPath | ConvertFrom-Json
@@ -460,7 +460,7 @@ Fix steps:
                 $config | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value
             }
 
-            Set-Content -Path configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+            Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
         }
         else {
             Copy-Item -Path $configPath -Destination $configPublishPath -Force -ErrorAction Stop
