@@ -2473,7 +2473,7 @@ namespace System.Management.Automation
         private IList _verboseVarList;
 
         /// <summary>
-        /// VerboseVariable tells which variable to populate with the verbose records.
+        /// Gets or sets a variable that will be used store verbose records.
         /// Use +varname to append to the variable rather than clearing it.
         /// </summary>
         /// <remarks>
@@ -2501,7 +2501,7 @@ namespace System.Management.Automation
         private IList _debugVarList;
 
         /// <summary>
-        /// DebugVariable tells which variable to populate with the debug records.
+        /// Gets or sets a variable that will be used store debug records.
         /// Use +varname to append to the variable rather than clearing it.
         /// </summary>
         /// <remarks>
@@ -2614,7 +2614,7 @@ namespace System.Management.Automation
         private IList _progressVarList;
 
         /// <summary>
-        /// ProgressVariable tells which variable to populate with the progress records.
+        /// Gets or sets a variable that will be used store progress records.
         /// Use +varname to append to the variable rather than clearing it.
         /// </summary>
         /// <remarks>
@@ -3131,10 +3131,12 @@ namespace System.Management.Automation
                 {
                     return ActionPreference.Inquire;
                 }
+
                 if (Verbose)
                 {
                     return ActionPreference.Continue;
                 }
+
                 // Debug:$false and Verbose:$false ignored
 
                 if (!_isWarningPreferenceCached)

@@ -155,7 +155,7 @@ Describe "Stream writer tests" -Tags "CI" {
                 Write-Debug -Message 'Debug'
                 Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting an information message' -PercentComplete ([Math]::Round(5 / 6 * 100))
-                Write-Information -Message 'Information'
+                Write-Information -MessageData 'Information'
                 Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Cooling down' -Completed -PercentComplete ([Math]::Round(6 / 6 * 100))
             }

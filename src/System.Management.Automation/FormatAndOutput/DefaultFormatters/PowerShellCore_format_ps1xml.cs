@@ -892,12 +892,14 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ProgressRecord()
         {
-            yield return new FormatViewDefinition("ProgressRecord",
-                CustomControl.Create(outOfBand: true)
-                    .StartEntry()
-                        .AddScriptBlockExpressionBinding($@"'{FormatStrings.ProgressFormatString}' -f ""$(if ($_.PercentComplete -ge 0) {{'{{0,3}}% - ' -f $_.PercentComplete}})$($_.Activity)$(if ($_.StatusDescription -ne '{FormatStrings.Processing}') {{"": $($_.StatusDescription)""}})$(if ($_.CurrentOperation) {{"" ($($_.CurrentOperation))""}})""")
-                    .EndEntry()
-                .EndControl());
+            yield return new FormatViewDefinition(
+                "ProgressRecord",
+                CustomControl
+                    .Create(outOfBand: true)
+                        .StartEntry()
+                            .AddScriptBlockExpressionBinding($@"'{FormatStrings.ProgressFormatString}' -f ""$(if ($_.PercentComplete -ge 0) {{'{{0,3}}% - ' -f $_.PercentComplete}})$($_.Activity)$(if ($_.StatusDescription -ne '{FormatStrings.Processing}') {{"": $($_.StatusDescription)""}})$(if ($_.CurrentOperation) {{"" ($($_.CurrentOperation))""}})""")
+                        .EndEntry()
+                    .EndControl());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(CustomControl[] sharedControls)

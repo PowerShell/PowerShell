@@ -33,13 +33,9 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should -BeExactly $errorCount
         }
 
-        It 'action preference of Ignore cannot be set as a preference variable' {
-            $e = {
-                $GLOBAL:errorActionPreference = "Ignore"
-                Get-Process -Name asdfasdfasdf
-            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
-            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
-
+        It 'action preference of Ignore can be set as a preference variable' {
+            $GLOBAL:errorActionPreference = "Ignore"
+            Get-Process -Name asdfasdfasdf | Should -Be $null
             $GLOBAL:errorActionPreference = $orgin
         }
 
