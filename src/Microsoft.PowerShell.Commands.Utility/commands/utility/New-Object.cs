@@ -395,7 +395,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-#if !CORECLR
         private class ComCreateInfo
         {
             public object objectCreated;
@@ -435,7 +434,6 @@ namespace Microsoft.PowerShell.Commands
                 info.success = false;
             }
         }
-#endif
 
         private object CreateComObject()
         {
@@ -459,13 +457,6 @@ namespace Microsoft.PowerShell.Commands
                 // Check Error Code to see if Error is because of Com apartment Mismatch.
                 if (e.HResult == RPC_E_CHANGED_MODE)
                 {
-#if CORECLR
-                    ThrowTerminatingError(
-                        new ErrorRecord(
-                            new COMException(StringUtil.Format(NewObjectStrings.ApartmentNotSupported, e.Message), e),
-                            "NoCOMClassIdentified",
-                            ErrorCategory.ResourceUnavailable, null));
-#else
                     createInfo = new ComCreateInfo();
 
                     Thread thread = new Thread(new ParameterizedThreadStart(STAComCreateThreadProc));
@@ -482,7 +473,6 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                              new ErrorRecord(createInfo.e, "NoCOMClassIdentified",
                                                     ErrorCategory.ResourceUnavailable, null));
-#endif
                 }
                 else
                 {

@@ -382,7 +382,7 @@ Once you sign a CLA, all your existing and future pull requests will have the st
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
-[vuln-reporting]: ../docs/maintainers/issue-management.md#Security-Vulnerabilities
+[vuln-reporting]: ./SECURITY.md
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/

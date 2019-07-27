@@ -12,6 +12,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 
 using Microsoft.PowerShell.Commands;
@@ -44,9 +45,7 @@ namespace System.Management.Automation.Remoting
         internal const string MAXRCVDCMDSIZETOKEN = "psmaximumreceiveddatasizepercommandmb";
         internal const string MAXRCVDCMDSIZETOKEN_CamelCase = "PSMaximumReceivedDataSizePerCommandMB";
         internal const string THREADOPTIONSTOKEN = "pssessionthreadoptions";
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const string THREADAPTSTATETOKEN = "pssessionthreadapartmentstate";
-#endif
         internal const string SESSIONCONFIGTOKEN = "sessionconfigurationdata";
         internal const string PSVERSIONTOKEN = "PSVersion";
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
@@ -68,10 +67,7 @@ namespace System.Management.Automation.Remoting
         internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
         internal PSThreadOptions? ShellThreadOptions;
-
-#if !CORECLR // No ApartmentState In CoreCLR
-        internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
-#endif
+        internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
 
@@ -127,13 +123,11 @@ namespace System.Management.Automation.Remoting
                     ShellThreadOptions = (PSThreadOptions)LanguagePrimitives.ConvertTo(
                         optionValue, typeof(PSThreadOptions), CultureInfo.InvariantCulture);
                     break;
-#if !CORECLR // No ApartmentState In CoreCLR
                 case THREADAPTSTATETOKEN:
                     AssertValueNotAssigned(THREADAPTSTATETOKEN, ShellThreadApartmentState);
-                    ShellThreadApartmentState = (System.Threading.ApartmentState)LanguagePrimitives.ConvertTo(
-                        optionValue, typeof(System.Threading.ApartmentState), CultureInfo.InvariantCulture);
+                    ShellThreadApartmentState = (ApartmentState)LanguagePrimitives.ConvertTo(
+                        optionValue, typeof(ApartmentState), CultureInfo.InvariantCulture);
                     break;
-#endif
                 case SESSIONCONFIGTOKEN:
                     {
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);

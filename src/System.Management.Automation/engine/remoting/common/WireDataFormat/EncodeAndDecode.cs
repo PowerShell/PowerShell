@@ -677,11 +677,7 @@ namespace System.Management.Automation
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MinRunspaces, minRunspaces));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MaxRunspaces, maxRunspaces));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ThreadOptions, runspacePool.ThreadOptions));
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-            ApartmentState poolState = ApartmentState.MTA;
-#else
             ApartmentState poolState = runspacePool.ApartmentState;
-#endif
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, poolState));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApplicationArguments, applicationArguments));
 
@@ -1113,11 +1109,7 @@ namespace System.Management.Automation
                 hostInfo = new HostInfo(null);
                 hostInfo.UseRunspaceHost = true;
 
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-                ApartmentState passedApartmentState = ApartmentState.MTA;
-#else
                 ApartmentState passedApartmentState = rsPool.ApartmentState;
-#endif
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, passedApartmentState));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.RemoteStreamOptions, RemoteStreamOptions.AddInvocationInfo));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.AddToHistory, false));
@@ -1130,11 +1122,7 @@ namespace System.Management.Automation
                     hostInfo.UseRunspaceHost = true;
                 }
 
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-                ApartmentState passedApartmentState = ApartmentState.MTA;
-#else
                 ApartmentState passedApartmentState = settings.ApartmentState;
-#endif
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, passedApartmentState));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.RemoteStreamOptions, settings.RemoteStreamOptions));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.AddToHistory, settings.AddToHistory));
@@ -2341,7 +2329,6 @@ namespace System.Management.Automation
             return GetPropertyValue<bool>(dataAsPSObject, RemoteDataNameStrings.IsNested);
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// Gets the invocation settings information from the message.
         /// </summary>
@@ -2352,7 +2339,7 @@ namespace System.Management.Automation
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
             return GetPropertyValue<ApartmentState>(dataAsPSObject, RemoteDataNameStrings.ApartmentState);
         }
-#endif
+
         /// <summary>
         /// Gets the stream options from the message.
         /// </summary>

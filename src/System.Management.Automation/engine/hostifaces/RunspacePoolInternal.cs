@@ -132,10 +132,7 @@ namespace System.Management.Automation.Runspaces.Internal
             _initialSessionState = initialSessionState.Clone();
             this.host = host;
             ThreadOptions = initialSessionState.ThreadOptions;
-#if !CORECLR
-            // No ApartmentState In CoreCLR
             this.ApartmentState = initialSessionState.ApartmentState;
-#endif
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
@@ -851,7 +848,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// The value of this property is propagated to all the Runspaces in this pool.
         /// </summary>
@@ -859,7 +855,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Any updates to the value of this property must be done before the RunspacePool is opened
         /// </remarks>
         internal ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
@@ -1257,9 +1252,7 @@ namespace System.Management.Automation.Runspaces.Internal
             Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             result.ApartmentState = this.ApartmentState;
-#endif
 
             this.PropagateApplicationPrivateData(result);
 
