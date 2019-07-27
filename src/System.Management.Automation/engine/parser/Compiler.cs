@@ -3536,14 +3536,14 @@ namespace System.Management.Automation.Language
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    if (splatTest is VariableExpressionAst variableExpressionAst)
+                    switch (splatTest)
                     {
-                        splatted = variableExpressionAst.Splatted;
-                    }
-
-                    if (splatTest is HashtableAst hashTableAst)
-                    {
-                        splatted = hashTableAst.Splatted;
+                        case VariableExpressionAst variableExpressionAst:
+                            splatted = variableExpressionAst.Splatted;
+                            break;
+                        case HashtableAst hashTableAst:
+                            splatted = hashTableAst.Splatted;
+                            break;
                     }
 
                     elementExprs[i] =
