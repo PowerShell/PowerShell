@@ -103,18 +103,65 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets or sets the value of the VerboseAction parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command what to do when a verbose record
+        /// occurs.
+        /// </remarks>
+        [Parameter]
+        [Alias("va")]
+        public ActionPreference VerboseAction
+        {
+            get { return _commandRuntime.VerbosePreference; }
+
+            set { _commandRuntime.VerbosePreference = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the DebugAction parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command what to do when a debug record
+        /// occurs.
+        /// </remarks>
+        [Parameter]
+        [Alias("da")]
+        public ActionPreference DebugAction
+        {
+            get { return _commandRuntime.DebugPreference; }
+
+            set { _commandRuntime.DebugPreference = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the value of the InformationAction parameter for the cmdlet.
         /// </summary>
         /// <remarks>
         /// This parameter tells the command what to do when an informational record occurs.
         /// </remarks>
         [Parameter]
-        [Alias("infa")]
+        [Alias("ia")]
         public ActionPreference InformationAction
         {
             get { return _commandRuntime.InformationPreference; }
 
             set { _commandRuntime.InformationPreference = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the ProgressAction parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command what to do when an progress record occurs.
+        /// </remarks>
+        [Parameter]
+        [Alias("pra")]
+        public ActionPreference ProgressAction
+        {
+            get { return _commandRuntime.ProgressPreference; }
+
+            set { _commandRuntime.ProgressPreference = value; }
         }
 
         /// <summary>
@@ -156,6 +203,40 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets or sets the value of the VerboseVariable parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command which variable to populate with verbose messages.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </remarks>
+        [Parameter]
+        [Alias("vv")]
+        [ValidateVariableName]
+        public string VerboseVariable
+        {
+            get { return _commandRuntime.VerboseVariable; }
+
+            set { _commandRuntime.VerboseVariable = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the DebugVariable parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command which variable to populate with debug messages.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </remarks>
+        [Parameter]
+        [Alias("dv")]
+        [ValidateVariableName]
+        public string DebugVariable
+        {
+            get { return _commandRuntime.DebugVariable; }
+
+            set { _commandRuntime.DebugVariable = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the value of the InformationVariable parameter for the cmdlet.
         /// </summary>
         /// <remarks>
@@ -170,6 +251,23 @@ namespace System.Management.Automation.Internal
             get { return _commandRuntime.InformationVariable; }
 
             set { _commandRuntime.InformationVariable = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the ProgressVariable parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command which variable to populate with progress messages.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </remarks>
+        [Parameter]
+        [Alias("prv")]
+        [ValidateVariableName]
+        public string ProgressVariable
+        {
+            get { return _commandRuntime.ProgressVariable; }
+
+            set { _commandRuntime.ProgressVariable = value; }
         }
 
         /// <summary>

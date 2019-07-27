@@ -929,9 +929,10 @@ namespace System.Management.Automation
                      .AddParameter("PassThru")
                      .AddParameter("ErrorAction", ActionPreference.Ignore)
                      .AddParameter("WarningAction", ActionPreference.Ignore)
+                     .AddParameter("VerboseAction", ActionPreference.Ignore)
+                     .AddParameter("DebugAction", ActionPreference.Ignore)
                      .AddParameter("InformationAction", ActionPreference.Ignore)
-                     .AddParameter("Verbose", false)
-                     .AddParameter("Debug", false);
+                     .AddParameter("ProgressAction", ActionPreference.Ignore);
                 matchingModules = (Collection<PSModuleInfo>)ps.Invoke<PSModuleInfo>();
             }
             catch (Exception e)

@@ -598,9 +598,10 @@ namespace System.Management.Automation
                         .AddParameter("List", true)
                         .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("WarningAction", ActionPreference.Ignore)
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("DebugAction", ActionPreference.Ignore)
                         .AddParameter("InformationAction", ActionPreference.Ignore)
-                        .AddParameter("Verbose", false)
-                        .AddParameter("Debug", false)
+                        .AddParameter("ProgressAction", ActionPreference.Ignore)
                         .AddParameter("Name", modulePath)
                     .Invoke();
             }

@@ -8,14 +8,17 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// Corresponds to -OutputVariable, -ErrorVariable, -WarningVariable, and -InformationVariable.
+    /// Corresponds to -OutputVariable, -ErrorVariable, -WarningVariable, -VerboseVariable, -DebugVariable, -InformationVariable, and -ProgressVariable.
     /// </summary>
     internal enum VariableStreamKind
     {
         Output,
         Error,
         Warning,
-        Information
+        Verbose,
+        Debug,
+        Information,
+        Progress,
     };
 
     /// <summary>
@@ -172,9 +175,24 @@ namespace System.Management.Automation.Internal
         private List<IList> _warningVariableList;
 
         /// <summary>
+        /// If non-null, verbose records written to the pipe are also added to this list.
+        /// </summary>
+        private List<IList> _verboseVariableList;
+
+        /// <summary>
+        /// If non-null, debug records written to the pipe are also added to this list.
+        /// </summary>
+        private List<IList> _debugVariableList;
+
+        /// <summary>
         /// If non-null, information objects written to the pipe are also added to this list.
         /// </summary>
         private List<IList> _informationVariableList;
+
+        /// <summary>
+        /// If non-null, progress records written to the pipe are also added to this list.
+        /// </summary>
+        private List<IList> _progressVariableList;
 
         /// <summary>
         /// If non-null, the current object being written to the pipe is stored in
@@ -206,8 +224,17 @@ namespace System.Management.Automation.Internal
                 case VariableStreamKind.Output:
                     AddToVarList(_outVariableList, obj);
                     break;
+                case VariableStreamKind.Verbose:
+                    AddToVarList(_verboseVariableList, obj);
+                    break;
+                case VariableStreamKind.Debug:
+                    AddToVarList(_debugVariableList, obj);
+                    break;
                 case VariableStreamKind.Information:
                     AddToVarList(_informationVariableList, obj);
+                    break;
+                case VariableStreamKind.Progress:
+                    AddToVarList(_progressVariableList, obj);
                     break;
             }
         }
@@ -240,6 +267,22 @@ namespace System.Management.Automation.Internal
 
                     _outVariableList.Add(list);
                     break;
+                case VariableStreamKind.Verbose:
+                    if (_verboseVariableList == null)
+                    {
+                        _verboseVariableList = new List<IList>();
+                    }
+
+                    _verboseVariableList.Add(list);
+                    break;
+                case VariableStreamKind.Debug:
+                    if (_debugVariableList == null)
+                    {
+                        _debugVariableList = new List<IList>();
+                    }
+
+                    _debugVariableList.Add(list);
+                    break;
                 case VariableStreamKind.Information:
                     if (_informationVariableList == null)
                     {
@@ -247,6 +290,14 @@ namespace System.Management.Automation.Internal
                     }
 
                     _informationVariableList.Add(list);
+                    break;
+                case VariableStreamKind.Progress:
+                    if (_progressVariableList == null)
+                    {
+                        _progressVariableList = new List<IList>();
+                    }
+
+                    _progressVariableList.Add(list);
                     break;
             }
         }
@@ -269,8 +320,17 @@ namespace System.Management.Automation.Internal
                 case VariableStreamKind.Output:
                     _outVariableList.Remove(list);
                     break;
+                case VariableStreamKind.Verbose:
+                    _verboseVariableList.Remove(list);
+                    break;
+                case VariableStreamKind.Debug:
+                    _debugVariableList.Remove(list);
+                    break;
                 case VariableStreamKind.Information:
                     _informationVariableList.Remove(list);
+                    break;
+                case VariableStreamKind.Progress:
+                    _progressVariableList.Remove(list);
                     break;
             }
         }
@@ -286,8 +346,8 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// When a temporary pipe is used in the middle of execution, then we need to pass along
-        /// the error and warning variable list to hold the errors and warnings get written out
-        /// while the temporary pipe is being used.
+        /// the message variable lists to hold messages written out while the temporary pipe is
+        /// being used.
         ///
         /// We don't need to pass along the out variable list because we don't care about the output
         /// generated in the middle of execution.
@@ -296,7 +356,10 @@ namespace System.Management.Automation.Internal
         {
             CopyVariableToTempPipe(VariableStreamKind.Error, _errorVariableList, tempPipe);
             CopyVariableToTempPipe(VariableStreamKind.Warning, _warningVariableList, tempPipe);
+            CopyVariableToTempPipe(VariableStreamKind.Verbose, _verboseVariableList, tempPipe);
+            CopyVariableToTempPipe(VariableStreamKind.Debug, _debugVariableList, tempPipe);
             CopyVariableToTempPipe(VariableStreamKind.Information, _informationVariableList, tempPipe);
+            CopyVariableToTempPipe(VariableStreamKind.Progress, _progressVariableList, tempPipe);
         }
 
         private void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)

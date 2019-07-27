@@ -972,7 +972,10 @@ namespace System.Management.Automation
                             .AddParameter("Scope", StringLiterals.Global)
                             .AddParameter("ErrorAction", ActionPreference.Ignore)
                             .AddParameter("WarningAction", ActionPreference.Ignore)
+                            .AddParameter("VerboseAction", ActionPreference.Ignore)
+                            .AddParameter("DebugAction", ActionPreference.Ignore)
                             .AddParameter("InformationAction", ActionPreference.Ignore)
+                            .AddParameter("ProgressAction", ActionPreference.Ignore)
                             .AddParameter("Verbose", false)
                             .AddParameter("Debug", false)
                             .AddParameter("PassThru");
@@ -1023,6 +1026,10 @@ namespace System.Management.Automation
                         .AddParameter("Name", module)
                         .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("WarningAction", ActionPreference.Ignore)
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("DebugAction", ActionPreference.Ignore)
+                        .AddParameter("InformationAction", ActionPreference.Ignore)
+                        .AddParameter("ProgressAction", ActionPreference.Ignore)
                         .AddParameter("Verbose", false)
                         .AddParameter("Debug", false)
                         .AddParameter("ListAvailable");
@@ -1082,7 +1089,10 @@ namespace System.Management.Automation
                         .AddParameter("FullyQualifiedName", fullyQualifiedName)
                         .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("WarningAction", ActionPreference.Ignore)
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("DebugAction", ActionPreference.Ignore)
                         .AddParameter("InformationAction", ActionPreference.Ignore)
+                        .AddParameter("ProgressAction", ActionPreference.Ignore)
                         .AddParameter("Verbose", false)
                         .AddParameter("Debug", false)
                         .AddParameter("ListAvailable");

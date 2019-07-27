@@ -1306,9 +1306,10 @@ namespace Microsoft.PowerShell.Commands
                                 .AddParameter("Scope", StringLiterals.Global)
                                 .AddParameter("ErrorAction", ActionPreference.Ignore)
                                 .AddParameter("WarningAction", ActionPreference.Ignore)
+                                .AddParameter("VerboseAction", ActionPreference.Ignore)
+                                .AddParameter("DebugAction", ActionPreference.Ignore)
                                 .AddParameter("InformationAction", ActionPreference.Ignore)
-                                .AddParameter("Verbose", false)
-                                .AddParameter("Debug", false);
+                                .AddParameter("ProgressAction", ActionPreference.Ignore);
                 ps.Invoke();
             }
             catch (Exception)

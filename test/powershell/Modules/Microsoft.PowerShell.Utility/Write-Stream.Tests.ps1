@@ -1,26 +1,34 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Stream writer tests" -Tags "CI" {
-    $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"
-
-    # A custom function is defined here do handle the debug stream dealing with the confirm prompt
-    # that would normally
-    function Write-Messages
-    {
-        [CmdletBinding()]
-
-        param()
-
-        Write-Verbose "Verbose message"
-
-        Write-Debug "Debug message"
-
-    }
 
     Context "Redirect Stream Tests" {
         # These tests validate that a stream is actually being written to by redirecting the output of that stream
 
-        AfterEach { Remove-Item $targetfile }
+        BeforeAll {
+            function Write-Messages {
+                [CmdletBinding()]
+
+                param()
+
+                Write-Verbose "Verbose message"
+
+                Write-Debug "Debug message"
+
+            }
+        }
+
+        BeforeEach {
+            $targetfile = [System.IO.Path]::GetTempFileName()
+        }
+
+        AfterEach {
+            if (Test-Path -LiteralPath $targetfile) {
+                Remove-Item $targetfile
+            }
+        }
+
         It "Should write warnings to the warning stream" {
             Write-Warning "Test Warning" 3>&1 > $targetfile
 
@@ -55,24 +63,11 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Write-Information cmdlet" {
-        BeforeAll {
-            $ps = [powershell]::Create()
-
-            $testInfoData = @(
-                @{ Name = 'defaults'; Command = "Write-Information TestMessage";              returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Object';  Command = "Write-Information -MessageData TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Message'; Command = "Write-Information -Message TestMessage";     returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";         returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test";    returnCount = 1; returnValue = 'TestMessage' }
-            )
-        }
-
         BeforeEach {
-            $ps.Commands.Clear()
-            $ps.Streams.ClearStreams()
+            $ps = [powershell]::Create()
         }
 
-        AfterAll {
+        AfterEach {
             $ps.Dispose()
         }
 
@@ -105,7 +100,15 @@ Describe "Stream writer tests" -Tags "CI" {
             $result[1].MessageData | Should -BeExactly "12345"
        }
 
-       It "Write-Information works with <Name>" -TestCases:$testInfoData {
+        $testInfoData = @(
+            @{ Name = 'defaults'; Command = "Write-Information TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
+            @{ Name = '-Object'; Command = "Write-Information -MessageData TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
+            @{ Name = '-Message'; Command = "Write-Information -Message TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
+            @{ Name = '-Msg'; Command = "Write-Information -Msg TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
+            @{ Name = '-Tag'; Command = "Write-Information TestMessage -Tag Test"; returnCount = 1; returnValue = 'TestMessage' }
+        )
+
+        It "Write-Information works with <Name>" -TestCases $testInfoData {
             param($Command, $returnCount, $returnValue)
             $ps.AddScript($Command).Invoke()
 
@@ -120,6 +123,74 @@ Describe "Stream writer tests" -Tags "CI" {
             $null | Write-Information -Tags myTag -ErrorAction Stop -InformationAction SilentlyContinue -InformationVariable i
             $i.Tags | Should -BeExactly "myTag"
             $i.MessageData | Should -Be $null
+        }
+    }
+
+    Context 'Stream Variable Tests' {
+        # These tests validate that output from any stream can be captured in a variable
+
+        $streams = @('Error', 'Warning', 'Verbose', 'Debug', 'Information', 'Progress')
+        $streamTestCases = foreach ($stream in $streams) {
+            @{
+                Stream = $stream
+            }
+        }
+
+        BeforeAll {
+            function Test-StreamData {
+                [CmdletBinding()]
+                param()
+                Write-Progress -Activity 'Warming up' -PercentComplete ([Math]::Round(0 / 6 * 100))
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Writing output' -Status 'Outputting an error' -PercentComplete ([Math]::Round(1 / 6 * 100))
+                Write-Error -Message 'Error'
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Writing output' -Status 'Outputting a warning' -PercentComplete ([Math]::Round(2 / 6 * 100))
+                Write-Warning -Message 'Warning'
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Writing output' -Status 'Outputting a verbose message' -PercentComplete ([Math]::Round(3 / 6 * 100))
+                Write-Verbose -Message 'Verbose'
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Writing output' -Status 'Outputting a debug message' -PercentComplete ([Math]::Round(4 / 6 * 100))
+                Write-Debug -Message 'Debug'
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Writing output' -Status 'Outputting an information message' -PercentComplete ([Math]::Round(5 / 6 * 100))
+                Write-Information -Message 'Information'
+                Start-Sleep -Milliseconds 50
+                Write-Progress -Activity 'Cooling down' -Completed -PercentComplete ([Math]::Round(6 / 6 * 100))
+            }
+        }
+
+        It 'Should be able to capture messages written to the <Stream> stream' -TestCases $streamTestCases {
+            param($Stream)
+
+            $streamData = @()
+            $parameters = @{
+                "${Stream}Variable" = 'streamData'
+            }
+            Test-StreamData @parameters *> $null
+
+            ,$streamData | Should -BeOfType [System.Collections.ArrayList]
+            $streamData.Count | Should -BeGreaterThan 0
+            $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
+        }
+
+        # We skip progress here because it is not redirectable
+        It 'Should be able to ignore all streams except for the <Stream> stream' -TestCases $streamTestCases[0..$($streamTestCases.Length - 2)] {
+            param($Stream)
+            $parameters = @{}
+            foreach ($streamName in $streams) {
+                $parameters["${streamName}Action"] = if ($streamName -eq $Stream) {
+                    [System.Management.Automation.ActionPreference]::Continue
+                } else {
+                    [System.Management.Automation.ActionPreference]::Ignore
+                }
+            }
+            $streamdata = @(Test-StreamData @parameters *>&1)
+
+            , $streamData | Should -BeOfType [System.Object[]]
+            $streamData.Count | Should -BeGreaterThan 0
+            $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
         }
     }
 }

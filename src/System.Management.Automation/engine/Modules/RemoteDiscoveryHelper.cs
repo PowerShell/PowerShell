@@ -473,7 +473,10 @@ namespace System.Management.Automation
         {
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "ErrorAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "WarningAction");
+            CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "VerboseAction");
+            CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "DebugAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "InformationAction");
+            CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "ProgressAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "Verbose");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "Debug");
 

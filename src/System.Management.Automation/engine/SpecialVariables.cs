@@ -262,6 +262,7 @@ namespace System.Management.Automation
                                                                     SpecialVariables.WarningPreference,
                                                                     SpecialVariables.InformationPreference,
                                                                     SpecialVariables.ConfirmPreference,
+                                                                    SpecialVariables.ProgressPreference,
                                                                 };
 
         internal static readonly Type[] PreferenceVariableTypes = {
@@ -272,6 +273,7 @@ namespace System.Management.Automation
                                                                     /* WarningPreference */     typeof(ActionPreference),
                                                                     /* InformationPreference */ typeof(ActionPreference),
                                                                     /* ConfirmPreference */     typeof(ConfirmImpact),
+                                                                    /* ProgressPreference */    typeof(ActionPreference),
                                                                   };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
@@ -339,5 +341,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
+        Progress = 16,
     }
 }

@@ -50,9 +50,12 @@ namespace System.Management.Automation
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
-                    "ErrorVariable", "WarningVariable", "OutVariable",
-                    "OutBuffer", "PipelineVariable", "InformationVariable" };
+                    "Verbose", "Debug",
+                    "ErrorAction", "WarningAction", "VerboseAction",
+                    "DebugAction", "InformationAction", "ProgressAction",
+                    "ErrorVariable", "WarningVariable", "VerboseVariable",
+                    "DebugVariable", "InformationVariable", "ProgressVariable",
+                    "OutVariable", "OutBuffer", "PipelineVariable" };
             }
         );
 

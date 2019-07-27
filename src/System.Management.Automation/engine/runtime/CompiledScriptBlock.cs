@@ -2411,9 +2411,24 @@ namespace System.Management.Automation
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Warning, _commandRuntime.WarningPreference);
             }
 
+            if (_commandRuntime.IsVerboseActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Verbose, _commandRuntime.VerbosePreference);
+            }
+
+            if (_commandRuntime.IsDebugActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Debug, _commandRuntime.DebugPreference);
+            }
+
             if (_commandRuntime.IsInformationActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
+            }
+
+            if (_commandRuntime.IsProgressActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
             }
 
             if (_commandRuntime.IsWhatIfFlagSet)

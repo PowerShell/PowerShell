@@ -414,6 +414,8 @@ namespace System.Management.Automation
                 ui.WriteProgress(sourceId, progressRecord);
             }
 
+            AppendProgressVarList(progressRecord);
+
             lastProgressContinueStatus = WriteHelper(
                 null,
                 null,
@@ -508,6 +510,8 @@ namespace System.Management.Automation
                 }
             }
 
+            AppendDebugVarList(record);
+
             lastDebugContinueStatus = WriteHelper(
                 null,
                 null,
@@ -595,6 +599,8 @@ namespace System.Management.Automation
                     CBhost.InternalUI.WriteVerboseRecord(record);
                 }
             }
+
+            AppendVerboseVarList(record);
 
             lastVerboseContinueStatus = WriteHelper(
                 null,
@@ -2463,6 +2469,62 @@ namespace System.Management.Automation
 
         #endregion Warning PSVariable
 
+        #region Verbose PSVariable
+        private IList _verboseVarList;
+
+        /// <summary>
+        /// VerboseVariable tells which variable to populate with the verbose records.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </summary>
+        /// <remarks>
+        /// This is a common parameter via class CommonParameters.
+        /// </remarks>
+        internal string VerboseVariable { get; set; }
+
+        internal void SetupVerboseVariable()
+        {
+            SetupVariable(VariableStreamKind.Verbose, this.VerboseVariable, ref _verboseVarList);
+        }
+
+        /// <summary>
+        /// Append a verbose to VerboseVariable if specified.
+        /// </summary>
+        /// <param name="obj">The verbose message.</param>
+        internal void AppendVerboseVarList(object obj)
+        {
+            this.OutputPipe.AppendVariableList(VariableStreamKind.Verbose, obj);
+        }
+
+        #endregion Verbose PSVariable
+
+        #region Debug PSVariable
+        private IList _debugVarList;
+
+        /// <summary>
+        /// DebugVariable tells which variable to populate with the debug records.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </summary>
+        /// <remarks>
+        /// This is a common parameter via class CommonParameters.
+        /// </remarks>
+        internal string DebugVariable { get; set; }
+
+        internal void SetupDebugVariable()
+        {
+            SetupVariable(VariableStreamKind.Debug, this.DebugVariable, ref _debugVarList);
+        }
+
+        /// <summary>
+        /// Append a debug to DebugVariable if specified.
+        /// </summary>
+        /// <param name="obj">The debug message.</param>
+        internal void AppendDebugVarList(object obj)
+        {
+            this.OutputPipe.AppendVariableList(VariableStreamKind.Debug, obj);
+        }
+
+        #endregion Debug PSVariable
+
         #region Information PSVariable
         private IList _informationVarList;
 
@@ -2547,6 +2609,34 @@ namespace System.Management.Automation
         }
 
         #endregion Information PSVariable
+
+        #region Progress PSVariable
+        private IList _progressVarList;
+
+        /// <summary>
+        /// ProgressVariable tells which variable to populate with the progress records.
+        /// Use +varname to append to the variable rather than clearing it.
+        /// </summary>
+        /// <remarks>
+        /// This is a common parameter via class CommonParameters.
+        /// </remarks>
+        internal string ProgressVariable { get; set; }
+
+        internal void SetupProgressVariable()
+        {
+            SetupVariable(VariableStreamKind.Progress, this.ProgressVariable, ref _progressVarList);
+        }
+
+        /// <summary>
+        /// Append a progress to ProgressVariable if specified.
+        /// </summary>
+        /// <param name="obj">The progress message.</param>
+        internal void AppendProgressVarList(object obj)
+        {
+            this.OutputPipe.AppendVariableList(VariableStreamKind.Progress, obj);
+        }
+
+        #endregion Progress PSVariable
 
         #region Write
         internal bool UseSecurityContextRun = true;
@@ -2868,6 +2958,7 @@ namespace System.Management.Automation
 
         private bool _isConfirmPreferenceCached = false;
         private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
+
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
         /// </summary>
@@ -2906,7 +2997,6 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isDebugPreferenceSet = false;
         private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
         /// <summary>
@@ -2919,7 +3009,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isDebugPreferenceSet)
+                if (IsDebugActionSet)
                 {
                     return _debugPreference;
                 }
@@ -2931,9 +3021,7 @@ namespace System.Management.Automation
 
                 if (!_isDebugPreferenceCached)
                 {
-                    bool defaultUsed = false;
-
-                    _debugPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
+                    _debugPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out _);
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -2951,12 +3039,15 @@ namespace System.Management.Automation
             set
             {
                 _debugPreference = value;
-                _isDebugPreferenceSet = true;
+                IsDebugActionSet = true;
             }
         }
 
-        private bool _isVerbosePreferenceCached = false;
+        internal bool IsDebugActionSet { get; private set; } = false;
+
         private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
+        private bool _isVerbosePreferenceCached = false;
+
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -2967,12 +3058,14 @@ namespace System.Management.Automation
         {
             get
             {
+                if (IsVerboseActionSet)
+                {
+                    return _verbosePreference;
+                }
+
                 if (IsVerboseFlagSet)
                 {
-                    if (Verbose)
-                        return ActionPreference.Continue;
-                    else
-                        return ActionPreference.SilentlyContinue;
+                    return Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
                 }
 
                 if (Debug)
@@ -2991,21 +3084,33 @@ namespace System.Management.Automation
 
                 if (!_isVerbosePreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _verbosePreference = Context.GetEnumPreference<ActionPreference>(
-                        SpecialVariables.VerbosePreferenceVarPath,
-                        _verbosePreference,
-                        out defaultUsed);
+                    _verbosePreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.VerbosePreferenceVarPath, _verbosePreference, out _);
+
+                    // If the host couldn't prompt for the verbose action anyways, change it to 'Continue'.
+                    // This lets hosts still see debug output without having to implement the prompting logic.
+                    if ((CBhost.ExternalHost.UI == null) && (_verbosePreference == ActionPreference.Continue))
+                    {
+                        _verbosePreference = ActionPreference.Continue;
+                    }
+
+                    _isVerbosePreferenceCached = true;
                 }
 
                 return _verbosePreference;
             }
+
+            set
+            {
+                _verbosePreference = value;
+                IsVerboseActionSet = true;
+            }
         }
 
-        internal bool IsWarningActionSet { get; private set; } = false;
+        internal bool IsVerboseActionSet { get; private set; } = false;
 
         private bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
+
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3018,18 +3123,32 @@ namespace System.Management.Automation
             {
                 // Setting CommonParameters.WarningAction has highest priority
                 if (IsWarningActionSet)
+                {
                     return _warningPreference;
+                }
 
                 if (Debug)
+                {
                     return ActionPreference.Inquire;
+                }
                 if (Verbose)
+                {
                     return ActionPreference.Continue;
+                }
                 // Debug:$false and Verbose:$false ignored
 
                 if (!_isWarningPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _warningPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
+                    _warningPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out _);
+
+                    // If the host couldn't prompt for the warning action anyways, change it to 'Continue'.
+                    // This lets hosts still see debug output without having to implement the prompting logic.
+                    if ((CBhost.ExternalHost.UI == null) && (_warningPreference == ActionPreference.Continue))
+                    {
+                        _warningPreference = ActionPreference.Continue;
+                    }
+
+                    _isWarningPreferenceCached = true;
                 }
 
                 return _warningPreference;
@@ -3046,6 +3165,8 @@ namespace System.Management.Automation
                 IsWarningActionSet = true;
             }
         }
+
+        internal bool IsWarningActionSet { get; private set; } = false;
 
         // This is used so that people can tell whether the verbose switch
         // was specified.  This is useful in the Cmdlet-calling-Cmdlet case
@@ -3219,6 +3340,9 @@ namespace System.Management.Automation
 
         internal bool IsErrorActionSet { get; private set; } = false;
 
+        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
+        private bool _isProgressPreferenceCached = false;
+
         /// <summary>
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
         /// </summary>
@@ -3227,7 +3351,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProgressPreferenceSet)
+                if (IsProgressActionSet)
                     return _progressPreference;
 
                 if (!_isProgressPreferenceCached)
@@ -3243,13 +3367,14 @@ namespace System.Management.Automation
             set
             {
                 _progressPreference = value;
-                _isProgressPreferenceSet = true;
+                IsProgressActionSet = true;
             }
         }
 
-        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
-        private bool _isProgressPreferenceSet = false;
-        private bool _isProgressPreferenceCached = false;
+        internal bool IsProgressActionSet { get; private set; } = false;
+
+        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
+        private bool _isInformationPreferenceCached = false;
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
@@ -3284,11 +3409,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
-
         internal bool IsInformationActionSet { get; private set; } = false;
-
-        private bool _isInformationPreferenceCached = false;
 
         internal PagingParameters PagingParameters { get; set; }
 
@@ -3661,9 +3782,24 @@ namespace System.Management.Automation
                 this.OutputPipe.AddVariableList(VariableStreamKind.Warning, _warningVarList);
             }
 
+            if (_verboseVarList != null)
+            {
+                this.OutputPipe.AddVariableList(VariableStreamKind.Verbose, _verboseVarList);
+            }
+
+            if (_debugVarList != null)
+            {
+                this.OutputPipe.AddVariableList(VariableStreamKind.Debug, _debugVarList);
+            }
+
             if (_informationVarList != null)
             {
                 this.OutputPipe.AddVariableList(VariableStreamKind.Information, _informationVarList);
+            }
+
+            if (_progressVarList != null)
+            {
+                this.OutputPipe.AddVariableList(VariableStreamKind.Progress, _progressVarList);
             }
 
             if (this.PipelineVariable != null)
@@ -3691,9 +3827,24 @@ namespace System.Management.Automation
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Warning, _warningVarList);
             }
 
+            if (_verboseVarList != null)
+            {
+                this.OutputPipe.RemoveVariableList(VariableStreamKind.Verbose, _verboseVarList);
+            }
+
+            if (_debugVarList != null)
+            {
+                this.OutputPipe.RemoveVariableList(VariableStreamKind.Debug, _debugVarList);
+            }
+
             if (_informationVarList != null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Information, _informationVarList);
+            }
+
+            if (_progressVarList != null)
+            {
+                this.OutputPipe.RemoveVariableList(VariableStreamKind.Progress, _progressVarList);
             }
 
             if (this.PipelineVariable != null)

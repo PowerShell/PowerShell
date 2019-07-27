@@ -1107,8 +1107,11 @@ namespace System.Management.Automation.Internal
                 commandProcessor.CommandRuntime.SetupOutVariable();
                 commandProcessor.CommandRuntime.SetupErrorVariable();
                 commandProcessor.CommandRuntime.SetupWarningVariable();
+                commandProcessor.CommandRuntime.SetupVerboseVariable();
+                commandProcessor.CommandRuntime.SetupDebugVariable();
                 commandProcessor.CommandRuntime.SetupPipelineVariable();
                 commandProcessor.CommandRuntime.SetupInformationVariable();
+                commandProcessor.CommandRuntime.SetupProgressVariable();
             }
         }
 
