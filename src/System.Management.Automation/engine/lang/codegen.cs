@@ -109,14 +109,15 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Single-quote and escape a member name if it requires quoting, otherwise passing it unmodified.
-        /// For example: QuoteMemberName(userContent)
         /// </summary>
         /// <param name="value">The content to be used as a member name in a member access.</param>
         /// <returns>Content quoted and escaped if required for use as a member name.</returns>
         public static string QuoteMemberName(string value)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return string.Empty;
+            }
 
             // determine if any character is not a standard indentifier character
             bool requiresQuote = !value[0].IsIdentifierStart();
@@ -141,7 +142,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Quote an argument, if needed, or if specifically requested, escaping characters accordingly,
         /// handling escaping of wildcard patterns when argument is not already taken literally.
-        /// For example: QuoteArgument(userContent, quoteInUse, isLiteralArgument)
         /// </summary>
         /// <param name="value">The content to be used as an argument value taken literally.</param>
         /// <param name="quoteInUse">The character to be quoted with.</param>
@@ -155,8 +155,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Quote an argument, if needed, or if specifically requested, escaping characters accordingly
-        /// For example: QuoteArgument(userContent, quoteInUse)
+        /// Quote an argument, if needed, or if specifically requested, escaping characters accordingly.
         /// </summary>
         /// <param name="value">The content to be used as an argument value taken literally.</param>
         /// <param name="quoteInUse">The character to be quoted with.</param>
@@ -164,59 +163,72 @@ namespace System.Management.Automation.Language
         public static string QuoteArgument(string value, char quoteInUse)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return string.Empty;
+            }
 
             char quoteToUse = quoteInUse;
             if (quoteToUse == 0)
+            {
                 if (ShouldArgumentNotBeBareword(value))
+                {
                     // argument value not compatible with bareword
                     quoteToUse = '\'';
+                }
                 else
+                {
                     // return unmodified argument value
                     return value;
+                }
+            }
 
             // quote and escape argument as needed
             return quoteToUse + (quoteToUse.IsDoubleQuote() ? EscapeDoubleQuotedStringContent(value) :
                 EscapeSingleQuotedStringContent(value)) + quoteToUse;
         }
 
-        // brute force method to determine when an argument's value cannot be used bareword
+        // A brute force method to determine when an argument's value cannot be used bareword.
         private static bool ShouldArgumentNotBeBareword(string value)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return false;
+            }
 
-            // Rules for bareword arguments:
-            //   characters that cannot be in the first position: '@','#','<','>'
-            //   Pattern that cannot be in the first position: /[1-6]>/
+            // Rules for allowable bareword arguments:
+            // - Characters that cannot be at start of argument: '@','#','<','>'
+            // - Pattern that cannot be at start of argument: /[1-6]>/
             bool requiresQuote = "@#<>".Contains(value[0]) ||
-                value.Length > 1 && '1' <= value[0] && value[0] <= '6' && value[1] == '>';
+                (value.Length > 1 && (uint)(value[0] - '1') <= 5 && value[1] == '>');
 
             if (!requiresQuote)
             {
                 bool lastCharWasDollar = false;
                 foreach (char c in value)
                 {
-                    //   Characters that cannot appear anywhere 
-                    //     ForceStartNewToken
-                    //     IsSingleQuote
-                    //     IsDoubleQuote
+                    // - Characters that cannot appear anywhere:
+                    // - - ForceStartNewToken
+                    // - - IsSingleQuote
+                    // - - IsDoubleQuote
+                    // - - Backtick ('\`')
                     if (c.ForceStartNewToken() || c.IsSingleQuote() || c.IsDoubleQuote() || c == '`')
                     {
                         requiresQuote = true;
                         break;
                     }
-                    if (lastCharWasDollar)
-                        //   IsVariableStart characters cannot appear after a `$`
-                        // note `{` and `(` is handled by ForceStartNewToken()
-                        if (c.IsVariableStart())
-                        {
-                            requiresQuote = true;
-                            break;
-                        }
+
+                    // - IsVariableStart characters cannot appear after a `$`
+                    // Note `{` and `(` is handled by ForceStartNewToken()
+                    if (lastCharWasDollar && c.IsVariableStart())
+                    {
+                        requiresQuote = true;
+                        break;
+                    }
+
                     lastCharWasDollar = c == '$';
                 }
             }
+
             return requiresQuote;
         }
 
@@ -229,7 +241,9 @@ namespace System.Management.Automation.Language
         public static string EscapeDoubleQuotedStringContent(string value)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return string.Empty;
+            }
 
             StringBuilder sb = new StringBuilder(value.Length);
             bool lastCharWasDollar = false;
@@ -238,20 +252,29 @@ namespace System.Management.Automation.Language
                 if (lastCharWasDollar)
                 {
                     if (c.IsVariableStart() || c == '{' || c == '(')
+                    {
                         sb.Append('`');
+                    }
+
                     sb.Append('$');
                 }
+
                 lastCharWasDollar = c == '$';
                 if (!lastCharWasDollar)
                 {
                     sb.Append(c);
                     if (c.IsDoubleQuote() || c == '`')
+                    {
                         // double-up quotes & backticks to escape them
                         sb.Append(c);
+                    }
                 }
             }
+
             if (lastCharWasDollar)
+            {
                 sb.Append('$');
+            }
 
             return sb.ToString();
         }

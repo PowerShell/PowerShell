@@ -230,9 +230,11 @@ namespace System.Management.Automation
             syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
             name = CodeGeneration.QuoteArgument(name, quote == string.Empty ? (char)0 : quote[0], false);
 
+            // determine if an ampersand is needed, if adding an ampersand (`&`) is enabled,
+            // and either the argument is quoted or
+            // the argument matches a keyword and that keyword is NOT in the list of keywords to exclude from adding an ampersand.
             bool needAmpersand = addAmpersandIfNecessary &&
                 name[0].IsSingleQuote() || name[0].IsDoubleQuote() ||
-                // at this point, name is unquoted, if it is a keyword, it will need an ampersand
                 Tokenizer.IsKeyword(name) && !s_keywordsToExcludeFromAddingAmpersand.Contains(name);
 
             // It's useless to call ForEach-Object (foreach) as the first command of a pipeline. For example:
@@ -4588,14 +4590,16 @@ namespace System.Management.Automation
         private static string GenerateVariableCompletionText(string value, bool hasProvider)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return string.Empty;
+            }
 
             bool startsWithQM = value[0] == '?' && value.Length > 1;
-            bool lastCharWasColon = false, hasColon = false;
+            bool hasColon = false;
             bool braceVariable = !value[0].IsVariableStart() || value.Length != 1 && (value[0] == '$' || value[0] == '^' || (hasProvider && startsWithQM));
             if (!braceVariable)
             {
-                lastCharWasColon = !hasProvider && value[0] == ':';
+                bool lastCharWasColon = !hasProvider && value[0] == ':';
                 hasColon = lastCharWasColon;
                 foreach (char c in value.Substring(1))
                 {
@@ -4604,6 +4608,7 @@ namespace System.Management.Automation
                         braceVariable = true;
                         break;
                     }
+
                     lastCharWasColon = c == ':';
                     hasColon |= lastCharWasColon;
                 }
