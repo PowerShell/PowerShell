@@ -175,7 +175,25 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
         }
 
-        # We skip progress here because it is not redirectable
+        # We skip the error stream here because it is not capturable when ignored right now
+        It 'Should be able to capture messages written to the <Stream> stream even if the stream is set to Ignore' -TestCases $streamTestCases[1..$($streamTestCases.Count - 1)] {
+            param($Stream)
+
+            $streamData = @()
+            $parameters = @{
+                "${Stream}Variable" = 'streamData'
+            }
+            foreach ($streamName in $streams) {
+                $parameters["${streamName}Action"] = [System.Management.Automation.ActionPreference]::Ignore
+            }
+            Test-StreamData @parameters *> $null
+
+            , $streamData | Should -BeOfType [System.Collections.ArrayList]
+            $streamData.Count | Should -BeGreaterThan 0
+            $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
+        }
+
+        # We skip the progress stream here because it is not redirectable
         It 'Should be able to ignore all streams except for the <Stream> stream' -TestCases $streamTestCases[0..$($streamTestCases.Length - 2)] {
             param($Stream)
             $parameters = @{}
@@ -186,11 +204,40 @@ Describe "Stream writer tests" -Tags "CI" {
                     [System.Management.Automation.ActionPreference]::Ignore
                 }
             }
-            $streamdata = @(Test-StreamData @parameters *>&1)
+            $streamData = @(Test-StreamData @parameters *>&1)
 
-            , $streamData | Should -BeOfType [System.Object[]]
+            ,$streamData | Should -BeOfType [System.Object[]]
             $streamData.Count | Should -BeGreaterThan 0
             $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
         }
+
+        It 'Should prefer -VerboseAction over -Verbose when both are provided' {
+            $parameters = @{
+                'Verbose' = $true
+            }
+            foreach ($streamName in $streams) {
+                $parameters["${streamName}Action"] = [System.Management.Automation.ActionPreference]::Ignore
+            }
+            $streamData = @()
+            $streamData = @(Test-StreamData @parameters *>&1)
+
+            , $streamData | Should -BeOfType [System.Object[]]
+            $streamData.Count | Should -Be 0
+        }
+
+        It 'Should prefer -DebugAction over -Debug when both are provided' {
+            $parameters = @{
+                'Debug' = $true
+            }
+            foreach ($streamName in $streams) {
+                $parameters["${streamName}Action"] = [System.Management.Automation.ActionPreference]::Ignore
+            }
+            $streamData = @()
+            $streamData = @(Test-StreamData @parameters *>&1)
+
+            , $streamData | Should -BeOfType [System.Object[]]
+            $streamData.Count | Should -Be 0
+        }
+
     }
 }
