@@ -4588,38 +4588,51 @@ namespace System.Management.Automation
             return GenerateVariableCompletionText(value, prefix, true);
         }
 
-        private static string GenerateVariableCompletionText(string value, string prefix, bool hasProvider)
+        /// <summary>
+        /// Generate a final variable completion suggestion from a name, a prefix (`$` or `@`) and a 
+        /// hint as to whether the completion is known to have a scope, drive, or provider already
+        /// specified.  Braces will wrap the name if the name does not meet the requirements for the
+        /// simple syntax.  Additionally, the name will be prefixed with a `:` if there is no scope,
+        /// drive, or provider specified, but either a `:` already appears in the name or if the name
+        /// starts with a `?` and is longer than 1 character and doesn't require braces.
+        /// </summary>
+        private static string GenerateVariableCompletionText(string name, string prefix, bool hasProvider)
         {
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(name))
             {
                 return string.Empty;
             }
 
-            bool startsWithQM = value[0] == '?' && value.Length > 1;
-            bool hasColon = false;
-            bool braceVariable = !value[0].IsVariableStart() || value.Length != 1 && (value[0] == '$' || value[0] == '^' || (hasProvider && startsWithQM));
+            char firstChar = name[0];
+            bool isNotSingleChar = name.Length > 1;
+            bool startsWithQM = isNotSingleChar && firstChar == '?';
+            bool hasColon = hasProvider || name.Contains(':');
+            bool braceVariable = !firstChar.IsVariableStart() || (startsWithQM && hasProvider) ||
+                isNotSingleChar && (firstChar == '$' || firstChar == '^');
             if (!braceVariable)
             {
-                bool lastCharWasColon = !hasProvider && value[0] == ':';
-                hasColon = lastCharWasColon;
-                foreach (char c in value.Substring(1))
+                bool lastCharWasColon = !hasProvider && firstChar == ':';
+
+                // Enumerate through the string, but the first character is already
+                // evaluated with special rules so lets skip it.
+                CharEnumerator ce_name = name.GetEnumerator();
+                for (ce_name.MoveNext(); ce_name.MoveNext();)
                 {
-                    if ((c == ':' && lastCharWasColon) || !(c.IsIdentifierFollow() || c == '?' || c == ':'))
+                    char c = ce_name.Current;
+                    if ((lastCharWasColon && c == ':') || !(c.IsIdentifierFollow() || c == '?' || c == ':'))
                     {
                         braceVariable = true;
                         break;
                     }
 
                     lastCharWasColon = c == ':';
-                    hasColon |= lastCharWasColon;
                 }
             }
 
-            // note add a leading `:` if no provider is part of the completion, but completion contains `:`
-            // or specifically for an unbraced variable that starts with a `?` (but is more than just a `?`)
+            // Assembly the final variable notation completion suggestion
             return prefix + (braceVariable ?
-                "{" + CodeGeneration.EscapeVariableName((hasProvider || !hasColon ? string.Empty : ":") + value) + "}" :
-                (hasProvider || !(startsWithQM || hasColon) ? string.Empty : ":") + value);
+                "{" + CodeGeneration.EscapeVariableName((!hasProvider && hasColon ? ":" : string.Empty) + name) + "}" :
+                (!hasProvider && (hasColon || startsWithQM) ? ":" : string.Empty) + name);
         }
 
         private class FindVariablesVisitor : AstVisitor
