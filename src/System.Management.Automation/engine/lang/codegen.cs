@@ -197,9 +197,14 @@ namespace System.Management.Automation.Language
 
             // Rules for allowable bareword arguments:
             // - Characters that cannot be at start of argument: '@','#','<','>'
-            // - Pattern that cannot be at start of argument: /[1-6]>/
-            bool requiresQuote = "@#<>".Contains(value[0]) ||
-                (value.Length > 1 && (uint)(value[0] - '1') <= 5 && value[1] == '>');
+            // - Patterns that cannot be at start of argument: 
+            // - - /[1-6]>/
+            // - - /<IsDash>(<IsDash>$|[_<IsIdentifierStart>])/
+            var firstChar = value[0];
+            var length = value.Length;
+            bool requiresQuote = "@#<>".Contains(firstChar) ||
+                length > 1 && ((uint)(firstChar - '1') <= 5 && value[1] == '>' ||
+                firstChar.IsDash() && (value[1].IsIdentifierStart() || (length == 2 && value[1].IsDash())));
 
             if (!requiresQuote)
             {
