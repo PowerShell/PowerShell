@@ -147,12 +147,12 @@ namespace System.Management.Automation.Language
         /// <param name="quoteInUse">The character to be quoted with.</param>
         /// <param name="isLiteralArgument">Treat the argument as taken literally, wildcard escaping not required.</param>
         /// <returns>Content quoted and escaped if required for use as an argument value.</returns>
-        public static string QuoteArgument(string value, char quoteInUse, bool isLiteralArgument)
-        {
-            return string.IsNullOrEmpty(value) ?
+        public static string QuoteArgument(string value, char quoteInUse, bool isLiteralArgument) =>
+            // WildcardPattern.Escape() fails to escape the escape character, so we use Replace() first
+            // but not all CMDLets will process the fully escaped result correctly.
+            string.IsNullOrEmpty(value) ?
                 string.Empty :
-                QuoteArgument(isLiteralArgument ? value : WildcardPattern.Escape(value), quoteInUse);
-        }
+                QuoteArgument(isLiteralArgument ? value : WildcardPattern.Escape(value.Replace("`", "``")), quoteInUse);
 
         /// <summary>
         /// Quote an argument, if needed, or if specifically requested, escaping characters accordingly.
