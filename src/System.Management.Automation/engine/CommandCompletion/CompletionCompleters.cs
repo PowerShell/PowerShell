@@ -228,7 +228,7 @@ namespace System.Management.Automation
             }
 
             syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
-            name = CodeGeneration.QuoteArgument(name, quote == string.Empty ? (char)0 : quote[0], false);
+            name = CodeGeneration.QuoteArgument(name, quote, false);
 
             // determine if an ampersand is needed, if adding an ampersand (`&`) is enabled,
             // and either the argument is quoted or
@@ -436,7 +436,7 @@ namespace System.Management.Automation
                 foreach (dynamic moduleInfo in psObjects)
                 {
                     var listItemText = moduleInfo.Name.ToString();
-                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
                     var toolTip = "Description: " + moduleInfo.Description.ToString() + "\r\nModuleType: "
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path.ToString();
@@ -1671,7 +1671,7 @@ namespace System.Management.Automation
                 {
                     if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
-                        string completionText = quote == string.Empty ? value : quote + value + quote;
+                        string completionText = CodeGeneration.QuoteArgument(value, quote);
                         fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
                         continue;
                     }
@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
 
                 enumList.Sort();
                 result.AddRange(from entry in enumList
-                                let completionText = quote == string.Empty ? entry : quote + entry + quote
+                                let completionText = CodeGeneration.QuoteArgument(entry, quote)
                                 select new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
 
                 result.Add(CompletionResult.Null);
@@ -1728,7 +1728,7 @@ namespace System.Management.Automation
 
                         if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                         {
-                            string completionText = quote == string.Empty ? value : quote + value + quote;
+                            string completionText = CodeGeneration.QuoteArgument(value, quote);
                             fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
                             continue;
                         }
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
                     foreach (string entry in setList)
                     {
                         string realEntry = entry;
-                        string completionText = CodeGeneration.QuoteArgument(entry, quote == string.Empty ? (char)0 : quote[0]);
+                        string completionText = CodeGeneration.QuoteArgument(entry, quote);
 
                         result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
                     }
@@ -2884,7 +2884,7 @@ namespace System.Management.Automation
                     foreach (dynamic eventLog in psObjects)
                     {
                         var listItemText = eventLog.Log.ToString();
-                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                         if (pattern.IsMatch(listItemText))
                         {
@@ -2963,7 +2963,7 @@ namespace System.Management.Automation
                 foreach (dynamic psJob in psObjects)
                 {
                     var listItemText = psJob.Name;
-                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3026,7 +3026,7 @@ namespace System.Management.Automation
                 foreach (dynamic psJob in psObjects)
                 {
                     var listItemText = psJob.Name;
-                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3157,7 +3157,7 @@ namespace System.Management.Automation
 
                     uniqueSet.Add(listItemText);
 
-                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
 
@@ -3191,7 +3191,7 @@ namespace System.Management.Automation
             foreach (dynamic providerInfo in psObjects)
             {
                 var listItemText = providerInfo.Name;
-                var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                 result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
             }
@@ -3227,7 +3227,7 @@ namespace System.Management.Automation
                 foreach (dynamic driveInfo in psObjects)
                 {
                     var listItemText = driveInfo.Name;
-                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                    var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3266,7 +3266,7 @@ namespace System.Management.Automation
                     foreach (dynamic serviceInfo in psObjects)
                     {
                         var listItemText = serviceInfo.DisplayName;
-                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3285,7 +3285,7 @@ namespace System.Management.Automation
                     foreach (dynamic serviceInfo in psObjects)
                     {
                         var listItemText = serviceInfo.Name;
-                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3320,7 +3320,7 @@ namespace System.Management.Automation
             foreach (dynamic variable in psObjects)
             {
                 var listItemText = variable.Name;
-                var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0], false);
+                var completionText = CodeGeneration.QuoteArgument(listItemText, quote, false);
 
                 result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
             }
@@ -3358,7 +3358,7 @@ namespace System.Management.Automation
                     foreach (dynamic aliasInfo in psObjects)
                     {
                         var listItemText = aliasInfo.Name;
-                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                        var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3409,7 +3409,7 @@ namespace System.Management.Automation
             foreach (dynamic trace in psObjects)
             {
                 var listItemText = trace.Name;
-                var completionText = CodeGeneration.QuoteArgument(listItemText, quote == string.Empty ? (char)0 : quote[0]);
+                var completionText = CodeGeneration.QuoteArgument(listItemText, quote);
 
                 result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
             }
@@ -3941,8 +3941,7 @@ namespace System.Management.Automation
                     if (sharePattern.IsMatch(share))
                     {
                         string shareFullPath = "\\\\" + server + "\\" + share;
-                        string completionText = CodeGeneration.QuoteArgument(shareFullPath,
-                            quote == string.Empty ? (char)0 : quote[0], useLiteralPath);
+                        string completionText = CodeGeneration.QuoteArgument(shareFullPath, quote, useLiteralPath);
 
                         results.Add(new CompletionResult(completionText, share, CompletionResultType.ProviderContainer, shareFullPath));
                     }
@@ -4191,7 +4190,7 @@ namespace System.Management.Automation
                             completionText = completionText.Substring(index + 2);
                         }
 
-                        completionText = CodeGeneration.QuoteArgument(completionText, quote == string.Empty ? (char)0 : quote[0], useLiteralPath);
+                        completionText = CodeGeneration.QuoteArgument(completionText, quote, useLiteralPath);
 
                         if (isFileSystem)
                         {

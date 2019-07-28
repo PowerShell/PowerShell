@@ -148,10 +148,10 @@ namespace System.Management.Automation.Language
         /// handling escaping of wildcard patterns when argument is not already taken literally.
         /// </summary>
         /// <param name="value">The content to be used as an argument value taken literally.</param>
-        /// <param name="quoteInUse">The character to be quoted with.</param>
+        /// <param name="quoteInUse">The character to be quoted with, or an empty string for bareword.</param>
         /// <param name="isLiteralArgument">Treat the argument as taken literally, wildcard escaping not required.</param>
         /// <returns>Content quoted and escaped if required for use as an argument value.</returns>
-        public static string QuoteArgument(string value, char quoteInUse, bool isLiteralArgument) =>
+        public static string QuoteArgument(string value, string quoteInUse, bool isLiteralArgument) =>
             // WildcardPattern.Escape() fails to escape the escape character, so we use Replace() first
             // but not all CMDLets will process the fully escaped result correctly.
             string.IsNullOrEmpty(value) ?
@@ -162,17 +162,17 @@ namespace System.Management.Automation.Language
         /// Quote an argument, if needed, or if specifically requested, escaping characters accordingly.
         /// </summary>
         /// <param name="value">The content to be used as an argument value taken literally.</param>
-        /// <param name="quoteInUse">The character to be quoted with.</param>
+        /// <param name="quoteInUse">The character to be quoted with, or an empty string for bareword.</param>
         /// <returns>Content quoted and escaped if required for use as an argument value.</returns>
-        public static string QuoteArgument(string value, char quoteInUse)
+        public static string QuoteArgument(string value, string quoteInUse)
         {
             if (string.IsNullOrEmpty(value))
             {
                 return string.Empty;
             }
 
-            char quoteToUse = quoteInUse;
-            if (quoteToUse == 0)
+            char quoteToUse = string.IsNullOrWhiteSpace(quoteInUse) ? (char)0 : quoteInUse[0];
+            if (quoteToUse == (char)0)
             {
                 if (ShouldArgumentNotBeBareword(value))
                 {
