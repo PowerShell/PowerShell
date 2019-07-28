@@ -6300,34 +6300,20 @@ namespace System.Management.Automation
 
         internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
         {
-            string quote = string.Empty;
-
-            if (!string.IsNullOrEmpty(wordToComplete) && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote()))
+            if (!string.IsNullOrEmpty(wordToComplete))
             {
-                char frontQuote = wordToComplete[0];
-                int length = wordToComplete.Length;
-
-                if (length == 1)
+                char firstChar = wordToComplete[0];
+                if (firstChar.IsSingleQuote() || firstChar.IsDoubleQuote())
                 {
-                    wordToComplete = string.Empty;
-                    quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                }
-                else if (length > 1)
-                {
-                    if ((wordToComplete[length - 1].IsDoubleQuote() && frontQuote.IsDoubleQuote()) || (wordToComplete[length - 1].IsSingleQuote() && frontQuote.IsSingleQuote()))
-                    {
-                        wordToComplete = wordToComplete.Substring(1, length - 2);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                    else if (!wordToComplete[length - 1].IsDoubleQuote() && !wordToComplete[length - 1].IsSingleQuote())
-                    {
-                        wordToComplete = wordToComplete.Substring(1);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
+                    int length = wordToComplete.Length;
+                    wordToComplete = length == 1 ? string.Empty :
+                        (firstChar.IsSingleQuote() ? wordToComplete[length - 1].IsSingleQuote() : wordToComplete[length - 1].IsDoubleQuote()) ?
+                            wordToComplete.Substring(1, length - 2) : wordToComplete.Substring(1);
+                    return firstChar.IsSingleQuote() ? "'" : "\"";
                 }
             }
 
-            return quote;
+            return string.Empty;
         }
 
         internal static bool IsSplattedVariable(Ast targetExpr)
