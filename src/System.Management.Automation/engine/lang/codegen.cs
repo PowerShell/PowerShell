@@ -110,22 +110,26 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Single-quote and escape a member name if it requires quoting, otherwise passing it unmodified.
         /// </summary>
-        /// <param name="value">The content to be used as a member name in a member access.</param>
+        /// <param name="name">The content to be used as a member name in a member access.</param>
         /// <returns>Content quoted and escaped if required for use as a member name.</returns>
-        public static string QuoteMemberName(string value)
+        public static string QuoteMemberName(string name)
         {
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(name))
             {
                 return string.Empty;
             }
 
-            // determine if any character is not a standard indentifier character
-            bool requiresQuote = !value[0].IsIdentifierStart();
+            // Determine if first character is not an indentifier start character.
+            bool requiresQuote = !name[0].IsIdentifierStart();
             if (!requiresQuote)
             {
-                foreach (char c in value.Substring(1))
+                // Use an enumerator, skipping the first character which has already been
+                // evaluated with different rules, to determine if any remaining characters are 
+                // not an indentifier successive character.
+                CharEnumerator ce_name = name.GetEnumerator();
+                for (ce_name.MoveNext(); ce_name.MoveNext();)
                 {
-                    if (!c.IsIdentifierFollow())
+                    if (!ce_name.Current.IsIdentifierFollow())
                     {
                         requiresQuote = true;
                         break;
@@ -135,8 +139,8 @@ namespace System.Management.Automation.Language
 
             // quote the content if required.
             return requiresQuote ?
-                "'" + EscapeSingleQuotedStringContent(value) + "'" :
-                value;
+                "'" + EscapeSingleQuotedStringContent(name) + "'" :
+                name;
         }
 
         /// <summary>
