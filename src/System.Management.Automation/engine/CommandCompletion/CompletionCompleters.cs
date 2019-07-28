@@ -234,8 +234,8 @@ namespace System.Management.Automation
             // and either the argument is quoted or
             // the argument matches a keyword and that keyword is NOT in the list of keywords to exclude from adding an ampersand.
             bool needAmpersand = addAmpersandIfNecessary &&
-                name[0].IsSingleQuote() || name[0].IsDoubleQuote() ||
-                Tokenizer.IsKeyword(name) && !s_keywordsToExcludeFromAddingAmpersand.Contains(name);
+                (name[0].IsSingleQuote() || name[0].IsDoubleQuote() ||
+                Tokenizer.IsKeyword(name) && !s_keywordsToExcludeFromAddingAmpersand.Contains(name));
 
             // It's useless to call ForEach-Object (foreach) as the first command of a pipeline. For example:
             //     PS C:\> fore<tab>  --->   PS C:\> foreach   (expected, use as the keyword)
