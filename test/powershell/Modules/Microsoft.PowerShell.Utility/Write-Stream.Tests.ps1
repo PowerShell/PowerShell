@@ -238,6 +238,5 @@ Describe "Stream writer tests" -Tags "CI" {
             , $streamData | Should -BeOfType [System.Object[]]
             $streamData.Count | Should -Be 0
         }
-
     }
 }
