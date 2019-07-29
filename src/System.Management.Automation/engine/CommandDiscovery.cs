@@ -927,12 +927,12 @@ namespace System.Management.Automation
                     .AddParameter("Name", moduleName)
                      .AddParameter("Scope", StringLiterals.Global)
                      .AddParameter("PassThru")
-                     .AddParameter("ErrorAction", ActionPreference.Ignore)
-                     .AddParameter("WarningAction", ActionPreference.Ignore)
-                     .AddParameter("VerboseAction", ActionPreference.Ignore)
                      .AddParameter("DebugAction", ActionPreference.Ignore)
+                     .AddParameter("ErrorAction", ActionPreference.Ignore)
                      .AddParameter("InformationAction", ActionPreference.Ignore)
-                     .AddParameter("ProgressAction", ActionPreference.Ignore);
+                     .AddParameter("ProgressAction", ActionPreference.Ignore)
+                     .AddParameter("VerboseAction", ActionPreference.Ignore)
+                     .AddParameter("WarningAction", ActionPreference.Ignore);
                 matchingModules = (Collection<PSModuleInfo>)ps.Invoke<PSModuleInfo>();
             }
             catch (Exception e)

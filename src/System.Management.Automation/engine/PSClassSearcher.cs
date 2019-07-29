@@ -270,14 +270,12 @@ namespace System.Management.Automation
                 .AddCommand(getModuleCommand)
                     .AddParameter("List", true)
                     .AddParameter("Name", moduleName)
-                    .AddParameter("ErrorAction", ActionPreference.Ignore)
-                    .AddParameter("WarningAction", ActionPreference.Ignore)
-                    .AddParameter("VerboseAction", ActionPreference.Ignore)
                     .AddParameter("DebugAction", ActionPreference.Ignore)
+                    .AddParameter("ErrorAction", ActionPreference.Ignore)
                     .AddParameter("InformationAction", ActionPreference.Ignore)
                     .AddParameter("ProgressAction", ActionPreference.Ignore)
-                    .AddParameter("Verbose", false)
-                    .AddParameter("Debug", false)
+                    .AddParameter("VerboseAction", ActionPreference.Ignore)
+                    .AddParameter("WarningAction", ActionPreference.Ignore)
                     .Invoke<PSModuleInfo>();
 
             lock (_lockObject)

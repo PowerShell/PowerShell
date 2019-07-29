@@ -2727,7 +2727,14 @@ function Get-PSImplicitRemotingClientSideParameters
 
     $clientSideParameters = @{}
 
-    $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'VerboseAction', 'DebugAction', 'InformationAction', 'ProgressAction'
+    $parametersToLeaveRemote = @(
+        'DebugAction'
+        'ErrorAction'
+        'InformationAction'
+        'ProgressAction'
+        'VerboseAction'
+        'WarningAction'
+    )
 
     Modify-PSImplicitRemotingParameters $clientSideParameters $PSBoundParameters 'AsJob'
     if ($proxyForCmdlet)

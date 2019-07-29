@@ -596,13 +596,13 @@ namespace System.Management.Automation
                 PowerShell.Create(RunspaceMode.CurrentRunspace)
                     .AddCommand(getModuleCommand)
                         .AddParameter("List", true)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("Name", modulePath)
                         .AddParameter("DebugAction", ActionPreference.Ignore)
+                        .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("InformationAction", ActionPreference.Ignore)
                         .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("Name", modulePath)
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("WarningAction", ActionPreference.Ignore)
                     .Invoke();
             }
             catch (Exception e)

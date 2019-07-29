@@ -970,15 +970,13 @@ namespace System.Management.Automation
                             .AddCommand(importModuleCommand)
                             .AddParameter("Name", module)
                             .AddParameter("Scope", StringLiterals.Global)
-                            .AddParameter("ErrorAction", ActionPreference.Ignore)
-                            .AddParameter("WarningAction", ActionPreference.Ignore)
-                            .AddParameter("VerboseAction", ActionPreference.Ignore)
+                            .AddParameter("PassThru")
                             .AddParameter("DebugAction", ActionPreference.Ignore)
+                            .AddParameter("ErrorAction", ActionPreference.Ignore)
                             .AddParameter("InformationAction", ActionPreference.Ignore)
                             .AddParameter("ProgressAction", ActionPreference.Ignore)
-                            .AddParameter("Verbose", false)
-                            .AddParameter("Debug", false)
-                            .AddParameter("PassThru");
+                            .AddParameter("VerboseAction", ActionPreference.Ignore)
+                            .AddParameter("WarningAction", ActionPreference.Ignore);
 
                         ps.Invoke<PSModuleInfo>();
                     }
@@ -1024,15 +1022,13 @@ namespace System.Management.Automation
                 ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
                         .AddCommand(getModuleCommand)
                         .AddParameter("Name", module)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("ListAvailable")
                         .AddParameter("DebugAction", ActionPreference.Ignore)
+                        .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("InformationAction", ActionPreference.Ignore)
                         .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("Verbose", false)
-                        .AddParameter("Debug", false)
-                        .AddParameter("ListAvailable");
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("WarningAction", ActionPreference.Ignore);
 
                 Collection<PSModuleInfo> gmoOutPut = ps.Invoke<PSModuleInfo>();
                 if (gmoOutPut != null)
@@ -1087,15 +1083,13 @@ namespace System.Management.Automation
                 ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
                         .AddCommand(getModuleCommand)
                         .AddParameter("FullyQualifiedName", fullyQualifiedName)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("ListAvailable")
                         .AddParameter("DebugAction", ActionPreference.Ignore)
+                        .AddParameter("ErrorAction", ActionPreference.Ignore)
                         .AddParameter("InformationAction", ActionPreference.Ignore)
                         .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("Verbose", false)
-                        .AddParameter("Debug", false)
-                        .AddParameter("ListAvailable");
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("WarningAction", ActionPreference.Ignore);
 
                 Collection<PSModuleInfo> gmoOutput = ps.Invoke<PSModuleInfo>();
                 if (gmoOutput != null)

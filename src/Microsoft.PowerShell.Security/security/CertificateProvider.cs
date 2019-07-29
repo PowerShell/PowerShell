@@ -1304,12 +1304,12 @@ namespace Microsoft.PowerShell.Commands
                             .AddCommand(importModuleCommand)
                                 .AddParameter("Name", moduleName)
                                 .AddParameter("Scope", StringLiterals.Global)
-                                .AddParameter("ErrorAction", ActionPreference.Ignore)
-                                .AddParameter("WarningAction", ActionPreference.Ignore)
-                                .AddParameter("VerboseAction", ActionPreference.Ignore)
                                 .AddParameter("DebugAction", ActionPreference.Ignore)
+                                .AddParameter("ErrorAction", ActionPreference.Ignore)
                                 .AddParameter("InformationAction", ActionPreference.Ignore)
-                                .AddParameter("ProgressAction", ActionPreference.Ignore);
+                                .AddParameter("ProgressAction", ActionPreference.Ignore)
+                                .AddParameter("VerboseAction", ActionPreference.Ignore)
+                                .AddParameter("WarningAction", ActionPreference.Ignore);
                 ps.Invoke();
             }
             catch (Exception)

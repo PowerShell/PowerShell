@@ -251,14 +251,12 @@ namespace System.Management.Automation
             }
 
             powershell
-                .AddParameter("ErrorAction", ActionPreference.Ignore)
-                .AddParameter("WarningAction", ActionPreference.Ignore)
-                .AddParameter("VerboseAction", ActionPreference.Ignore)
                 .AddParameter("DebugAction", ActionPreference.Ignore)
+                .AddParameter("ErrorAction", ActionPreference.Ignore)
                 .AddParameter("InformationAction", ActionPreference.Ignore)
                 .AddParameter("ProgressAction", ActionPreference.Ignore)
-                .AddParameter("Verbose", false)
-                .AddParameter("Debug", false);
+                .AddParameter("VerboseAction", ActionPreference.Ignore)
+                .AddParameter("WarningAction", ActionPreference.Ignore);
 
             return powershell;
         }
