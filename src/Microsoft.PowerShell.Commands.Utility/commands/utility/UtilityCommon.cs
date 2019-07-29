@@ -207,6 +207,58 @@ namespace Microsoft.PowerShell.Commands
         public string Path { get; private set; }
 
         /// <summary>
+        /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
+        /// </summary>
+        public string HexOffset { get => string.Format("{0:X16}", Offset64); }
+
+        private const int BytesPerLine = 16;
+
+        /// <summary>
+        /// Gets a space-delimited string of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>
+        /// in hexadecimal format.
+        /// </summary>
+        public string HexBytes
+        {
+            get
+            {
+                StringBuilder line = new StringBuilder(BytesPerLine * 3);
+
+                foreach (var currentByte in Bytes)
+                {
+                    line.AppendFormat("{0:X2} ", currentByte);
+                }
+
+                return line.ToString().Trim();
+            }
+        }
+
+        /// <summary>
+        /// Gets the ASCII string representation of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>.
+        /// </summary>
+        /// <value></value>
+        public string AsciiBytes
+        {
+            get
+            {
+                StringBuilder ascii = new StringBuilder(BytesPerLine);
+
+                foreach (var currentByte in Bytes)
+                {
+                    if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                    {
+                        ascii.Append((char)currentByte);
+                    }
+                    else
+                    {
+                        ascii.Append('.');
+                    }
+                }
+
+                return ascii.ToString();
+            }
+        }
+
+        /// <summary>
         /// Displays the hexadecimal format of the bytes stored in the collection.
         /// </summary>
         /// <returns></returns>
