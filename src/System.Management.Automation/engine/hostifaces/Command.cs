@@ -178,7 +178,7 @@ namespace System.Management.Automation.Runspaces
         /// This is used by foreach-object -parallel where each piped input ($_) is associated
         /// with a parallel running script block.
         /// </summary>
-        internal object DollarUnderbar { get; set; }
+        internal object DollarUnderbar { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Checks if the current command marks the end of a statement (see PowerShell.AddStatement())
