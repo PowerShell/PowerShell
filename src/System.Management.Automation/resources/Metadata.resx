@@ -252,4 +252,10 @@
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
     <value>Cannot process input. The argument "{0}" is not trusted.</value>
   </data>
+  <data name="ValidatePathDirectoryFailure" xml:space="preserve">
+    <value>The path argument {0} can not be found or is not a directory. Please supply a valid Path.</value>
+  </data>
+  <data name="ValidatePathFileFailure" xml:space="preserve">
+    <value>The path argument {0} can not be found or is not a file. Please supply a valid Path.</value>
+  </data>
 </root>

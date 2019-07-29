@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -1248,6 +1249,65 @@ namespace System.Management.Automation
             }
 
             return resultType;
+        }
+    }
+
+    /// <summary>
+    /// Validates that each parameter is a valid Path
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidatePathAttribute : ValidateEnumeratedArgumentsAttribute
+    {
+        private bool IsFile { get; }
+
+        /// <summary>
+        /// Validates that each parameter argument is a valid Path.
+        /// </summary>
+        /// <param name="element">Object to validate.</param>
+        /// <exception cref="ValidationMetadataException">
+        /// If <paramref name="element"/> is not a valid and existing path.
+        /// </exception>
+        protected override void ValidateElement(object element)
+        {
+            if (element == null)
+            {
+                throw new ValidationMetadataException(
+                    "ArgumentIsEmpty",
+                    null,
+                    Metadata.ValidateNotNullFailure);
+            }
+            string path = element.ToString();
+
+            if (IsFile)
+            {
+                if (!File.Exists(path))
+                {
+                    throw new ValidationMetadataException(
+                        "FileIsInvalid",
+                        null,
+                        Metadata.ValidatePathFileFailure,
+                        path);
+                }
+            } else
+            {
+                if (!Directory.Exists(path))
+                {
+                    throw new ValidationMetadataException(
+                        "DirectoryIsInvalid",
+                        null,
+                        Metadata.ValidatePathDirectoryFailure,
+                        path);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatePathAttribute"/> class.
+        /// </summary>
+        /// <param name="isFile">Should the given Path be a file</param>
+        public ValidatePathAttribute(bool isFile = false)
+        {
+            IsFile = isFile;
         }
     }
 

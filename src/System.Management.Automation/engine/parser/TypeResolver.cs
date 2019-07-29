@@ -789,6 +789,7 @@ namespace System.Management.Automation
                     { typeof(ValidateLengthAttribute),                     new[] { "ValidateLength" } },
                     { typeof(ValidateNotNullAttribute),                    new[] { "ValidateNotNull" } },
                     { typeof(ValidateNotNullOrEmptyAttribute),             new[] { "ValidateNotNullOrEmpty" } },
+                    { typeof(ValidatePathAttribute),                       new[] { "ValidatePath" } },
                     { typeof(ValidatePatternAttribute),                    new[] { "ValidatePattern" } },
                     { typeof(ValidateRangeAttribute),                      new[] { "ValidateRange" } },
                     { typeof(ValidateScriptAttribute),                     new[] { "ValidateScript" } },
