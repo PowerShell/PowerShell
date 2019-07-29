@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Management.Automation.resources;
 
 namespace System.Management.Automation.Runspaces
 {

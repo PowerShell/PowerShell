@@ -141,22 +141,16 @@ Describe "Stream writer tests" -Tags "CI" {
                 [CmdletBinding()]
                 param()
                 Write-Progress -Activity 'Warming up' -PercentComplete ([Math]::Round(0 / 6 * 100))
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting an error' -PercentComplete ([Math]::Round(1 / 6 * 100))
                 Write-Error -Message 'Error'
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting a warning' -PercentComplete ([Math]::Round(2 / 6 * 100))
                 Write-Warning -Message 'Warning'
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting a verbose message' -PercentComplete ([Math]::Round(3 / 6 * 100))
                 Write-Verbose -Message 'Verbose'
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting a debug message' -PercentComplete ([Math]::Round(4 / 6 * 100))
                 Write-Debug -Message 'Debug'
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Writing output' -Status 'Outputting an information message' -PercentComplete ([Math]::Round(5 / 6 * 100))
                 Write-Information -MessageData 'Information'
-                Start-Sleep -Milliseconds 50
                 Write-Progress -Activity 'Cooling down' -Completed -PercentComplete ([Math]::Round(6 / 6 * 100))
             }
         }
