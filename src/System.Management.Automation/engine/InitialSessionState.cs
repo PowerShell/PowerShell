@@ -1671,9 +1671,7 @@ namespace System.Management.Automation.Runspaces
             ss.UseFullLanguageModeInDebugger = this.UseFullLanguageModeInDebugger;
             ss.ThreadOptions = this.ThreadOptions;
             ss.ThrowOnRunspaceOpenError = this.ThrowOnRunspaceOpenError;
-#if !CORECLR // No ApartmentState In CoreCLR
             ss.ApartmentState = this.ApartmentState;
-#endif
 
             foreach (ModuleSpecification modSpec in this.ModuleSpecificationsToImport)
             {
@@ -1812,13 +1810,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public bool UseFullLanguageModeInDebugger { get; set; } = false;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread used to execute commands.
         /// </summary>
         public ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
-
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is created for each invocation of a command.

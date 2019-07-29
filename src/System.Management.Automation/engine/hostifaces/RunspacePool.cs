@@ -1259,7 +1259,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread used to execute commands within this RunspacePool.
         /// </summary>
@@ -1286,7 +1285,6 @@ namespace System.Management.Automation.Runspaces
                 _internalPool.ApartmentState = value;
             }
         }
-#endif
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
