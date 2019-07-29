@@ -3168,7 +3168,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsWarningActionSet { get; private set; } = false;
+        internal bool IsWarningActionSet { get; private set; }
 
         // This is used so that people can tell whether the verbose switch
         // was specified.  This is useful in the Cmdlet-calling-Cmdlet case
