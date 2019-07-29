@@ -272,8 +272,8 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
         }
 
         It "Can send mail with attachments" {
-            $attachment1 = "$TestDrive\attachment1.txt"
-            $attachment2 = "$TestDrive\attachment2.png"
+            $attachment1 = "$TestDrive/attachment1.txt"
+            $attachment2 = "$TestDrive/attachment2.png"
 
             $pngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDoL9/aK3hHFSgyUw4o0KEIEQIQoQgRAhChAgRghAhCBGCECEIEYIQhAhBiBCECEGIEIQgRAhChCBECEKEIAQhQhAiBCFCECIEIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCECFChCBECEKEIOS7BU5Hx50BmcQaAAAAAElFTkSuQmCC"
 

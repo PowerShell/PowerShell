@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using MailKit;
-using MimeKit;
 using System;
 using System.Globalization;
 using System.Management.Automation;
 using System.Text;
+using MailKit;
+using MimeKit;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -180,26 +180,26 @@ namespace Microsoft.PowerShell.Commands
         {
             public DeliveryStatusNotification DeliveryStatusNotification { get; set; }
             
-            protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
+            protected override DeliveryStatusNotification? GetDeliveryStatusNotifications(MimeMessage message, MailboxAddress mailbox)
             {
                 return DeliveryStatusNotification;
             }
         }
 
-        private DsnSmtpClient _mSmtpClient = null;
+        private DsnSmtpClient _smtpClient;
 
-        private PSVariable _mGlobalEmailServer = null;
+        private PSVariable _globalEmailServer;
 
         /// <summary>
         /// Add the input address to the MimeMessage list.
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="address"></param>
+        /// <param name="list">MimeMessage InternetAddressList property to which single address is added.</param>
+        /// <param name="address">String with unparsed mailbox addresses.</param>
         private void AddMailAddress(InternetAddressList list, string address)
         {
             try
             {
-                list.Add(MailboxAddress.Parse(new MimeKit.ParserOptions(){ AddressParserComplianceMode = RfcComplianceMode.Strict, AllowAddressesWithoutDomain = false }, address));
+                list.Add(MailboxAddress.Parse(new MimeKit.ParserOptions() { AddressParserComplianceMode = RfcComplianceMode.Strict, AllowAddressesWithoutDomain = false }, address));
             }
             catch (MimeKit.ParseException ex)
             {
@@ -211,11 +211,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Add the input addresses to the MimeMessage list.
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="addresses"></param>
+        /// <param name="list">MimeMessage InternetAddressList property to which addresses are added.</param>
+        /// <param name="addresses">String array with unparsed mailbox addresses.</param>
         private void AddMailAddresses(InternetAddressList list, string[] addresses)
         {
-            foreach(var strEmailAddress in addresses)
+            foreach (var strEmailAddress in addresses)
             {
                 AddMailAddress(list, strEmailAddress);
             }
@@ -230,11 +230,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            _mSmtpClient = new DsnSmtpClient();
+            _smtpClient = new DsnSmtpClient();
 
             // Get the PowerShell environment variable
             // PSEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
-            _mGlobalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
+            _globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
         }
 
         /// <summary>
@@ -243,21 +243,18 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Fallback to global email server if SmtpServer parameter is not set
-            if (SmtpServer == null && _mGlobalEmailServer != null)
-            {
-                SmtpServer = Convert.ToString(_mGlobalEmailServer.Value, CultureInfo.InvariantCulture);
-            }
+            SmtpServer = SmtpServer ?? Convert.ToString(_globalEmailServer?.Value, CultureInfo.InvariantCulture);
 
             if (string.IsNullOrEmpty(SmtpServer))
             {
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
-                return;
+                ThrowTerminatingError(er);
             }
 
             // Set default port for protocol
             if (Port == 0)
             {
-                if(UseSsl)
+                if (UseSsl)
                 {
                     Port = 465; // Standard SMTPS port
                 }
@@ -358,43 +355,43 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Connect to SMTP server
-                _mSmtpClient.Connect (SmtpServer, Port, UseSsl);
+                _smtpClient.Connect(SmtpServer, Port, UseSsl);
 
                 // Authenticate if credentials are provided
                 if (Credential != null)
                 {
-                    _mSmtpClient.Authenticate(Credential.GetNetworkCredential());
+                    _smtpClient.Authenticate(Credential.GetNetworkCredential());
                 }
 
                 // Set the delivery notification
-                _mSmtpClient.DeliveryStatusNotification = DeliveryNotificationOption;
+                _smtpClient.DeliveryStatusNotification = DeliveryNotificationOption;
 
                 // Send the mail message
-                _mSmtpClient.Send(msg);
+                _smtpClient.Send(msg);
             }
             catch (MailKit.ProtocolException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "ProtocolException", ErrorCategory.ProtocolError, _mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "ProtocolException", ErrorCategory.ProtocolError, _smtpClient);
                 WriteError(er);
             }
             catch (MailKit.Security.AuthenticationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.AuthenticationError, _mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.AuthenticationError, _smtpClient);
                 WriteError(er);
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _smtpClient);
                 WriteError(er);
             }
             catch (ArgumentNullException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentNullException", ErrorCategory.InvalidArgument, _mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "ArgumentNullException", ErrorCategory.InvalidArgument, _smtpClient);
                 WriteError(er);
             }
             finally
             {
-                _mSmtpClient.Disconnect(true);
+                _smtpClient.Disconnect(true);
             }
         }
 
@@ -403,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            _mSmtpClient?.Dispose();
+            _smtpClient?.Dispose();
         }
 
         #endregion
