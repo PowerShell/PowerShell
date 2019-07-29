@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that each parameter is a valid Path
+    /// Validates that each parameter is a valid path.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidatePathAttribute : ValidateEnumeratedArgumentsAttribute
@@ -1261,7 +1261,7 @@ namespace System.Management.Automation
         private bool IsFile { get; }
 
         /// <summary>
-        /// Validates that each parameter argument is a valid Path.
+        /// Validates that each parameter argument is a valid path.
         /// </summary>
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
@@ -1276,8 +1276,8 @@ namespace System.Management.Automation
                     null,
                     Metadata.ValidateNotNullFailure);
             }
-            string path = element.ToString();
 
+            string path = element.ToString();
             if (IsFile)
             {
                 if (!File.Exists(path))
@@ -1288,7 +1288,8 @@ namespace System.Management.Automation
                         Metadata.ValidatePathFileFailure,
                         path);
                 }
-            } else
+            }
+            else
             {
                 if (!Directory.Exists(path))
                 {
@@ -1304,7 +1305,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidatePathAttribute"/> class.
         /// </summary>
-        /// <param name="isFile">Should the given Path be a file</param>
+        /// <param name="isFile">Should the given path be a file.</param>
         public ValidatePathAttribute(bool isFile = false)
         {
             IsFile = isFile;
