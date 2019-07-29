@@ -3354,7 +3354,9 @@ namespace System.Management.Automation
             get
             {
                 if (IsProgressActionSet)
+                {
                     return _progressPreference;
+                }
 
                 if (!_isProgressPreferenceCached)
                 {
