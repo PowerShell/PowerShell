@@ -3378,7 +3378,7 @@ namespace System.Management.Automation
         internal bool IsProgressActionSet { get; private set; }
 
         private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
-        private bool _isInformationPreferenceCached = false;
+        private bool _isInformationPreferenceCached;
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
