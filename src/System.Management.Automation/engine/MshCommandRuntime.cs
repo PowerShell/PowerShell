@@ -3106,7 +3106,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsVerboseActionSet { get; private set; } = false;
+        internal bool IsVerboseActionSet { get; private set; }
 
         private bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
