@@ -1,11 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using MailKit;
+using MimeKit;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
-using System.Net.Mail;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands
@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Send-MailMessage command.
     /// </summary>
-    [Obsolete("This cmdlet does not guarantee secure connections to SMTP servers. While there is no immediate replacement available in PowerShell, we recommend you do not use Send-MailMessage at this time. See https://aka.ms/SendMailMessage for more information.")]
     [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
     public sealed class SendMailMessage : PSCmdlet
     {
@@ -28,7 +27,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PsPath")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Attachments { get; set; }
 
         /// <summary>
@@ -37,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Bcc { get; set; }
 
         /// <summary>
@@ -71,8 +68,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Cc")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Cc { get; set; }
 
         /// <summary>
@@ -82,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("DNO")]
         [ValidateNotNullOrEmpty]
-        public DeliveryNotificationOptions DeliveryNotificationOption { get; set; }
+        public DeliveryStatusNotification DeliveryNotificationOption { get; set; }
 
         /// <summary>
         /// Gets or sets the from address for this e-mail message. The default value for
@@ -107,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public MailPriority Priority { get; set; }
+        public MessagePriority Priority { get; set; } = MessagePriority.Normal;
 
         /// <summary>
         /// Gets or sets the Reply-To field for this e-mail message.
@@ -127,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] To { get; set; }
 
         /// <summary>
@@ -154,58 +148,76 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public int Port { get; set; }
 
+        /// <summary>
+        /// Specifies the priority of the mail message.
+        /// </summary>
+        /// <remarks>
+        /// Backward compability matching with System.Net.Mail.MailPriority Enum.
+        /// </remarks>
+        public enum MessagePriority
+        {
+            /// <summary>
+            /// The email has low priority.
+            /// </summary>
+            Low,
+            
+            /// <summary>
+            /// The email has normal priority.
+            /// </summary>
+            Normal,
+            
+            /// <summary>
+            /// The email has high priority.
+            /// </summary>
+            High
+        }
+
         #endregion
 
         #region Private variables and methods
 
-        // Instantiate a new instance of MailMessage
-        private MailMessage _mMailMessage = new MailMessage();
+        private class DsnSmtpClient : MailKit.Net.Smtp.SmtpClient
+        {
+            public DeliveryStatusNotification DeliveryStatusNotification { get; set; }
+            
+            protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
+            {
+                return DeliveryStatusNotification;
+            }
+        }
 
-        private SmtpClient _mSmtpClient = null;
+        private DsnSmtpClient _mSmtpClient = null;
+
+        private PSVariable _mGlobalEmailServer = null;
 
         /// <summary>
-        /// Add the input addresses which are either string or hashtable to the MailMessage.
-        /// It returns true if the from parameter has more than one value.
+        /// Add the input address to the MimeMessage list.
         /// </summary>
+        /// <param name="list"></param>
         /// <param name="address"></param>
-        /// <param name="param"></param>
-        private void AddAddressesToMailMessage(object address, string param)
+        private void AddMailAddress(InternetAddressList list, string address)
         {
-            string[] objEmailAddresses = address as string[];
-            foreach (string strEmailAddress in objEmailAddresses)
+            try
             {
-                try
-                {
-                    switch (param)
-                    {
-                        case "to":
-                            {
-                                _mMailMessage.To.Add(new MailAddress(strEmailAddress));
-                                break;
-                            }
-                        case "cc":
-                            {
-                                _mMailMessage.CC.Add(new MailAddress(strEmailAddress));
-                                break;
-                            }
-                        case "bcc":
-                            {
-                                _mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
-                                break;
-                            }
-                        case "replyTo":
-                            {
-                                _mMailMessage.ReplyToList.Add(new MailAddress(strEmailAddress));
-                                break;
-                            }
-                    }
-                }
-                catch (FormatException e)
-                {
-                    ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, null);
-                    WriteError(er);
-                    continue;
-                }
+                list.Add(MailboxAddress.Parse(new MimeKit.ParserOptions(){ AddressParserComplianceMode = RfcComplianceMode.Strict, AllowAddressesWithoutDomain = false }, address));
+            }
+            catch (MimeKit.ParseException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "FormatException", ErrorCategory.InvalidArgument, null); // Keep FormatException for error record for backward compability
+                WriteError(er);
+            }
+        }
+
+        /// <summary>
+        /// Add the input addresses to the MimeMessage list.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="addresses"></param>
+        private void AddMailAddresses(InternetAddressList list, string[] addresses)
+        {
+            foreach(var strEmailAddress in addresses)
+            {
+                AddMailAddress(list, strEmailAddress);
             }
         }
 
@@ -218,95 +230,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            try
-            {
-                // Set the sender address of the mail message
-                _mMailMessage.From = new MailAddress(From);
-            }
-            catch (FormatException e)
-            {
-                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, From);
-                ThrowTerminatingError(er);
-            }
-
-            // Set the recipient address of the mail message
-            AddAddressesToMailMessage(To, "to");
-
-            // Set the BCC address of the mail message
-            if (Bcc != null)
-            {
-                AddAddressesToMailMessage(Bcc, "bcc");
-            }
-
-            // Set the CC address of the mail message
-            if (Cc != null)
-            {
-                AddAddressesToMailMessage(Cc, "cc");
-            }
-
-            // Set the Reply-To address of the mail message
-            if (ReplyTo != null)
-            {
-                AddAddressesToMailMessage(ReplyTo, "replyTo");
-            }
-
-            // Set the delivery notification
-            _mMailMessage.DeliveryNotificationOptions = DeliveryNotificationOption;
-
-            // Set the subject of the mail message
-            _mMailMessage.Subject = Subject;
-
-            // Set the body of the mail message
-            _mMailMessage.Body = Body;
-
-            // Set the subject and body encoding
-            _mMailMessage.SubjectEncoding = Encoding;
-            _mMailMessage.BodyEncoding = Encoding;
-
-            // Set the format of the mail message body as HTML
-            _mMailMessage.IsBodyHtml = BodyAsHtml;
-
-            // Set the priority of the mail message to normal
-            _mMailMessage.Priority = Priority;
+            _mSmtpClient = new DsnSmtpClient();
 
             // Get the PowerShell environment variable
-            // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
-            PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
-
-            if (SmtpServer == null && globalEmailServer != null)
-            {
-                SmtpServer = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
-            }
-
-            if (string.IsNullOrEmpty(SmtpServer))
-            {
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
-                this.ThrowTerminatingError(er);
-            }
-
-            if (Port == 0)
-            {
-                _mSmtpClient = new SmtpClient(SmtpServer);
-            }
-            else
-            {
-                _mSmtpClient = new SmtpClient(SmtpServer, Port);
-            }
-
-            if (UseSsl)
-            {
-                _mSmtpClient.EnableSsl = true;
-            }
-
-            if (Credential != null)
-            {
-                _mSmtpClient.UseDefaultCredentials = false;
-                _mSmtpClient.Credentials = Credential.GetNetworkCredential();
-            }
-            else if (!UseSsl)
-            {
-                _mSmtpClient.UseDefaultCredentials = true;
-            }
+            // PSEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
+            _mGlobalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
         }
 
         /// <summary>
@@ -314,25 +242,159 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            // Fallback to global email server if SmtpServer parameter is not set
+            if (SmtpServer == null && _mGlobalEmailServer != null)
+            {
+                SmtpServer = Convert.ToString(_mGlobalEmailServer.Value, CultureInfo.InvariantCulture);
+            }
+
+            if (string.IsNullOrEmpty(SmtpServer))
+            {
+                ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
+                return;
+            }
+
+            // Set default port for protocol
+            if (Port == 0)
+            {
+                if(UseSsl)
+                {
+                    Port = 465; // Standard SMTPS port
+                }
+                else
+                {
+                    Port = 25; // Standard SMTP port
+                }
+            }
+
+            // Create mail message
+            var msg = new MimeMessage();
+
+            // Set the sender address of the mail message
+            AddMailAddress(msg.From, From);
+
+            // Set the recipient addresses of the mail message
+            AddMailAddresses(msg.To, To);
+
+            // Set the CC addresses of the mail message
+            if (Cc != null)
+            {
+                AddMailAddresses(msg.Cc, Cc);
+            }
+
+            // Set the BCC addresses of the mail message
+            if (Bcc != null)
+            {
+                AddMailAddresses(msg.Bcc, Bcc);
+            }
+
+            // Set the Reply-To addresses of the mail message
+            if (ReplyTo != null)
+            {
+                AddMailAddresses(msg.ReplyTo, ReplyTo);
+            }
+
+            // Set the subject of the mail message
+            if (Subject != null)
+            {
+                msg.Subject = Subject;
+            }
+
+            // Set the priority of the mail message
+            msg.Priority = (MimeKit.MessagePriority)Priority;
+
+            // Create body
+            var builder = new BodyBuilder();
+
+            if (BodyAsHtml)
+            {
+                builder.HtmlBody = Body;
+            }
+            else
+            {
+                builder.TextBody = Body;
+            }
+
             // Add the attachments
             if (Attachments != null)
             {
-                string filepath = string.Empty;
                 foreach (string attachFile in Attachments)
                 {
                     try
                     {
-                        filepath = PathUtils.ResolveFilePath(attachFile, this);
+                        builder.Attachments.Add(attachFile);
                     }
-                    catch (ItemNotFoundException e)
+                    catch (ArgumentException ex)
                     {
-                        // NOTE: This will throw
-                        PathUtils.ReportFileOpenFailure(this, filepath, e);
+                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, builder);
+                        ThrowTerminatingError(er);
                     }
-
-                    Attachment mailAttachment = new Attachment(filepath);
-                    _mMailMessage.Attachments.Add(mailAttachment);
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, builder);
+                        ThrowTerminatingError(er);
+                    }
+                    catch (System.IO.DirectoryNotFoundException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "DirectoryNotFoundException", ErrorCategory.InvalidArgument, builder);
+                        ThrowTerminatingError(er);
+                    }
+                    catch (System.IO.FileNotFoundException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "FileNotFoundException", ErrorCategory.ObjectNotFound, builder);
+                        ThrowTerminatingError(er);
+                    }
+                    catch (System.IO.IOException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "IOException", ErrorCategory.ReadError, builder);
+                        ThrowTerminatingError(er);
+                    }
                 }
+            }
+
+            // Set the body of the mail message
+            msg.Body = builder.ToMessageBody();
+
+            try
+            {
+                // Connect to SMTP server
+                _mSmtpClient.Connect (SmtpServer, Port, UseSsl);
+
+                // Authenticate if credentials are provided
+                if (Credential != null)
+                {
+                    _mSmtpClient.Authenticate(Credential.GetNetworkCredential());
+                }
+
+                // Set the delivery notification
+                _mSmtpClient.DeliveryStatusNotification = DeliveryNotificationOption;
+
+                // Send the mail message
+                _mSmtpClient.Send(msg);
+            }
+            catch (MailKit.ProtocolException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "ProtocolException", ErrorCategory.ProtocolError, _mSmtpClient);
+                WriteError(er);
+            }
+            catch (MailKit.Security.AuthenticationException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.AuthenticationError, _mSmtpClient);
+                WriteError(er);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                WriteError(er);
+            }
+            catch (ArgumentNullException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "ArgumentNullException", ErrorCategory.InvalidArgument, _mSmtpClient);
+                WriteError(er);
+            }
+            finally
+            {
+                _mSmtpClient.Disconnect(true);
             }
         }
 
@@ -341,42 +403,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            try
-            {
-                // Send the mail message
-                _mSmtpClient.Send(_mMailMessage);
-            }
-            catch (SmtpFailedRecipientsException ex)
-            {
-                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
-                WriteError(er);
-            }
-            catch (SmtpException ex)
-            {
-                if (ex.InnerException != null)
-                {
-                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
-                    WriteError(er);
-                }
-                else
-                {
-                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
-                    WriteError(er);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
-                WriteError(er);
-            }
-            catch (System.Security.Authentication.AuthenticationException ex)
-            {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
-                WriteError(er);
-            }
-
-            // If we don't dispose the attachments, the sender can't modify or use the files sent.
-            _mMailMessage.Attachments.Dispose();
+            _mSmtpClient?.Dispose();
         }
 
         #endregion

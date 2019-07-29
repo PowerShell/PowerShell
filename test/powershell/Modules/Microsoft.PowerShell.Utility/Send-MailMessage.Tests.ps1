@@ -109,21 +109,6 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         }
     )
 
-    It "Shows obsolete message for cmdlet" {
-        $server | Should -Not -Be $null
-
-        $powershell = [PowerShell]::Create()
-
-        $null = $powershell.AddCommand("Send-MailMessage").AddParameters($testCases[0].InputObject).AddParameter("ErrorAction","SilentlyContinue")
-
-        $powershell.Invoke()
-
-        $warnings = $powershell.Streams.Warning
-
-        $warnings.count | Should -BeGreaterThan 0
-        $warnings[0].ToString() | Should -BeLike "The command 'Send-MailMessage' is obsolete. *"
-    }
-
     It "Can send mail message using named parameters <Name>" -TestCases $testCases {
         param($InputObject)
 
@@ -287,8 +272,8 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
         }
 
         It "Can send mail with attachments" {
-            $attachment1 = "TestDrive:\attachment1.txt"
-            $attachment2 = "TestDrive:\attachment2.txt"
+            $attachment1 = "$TestDrive\attachment1.txt"
+            $attachment2 = "$TestDrive\attachment2.png"
 
             $pngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDoL9/aK3hHFSgyUw4o0KEIEQIQoQgRAhChAgRghAhCBGCECEIEYIQhAhBiBCECEGIEIQgRAhChCBECEKEIAQhQhAiBCFCECIEIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCECFChCBECEKEIOS7BU5Hx50BmcQaAAAAAElFTkSuQmCC"
 
@@ -302,9 +287,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             $mail = Read-Mail
             $mail.MessageParts.Count | Should -BeExactly 3
 
-            $txt = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($mail.MessageParts[1].BodyData)) -replace "`n|`r"
-            $txt | Should -BeExactly "First attachment"
-
+            ($mail.MessageParts[1].BodyData) | Should -BeExactly "First attachment"
             ($mail.MessageParts[2].BodyData -replace "`n|`r") | Should -BeExactly $pngBase64
         }
     }
