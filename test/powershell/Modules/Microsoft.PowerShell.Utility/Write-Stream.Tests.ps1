@@ -169,8 +169,25 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
         }
 
-        # We skip the error stream here because it is not capturable when ignored right now
-        It 'Should be able to capture messages written to the <Stream> stream even if the stream is set to Ignore' -TestCases $streamTestCases[1..$($streamTestCases.Count - 1)] {
+        It 'Should be able to capture messages written to the <Stream> stream when the action is set to SilentlyContinue' -TestCases $streamTestCases {
+            param($Stream)
+
+            $streamData = @()
+            $parameters = @{
+                "${Stream}Variable" = 'streamData'
+            }
+            foreach ($streamName in $streams) {
+                $parameters["${streamName}Action"] = [System.Management.Automation.ActionPreference]::SilentlyContinue
+            }
+            Test-StreamData @parameters *> $null
+
+            , $streamData | Should -BeOfType [System.Collections.ArrayList]
+            $streamData.Count | Should -BeGreaterThan 0
+            $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
+        }
+
+        # We only check the error stream here because the others are capturable when ignored right now (see Issue #10248)
+        It 'Should not be able to capture messages written to the <Stream> stream when the action is set to Ignore' -TestCases $streamTestCases.where{ $_.Values[0] -eq 'Error' } {
             param($Stream)
 
             $streamData = @()
@@ -183,12 +200,11 @@ Describe "Stream writer tests" -Tags "CI" {
             Test-StreamData @parameters *> $null
 
             , $streamData | Should -BeOfType [System.Collections.ArrayList]
-            $streamData.Count | Should -BeGreaterThan 0
-            $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
+            $streamData.Count | Should -Be 0
         }
 
         # We skip the progress stream here because it is not redirectable
-        It 'Should be able to ignore all streams except for the <Stream> stream' -TestCases $streamTestCases[0..$($streamTestCases.Length - 2)] {
+        It 'Should be able to ignore all streams except for the <Stream> stream' -TestCases $streamTestCases.where{ $_.Values[0] -ne 'Progress' } {
             param($Stream)
             $parameters = @{}
             foreach ($streamName in $streams) {
