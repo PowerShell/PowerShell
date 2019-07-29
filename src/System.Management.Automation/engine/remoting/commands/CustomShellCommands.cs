@@ -4056,6 +4056,11 @@ function Test-WinRMQuickConfigNeeded
         $winrmQuickConfigNeeded = $true
     }}
 
+    # check if LocalAccountTokenFilterPolicy is enabled
+    elseif ((Get-ItemProperty -Path hklm:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LocalAccountTokenFilterPolicy) -ne 1){{
+        $winrmQuickConfigNeeded = $true
+    }}
+
     # check if WinRM firewall is enabled for HTTP
     else{{
         if (Get-Command Get-NetFirewallRule -ErrorAction SilentlyContinue){{
