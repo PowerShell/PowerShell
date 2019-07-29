@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell
             properties.Add("UUID", GetUniqueUserId());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
-            properties.Add("OSDetail", Environment.GetEnvironmentVariable("PSDestChannel"));
+            properties.Add("OSDetail", Environment.GetEnvironmentVariable("PSDistChannel"));
             if ( mode == null || mode == string.Empty ) {
                 properties.Add("StartMode", "unknown");
             }
