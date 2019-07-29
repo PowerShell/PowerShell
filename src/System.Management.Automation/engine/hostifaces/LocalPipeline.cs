@@ -625,11 +625,6 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-            catch (ThreadAbortException ex)
-            {
-                SetPipelineState(PipelineState.Failed, ex);
-                SetHadErrors(true);
-            }
             catch (HaltCommandException)
             {
                 // 1021203-2005/05/09-JonN

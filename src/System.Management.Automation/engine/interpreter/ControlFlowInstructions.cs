@@ -387,15 +387,6 @@ namespace System.Management.Automation.Interpreter
                 ExceptionHandler exHandler;
                 frame.InstructionIndex += _tryHandler.GotoHandler(frame, exception, out exHandler);
                 if (exHandler == null) { throw; }
-#if !CORECLR // Thread.Abort and ThreadAbortException are not in CoreCLR.
-                // stay in the current catch so that ThreadAbortException is not rethrown by CLR:
-                var abort = exception as ThreadAbortException;
-                if (abort != null)
-                {
-                    Interpreter.AnyAbortException = abort;
-                    frame.CurrentAbortHandler = exHandler;
-                }
-#endif
                 bool rethrow = false;
                 try
                 {
@@ -640,11 +631,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            // TODO: ThreadAbortException ?
-
             object exception = frame.Pop();
-            // ExceptionHandler handler;
-            // return frame.Interpreter.GotoHandler(frame, exception, out handler);
             throw new RethrowException();
         }
     }
