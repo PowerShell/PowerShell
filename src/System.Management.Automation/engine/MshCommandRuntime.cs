@@ -3373,7 +3373,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsProgressActionSet { get; private set; } = false;
+        internal bool IsProgressActionSet { get; private set; }
 
         private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
         private bool _isInformationPreferenceCached = false;
