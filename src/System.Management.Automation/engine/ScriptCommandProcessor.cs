@@ -235,7 +235,7 @@ namespace System.Management.Automation
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
-        private object _dollarUnderbar = AutomationNull.Value;
+        private readonly object _dollarUnderbar = AutomationNull.Value;
         private FunctionContext _functionContext;
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)

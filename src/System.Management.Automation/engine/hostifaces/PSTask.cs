@@ -53,22 +53,22 @@ namespace System.Management.Automation.PSTasks
         protected override void InitializePowershell()
         {
             // Writer data stream handlers
-            _output.DataAdded += (sender, args) => HandleOutputData(sender, args);
-            _powershell.Streams.Error.DataAdded += (sender, args) => HandleErrorData(sender, args);
-            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData(sender, args);
-            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData(sender, args);
-            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData(sender, args);
-            _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData(sender, args);
+            _output.DataAdded += (sender, args) => HandleOutputData();
+            _powershell.Streams.Error.DataAdded += (sender, args) => HandleErrorData();
+            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData();
+            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData();
+            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData();
+            _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData();
 
             // State change handler
-            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
+            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(args);
         }
 
-        #endregion       
+        #endregion
 
         #region Writer data stream handlers
 
-        private void HandleOutputData(object sender, DataAddedEventArgs args)
+        private void HandleOutputData()
         {
             foreach (var item in _output.ReadAll())
             {
@@ -78,7 +78,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleErrorData(object sender, DataAddedEventArgs args)
+        private void HandleErrorData()
         {
             foreach (var item in _powershell.Streams.Error.ReadAll())
             {
@@ -88,7 +88,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleWarningData(object sender, DataAddedEventArgs args)
+        private void HandleWarningData()
         {
             foreach (var item in _powershell.Streams.Warning.ReadAll())
             {
@@ -98,7 +98,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleVerboseData(object sender, DataAddedEventArgs args)
+        private void HandleVerboseData()
         {
             foreach (var item in _powershell.Streams.Verbose.ReadAll())
             {
@@ -108,7 +108,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleDebugData(object sender, DataAddedEventArgs args)
+        private void HandleDebugData()
         {
             foreach (var item in _powershell.Streams.Debug.ReadAll())
             {
@@ -118,7 +118,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleInformationData(object sender, DataAddedEventArgs args)
+        private void HandleInformationData()
         {
             foreach (var item in _powershell.Streams.Information.ReadAll())
             {
@@ -132,7 +132,7 @@ namespace System.Management.Automation.PSTasks
 
         #region Event handlers
 
-        private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
+        private void HandleStateChanged(PSInvocationStateChangedEventArgs stateChangeInfo)
         {
             if (_dataStreamWriter != null)
             {
@@ -196,22 +196,22 @@ namespace System.Management.Automation.PSTasks
         protected override void InitializePowershell()
         {
             // Job data stream handlers
-            _output.DataAdded += (sender, args) => HandleJobOutputData(sender, args);
-            _powershell.Streams.Error.DataAdded += (sender, args) => HandleJobErrorData(sender, args);
-            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleJobWarningData(sender, args);
-            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleJobVerboseData(sender, args);
-            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleJobDebugData(sender, args);
-            _powershell.Streams.Information.DataAdded += (sender, args) => HandleJobInformationData(sender, args);
+            _output.DataAdded += (sender, args) => HandleJobOutputData();
+            _powershell.Streams.Error.DataAdded += (sender, args) => HandleJobErrorData();
+            _powershell.Streams.Warning.DataAdded += (sender, args) => HandleJobWarningData();
+            _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleJobVerboseData();
+            _powershell.Streams.Debug.DataAdded += (sender, args) => HandleJobDebugData();
+            _powershell.Streams.Information.DataAdded += (sender, args) => HandleJobInformationData();
 
             // State change handler
-            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(sender, args);
+            _powershell.InvocationStateChanged += (sender, args) => HandleStateChanged(args);
         }
 
         #endregion
 
         #region Job data stream handlers
 
-        private void HandleJobOutputData(object sender, DataAddedEventArgs args)
+        private void HandleJobOutputData()
         {
             foreach (var item in _output.ReadAll())
             {
@@ -222,7 +222,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleJobErrorData(object sender, DataAddedEventArgs args)
+        private void HandleJobErrorData()
         {
             foreach (var item in _powershell.Streams.Error.ReadAll())
             {
@@ -233,7 +233,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleJobWarningData(object sender, DataAddedEventArgs args)
+        private void HandleJobWarningData()
         {
             foreach (var item in _powershell.Streams.Warning.ReadAll())
             {
@@ -244,7 +244,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleJobVerboseData(object sender, DataAddedEventArgs args)
+        private void HandleJobVerboseData()
         {
             foreach (var item in _powershell.Streams.Verbose.ReadAll())
             {
@@ -255,7 +255,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleJobDebugData(object sender, DataAddedEventArgs args)
+        private void HandleJobDebugData()
         {
             foreach (var item in _powershell.Streams.Debug.ReadAll())
             {
@@ -266,7 +266,7 @@ namespace System.Management.Automation.PSTasks
             }
         }
 
-        private void HandleJobInformationData(object sender, DataAddedEventArgs args)
+        private void HandleJobInformationData()
         {
             foreach (var item in _powershell.Streams.Information.ReadAll())
             {
@@ -281,7 +281,7 @@ namespace System.Management.Automation.PSTasks
 
         #region Event handlers
 
-        private void HandleStateChanged(object sender, PSInvocationStateChangedEventArgs stateChangeInfo)
+        private void HandleStateChanged(PSInvocationStateChangedEventArgs stateChangeInfo)
         {
             RaiseStateChangedEvent(stateChangeInfo);
         }
@@ -307,7 +307,7 @@ namespace System.Management.Automation.PSTasks
         private const string VERBATIM_ARGUMENT = "--%";
         private const string RunspaceName = "PSTask";
 
-        private static int s_taskId = 0;
+        private static int s_taskId;
 
         #endregion
 
@@ -361,7 +361,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Constructor
         /// </summary>
-        public PSTaskBase(
+        protected PSTaskBase(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar) : this()
@@ -686,7 +686,7 @@ namespace System.Management.Automation.PSTasks
                 // Add new task
                 if (index == 0)
                 {
-                    task.StateChanged += (sender, args) => HandleTaskStateChanged(sender, args);
+                    task.StateChanged += HandleTaskStateChangedDelegate;
 
                     lock (_syncObject)
                     {
@@ -717,7 +717,6 @@ namespace System.Management.Automation.PSTasks
                 if (index == 2)
                 {
                     dataStreamWriter.WriteImmediate();
-                    continue;
                 }
             }
         }
@@ -762,6 +761,7 @@ namespace System.Management.Automation.PSTasks
 
         #region Private Methods
 
+        private void HandleTaskStateChangedDelegate(object sender, PSInvocationStateChangedEventArgs args) => HandleTaskStateChanged(sender, args);
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
             var task = sender as PSTaskBase;
@@ -781,7 +781,7 @@ namespace System.Management.Automation.PSTasks
                             _addAvailable.Set();
                         }
                     }
-                    task.StateChanged -= (sender, args) => HandleTaskStateChanged(sender, args);
+                    task.StateChanged -= HandleTaskStateChangedDelegate;
                     task.Dispose();
                     CheckForComplete();
                     break;
