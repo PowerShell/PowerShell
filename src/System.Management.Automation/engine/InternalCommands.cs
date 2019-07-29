@@ -207,22 +207,22 @@ namespace Microsoft.PowerShell.Commands
         #region ParallelParameterSet
 
         /// <summary>
-        /// Flag to indicate that foreach iterations should be run in parallel instead of sequentially.
+        /// Gets and sets a flag to indicate that foreach iterations should be run in parallel instead of sequentially.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter Parallel { get; set; }
 
         /// <summary>
-        /// Script block to run for each pipeline object
+        /// Gets and sets a script block to run for each pipeline object.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         public ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Specifies the maximum number of concurrently running scriptblocks on separate threads.
+        /// Gets and sets the maximum number of concurrently running scriptblocks on separate threads.
         /// The default number is 5.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
@@ -231,16 +231,16 @@ namespace Microsoft.PowerShell.Commands
         public int ThrottleLimit { get; set; } = 5;
 
         /// <summary>
-        /// Specifies a timeout time in seconds, after which the parallel running scripts will be stopped
+        /// Gets and sets a timeout time in seconds, after which the parallel running scripts will be stopped
         /// The default value is 0, indicating no timeout.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        [ValidateRange(0, (Int32.MaxValue/1000))]
+        [ValidateRange(0, (Int32.MaxValue / 1000))]
         public int TimeoutSeconds { get; set; }
 
         /// <summary>
-        /// Flag that returns a job object immediately for the parallel operation, instead of returning after
+        /// Gets and sets a flag that returns a job object immediately for the parallel operation, instead of returning after
         /// all foreach processing is completed.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitParallelParameterSet()
         {
-            bool allowUsingExpression = (this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+            bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(ScriptBlock, allowUsingExpression, this.Context, null);
             
             // Validate using values map
@@ -380,8 +380,7 @@ namespace Microsoft.PowerShell.Commands
                             new PSArgumentException(InternalCommandStrings.ParallelUsingVariableCannotBeScriptBlock),
                             "ParallelUsingVariableCannotBeScriptBlock",
                             ErrorCategory.InvalidType,
-                            this)
-                    );
+                            this));
                 }
             }
 
@@ -394,8 +393,7 @@ namespace Microsoft.PowerShell.Commands
                             new PSArgumentException(InternalCommandStrings.ParallelCannotUseTimeoutWithJob),
                             "ParallelCannotUseTimeoutWithJob",
                             ErrorCategory.InvalidOperation,
-                            this)
-                    );
+                            this));
                 }
 
                 _taskJob = new PSTaskJob(
@@ -415,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
                     _taskTimer = new System.Threading.Timer(
                         (_) => _taskPool.StopAll(),
                         null,
-                        (TimeoutSeconds * 1000),
+                        TimeoutSeconds * 1000,
                         System.Threading.Timeout.Infinite);
                 }
             }
@@ -431,8 +429,7 @@ namespace Microsoft.PowerShell.Commands
                             new PSArgumentException(InternalCommandStrings.ParallelPipedInputObjectCannotBeScriptBlock),
                             "ParallelPipedInputObjectCannotBeScriptBlock",
                             ErrorCategory.InvalidType,
-                            this)
-                );
+                            this));
 
                 return;
             }

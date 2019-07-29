@@ -73,8 +73,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _output.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Output, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Output, item));
             }
         }
 
@@ -83,8 +82,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _powershell.Streams.Error.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Error, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Error, item));
             }
         }
 
@@ -93,8 +91,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _powershell.Streams.Warning.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Warning, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Warning, item.Message));
             }
         }
 
@@ -103,8 +100,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _powershell.Streams.Verbose.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message));
             }
         }
 
@@ -113,8 +109,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _powershell.Streams.Debug.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Debug, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Debug, item.Message));
             }
         }
 
@@ -123,8 +118,7 @@ namespace System.Management.Automation.PSTasks
             foreach (var item in _powershell.Streams.Information.ReadAll())
             {
                 _dataStreamWriter.Add(
-                    new PSStreamObject(PSStreamObjectType.Information, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Information, item));
             }
         }
         
@@ -147,8 +141,7 @@ namespace System.Management.Automation.PSTasks
                         this);
 
                     _dataStreamWriter.Add(
-                        new PSStreamObject(PSStreamObjectType.Error, errorRecord)
-                    );
+                        new PSStreamObject(PSStreamObjectType.Error, errorRecord));
                 }
             }
 
@@ -217,8 +210,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Output.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Output, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Output, item));
             }
         }
 
@@ -228,8 +220,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Error.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Error, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Error, item));
             }
         }
 
@@ -239,8 +230,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Warning.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Warning, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Warning, item.Message));
             }
         }
 
@@ -250,8 +240,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Verbose.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Verbose, item.Message));
             }
         }
 
@@ -261,8 +250,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Debug.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Debug, item.Message)
-                );
+                    new PSStreamObject(PSStreamObjectType.Debug, item.Message));
             }
         }
 
@@ -272,8 +260,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _job.Information.Add(item);
                 _job.Results.Add(
-                    new PSStreamObject(PSStreamObjectType.Information, item)
-                );
+                    new PSStreamObject(PSStreamObjectType.Information, item));
             }
         }
 
@@ -762,6 +749,7 @@ namespace System.Management.Automation.PSTasks
         #region Private Methods
 
         private void HandleTaskStateChangedDelegate(object sender, PSInvocationStateChangedEventArgs args) => HandleTaskStateChanged(sender, args);
+        
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
             var task = sender as PSTaskBase;
