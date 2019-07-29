@@ -41,19 +41,19 @@
         {
             "label": "Bootstrap",
             "type": "shell",
-            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBootstrap",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap",
             "problemMatcher": []
         },
         {
             "label": "Clean Build",
             "type": "shell",
-            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Clean -Output (Join-Path ${workspaceFolder} debug)",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean -Output (Join-Path '${workspaceFolder}' debug)",
             "problemMatcher": "$msCompile"
         },
         {
             "label": "Build",
             "type": "shell",
-            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Output (Join-Path ${workspaceFolder} debug)",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Output (Join-Path '${workspaceFolder}' debug)",
             "group": {
                 "kind": "build",
                 "isDefault": true
