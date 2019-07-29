@@ -3106,7 +3106,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsVerboseActionSet { get; private set; } = false;
+        internal bool IsVerboseActionSet { get; private set; }
 
         private bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
@@ -3168,7 +3168,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsWarningActionSet { get; private set; } = false;
+        internal bool IsWarningActionSet { get; private set; }
 
         // This is used so that people can tell whether the verbose switch
         // was specified.  This is useful in the Cmdlet-calling-Cmdlet case
@@ -3354,7 +3354,9 @@ namespace System.Management.Automation
             get
             {
                 if (IsProgressActionSet)
+                {
                     return _progressPreference;
+                }
 
                 if (!_isProgressPreferenceCached)
                 {
@@ -3373,10 +3375,10 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsProgressActionSet { get; private set; } = false;
+        internal bool IsProgressActionSet { get; private set; }
 
         private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
-        private bool _isInformationPreferenceCached = false;
+        private bool _isInformationPreferenceCached;
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
