@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation.Host;
+using System.Management.Automation.Language;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
@@ -271,6 +273,21 @@ namespace System.Management.Automation.PSTasks
         private void HandleStateChanged(PSInvocationStateChangedEventArgs stateChangeInfo)
         {
             RaiseStateChangedEvent(stateChangeInfo);
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Debugger
+        /// </summary>
+        public Debugger Debugger
+        {
+            get
+            {
+                return _powershell.Runspace.Debugger;
+            }
         }
 
         #endregion
@@ -974,13 +991,189 @@ namespace System.Management.Automation.PSTasks
     }
 
     /// <summary>
+    /// PSTaskChildJob debugger wrapper
+    /// </summary>
+    internal sealed class PSTaskChildDebugger : Debugger
+    {
+        #region Members
+
+        private Debugger _wrappedDebugger;
+        private string _jobName;
+
+        #endregion
+
+        #region Constructor
+
+        private PSTaskChildDebugger() { }
+
+        public PSTaskChildDebugger(
+            Debugger debugger,
+            string jobName)
+        {
+            if (debugger == null)
+            {
+                throw new PSArgumentNullException("debugger");
+            }
+
+            _wrappedDebugger = debugger;
+            _jobName = jobName ?? string.Empty;
+
+            // Create handlers for wrapped debugger events.
+            _wrappedDebugger.BreakpointUpdated += HandleBreakpointUpdated;
+            _wrappedDebugger.DebuggerStop += HandleDebuggerStop;
+        }
+
+        #endregion
+
+        #region Debugger overrides
+
+        /// <summary>
+        /// Evaluates provided command either as a debugger specific command
+        /// or a PowerShell command.
+        /// </summary>
+        /// <param name="command">PowerShell command.</param>
+        /// <param name="output">Output.</param>
+        /// <returns>DebuggerCommandResults.</returns>
+        public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
+        {
+            // Special handling for the prompt command.
+            if (command.Commands[0].CommandText.Trim().Equals("prompt", StringComparison.OrdinalIgnoreCase))
+            {
+                return HandlePromptCommand(output);
+            }
+
+            return _wrappedDebugger.ProcessCommand(command, output);
+        }
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.SetBreakpoints(breakpoints);
+        }
+
+        /// <summary>
+        /// Sets the debugger resume action.
+        /// </summary>
+        /// <param name="resumeAction">DebuggerResumeAction.</param>
+        public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
+        {
+            _wrappedDebugger.SetDebuggerAction(resumeAction);
+        }
+
+        /// <summary>
+        /// Stops a running command.
+        /// </summary>
+        public override void StopProcessCommand()
+        {
+            _wrappedDebugger.StopProcessCommand();
+        }
+
+        /// <summary>
+        /// Returns current debugger stop event arguments if debugger is in
+        /// debug stop state.  Otherwise returns null.
+        /// </summary>
+        /// <returns>DebuggerStopEventArgs.</returns>
+        public override DebuggerStopEventArgs GetDebuggerStopArgs()
+        {
+            return _wrappedDebugger.GetDebuggerStopArgs();
+        }
+
+        /// <summary>
+        /// Sets the parent debugger, breakpoints, and other debugging context information.
+        /// </summary>
+        /// <param name="parent">Parent debugger.</param>
+        /// <param name="breakPoints">List of breakpoints.</param>
+        /// <param name="startAction">Debugger mode.</param>
+        /// <param name="host">PowerShell host.</param>
+        /// <param name="path">Current path.</param>
+        public override void SetParent(
+            Debugger parent,
+            IEnumerable<Breakpoint> breakPoints,
+            DebuggerResumeAction? startAction,
+            PSHost host,
+            PathInfo path)
+        {
+            // For now always enable step mode debugging.
+            SetDebuggerStepMode(true);
+        }
+
+        /// <summary>
+        /// Sets the debugger mode.
+        /// </summary>
+        public override void SetDebugMode(DebugModes mode)
+        {
+            _wrappedDebugger.SetDebugMode(mode);
+
+            base.SetDebugMode(mode);
+        }
+
+        /// <summary>
+        /// Returns IEnumerable of CallStackFrame objects.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<CallStackFrame> GetCallStack()
+        {
+            return _wrappedDebugger.GetCallStack();
+        }
+
+        /// <summary>
+        /// Sets debugger stepping mode.
+        /// </summary>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
+        public override void SetDebuggerStepMode(bool enabled)
+        {
+            _wrappedDebugger.SetDebuggerStepMode(enabled);
+        }
+
+        /// <summary>
+        /// True when debugger is stopped at a breakpoint.
+        /// </summary>
+        public override bool InBreakpoint
+        {
+            get { return _wrappedDebugger.InBreakpoint; }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
+        {
+            this.RaiseDebuggerStopEvent(e);
+        }
+
+        private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
+        {
+            this.RaiseBreakpointUpdatedEvent(e);
+        }
+
+        private DebuggerCommandResults HandlePromptCommand(PSDataCollection<PSObject> output)
+        {
+            // Nested debugged runspace prompt should look like:
+            // [DBG]: [JobName]: PS C:\>>
+            string promptScript = "'[DBG]: '" + " + " + "'[" + CodeGeneration.EscapeSingleQuotedStringContent(_jobName) + "]: '" + " + " + @"""PS $($executionContext.SessionState.Path.CurrentLocation)>> """;
+            PSCommand promptCommand = new PSCommand();
+            promptCommand.AddScript(promptScript);
+            _wrappedDebugger.ProcessCommand(promptCommand, output);
+
+            return new DebuggerCommandResults(null, true);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Task child job that wraps asynchronously running tasks
     /// </summary>
-    internal sealed class PSTaskChildJob : Job
+    internal sealed class PSTaskChildJob : Job, IJobDebugger
     {
         #region Members
 
         private readonly PSJobTask _task;
+        private PSTaskChildDebugger _jobDebuggerWrapper;
 
         #endregion
 
@@ -1059,6 +1252,33 @@ namespace System.Management.Automation.PSTasks
         {
             _task.SignalStop();
         }
+
+        #endregion
+
+        #region IJobDebugger
+
+        /// <summary>
+        /// Job Debugger
+        /// </summary>
+        public Debugger Debugger
+        {
+            get
+            {
+                if (_jobDebuggerWrapper == null)
+                {
+                    _jobDebuggerWrapper = new PSTaskChildDebugger(
+                        _task.Debugger,
+                        this.Name);
+                }
+
+                return _jobDebuggerWrapper;
+            }
+        }
+
+        /// <summary>
+        /// IsAsync
+        /// </summary>
+        public bool IsAsync { get; set; }
 
         #endregion
 

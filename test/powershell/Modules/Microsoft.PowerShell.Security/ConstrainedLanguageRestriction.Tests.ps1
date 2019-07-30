@@ -904,7 +904,7 @@ try
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
 
-                $results = 1..1 | ForEach-Object -Parallel -ScriptBlock { $ExecutionContext.SessionState.LanguageMode }
+                $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
             }
             finally
             {

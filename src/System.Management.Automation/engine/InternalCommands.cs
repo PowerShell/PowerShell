@@ -207,19 +207,11 @@ namespace Microsoft.PowerShell.Commands
         #region ParallelParameterSet
 
         /// <summary>
-        /// Gets and sets a flag to indicate that foreach iterations should be run in parallel instead of sequentially.
+        /// Gets and sets a script block to run in parallel for each pipeline object.
         /// </summary>
         [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
-        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        public SwitchParameter Parallel { get; set; }
-
-        /// <summary>
-        /// Gets and sets a script block to run for each pipeline object.
-        /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        [ValidateNotNull]
-        public ScriptBlock ScriptBlock { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        public ScriptBlock Parallel { get; set; }
 
         /// <summary>
         /// Gets and sets the maximum number of concurrently running scriptblocks on separate threads.
@@ -368,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
         private void InitParallelParameterSet()
         {
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
-            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(ScriptBlock, allowUsingExpression, this.Context, null);
+            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(Parallel, allowUsingExpression, this.Context, null);
             
             // Validate using values map
             foreach (var item in _usingValuesMap.Values)
@@ -397,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _taskJob = new PSTaskJob(
-                    ScriptBlock.ToString(),
+                    Parallel.ToString(),
                     ThrottleLimit);
             }
             else
@@ -437,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
             if (AsJob)
             {
                 var taskChildJob = new PSTaskChildJob(
-                    ScriptBlock,
+                    Parallel,
                     _usingValuesMap,
                     InputObject);
 
@@ -449,7 +441,7 @@ namespace Microsoft.PowerShell.Commands
                 _taskDataStreamWriter.WriteImmediate();
 
                 var task = new System.Management.Automation.PSTasks.PSTask(
-                     ScriptBlock,
+                     Parallel,
                      _usingValuesMap,
                      InputObject,
                      _taskDataStreamWriter);
