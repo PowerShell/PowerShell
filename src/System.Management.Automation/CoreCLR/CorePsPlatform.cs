@@ -249,7 +249,7 @@ namespace System.Management.Automation
 
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
-            string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
+            string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, Utils.ModulesFolder);
             string xdgCacheDefault = Path.Combine(envHome, ".cache", "powershell");
 
             switch (dirpath)
@@ -314,7 +314,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        return Path.Combine(xdgdatahome, "powershell", "Modules");
+                        return Path.Combine(xdgdatahome, "powershell", Utils.ModulesFolder);
                     }
 
                 case Platform.XDG_Type.SHARED_MODULES:

@@ -467,8 +467,7 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
-            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            return IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
+            return UserConfigurationDirectory;
 #endif
         }
 
@@ -705,15 +704,29 @@ namespace System.Management.Automation
         internal const string DefaultPowerShellShellID = "Microsoft.PowerShell";
 
         /// <summary>
+        /// This is used to construct the module directory.
+        /// </summary>
+        internal const string ModulesFolder = "Modules";
+
+#if !UNIX
+        /// <summary>
         /// This is used to construct the profile path.
         /// </summary>
         internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
-        /// The subdirectory of module paths
-        /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
+        /// The directory under which to store Modules and Scripts folders for the current user.
+        /// By default this will be ~\Documents\PowerShell.
         /// </summary>
-        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+        internal static string UserConfigurationDirectory =
+            EnvVarHelper.GetExpandedEnvironmentVariable(EnvVarHelper.PSUserRootEnvVar, EnvironmentVariableTarget.User)
+            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProductNameForDirectory);
+
+        /// <summary>
+        /// The current user's modules folder.
+        /// </summary>
+        internal static string UserModulesFolder = Path.Combine(UserConfigurationDirectory, ModulesFolder);
+#endif
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };

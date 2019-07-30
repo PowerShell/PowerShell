@@ -103,10 +103,10 @@ namespace System.Management.Automation.Configuration
         /// Note: There is no setter because this value is immutable.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
-        /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
+        /// <returns>Value if found, null otherwise. The behavior matches EnvVarHelper.GetExpandedEnvironmentVariable().</returns>
         internal string GetModulePath(ConfigScope scope)
         {
-            string modulePath = ReadValueFromFile<string>(scope, Constants.PSModulePathEnvVar);
+            string modulePath = ReadValueFromFile<string>(scope, EnvVarHelper.PSModulePathEnvVar);
             if (!string.IsNullOrEmpty(modulePath))
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);

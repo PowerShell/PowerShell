@@ -17,9 +17,21 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal static class Constants
+    internal static class EnvVarHelper
     {
         public const string PSModulePathEnvVar = "PSModulePath";
+        public const string PSUserRootEnvVar = "PSUserRoot";
+
+        internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
+        {
+            string result = Environment.GetEnvironmentVariable(name, target);
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = Environment.ExpandEnvironmentVariables(result);
+            }
+
+            return result;
+        }
     }
 
     /// <summary>
@@ -36,7 +48,7 @@ namespace System.Management.Automation
         // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
         // to load forward compatible Windows PowerShell modules from
         private static readonly string s_windowsPowerShellPSHomeModulePath =
-            Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
+            Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", Utils.ModulesFolder);
 
         internal ModuleIntrinsics(ExecutionContext context)
         {
@@ -967,7 +979,7 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
+            return Utils.UserModulesFolder;
 #endif
         }
 
@@ -1023,7 +1035,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(sharedModulePath))
             {
-                sharedModulePath = Path.Combine(sharedModulePath, Utils.ModuleDirectory);
+                sharedModulePath = Path.Combine(sharedModulePath, Utils.ProductNameForDirectory, Utils.ModulesFolder);
             }
 
             return sharedModulePath;
@@ -1071,17 +1083,6 @@ namespace System.Management.Automation
             }
 
             return null;
-        }
-
-        internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
-        {
-            string result = Environment.GetEnvironmentVariable(name, target);
-            if (!string.IsNullOrEmpty(result))
-            {
-                result = Environment.ExpandEnvironmentVariables(result);
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -1184,8 +1185,8 @@ namespace System.Management.Automation
             // so if the current process module path contains any of them, it's likely that the sxs
             // ps was started directly on windows, or from full ps. The same goes for the legacy personal
             // and shared module paths.
-            string hklmModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
-            string hkcuModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
+            string hklmModulePath = EnvVarHelper.GetExpandedEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+            string hkcuModulePath = EnvVarHelper.GetExpandedEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar, EnvironmentVariableTarget.User);
             string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
             string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
 
@@ -1225,7 +1226,7 @@ namespace System.Management.Automation
                 if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) &&
                     !trimedPath.Equals(sharedModulePath, StringComparison.OrdinalIgnoreCase) &&
                     !trimedPath.Equals(psHomeModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    trimedPath.EndsWith("Modules", StringComparison.OrdinalIgnoreCase))
+                    trimedPath.EndsWith(Utils.ModulesFolder, StringComparison.OrdinalIgnoreCase))
                 {
                     string parentDir = Path.GetDirectoryName(trimedPath);
                     string psExePath = Path.Combine(parentDir, powershellExeName);
@@ -1334,7 +1335,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
+            string currentModulePath = EnvVarHelper.GetExpandedEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             return currentModulePath;
         }
 
@@ -1345,7 +1346,7 @@ namespace System.Management.Automation
         /// </summary>
         private static string SetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
+            string currentModulePath = EnvVarHelper.GetExpandedEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
 
@@ -1364,7 +1365,7 @@ namespace System.Management.Automation
 #endif
 
                 // Set the environment variable...
-                Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
+                Environment.SetEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar, newModulePathString);
             }
 
             return newModulePathString;
@@ -1387,7 +1388,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
+            string modulePathString = Environment.GetEnvironmentVariable(EnvVarHelper.PSModulePathEnvVar) ?? SetModulePath();
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
