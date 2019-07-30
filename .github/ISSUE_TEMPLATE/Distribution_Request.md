@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-# Details of the Distributiyon
+# Details of the Distribution
 
 - Name of the Distribution: 
 - Version of the Distribution:
