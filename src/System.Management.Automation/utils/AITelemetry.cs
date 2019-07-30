@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Track each PowerShell.Create API
         /// </summary>
-        PowerShellStart,
+        PowerShellCreate,
         /// <summary>
         /// Track remote session creation
         /// </summary>
@@ -128,8 +128,6 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                // var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
-
                 if (! CanSendTelemetry)
                 {
                     return;
@@ -146,7 +144,6 @@ namespace Microsoft.PowerShell
         /// <summary>send telemetry as a metric</summary>
         public static void SendTelemetryMetric(AITelemetryType metricId, string dim1, string dim2)
         {
-            // var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
             if (! CanSendTelemetry)
             {
@@ -162,43 +159,33 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static void SendTelemetryMetric(AITelemetryType metricId, string dimension1)
         {
-            var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
-            if (!enabled)
+            if (! CanSendTelemetry)
             {
                 return;
             }
-
-            string uuid;
-            try {
-                uuid = GetUniqueUserId();
-            }
-            catch {
-                return;
-            }
-
 
             string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
             switch (metricId)
             {
                 case AITelemetryType.ApplicationType:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "AppType").TrackValue(1, uuid, sessionId.ToString(), dimension1);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "AppType").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
                     break;
                 case AITelemetryType.ExperimentalFeatureActivation:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "FeatureName").TrackValue(1, uuid, sessionId.ToString(), dimension1);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "FeatureName").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
                     break;
                 case AITelemetryType.ModuleLoad:
                     string moduleName = getModuleName(dimension1); // This will return anonymous if the modulename is not on the report list
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "ModuleName").TrackValue(1, uuid, sessionId.ToString(), moduleName);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "ModuleName").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), moduleName);
                     break;
-                case AITelemetryType.PowerShellStart:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "EngineStart").TrackValue(1, uuid, sessionId.ToString(), dimension1);
+                case AITelemetryType.PowerShellCreate:
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "PowerShellCreate").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
                     break;
                 case AITelemetryType.RemoteSessionOpen:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "RemoteSessionOpen").TrackValue(1, uuid, sessionId.ToString(), dimension1);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "RemoteSessionOpen").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
                     break;
                 default:
-                    break; // don't log anything, definitely don't throw
+                    break; // don't log anything
             }
         }
 
@@ -215,7 +202,7 @@ namespace Microsoft.PowerShell
         private static bool canReportExperimentalFeature(string experimentalFeatureName)
         {
             // don't bother to check if we can't send telemetry
-            if ( ! CanSendTelemetry ) 
+            if ( ! CanSendTelemetry )
             {
                 return false;
             }
@@ -261,9 +248,16 @@ namespace Microsoft.PowerShell
             string uuidPath = Path.Join(cacheDir, "telemetry.uuid");
             Byte[] buffer = new Byte[16];
 
-            if ( ! Directory.Exists(cacheDir) )
-            {
+            // Don't bother to check if the directory exists
+            // we only need to catch if there is a problem and then disable telemetry
+            // it's documented to throw if the directory cannot be created (and it doesn't exist)
+            // If this throws, we can't create the directory so we can't persist the uuid
+            try {
                 Directory.CreateDirectory(cacheDir);
+            }
+            catch {
+                CanSendTelemetry = false;
+                return;
             }
 
             try
@@ -281,6 +275,7 @@ namespace Microsoft.PowerShell
                         throw new FileNotFoundException(uuidPath);
                     }
                 }
+                return;
             }
             catch ( FileNotFoundException )
             {
@@ -301,22 +296,19 @@ namespace Microsoft.PowerShell
             }
 
             // this is very unlikely but we still protect it
-            Mutex m = null;
-            try {
-                m = new Mutex(true, "CreateUniqueUserId");
-                m.WaitOne(10);
-                getUserIdImpl();
-            }
-            catch (AbandonedMutexException) {
-                // if the mutex was abandoned, be sure to not let it spoil our day
-            }
-            catch ( TimeoutException ) {
-            }
-            finally {
-                m.ReleaseMutex();
+            using ( var m = new Mutex(true, "CreateUniqueUserId") ) {
+                try {
+                    m.WaitOne();
+                    getUserIdImpl();
+                }
+                catch (Exception e) {
+                    CanSendTelemetry = false;
+                }
+                finally {
+                    m.ReleaseMutex();
+                }
             }
             return uniqueUserIdentifier.ToString();
-
         }
     }
 }

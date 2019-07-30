@@ -639,7 +639,7 @@ namespace System.Management.Automation
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
             // Telemetry here
-            Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(Microsoft.PowerShell.AITelemetryType.PowerShellStart, "PowerShellCreate");
+            Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(Microsoft.PowerShell.AITelemetryType.PowerShellCreate, "PowerShellCreate");
         }
 
         /// <summary>
