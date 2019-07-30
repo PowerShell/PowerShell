@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
         /// </summary>
-        public string HexOffset { get => string.Format("{0:X16}", Offset64); }
+        public string HexOffset { get => string.Format(CultureInfo.CurrentCulture, "{0:X16}", Offset64); }
 
         private const int BytesPerLine = 16;
 
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var currentByte in Bytes)
                 {
-                    line.AppendFormat("{0:X2} ", currentByte);
+                    line.AppendFormat(CultureInfo.CurrentCulture, "{0:X2} ", currentByte);
                 }
 
                 return line.ToString().Trim();
@@ -244,13 +244,18 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var currentByte in Bytes)
                 {
-                    if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                    var currentChar = (char)currentByte;
+                    if (char.IsControl(currentChar))
                     {
-                        ascii.Append((char)currentByte);
+                        ascii.Append((char)0xFFFD);
+                    }
+                    else if (currentChar == 0x0)
+                    {
+                        ascii.Append(' ');
                     }
                     else
                     {
-                        ascii.Append('.');
+                        ascii.Append(currentChar);
                     }
                 }
 
