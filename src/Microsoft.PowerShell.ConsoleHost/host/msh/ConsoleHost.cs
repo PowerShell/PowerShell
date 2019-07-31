@@ -1615,7 +1615,7 @@ namespace Microsoft.PowerShell
                 runspace.ApartmentState = ApartmentState.STA;
             }
 
-            runspace.ThreadOptions = PSThreadOptions.ReuseThread;
+            runspace.ThreadOptions = PSThreadOptions.UseCurrentThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
