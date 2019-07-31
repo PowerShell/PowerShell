@@ -3042,6 +3042,15 @@
       <Component Id="cmpD8D8DB4A941A4A5299849526DADC6356" Guid="{44d517a4-307a-4fe8-b27c-f0bc8a7631d6}">
         <File Id="filC7D414D25AFB4CA9A3243F5A8C0279C1" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Resources.Extensions.dll" />
       </Component>
+      <Component Id="cmpE5C1153A7BA345DB8E6FA30B9D569367" Guid="{50dfdcbb-e3be-4a4f-acb9-041b16cc8234}">
+        <File Id="fil79B2049332604DAE9D33216D05BDACFA" KeyPath="yes" Source="$(env.ProductSourcePath)\BouncyCastle.Crypto.dll" />
+      </Component>
+      <Component Id="cmp6FCFC0BB6C7A467F9F3524181DD1AE2C" Guid="{231dbea7-c434-4850-bdf9-4c5e4625dbc1}">
+        <File Id="filA248708B4DBE4F5AA99CF7043851720D" KeyPath="yes" Source="$(env.ProductSourcePath)\MimeKit.dll" />
+      </Component>
+      <Component Id="cmp1A42A34AAF034E048D71F87C85412439" Guid="{f0741346-393b-46d0-9a65-51cc10d3d84d}">
+        <File Id="filFE4BB4E742884249987902AD7AA80A93" KeyPath="yes" Source="$(env.ProductSourcePath)\MailKit.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -3874,6 +3883,9 @@
       <ComponentRef Id="cmpFAF0214999C3458FA8D3E78240FEF8E6" />
       <ComponentRef Id="cmp569CAE80DA274314823D3CB0680E519A" />
       <ComponentRef Id="cmpA6C3F8BAB7AF49D6A4A777B89BE95113" />
+      <ComponentRef Id="cmpE5C1153A7BA345DB8E6FA30B9D569367" />
+      <ComponentRef Id="cmp6FCFC0BB6C7A467F9F3524181DD1AE2C" />
+      <ComponentRef Id="cmp1A42A34AAF034E048D71F87C85412439" />
     </ComponentGroup>
   </Fragment>
 </Wix>
