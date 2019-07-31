@@ -22,85 +22,6 @@ try
 
         BeforeAll {
 
-            # Invoke-LanguageModeTestingSupportCmdlet definition
-            $languageModeCmdletDef = @'
-            using System;
-            using System.Globalization;
-            using System.Reflection;
-            using System.Collections;
-            using System.Collections.Generic;
-            using System.IO;
-            using System.Security;
-            using System.Runtime.InteropServices;
-            using System.Threading;
-            using System.Management.Automation;
-
-            /// <summary>Adds a new type to the Application Domain</summary>
-            [Cmdlet("Invoke", "LanguageModeTestingSupportCmdlet")]
-            public sealed class InvokeLanguageModeTestingSupportCmdlet : PSCmdlet
-            {
-                [Parameter()]
-                public SwitchParameter EnableFullLanguageMode
-                {
-                    get { return enableFullLanguageMode; }
-                    set { enableFullLanguageMode = value; }
-                }
-                private SwitchParameter enableFullLanguageMode;
-
-                [Parameter()]
-                public SwitchParameter SetLockdownMode
-                {
-                    get { return setLockdownMode; }
-                    set { setLockdownMode = value; }
-                }
-                private SwitchParameter setLockdownMode;
-
-                [Parameter()]
-                public SwitchParameter RevertLockdownMode
-                {
-                    get { return revertLockdownMode; }
-                    set { revertLockdownMode = value; }
-                }
-                private SwitchParameter revertLockdownMode;
-
-                protected override void BeginProcessing()
-                {
-                    if(enableFullLanguageMode)
-                    {
-                        SessionState.LanguageMode = PSLanguageMode.FullLanguage;
-                    }
-
-                    if(setLockdownMode)
-                    {
-                        Environment.SetEnvironmentVariable("__PSLockdownPolicy", "0x80000007", EnvironmentVariableTarget.Machine);
-                    }
-
-                    if(revertLockdownMode)
-                    {
-                        Environment.SetEnvironmentVariable("__PSLockdownPolicy", null, EnvironmentVariableTarget.Machine);
-                    }
-                }
-            }
-'@
-
-            if (-not (Get-Command Invoke-LanguageModeTestingSupportCmdlet -ea Ignore))
-            {
-                $languageModeModuleName = "LanguageModeModule"
-                $modulePath = [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
-                $script:moduleDirectory = join-path "$PSScriptRoot\$modulePath" $languageModeModuleName
-                if (-not (Test-Path $moduleDirectory))
-                {
-                    $null = New-Item -ItemType Directory $moduleDirectory -Force
-                }
-
-                try
-                {
-                    Add-Type -TypeDefinition $languageModeCmdletDef -OutputAssembly $moduleDirectory\TestCmdletForConstrainedLanguage.dll -ErrorAction Ignore
-                } catch {}
-
-                Import-Module -Name $moduleDirectory\TestCmdletForConstrainedLanguage.dll
-            }
-
             # Debugger test type definition
             $debuggerTestTypeDef = @'
             using System;
@@ -146,6 +67,26 @@ try
 
             # Define debugger test type
             Add-Type -TypeDefinition $debuggerTestTypeDef
+
+            # Test cases
+            $TestCasesDisableDebugger = @(
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Line is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Statement is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1 -Column 1' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Command is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Command {0}' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Variable is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Variable HelloVar'
+                }
+            )
         }
 
         AfterAll {
@@ -156,93 +97,23 @@ try
             }
         }
 
-        It "Verifies that Set-PSBreakpoint Line is disabled on locked down system" {
+        It "<testName>" -TestCases $TestCasesDisableDebugger {
 
-            try
+            param ($scriptText)
+
+            try 
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                Set-PSBreakpoint -Script $scriptFilePath -Line 1
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
+                # Run script in new runspace created within lock down mode.
+                [powershell] $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace);
+                $ps.AddScript($scriptText).Invoke()
+                $expectedError = $ps.Streams.Error[0]
             }
             finally
             {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-            }
-
-            $expectedError.FullyQualifiedErrorId | Should Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
-        }
-
-        It "Verifies that Set-PSBreakpoint Statement is disabled on locked down system" {
-
-            try
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Set-PSBreakpoint -Script $scriptFilePath -Line 1 -Column 1
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-            }
-
-            $expectedError.FullyQualifiedErrorId | Should Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
-        }
-
-        It "Verifies that Set-PSBreakpoint Command is disabled on locked down system" {
-
-            try
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Set-PSBreakpoint -Command $scriptFilePath
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-            }
-
-            $expectedError.FullyQualifiedErrorId | Should Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
-        }
-
-        It "Verifies that Set-PSBreakpoint Variable is disabled on locked down system" {
-
-            try
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Set-PSBreakpoint -Variable HelloVar
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                if ($ps -ne $null) { $ps.Dispose() }
             }
 
             $expectedError.FullyQualifiedErrorId | Should Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
