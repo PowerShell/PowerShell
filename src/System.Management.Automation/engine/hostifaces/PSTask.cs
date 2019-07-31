@@ -17,7 +17,7 @@ namespace System.Management.Automation.PSTasks
     #region PSTask
 
     /// <summary>
-    /// Class to encapsulate synchronous running scripts in parallel
+    /// Class to encapsulate synchronous running scripts in parallel.
     /// </summary>
     internal sealed class PSTask : PSTaskBase
     {
@@ -30,7 +30,7 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PSTask(
             ScriptBlock scriptBlock,
@@ -50,7 +50,7 @@ namespace System.Management.Automation.PSTasks
         #region Overrides
 
         /// <summary>
-        /// Initialize PowerShell object
+        /// Initialize PowerShell object.
         /// </summary>
         protected override void InitializePowershell()
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation.PSTasks
     }
 
     /// <summary>
-    /// Class to encapsulate asynchronous running scripts in parallel as jobs
+    /// Class to encapsulate asynchronous running scripts in parallel as jobs.
     /// </summary>
     internal sealed class PSJobTask : PSTaskBase
     {
@@ -167,7 +167,7 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PSJobTask(
             ScriptBlock scriptBlock,
@@ -186,7 +186,7 @@ namespace System.Management.Automation.PSTasks
         #region Overrides
 
         /// <summary>
-        /// Initialize PowerShell object
+        /// Initialize PowerShell object.
         /// </summary>
         protected override void InitializePowershell()
         {
@@ -280,7 +280,7 @@ namespace System.Management.Automation.PSTasks
         #region Properties
 
         /// <summary>
-        /// Debugger
+        /// Gets Debugger.
         /// </summary>
         public Debugger Debugger
         {
@@ -294,7 +294,7 @@ namespace System.Management.Automation.PSTasks
     }
 
     /// <summary>
-    /// Base class to encapsulate running a PowerShell script concurrently in a cmdlet or job context
+    /// Base class to encapsulate running a PowerShell script concurrently in a cmdlet or job context.
     /// </summary>
     internal abstract class PSTaskBase : IDisposable
     {
@@ -308,7 +308,6 @@ namespace System.Management.Automation.PSTasks
         protected PowerShell _powershell;
         protected PSDataCollection<PSObject> _output;
 
-        private const string VERBATIM_ARGUMENT = "--%";
         private const string RunspaceName = "PSTask";
 
         private static int s_taskId;
@@ -318,7 +317,7 @@ namespace System.Management.Automation.PSTasks
         #region Events
 
         /// <summary>
-        /// Event that fires when the task running state changes
+        /// Event that fires when the task running state changes.
         /// </summary>
         public event EventHandler<PSInvocationStateChangedEventArgs> StateChanged;
 
@@ -332,7 +331,7 @@ namespace System.Management.Automation.PSTasks
         #region Properties
 
         /// <summary>
-        /// Current running state of the task
+        /// Gets current running state of the task.
         /// </summary>
         public PSInvocationState State
         {
@@ -349,7 +348,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Task Id
+        /// Gets Task Id.
         /// </summary>
         public int Id { get { return _id; } }
 
@@ -363,7 +362,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected PSTaskBase(
             ScriptBlock scriptBlock,
@@ -380,7 +379,7 @@ namespace System.Management.Automation.PSTasks
         #region Abstract Methods
 
         /// <summary>
-        /// Initialize PowerShell object
+        /// Initialize PowerShell object.
         /// </summary>
         protected abstract void InitializePowershell();
 
@@ -388,6 +387,9 @@ namespace System.Management.Automation.PSTasks
 
         #region IDisposable
 
+        /// <summary>
+        /// Dispose.
+        /// </summary>
         public void Dispose()
         {
             _runspace.Dispose();
@@ -400,7 +402,7 @@ namespace System.Management.Automation.PSTasks
         #region Public Methods
 
         /// <summary>
-        /// Start task
+        /// Start task.
         /// </summary>
         public void Start()
         {
@@ -432,13 +434,13 @@ namespace System.Management.Automation.PSTasks
             _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
             if (_usingValuesMap != null && _usingValuesMap.Count > 0)
             {
-                _powershell.AddParameter(VERBATIM_ARGUMENT, _usingValuesMap);
+                _powershell.AddParameter(Parser.VERBATIM_ARGUMENT, _usingValuesMap);
             }
             _powershell.BeginInvoke<object, PSObject>(null, _output);
         }
 
         /// <summary>
-        /// Signals the running task to stop
+        /// Signals the running task to stop.
         /// </summary>
         public void SignalStop()
         {
@@ -456,7 +458,7 @@ namespace System.Management.Automation.PSTasks
     #region PSTaskDataStreamWriter
 
     /// <summary>
-    /// Class that handles writing task data stream objects to a cmdlet
+    /// Class that handles writing task data stream objects to a cmdlet.
     /// </summary>
     internal sealed class PSTaskDataStreamWriter : IDisposable
     {
@@ -485,7 +487,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskDataStreamWriter() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
@@ -499,7 +501,7 @@ namespace System.Management.Automation.PSTasks
         #region Public Methods
 
         /// <summary>
-        /// Add data stream object to the writer
+        /// Add data stream object to the writer.
         /// </summary>
         public void Add(PSStreamObject streamObject)
         {
@@ -507,7 +509,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Write all objects in data stream collection to the cmdlet data stream
+        /// Write all objects in data stream collection to the cmdlet data stream.
         /// </summary>
         public void WriteImmediate()
         {
@@ -542,7 +544,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Closes the stream writer
+        /// Closes the stream writer.
         /// </summary>
         public void Close()
         {
@@ -566,7 +568,7 @@ namespace System.Management.Automation.PSTasks
         #region IDisposable
 
         /// <summary>
-        /// Disposes the stream writer
+        /// Disposes the stream writer.
         /// </summary>
         public void Dispose()
         {
@@ -601,7 +603,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskPool() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PSTaskPool(int size)
         {
@@ -618,7 +620,7 @@ namespace System.Management.Automation.PSTasks
         #region Events
 
         /// <summary>
-        /// Event that fires when pool is closed and drained of all tasks
+        /// Event that fires when pool is closed and drained of all tasks.
         /// </summary>
         public event EventHandler<EventArgs> PoolComplete;
 
@@ -627,7 +629,7 @@ namespace System.Management.Automation.PSTasks
         #region Public Properties
 
         /// <summary>
-        /// Returns true if pool is currently open for accepting tasks
+        /// Returns true if pool is currently open for accepting tasks.
         /// </summary>
         public bool IsOpen
         {
@@ -639,7 +641,7 @@ namespace System.Management.Automation.PSTasks
         #region IDisposable
 
         /// <summary>
-        /// Dispose task pool
+        /// Dispose task pool.
         /// </summary>
         public void Dispose()
         {
@@ -726,7 +728,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Add child job task to task pool
+        /// Add child job task to task pool.
         /// </summary>
         public bool Add(PSTaskChildJob childJob)
         {
@@ -734,7 +736,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Signals all running tasks to stop and closes pool for any new tasks
+        /// Signals all running tasks to stop and closes pool for any new tasks.
         /// </summary>
         public void StopAll()
         {
@@ -753,7 +755,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Closes the pool and prevents any new tasks from being added
+        /// Closes the pool and prevents any new tasks from being added.
         /// </summary>
         public void Close()
         {
@@ -825,7 +827,7 @@ namespace System.Management.Automation.PSTasks
     #region PSTaskJobs
 
     /// <summary>
-    /// Job for running ForEach-Object parallel task child jobs asynchronously
+    /// Job for running ForEach-Object parallel task child jobs asynchronously.
     /// </summary>
     internal sealed class PSTaskJob : Job
     {
@@ -841,6 +843,9 @@ namespace System.Management.Automation.PSTasks
 
         private PSTaskJob() { }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public PSTaskJob(
             string command,
             int throttleLimit) : base(command, string.Empty)
@@ -857,7 +862,7 @@ namespace System.Management.Automation.PSTasks
         #region Overrides
 
         /// <summary>
-        /// Location
+        /// Gets Location.
         /// </summary>
         public override string Location
         {
@@ -865,7 +870,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// HasMoreData
+        /// Gets HasMoreData.
         /// </summary>
         public override bool HasMoreData
         {
@@ -884,7 +889,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StatusMessage
+        /// Gets StatusMessage.
         /// </summary>
         public override string StatusMessage
         {
@@ -892,7 +897,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StopJob
+        /// StopJob.
         /// </summary>
         public override void StopJob()
         {
@@ -904,7 +909,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -1006,6 +1011,9 @@ namespace System.Management.Automation.PSTasks
 
         private PSTaskChildDebugger() { }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public PSTaskChildDebugger(
             Debugger debugger,
             string jobName)
@@ -1166,7 +1174,7 @@ namespace System.Management.Automation.PSTasks
     }
 
     /// <summary>
-    /// Task child job that wraps asynchronously running tasks
+    /// Task child job that wraps asynchronously running tasks.
     /// </summary>
     internal sealed class PSTaskChildJob : Job, IJobDebugger
     {
@@ -1182,7 +1190,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskChildJob() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PSTaskChildJob(
             ScriptBlock scriptBlock,
@@ -1201,7 +1209,7 @@ namespace System.Management.Automation.PSTasks
         #region Properties
 
         /// <summary>
-        /// Child job task
+        /// Gets child job task.
         /// </summary>
         internal PSTaskBase Task
         {
@@ -1213,7 +1221,7 @@ namespace System.Management.Automation.PSTasks
         #region Overrides
 
         /// <summary>
-        /// Location
+        /// Gets Location.
         /// </summary>
         public override string Location
         {
@@ -1221,7 +1229,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// HasMoreData
+        /// Gets HasMoreData.
         /// </summary>
         public override bool HasMoreData
         {
@@ -1238,7 +1246,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StatusMessage
+        /// Gets StatusMessage.
         /// </summary>
         public override string StatusMessage
         {
@@ -1246,7 +1254,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StopJob
+        /// StopJob.
         /// </summary>
         public override void StopJob()
         {
@@ -1258,7 +1266,7 @@ namespace System.Management.Automation.PSTasks
         #region IJobDebugger
 
         /// <summary>
-        /// Job Debugger
+        /// Gets Job Debugger.
         /// </summary>
         public Debugger Debugger
         {
@@ -1276,7 +1284,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// IsAsync
+        /// Gets or sets IsAsync.
         /// </summary>
         public bool IsAsync { get; set; }
 

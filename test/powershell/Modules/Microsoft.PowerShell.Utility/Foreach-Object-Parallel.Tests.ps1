@@ -285,12 +285,8 @@ Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
         $job = 1..4 | ForEach-Object -Parallel { Start-Sleep 60 } -AsJob -ThrottleLimit 2
 
         # Wait for child job 2 to begin running for up to ten seconds
-        $count = 0
-        while (($job.ChildJobs[1].JobStateInfo.State -ne 'Running') -and (++$count -lt 40))
-        {
-            Start-Sleep -Milliseconds 250
-        }
-        if ($job.ChildJobs[1].JobStateInfo.State -ne 'Running')
+        if ( !(Wait-UntilTrue -TimeoutInMilliseconds 10000 -IntervalInMilliseconds 250 `
+               { $job.ChildJobs[1].JobStateInfo.State -eq 'Running' }))
         {
             throw "ForEach-Object -Parallel child job 2 did not start"
         }
