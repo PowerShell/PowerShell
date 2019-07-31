@@ -1189,6 +1189,25 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _scriptBlock;
 
         /// <summary>
+        /// Initial location of the script block.
+        /// This is used to set the location prior to executing the script block
+        /// </summary>
+        public virtual string WorkingDirectory
+        {
+            get
+            {
+                return _scriptBlockInitialLocation;
+            }
+
+            set
+            {
+                _scriptBlockInitialLocation = value;
+            }
+        }
+
+        private string _scriptBlockInitialLocation;
+
+        /// <summary>
         /// The file containing the script that the user has specified in the
         /// cmdlet. This will be converted to a powershell before
         /// its actually sent to the remote end.
@@ -1842,6 +1861,13 @@ namespace Microsoft.PowerShell.Commands
                 remoteRunspace.CreatePipeline(powershellToUse.Commands.Commands[0].CommandText, true);
 
             pipeline.Commands.Clear();
+
+            if (_scriptBlockInitialLocation != null)
+            {
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", _scriptBlockInitialLocation);
+                pipeline.Commands.Add(command);
+            }
 
             foreach (Command command in powershellToUse.Commands.Commands)
             {

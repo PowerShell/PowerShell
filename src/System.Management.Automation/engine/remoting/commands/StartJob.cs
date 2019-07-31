@@ -486,7 +486,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string WorkingDirectory { get; set; }
+        public override string WorkingDirectory
+        { 
+            get
+            {
+                return base.WorkingDirectory;
+            }
+
+            set
+            {
+                base.WorkingDirectory = value;
+            }
+        }
 
         /// <summary>
         /// Launches the background job as a 32-bit process. This can be used on
@@ -597,6 +608,18 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
+            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            {
+                    string message =  StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, _definitionType, _definitionName);
+                    var errorRecord = new ErrorRecord(
+                        new DirectoryNotFoundException(message),
+                        "DirectoryNotFoundException",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null);
+
+                    ThrowTerminatingError(errorRecord);
+            }
+
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);
 
             if (ParameterSetName == DefinitionNameParameterSet)
@@ -631,24 +654,23 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied,
                             Context.LanguageMode));
             }
-
+            
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
-
+            
             RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());
-
+            
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
-
             Pipeline pipeline = CreatePipeline(remoteRunspace);
 
             IThrottleOperation operation =
                 new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
-
             Operations.Add(operation);
         }
+
         /// <summary>
         /// The expression will be executed in the remote computer if a
         /// remote runspace parameter or computer name is specified. If
@@ -658,26 +680,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (WorkingDirectory != null)
-            {
-                // WorkingDirectory -> Not Exist -> Throw Error
-                WorkingDirectory = PathUtils.ResolveFilePath(WorkingDirectory, this);
-                if (!Directory.Exists(WorkingDirectory))
-                {
-                    string message = "TODO: CRITICAL Improve error message";//StringUtil.Format(ProcessResources.InvalidInput, "WorkingDirectory");
-                    ErrorRecord er = new ErrorRecord(new DirectoryNotFoundException(message), "DirectoryNotFoundException", ErrorCategory.InvalidOperation, null);
-                    WriteError(er);
-                    return;
-                }
-            }
-            else
-            {
-                // Working Directory not specified -> Assign Current Path.
-                WorkingDirectory =  PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this);
-            }
-
-            WriteWarning(WorkingDirectory);
-
             if (ParameterSetName == DefinitionNameParameterSet)
             {
                 // Get the Job2 object from the Job Manager for this definition name and start the job.
@@ -716,9 +718,6 @@ namespace Microsoft.PowerShell.Commands
                     resolvedPath = paths[0];
                 }
                 
-                WriteWarning("I am debuggin here");
-                WriteWarning($"{resolvedPath}");
-                WriteWarning($"{_definitionPath}");
                 List<Job2> jobs = JobManager.GetJobToStart(_definitionName, resolvedPath, _definitionType, this, false);
 
                 if (jobs.Count == 0)
@@ -755,10 +754,10 @@ namespace Microsoft.PowerShell.Commands
             if (_firstProcessRecord)
             {
                 _firstProcessRecord = false;
-
+                
                 PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
                         ScriptBlock.ToString(), ThrottleLimit, _name);
-
+                
                 job.PSJobTypeName = s_startJobType;
 
                 this.JobRepository.Add(job);

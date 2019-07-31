@@ -69,6 +69,14 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg[0].StatusDescription | Should -BeExactly 2
         }
 
+        It 'Can use the user specified working directory parameter'{
+            $parent = [System.IO.Path]::GetTempPath()
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $parent| Wait-Job
+            Wait-Job $job
+            Receive-Job $job -OutVariable jobOutput
+            $jobOutput | Should -BeExactly  $parent
+        }
+
         It "Create job with native command" {
             try {
                 $nativeJob = Start-job { pwsh -c 1+1 }
