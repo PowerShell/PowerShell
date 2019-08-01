@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                list.Add(MailboxAddress.Parse(new MimeKit.ParserOptions() { AddressParserComplianceMode = RfcComplianceMode.Strict, AllowAddressesWithoutDomain = false }, address));
+                list.Add(MailboxAddress.Parse(new MimeKit.ParserOptions { AddressParserComplianceMode = RfcComplianceMode.Strict, AllowAddressesWithoutDomain = false }, address));
             }
             catch (MimeKit.ParseException ex)
             {
@@ -313,7 +313,23 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the attachments
-            if (Attachments != null)
+            /* Note for second check: 
+             * The solution below is a workaround to check if the Attachments parameter is null for the PSCustomObject piped into the cmdlet 
+             * and therefore the Attachments parameter is falsely set to the casted PSCustomObject.
+             * 
+             * Attachments parameter is not mandatory but declared as ValueFromPipeline and ValueFromPipelineByPropertyName.
+             * If PSCustomObject is piped into cmdlet and Attachments property is not present (ValueFromPipelineByPropertyName), 
+             * than the binding process will try to set Attachments to the piped PSCustomObject (ValueFromPipeline).
+             *
+             * Problem: PSCustomObject (Pipeline input) can be casted to string[] (Attachments parameter)
+             * Attachments will hold at least one string with the current pipeline object as a string. E.g. "@{SmtpServer=localhost, From=foo@contonso.com, To=bar@contonso.com}"
+             *
+             * A simple check if Attachments starts with "@{" or even a pattern match might lead to problems, because the file name for the 
+             * attachment could THEORETICALLY be "@{SmtpServer=localhost, From=foo@contonso.com, To=bar@contonso.com}" without any extension.
+             *
+             * The problem only occurs for parameters which are not mandatory but have [ValueFromPipeline] and [ValueFromPipelineByPropertyName] attribute.
+             */
+            if (Attachments != null && Attachments?[0] != CurrentPipelineObject.ToString())
             {
                 foreach (string attachFile in Attachments)
                 {
@@ -324,27 +340,27 @@ namespace Microsoft.PowerShell.Commands
                     catch (ArgumentException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, builder);
-                        ThrowTerminatingError(er);
+                        WriteError(er);
                     }
                     catch (UnauthorizedAccessException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, builder);
-                        ThrowTerminatingError(er);
+                        WriteError(er);
                     }
                     catch (System.IO.DirectoryNotFoundException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "DirectoryNotFoundException", ErrorCategory.InvalidArgument, builder);
-                        ThrowTerminatingError(er);
+                        WriteError(er);
                     }
                     catch (System.IO.FileNotFoundException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "FileNotFoundException", ErrorCategory.ObjectNotFound, builder);
-                        ThrowTerminatingError(er);
+                        WriteError(er);
                     }
                     catch (System.IO.IOException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "IOException", ErrorCategory.ReadError, builder);
-                        ThrowTerminatingError(er);
+                        WriteError(er);
                     }
                 }
             }
@@ -382,6 +398,16 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException ex)
             {
                 ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _smtpClient);
+                WriteError(er);
+            }
+            catch (System.IO.IOException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "IOException", ErrorCategory.ReadError, builder);
+                WriteError(er);
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                ErrorRecord er = new ErrorRecord(ex, "SocketException", ErrorCategory.ConnectionError, builder);
                 WriteError(er);
             }
             catch (ArgumentNullException ex)

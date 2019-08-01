@@ -141,10 +141,8 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
     }
 
-    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases -Pending {
+    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases {
         param($InputObject)
-
-        Set-TestInconclusive "As of right now the Send-MailMessage cmdlet does not support piping named parameters (see issue 7591)"
 
         $server | Should -Not -Be $null
 
