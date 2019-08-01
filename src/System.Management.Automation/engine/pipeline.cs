@@ -7,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -1028,8 +1029,8 @@ namespace System.Management.Automation.Internal
                 // Telemetry here
                 // the type of command should be sent along
                 // commandProcessor.CommandInfo.CommandType
-                Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(
-                        Microsoft.PowerShell.AITelemetryType.ApplicationType,
+                ApplicationInsightsTelemetry.SendTelemetryMetric(
+                        AITelemetryType.ApplicationType,
                         Enum.GetName(typeof(CommandTypes), commandProcessor.Command.CommandInfo.CommandType)
                     );
 #if LEGACYTELEMETRY

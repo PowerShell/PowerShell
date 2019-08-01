@@ -14,6 +14,7 @@ using System.Management.Automation.Runspaces.Internal;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.PowerShell.Telemetry;
 
 using Microsoft.Management.Infrastructure;
 
@@ -639,7 +640,7 @@ namespace System.Management.Automation
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
             // Telemetry here
-            Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(Microsoft.PowerShell.AITelemetryType.PowerShellCreate, "PowerShellCreate");
+            ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.PowerShellCreate, InstanceId.ToString());
         }
 
         /// <summary>

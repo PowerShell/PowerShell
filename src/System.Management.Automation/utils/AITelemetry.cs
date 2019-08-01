@@ -14,7 +14,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace Microsoft.PowerShell
+namespace Microsoft.PowerShell.Telemetry
 {
     /// <summary>
     /// The type of tracking for our telemetry
@@ -141,22 +141,10 @@ namespace Microsoft.PowerShell
             }
         }
 
-        /// <summary>send telemetry as a metric</summary>
-        public static void SendTelemetryMetric(AITelemetryType metricId, string dim1, string dim2)
-        {
-
-            if (! CanSendTelemetry)
-            {
-                return;
-            }
-
-            string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
-            _telemetryClient.GetMetric(metricName, "execution", "name").TrackValue(1, dim1, dim2);
-        }
-
         /// <summary>
         /// Send telemetry as a metric
         /// </summary>
+        /// <parameter name="metricId">The type of telemetry that we'll be sending& ()
         public static void SendTelemetryMetric(AITelemetryType metricId, string dimension1)
         {
 
@@ -166,27 +154,40 @@ namespace Microsoft.PowerShell
             }
 
             string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
+            string uuidString = uniqueUserIdentifier.ToString();
+            string sessionIdString  = sessionId.ToString();
             switch (metricId)
             {
                 case AITelemetryType.ApplicationType:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "AppType").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
+                case AITelemetryType.PowerShellCreate:
+                case AITelemetryType.RemoteSessionOpen:
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, dimension1);
                     break;
                 case AITelemetryType.ExperimentalFeatureActivation:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "FeatureName").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
+                    string experimentalFeatureName = getExperimentalFeatureName(dimension1);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, dimension1);
                     break;
                 case AITelemetryType.ModuleLoad:
                     string moduleName = getModuleName(dimension1); // This will return anonymous if the modulename is not on the report list
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "ModuleName").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), moduleName);
-                    break;
-                case AITelemetryType.PowerShellCreate:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "PowerShellCreate").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
-                    break;
-                case AITelemetryType.RemoteSessionOpen:
-                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "RemoteSessionOpen").TrackValue(1, uniqueUserIdentifier.ToString(), sessionId.ToString(), dimension1);
+                    _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, moduleName);
                     break;
                 default:
                     break; // don't log anything
             }
+        }
+
+        private static string getExperimentalFeatureName(string featureNameToValidate)
+        {
+            foreach ( string knownModuleName in knownModuleNames )
+            {
+                // An experimental feature in a module is guaranteed to start with the module name
+                // but we can't look up the experimental feature in the hash because there will be more than just the module name.
+                if ( featureNameToValidate.StartsWith(knownModuleName, StringComparison.OrdinalIgnoreCase ) )
+                {
+                    return featureNameToValidate;
+                }
+            }
+            return "anonymous";
         }
 
         private static string getModuleName(string moduleNameToValidate)
@@ -199,26 +200,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static bool canReportExperimentalFeature(string experimentalFeatureName)
-        {
-            // don't bother to check if we can't send telemetry
-            if ( ! CanSendTelemetry )
-            {
-                return false;
-            }
-
-            foreach ( string knownModuleName in knownModuleNames )
-            {
-                // An experimental feature in a module is guaranteed to start with the module name
-                // but we can't look up the experimental feature in the hash because there will be more than just the module name.
-                if ( experimentalFeatureName.StartsWith(knownModuleName, StringComparison.OrdinalIgnoreCase ) )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         /// <summary>
         /// Create the startup payload and send it up.
         /// This is done only once during for the console host
@@ -226,6 +207,9 @@ namespace Microsoft.PowerShell
         /// <param name="mode">The "mode" of the startup.</param>
         public static void SendPSCoreStartupTelemetry(string mode)
         {
+            if ( ! CanSendTelemetry ) {
+                return;
+            }
             var properties = new Dictionary<string, string>();
             properties.Add("SessionId", sessionId.ToString());
             properties.Add("UUID", GetUniqueUserId());
@@ -301,7 +285,9 @@ namespace Microsoft.PowerShell
                     m.WaitOne();
                     getUserIdImpl();
                 }
-                catch (Exception e) {
+                // Any problem in generating a uuid will result in no telemetry being sent
+                // ??? Should this send anonymous telemetry ???
+                catch (Exception) {
                     CanSendTelemetry = false;
                 }
                 finally {
