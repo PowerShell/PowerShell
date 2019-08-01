@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
             {
-                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, _definitionType, _definitionName);
+                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
                     var errorRecord = new ErrorRecord(
                         new DirectoryNotFoundException(message),
                         "DirectoryNotFoundException",

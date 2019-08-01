@@ -1192,7 +1192,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the initial location of the script block.
         /// This is used to set the location prior to executing the script block.
         /// </summary>
-        public virtual string WorkingDirectory {get; set;}
+        public virtual string WorkingDirectory { get; set; }
 
         /// <summary>
         /// The file containing the script that the user has specified in the
