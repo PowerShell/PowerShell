@@ -1189,23 +1189,10 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _scriptBlock;
 
         /// <summary>
-        /// Initial location of the script block.
-        /// This is used to set the location prior to executing the script block
+        /// Gets or sets the initial location of the script block.
+        /// This is used to set the location prior to executing the script block.
         /// </summary>
-        public virtual string WorkingDirectory
-        {
-            get
-            {
-                return _scriptBlockInitialLocation;
-            }
-
-            set
-            {
-                _scriptBlockInitialLocation = value;
-            }
-        }
-
-        private string _scriptBlockInitialLocation;
+        public virtual string WorkingDirectory {get; set;}
 
         /// <summary>
         /// The file containing the script that the user has specified in the
@@ -1862,10 +1849,10 @@ namespace Microsoft.PowerShell.Commands
 
             pipeline.Commands.Clear();
 
-            if (_scriptBlockInitialLocation != null)
+            if (WorkingDirectory != null)
             {
                 var command = new Command("Set-Location");
-                command.Parameters.Add("LiteralPath", _scriptBlockInitialLocation);
+                command.Parameters.Add("LiteralPath", WorkingDirectory);
                 pipeline.Commands.Add(command);
             }
 

@@ -480,9 +480,8 @@ namespace Microsoft.PowerShell.Commands
 
         private ScriptBlock _initScript;
 
-
         /// <summary>
-        /// Working directory of the process.
+        /// Gets or sets the working directory of the process.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -610,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
             {
-                    string message =  StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, _definitionType, _definitionName);
+                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, _definitionType, _definitionName);
                     var errorRecord = new ErrorRecord(
                         new DirectoryNotFoundException(message),
                         "DirectoryNotFoundException",
@@ -659,15 +658,16 @@ namespace Microsoft.PowerShell.Commands
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
-            
+
             RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());
-            
+
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
             Pipeline pipeline = CreatePipeline(remoteRunspace);
 
             IThrottleOperation operation =
                 new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
+
             Operations.Add(operation);
         }
 
@@ -717,7 +717,7 @@ namespace Microsoft.PowerShell.Commands
 
                     resolvedPath = paths[0];
                 }
-                
+
                 List<Job2> jobs = JobManager.GetJobToStart(_definitionName, resolvedPath, _definitionType, this, false);
 
                 if (jobs.Count == 0)
@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
                 
                 PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
                         ScriptBlock.ToString(), ThrottleLimit, _name);
-                
+
                 job.PSJobTypeName = s_startJobType;
 
                 this.JobRepository.Add(job);

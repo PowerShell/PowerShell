@@ -69,12 +69,12 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg[0].StatusDescription | Should -BeExactly 2
         }
 
-        It 'Can use the user specified working directory parameter'{
-            $parent = [System.IO.Path]::GetTempPath()
-            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $parent| Wait-Job
-            Wait-Job $job
-            Receive-Job $job -OutVariable jobOutput
-            $jobOutput | Should -BeExactly  $parent
+        It 'Can use the user specified working directory parameter' {
+            $tempPath = [System.IO.Path]::GetTempPath()
+            # In the script block we use join path to normalize the path string
+            $job = Start-Job -ScriptBlock { Join-Path $pwd "" } -WorkingDirectory $tempPath | Wait-Job
+            $jobOutput = Receive-Job $job
+            $jobOutput | Should -BeExactly $tempPath
         }
 
         It "Create job with native command" {
