@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _initScript;
 
         /// <summary>
-        /// Gets or sets the working directory of the process.
+        /// Gets or sets a working directory of the process.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
