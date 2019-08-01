@@ -625,18 +625,11 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#if !CORECLR // No ThreadAbortException In CoreCLR
-            catch (ThreadAbortException ex)
-            {
-                SetPipelineState(PipelineState.Failed, ex);
-                SetHadErrors(true);
-            }
-#endif
-            // 1021203-2005/05/09-JonN
-            // HaltCommandException will cause the command
-            // to stop, but not be reported as an error.
             catch (HaltCommandException)
             {
+                // 1021203-2005/05/09-JonN
+                // HaltCommandException will cause the command
+                // to stop, but not be reported as an error.
                 SetPipelineState(PipelineState.Completed);
             }
             finally
