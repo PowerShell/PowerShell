@@ -1,7 +1,0 @@
-{
-    "ExperimentalFeatures": [
-        "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints",
-        "PSCommandNotFoundSuggestion",
-        "PSImplicitRemotingBatching"
-    ]
-}

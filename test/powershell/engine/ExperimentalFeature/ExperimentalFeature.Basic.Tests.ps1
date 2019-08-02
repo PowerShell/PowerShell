@@ -14,10 +14,10 @@ Describe "Default enablement of Experimental Features" -Tags CI {
             )
 
             $failure = if ($Negate) {
-                "Expected: Feature $Name to be Enabled"
+                "Expected: Feature $Name to not be Enabled"
             }
             else {
-                "Expected: Feature $Name to not be Enabled"
+                "Expected: Feature $Name to be Enabled"
             }
 
             return [PSCustomObject]@{

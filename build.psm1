@@ -447,29 +447,27 @@ Fix steps:
     }
 
     # publish powershell.config.json
-    # only Windows currently has a default config file that needs to be merged if Preview
-    $version = git --git-dir="$PSSCriptRoot/.git" describe
-    $previewConfigPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell/powershell-preview.config.json"
-    $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+    $config = @{}
     if ($Environment.IsWindows) {
-        $configPath = Join-Path -Path $PSScriptRoot -ChildPath "src" -AdditionalChildPath "powershell/powershell.config.json"
-        if (Test-IsPreview $version) {
-            $config = Get-Content $configPath | ConvertFrom-Json
-            $previewConfig = Get-Content $previewConfigPath | ConvertFrom-Json
-            foreach ($property in $previewConfig.psobject.Properties) {
-                $config | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value
-            }
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+    }
 
-            Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
-        }
-        else {
-            Copy-Item -Path $configPath -Destination $configPublishPath -Force -ErrorAction Stop
-        }
+    if ($ReleaseTag) {
+        $psVersion = $ReleaseTag
     }
     else {
-        if (Test-IsPreview $version) {
-            Copy-Item -Path $previewConfigPath -Destination $configPublishPath -Force -ErrorAction Stop
-        }
+        $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
+    }
+
+    if (Test-IsPreview $psVersion) {
+        $expFeatures = [System.Collections.Generic.List[string]]::new()
+        & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+        $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
+    }
+
+    if ($config.Count -gt 0) {
+        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
