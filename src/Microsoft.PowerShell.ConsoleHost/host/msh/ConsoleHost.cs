@@ -1023,10 +1023,11 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
 
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+
+        private double _readyForInputTimeInMS;
 #endif
 
         private double _profileLoadTimeInMS;
-        private double _readyForInputTimeInMS;
         private int _interactiveCommandCount;
 
         #endregion overrides
@@ -1602,8 +1603,10 @@ namespace Microsoft.PowerShell
                                                    PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
             }
 
+#if LEGACYTELEMETRY
             // Record how long it took from process start to runspace open for telemetry.
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
+#endif
 
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
