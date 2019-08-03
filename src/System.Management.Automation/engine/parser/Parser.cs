@@ -5284,6 +5284,13 @@ namespace System.Management.Automation.Language
             // A function name that matches a keyword isn't really a keyword, so don't color it that way
             functionNameToken.TokenFlags &= ~TokenFlags.Keyword;
 
+            // A function name is not an expandable token, so remove any nested tokens
+            var expandableToken = functionNameToken as StringExpandableToken;
+            if (expandableToken != null)
+            {
+                expandableToken.NestedTokens = null;
+            }
+
             IScriptExtent endErrorStatement;
             Token rParen;
             var parameters = this.FunctionParameterDeclarationRule(out endErrorStatement, out rParen);
@@ -6103,6 +6110,12 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
+                            // Remove any nested tokens already collected in this context
+                            if (expandableToken != null && context == CommandArgumentContext.CommandName)
+                            {
+                                expandableToken.NestedTokens = null;
+                            }
+
                             exprAst = new StringConstantExpressionAst(genericToken.Extent, genericToken.Value, StringConstantType.BareWord);
 
                             // If this is a verbatim argument, then don't continue peeking
@@ -6339,6 +6352,7 @@ namespace System.Management.Automation.Language
                                 // but V3 and on will because it falls out rather naturally here.
                                 endExtent = token.Extent;
                                 elements.Add(new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord));
+                                token.TokenFlags |= TokenFlags.CommandName;
                             }
 
                             break;
