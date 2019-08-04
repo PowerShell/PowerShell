@@ -21,7 +21,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using PowerShellApi = System.Management.Automation.PowerShell;
 using WSManNativeApi = System.Management.Automation.Remoting.Client.WSManNativeApi;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     #region Register-PSSessionConfiguration cmdlet
