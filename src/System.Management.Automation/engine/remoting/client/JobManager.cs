@@ -383,10 +383,6 @@ namespace System.Management.Automation
                     {
                         ex = e;
                     }
-                    catch (ThreadAbortException e)
-                    {
-                        ex = e;
-                    }
 
                     if (ex != null)
                     {

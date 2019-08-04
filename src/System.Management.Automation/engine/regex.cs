@@ -146,7 +146,11 @@ namespace System.Management.Automation
                 {
                     stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
                         ? StringComparison.InvariantCultureIgnoreCase
-                        : StringComparison.CurrentCultureIgnoreCase;
+                        : CultureInfo.CurrentCulture.Name.Equals("en-US-POSIX", StringComparison.OrdinalIgnoreCase)
+                            // The collation behavior of the POSIX locale (also known as the C locale) is case sensitive.
+                            // For this specific locale, we use 'OrdinalIgnoreCase'.
+                            ? StringComparison.OrdinalIgnoreCase
+                            : StringComparison.CurrentCultureIgnoreCase;
                 }
                 else
                 {

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell
         {
             // The STA apartment state is not supported on NanoServer and Windows IoT.
             // Plus, there is not need to create jump list in those environment anyways.
-            if (Platform.IsNanoServer || Platform.IsIoT)
+            if (!Platform.IsWindowsDesktop)
             {
                 return;
             }

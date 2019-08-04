@@ -1373,11 +1373,7 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-#if STAMODE
                 exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
-#else
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName);
-#endif
             }
             while (false);
 
@@ -1452,12 +1448,12 @@ namespace Microsoft.PowerShell
 
                 _runspaceRef.Runspace.Close();
                 _runspaceRef = null;
-#if STAMODE
-                if (staMode) // don't recycle the Runspace in STA mode
+
+                if (staMode)
                 {
+                    // don't continue the session in STA mode
                     ShouldEndSession = true;
                 }
-#endif
             }
 
             return ExitCode;
@@ -1496,11 +1492,7 @@ namespace Microsoft.PowerShell
             {
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
                 Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-#if STAMODE
                 DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
-#else
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.InitialCommandArgs);
-#endif
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1618,17 +1610,11 @@ namespace Microsoft.PowerShell
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-#if STAMODE
-            // staMode will have following values:
-            // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
-            // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
-            // ThreadOptions should match on FullPS and NanoPS for corresponding ApartmentStates.
-            if (staMode)
+            if (staMode && Platform.IsWindowsDesktop)
             {
-                // we can't change ApartmentStates on CoreCLR
                 runspace.ApartmentState = ApartmentState.STA;
             }
-#endif
+
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
@@ -2896,18 +2882,14 @@ namespace Microsoft.PowerShell
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
-#if STAMODE
             StaMode = staMode;
-#endif
             ConfigurationName = configurationName;
             InitialCommandArgs = initialCommandArgs;
         }
 
         internal string InitialCommand { get; set; }
         internal bool SkipProfiles { get; set; }
-#if STAMODE
         internal bool StaMode { get; set; }
-#endif
         internal string ConfigurationName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }

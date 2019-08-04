@@ -328,9 +328,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSInvocationSettings()
         {
-#if !CORECLR // No ApartmentState In CoreCLR
             this.ApartmentState = ApartmentState.Unknown;
-#endif
             _host = null;
             RemoteStreamOptions = 0;
             AddToHistory = false;
@@ -339,13 +337,11 @@ namespace System.Management.Automation
 
         #endregion
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread in which the command
         /// is executed.
         /// </summary>
         public ApartmentState ApartmentState { get; set; }
-#endif
 
         /// <summary>
         /// Host to use with the Runspace when the command is
@@ -2262,9 +2258,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2323,9 +2316,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2389,9 +2379,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2450,9 +2437,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2517,9 +2501,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2583,9 +2564,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2654,9 +2632,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2718,9 +2693,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2792,9 +2764,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -4461,9 +4430,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -4530,9 +4496,8 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
-#endif
+
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
                         _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
@@ -4544,9 +4509,8 @@ namespace System.Management.Automation
                         rsToUse = _rsConnection as Runspace;
                         if (rsToUse != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
                             VerifyThreadSettings(settings, rsToUse.ApartmentState, rsToUse.ThreadOptions, false);
-#endif
+
                             if (rsToUse.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rsToUse.RunspaceStateInfo.State);
@@ -4810,9 +4774,8 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, pool.IsRemote);
-#endif
+
                         pool.AssertPoolIsOpen();
 
                         // for executing in a remote runspace pool case
@@ -4888,9 +4851,8 @@ namespace System.Management.Automation
                         LocalRunspace rs = _rsConnection as LocalRunspace;
                         if (rs != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
-#endif
+
                             if (rs.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rs.RunspaceStateInfo.State);
@@ -4939,7 +4901,6 @@ namespace System.Management.Automation
             return _invokeAsyncResult;
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// Verifies the settings for ThreadOptions and ApartmentState.
         /// </summary>
@@ -4974,7 +4935,6 @@ namespace System.Management.Automation
                 }
             }
         }
-#endif
 
         /// <summary>
         /// </summary>

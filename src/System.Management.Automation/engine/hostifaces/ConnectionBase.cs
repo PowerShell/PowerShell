@@ -77,10 +77,7 @@ namespace System.Management.Automation.Runspaces
             Host = host;
             InitialSessionState = initialSessionState.Clone();
             this.ThreadOptions = initialSessionState.ThreadOptions;
-
-#if !CORECLR // No ApartmentState In CoreCLR
             this.ApartmentState = initialSessionState.ApartmentState;
-#endif
         }
 
         /// <summary>
@@ -126,10 +123,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             this.ThreadOptions = initialSessionState.ThreadOptions;
-
-#if !CORECLR // No ApartmentState In CoreCLR
             this.ApartmentState = initialSessionState.ApartmentState;
-#endif
         }
 
         /// <summary>
@@ -920,7 +914,6 @@ namespace System.Management.Automation.Runspaces
                     waitHandles[i] = runningPipelines[i].PipelineFinishedEvent;
                 }
 
-#if !CORECLR    // No ApartmentState.STA In CoreCLR
                 // WaitAll for multiple handles on a STA (single-thread apartment) thread is not supported as WaitAll will prevent the message pump to run
                 if (runningPipelines.Length > 1 && Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
                 {
@@ -940,7 +933,7 @@ namespace System.Management.Automation.Runspaces
                         return waitAllIsDone.WaitOne();
                     }
                 }
-#endif
+
                 return WaitHandle.WaitAll(waitHandles);
             }
             else

@@ -42,11 +42,8 @@ namespace System.Management.Automation
         // associated with this powershell
         private ServerRemoteHost _remoteHost;
 
-#if !CORECLR
-        // No ApartmentState In CoreCLR
         // apartment state for this powershell
         private ApartmentState apartmentState;
-#endif
 
         // Handles nested invocation of PS drivers.
         private IRSPDriverInvoke _psDriverInvoker;
@@ -55,7 +52,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-#if !CORECLR
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers.
         /// </summary>
@@ -85,66 +81,7 @@ namespace System.Management.Automation
                    apartmentState, hostInfo, streamOptions, addToHistory, rsToUse, null)
         {
         }
-#else
-        /// <summary>
-        /// Default constructor for creating ServerPowerShellDrivers.
-        /// </summary>
-        /// <param name="powershell">Decoded powershell object.</param>
-        /// <param name="extraPowerShell">Extra pipeline to be run after <paramref name="powershell"/> completes.</param>
-        /// <param name="noInput">Whether there is input for this powershell.</param>
-        /// <param name="clientPowerShellId">The client powershell id.</param>
-        /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        internal ServerPowerShellDriver(PowerShell powershell, PowerShell extraPowerShell, bool noInput, Guid clientPowerShellId,
-           Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-           HostInfo hostInfo, RemoteStreamOptions streamOptions,
-           bool addToHistory, Runspace rsToUse)
-            : this(powershell, extraPowerShell, noInput, clientPowerShellId, clientRunspacePoolId, runspacePoolDriver,
-                   hostInfo, streamOptions, addToHistory, rsToUse, null)
-        {
-        }
-#endif
 
-#if CORECLR
-        /// <summary>
-        /// Default constructor for creating ServerPowerShellDrivers.
-        /// </summary>
-        /// <param name="powershell">Decoded powershell object.</param>
-        /// <param name="extraPowerShell">Extra pipeline to be run after <paramref name="powershell"/> completes.</param>
-        /// <param name="noInput">Whether there is input for this powershell.</param>
-        /// <param name="clientPowerShellId">The client powershell id.</param>
-        /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        /// <param name="output">
-        /// If not null, this is used as another source of output sent to the client.
-        /// </param>
-        internal ServerPowerShellDriver(PowerShell powershell, PowerShell extraPowerShell, bool noInput, Guid clientPowerShellId,
-            Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-            HostInfo hostInfo, RemoteStreamOptions streamOptions,
-            bool addToHistory, Runspace rsToUse, PSDataCollection<PSObject> output)
-#else
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers.
         /// </summary>
@@ -173,14 +110,11 @@ namespace System.Management.Automation
             Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
             ApartmentState apartmentState, HostInfo hostInfo, RemoteStreamOptions streamOptions,
             bool addToHistory, Runspace rsToUse, PSDataCollection<PSObject> output)
-#endif
         {
             InstanceId = clientPowerShellId;
             RunspacePoolId = clientRunspacePoolId;
             RemoteStreamOptions = streamOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = apartmentState;
-#endif
             LocalPowerShell = powershell;
             _extraPowerShell = extraPowerShell;
             _localPowerShellOutput = new PSDataCollection<PSObject>();
@@ -298,9 +232,7 @@ namespace System.Management.Automation
             }
 
             PSInvocationSettings settings = new PSInvocationSettings();
-#if !CORECLR // No ApartmentState In CoreCLR
             settings.ApartmentState = apartmentState;
-#endif
             settings.Host = _remoteHost;
 
             // Flow the impersonation policy to pipeline execution thread
