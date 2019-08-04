@@ -2258,9 +2258,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2319,9 +2316,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2385,9 +2379,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2446,9 +2437,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2513,9 +2501,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2579,9 +2564,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2650,9 +2632,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2714,9 +2693,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2788,9 +2764,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -4456,9 +4429,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
