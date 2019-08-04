@@ -2023,10 +2023,6 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     ex = e;
                 }
-                catch (System.Threading.ThreadAbortException e)
-                {
-                    ex = e;
-                }
                 catch (IOException e)
                 {
                     ex = e;
