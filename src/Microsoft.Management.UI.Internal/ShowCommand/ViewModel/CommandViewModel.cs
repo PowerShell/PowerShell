@@ -502,8 +502,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             Dictionary<string, ParameterViewModel> commonParametersTable = new Dictionary<string, ParameterViewModel>();
 
-            bool isWorkflow = (commandInfo.CommandType & CommandTypes.Workflow) != 0;
-
             foreach (ShowCommandParameterSetInfo parameterSetInfo in commandInfo.ParameterSets)
             {
                 if (parameterSetInfo.IsDefault)
