@@ -18,7 +18,7 @@ Describe 'deprecated keyword parsing' -Tags 'CI' {
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
     ShouldBeParseError 'for(' MissingEndParenthesisAfterStatement 5 -CheckColumnNumber
-    ShouldBeParseError 'for(; ' MissingEndParenthesisAfterStatement 6 -CheckColumnNumber
+    ShouldBeParseError 'for(;' MissingEndParenthesisAfterStatement 6 -CheckColumnNumber
     ShouldBeParseError 'for(;;' MissingEndParenthesisAfterStatement 7 -CheckColumnNumber
     ShouldBeParseError 'for($a' MissingEndParenthesisAfterStatement 7 -CheckColumnNumber
     ShouldBeParseError 'for($a;' MissingEndParenthesisAfterStatement 8 -CheckColumnNumber
