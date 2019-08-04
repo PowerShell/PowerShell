@@ -1854,12 +1854,14 @@ namespace System.Management.Automation
 
             string caption = ParserStrings.ExceptionActionPromptCaption;
 
-            int choice;
             bool oldQuestionMarkVariableValue = context.QuestionMarkVariableValue;
+
+            int choice;
             while ((choice = ui.PromptForChoice(caption, message, choices, 0)) == 3)
             {
                 context.EngineHostInterface.EnterNestedPrompt();
             }
+
             context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
             if (choice == 0)
