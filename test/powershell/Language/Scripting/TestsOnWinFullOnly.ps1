@@ -13,8 +13,7 @@ function Run-TestOnWinFull
             $r = TestErrorActionSuspend -ErrorAction Suspend
 
             $r | Should -BeExactly 'Hello'
-            break;   
-        }
+            break;   }
 
         "ForeachParallel:ASTOfParallelForeachOnWorkflow" {
             Import-Module PSWorkflow
