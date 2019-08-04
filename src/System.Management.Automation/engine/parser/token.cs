@@ -527,7 +527,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'InlineScript' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
         InlineScript = 154,
-        
+
         /// <summary>The "configuration" keyword</summary>
         Configuration = 155,
 
