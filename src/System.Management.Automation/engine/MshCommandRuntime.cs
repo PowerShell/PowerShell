@@ -3096,6 +3096,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                }
+
                 _warningPreference = value;
                 IsWarningActionSet = true;
             }
@@ -3261,6 +3266,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceSupportedOnlyOnWorkflow);
+                }
+
                 _errorAction = value;
                 IsErrorActionSet = true;
             }
@@ -3323,6 +3333,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                }
+
                 _informationPreference = value;
                 IsInformationActionSet = true;
             }

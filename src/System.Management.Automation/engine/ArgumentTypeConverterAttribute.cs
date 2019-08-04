@@ -140,6 +140,25 @@ namespace System.Management.Automation
                     }
 
                     result = LanguagePrimitives.ConvertTo(result, _convertTypes[i], CultureInfo.InvariantCulture);
+
+                    // Do validation of invalid direct variable assignments which are allowed to
+                    // be used for parameters.
+                    //
+                    // Note - this is duplicated in ExecutionContext.cs as parameter binding for script cmdlets can avoid this code path.
+                    if ((!bindingScriptCmdlet) && (!bindingParameters))
+                    {
+                        // ActionPreference of Suspend is not supported as a preference variable. We can only block "Suspend"
+                        // during variable assignment (here) - "Ignore" is blocked during variable retrieval.
+                        if (_convertTypes[i] == typeof(ActionPreference))
+                        {
+                            ActionPreference resultPreference = (ActionPreference)result;
+
+                            if (resultPreference == ActionPreference.Suspend)
+                            {
+                                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.UnsupportedPreferenceVariable, resultPreference);
+                            }
+                        }
+                    }
                 }
             }
             catch (PSInvalidCastException e)
