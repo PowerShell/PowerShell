@@ -516,8 +516,18 @@ namespace System.Management.Automation.Language
         /// <summary>The 'while' keyword.</summary>
         While = 150,
 
-        // Keywords 151-154 were part of the workflow functionality that was removed in PowerShell 7.
+        /// <summary>The 'workflow' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
+        Workflow = 151,
 
+        /// <summary>The 'parallel' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
+        Parallel = 152,
+
+        /// <summary>The 'sequence' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
+        Sequence = 153,
+
+        /// <summary>The 'InlineScript' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
+        InlineScript = 154,
+        
         /// <summary>The "configuration" keyword</summary>
         Configuration = 155,
 
@@ -898,10 +908,10 @@ namespace System.Management.Automation.Language
             /*                Using */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                  Var */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                While */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Workflow */ TokenFlags.Deprecated,
-            /*             Parallel */ TokenFlags.Deprecated,
-            /*             Sequence */ TokenFlags.Deprecated,
-            /*         InlineScript */ TokenFlags.Deprecated,
+            /*             Workflow */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*             Parallel */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*             Sequence */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*         InlineScript */ TokenFlags.Keyword | TokenFlags.Deprecated,
             /*        Configuration */ TokenFlags.Keyword,
             /*    <dynamic keyword> */ TokenFlags.Keyword,
             /*               Public */ TokenFlags.Keyword,
@@ -1096,10 +1106,10 @@ namespace System.Management.Automation.Language
             /*                Using */ "using",
             /*                  Var */ "var",
             /*                While */ "while",
-            /*             Workflow */ "DEPRECATED",
-            /*             Parallel */ "DEPRECATED",
-            /*             Sequence */ "DEPRECATED",
-            /*         InlineScript */ "DEPRECATED",
+            /*             Workflow */ "workflow",
+            /*             Parallel */ "parallel",
+            /*             Sequence */ "sequence",
+            /*         InlineScript */ "inlinescript",
             /*        Configuration */ "configuration",
             /*    <dynamic keyword> */ "<dynamic keyword>",
             /*               Public */ "public",
@@ -1128,8 +1138,8 @@ namespace System.Management.Automation.Language
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
                                "Table out of sync with enum - flags Begin");
-            Diagnostics.Assert(GetTraits(TokenKind.While) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
-                               "Table out of sync with enum - flags While");
+            Diagnostics.Assert(GetTraits(TokenKind.Workflow) == (TokenFlags.Keyword | TokenFlags.Deprecated),
+                               "Table out of sync with enum - flags Workflow");
             Diagnostics.Assert(GetTraits(TokenKind.Configuration) == TokenFlags.Keyword,
                                "Table out of sync with enum - flags Configuration");
             Diagnostics.Assert(GetTraits(TokenKind.Shr) == (TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold),

@@ -2042,6 +2042,17 @@ namespace System.Management.Automation.Language
                 case TokenKind.Configuration:
                     statement = ConfigurationStatementRule(attributes != null ? attributes.OfType<AttributeAst>() : null, token);
                     break;
+                case TokenKind.Workflow:
+                case TokenKind.Parallel:
+                case TokenKind.Sequence:
+                case TokenKind.InlineScript:
+                    // These tokens have been deprecated.
+                    ReportError(token.Extent,
+                        nameof(ParserStrings.DeprecatedKeywordNotAllowed),
+                        ParserStrings.DeprecatedKeywordNotAllowed,
+                        token.Kind.Text());
+                    statement = new ErrorStatementAst(token.Extent);
+                    break;
                 case TokenKind.From:
                 case TokenKind.Define:
                 case TokenKind.Var:
