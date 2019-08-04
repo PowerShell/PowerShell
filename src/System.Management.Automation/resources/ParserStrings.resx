@@ -466,6 +466,9 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="ReservedKeywordNotAllowed" xml:space="preserve">
     <value>The '{0}' keyword is not supported in this version of the language.</value>
   </data>
+  <data name="DeprecatedKeywordNotAllowed" xml:space="preserve">
+    <value>The '{0}' keyword has been deprecated and is no longer supported.</value>
+  </data>
   <data name="MissingExpressionAfterKeyword" xml:space="preserve">
     <value>Missing expression after '{0}' in loop.</value>
   </data>
