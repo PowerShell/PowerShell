@@ -100,6 +100,7 @@ Note that all bash commands should continue working on PowerShell session.
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
+- [Master PowerShell][master-powershell] by Tobias Weltner
 
 ### Commercial Resources
 
@@ -121,3 +122,4 @@ Note that all bash commands should continue working on PowerShell session.
 [quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6
+[master-powershell]:http://community.idera.com/database-tools/powershell/powertips/b/ebookv2
