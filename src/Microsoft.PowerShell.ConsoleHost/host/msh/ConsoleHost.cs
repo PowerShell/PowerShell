@@ -1025,10 +1025,10 @@ namespace Microsoft.PowerShell
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
 
         private double _readyForInputTimeInMS;
+        private int _interactiveCommandCount;
 #endif
 
         private double _profileLoadTimeInMS;
-        private int _interactiveCommandCount;
 
         #endregion overrides
 
@@ -2520,8 +2520,10 @@ namespace Microsoft.PowerShell
                                 }
                             }
 
+#if LEGACYTELEMETRY
                             if (!inBlockMode)
                                 s_theConsoleHost._interactiveCommandCount += 1;
+#endif
                         }
                     }
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
