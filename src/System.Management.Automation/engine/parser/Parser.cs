@@ -1966,7 +1966,8 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            ReportError(attributes[0].Extent,
+                            ReportError(
+                                attributes[0].Extent,
                                 nameof(ParserStrings.UnexpectedAttribute),
                                 ParserStrings.UnexpectedAttribute,
                                 attributes[0].TypeName.FullName);
@@ -1976,7 +1977,8 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var attr in attributes.Where(attr => !(attr is AttributeAst)))
                         {
-                            ReportError(attr.Extent,
+                            ReportError(
+                                attr.Extent,
                                 nameof(ParserStrings.TypeNotAllowedBeforeStatement),
                                 ParserStrings.TypeNotAllowedBeforeStatement,
                                 attr.TypeName.FullName);
@@ -2047,7 +2049,8 @@ namespace System.Management.Automation.Language
                 case TokenKind.Sequence:
                 case TokenKind.InlineScript:
                     // These tokens have been deprecated.
-                    ReportError(token.Extent,
+                    ReportError(
+                        token.Extent,
                         nameof(ParserStrings.DeprecatedKeywordNotAllowed),
                         ParserStrings.DeprecatedKeywordNotAllowed,
                         token.Kind.Text());
@@ -2056,7 +2059,8 @@ namespace System.Management.Automation.Language
                 case TokenKind.From:
                 case TokenKind.Define:
                 case TokenKind.Var:
-                    ReportError(token.Extent,
+                    ReportError(
+                        token.Extent,
                         nameof(ParserStrings.ReservedKeywordNotAllowed),
                         ParserStrings.ReservedKeywordNotAllowed,
                         token.Kind.Text());
@@ -2106,7 +2110,8 @@ namespace System.Management.Automation.Language
                 case TokenKind.Using:
                     statement = UsingStatementRule(token);
                     // Report an error - usings must appear before anything else in the script, but parse it anyway
-                    ReportError(statement.Extent,
+                    ReportError(
+                        statement.Extent,
                         nameof(ParserStrings.UsingMustBeAtStartOfScript),
                         ParserStrings.UsingMustBeAtStartOfScript);
                     break;
