@@ -117,7 +117,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 }
 
-Describe 'ActionPreference.Break tests' -tag 'CI' {
+Describe 'ActionPreference.Break tests' -tag 'CI','KirkTest' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -135,7 +135,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                     param()
                     try {
                         # Generate a non-terminating error
-                        Get-Process -Id ([int]::MaxValue)
+                        Write-Error 'This is a non-terminating error.'
                         # Do something afterwards
                         'This should still run'
                     } catch {
@@ -156,7 +156,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
         }
 
         It 'The breakpoint should be the statement that generated the non-terminating error' {
-            $results[0] | ShouldHaveExtent -Line 7 -FromColumn 25 -ToColumn 58
+            $results[0] | ShouldHaveExtent -Line 7 -FromColumn 25 -ToColumn 71
         }
 
         It 'The second statement should be the statement after that which generated the non-terminating error' {
