@@ -4,6 +4,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }
+
         AfterAll {
             if ($GLOBAL:errorActionPreference -ne $orgin)
             {
@@ -17,15 +18,18 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 get-childitem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
             }
             catch {}
+
             It '$err.Count' { $err.Count | Should -Be 1 }
             It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
             It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
             It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
             It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
         }
+
         It 'ActionPreference Ignore Works' {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ignore
+
             $error.Count | Should -BeExactly $errorCount
         }
 
@@ -56,7 +60,42 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should -BeExactly $errorCount
         }
 
+        It 'ErrorAction = Suspend works on Workflow' -Skip:$IsCoreCLR {
+           . .\TestsOnWinFullOnly.ps1
+            Run-TestOnWinFull "ActionPreference:ErrorAction=SuspendOnWorkflow"
+        }
+
+        It 'ErrorAction = Suspend does not work on functions' {
+            function MyHelperFunction {
+                [CmdletBinding()]
+                param()
+                "Hello"
+            }
+
+            { MyHelperFunction -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,MyHelperFunction"
+        }
+
+        It 'ErrorAction = Suspend does not work on cmdlets' {
+            { Get-Process -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
+        }
+
+        It 'WarningAction = Suspend does not work' {
+            { Get-Process -WarningAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
+        }
+
         #issue 2076
+        It 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Pending{
+            $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | Select-String Action
+
+            $suspendErrors = $null
+            $num=0
+
+            $params | ForEach-Object {
+                        $input=@{'InputObject' = 'Test';$_='Suspend'}
+                        { Write-Output @input } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
+                    }
+        }
+
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
             @{switch="Verbose"},
             @{switch="Debug"}
