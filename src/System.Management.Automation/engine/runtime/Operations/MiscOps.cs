@@ -1789,11 +1789,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal static ActionPreference GetErrorActionPreference(ExecutionContext context)
         {
-            bool defaultUsed;
-            return context.GetEnumPreference<ActionPreference>(
+            return context.GetEnumPreference(
                 SpecialVariables.ErrorActionPreferenceVarPath,
                 ActionPreference.Continue,
-                out defaultUsed);
+                _);
         }
 
         /// <summary>

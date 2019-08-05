@@ -37,7 +37,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $e = {
                 $GLOBAL:errorActionPreference = "Ignore"
                 Get-Process -Name asdfasdfasdf
-            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
+            } | Should -Throw -ErrorId 'System.NotSupportedException' -PassThru
             $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
 
             $GLOBAL:errorActionPreference = $orgin
