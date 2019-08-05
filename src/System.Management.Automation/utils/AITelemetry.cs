@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Threading;
 
 using Microsoft.ApplicationInsights;
@@ -92,7 +90,7 @@ namespace Microsoft.PowerShell.Telemetry
         };
 
         /// <summary>Can we send telemetry</summary>
-        public static bool CanSendTelemetry; // = GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
+        public static bool CanSendTelemetry;
 
         // use a hashset for quicker lookups.
         private static HashSet<string> knownModules; //  = new HashSet<string>(knownModuleNames, StringComparer.OrdinalIgnoreCase);
@@ -100,7 +98,7 @@ namespace Microsoft.PowerShell.Telemetry
         // static constructor sets the telemetry key and set the telemetry delivery mode (Developer mode sends quicker)
         static ApplicationInsightsTelemetry()
         {
-            CanSendTelemetry = GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
+            CanSendTelemetry = GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: true);
             // If we can't send telemetry, there's no reason to do any of this
             if ( CanSendTelemetry ) {
                 TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
@@ -151,21 +149,22 @@ namespace Microsoft.PowerShell.Telemetry
             string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
             string uuidString = uniqueUserIdentifier.ToString();
             string sessionIdString  = sessionId.ToString();
+            bool trackValue = false;
             try {
                 switch (metricId)
                 {
                     case AITelemetryType.ApplicationType:
                     case AITelemetryType.PowerShellCreate:
                     case AITelemetryType.RemoteSessionOpen:
-                        _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, data);
+                        trackValue = _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, data);
                         break;
                     case AITelemetryType.ExperimentalFeatureActivation:
                         string experimentalFeatureName = getExperimentalFeatureName(data);
-                        _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, data);
+                        trackValue = _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, data);
                         break;
                     case AITelemetryType.ModuleLoad:
                         string moduleName = getModuleName(data); // This will return anonymous if the modulename is not on the report list
-                        _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, moduleName);
+                        trackValue = _telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, moduleName);
                         break;
                     default:
                         break; // don't log anything
@@ -213,17 +212,14 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
             var properties = new Dictionary<string, string>();
+            var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
+
             properties.Add("SessionId", sessionId.ToString());
             properties.Add("UUID", uniqueUserIdentifier.ToString());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
-            properties.Add("OSDetail", Environment.GetEnvironmentVariable("PSDistChannel"));
-            if ( mode == null || mode == string.Empty ) {
-                properties.Add("StartMode", "unknown");
-            }
-            else {
-                properties.Add("StartMode", mode);
-            }
+            properties.Add("OSChannel", (channel == null || channel == string.Empty) ? "unknown" : channel);
+            properties.Add("StartMode", (mode == null || mode == string.Empty) ? "unknown" : mode);
             try {
                 _telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
             }
@@ -234,7 +230,6 @@ namespace Microsoft.PowerShell.Telemetry
 
         private static void getUserIdImpl()
         {
-
             string cacheDir = Platform.CacheDirectory;
             string uuidPath = Path.Join(cacheDir, "telemetry.uuid");
             Byte[] buffer = new Byte[16];
@@ -248,6 +243,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
             catch {
                 CanSendTelemetry = false;
+                _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "cachedir");
                 return;
             }
 
@@ -275,6 +271,7 @@ namespace Microsoft.PowerShell.Telemetry
                 File.WriteAllBytes(uuidPath, uniqueUserIdentifier.ToByteArray());
             }
             catch {
+                _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "saveuuid");
                 CanSendTelemetry = false;
             }
 
@@ -296,7 +293,11 @@ namespace Microsoft.PowerShell.Telemetry
                 }
                 // Any problem in generating a uuid will result in no telemetry being sent
                 catch (Exception) {
+                    // attempt to send the failure in telemetry, but it will have no data
+                    // there is no attempt at capturing anything but the failure
                     CanSendTelemetry = false;
+                    _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "mutex");
+
                 }
                 finally {
                     m.ReleaseMutex();
