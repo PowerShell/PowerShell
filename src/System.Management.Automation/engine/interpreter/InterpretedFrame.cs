@@ -48,10 +48,6 @@ namespace System.Management.Automation.Interpreter
         public int StackIndex;
         public int InstructionIndex;
 
-        // When a ThreadAbortException is raised from interpreted code this is the first frame that caught it.
-        // No handlers within this handler re-abort the current thread when left.
-        public ExceptionHandler CurrentAbortHandler;
-
         internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
         {
             Interpreter = interpreter;
