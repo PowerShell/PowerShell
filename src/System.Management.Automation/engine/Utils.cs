@@ -727,7 +727,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The subdirectory of module paths
-        /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
+        /// e.g. ~\Documents\PowerShell\Modules and %ProgramFiles%\PowerShell\Modules.
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
@@ -2065,6 +2065,7 @@ namespace System.Management.Automation.Internal
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
+        internal static object[] TestPowerShellPSModulePaths;
 
         internal static bool ShowMarkdownOutputBypass;
 

@@ -1907,8 +1907,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Go through each directory in the module path
-            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Utils.Separators.PathSeparator);
-            foreach (string path in modulePaths)
+            foreach (string path in ModuleIntrinsics.GetModulePath())
             {
                 try
                 {

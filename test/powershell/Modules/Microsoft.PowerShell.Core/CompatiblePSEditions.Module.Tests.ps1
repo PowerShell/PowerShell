@@ -39,9 +39,9 @@ function New-EditionCompatibleModule
     $psm1Name = "$ModuleName.psm1"
     $psm1Path = Join-Path $modulePath $psm1Name
 
-    New-Item -Path $modulePath -ItemType Directory
+    New-Item -Path $modulePath -ItemType Directory > $null
 
-    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true }"
+    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true }" > $null
 
     if ($CompatiblePSEditions)
     {
@@ -86,7 +86,7 @@ function New-TestNestedModule
     $nestedModules = [System.Collections.ArrayList]::new()
 
     # Create script module
-    New-Item -Path (Join-Path $ModuleBase $ScriptModuleFileName) -Value $ScriptModuleContent
+    New-Item -Path (Join-Path $ModuleBase $ScriptModuleFileName) -Value $ScriptModuleContent > $null
     $nestedModules.Add($ScriptModuleFilename)
 
     if ($BinaryModuleFilename -and $BinaryModuleDllPath)
@@ -99,7 +99,7 @@ function New-TestNestedModule
     # Create the root module if there is one
     if ($UseRootModule)
     {
-        New-Item -Path (Join-Path $ModuleBase $RootModuleFilename) -Value $RootModuleContent
+        New-Item -Path (Join-Path $ModuleBase $RootModuleFilename) -Value $RootModuleContent > $null
     }
 
     # Create the manifest command
@@ -412,7 +412,7 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
 
         foreach ($basePath in $compatiblePath,$incompatiblePath)
         {
-            New-Item -Path $basePath -ItemType Directory
+            New-Item -Path $basePath -ItemType Directory > $null
         }
     }
 
@@ -432,11 +432,13 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             $containingDir = Join-Path $TestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
-            New-Item -Path $moduleBase -ItemType Directory
+            New-Item -Path $moduleBase -ItemType Directory > $null
             Add-ModulePath $containingDir
         }
 
         AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Remove-Item -Recurse -Path $moduleBase -Force
             Restore-ModulePath
         }
 
@@ -494,7 +496,11 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
                 return
             }
 
-            $modules.Count | Should -Be 1
+            # In $env:PSModulePath we have 2 paths to the module:
+            # - direct path to the module
+            # - "system" path to a directory on one level above
+            # so we will get the module path twice (2 instead of 1).
+            $modules.Count | Should -Be 2
             $modules[0].Name | Should -Be $moduleName
         }
 
@@ -538,13 +544,17 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
                 Get-Module -ListAvailable -All | Where-Object { $_.Path.Contains($guid) }
             }
 
+            # In $env:PSModulePath we have 2 paths to the module:
+            # - direct path to the module
+            # - "system" path to a directory on one level above
+            # so we will get the module path twice (8 instead of 4, 6 instead of 3).
             if ($UseRootModule)
             {
-                $modules.Count | Should -Be 4
+                $modules.Count | Should -Be 8
             }
             else
             {
-                $modules.Count | Should -Be 3
+                $modules.Count | Should -Be 6
             }
 
             $names = $modules.Name
@@ -562,11 +572,13 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             $containingDir = Join-Path $TestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
-            New-Item -Path $moduleBase -ItemType Directory
+            New-Item -Path $moduleBase -ItemType Directory > $null
             Add-ModulePath $containingDir
         }
 
         AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Remove-Item -Recurse -Path $moduleBase -Force
             Restore-ModulePath
         }
 
@@ -708,7 +720,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 
         foreach ($basePath in $compatiblePath,$incompatiblePath)
         {
-            New-Item -Path $basePath -ItemType Directory
+            New-Item -Path $basePath -ItemType Directory > $null
         }
     }
 
@@ -728,12 +740,13 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             $containingDir = Join-Path $TestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
-            New-Item -Path $moduleBase -ItemType Directory
+            New-Item -Path $moduleBase -ItemType Directory > $null
             Add-ModulePath $containingDir
         }
 
         AfterEach {
             Get-Module $moduleName | Remove-Module -Force
+            Remove-Item -Recurse -Path $moduleBase -Force
             Restore-ModulePath
         }
 
@@ -818,12 +831,13 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             $containingDir = Join-Path $TestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
-            New-Item -Path $moduleBase -ItemType Directory
+            New-Item -Path $moduleBase -ItemType Directory > $null
             Add-ModulePath $containingDir
         }
 
         AfterEach {
             Get-Module $moduleName | Remove-Module -Force
+            Remove-Item -Recurse -Path $moduleBase -Force
             Restore-ModulePath
         }
 

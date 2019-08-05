@@ -62,7 +62,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             }
         )
 
-        $env:PSModulePath = Join-Path $testdrive "Modules"
+        $testModulePath = Join-Path $testdrive "Modules"
+        $env:PSModulePath = $testModulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
     }
 
     AfterAll {
@@ -71,8 +72,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module -ListAvailable" {
         $modules = Get-Module -ListAvailable
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 5
-        $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
         $modules[0].Version | Should -Be "1.1"
         $modules[1].Version | Should -Be "0.0.1"
@@ -82,6 +83,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module <Name> -ListAvailable" {
         $modules = Get-Module F* -ListAvailable
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 2
         $modules = $modules | Sort-Object -Property Version
         $modules.Name -join "," | Should -BeExactly "Foo,Foo"
@@ -91,6 +93,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module -ListAvailable -All" {
         $modules = Get-Module -ListAvailable -All
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 12
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Az,Az,Bar,Bar,Download,Foo,Foo,Foo,Foo,Zoo,Zoo,Zoo"
@@ -116,6 +120,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module <Name> -ListAvailable -All" {
         $modules = Get-Module down*, zoo -ListAvailable -All
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 4
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Download,Zoo,Zoo,Zoo"
@@ -128,6 +133,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module <Path> -ListAvailable" {
         $modules = Get-Module "$testdrive\Modules\*" -ListAvailable
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 5
         $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
@@ -137,6 +143,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module <Path> -ListAvailable -All" {
         $modules = Get-Module "$testdrive\Modules\*" -ListAvailable -All
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules.Count | Should -Be 6
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo,Zoo"
@@ -155,6 +162,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
         $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
         $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly $ExpectedName
         $modules.Version | Should -BeExactly $ModuleVersion
@@ -179,6 +187,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module <Name> -Refresh -ListAvailable" {
         $modules = Get-Module -Name 'Zoo' -ListAvailable
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly "Zoo"
         $modules.ExportedFunctions.Count | Should -Be 0 -Because 'No exports were defined'
@@ -200,6 +209,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         }
 
         $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
+        $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
         $modules | Should -HaveCount $Count
         $modules[0].Name | Should -BeExactly $Name
         $modules.Version | Should -Contain $Version
@@ -227,6 +237,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         ) {
             param ($CompatiblePSEditions, $ExpectedModule)
             $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
+            $modules = $modules | Where-Object { $_.Path.StartsWith($testModulePath) } | Sort-Object -Property Name, Version
             $modules | Should -HaveCount $ExpectedModule.Count
             $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
         }
@@ -274,7 +285,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
         It "'Get-Module -ListAvailable' should not load the module assembly" {
             ## $fullName should be null and thus the result should just be the module's name.
-            $result = pwsh -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
+            $result = pwsh -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable | Where-Object { `$_.Path.StartsWith('$tempModulePath') }; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
             $result | Should -BeExactly "MyModuelTest"
         }
     }
