@@ -1792,7 +1792,7 @@ namespace System.Management.Automation
             return context.GetEnumPreference(
                 SpecialVariables.ErrorActionPreferenceVarPath,
                 ActionPreference.Continue,
-                _);
+                out _);
         }
 
         /// <summary>

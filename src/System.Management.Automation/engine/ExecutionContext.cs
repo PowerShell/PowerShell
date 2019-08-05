@@ -570,7 +570,7 @@ namespace System.Management.Automation
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, _, _);
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
             if (val is T)
             {
                 // We don't want to support "Ignore" as action preferences, as it leads to bad
