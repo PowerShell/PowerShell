@@ -334,4 +334,22 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
             $results[6] | ShouldHaveExtent -Line 9 -FromColumn 21 -ToColumn 67
         }
     }
+
+    Context 'ActionPreference.Break in jobs' {
+
+        BeforeAll {
+            $job = Start-Job {
+                $ErrorActionPreference = [actionpreference]::Break
+                Get-Process -TheAnswer 42
+            }
+        }
+
+        AfterAll {
+            Remove-Job -Job $job -Force
+        }
+
+        It 'ActionPreference.Break should break in a running job' {
+            Wait-UntilTrue -sb { $job.State -eq 'AtBreakpoint' } -TimeoutInMilliseconds (10 * 1000) -IntervalInMilliseconds 100 | Should -BeTrue
+        }
+    }
 }
