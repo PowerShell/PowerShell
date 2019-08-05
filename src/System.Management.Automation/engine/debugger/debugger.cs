@@ -1668,6 +1668,9 @@ namespace System.Management.Automation
         private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
+        // System is locked down when true. Used to disable debugger on lock down.
+        private bool? _isSystemLockedDown;
+
         private static readonly string s_processDebugPromptMatch;
 
         #endregion private members
@@ -2073,16 +2076,27 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsSystemLockedDown
+        private bool IsSystemLockedDown
         {
             get
             {
-                return (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                        System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+                if (_isSystemLockedDown == null)
+                {
+                    lock (_syncObject)
+                    {
+                        if (_isSystemLockedDown == null)
+                        {
+                            _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                                System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+                        }
+                    }
+                }
+
+                return _isSystemLockedDown.Value;
             }
         }
 
-        private static void CheckForBreakpointSupport()
+        private void CheckForBreakpointSupport()
         {
             if (IsSystemLockedDown)
             {
