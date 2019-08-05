@@ -18,6 +18,11 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
 
+  <PropertyGroup Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' ">
+    <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Content Include="..\System.Management.Automation\powershell.config.json">
