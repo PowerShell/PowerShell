@@ -11,6 +11,7 @@
 
 # Area: Security
 # @TravisEz13 @PaulHigin
+src/System.Management.Automation/security/wldpNativeMethods.cs @TravisEz13 @PaulHigin
 
 # Area: Documentation
 .github/    @joeyaiello @TravisEz13
