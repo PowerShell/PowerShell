@@ -96,10 +96,10 @@ Note that all bash commands should continue working on PowerShell session.
 - Microsoft Virtual Academy: [Getting Started with PowerShell][getstarted-with-powershell]
 - [Why Learn PowerShell][why-learn-powershell] by Ed Wilson
 - PowerShell Web Docs: [Basic cookbooks][basic-cookbooks]
-- [PowerShell eBook][ebook-from-powershell.com] from PowerShell.com
+- [The Guide to Learning PowerShell][ebook-from-Idera] by Tobias Weltner
 - [PowerShell-related Videos][channel9-learn-powershell] on Channel 9
-- [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
+- [Learn PowerShell Video Library][idera-learn-powershell] from Idera
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
 
@@ -119,9 +119,9 @@ Note that all bash commands should continue working on PowerShell session.
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
 [Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/getting-started/fundamental/using-windows-powershell-for-administration?view=powershell-6
-[ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
+[ebook-from-Idera]:https://www.idera.com/resourcecentral/whitepapers/powershell-ebook
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
-[powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
+[idera-learn-powershell]: https://community.idera.com/database-tools/powershell/video_library/
 [quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6
