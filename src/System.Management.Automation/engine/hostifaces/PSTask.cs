@@ -30,8 +30,12 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes new instance of PSTask.
         /// </summary>
+        /// <param name="scriptBlock">Script block to run in task</param>
+        /// <param name="usingValuesMap">Using values passed into script block</param>
+        /// <param name="dollarUnderbar">Dollar underbar variable value</param>
+        /// <param name="dataStreamWriter">Cmdlet data stream writer</param>
         public PSTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
@@ -167,8 +171,12 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes new instance PSJobTask.
         /// </summary>
+        /// <param name="scriptBlock">Script block to run</param>
+        /// <param name="usingValuesMap">Using variable values passed to script block</param>
+        /// <param name="dollarUnderbar">Dollar underbar variable value for script block</param>
+        /// <param name="job">Job object associated with task</param>
         public PSJobTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
@@ -362,8 +370,11 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes instance of PSTaskBase.
         /// </summary>
+        /// <param name="scriptBlock">Script block to run</param>
+        /// <param name="usingValuesMap">Using variable values passed to script block</param>
+        /// <param name="dollarUnderbar">Dollar underbar variable value</param>
         protected PSTaskBase(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
@@ -388,7 +399,7 @@ namespace System.Management.Automation.PSTasks
         #region IDisposable
 
         /// <summary>
-        /// Dispose.
+        /// Dispose PSTaskBase instance.
         /// </summary>
         public void Dispose()
         {
@@ -473,7 +484,7 @@ namespace System.Management.Automation.PSTasks
         #region Properties
 
         /// <summary>
-        /// Wait-able handle that signals when new data has been added to
+        /// Gets wait-able handle that signals when new data has been added to
         /// the data stream collection.
         internal WaitHandle DataAddedWaitHandle
         {
@@ -487,7 +498,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskDataStreamWriter() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes instance of PSTaskDataStreamWriter.
         /// </summary>
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
@@ -503,6 +514,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Add data stream object to the writer.
         /// </summary>
+        /// <param name="streamObject">Data stream object to write</param>
         public void Add(PSStreamObject streamObject)
         {
             _dataStream.Add(streamObject);
@@ -568,7 +580,7 @@ namespace System.Management.Automation.PSTasks
         #region IDisposable
 
         /// <summary>
-        /// Disposes the stream writer.
+        /// Dispose the stream writer.
         /// </summary>
         public void Dispose()
         {
@@ -589,12 +601,12 @@ namespace System.Management.Automation.PSTasks
     {
         #region Members
 
-        private readonly int _sizeLimit;
-        private bool _isOpen;
-        private readonly object _syncObject;
         private readonly ManualResetEvent _addAvailable;
         private readonly ManualResetEvent _stopAll;
         private readonly Dictionary<int, PSTaskBase> _taskPool;
+        private readonly int _sizeLimit;
+        private bool _isOpen;
+        private readonly object _syncObject;
 
         #endregion
 
@@ -603,8 +615,9 @@ namespace System.Management.Automation.PSTasks
         private PSTaskPool() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes instance of PSTaskPool.
         /// </summary>
+        /// <param name="size">Total number of allowed running objects in pool at one time</param>
         public PSTaskPool(int size)
         {
             _sizeLimit = size;
@@ -629,7 +642,7 @@ namespace System.Management.Automation.PSTasks
         #region Public Properties
 
         /// <summary>
-        /// Returns true if pool is currently open for accepting tasks.
+        /// Gets boolean indicating if pool is currently open for accepting tasks.
         /// </summary>
         public bool IsOpen
         {
@@ -658,11 +671,13 @@ namespace System.Management.Automation.PSTasks
         /// If the pool is full, then this method blocks until space is available.
         /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
+        /// <param name="task">Task to be added to pool</param>
+        /// <param name="dataStreamWriter">Optional cmdlet data stream writer</param>
         public bool Add(
             PSTaskBase task, 
             PSTaskDataStreamWriter dataStreamWriter = null)
         {
-            if (! _isOpen)
+            if (!_isOpen)
             {
                 return false;
             }
@@ -696,7 +711,7 @@ namespace System.Management.Automation.PSTasks
 
                     lock (_syncObject)
                     {
-                        if (! _isOpen)
+                        if (!_isOpen)
                         {
                             return false;
                         }
@@ -730,6 +745,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Add child job task to task pool.
         /// </summary>
+        /// <param name="childJob">Child job to be added to pool</param>
         public bool Add(PSTaskChildJob childJob)
         {
             return Add(childJob.Task);
@@ -800,7 +816,7 @@ namespace System.Management.Automation.PSTasks
             bool isTaskPoolComplete;
             lock (_syncObject)
             {
-                isTaskPoolComplete = (!_isOpen && _taskPool.Count == 0);
+                isTaskPoolComplete = !_isOpen && _taskPool.Count == 0;
             }
 
             if (isTaskPoolComplete)
@@ -844,8 +860,10 @@ namespace System.Management.Automation.PSTasks
         private PSTaskJob() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes instance of PSTaskJob.
         /// </summary>
+        /// <param name="command">Job command text</param>
+        /// <param name="throttleLimit">Pool size limit for task job</param>
         public PSTaskJob(
             string command,
             int throttleLimit) : base(command, string.Empty)
@@ -897,7 +915,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StopJob.
+        /// Stops running job.
         /// </summary>
         public override void StopJob()
         {
@@ -909,7 +927,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Dispose.
+        /// Disposes task job.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -928,9 +946,10 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Add a child job to the collection.
         /// </summary>
+        /// <param name="childJob">Child job to add</param>
         public bool AddJob(PSTaskChildJob childJob)
         {
-            if (! _isOpen)
+            if (!_isOpen)
             {
                 return false;
             }
@@ -959,8 +978,7 @@ namespace System.Management.Automation.PSTasks
                         _taskPool.Add((PSTaskChildJob) childJob);
                     }
                     _taskPool.Close();
-                }
-            );
+                });
         }
 
         #endregion
@@ -996,14 +1014,14 @@ namespace System.Management.Automation.PSTasks
     }
 
     /// <summary>
-    /// PSTaskChildJob debugger wrapper
+    /// PSTaskChildJob debugger wrapper.
     /// </summary>
     internal sealed class PSTaskChildDebugger : Debugger
     {
         #region Members
 
-        private Debugger _wrappedDebugger;
-        private string _jobName;
+        private readonly Debugger _wrappedDebugger;
+        private readonly string _jobName;
 
         #endregion
 
@@ -1012,8 +1030,10 @@ namespace System.Management.Automation.PSTasks
         private PSTaskChildDebugger() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes new instance of PSTaskChildDebugger.
         /// </summary>
+        /// <param name="debugger">Script debugger associated with task</param>
+        /// <param name="jobName">Job name for associated task</param>
         public PSTaskChildDebugger(
             Debugger debugger,
             string jobName)
@@ -1039,10 +1059,12 @@ namespace System.Management.Automation.PSTasks
         /// Evaluates provided command either as a debugger specific command
         /// or a PowerShell command.
         /// </summary>
-        /// <param name="command">PowerShell command.</param>
-        /// <param name="output">Output.</param>
-        /// <returns>DebuggerCommandResults.</returns>
-        public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
+        /// <param name="command">PowerShell command</param>
+        /// <param name="output">Output</param>
+        /// <returns>DebuggerCommandResults</returns>
+        public override DebuggerCommandResults ProcessCommand(
+            PSCommand command,
+            PSDataCollection<PSObject> output)
         {
             // Special handling for the prompt command.
             if (command.Commands[0].CommandText.Trim().Equals("prompt", StringComparison.OrdinalIgnoreCase))
@@ -1065,7 +1087,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets the debugger resume action.
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction.</param>
+        /// <param name="resumeAction">DebuggerResumeAction</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             _wrappedDebugger.SetDebuggerAction(resumeAction);
@@ -1083,7 +1105,7 @@ namespace System.Management.Automation.PSTasks
         /// Returns current debugger stop event arguments if debugger is in
         /// debug stop state.  Otherwise returns null.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs.</returns>
+        /// <returns>DebuggerStopEventArgs</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             return _wrappedDebugger.GetDebuggerStopArgs();
@@ -1092,11 +1114,11 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets the parent debugger, breakpoints, and other debugging context information.
         /// </summary>
-        /// <param name="parent">Parent debugger.</param>
-        /// <param name="breakPoints">List of breakpoints.</param>
-        /// <param name="startAction">Debugger mode.</param>
-        /// <param name="host">PowerShell host.</param>
-        /// <param name="path">Current path.</param>
+        /// <param name="parent">Parent debugger</param>
+        /// <param name="breakPoints">List of breakpoints</param>
+        /// <param name="startAction">Debugger mode</param>
+        /// <param name="host">PowerShell host</param>
+        /// <param name="path">Current path</param>
         public override void SetParent(
             Debugger parent,
             IEnumerable<Breakpoint> breakPoints,
@@ -1111,6 +1133,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets the debugger mode.
         /// </summary>
+        /// <param name="mode">Debugger mode to set</param>
         public override void SetDebugMode(DebugModes mode)
         {
             _wrappedDebugger.SetDebugMode(mode);
@@ -1121,7 +1144,6 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Returns IEnumerable of CallStackFrame objects.
         /// </summary>
-        /// <returns></returns>
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             return _wrappedDebugger.GetCallStack();
@@ -1130,14 +1152,13 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled.</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             _wrappedDebugger.SetDebuggerStepMode(enabled);
         }
 
         /// <summary>
-        /// True when debugger is stopped at a breakpoint.
+        /// Gets boolean indicating when debugger is stopped at a breakpoint.
         /// </summary>
         public override bool InBreakpoint
         {
@@ -1190,8 +1211,11 @@ namespace System.Management.Automation.PSTasks
         private PSTaskChildJob() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of PSTaskChildJob.
         /// </summary>
+        /// <param name="scriptBlock">Script block to run</param>
+        /// <param name="usingValuesMap">Using variable values passed to script block</param>
+        /// <param name="dollarUnderbar">Dollar underbar variable value</param>
         public PSTaskChildJob(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
@@ -1235,13 +1259,13 @@ namespace System.Management.Automation.PSTasks
         {
             get 
             { 
-                return (this.Output.Count > 0 ||
-                        this.Error.Count > 0 ||
-                        this.Progress.Count > 0 ||
-                        this.Verbose.Count > 0 ||
-                        this.Debug.Count > 0 ||
-                        this.Warning.Count > 0 ||
-                        this.Information.Count > 0);
+                return this.Output.Count > 0 ||
+                       this.Error.Count > 0 ||
+                       this.Progress.Count > 0 ||
+                       this.Verbose.Count > 0 ||
+                       this.Debug.Count > 0 ||
+                       this.Warning.Count > 0 ||
+                       this.Information.Count > 0;
             }
         }
 
@@ -1254,7 +1278,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// StopJob.
+        /// Stops running job.
         /// </summary>
         public override void StopJob()
         {
