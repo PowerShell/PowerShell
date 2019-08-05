@@ -35,7 +35,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
         It 'action preference of Ignore can be set as a preference variable using a string value' {
             try {
-                Rename-Item -LiteralPath variable:ErrorActionPreference -NewName oldErrorActionPreference
+                Remove-Variable -Name ErrorActionPreference -Scope Global -Force
                 $GLOBAL:ErrorActionPreference = 'Ignore'
                 $errorCount = $error.Count
                 Get-Process -Name asdfasdfasdf
@@ -43,7 +43,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 $error.Count | Should -BeExactly $errorCount
             } finally {
                 Remove-Variable -Name ErrorActionPreference -Scope Global
-                Rename-Item -LiteralPath variable:oldErrorActionPreference -NewName ErrorActionPreference
+                # Re-create the action preference variable as a strongly typed variable like it was before
+                [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $orgin
             }
         }
 
