@@ -113,9 +113,8 @@ namespace System.Management.Automation.Security
         private static SystemEnforcementMode GetWldpPolicy(string path, SafeHandle handle)
         {
             // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP validation
-            if (s_hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
+            if (s_hadMissingWldpAssembly)
             {
-                s_hadMissingWldpAssembly = true;
                 return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
