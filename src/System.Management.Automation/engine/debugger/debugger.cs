@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
         private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
-        // Debugger disabling
+        // System is locked down when true. Used to disable debugger on lock down.
         private bool? _isSystemLockedDown;
 
         private static readonly string s_processDebugPromptMatch;
