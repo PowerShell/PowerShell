@@ -42,6 +42,7 @@ Describe "Default enablement of Experimental Features" -Tags CI {
 
     It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
+
         foreach ($expFeature in Get-ExperimentalFeature) {
             $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
         }

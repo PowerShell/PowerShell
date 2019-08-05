@@ -1111,7 +1111,7 @@ function Start-PSPester {
     }
 
     $PSFlags = @("-noprofile")
-    if (-not [string]::IsNullOrEmpty($ExperimentalFeatureName)) {
+    if (-not (Test-IsPreview (& $powershell -version)) -and -not [string]::IsNullOrEmpty($ExperimentalFeatureName)) {
         $configFile = [System.IO.Path]::GetTempFileName()
         $configFile = [System.IO.Path]::ChangeExtension($configFile, ".json")
 
