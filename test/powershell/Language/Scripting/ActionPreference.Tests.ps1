@@ -33,10 +33,30 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should -BeExactly $errorCount
         }
 
-        It 'action preference of Ignore can be set as a preference variable' {
-            $GLOBAL:errorActionPreference = "Ignore"
-            Get-Process -Name asdfasdfasdf | Should -Be $null
-            $GLOBAL:errorActionPreference = $orgin
+        It 'action preference of Ignore can be set as a preference variable using a string value' {
+            try {
+                Rename-Item -LiteralPath variable:ErrorActionPreference -NewName oldErrorActionPreference
+                $GLOBAL:ErrorActionPreference = 'Ignore'
+                $errorCount = $error.Count
+                Get-Process -Name asdfasdfasdf
+
+                $error.Count | Should -BeExactly $errorCount
+            } finally {
+                Remove-Variable -Name ErrorActionPreference -Scope Global
+                Rename-Item -LiteralPath variable:oldErrorActionPreference -NewName ErrorActionPreference
+            }
+        }
+
+        It 'action preference of Ignore can be set as a preference variable using an enumerated value' {
+            try {
+                $GLOBAL:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Ignore
+                $errorCount = $error.Count
+                Get-Process -Name asdfasdfasdf
+
+                $error.Count | Should -BeExactly $errorCount
+            } finally {
+                $GLOBAL:ErrorActionPreference = $orgin
+            }
         }
 
         It 'action preference of Suspend cannot be set as a preference variable' {
