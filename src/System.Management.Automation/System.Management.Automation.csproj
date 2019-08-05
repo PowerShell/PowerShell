@@ -6,8 +6,11 @@
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->

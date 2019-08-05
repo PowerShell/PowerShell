@@ -336,9 +336,8 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 Name           = $servicename;
                 BinaryPathName = "$PSHOME\pwsh.exe"
             }
-            $service = New-Service @parameters
-            $service | Should -Not -BeNullOrEmpty
-            $script = { Set-Service $service -DisplayName $newdisplayname }
+
+            $script = { New-Service @parameters | Set-Service -DisplayName $newdisplayname }
             { & $script } | Should -Not -Throw
             $service = Get-Service -Name $servicename
             $service.DisplayName | Should -BeExactly $newdisplayname
