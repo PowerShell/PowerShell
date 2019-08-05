@@ -4,7 +4,6 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }
-
         AfterAll {
             if ($GLOBAL:errorActionPreference -ne $orgin)
             {
@@ -18,44 +17,36 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 get-childitem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
             }
             catch {}
-
             It '$err.Count' { $err.Count | Should -Be 1 }
             It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
             It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
             It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
             It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
         }
-
         It 'ActionPreference Ignore Works' {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ignore
-
             $error.Count | Should -BeExactly $errorCount
         }
 
-        It 'action preference of Ignore can be set as a preference variable using a string value' {
-            try {
-                Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+        It 'action preference of Ignore cannot be set as a preference variable' {
+            $e = {
                 $GLOBAL:errorActionPreference = "Ignore"
-                $errorCount = $error.Count
                 Get-Process -Name asdfasdfasdf
+            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
 
-                $error.Count | Should -BeExactly $errorCount
-            } finally {
-                $GLOBAL:errorActionPreference = $orgin
-            }
+            $GLOBAL:errorActionPreference = $orgin
         }
 
-        It 'action preference of Ignore can be set as a preference variable using an enumerated value' {
-            try {
-                $GLOBAL:errorActionPreference = [actionpreference]::Ignore
-                $errorCount = $error.Count
+        It 'action preference of Suspend cannot be set as a preference variable' {
+            $e = {
+                $GLOBAL:errorActionPreference = "Suspend"
                 Get-Process -Name asdfasdfasdf
+            } | Should -Throw -ErrorId 'RuntimeException' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
 
-                $error.Count | Should -BeExactly $errorCount
-            } finally {
-                $GLOBAL:errorActionPreference = $orgin
-            }
+            $GLOBAL:errorActionPreference = $orgin
         }
 
         It 'enum disambiguation works' {
