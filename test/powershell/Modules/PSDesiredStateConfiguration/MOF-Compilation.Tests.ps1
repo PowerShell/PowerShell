@@ -8,6 +8,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
     BeforeAll {
         $IsAlpine = (Get-PlatformInfo) -eq "alpine"
+        $env:PSModulePath = ""
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
