@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
 namespace Microsoft.PowerShell.Telemetry
@@ -19,10 +18,6 @@ namespace Microsoft.PowerShell.Telemetry
     /// </summary>
     public enum AITelemetryType
     {
-        /// <summary>
-        /// Telemetry for execution
-        /// </summary>
-        PipelineExecution,
         /// <summary>
         /// Track the application type (cmdlet, script, etc)
         /// </summary>
@@ -53,7 +48,7 @@ namespace Microsoft.PowerShell.Telemetry
     public static class ApplicationInsightsTelemetry
     {
         // If this env var is true, yes, or 1, telemetry will NOT be sent.
-        private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
+        private const string _telemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient _telemetryClient = new TelemetryClient();
@@ -63,19 +58,22 @@ namespace Microsoft.PowerShell.Telemetry
 
         // PSCoreInsight2 telemetry key
         // private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // Production
-        private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // Dev
+        private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // V7 Preview 3
 
         // the unique identifier for the user, when we start we
         private static Guid uniqueUserIdentifier = Guid.Empty;
 
         // the session identifier
-        private static Guid sessionId; // = Guid.NewGuid();
+        private static Guid _sessionId;
+
+        // the telemetry failure string
+        private const string _telemetryFailure = "TELEMETRY_FAILURE";
 
         ///<summary>
         /// We send telemetry only a known set of modules.
         /// If it's not in this list, then we report anonymous
         /// </summary>
-        private static string[] knownModuleNames = new string[] {
+        private static string[] _knownModuleNames = new string[] {
                 "Microsoft.PowerShell.Archive",
                 "Microsoft.PowerShell.Host",
                 "Microsoft.PowerShell.Management",
@@ -93,23 +91,32 @@ namespace Microsoft.PowerShell.Telemetry
         public static bool CanSendTelemetry;
 
         // use a hashset for quicker lookups.
-        private static HashSet<string> knownModules; //  = new HashSet<string>(knownModuleNames, StringComparer.OrdinalIgnoreCase);
+        private static HashSet<string> _knownModules;
 
-        // static constructor sets the telemetry key and set the telemetry delivery mode (Developer mode sends quicker)
+        /// <summary>
+        /// Static constructor determines whether telemetry is to be sent, and then
+        /// sets the telemetry key and set the telemetry delivery mode
+        /// Creates the session ID
+        /// Initializes the HashSet of known module names
+        /// Retrieves or constructs the unique identifier
+        /// </summary>
         static ApplicationInsightsTelemetry()
         {
-            CanSendTelemetry = GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: true);
+            CanSendTelemetry = ! GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             // If we can't send telemetry, there's no reason to do any of this
             if ( CanSendTelemetry ) {
                 TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
                 TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
-                sessionId = Guid.NewGuid();
-                knownModules = new HashSet<string>(knownModuleNames, StringComparer.OrdinalIgnoreCase);
+                _sessionId = Guid.NewGuid();
+                // use a hashset when looking for module names, it should be quicker than a string comparison
+                _knownModules = new HashSet<string>(_knownModuleNames, StringComparer.OrdinalIgnoreCase);
                 uniqueUserIdentifier = getUniqueIdentifier();
             }
         }
 
-        // determine whether the environment variable is set and how
+        /// <summary>
+        /// determine whether the environment variable is set and how
+        /// </summary>
         private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
         {
             var str = Environment.GetEnvironmentVariable(name);
@@ -148,7 +155,7 @@ namespace Microsoft.PowerShell.Telemetry
 
             string metricName = Enum.GetName(typeof(AITelemetryType), metricId);
             string uuidString = uniqueUserIdentifier.ToString();
-            string sessionIdString  = sessionId.ToString();
+            string sessionIdString  = _sessionId.ToString();
             bool trackValue = false;
             try {
                 switch (metricId)
@@ -172,16 +179,18 @@ namespace Microsoft.PowerShell.Telemetry
             }
             catch {
                 ; // do nothing, telemetry can't be sent
+                // don't send the panic telemetry as if we have failed above, it will likely fail here.
             }
         }
 
         // Get the experimental feature name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
         private static string getExperimentalFeatureName(string featureNameToValidate)
         {
-            foreach ( string knownModuleName in knownModuleNames )
+            foreach ( string knownModuleName in _knownModuleNames )
             {
                 // An experimental feature in a module is guaranteed to start with the module name
                 // but we can't look up the experimental feature in the hash because there will be more than just the module name.
+                // we can't use a hashset because it's a partial comparison.
                 if ( featureNameToValidate.StartsWith(knownModuleName, StringComparison.OrdinalIgnoreCase ) )
                 {
                     return featureNameToValidate;
@@ -193,7 +202,7 @@ namespace Microsoft.PowerShell.Telemetry
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
         private static string getModuleName(string moduleNameToValidate)
         {
-            if ( knownModules.TryGetValue(moduleNameToValidate, out string valOut)) {
+            if ( _knownModules.TryGetValue(moduleNameToValidate, out string valOut)) {
                 return moduleNameToValidate;
             }
             else {
@@ -214,7 +223,7 @@ namespace Microsoft.PowerShell.Telemetry
             var properties = new Dictionary<string, string>();
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
-            properties.Add("SessionId", sessionId.ToString());
+            properties.Add("SessionId", _sessionId.ToString());
             properties.Add("UUID", uniqueUserIdentifier.ToString());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
@@ -232,7 +241,8 @@ namespace Microsoft.PowerShell.Telemetry
         {
             string cacheDir = Platform.CacheDirectory;
             string uuidPath = Path.Join(cacheDir, "telemetry.uuid");
-            Byte[] buffer = new Byte[16];
+            const int GuidSize = 16;
+            Byte[] buffer = new Byte[GuidSize];
 
             // Don't bother to check if the directory exists
             // we only need to catch if there is a problem and then disable telemetry
@@ -243,7 +253,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
             catch {
                 CanSendTelemetry = false;
-                _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "cachedir");
+                _telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "cachedir");
                 return;
             }
 
@@ -253,10 +263,14 @@ namespace Microsoft.PowerShell.Telemetry
                 using (FileStream fs = new FileStream(uuidPath, FileMode.Open, FileAccess.Read))
                 {
                     // if the read is invalid, or wrong size, we return it
-                    int n = fs.Read(buffer, 0, 16);
-                    if ( n == 16 )
+                    int n = fs.Read(buffer, 0, GuidSize);
+                    if ( n == GuidSize )
                     {
                         uniqueUserIdentifier = new Guid(buffer);
+                        // If Guid.Empty is provided, then create a new identifier
+                        if ( uniqueUserIdentifier == Guid.Empty ) {
+                            throw new InvalidOperationException(Guid.Empty.ToString());
+                        }
                         return;
                     }
                 }
@@ -271,7 +285,7 @@ namespace Microsoft.PowerShell.Telemetry
                 File.WriteAllBytes(uuidPath, uniqueUserIdentifier.ToByteArray());
             }
             catch {
-                _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "saveuuid");
+                _telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
                 CanSendTelemetry = false;
             }
 
@@ -291,12 +305,11 @@ namespace Microsoft.PowerShell.Telemetry
                     m.WaitOne();
                     getUserIdImpl();
                 }
-                // Any problem in generating a uuid will result in no telemetry being sent
                 catch (Exception) {
-                    // attempt to send the failure in telemetry, but it will have no data
-                    // there is no attempt at capturing anything but the failure
+                    // Any problem in generating a uuid will result in no telemetry being sent.
+                    // Attempt to send the failure in telemetry, but it will have no unique id.
                     CanSendTelemetry = false;
-                    _telemetryClient.GetMetric(TelemetryFailure, "Detail").TrackValue(1, "mutex");
+                    _telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
 
                 }
                 finally {
