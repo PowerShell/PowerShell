@@ -5,7 +5,7 @@
 Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
         # if the telemetry file exists, move it out of the way
-        $cacheDir = "$HOME/.cache/powershell"
+        $cacheDir = [System.Management.Automation.Platform]::CacheDirectory
         $uuidPath = Join-Path -Path $cacheDir -ChildPath telemetry.uuid
         $uuidFileExists = Test-Path -Path $uuidPath
         if ( $uuidFileExists ) {

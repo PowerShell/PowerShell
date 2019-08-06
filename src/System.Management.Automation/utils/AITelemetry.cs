@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
         }
 
-        // Get the experimental feature name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
+        // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
         private static string getExperimentalFeatureName(string featureNameToValidate)
         {
             foreach ( string knownModuleName in _knownModuleNames )
