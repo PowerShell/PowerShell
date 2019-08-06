@@ -117,7 +117,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 }
 
-Describe 'ActionPreference.Break tests' -tag 'CI','KirkTest' {
+Describe 'ActionPreference.Break tests' -tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
