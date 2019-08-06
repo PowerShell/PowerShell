@@ -31,8 +31,8 @@ RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
 ADD $PACKAGELOCATION/$PACKAGENAME .
-RUN mkdir -p /opt/microsoft/powershell
-RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
+RUN mkdir -p /opt/microsoft/powershell \
+    && tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 
 # Download and run tests
 RUN $TESTDOWNLOADCOMMAND
