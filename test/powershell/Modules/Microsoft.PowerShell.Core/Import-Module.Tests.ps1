@@ -5,7 +5,7 @@ Describe "Import-Module" -Tags "CI" {
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
 
-        # Remove system paths
+        # Remove system paths because PS 6 modify $env:PSModulePath
         $env:PSModulePath = ""
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\1.1" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\2.0" -Force > $null

@@ -393,7 +393,17 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
 }
 
 Describe "Remove-Module core module on module path by name" -Tags "CI" {
-    $moduleName = "Microsoft.PowerShell.Security"
+    BeforeAll {
+        $originalPSModulePath = $env:PSModulePath
+
+        # Remove system paths because PS 6 modify $env:PSModulePath
+        $env:PSModulePath = ""
+        $moduleName = "Microsoft.PowerShell.Security"
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
 
     BeforeEach {
         Import-Module -Name $moduleName -Force
