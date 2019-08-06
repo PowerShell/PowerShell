@@ -459,7 +459,8 @@ Fix steps:
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
     }
 
-    if (Test-IsPreview $psVersion) {
+    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+    if (Test-IsPreview $psVersion -and !($Runtime.Contains("arm"))) {
         $expFeatures = [System.Collections.Generic.List[string]]::new()
         & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
         $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
