@@ -10,11 +10,6 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Diagnostics.EventLog" Version="4.6.0-preview7.19362.9" />
-  </ItemGroup>
-
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
@@ -30,6 +25,11 @@
     <Compile Remove="PdhHelper.cs" />
     <Compile Remove="PdhSafeHandle.cs" />
     <Compile Remove="gen\GetEventResources.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="GetEventCommand.cs" />
+    <Compile Remove="NewWinEventCommand.cs" />
   </ItemGroup>
 
 </Project>
