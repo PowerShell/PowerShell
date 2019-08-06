@@ -147,7 +147,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's', 's')
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -188,7 +188,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's', 's')
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
