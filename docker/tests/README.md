@@ -10,7 +10,7 @@ The tests must be run separately on the Windows and Linux docker daemons. You ca
 Invoke-Pester
 ```
 
-Note: be sure to do this using both the Windows and Linux docker daemon, as the windows.
+Note: be sure to do this using both the Windows and Linux docker daemon.
 
 ## To test the productions containers
 
