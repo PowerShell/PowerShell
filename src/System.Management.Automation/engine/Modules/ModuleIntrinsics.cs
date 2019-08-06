@@ -1216,7 +1216,6 @@ namespace System.Management.Automation
 #endif
                 }
 
-                CheckModulePath();
                 s_modulePathCache = s_modulePath;
                 s_psModulePathEnvVar = currentModulePath;
 
@@ -1234,18 +1233,6 @@ namespace System.Management.Automation
                 }
 
                 return s_modulePath;
-            }
-        }
-
-        private static void CheckModulePath()
-        {
-            HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var p in s_modulePath)
-            {
-                if (!processedPathSet.Add(p))
-                {
-                    PSTraceSource.NewInvalidOperationException();
-                }
             }
         }
 
