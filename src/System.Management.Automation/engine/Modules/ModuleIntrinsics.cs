@@ -1145,7 +1145,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             int indexOfSharedModulePath = IndexOfPath(sharedModulePath);
             if (indexOfSharedModulePath == -1)
             {
