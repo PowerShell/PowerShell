@@ -1291,11 +1291,13 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Description")
                         .AddItemProperty(@"ModuleType")
                         .AddItemProperty(@"Version")
-                        .AddItemScriptBlock(@"
+                        .AddItemScriptBlock(
+                            @"
                             if ($_.PrivateData -and $_.PrivateData.PSData)
                             {
                                     $_.PrivateData.PSData.PreRelease
-                            }", label: "PreRelease")
+                            }",
+                            label: "PreRelease")
                         .AddItemProperty(@"NestedModules")
                         .AddItemScriptBlock(@"$_.ExportedFunctions.Keys", label: "ExportedFunctions")
                         .AddItemScriptBlock(@"$_.ExportedCmdlets.Keys", label: "ExportedCmdlets")
