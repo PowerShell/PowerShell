@@ -292,10 +292,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public Debugger Debugger
         {
-            get
-            {
-                return _powershell.Runspace.Debugger;
-            }
+            get => _powershell.Runspace.Debugger;
         }
 
         #endregion
@@ -358,7 +355,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets Task Id.
         /// </summary>
-        public int Id { get { return _id; } }
+        public int Id { get => _id; }
 
         #endregion
 
@@ -488,7 +485,7 @@ namespace System.Management.Automation.PSTasks
         /// the data stream collection.
         internal WaitHandle DataAddedWaitHandle
         {
-            get { return _dataStream.WaitHandle; }
+            get => _dataStream.WaitHandle;
         }
 
         #endregion
@@ -639,14 +636,14 @@ namespace System.Management.Automation.PSTasks
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
         /// <summary>
         /// Gets boolean indicating if pool is currently open for accepting tasks.
         /// </summary>
         public bool IsOpen
         {
-            get { return _isOpen; }
+            get => _isOpen;
         }
 
         #endregion
@@ -884,7 +881,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override string Location
         {
-            get { return "PowerShell"; }
+            get => "PowerShell";
         }
 
         /// <summary>
@@ -911,7 +908,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override string StatusMessage
         {
-            get { return string.Empty; }
+            get => string.Empty;
         }
 
         /// <summary>
@@ -1144,6 +1141,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Returns IEnumerable of CallStackFrame objects.
         /// </summary>
+        /// <returns>Enumerable call stack</returns>
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             return _wrappedDebugger.GetCallStack();
@@ -1152,6 +1150,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
+        /// <param name="enabled">True to enable debugger step mode</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             _wrappedDebugger.SetDebuggerStepMode(enabled);
@@ -1162,7 +1161,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override bool InBreakpoint
         {
-            get { return _wrappedDebugger.InBreakpoint; }
+            get => _wrappedDebugger.InBreakpoint;
         }
 
         #endregion
@@ -1237,7 +1236,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         internal PSTaskBase Task
         {
-            get { return _task; }
+            get => _task;
         }
 
         #endregion
@@ -1249,7 +1248,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override string Location
         {
-            get { return "PowerShell"; }
+            get => "PowerShell";
         }
 
         /// <summary>
@@ -1257,16 +1256,13 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override bool HasMoreData
         {
-            get 
-            { 
-                return this.Output.Count > 0 ||
-                       this.Error.Count > 0 ||
-                       this.Progress.Count > 0 ||
-                       this.Verbose.Count > 0 ||
-                       this.Debug.Count > 0 ||
-                       this.Warning.Count > 0 ||
-                       this.Information.Count > 0;
-            }
+            get => this.Output.Count > 0 ||
+                   this.Error.Count > 0 ||
+                   this.Progress.Count > 0 ||
+                   this.Verbose.Count > 0 ||
+                   this.Debug.Count > 0 ||
+                   this.Warning.Count > 0 ||
+                   this.Information.Count > 0;
         }
 
         /// <summary>
@@ -1274,7 +1270,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override string StatusMessage
         {
-            get { return string.Empty; }
+            get => string.Empty;
         }
 
         /// <summary>
