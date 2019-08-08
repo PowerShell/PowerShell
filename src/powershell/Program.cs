@@ -41,6 +41,10 @@ namespace Microsoft.PowerShell
             public int ExitCode { get; }
         }
 
+        // Environment variable used to short circuit second login check
+        private const string LOGIN_ENV_VAR_NAME = "__PWSH_LOGIN_CHECKED";
+        private const string LOGIN_ENV_VAR_VALUE = "1";
+
         // Linux p/Invoke constants
         private const int LINUX_PATH_MAX = 4096;
 
@@ -76,6 +80,13 @@ namespace Microsoft.PowerShell
         /// <param name="args">The startup arguments to pwsh.</param>
         private static void AttemptExecPwshLogin(string[] args)
         {
+            // If the login environment variable is set, we have already done the login logic and have been exec'd
+            if (Environment.GetEnvironmentVariable(LOGIN_ENV_VAR_NAME) != null)
+            {
+                Environment.SetEnvironmentVariable(LOGIN_ENV_VAR_NAME, null);
+                return;
+            }
+
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
@@ -93,7 +104,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // Run login detection logic
-                if (!IsLogin(procNameFirstByte, args, out int loginArgIndex))
+                if (!IsLogin(procNameFirstByte, args))
                 {
                     return;
                 }
@@ -105,7 +116,7 @@ namespace Microsoft.PowerShell
                 Marshal.FreeHGlobal(linkPathPtr);
 
                 // exec pwsh
-                ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: false));
+                ThrowIfFails("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
                 return;
             }
 
@@ -131,6 +142,8 @@ namespace Microsoft.PowerShell
             // Get the PID so we can query this process' args
             int pid = GetPid();
 
+            // The following logic is based on https://gist.github.com/nonowarn/770696
+
             // Now read the process args into the allocated space
             IntPtr procargs = Marshal.AllocHGlobal(argmax);
             IntPtr execPathPtr = IntPtr.Zero;
@@ -148,7 +161,25 @@ namespace Microsoft.PowerShell
                         ThrowIfFails(nameof(procargs), SysCtl(mibptr, mibLength, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
                     }
 
-                    // Skip over argc, remember where exec_path is
+                    // The memory block we're reading is a series of null-terminated strings
+                    // that looks something like this:
+                    //
+                    // | argc      | <int>
+                    // | exec_path | ... \0
+                    // | argv[0]   | ... \0
+                    // | argv[1]   | ... \0
+                    //   ...
+                    //
+                    // We care about argv[0], since that's the name the process was started with
+                    // If argv[0][0] == '-', we have been invoked as login.
+                    // Doing this, the buffer we populated also recorded `exec_path`,
+                    // which is the path to our executable.
+                    // We can reuse this value later to prevent needing to call a .NET API
+                    // to generate our exec invocation.
+
+
+                    // We don't care about argc's value, since argv[0] must always exist
+                    // Skip over argc, but remember where exec_path is for later
                     execPathPtr = IntPtr.Add(procargs, sizeof(int));
 
                     // Skip over exec_path
@@ -160,7 +191,7 @@ namespace Microsoft.PowerShell
                     procNameFirstByte = *argvPtr;
                 }
 
-                if (!IsLogin(procNameFirstByte, args, out int loginArgIndex))
+                if (!IsLogin(procNameFirstByte, args))
                 {
                     return;
                 }
@@ -169,7 +200,7 @@ namespace Microsoft.PowerShell
                 pwshPath = Marshal.PtrToStringAnsi(execPathPtr);
 
                 // exec pwsh
-                ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: true));
+                ThrowIfFails("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
             }
             finally
             {
@@ -182,26 +213,15 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="procNameFirstByte">The first byte of the name of the currently running process.</param>
         /// <param name="args">Arguments passed to the program.</param>
-        /// <param name="loginIndex">The arg index (in argv) where -Login was found.</param>
         /// <returns></returns>
         private static bool IsLogin(
             byte procNameFirstByte,
-            string[] args,
-            out int loginIndex)
+            string[] args)
         {
-            loginIndex = -1;
-
-            switch (procNameFirstByte)
+            // Process name starting with '-' means this is a login shell
+            if (procNameFirstByte == 0x2D)
             {
-                // '+' signifies we have already done login check
-                case 0x2B:
-                    return false;
-
-                // '-' means this is a login shell
-                case 0x2D:
-                    return true;
-
-                // For any other char, we check for a login parameter
+                return true;
             }
 
             // Parameter comparison strings, stackalloc'd for performance
@@ -218,14 +238,14 @@ namespace Microsoft.PowerShell
                 // Check for "-Login" or some prefix thereof
                 if (IsParam(arg, "login", "LOGIN"))
                 {
-                    loginIndex = i;
                     return true;
                 }
 
-                // After -File and -Command, all parameters are passed
+                // After -File, -Command and -Version, all parameters are passed
                 // to the invoked file or command, so we can stop looking.
                 if (IsParam(arg, "file", "FILE")
-                    || IsParam(arg, "command", "COMMAND"))
+                    || IsParam(arg, "command", "COMMAND")
+                    || IsParam(arg, "version", "VERSION"))
                 {
                     return false;
                 }
@@ -270,30 +290,25 @@ namespace Microsoft.PowerShell
         /// Create the exec call to /bin/{z}sh -l -c 'exec -a +pwsh pwsh "$@"' and run it.
         /// </summary>
         /// <param name="args">The argument vector passed to pwsh.</param>
-        /// <param name="loginArgIndex">The index of -Login in the argument vector.</param>
         /// <param name="isMacOS">True if we are running on macOS.</param>
         /// <param name="pwshPath">Absolute path to the pwsh executable.</param>
         /// <returns>
         /// The exit code of exec if it fails.
         /// If exec succeeds, this process is overwritten so we never actually return.
         /// </returns>
-        private static int ExecPwshLogin(string[] args, int loginArgIndex, string pwshPath, bool isMacOS)
+        private static int ExecPwshLogin(string[] args, string pwshPath, bool isMacOS)
         {
             // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
 
-            // /bin/sh does not support the exec -a feature
-            int pwshExecInvocationLength = isMacOS
-                ? quotedPwshPathLength + 19  // exec -a +pwsh '{pwshPath}' "$@"
-                : quotedPwshPathLength + 10; // exec '{pwshPath}' "$@"
-
             string pwshInvocation = string.Create(
-                pwshExecInvocationLength, 
-                (pwshPath, quotedPwshPathLength, isMacOS),
+                quotedPwshPathLength + 10, // exec '{pwshPath}' "$@" 
+                (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
             // Set up the arguments for /bin/sh
-            var execArgs = new string[args.Length + 5];
+            // We need to add the 5 /bin/sh invocation parts, plus 1 null terminator at the end
+            var execArgs = new string[args.Length + 6];
 
             // execArgs[0] is set below to the correct shell executable
 
@@ -308,18 +323,12 @@ namespace Microsoft.PowerShell
             execArgs[4] = ""; // Within the shell, exec ignores $0
 
             // Add the arguments passed to pwsh on the end
-            int i = 0;
-            int j = 5;
-            for (; i < args.Length; i++)
-            {
-                if (i == loginArgIndex) { continue; }
-
-                execArgs[j] = args[i];
-                j++;
-            }
+            args.CopyTo(execArgs, 5);
 
             // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
+
+            ThrowIfFails("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
             // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
             if (isMacOS)
@@ -356,42 +365,22 @@ namespace Microsoft.PowerShell
         /// <param name="invocationInfo">Information used to build the required string.</param>
         private static void CreatePwshInvocation(
             Span<char> strBuf,
-            (string path, int quotedLength, bool supportsDashA) invocationInfo)
+            (string path, int quotedLength) invocationInfo)
         {
             // "exec "
-            int i = 0;
-            strBuf[i++]  = 'e';
-            strBuf[i++]  = 'x';
-            strBuf[i++]  = 'e';
-            strBuf[i++]  = 'c';
-            strBuf[i++]  = ' ';
+            string prefix = "exec ";
+            prefix.AsSpan().CopyTo(strBuf);
 
-            if (invocationInfo.supportsDashA)
-            {
-                // "-a +pwsh "
-                // We use this where -a is supported to prevent a second login check
-                strBuf[i++] = '-';
-                strBuf[i++] = 'a';
-                strBuf[i++] = ' ';
-                strBuf[i++] = '+';
-                strBuf[i++] = 'p';
-                strBuf[i++] = 'w';
-                strBuf[i++] = 's';
-                strBuf[i++] = 'h';
-                strBuf[i++] = ' ';
-            }
-            
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
+            int i = prefix.Length;
             Span<char> pathSpan = strBuf.Slice(i, invocationInfo.quotedLength);
             QuoteAndWriteToSpan(invocationInfo.path, pathSpan);
             i += invocationInfo.quotedLength;
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            strBuf[i++] = ' ';
-            strBuf[i++] = '"';
-            strBuf[i++] = '$';
-            strBuf[i++] = '@';
-            strBuf[i++] = '"';
+            string suffix = " \"$@\"";
+            Span<char> bufSuffix = strBuf.Slice(i);
+            suffix.AsSpan().CopyTo(bufSuffix);
         }
 
         /// <summary>
@@ -431,12 +420,14 @@ namespace Microsoft.PowerShell
         {
             if (code < 0)
             {
+                code = Marshal.GetLastWin32Error();
+                Console.Error.WriteLine($"Call to '{call}' failed with errno {code}");
                 throw new StartupException(call, code);
             }
         }
 
         /// <summary>
-        /// The `execv` syscall we use to exec /bin/sh.
+        /// The `execv` POSIX syscall we use to exec /bin/sh.
         /// </summary>
         /// <param name="path">The path to the executable to exec.</param>
         /// <param name="args">
@@ -454,7 +445,7 @@ namespace Microsoft.PowerShell
         private static extern int Exec(string path, string[] args);
 
         /// <summary>
-        /// The `readlink` syscall we use to read the symlink from /proc/self/exe
+        /// The `readlink` POSIX syscall we use to read the symlink from /proc/self/exe
         /// to get the executable path of pwsh on Linux.
         /// </summary>
         /// <param name="pathname">The path to the symlink to read.</param>
@@ -462,7 +453,7 @@ namespace Microsoft.PowerShell
         /// <param name="size">The size of the buffer we have supplied.</param>
         /// <returns>The number of bytes placed in the buffer.</returns>
         [DllImport("libc",
-            EntryPoint="readlink",
+            EntryPoint = "readlink",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi)]
         private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
@@ -476,6 +467,19 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi)]
         private static extern int GetPid();
+
+        /// <summary>
+        /// The `setenv` POSIX syscall used to set an environment variable in the process.
+        /// </summary>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="value">The value of the environment variable.</param>
+        /// <param name="overwrite">If true, will overwrite an existing environment variable of the same name.</param>
+        /// <returns>0 if successful, -1 on error. errno indicates the reason for failure.</returns>
+        [DllImport("libc",
+            EntryPoint = "setenv",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static extern int SetEnv(string name, string value, bool overwrite);
 
         /// <summary>
         /// The `sysctl` BSD sycall used to get system information on macOS.
