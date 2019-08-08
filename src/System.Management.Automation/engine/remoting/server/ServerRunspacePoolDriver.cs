@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -656,14 +657,21 @@ namespace System.Management.Automation
             // on Remoting in PowerShell engine
             try
             {
-                string initialLocation = string.IsNullOrWhiteSpace(_initialLocation) ? Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments) : _initialLocation;
-                args.Runspace.ExecutionContext.EngineSessionState.SetLocation(initialLocation);
+                string personalfolder = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                args.Runspace.ExecutionContext.EngineSessionState.SetLocation(personalfolder);
             }
             catch (Exception)
             {
                 // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
+            }
+            
+            if (!string.IsNullOrWhiteSpace(_initialLocation))
+            {
+                var setLocationCommand = new Command("Set-Location");
+                setLocationCommand.Parameters.Add(new CommandParameter("LiteralPath", _initialLocation));
+                InvokeScript(setLocationCommand, args);
             }
     
             // Run startup scripts
