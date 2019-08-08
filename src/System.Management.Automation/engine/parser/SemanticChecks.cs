@@ -458,13 +458,11 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((switchStatementAst.Flags & SwitchFlags.Parallel) == SwitchFlags.Parallel)
             {
-                bool reportError = !switchStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(switchStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(switchStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "switch",
+                    "parallel");
             }
 
             return AstVisitAction.Continue;
@@ -494,13 +492,20 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((forEachStatementAst.Flags & ForEachFlags.Parallel) == ForEachFlags.Parallel)
             {
-                bool reportError = !forEachStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(forEachStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "parallel");
+            }
+
+            if (forEachStatementAst.ThrottleLimit != null)
+            {
+                _parser.ReportError(forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "throttlelimit");
             }
 
             // Throttle limit must be combined with Parallel flag
