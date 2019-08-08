@@ -151,7 +151,7 @@ namespace System.Management.Automation
                 if (IsModuleFeatureName(name))
                 {
                     list.Add(name);
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.ExperimentalFeatureActivation, name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalModuleFeatureActivation, name);
                 }
                 else if (IsEngineFeatureName(name))
                 {
@@ -159,7 +159,7 @@ namespace System.Management.Automation
                     {
                         feature.Enabled = true;
                         list.Add(name);
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.ExperimentalFeatureActivation, name);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureActivation, name);
                     }
                     else
                     {

@@ -826,6 +826,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // Send telemetry on the imported modules
+            foreach(PSModuleInfo mInfo in remotelyImportedModules )
+            {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, mInfo.Name);
+            }
+
             return remotelyImportedModules;
         }
 
@@ -1252,6 +1258,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (RemoteDiscoveryHelper.CimModule remoteCimModule in remotePsCimModules)
             {
                 ImportModule_RemotelyViaCimModuleData(importModuleOptions, remoteCimModule, cimSession);
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, remoteCimModule.ModuleName);
             }
         }
 
@@ -1744,6 +1751,7 @@ namespace Microsoft.PowerShell.Commands
                 // of doing Get-Module -list
                 foreach (PSModuleInfo module in ModuleInfo)
                 {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, module.Name);
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
                         localAction: delegate ()
@@ -1773,6 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Assembly suppliedAssembly in Assembly)
                     {
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, suppliedAssembly.GetName().Name);
                         ImportModule_ViaAssembly(importModuleOptions, suppliedAssembly);
                     }
                 }
@@ -1787,8 +1796,7 @@ namespace Microsoft.PowerShell.Commands
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
                         // Telemetry here - report module load
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.ModuleLoad, foundModule.Name);
-                        // if it's in our known list, report the name, otherwise "anonymousmodule"
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
 #if LEGACYTELEMETRY
                         TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
@@ -1813,6 +1821,7 @@ namespace Microsoft.PowerShell.Commands
                     BaseGuid = modulespec.Guid;
 
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                     if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
@@ -1822,6 +1831,10 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_FQName_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
             {
                 ImportModule_RemotelyViaPsrpSession(importModuleOptions, null, FullyQualifiedName, this.PSSession);
+                foreach ( ModuleSpecification modulespec in FullyQualifiedName )
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
+                }
             }
             else
             {

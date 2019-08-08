@@ -856,7 +856,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
             // Telemetry here - remote session
-            ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.RemoteSessionOpen, isAsync.ToString());
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.RemoteSessionOpen, isAsync.ToString());
 #if LEGACYTELEMETRY
             TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
 #endif

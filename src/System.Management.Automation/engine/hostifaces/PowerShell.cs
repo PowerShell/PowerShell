@@ -640,7 +640,7 @@ namespace System.Management.Automation
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
             // Telemetry here
-            ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.PowerShellCreate, InstanceId.ToString());
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.PowerShellCreate, "create");
         }
 
         /// <summary>

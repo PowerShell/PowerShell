@@ -143,7 +143,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieve the location for the various caches
         /// </summary>
-        public static string CacheDirectory
+        internal static string CacheDirectory
         {
             get
             {
