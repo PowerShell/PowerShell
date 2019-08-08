@@ -245,7 +245,8 @@ namespace Microsoft.PowerShell
                 // to the invoked file or command, so we can stop looking.
                 if (IsParam(arg, "file", "FILE")
                     || IsParam(arg, "command", "COMMAND")
-                    || IsParam(arg, "version", "VERSION"))
+                    || IsParam(arg, "version", "VERSION")
+                    || IsParam(arg, "help", "HELP"))
                 {
                     return false;
                 }
