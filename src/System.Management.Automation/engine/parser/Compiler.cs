@@ -3101,7 +3101,7 @@ namespace System.Management.Automation.Language
                         rhsStatementAst = subAssignmentAst.Right;
                         continue;
 
-                    case StatementChainAst statementChainAst:
+                    case StatementChainAst _:
                         return true;
 
                     case PipelineChainAst pipelineChainAst:
