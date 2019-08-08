@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell
                 Marshal.FreeHGlobal(linkPathPtr);
 
                 // exec pwsh
-                ThrowIfFails("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
+                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell
             {
                 fixed (int *mibptr = mib)
                 {
-                    ThrowIfFails(nameof(argmax), SysCtl(mibptr, mibLength, &argmax, &size, IntPtr.Zero, 0));
+                    ThrowOnFailure(nameof(argmax), SysCtl(mibptr, mibLength, &argmax, &size, IntPtr.Zero, 0));
                 }
             }
 
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell
                 {
                     fixed (int *mibptr = mib)
                     {
-                        ThrowIfFails(nameof(procargs), SysCtl(mibptr, mibLength, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
+                        ThrowOnFailure(nameof(procargs), SysCtl(mibptr, mibLength, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
                     }
 
                     // The memory block we're reading is a series of null-terminated strings
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell
                 pwshPath = Marshal.PtrToStringAnsi(execPathPtr);
 
                 // exec pwsh
-                ThrowIfFails("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
+                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
             }
             finally
             {
@@ -315,8 +315,10 @@ namespace Microsoft.PowerShell
             // The command arguments
 
             // First argument is the command name.
-            // Setting this to /bin/sh enables sh emulation in zsh (which examines $0 to determine how it should behave).
+            // Even when executing zsh, we want to set this to /bin/sh
+            // because this tells zsh to run in sh emulation mode (it examines $0)
             execArgs[0] = "/bin/sh"; 
+
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
             execArgs[3] = pwshInvocation; // Command to execute
@@ -328,7 +330,7 @@ namespace Microsoft.PowerShell
             // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
 
-            ThrowIfFails("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
+            ThrowOnFailure("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
             // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
             if (isMacOS)
@@ -416,7 +418,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="call">The native call that was attempted.</param>
         /// <param name="code">The exit code it returned.</param>
-        private static void ThrowIfFails(string call, int code)
+        private static void ThrowOnFailure(string call, int code)
         {
             if (code < 0)
             {
