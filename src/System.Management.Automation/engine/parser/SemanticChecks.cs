@@ -458,7 +458,8 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((switchStatementAst.Flags & SwitchFlags.Parallel) == SwitchFlags.Parallel)
             {
-                _parser.ReportError(switchStatementAst.Extent,
+                _parser.ReportError(
+                    switchStatementAst.Extent,
                     nameof(ParserStrings.KeywordParameterReservedForFutureUse),
                     ParserStrings.KeywordParameterReservedForFutureUse,
                     "switch",
@@ -492,7 +493,8 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((forEachStatementAst.Flags & ForEachFlags.Parallel) == ForEachFlags.Parallel)
             {
-                _parser.ReportError(forEachStatementAst.Extent,
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
                     nameof(ParserStrings.KeywordParameterReservedForFutureUse),
                     ParserStrings.KeywordParameterReservedForFutureUse,
                     "foreach",
@@ -501,7 +503,8 @@ namespace System.Management.Automation.Language
 
             if (forEachStatementAst.ThrottleLimit != null)
             {
-                _parser.ReportError(forEachStatementAst.Extent,
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
                     nameof(ParserStrings.KeywordParameterReservedForFutureUse),
                     ParserStrings.KeywordParameterReservedForFutureUse,
                     "foreach",
@@ -512,7 +515,8 @@ namespace System.Management.Automation.Language
             if ((forEachStatementAst.ThrottleLimit != null) &&
                 ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
             {
-                _parser.ReportError(forEachStatementAst.Extent,
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
                     nameof(ParserStrings.ThrottleLimitRequiresParallelFlag),
                     ParserStrings.ThrottleLimitRequiresParallelFlag);
             }
