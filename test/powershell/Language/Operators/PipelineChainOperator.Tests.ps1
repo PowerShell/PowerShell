@@ -3,6 +3,15 @@
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSPipelineChainOperators')
+        if ($skipTest)
+        {
+            Write-Verbose "Test Suite Skipped: These tests require the PSPipelineChainOperators experimental feature to be enabled" -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         function Test-SuccessfulCommand
         {
             Write-Output "SUCCESS"
@@ -114,7 +123,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
 
     AfterAll {
         if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            $PSDefaultParameterValues = $originalDefaultParameterValues
         }
     }
 

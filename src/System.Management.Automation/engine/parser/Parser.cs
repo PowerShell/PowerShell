@@ -35,6 +35,8 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
+        private static readonly bool s_pipelineChainsEnabled = ExperimentalFeature.IsEnabled("PSPipelineChainOperators");
+
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
@@ -5714,6 +5716,11 @@ namespace System.Management.Automation.Language
             // G      '||'
             // G      '&&'
 
+            if (!s_pipelineChainsEnabled)
+            {
+                return PipelineRule(allowBackground: true);
+            }
+
             Token assignToken = null;
             ExpressionAst expr;
 
@@ -5954,6 +5961,7 @@ namespace System.Management.Automation.Language
             while (scanning)
             {
                 CommandBaseAst commandAst;
+                Token assignToken = null;
 
                 if (expr == null)
                 {
@@ -5963,6 +5971,21 @@ namespace System.Management.Automation.Language
                     {
                         SetTokenizerMode(TokenizerMode.Expression);
                         expr = ExpressionRule();
+
+                        // When pipeline chains are not enabled, we must process assignment.
+                        // We are looking for <expr> = <statement>, and have seen <expr>.
+                        // Now looking for '='
+                        if (!s_pipelineChainsEnabled && expr == null)
+                        {
+                            // We peek here because we are in expression mode,
+                            // otherwise =0 will get scanned as a single token.
+                            Token token = PeekToken();
+                            if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
+                            {
+                                SkipToken();
+                                assignToken = token;
+                            }
+                        }
                     }
                     finally
                     {
@@ -5979,6 +6002,36 @@ namespace System.Management.Automation.Language
                         ReportError(expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
+                    }
+
+                    // To process assignment when pipeline chains are not enabled,
+                    // we have seen '<expr> = ' and now expect a statement
+                    if (!s_pipelineChainsEnabled && assignToken != null)
+                    {
+                        SkipNewlines();
+                        StatementAst statement = StatementRule();
+
+                        if (statement == null)
+                        {
+                            // ErrorRecovery:
+                            // We are likely at EOF, since almost anything else should result in a pipeline,
+                            // so just keep parsing
+
+                            IScriptExtent errorExtent = After(assignToken);
+                            ReportIncompleteInput(
+                                errorExtent,
+                                nameof(ParserStrings.ExpectedValueExpression),
+                                ParserStrings.ExpectedValueExpression,
+                                assignToken.Kind.Text());
+                            statement = new ErrorStatementAst(errorExtent);
+                        }
+
+                        return new AssignmentStatementAst(
+                            ExtentOf(expr, statement),
+                            expr,
+                            assignToken.Kind,
+                            statement,
+                            assignToken.Extent);
                     }
 
                     RedirectionAst[] redirections = null;
@@ -6048,14 +6101,37 @@ namespace System.Management.Automation.Language
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
                     case TokenKind.EndOfInput:
-                    case TokenKind.AndAnd:
-                    case TokenKind.OrOr:
                         // Handled by invoking rule
                         scanning = false;
                         continue;
 
+                    case TokenKind.AndAnd:
+                    case TokenKind.OrOr:
+                        if (s_pipelineChainsEnabled)
+                        {
+                            scanning = false;
+                            continue;
+                        }
+
+                        // Report that &&/|| are unsupported
+                        SkipToken();
+                        SkipNewlines();
+                        ReportError(
+                            nextToken.Extent,
+                            nameof(ParserStrings.InvalidEndOfLine),
+                            nextToken.Text);
+
+                        if (PeekToken().Kind == TokenKind.EndOfInput)
+                        {
+                            scanning = false;
+                        }
+
+                        break;
+
+
                     case TokenKind.Ampersand:
-                        if (!allowBackground)
+                        // When pipeline chains are not enabled, pipelines always handle backgrounding
+                        if (s_pipelineChainsEnabled && !allowBackground)
                         {
                             // Handled by invoking rule
                             scanning = false;
