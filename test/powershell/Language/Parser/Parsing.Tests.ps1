@@ -2,6 +2,19 @@
 # Licensed under the MIT License.
 set-strictmode -v 2
 
+Describe 'reserved keyword parsing' -Tags 'CI' {
+    ShouldBeParseError 'from' ReservedKeywordNotAllowed 1 -CheckColumnNumber
+    ShouldBeParseError 'define' ReservedKeywordNotAllowed 1 -CheckColumnNumber
+    ShouldBeParseError 'var' ReservedKeywordNotAllowed 1 -CheckColumnNumber
+}
+
+Describe 'deprecated keyword parsing' -Tags 'CI' {
+    ShouldBeParseError 'workflow' DeprecatedKeywordNotAllowed 1 -CheckColumnNumber
+    ShouldBeParseError 'parallel' DeprecatedKeywordNotAllowed 1 -CheckColumnNumber
+    ShouldBeParseError 'sequence' DeprecatedKeywordNotAllowed 1 -CheckColumnNumber
+    ShouldBeParseError 'inlinescript' DeprecatedKeywordNotAllowed 1 -CheckColumnNumber
+}
+
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
     ShouldBeParseError 'for(' MissingEndParenthesisAfterStatement 5 -CheckColumnNumber

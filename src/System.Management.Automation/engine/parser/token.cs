@@ -516,16 +516,16 @@ namespace System.Management.Automation.Language
         /// <summary>The 'while' keyword.</summary>
         While = 150,
 
-        /// <summary>The 'workflow' keyword.</summary>
+        /// <summary>The 'workflow' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
         Workflow = 151,
 
-        /// <summary>The 'parallel' keyword.</summary>
+        /// <summary>The 'parallel' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
         Parallel = 152,
 
-        /// <summary>The 'sequence' keyword.</summary>
+        /// <summary>The 'sequence' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
         Sequence = 153,
 
-        /// <summary>The 'InlineScript' keyword</summary>
+        /// <summary>The 'InlineScript' keyword. This keyword was part of workflow functionality that was deprecated in PowerShell 7.</summary>
         InlineScript = 154,
 
         /// <summary>The "configuration" keyword</summary>
@@ -720,6 +720,11 @@ namespace System.Management.Automation.Language
         /// The token is a statement but does not support attributes.
         /// </summary>
         StatementDoesntSupportAttributes = 0x01000000,
+
+        /// <summary>
+        /// The token has been deprecated.
+        /// </summary>
+        Deprecated = 0x10000000,
     }
 
     /// <summary>
@@ -903,10 +908,10 @@ namespace System.Management.Automation.Language
             /*                Using */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                  Var */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
             /*                While */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Workflow */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Parallel */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*             Sequence */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
-            /*         InlineScript */ TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes,
+            /*             Workflow */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*             Parallel */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*             Sequence */ TokenFlags.Keyword | TokenFlags.Deprecated,
+            /*         InlineScript */ TokenFlags.Keyword | TokenFlags.Deprecated,
             /*        Configuration */ TokenFlags.Keyword,
             /*    <dynamic keyword> */ TokenFlags.Keyword,
             /*               Public */ TokenFlags.Keyword,
@@ -1133,10 +1138,10 @@ namespace System.Management.Automation.Language
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
                                "Table out of sync with enum - flags Begin");
-            Diagnostics.Assert(GetTraits(TokenKind.Workflow) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
+            Diagnostics.Assert(GetTraits(TokenKind.Workflow) == (TokenFlags.Keyword | TokenFlags.Deprecated),
                                "Table out of sync with enum - flags Workflow");
-            Diagnostics.Assert(GetTraits(TokenKind.Sequence) == (TokenFlags.Keyword | TokenFlags.StatementDoesntSupportAttributes),
-                               "Table out of sync with enum - flags Sequence");
+            Diagnostics.Assert(GetTraits(TokenKind.Configuration) == TokenFlags.Keyword,
+                               "Table out of sync with enum - flags Configuration");
             Diagnostics.Assert(GetTraits(TokenKind.Shr) == (TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold),
                                "Table out of sync with enum - flags Shr");
             Diagnostics.Assert(s_tokenText[(int)TokenKind.Shr].Equals("-shr", StringComparison.OrdinalIgnoreCase),

@@ -722,7 +722,6 @@ namespace System.Management.Automation.Language
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
         internal bool WantSimpleName { get; set; }
-        internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
         internal Token FirstToken { get; private set; }
 
@@ -4392,8 +4391,7 @@ namespace System.Management.Automation.Language
                 sb = null;
                 if (s_keywordTable.TryGetValue(ident, out tokenKind))
                 {
-                    if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
-                        return NewToken(tokenKind);
+                    return NewToken(tokenKind);
                 }
 
                 if (DynamicKeyword.ContainsKeyword(ident) && !DynamicKeyword.IsHiddenKeyword(ident))

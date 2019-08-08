@@ -288,42 +288,6 @@ namespace System.Management.Automation.Language
 
         internal static PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
 
-        internal bool IsInWorkflow()
-        {
-            // Scan up the AST's parents, looking for a script block that is either
-            // a workflow, or has a job definition attribute.
-            // Stop scanning when we encounter a FunctionDefinitionAst
-            Ast current = this;
-            bool stopScanning = false;
-
-            while (current != null && !stopScanning)
-            {
-                ScriptBlockAst scriptBlock = current as ScriptBlockAst;
-                if (scriptBlock != null)
-                {
-                    // See if this uses the workflow keyword
-                    FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
-                    if ((functionDefinition != null))
-                    {
-                        stopScanning = true;
-                        if (functionDefinition.IsWorkflow) { return true; }
-                    }
-                }
-
-                CommandAst commandAst = current as CommandAst;
-                if (commandAst != null &&
-                    string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
-                    this != commandAst)
-                {
-                    return false;
-                }
-
-                current = current.Parent;
-            }
-
-            return false;
-        }
-
         internal bool HasSuspiciousContent { get; set; }
 
         #region Search Ancestor Ast
@@ -894,7 +858,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -913,7 +877,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -932,7 +896,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
@@ -953,7 +917,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
@@ -974,7 +938,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
@@ -996,7 +960,7 @@ namespace System.Management.Automation.Language
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
-        /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
+        /// <param name="isFilter">True if the script block is a filter, false if it is a function.</param>
         /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
@@ -3556,13 +3520,12 @@ namespace System.Management.Automation.Language
     public class FunctionDefinitionAst : StatementAst, IParameterMetadataProvider
     {
         /// <summary>
-        /// Construct a function definition.
+        /// Initializes a new instance of the <see cref="FunctionDefinitionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the function definition, starting with the function or filter keyword, ending at the closing curly.
         /// </param>
         /// <param name="isFilter">True if the filter keyword was used.</param>
-        /// <param name="isWorkflow">True if the workflow keyword was used.</param>
         /// <param name="name">The name of the function.</param>
         /// <param name="parameters">
         /// The parameters specified after the function name.  This does not include parameters specified with a param statement.
@@ -3572,12 +3535,15 @@ namespace System.Management.Automation.Language
         /// If <paramref name="extent"/>, <paramref name="name"/>, or <paramref name="body"/> is null, or
         /// if <paramref name="name"/> is an empty string.
         /// </exception>
-        public FunctionDefinitionAst(IScriptExtent extent,
-                                     bool isFilter,
-                                     bool isWorkflow,
-                                     string name,
-                                     IEnumerable<ParameterAst> parameters,
-                                     ScriptBlockAst body)
+        /// <remarks>
+        /// This class represents a function definition in PowerShell.
+        /// </remarks>
+        public FunctionDefinitionAst(
+            IScriptExtent extent,
+            bool isFilter,
+            string name,
+            IEnumerable<ParameterAst> parameters,
+            ScriptBlockAst body)
             : base(extent)
         {
             if (string.IsNullOrEmpty(name))
@@ -3590,13 +3556,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException("body");
             }
 
-            if (isFilter && isWorkflow)
-            {
-                throw PSTraceSource.NewArgumentException("isFilter");
-            }
-
             this.IsFilter = isFilter;
-            this.IsWorkflow = isWorkflow;
 
             this.Name = name;
             if (parameters != null && parameters.Any())
@@ -3609,18 +3569,18 @@ namespace System.Management.Automation.Language
             SetParent(body);
         }
 
-        internal FunctionDefinitionAst(IScriptExtent extent,
-                                       bool isFilter,
-                                       bool isWorkflow,
-                                       Token functionNameToken,
-                                       IEnumerable<ParameterAst> parameters,
-                                       ScriptBlockAst body)
-            : this(extent,
-                   isFilter,
-                   isWorkflow,
-                   (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
-                   parameters,
-                   body)
+        internal FunctionDefinitionAst(
+            IScriptExtent extent,
+            bool isFilter,
+            Token functionNameToken,
+            IEnumerable<ParameterAst> parameters,
+            ScriptBlockAst body)
+            : this(
+                  extent,
+                  isFilter,
+                  (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
+                  parameters,
+                  body)
         {
             NameExtent = functionNameToken.Extent;
         }
@@ -3631,8 +3591,13 @@ namespace System.Management.Automation.Language
         public bool IsFilter { get; private set; }
 
         /// <summary>
-        /// If true, the workflow keyword was used.
+        /// Gets a value indicating whether or not the function is actually a workflow.
         /// </summary>
+        /// <remarks>
+        /// This property has been deprecated. It can be removed once PowerShellGet has
+        /// been updated to check the PowerShell version before looking at the IsWorkflow
+        /// property.
+        /// </remarks>
         public bool IsWorkflow { get; private set; }
 
         /// <summary>
@@ -3707,7 +3672,7 @@ namespace System.Management.Automation.Language
             var newParameters = CopyElements(this.Parameters);
             var newBody = CopyElement(this.Body);
 
-            return new FunctionDefinitionAst(this.Extent, this.IsFilter, this.IsWorkflow, this.Name, newParameters, newBody) { NameExtent = this.NameExtent };
+            return new FunctionDefinitionAst(this.Extent, this.IsFilter, this.Name, newParameters, newBody) { NameExtent = this.NameExtent };
         }
 
         internal string GetParamTextFromParameterList(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple = null)
@@ -7304,8 +7269,8 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that represents a scriptblock with a keyword name. This is normally allowed only for script workflow.
-    /// e.g. <c>parallel { ... }</c> or <c>sequence { ... }</c>.
+    /// The ast that represents a scriptblock with a keyword name.
+    /// e.g. The parallel and sequence block statements that were deprecated along with workflow in PowerShell 7.
     /// </summary>
     public class BlockStatementAst : StatementAst
     {
@@ -7323,7 +7288,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(kind == null ? "kind" : "body");
             }
 
-            if (kind.Kind != TokenKind.Sequence && kind.Kind != TokenKind.Parallel)
+            if (!tokenKindsThatSupportBlockStatements.Contains(kind.Kind))
             {
                 throw PSTraceSource.NewArgumentException("kind");
             }
@@ -7332,6 +7297,10 @@ namespace System.Management.Automation.Language
             this.Body = body;
             SetParent(body);
         }
+
+        // This should remain empty until block statements are needed in PowerShell. The only tokens that supported
+        // them in the past were deprecated along with workflow in PowerShell 7.
+        private static SortedSet<TokenKind> tokenKindsThatSupportBlockStatements = new SortedSet<TokenKind>();
 
         /// <summary>
         /// The scriptblockexpression that has a keyword applied to it. This property is nerver null.

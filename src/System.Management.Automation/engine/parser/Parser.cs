@@ -2013,7 +2013,6 @@ namespace System.Management.Automation.Language
                     break;
                 case TokenKind.Function:
                 case TokenKind.Filter:
-                case TokenKind.Workflow:
                     statement = FunctionDeclarationRule(token);
                     break;
                 case TokenKind.Return:
@@ -2040,17 +2039,25 @@ namespace System.Management.Automation.Language
                 case TokenKind.Data:
                     statement = DataStatementRule(token);
                     break;
-                case TokenKind.Parallel:
-                case TokenKind.Sequence:
-                    statement = BlockStatementRule(token);
-                    break;
                 case TokenKind.Configuration:
                     statement = ConfigurationStatementRule(attributes != null ? attributes.OfType<AttributeAst>() : null, token);
+                    break;
+                case TokenKind.Workflow:
+                case TokenKind.Parallel:
+                case TokenKind.Sequence:
+                case TokenKind.InlineScript:
+                    ReportError(
+                        token.Extent,
+                        nameof(ParserStrings.DeprecatedKeywordNotAllowed),
+                        ParserStrings.DeprecatedKeywordNotAllowed,
+                        token.Kind.Text());
+                    statement = new ErrorStatementAst(token.Extent);
                     break;
                 case TokenKind.From:
                 case TokenKind.Define:
                 case TokenKind.Var:
-                    ReportError(token.Extent,
+                    ReportError(
+                        token.Extent,
                         nameof(ParserStrings.ReservedKeywordNotAllowed),
                         ParserStrings.ReservedKeywordNotAllowed,
                         token.Kind.Text());
@@ -2100,7 +2107,8 @@ namespace System.Management.Automation.Language
                 case TokenKind.Using:
                     statement = UsingStatementRule(token);
                     // Report an error - usings must appear before anything else in the script, but parse it anyway
-                    ReportError(statement.Extent,
+                    ReportError(
+                        statement.Extent,
                         nameof(ParserStrings.UsingMustBeAtStartOfScript),
                         ParserStrings.UsingMustBeAtStartOfScript);
                     break;
@@ -2318,45 +2326,6 @@ namespace System.Management.Automation.Language
             }
 
             return new BlockStatementAst(ExtentOf(kindToken, body), kindToken, body);
-        }
-
-        /// <summary>
-        /// Handle the InlineScript syntax in the script workflow.
-        /// </summary>
-        /// <param name="inlineScriptToken"></param>
-        /// <param name="elements"></param>
-        /// <returns>
-        /// true  -- InlineScript parsing successful
-        /// false -- InlineScript parsing unsuccessful
-        /// </returns>
-        private bool InlineScriptRule(Token inlineScriptToken, List<CommandElementAst> elements)
-        {
-            // G Command
-            // G      InlineScript    scriptblock-expression
-
-            Diagnostics.Assert(elements != null && elements.Count == 0, "The CommandElement list should be empty");
-            var commandName = new StringConstantExpressionAst(inlineScriptToken.Extent, inlineScriptToken.Text, StringConstantType.BareWord);
-            inlineScriptToken.TokenFlags |= TokenFlags.CommandName;
-            elements.Add(commandName);
-
-            SkipNewlines();
-            Token lCurly = NextToken();
-
-            if (lCurly.Kind != TokenKind.LCurly)
-            {
-                // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
-
-                UngetToken(lCurly);
-                ReportIncompleteInput(After(inlineScriptToken),
-                    nameof(ParserStrings.MissingStatementAfterKeyword),
-                    ParserStrings.MissingStatementAfterKeyword,
-                    inlineScriptToken.Text);
-                return false;
-            }
-
-            var expr = ScriptBlockExpressionRule(lCurly);
-            elements.Add(expr);
-            return true;
         }
 
         private StatementAst IfStatementRule(Token ifToken)
@@ -5222,7 +5191,7 @@ namespace System.Management.Automation.Language
                 SetTokenizerMode(TokenizerMode.Command);
                 ScriptBlockAst scriptBlock = ScriptBlockRule(lCurly, false, baseCtorCallStatement);
                 var result = new FunctionDefinitionAst(ExtentOf(functionNameToken, scriptBlock),
-                    /*isFilter:*/false, /*isWorkflow:*/false, functionNameToken, parameters, scriptBlock);
+                    /*isFilter:*/false, functionNameToken, parameters, scriptBlock);
 
                 return result;
             }
@@ -5237,7 +5206,6 @@ namespace System.Management.Automation.Language
             // G  function-statement:
             // G      'function'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
             // G      'filter'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            // G      'workflow'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
             // G
             // G  function-name:
             // G      command-argument
@@ -5309,26 +5277,12 @@ namespace System.Management.Automation.Language
             }
 
             bool isFilter = functionToken.Kind == TokenKind.Filter;
-            bool isWorkflow = functionToken.Kind == TokenKind.Workflow;
 
-            bool oldTokenizerWorkflowContext = _tokenizer.InWorkflowContext;
-            try
-            {
-                _tokenizer.InWorkflowContext = isWorkflow;
+            ScriptBlockAst scriptBlock = ScriptBlockRule(lCurly, isFilter);
 
-                ScriptBlockAst scriptBlock = ScriptBlockRule(lCurly, isFilter);
-                var functionName = (functionNameToken.Kind == TokenKind.Generic)
-                                       ? ((StringToken)functionNameToken).Value
-                                       : functionNameToken.Text;
-
-                FunctionDefinitionAst result = new FunctionDefinitionAst(ExtentOf(functionToken, scriptBlock),
-                    isFilter, isWorkflow, functionNameToken, parameters, scriptBlock);
-                return result;
-            }
-            finally
-            {
-                _tokenizer.InWorkflowContext = oldTokenizerWorkflowContext;
-            }
+            FunctionDefinitionAst result = new FunctionDefinitionAst(ExtentOf(functionToken, scriptBlock),
+                isFilter, functionNameToken, parameters, scriptBlock);
+            return result;
         }
 
         private List<ParameterAst> FunctionParameterDeclarationRule(out IScriptExtent endErrorStatement, out Token rParen)
@@ -6344,41 +6298,30 @@ namespace System.Management.Automation.Language
                             break;
 
                         default:
-                            if (token.Kind == TokenKind.InlineScript && context == CommandArgumentContext.CommandName)
-                            {
-                                scanning = InlineScriptRule(token, elements);
-                                Diagnostics.Assert(elements.Count >= 1, "We should at least have the command name: inlinescript");
-                                endExtent = elements.Last().Extent;
+                            var ast = GetCommandArgument(context, token);
 
-                                if (!scanning) { continue; }
-                            }
-                            else
+                            // If this is the special verbatim argument syntax, look for the next element
+                            StringToken argumentToken = token as StringToken;
+                            if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                             {
-                                var ast = GetCommandArgument(context, token);
+                                elements.Add(ast);
+                                endExtent = ast.Extent;
 
-                                // If this is the special verbatim argument syntax, look for the next element
-                                StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                var verbatimToken = GetVerbatimCommandArgumentToken();
+                                if (verbatimToken != null)
                                 {
+                                    foundVerbatimArgument = true;
+                                    scanning = false;
+                                    ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
                                     elements.Add(ast);
                                     endExtent = ast.Extent;
-
-                                    var verbatimToken = GetVerbatimCommandArgumentToken();
-                                    if (verbatimToken != null)
-                                    {
-                                        foundVerbatimArgument = true;
-                                        scanning = false;
-                                        ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
-                                        elements.Add(ast);
-                                        endExtent = ast.Extent;
-                                    }
-
-                                    break;
                                 }
 
-                                endExtent = ast.Extent;
-                                elements.Add(ast);
+                                break;
                             }
+
+                            endExtent = ast.Extent;
+                            elements.Add(ast);
 
                             break;
                     }
