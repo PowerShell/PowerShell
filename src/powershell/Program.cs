@@ -224,29 +224,45 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-            // Parameter comparison strings, stackalloc'd for performance
+            // Check the parameters in order
             for (int i = 0; i < args.Length; i++)
             {
                 string arg = args[i];
 
-                // Must look like '-<name>'
-                if (arg == null || arg.Length < 2 || arg[0] != '-')
+                if (arg == null || arg.Length < 2)
                 { 
+                    continue;
+                }
+
+                // '/?' is equivalent to '-help'
+                if (arg.Equals("/?"))
+                {
+                    return false;
+                }
+
+                // Must look like '-<name>'
+                if (arg[0] != '-')
+                {
                     continue;
                 }
 
                 // Check for "-Login" or some prefix thereof
                 if (IsParam(arg, "login", "LOGIN"))
                 {
+                    // It's possible that we might see -Help or -Version
+                    // after -Login and do the login only to print help.
+                    // However, this just causes a slow down and still works.
+                    // In exchange, we speed up the login detection scenario in normal cases
                     return true;
                 }
 
-                // After -File, -Command and -Version, all parameters are passed
+                // After -File, -Command, -Version, -Help and -?, all parameters are passed
                 // to the invoked file or command, so we can stop looking.
                 if (IsParam(arg, "file", "FILE")
                     || IsParam(arg, "command", "COMMAND")
                     || IsParam(arg, "version", "VERSION")
-                    || IsParam(arg, "help", "HELP"))
+                    || IsParam(arg, "help", "HELP")
+                    || IsParam(arg, "?", "?"))
                 {
                     return false;
                 }
