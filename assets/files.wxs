@@ -3042,6 +3042,15 @@
       <Component Id="cmpCE991A76187F47148F1854BC02E3524E" Guid="{39a0126f-44e9-471a-83d6-139d1636e79a}">
         <File Id="fil199A45B24AFE4650B2EB5A3C3E7EC0BE" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Windows.Forms.dll" />
       </Component>
+      <Component Id="cmpAD1A205D445C43588868B205091DD390" Guid="{6b4a76d4-d968-40ee-bac1-abdb3d01b442}">
+        <File Id="filFC6F2DCBA0D549999D96D3624406804E" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Reflection.Context.dll" />
+      </Component>
+      <Component Id="cmpD7A187ADE66347E5A7550B96BA10D493" Guid="{410b2d6d-2158-4e70-a970-37b2f14e3e82}">
+        <File Id="filEEF618E0250F4B8CBFE951C2A7E5C018" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Data.OleDb.dll" />
+      </Component>
+      <Component Id="cmp827B25EEC28D4699BB29042B273C8CBF" Guid="{f7ccc70c-5aaf-4e6b-bf9f-c59f4e631f9c}">
+        <File Id="filEF6B07EDBC8F43AE8DF88CFDF798FC22" KeyPath="yes" Source="$(env.ProductSourcePath)\System.ComponentModel.Composition.Registration.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -3876,6 +3885,9 @@
       <ComponentRef Id="cmp765A784AADA742928B4E6376ABB7EF28" />
       <ComponentRef Id="cmpC6C53A5B540B4A3C9624A0D14D5A9790" />
       <ComponentRef Id="cmp6A48FC0DE86C41C297EC418A0E49CA2C" />
+      <ComponentRef Id="cmpAD1A205D445C43588868B205091DD390" />
+      <ComponentRef Id="cmpD7A187ADE66347E5A7550B96BA10D493" />
+      <ComponentRef Id="cmp827B25EEC28D4699BB29042B273C8CBF" />
     </ComponentGroup>
   </Fragment>
 </Wix>
