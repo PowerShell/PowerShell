@@ -170,15 +170,15 @@ namespace Microsoft.PowerShell
                     // | argv[1]   | ... \0
                     //   ...
                     //
-                    // We care about argv[0], since that's the name the process was started with
+                    // We care about argv[0], since that's the name the process was started with.
                     // If argv[0][0] == '-', we have been invoked as login.
                     // Doing this, the buffer we populated also recorded `exec_path`,
-                    // which is the path to our executable.
+                    // which is the path to our executable `pwsh`.
                     // We can reuse this value later to prevent needing to call a .NET API
                     // to generate our exec invocation.
 
 
-                    // We don't care about argc's value, since argv[0] must always exist
+                    // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
                     execPathPtr = IntPtr.Add(procargs, sizeof(int));
 
@@ -323,15 +323,15 @@ namespace Microsoft.PowerShell
                 (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
-            // Set up the arguments for /bin/sh
-            // We need to add the 5 /bin/sh invocation parts, plus 1 null terminator at the end
+            // Set up the arguments for '/bin/sh'.
+            // We need to add 5 slots for the '/bin/sh' invocation parts, plus 1 slot for the null terminator at the end
             var execArgs = new string[args.Length + 6];
 
             // The command arguments
 
             // First argument is the command name.
-            // Even when executing zsh, we want to set this to /bin/sh
-            // because this tells zsh to run in sh emulation mode (it examines $0)
+            // Even when executing 'zsh', we want to set this to '/bin/sh'
+            // because this tells 'zsh' to run in sh emulation mode (it examines $0)
             execArgs[0] = "/bin/sh"; 
 
             execArgs[1] = "-l"; // Login flag
@@ -339,17 +339,17 @@ namespace Microsoft.PowerShell
             execArgs[3] = pwshInvocation; // Command to execute
             execArgs[4] = ""; // Within the shell, exec ignores $0
 
-            // Add the arguments passed to pwsh on the end
+            // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);
 
-            // A null is required by exec
+            // A null is required by exec.
             execArgs[execArgs.Length - 1] = null;
 
-            // We can't use Environment.SetEnvironmentVariable() here
-            // See https://github.com/dotnet/corefx/issues/40130#issuecomment-519420648
+            // We can't use Environment.SetEnvironmentVariable() here.
+            // See https://github.com/dotnet/corefx/issues/40130#issuecomment-519420648.
             ThrowOnFailure("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
-            // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
+            // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode.
             if (isMacOS)
             {
                 return Exec("/bin/zsh", execArgs);
