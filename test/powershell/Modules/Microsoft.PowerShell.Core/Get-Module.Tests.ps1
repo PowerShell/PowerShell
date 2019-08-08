@@ -33,6 +33,35 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
         )
 
+        $listModuleNameTestCases = @(
+            @{
+                Name = 'Foo'
+                TestCaseName = 'Match case'
+                ExpectedName = 'Foo'
+                ModuleVersion = '2.0'
+            }
+            @{
+                Name = 'foo'
+                TestCaseName = 'Mismatched case'
+                ExpectedName = 'Foo'
+                ModuleVersion = '2.0'
+            }
+        )
+        $loadedModuleNameTestCases = @(
+            @{
+                Name = 'Microsoft.PowerShell.Managemen*'
+                TestCaseName = 'Wildcard'
+                ExpectedName = 'Microsoft.PowerShell.Management'
+                ModuleVersion = '6.1.0.0'
+            }
+            @{
+                Name = 'microsoft.powershell.managemen*'
+                TestCaseName = 'Mismatched case'
+                ExpectedName = 'Microsoft.PowerShell.Management'
+                ModuleVersion = '6.1.0.0'
+            }
+        )
+
         $env:PSModulePath = Join-Path $testdrive "Modules"
     }
 
@@ -114,20 +143,38 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules[4].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
     }
 
-    It "Get-Module -FullyQualifiedName <FullyQualifiedName> (case matched) -ListAvailable" {
-        $moduleSpecification  = @{ModuleName = "Foo"; ModuleVersion = "2.0"}
+    It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} -ListAvailable - <TestCaseName>" -TestCases $listModuleNameTestCases {
+        param(
+            [Parameter(Mandatory = $true)]
+            $Name,
+            $TestCaseName,
+            [Parameter(Mandatory = $true)]
+            $ExpectedName,
+            $ModuleVersion
+        )
+
+        $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
         $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
         $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly "Foo"
-        $modules.Version | Should -BeExactly "2.0"
+        $modules.Name | Should -BeExactly $ExpectedName
+        $modules.Version | Should -BeExactly $ModuleVersion
     }
 
-    It "Get-Module -FullyQualifiedName <FullyQualifiedName> (case mismatched) -ListAvailable" {
-        $moduleSpecification  = @{ModuleName = "foo"; ModuleVersion = "2.0"}
-        $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
+    It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} - <TestCaseName>" -TestCases $loadedModuleNameTestCases {
+        param(
+            [Parameter(Mandatory = $true)]
+            $Name,
+            $TestCaseName,
+            [Parameter(Mandatory = $true)]
+            $ExpectedName,
+            $ModuleVersion
+        )
+
+        $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
+        $modules = Get-Module -FullyQualifiedName $moduleSpecification
         $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly "Foo"
-        $modules.Version | Should -BeExactly "2.0"
+        $modules.Name | Should -BeExactly $ExpectedName
+        $modules.Version | Should -BeExactly $ModuleVersion
     }
 
     It "Get-Module <Name> -Refresh -ListAvailable" {
