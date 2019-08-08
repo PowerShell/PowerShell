@@ -310,8 +310,6 @@ namespace Microsoft.PowerShell
             // We need to add the 5 /bin/sh invocation parts, plus 1 null terminator at the end
             var execArgs = new string[args.Length + 6];
 
-            // execArgs[0] is set below to the correct shell executable
-
             // The command arguments
 
             // First argument is the command name.
@@ -330,6 +328,8 @@ namespace Microsoft.PowerShell
             // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
 
+            // We can't use Environment.SetEnvironmentVariable() here
+            // See https://github.com/dotnet/corefx/issues/40130#issuecomment-519420648
             ThrowOnFailure("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
             // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
