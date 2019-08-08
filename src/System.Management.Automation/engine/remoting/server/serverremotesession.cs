@@ -88,6 +88,9 @@ namespace System.Management.Automation.Remoting
         // Specifies an optional endpoint configuration for out-of-proc session use.
         // Creates a pushed remote runspace session created with this configuration name.
         private string _configurationName;
+        
+        // Specifies an initial location of the powershell session.
+        private string _initialLocation;
 
         #region Events
         /// <summary>
@@ -176,6 +179,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         /// <param name="transportManager"></param>
         /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
+        /// <param name="initialLocation">Optional configuration initial location of the powershell session.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
@@ -192,7 +196,8 @@ namespace System.Management.Automation.Remoting
             string configurationProviderId,
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName = null)
+            string configurationName = null,
+            string initialLocation = null)
         {
             Dbg.Assert((senderInfo != null) & (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
@@ -212,7 +217,8 @@ namespace System.Management.Automation.Remoting
                 initializationParameters,
                 transportManager)
             {
-                _configurationName = configurationName
+                _configurationName = configurationName,
+                _initialLocation = initialLocation
             };
 
             // start state machine.
@@ -229,14 +235,15 @@ namespace System.Management.Automation.Remoting
         /// <param name="initializationScriptForOutOfProcessRunspace"></param>
         /// <param name="transportManager"></param>
         /// <param name="configurationName"></param>
+        /// <param name="initialLocation"></param>
         /// <returns></returns>
         internal static ServerRemoteSession CreateServerRemoteSession(PSSenderInfo senderInfo,
             string initializationScriptForOutOfProcessRunspace,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName)
+            string configurationName, string initialLocation)
         {
             ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
-                "Microsoft.PowerShell", string.Empty, transportManager, configurationName);
+                "Microsoft.PowerShell", string.Empty, transportManager, configurationName, initialLocation);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }
@@ -885,7 +892,8 @@ namespace System.Management.Automation.Remoting
                 isAdministrator,
                 Context.ServerCapability,
                 psClientVersion,
-                _configurationName);
+                _configurationName,
+                _initialLocation);
 
             // attach the necessary event handlers and start the driver.
             Interlocked.Exchange(ref _runspacePoolDriver, tmpDriver);

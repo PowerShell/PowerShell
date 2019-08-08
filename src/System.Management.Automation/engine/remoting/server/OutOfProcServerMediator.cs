@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string initialLocation)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
@@ -318,16 +318,16 @@ namespace System.Management.Automation.Remoting.Server
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
             ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                _initialCommand, tm, configurationName);
+                _initialCommand, tm, configurationName, initialLocation);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string configurationName = null)
+        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string initialLocation = null, string configurationName = null)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, initialLocation);
 
             try
             {
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, initialLocation);
                         }
                     }
 
@@ -469,7 +469,7 @@ namespace System.Management.Automation.Remoting.Server
 
         /// <summary>
         /// </summary>
-        internal static void Run(string initialCommand)
+        internal static void Run(string initialCommand, string workingDirectory)
         {
             lock (SyncObject)
             {
@@ -486,7 +486,7 @@ namespace System.Management.Automation.Remoting.Server
             // Setup unhandled exception to log events
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
         }
 
         #endregion
