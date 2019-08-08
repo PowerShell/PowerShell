@@ -296,7 +296,7 @@ export $envVarName='$guid'
         ) {
             param($LoginSwitch)
 
-            $result = & $powershell -NoProfile $LoginSwitch -Command "`$env:$envVarName"
+            $result = & $powershell $LoginSwitch -NoProfile -Command "`$env:$envVarName"
 
             if ($IsWindows) {
                 $result | Should -BeNullOrEmpty
