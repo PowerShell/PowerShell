@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Parallel foreach syntax" -Tags "CI" {
 
-   Context 'Should be able to retrieve AST of parallel foreach' {
+    Context 'Should be able to retrieve AST of parallel foreach' {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($foo in $bar) {}', [ref] $null, [ref] $null)
         It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Parallel switch syntax" -Tags "CI" {
 
-   Context 'Should be able to retrieve AST of parallel switch' {
+    Context 'Should be able to retrieve AST of parallel switch' {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'switch -parallel ($foo) {1 {break}}', [ref] $null, [ref] $null)
         It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }
