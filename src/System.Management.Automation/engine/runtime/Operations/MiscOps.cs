@@ -1809,12 +1809,11 @@ namespace System.Management.Automation
         internal static ActionPreference QueryForAction(RuntimeException rte, string message, ExecutionContext context)
         {
             // 906264 "$ErrorActionPreference="Inquire" prevents original non-terminating error from being reported to $error"
-            bool defaultUsed;
             ActionPreference preference =
                 context.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     ActionPreference.Continue,
-                    out defaultUsed);
+                    out _);
 
             if (preference != ActionPreference.Inquire || rte.SuppressPromptInInterpreter)
                 return preference;
