@@ -46,9 +46,16 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         /// <param name="initializationScript"></param>
         /// <param name="useWow64"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64)
+        /// <param name="workingDirectory"></param>
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
             string processArguments = " -s -NoLogo -NoProfile";
+
+            if (workingDirectory != null)
+            {
+                processArguments = string.Format(CultureInfo.InvariantCulture,
+                    "{0} -wd {1}", processArguments, workingDirectory);
+            }
 
             if (initializationScript != null)
             {
@@ -92,7 +99,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// </summary>
-        public PowerShellProcessInstance() : this(null, null, null, false)
+        public PowerShellProcessInstance() : this(null, null, null, false, null)
         {
         }
 

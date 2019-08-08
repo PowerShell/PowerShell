@@ -1003,7 +1003,8 @@ namespace System.Management.Automation.Remoting.Client
                 _processInstance = _connectionInfo.Process ?? new PowerShellProcessInstance(_connectionInfo.PSVersion,
                                                                                            _connectionInfo.Credential,
                                                                                            _connectionInfo.InitializationScript,
-                                                                                           _connectionInfo.RunAs32);
+                                                                                           _connectionInfo.RunAs32,
+                                                                                           _connectionInfo.WorkingDirectory);
                 if (_connectionInfo.Process != null)
                 {
                     _processCreated = false;
