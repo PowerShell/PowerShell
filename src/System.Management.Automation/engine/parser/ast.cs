@@ -3598,7 +3598,7 @@ namespace System.Management.Automation.Language
         /// been updated to check the PowerShell version before looking at the IsWorkflow
         /// property.
         /// </remarks>
-        public bool IsWorkflow { get; private set; }
+        public bool IsWorkflow { get { return false; } }
 
         /// <summary>
         /// The name of the function or filter.  This property is never null or empty.
