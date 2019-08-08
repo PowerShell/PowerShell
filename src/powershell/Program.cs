@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell
 
             // Now read the process args into the allocated space
             IntPtr procargs = Marshal.AllocHGlobal(argmax);
-            IntPtr execPathPtr = IntPtr.Zero;
+            IntPtr executablePathPtr = IntPtr.Zero;
             try
             {
                 mib[0] = MACOS_CTL_KERN;
@@ -180,10 +180,10 @@ namespace Microsoft.PowerShell
 
                     // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
-                    execPathPtr = IntPtr.Add(procargs, sizeof(int));
+                    executablePathPtr = IntPtr.Add(procargs, sizeof(int));
 
                     // Skip over exec_path
-                    byte *argvPtr = (byte *)execPathPtr;
+                    byte *argvPtr = (byte *)executablePathPtr;
                     while (*argvPtr != 0) { argvPtr++; }
                     while (*argvPtr == 0) { argvPtr++; }
 
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // Get the pwshPath from exec_path
-                pwshPath = Marshal.PtrToStringAnsi(execPathPtr);
+                pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
@@ -224,51 +224,12 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-            // Check the parameters in order
-            for (int i = 0; i < args.Length; i++)
-            {
-                string arg = args[i];
-
-                if (arg == null || arg.Length < 2)
-                { 
-                    continue;
-                }
-
-                // '/?' is equivalent to '-help'
-                if (arg.Equals("/?"))
-                {
-                    return false;
-                }
-
-                // Must look like '-<name>'
-                if (arg[0] != '-')
-                {
-                    continue;
-                }
-
-                // Check for "-Login" or some prefix thereof
-                if (IsParam(arg, "login", "LOGIN"))
-                {
-                    // It's possible that we might see -Help or -Version
-                    // after -Login and do the login only to print help.
-                    // However, this just causes a slow down and still works.
-                    // In exchange, we speed up the login detection scenario in normal cases
-                    return true;
-                }
-
-                // After -File, -Command, -Version, -Help and -?, all parameters are passed
-                // to the invoked file or command, so we can stop looking.
-                if (IsParam(arg, "file", "FILE")
-                    || IsParam(arg, "command", "COMMAND")
-                    || IsParam(arg, "version", "VERSION")
-                    || IsParam(arg, "help", "HELP")
-                    || IsParam(arg, "?", "?"))
-                {
-                    return false;
-                }
-            }
-
-            return false;
+            // Look at the first parameter to see if it is -Login
+            // NOTE: -Login is only supported as the first parameter to PowerShell
+            return args.Length > 0
+                && args[0].Length > 1
+                && args[0][0] == '-'
+                && IsParam(args[0], "login", "LOGIN");
         }
 
         /// <summary>
@@ -337,7 +298,17 @@ namespace Microsoft.PowerShell
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
             execArgs[3] = pwshInvocation; // Command to execute
-            execArgs[4] = ""; // Within the shell, exec ignores $0
+
+            // The /bin/sh option spec looks like:
+            // sh -c command_string [command_name [argument...]]
+            // We must provide a command_name before arguments,
+            // but this is never used since "$@" takes argv[1] - argv[n]
+            // and the `exec` builtin provides its own argv[0].
+            // See https://pubs.opengroup.org/onlinepubs/9699919799.2016edition/
+            //
+            // Since command_name is ignored and we can't use null (it's the terminator)
+            // we use empty string
+            execArgs[4] = "";
 
             // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);
@@ -474,7 +445,8 @@ namespace Microsoft.PowerShell
         [DllImport("libc",
             EntryPoint = "readlink",
             CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
+            CharSet = CharSet.Ansi,
+            SetLastError = true)]
         private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
 
         /// <summary>
@@ -484,7 +456,8 @@ namespace Microsoft.PowerShell
         [DllImport("libc",
             EntryPoint = "getpid",
             CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
+            CharSet = CharSet.Ansi,
+            SetLastError = true)]
         private static extern int GetPid();
 
         /// <summary>
@@ -497,7 +470,8 @@ namespace Microsoft.PowerShell
         [DllImport("libc",
             EntryPoint = "setenv",
             CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
+            CharSet = CharSet.Ansi,
+            SetLastError = true)]
         private static extern int SetEnv(string name, string value, bool overwrite);
 
         /// <summary>
@@ -513,7 +487,8 @@ namespace Microsoft.PowerShell
         [DllImport("libc",
             EntryPoint = "sysctl",
             CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
+            CharSet = CharSet.Ansi,
+            SetLastError = true)]
         private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
 #endif
     }
