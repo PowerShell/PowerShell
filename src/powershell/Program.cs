@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create the exec call to /bin/{z}sh -l -c 'exec -a +pwsh pwsh "$@"' and run it.
+        /// Create the exec call to /bin/{z}sh -l -c 'exec pwsh "$@"' and run it.
         /// </summary>
         /// <param name="args">The argument vector passed to pwsh.</param>
         /// <param name="isMacOS">True if we are running on macOS.</param>
