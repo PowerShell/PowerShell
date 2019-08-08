@@ -2191,7 +2191,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "System.Management.Automation.dll"
     )
@@ -2199,6 +2198,7 @@ function Start-CrossGen {
     # Add Windows specific libraries
     if ($Environment.IsWindows) {
         $psCoreAssemblyList += @(
+            "Microsoft.PowerShell.CoreCLR.Eventing.dll",
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
