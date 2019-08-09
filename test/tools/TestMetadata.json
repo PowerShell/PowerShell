@@ -1,6 +1,6 @@
 {
   "ExperimentalFeatures": {
-    "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints": ["test/powershell/Modules/Microsoft.PowerShell.Utility/New-PSBreakpoint.Tests.ps1"],
+    "Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace": [ ],
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ]
   }
 }

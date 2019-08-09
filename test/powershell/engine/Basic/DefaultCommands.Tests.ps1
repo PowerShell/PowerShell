@@ -116,7 +116,6 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "move",                             "Move-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""
 "Alias",        "mp",                               "Move-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "mv",                               "Move-Item",                        $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
-"Alias",        "nbp",                              "New-PSBreakpoint",                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "nal",                              "New-Alias",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "ndr",                              "New-PSDrive",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "ni",                               "New-Item",                         $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""

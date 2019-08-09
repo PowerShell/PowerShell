@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Threading;
 
 namespace System.Management.Automation
@@ -128,9 +129,7 @@ namespace System.Management.Automation
             return BreakpointAction.Continue;
         }
 
-        internal virtual void RemoveSelf(ScriptDebugger debugger)
-        {
-        }
+        internal virtual bool RemoveSelf(ScriptDebugger debugger) => false;
 
         #endregion methods
 
@@ -208,10 +207,8 @@ namespace System.Management.Automation
                        : StringUtil.Format(DebuggerStrings.CommandBreakpointString, Command);
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
-        {
+        internal override bool RemoveSelf(ScriptDebugger debugger) =>
             debugger.RemoveCommandBreakpoint(this);
-        }
 
         private bool CommandInfoMatches(CommandInfo commandInfo)
         {
@@ -350,10 +347,8 @@ namespace System.Management.Automation
             return false;
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
-        {
+        internal override bool RemoveSelf(ScriptDebugger debugger) =>
             debugger.RemoveVariableBreakpoint(this);
-        }
     }
 
     /// <summary>
@@ -589,7 +584,7 @@ namespace System.Management.Automation
             this.BreakpointBitArray.Set(SequencePointIndex, true);
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
+        internal override bool RemoveSelf(ScriptDebugger debugger)
         {
             if (this.SequencePoints != null)
             {
@@ -612,7 +607,7 @@ namespace System.Management.Automation
                 }
             }
 
-            debugger.RemoveLineBreakpoint(this);
+            return debugger.RemoveLineBreakpoint(this);
         }
     }
 }
