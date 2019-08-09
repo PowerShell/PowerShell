@@ -24,12 +24,10 @@ Describe 'Basic debugger tests' -tag 'CI' {
                         'The value of $? was changed to $true during debugging.'
                     }
                 }
-                $bp = Set-PSBreakpoint -Command Get-Process
                 $global:DollarQuestionMarkResults = Test-DollarQuestionMark -ErrorAction Break
-                Remove-PSBreakpoint -Breakpoint $bp
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '$?')
+            $global:results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '$?')
         }
 
         AfterAll {
