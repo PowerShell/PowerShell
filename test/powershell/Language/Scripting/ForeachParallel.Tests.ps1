@@ -21,7 +21,7 @@ Describe 'Parallel foreach syntax' -Tags 'CI' {
                 "foreach `n-parallel `n(`$foo in `$bar) {}", [ref] $null, [ref] $null)
         }
 
-        It '$errors.Count'
+        It '$errors.Count' {
             $errors.Count | Should -Be 0
         }
 
