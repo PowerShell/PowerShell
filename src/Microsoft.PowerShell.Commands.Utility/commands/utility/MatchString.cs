@@ -1654,10 +1654,12 @@ namespace Microsoft.PowerShell.Commands
             List<int> indexes = null;
             List<int> lengths = null;
 
+            bool shouldEmphasize = Emphasize && Host.UI.SupportsVirtualTerminal;
+
             // If Emphasize is set and VT is supported,
             // the lengths and starting indexes of regex matches
             // need to be passed in to the matchInfo object.
-            if (Emphasize && Host.UI.SupportsVirtualTerminal)
+            if (shouldEmphasize)
             {
                 indexes = new List<int>();
                 lengths = new List<int>();
@@ -1680,7 +1682,7 @@ namespace Microsoft.PowerShell.Commands
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
 
-                            if (Emphasize && Host.UI.SupportsVirtualTerminal)
+                            if (shouldEmphasize)
                             {
                                 foreach (Match match in matches)
                                 {
@@ -1699,7 +1701,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (match.Success)
                         {
-                            if (Emphasize && Host.UI.SupportsVirtualTerminal)
+                            if (shouldEmphasize)
                             {
                                 indexes.Add(match.Index);
                                 lengths.Add(match.Length);
@@ -1727,7 +1729,7 @@ namespace Microsoft.PowerShell.Commands
                     int index = operandString.IndexOf(pat, compareOption);
                     if (index >= 0)
                     {
-                        if (Emphasize && Host.UI.SupportsVirtualTerminal)
+                        if (shouldEmphasize)
                         {
                             indexes.Add(index);
                             lengths.Add(pat.Length);
@@ -1780,7 +1782,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = Emphasize && Host.UI.SupportsVirtualTerminal
+                matchResult = shouldEmphasize
                     ? new MatchInfo(indexes, lengths)
                     : new MatchInfo();
                 matchResult.IgnoreCase = !CaseSensitive;
