@@ -99,6 +99,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>
@@ -109,6 +110,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Deafault initializes the underlying dotnet process class
         /// </summary>
         public PowerShellProcessInstance() : this(null, null, null, false, null)
         {
