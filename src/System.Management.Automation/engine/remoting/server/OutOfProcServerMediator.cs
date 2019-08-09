@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string initialLocation)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
@@ -318,16 +318,16 @@ namespace System.Management.Automation.Remoting.Server
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
             ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                _initialCommand, tm, configurationName, initialLocation);
+                _initialCommand, tm, configurationName, workingDirectory);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string initialLocation = null, string configurationName = null)
+        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, initialLocation);
+            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
 
             try
             {
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, initialLocation);
+                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
                         }
                     }
 

@@ -47,7 +47,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="initializationScript"></param>
         /// <param name="useWow64"></param>
         /// <param name="workingDirectory"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory = null)
         {
             string processArguments = " -s -NoLogo -NoProfile";
 

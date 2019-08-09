@@ -77,6 +77,15 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $jobOutput | Should -BeExactly $tempPath
         }
 
+        It 'Throws an error message if the working directory parameter points to an invalid path' {
+            $invalidPaths = @(""," ", "this is an invalid path")
+
+            foreach ($tempPath in $invalidPaths)
+            {
+                {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $tempPath} | Should -Throw
+            }
+        }
+
         It "Create job with native command" {
             try {
                 $nativeJob = Start-job { pwsh -c 1+1 }

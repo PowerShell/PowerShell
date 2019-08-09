@@ -99,51 +99,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-<<<<<<< HEAD
-=======
-#if CORECLR // No ApartmentState In CoreCLR
-        /// <summary>
-        /// Creates the runspace pool driver.
-        /// </summary>
-        /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
-        /// <param name="transportManager">transport manager associated with this
-        /// runspace pool driver</param>
-        /// <param name="maxRunspaces">Maximum runspaces to open.</param>
-        /// <param name="minRunspaces">Minimum runspaces to open.</param>
-        /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
-        /// <param name="hostInfo">Host information about client side host.</param>
-        /// <param name="configData">
-        /// Contains:
-        /// 1. Script to run after a RunspacePool/Runspace is created in this session.
-        /// For RunspacePool case, every newly created Runspace (in the pool) will run
-        /// this script.
-        /// 2. ThreadOptions for RunspacePool/Runspace
-        /// 3. ThreadApartment for RunspacePool/Runspace
-        /// </param>
-        /// <param name="initialSessionState">Configuration of the runspace.</param>
-        /// <param name="applicationPrivateData">Application private data.</param>
-        /// <param name="isAdministrator">True if the driver is being created by an administrator.</param>
-        /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
-        /// <param name="psClientVersion">Client PowerShell version.</param>
-        /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
-        /// <param name="initialLocation">Optional initial location of the powershell.</param>
-        internal ServerRunspacePoolDriver(
-            Guid clientRunspacePoolId,
-            int minRunspaces,
-            int maxRunspaces,
-            PSThreadOptions threadOptions,
-            HostInfo hostInfo,
-            InitialSessionState initialSessionState,
-            PSPrimitiveDictionary applicationPrivateData,
-            ConfigurationDataFromXML configData,
-            AbstractServerSessionTransportManager transportManager,
-            bool isAdministrator,
-            RemoteSessionCapability serverCapability,
-            Version psClientVersion,
-            string configurationName,
-            string initialLocation)
-#else
->>>>>>> starting working directory for powershell running in server mode
         /// <summary>
         /// Creates the runspace pool driver.
         /// </summary>

@@ -1302,7 +1302,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
   <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
-    <value>Cannot find the directory {0}.</value>
+    <value>Cannot find the WorkingDirectory path {0}.</value>
   </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
     <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
