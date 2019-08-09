@@ -430,8 +430,7 @@ namespace System.Management.Automation.PSTasks
 
             // Create the PowerShell command pipeline for the provided script block
             // The script will run on the provided Runspace in a new thread by default
-            _powershell = PowerShell.Create();
-            _powershell.Runspace = _runspace;
+            _powershell = PowerShell.Create(_runspace);
 
             // Initialize PowerShell object data streams and event handlers
             _output = new PSDataCollection<PSObject>();
@@ -444,7 +443,7 @@ namespace System.Management.Automation.PSTasks
             {
                 _powershell.AddParameter(Parser.VERBATIM_ARGUMENT, _usingValuesMap);
             }
-            _powershell.BeginInvoke<object, PSObject>(null, _output);
+            _powershell.BeginInvoke<object, PSObject>(input:null, output:_output);
         }
 
         /// <summary>
@@ -526,7 +525,7 @@ namespace System.Management.Automation.PSTasks
 
             foreach (var item in _dataStream.ReadAll())
             {
-                item.WriteStreamObject(_cmdlet, true);
+                item.WriteStreamObject(cmdlet:_cmdlet, overrideInquire:true);
             }
         }
 

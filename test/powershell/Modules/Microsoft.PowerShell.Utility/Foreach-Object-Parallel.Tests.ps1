@@ -62,39 +62,41 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
             }
         } 2>&1
 
-        $results | Should -Not -Contain "Hello!"
-        $results | Should -Contain "Goodbye!"
+        $resultStrings = $results | ForEach-Object { $_.ToString() }
+        $resultStrings | Should -Not -Contain "Hello!"
+        $resultStrings | Should -Contain "Goodbye!"
+        $resultStrings | Should -Contain "Terminating Error!"
     }
 
     It 'Verifies non-terminating error streaming' {
 
-        $expectedError = 1..1 | ForEach-Object -Parallel { Write-Error "Error!" } 2>&1
-        $expectedError.ToString() | Should -BeExactly 'Error!'
-        $expectedError.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
+        $actualError = 1..1 | ForEach-Object -Parallel { Write-Error "Error!" } 2>&1
+        $actualError.ToString() | Should -BeExactly 'Error!'
+        $actualError.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
     }
 
     It 'Verifies warning data streaming' {
 
-        $expectedWarning = 1..1 | ForEach-Object -Parallel { Write-Warning "Warning!" } 3>&1
-        $expectedWarning.Message | Should -BeExactly 'Warning!'
+        $actualWarning = 1..1 | ForEach-Object -Parallel { Write-Warning "Warning!" } 3>&1
+        $actualWarning.Message | Should -BeExactly 'Warning!'
     }
 
     It 'Verifies verbose data streaming' {
 
-        $expectedVerbose = 1..1 | ForEach-Object -Parallel { Write-Verbose "Verbose!" -Verbose } -Verbose 4>&1
-        $expectedVerbose.Message | Should -BeExactly 'Verbose!'
+        $actualVerbose = 1..1 | ForEach-Object -Parallel { Write-Verbose "Verbose!" -Verbose } -Verbose 4>&1
+        $actualVerbose.Message | Should -BeExactly 'Verbose!'
     }
 
     It 'Verifies debug data streaming' {
     
-        $expectedDebug = 1..1 | ForEach-Object -Parallel { Write-Debug "Debug!" -Debug } -Debug 5>&1
-        $expectedDebug.Message | Should -BeExactly 'Debug!'
+        $actualDebug = 1..1 | ForEach-Object -Parallel { Write-Debug "Debug!" -Debug } -Debug 5>&1
+        $actualDebug.Message | Should -BeExactly 'Debug!'
     }
 
     It 'Verifies information data streaming' {
 
-        $expectedInformation = 1..1 | ForEach-Object -Parallel { Write-Information "Information!" } 6>&1
-        $expectedInformation.MessageData | Should -BeExactly 'Information!'
+        $actualInformation = 1..1 | ForEach-Object -Parallel { Write-Information "Information!" } 6>&1
+        $actualInformation.MessageData | Should -BeExactly 'Information!'
     }
 
     It 'Verifies error for using script block variable' {
