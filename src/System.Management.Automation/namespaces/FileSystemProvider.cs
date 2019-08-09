@@ -8000,21 +8000,23 @@ namespace Microsoft.PowerShell.Commands
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
-                    if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
+                    switch (reparseDataBuffer.ReparseTag)
                     {
-                        linkType = "SymbolicLink";
-                    }
-                    else if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
-                    {
-                        linkType = "Junction";
-                    }
-                    else if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_APPEXECLINK)
-                    {
-                        linkType = "AppExeCLink";
-                    }
-                    else
-                    {
-                        linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                        case IO_REPARSE_TAG_SYMLINK:
+                            linkType = "SymbolicLink";
+                            break;
+
+                        case IO_REPARSE_TAG_MOUNT_POINT:
+                            linkType = "Junction";
+                            break;
+
+                        case IO_REPARSE_TAG_APPEXECLINK:
+                            linkType = "AppExeCLink";
+                            break;
+
+                        default:
+                            linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                            break;
                     }
 
                     return linkType;
@@ -8055,6 +8057,9 @@ namespace Microsoft.PowerShell.Commands
             var data = new WIN32_FIND_DATA();
             using (SafeFileHandle handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
+                // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem (like symlinks)
+                // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
+                // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
                 if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 & IO_REPARSE_TAG_APPEXECLINK) != IO_REPARSE_TAG_APPEXECLINK)
                 {
                     return false;
