@@ -47,7 +47,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="initializationScript"></param>
         /// <param name="useWow64"></param>
         /// <param name="workingDirectory"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory = null)
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
             string processArguments = " -s -NoLogo -NoProfile";
 
@@ -95,6 +95,16 @@ namespace System.Management.Automation.Runspaces
             }
 
             Process = new Process { StartInfo = _startInfo, EnableRaisingEvents = true };
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="powerShellVersion"></param>
+        /// <param name="credential"></param>
+        /// <param name="initializationScript"></param>
+        /// <param name="useWow64"></param>
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, null)
+        {
         }
 
         /// <summary>
