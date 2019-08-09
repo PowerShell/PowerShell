@@ -36,6 +36,29 @@ Describe "Requires tests" -Tags "CI" {
             { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
         }
     }
+
+    Context "Version checks" {
+        BeforeAll {
+            $currentVersion = $PSVersionTable.PSVersion
+
+            $files = "6.1", "6.2" | ForEach-Object { New-Item -Path (Join-Path $TestDrive "vers$_.ps1") -Value "#requires -version $_" }
+
+            $filesTestCase = @(
+                @{ Name = "Check for version 6.1" ; File = $files[0] }
+                @{ Name = "Check for version 6.2" ; File = $files[1] }
+            )
+        }
+
+        It "<Name>" -TestCase $filesTestCase {
+            param( $Name, $File)
+
+            if ($currentVersion -notmatch '^7') {
+                Set-ItResult -Skipped -Because "Test not valid for current version - $currentVersion"
+            }
+
+            { . $file } | Should -Not -Throw
+        }
+    }
 }
 
 Describe "#requires -Modules" -Tags "CI" {
