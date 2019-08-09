@@ -8253,6 +8253,11 @@ namespace Microsoft.PowerShell.Commands
                         return null;
                 }
 
+                if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length);
+                }
+
                 return targetDir;
             }
             finally
