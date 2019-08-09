@@ -14,6 +14,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -57,21 +58,23 @@ namespace Microsoft.PowerShell.Commands
     /// to each element of the pipeline.
     /// </summary>
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        DefaultParameterSetName = "ScriptBlockSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
+        DefaultParameterSetName = ForEachObjectCommand.ScriptBlockSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
         RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet, IDisposable
     {
         #region Private Members
 
         private const string ParallelParameterSet = "ParallelParameterSet";
+        private const string ScriptBlockSet = "ScriptBlockSet";
+        private const string PropertyAndMethodSet = "PropertyAndMethodSet";
 
         #endregion
 
         /// <summary>
         /// This parameter specifies the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "ScriptBlockSet")]
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "PropertyAndMethodSet")]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
         [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public PSObject InputObject
         {
@@ -89,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply in begin processing.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet")]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock Begin
         {
             set
@@ -106,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ScriptBlockSet")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] Process
@@ -130,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply in complete processing.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet")]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock End
         {
             set
@@ -148,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The remaining script blocks to apply.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet", ValueFromRemainingArguments = true)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] RemainingScripts
@@ -173,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The property or method name.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "PropertyAndMethodSet")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
         [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
         public string MemberName
@@ -190,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The arguments passed to a method invocation.
         /// </summary>
-        [Parameter(ParameterSetName = "PropertyAndMethodSet", ValueFromRemainingArguments = true)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet, ValueFromRemainingArguments = true)]
         [ValidateTrustedData]
         [Alias("Args")]
         public object[] ArgumentList
@@ -253,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (ParameterSetName)
             {
-                case "ScriptBlockSet":
+                case ForEachObjectCommand.ScriptBlockSet:
                     InitScriptBlockParameterSet();
                     break;
 
@@ -274,11 +277,11 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (ParameterSetName)
             {
-                case "ScriptBlockSet":
+                case ForEachObjectCommand.ScriptBlockSet:
                     ProcessScriptBlockParameterSet();
                     break;
 
-                case "PropertyAndMethodSet":
+                case ForEachObjectCommand.PropertyAndMethodSet:
                     ProcessPropertyAndMethodParameterSet();
                     break;
 
@@ -298,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (ParameterSetName)
             {
-                case "ScriptBlockSet":
+                case ForEachObjectCommand.ScriptBlockSet:
                     EndBlockParameterSet();
                     break;
 
@@ -331,18 +334,9 @@ namespace Microsoft.PowerShell.Commands
         public void Dispose()
         {
             // Ensure all parallel task objects are disposed
-            if (_taskTimer != null)
-            {
-                _taskTimer.Dispose();
-            }
-            if (_taskDataStreamWriter != null)
-            {
-                _taskDataStreamWriter.Dispose();
-            }
-            if (_taskPool != null)
-            {
-                _taskPool.Dispose();
-            }
+            _taskTimer?.Dispose();
+            _taskDataStreamWriter?.Dispose();
+            _taskPool?.Dispose();
         }
 
         #endregion
@@ -354,16 +348,22 @@ namespace Microsoft.PowerShell.Commands
         private PSTaskPool _taskPool;
         private PSTaskDataStreamWriter _taskDataStreamWriter;
         private Dictionary<string, object> _usingValuesMap;
-        private System.Threading.Timer _taskTimer;
+        private Timer _taskTimer;
         private PSTaskJob _taskJob;
 
         private void InitParallelParameterSet()
         {
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
-            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(Parallel, allowUsingExpression, this.Context, null);
+            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
+                                Parallel,
+                                allowUsingExpression,
+                                this.Context,
+                                null);
             
-            // Validate using values map
-            foreach (var item in _usingValuesMap.Values)
+            // Validate using values map, which is a map of '$using:' variables referenced in the script.
+            // Script block variables are not allowed since their behavior is undefined outside the runspace
+            // in which they were created.
+            foreach (object item in _usingValuesMap.Values)
             {
                 if (item is ScriptBlock)
                 {
@@ -402,11 +402,11 @@ namespace Microsoft.PowerShell.Commands
                 };
                 if (TimeoutSeconds != 0)
                 {
-                    _taskTimer = new System.Threading.Timer(
+                    _taskTimer = new Timer(
                         (_) => _taskPool.StopAll(),
                         null,
                         TimeoutSeconds * 1000,
-                        System.Threading.Timeout.Infinite);
+                        Timeout.Infinite);
                 }
             }
         }
