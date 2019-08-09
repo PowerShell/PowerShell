@@ -133,7 +133,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This tracks all live TraceFrame objects, which forms a stack.
         /// </summary>
-        private List<TraceFrame> _traceFrames = new List<TraceFrame>();
+        private readonly List<TraceFrame> _traceFrames = new List<TraceFrame>();
 
         /// <summary>
         /// This is the API to use for starting a help trace scope.

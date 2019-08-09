@@ -1522,7 +1522,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                runningPipelines = (RemotePipeline[])_runningPipelines.ToArray();
+                runningPipelines = _runningPipelines.ToArray();
             }
 
             if (runningPipelines.Length > 0)
