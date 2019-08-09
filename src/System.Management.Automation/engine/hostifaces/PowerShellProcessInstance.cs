@@ -41,6 +41,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>
@@ -51,7 +52,7 @@ namespace System.Management.Automation.Runspaces
         {
             string processArguments = " -s -NoLogo -NoProfile";
 
-            if (workingDirectory != null)
+            if (!string.IsNullOrWhiteSpace(workingDirectory))
             {
                 processArguments = string.Format(CultureInfo.InvariantCulture,
                     "{0} -wd {1}", processArguments, workingDirectory);

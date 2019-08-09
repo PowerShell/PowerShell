@@ -26,6 +26,14 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
     Context 'Basic tests' {
 
+        BeforeAll {
+            $invalidPathTestCases = @(
+                @{ path = "This is an invalid path"; case = "invalid path"}
+                @{ path = ""; case = "empty string"}
+                @{ path = " "; case = "whitespace string (single space)"}
+            )
+        }
+
         AfterEach {
             Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
@@ -70,18 +78,15 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Can use the user specified working directory parameter' {
-            $tempPath = [System.IO.Path]::GetTempPath()
-            # In the script block we use join path to normalize the path string
-            $job = Start-Job -ScriptBlock { Join-Path $pwd "" } -WorkingDirectory $tempPath | Wait-Job
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $TestDrive | Wait-Job
             $jobOutput = Receive-Job $job
-            $jobOutput | Should -BeExactly $tempPath
+            $jobOutput | Should -BeExactly $TestDrive.ToString()
         }
 
-        It 'Throws an error message if the working directory parameter points to an invalid path' {
-            $invalidPaths = @(""," ", "this is an invalid path")
+        It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
             foreach ($tempPath in $invalidPaths)
             {
-                {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $tempPath} | Should -Throw
+                {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw
             }
         }
 
