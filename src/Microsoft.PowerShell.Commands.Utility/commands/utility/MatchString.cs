@@ -301,7 +301,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of the match object with matched text inverted.</returns>
         public string ToEmphasizedString(string directory)
         {
-            if (!_emphasize) {
+            if (!_emphasize)
+            {
                 return ToString(directory);
             }
 
@@ -314,22 +315,22 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            const string invertColorsVT100 = "\u001b[7m";
-            const string resetVT100 = "\u001b[0m";
+            const string InvertColorsVT100 = "\u001b[7m";
+            const string ResetVT100 = "\u001b[0m";
 
-            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
+            char[] chars = new char[(_matchIndexes.Count * (InvertColorsVT100.Length + ResetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
             for (int i = 0; i < _matchIndexes.Count; i++)
             {
                 // Adds characters before match
-                Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i]-lineIndex);
-                charsIndex += _matchIndexes[i]-lineIndex;
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i] - lineIndex);
+                charsIndex += _matchIndexes[i] - lineIndex;
                 lineIndex = _matchIndexes[i];
 
                 // Adds opening vt sequence
-                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
-                charsIndex += invertColorsVT100.Length;
+                InvertColorsVT100.CopyTo(0, chars, charsIndex, InvertColorsVT100.Length);
+                charsIndex += InvertColorsVT100.Length;
 
                 // Adds characters being emphasized
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
@@ -337,8 +338,8 @@ namespace Microsoft.PowerShell.Commands
                 charsIndex += _matchLengths[i];
 
                 // Adds closing vt sequence
-                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
-                charsIndex += resetVT100.Length;
+                ResetVT100.CopyTo(0, chars, charsIndex, ResetVT100.Length);
+                charsIndex += ResetVT100.Length;
             }
 
             // Adds remaining characters in line
@@ -1706,6 +1707,7 @@ namespace Microsoft.PowerShell.Commands
                                 indexes.Add(match.Index);
                                 lengths.Add(match.Length);
                             }
+
                             matches = new Match[] { match };
                         }
                     }
@@ -1734,6 +1736,7 @@ namespace Microsoft.PowerShell.Commands
                             indexes.Add(index);
                             lengths.Add(pat.Length);
                         }
+
                         gotMatch = true;
                         break;
                     }
