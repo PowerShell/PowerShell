@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new PlatformNotSupportedException();
                 }
 
-                if (stdin != "")
+                if (stdin != string.Empty)
                 {
                     process.StandardInput.Write(stdin);
                     process.StandardInput.Close();
