@@ -242,16 +242,26 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                 case AssemblyHashAlgorithm.Sha512:
                     hashImpl = SHA512.Create();
                     break;
+                case AssemblyHashAlgorithm.None:
+                    break;
                 default:
                     throw new NotSupportedException();
             }
 
-            byte[] publicKeyHash = hashImpl.ComputeHash(publickey);
-            byte[] publicKeyTokenBytes = new byte[8];
-            // Note that, the low 8 bytes of the hash of public key in reverse order is the public key tokens.
-            for (int i = 1; i <= 8; i++)
+            byte[] publicKeyTokenBytes;
+            if (hashImpl != null)
             {
-                publicKeyTokenBytes[i - 1] = publicKeyHash[publicKeyHash.Length - i];
+                byte[] publicKeyHash = hashImpl.ComputeHash(publickey);
+                publicKeyTokenBytes = new byte[8];
+                // Note that, the low 8 bytes of the hash of public key in reverse order is the public key tokens.
+                for (int i = 1; i <= 8; i++)
+                {
+                    publicKeyTokenBytes[i - 1] = publicKeyHash[publicKeyHash.Length - i];
+                }
+            }
+            else
+            {
+                publicKeyTokenBytes = publickey;
             }
 
             // Convert bytes to hex format strings in lower case.

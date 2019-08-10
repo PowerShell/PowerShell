@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// Property that sets clipboard content.
         /// </summary>
         [Parameter(ParameterSetName = ValueParameterSet, Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [AllowNull]
+        [System.Management.Automation.AllowNull]
         [AllowEmptyCollection]
         [AllowEmptyString]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -98,8 +98,8 @@ namespace Microsoft.PowerShell.Commands
             if (Value == null && _isHtmlSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
-    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
+                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
             if (Value != null)

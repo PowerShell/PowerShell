@@ -12,6 +12,8 @@ FunctionsToExport = @()
 AliasesToExport = @("gin", "gtz", "stz")
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
+    "Get-Clipboard",
+    "Set-Clipboard",
     "Clear-ItemProperty",
     "Join-Path",
     "Convert-Path",

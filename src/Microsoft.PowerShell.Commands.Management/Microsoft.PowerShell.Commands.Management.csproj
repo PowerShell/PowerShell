@@ -1,9 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
+
+  <PropertyGroup Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' ">
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,14 +29,14 @@
     <Compile Remove="commands\management\ControlPanelItemCommand.cs" />
     <Compile Remove="commands\management\CommitTransactionCommand.cs" />
     <Compile Remove="commands\management\Eventlog.cs" />
-    <Compile Remove="commands\management\GetClipboardCommand.cs" />
+    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="commands\management\GetClipboardCommand.cs" />
     <Compile Remove="commands\management\GetTransactionCommand.cs" />
     <Compile Remove="commands\management\GetWMIObjectCommand.cs" />
     <Compile Remove="commands\management\InvokeWMIMethodCommand.cs" />
     <Compile Remove="commands\management\RegisterWMIEventCommand.cs" />
     <Compile Remove="commands\management\RemoveWMIObjectCommand.cs" />
     <Compile Remove="commands\management\RollbackTransactionCommand.cs" />
-    <Compile Remove="commands\management\SetClipboardCommand.cs" />
+    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="commands\management\SetClipboardCommand.cs" />
     <Compile Remove="commands\management\SetWMIInstanceCommand.cs" />
     <Compile Remove="commands\management\StartTransactionCommand.cs" />
     <Compile Remove="commands\management\UseTransactionCommand.cs" />
@@ -40,7 +50,7 @@
     <Compile Remove="gen\WmiResources.cs" />
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
     <Compile Remove="gen\ClearRecycleBinResources.cs" />
-    <Compile Remove="gen\ClipboardResources.cs" />
+    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="gen\ClipboardResources.cs" />
 
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
     <EmbeddedResource Remove="resources\TransactionResources.resx" />
@@ -49,7 +59,7 @@
     <EmbeddedResource Remove="resources\WmiResources.resx" />
     <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
     <EmbeddedResource Remove="resources\ClearRecycleBinResources.resx" />
-    <EmbeddedResource Remove="resources\ClipboardResources.resx" />
+    <EmbeddedResource Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="resources\ClipboardResources.resx" />
   </ItemGroup>
 
   <ItemGroup>
