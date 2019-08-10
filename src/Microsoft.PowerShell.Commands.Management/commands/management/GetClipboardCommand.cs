@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// Audio format.
         Audio = 3,
-    };
+    }
 
 #if !WINFORMS
     /// <summary>
@@ -67,8 +67,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Comma Separated Value (CSV).
         /// </summary>
-        CommaSeparatedValue = 4
-    };
+        CommaSeparatedValue = 4,
+    }
 #endif
 
     /// <summary>
@@ -155,8 +155,7 @@ namespace Microsoft.PowerShell.Commands
 #if !WINFORMS
             else
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat),
-                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
             else if (Format == ClipboardFormat.Image)
@@ -193,8 +192,7 @@ namespace Microsoft.PowerShell.Commands
 #if !WINFORMS
             if (textFormat != TextDataFormat.UnicodeText)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported),
-                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
             try
@@ -203,8 +201,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PlatformNotSupportedException)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform),
-                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
             if (!Clipboard.ContainsText(textFormat))
@@ -288,8 +285,7 @@ namespace Microsoft.PowerShell.Commands
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = ""
-        )
+            string stdin = "")
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.UseShellExecute = false;
@@ -318,6 +314,7 @@ namespace Microsoft.PowerShell.Commands
                     process.StandardInput.Write(stdin);
                     process.StandardInput.Close();
                 }
+
                 stdout = process.StandardOutput.ReadToEnd();
                 process.WaitForExit(250);
 

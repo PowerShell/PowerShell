@@ -64,8 +64,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if !WINFORMS
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported),
-                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported), "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _path = value;
 #endif
@@ -91,8 +90,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if !WINFORMS
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported),
-                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported), "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _literalPath = value;
 #endif
@@ -115,8 +113,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if !WINFORMS
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported),
-                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported), "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _isHtmlSet = true;
                 _asHtml = value;
