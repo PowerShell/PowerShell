@@ -91,50 +91,53 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                     MetadataReader metadataReader = peReader.GetMetadataReader();
                     string strongAssemblyName = GetAssemblyStrongName(metadataReader);
 
-                    foreach (TypeDefinitionHandle typeHandle in metadataReader.TypeDefinitions)
+                    if (strongAssemblyName != null)
                     {
-                        // We only care about public types
-                        TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
-                        // The visibility mask is used to mask out the bits that contain the visibility.
-                        // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
-                        TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
-                        if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
+                        foreach (TypeDefinitionHandle typeHandle in metadataReader.TypeDefinitions)
                         {
-                            continue;
-                        }
-
-                        string fullName = GetTypeFullName(metadataReader, typeDefinition);
-                        bool isTypeObsolete = IsTypeObsolete(metadataReader, typeDefinition);
-
-                        if (!typeNameToAssemblyMap.ContainsKey(fullName))
-                        {
-                            // Add unique type.
-                            typeNameToAssemblyMap.Add(fullName, new TypeMetadata(strongAssemblyName, isTypeObsolete));
-                        }
-                        else if (typeNameToAssemblyMap[fullName].IsObsolete && !isTypeObsolete)
-                        {
-                            // Duplicate types found defined in different assemblies, but the previous one is obsolete while the current one is not.
-                            // Replace the existing type with the current one.
-                            if (printDebugMessage)
+                            // We only care about public types
+                            TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
+                            // The visibility mask is used to mask out the bits that contain the visibility.
+                            // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
+                            TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
+                            if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
                             {
-                                var existingTypeMetadata = typeNameToAssemblyMap[fullName];
-                                Console.WriteLine($@"
-REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})
-  WITH '{strongAssemblyName}' (IsObsolete? {isTypeObsolete})");
+                                continue;
                             }
 
-                            typeNameToAssemblyMap[fullName] = new TypeMetadata(strongAssemblyName, isTypeObsolete);
-                        }
-                        else if (printDebugMessage)
-                        {
-                            // Duplicate types found defined in different assemblies, and fall into one of the following conditions:
-                            //  - both are obsolete
-                            //  - both are not obsolete
-                            //  - the existing type is not obsolete while the new one is obsolete
-                            var existingTypeMetadata = typeNameToAssemblyMap[fullName];
-                            Console.WriteLine($@"
-DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsolete}).
-  -- Already exist in '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})");
+                            string fullName = GetTypeFullName(metadataReader, typeDefinition);
+                            bool isTypeObsolete = IsTypeObsolete(metadataReader, typeDefinition);
+
+                            if (!typeNameToAssemblyMap.ContainsKey(fullName))
+                            {
+                                // Add unique type.
+                                typeNameToAssemblyMap.Add(fullName, new TypeMetadata(strongAssemblyName, isTypeObsolete));
+                            }
+                            else if (typeNameToAssemblyMap[fullName].IsObsolete && !isTypeObsolete)
+                            {
+                                // Duplicate types found defined in different assemblies, but the previous one is obsolete while the current one is not.
+                                // Replace the existing type with the current one.
+                                if (printDebugMessage)
+                                {
+                                    var existingTypeMetadata = typeNameToAssemblyMap[fullName];
+                                    Console.WriteLine($@"
+    REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})
+    WITH '{strongAssemblyName}' (IsObsolete? {isTypeObsolete})");
+                                }
+
+                                typeNameToAssemblyMap[fullName] = new TypeMetadata(strongAssemblyName, isTypeObsolete);
+                            }
+                            else if (printDebugMessage)
+                            {
+                                // Duplicate types found defined in different assemblies, and fall into one of the following conditions:
+                                //  - both are obsolete
+                                //  - both are not obsolete
+                                //  - the existing type is not obsolete while the new one is obsolete
+                                var existingTypeMetadata = typeNameToAssemblyMap[fullName];
+                                Console.WriteLine($@"
+    DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsolete}).
+    -- Already exist in '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})");
+                            }
                         }
                     }
                 }
@@ -243,7 +246,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                     hashImpl = SHA512.Create();
                     break;
                 case AssemblyHashAlgorithm.None:
-                    Console.WriteLine($@"No HashAlgorithm: {asmName}");
+                    Console.WriteLine($@"No HashAlgorithm skipping: {asmName}");
                     break;
                 default:
                     throw new NotSupportedException();
@@ -262,7 +265,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             }
             else
             {
-                publicKeyTokenBytes = publickey;
+                return null;
             }
 
             // Convert bytes to hex format strings in lower case.
