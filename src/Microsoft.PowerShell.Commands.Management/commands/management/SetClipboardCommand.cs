@@ -52,7 +52,22 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PathParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Path { get; set; }
+        public string[] Path
+        {
+            get { return _path; }
+
+            set
+            {
+#if UNIX
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported)),
+                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+#else
+                _path = value;
+#endif
+            }
+        }
+
+        private string[] _path;
 
         /// <summary>
         /// Property that sets LiteralPath parameter. This will allow to set file formats to Clipboard.
@@ -61,7 +76,22 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] LiteralPath { get; set; }
+        public string[] LiteralPath
+        {
+            get { return _literalPath; }
+
+            set
+            {
+#if UNIX
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported)),
+                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+#else
+                _literalPath = value;
+#endif
+            }
+        }
+
+        private string[] _literalPath;
 
         /// <summary>
         /// Property that sets html parameter. This will allow html content rendered as html to clipboard.
@@ -73,8 +103,13 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
+#if UNIX
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported)),
+                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+#else
                 _isHtmlSet = true;
                 _asHtml = value;
+#endif
             }
         }
 
@@ -106,13 +141,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 _contentList.AddRange(Value);
             }
-            else if (Path != null)
+            else if (_path != null)
             {
-                _contentList.AddRange(Path);
+                _contentList.AddRange(_path);
             }
-            else if (LiteralPath != null)
+            else if (_literalPath != null)
             {
-                _contentList.AddRange(LiteralPath);
+                _contentList.AddRange(_literalPath);
             }
         }
 
@@ -121,11 +156,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (LiteralPath != null)
+            if (_literalPath != null)
             {
                 CopyFilesToClipboard(_contentList, Append, true);
             }
-            else if (Path != null)
+            else if (_path != null)
             {
                 CopyFilesToClipboard(_contentList, Append, false);
             }
@@ -150,7 +185,11 @@ namespace Microsoft.PowerShell.Commands
                 setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
+#if UNIX
+                    ClipboardHelper.SetText("");
+#else
                     Clipboard.Clear();
+#endif
                 }
 
                 return;
@@ -159,6 +198,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder content = new StringBuilder();
             if (append)
             {
+#if UNIX
+                content.AppendLine(ClipboardHelper.GetText());
+#else
                 if (!Clipboard.ContainsText())
                 {
                     WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
@@ -168,6 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     content.AppendLine(Clipboard.GetText());
                 }
+#endif
             }
 
             if (contentList != null)
@@ -199,11 +242,15 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
             {
                 // Set the text data
+#if UNIX
+                ClipboardHelper.SetText(content.ToString());
+#else
                 Clipboard.Clear();
                 if (asHtml)
                     Clipboard.SetText(GetHtmlDataString(content.ToString()), TextDataFormat.Html);
                 else
                     Clipboard.SetText(content.ToString());
+#endif
             }
         }
 

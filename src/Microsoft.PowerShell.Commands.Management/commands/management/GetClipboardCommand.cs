@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -112,6 +113,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteObject(GetClipboardContentAsText(_textFormat), true);
             }
+#if UNIX
+            else
+            {
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat)),
+                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+            }
+#else
             else if (Format == ClipboardFormat.Image)
             {
                 this.WriteObject(Clipboard.GetImage());
@@ -131,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteObject(Clipboard.GetAudioStream());
             }
+#endif
         }
 
         /// <summary>
@@ -140,15 +149,33 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> GetClipboardContentAsText(TextDataFormat textFormat)
         {
+            List<string> result = new List<string>();
+            string textContent;
+#if UNIX
+            if (textFormat != TextDataFormat.Text)
+            {
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported)),
+                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+            }
+
+            try
+            {
+                textContent = ClipboardHelper.GetText();
+            }
+            catch (PlatformNotSupportedException)
+            {
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform)),
+                    "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+            }
+#else
             if (!Clipboard.ContainsText(textFormat))
             {
                 return null;
             }
 
-            List<string> result = new List<string>();
-
             // TextFormat default value is Text, by default it is same as Clipboard.GetText()
-            string textContent = Clipboard.GetText(textFormat);
+            textContent = Clipboard.GetText(textFormat);
+#endif
             if (_raw)
             {
                 result.Add(textContent);
@@ -158,7 +185,6 @@ namespace Microsoft.PowerShell.Commands
                 string[] splitSymbol = { Environment.NewLine };
                 result.AddRange(textContent.Split(splitSymbol, StringSplitOptions.None));
             }
-
             return result;
         }
 
@@ -209,6 +235,110 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
+        }
+
+    }
+
+    internal class ClipboardHelper
+    {
+        private static bool? _clipboardSupported;
+
+        private static string StartProcess(
+            string tool,
+            string args,
+            string stdin = ""
+        )
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.FileName = tool;
+            startInfo.Arguments = args;
+            string stdout = null;
+
+            using (Process process = new Process())
+            {
+                process.StartInfo = startInfo;
+                try
+                {
+                    process.Start();
+                }
+                catch (System.ComponentModel.Win32Exception)
+                {
+                    _clipboardSupported = false;
+                    throw new PlatformNotSupportedException();
+                }
+
+                if (stdin != "")
+                {
+                    process.StandardInput.Write(stdin);
+                    process.StandardInput.Close();
+                }
+                stdout = process.StandardOutput.ReadToEnd();
+                process.WaitForExit(250);
+
+                _clipboardSupported = process.ExitCode == 0;
+            }
+
+            return stdout;
+        }
+
+        public static string GetText()
+        {
+            if (_clipboardSupported == false)
+            {
+                throw new PlatformNotSupportedException();
+            }
+
+            string tool = "";
+            string args = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                tool = "xclip";
+                args = "-selection clipboard -out";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                tool = "pbpaste";
+            }
+            else
+            {
+                _clipboardSupported = false;
+                throw new PlatformNotSupportedException();
+            }
+
+            return StartProcess(tool, args);
+        }
+
+        public static void SetText(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+
+            if (_clipboardSupported == false)
+            {
+                throw new PlatformNotSupportedException();
+            }
+
+            string tool = "";
+            string args = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                tool = "xclip";
+                args = "-selection clipboard -in";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                tool = "pbcopy";
+            }
+            else
+            {
+                _clipboardSupported = false;
+                throw new PlatformNotSupportedException();
+            }
+
+            StartProcess(tool, args, text);
         }
     }
 }
