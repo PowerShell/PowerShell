@@ -41,22 +41,53 @@ Describe "Requires tests" -Tags "CI" {
         BeforeAll {
             $currentVersion = $PSVersionTable.PSVersion
 
-            $files = "6.1", "6.2" | ForEach-Object { New-Item -Path (Join-Path $TestDrive "vers$_.ps1") -Value "#requires -version $_" }
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0"
+            $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
+            $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
+            $nonExistingMajor = "$($latestVersion.Major + 1).0"
 
-            $filesTestCase = @(
-                @{ Name = "Check for version 6.1" ; File = $files[0] }
-                @{ Name = "Check for version 6.2" ; File = $files[1] }
-            )
-        }
-
-        It "<Name>" -TestCase $filesTestCase {
-            param( $Name, $File)
-
-            if ($currentVersion -notmatch '^7') {
-                Set-ItResult -Skipped -Because "Test not valid for current version - $currentVersion"
+            foreach ($version in ($powerShellVersions + $nonExistingMinor + $nonExistingMajor)) {
+                $filePath = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                $null = New-Item -Path $filePath -Value "#requires -version $version"
             }
 
-            { . $file } | Should -Not -Throw
+            $filesSuccessTestCase = foreach ($version in $powerShellVersions) {
+                @{
+                    Name = "Check for version $version"
+                    File = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                    Version = $version
+                }
+            }
+
+            $filesFailTestCase = foreach ($version in @($nonExistingMinor) + @($nonExistingMajor)) {
+                @{
+                    Name = "Check for version $version"
+                    File = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                }
+            }
+        }
+
+        It "<Name>" -TestCase $filesSuccessTestCase {
+            param(
+                $Name,
+                $File,
+                $Version
+            )
+
+            if ($currentVersion -notmatch '^7' -and $Version -match '^7') {
+                Set-ItResult -Skipped -Because "Test not valid for current version - $currentVersion and test version = $Version"
+            }
+
+            { . $File } | Should -Not -Throw
+        }
+
+        It "<Name>" -TestCase $filesFailTestCase {
+            param(
+                $Name,
+                $File
+            )
+
+            { . $File } | Should -Throw -ExceptionType ([System.Management.Automation.ScriptRequiresException])
         }
     }
 }
