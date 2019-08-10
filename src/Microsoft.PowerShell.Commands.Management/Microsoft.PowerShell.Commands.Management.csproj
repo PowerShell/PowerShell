@@ -1,4 +1,5 @@
 ﻿<Project ToolsVersion="15.0">
+
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
@@ -29,14 +30,12 @@
     <Compile Remove="commands\management\ControlPanelItemCommand.cs" />
     <Compile Remove="commands\management\CommitTransactionCommand.cs" />
     <Compile Remove="commands\management\Eventlog.cs" />
-    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="commands\management\GetClipboardCommand.cs" />
     <Compile Remove="commands\management\GetTransactionCommand.cs" />
     <Compile Remove="commands\management\GetWMIObjectCommand.cs" />
     <Compile Remove="commands\management\InvokeWMIMethodCommand.cs" />
     <Compile Remove="commands\management\RegisterWMIEventCommand.cs" />
     <Compile Remove="commands\management\RemoveWMIObjectCommand.cs" />
     <Compile Remove="commands\management\RollbackTransactionCommand.cs" />
-    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="commands\management\SetClipboardCommand.cs" />
     <Compile Remove="commands\management\SetWMIInstanceCommand.cs" />
     <Compile Remove="commands\management\StartTransactionCommand.cs" />
     <Compile Remove="commands\management\UseTransactionCommand.cs" />
@@ -50,7 +49,6 @@
     <Compile Remove="gen\WmiResources.cs" />
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
     <Compile Remove="gen\ClearRecycleBinResources.cs" />
-    <Compile Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="gen\ClipboardResources.cs" />
 
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
     <EmbeddedResource Remove="resources\TransactionResources.resx" />
@@ -59,7 +57,6 @@
     <EmbeddedResource Remove="resources\WmiResources.resx" />
     <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
     <EmbeddedResource Remove="resources\ClearRecycleBinResources.resx" />
-    <EmbeddedResource Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " Remove="resources\ClipboardResources.resx" />
   </ItemGroup>
 
   <ItemGroup>

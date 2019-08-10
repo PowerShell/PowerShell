@@ -13,7 +13,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
+#if !UNIX
 using System.Windows.Forms;
+#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -59,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if UNIX
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _path = value;
@@ -67,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _path;
+        private string[] _path = null;
 
         /// <summary>
         /// Property that sets LiteralPath parameter. This will allow to set file formats to Clipboard.
@@ -83,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if UNIX
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _literalPath = value;
@@ -91,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _literalPath;
+        private string[] _literalPath = null;
 
         /// <summary>
         /// Property that sets html parameter. This will allow html content rendered as html to clipboard.
@@ -104,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
 #if UNIX
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
                 _isHtmlSet = true;
@@ -113,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _asHtml;
+        private bool _asHtml = false;
         private bool _isHtmlSet = false;
 
         /// <summary>
@@ -156,6 +158,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+#if UNIX
+            SetClipboardContent(_contentList, Append, _asHtml);
+#else
             if (_literalPath != null)
             {
                 CopyFilesToClipboard(_contentList, Append, true);
@@ -168,6 +173,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SetClipboardContent(_contentList, Append, _asHtml);
             }
+#endif
         }
 
         /// <summary>
@@ -254,6 +260,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+#if !UNIX
         /// <summary>
         /// Copy the file format to clipboard.
         /// </summary>
@@ -470,5 +477,6 @@ EndSelection:<<<<<<<<4";
 
             return count;
         }
+#endif
     }
 }

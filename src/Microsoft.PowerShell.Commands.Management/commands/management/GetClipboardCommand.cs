@@ -14,7 +14,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Media;
 using System.Runtime.InteropServices;
+#if !UNIX
 using System.Windows.Forms;
+#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -36,13 +38,40 @@ namespace Microsoft.PowerShell.Commands
         Audio = 3,
     };
 
+#if UNIX
+    /// <summary>
+    /// Defines the different text formats supported by clipboard.
+    /// </summary>
+    public enum TextDataFormat
+    {
+        /// Text format as default.
+        Text = 0,
+
+        /// Unicode text.
+        UnicodeText = 1,
+
+        /// Rich Text Format.
+        Rtf = 2,
+
+        /// Hyper-Text Markup Language.
+        Html = 3,
+
+        /// Comma Separated Value (CSV).
+        CommaSeparatedValue = 4
+    };
+#endif
+
     /// <summary>
     /// Defines the implementation of the 'Get-Clipboard' cmdlet.
     /// This cmdlet get the content from system clipboard.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
+#if UNIX
+    [OutputType(typeof(string))]
+#else
     [OutputType(typeof(string), typeof(FileInfo), typeof(Image), typeof(Stream))]
+#endif
     public class GetClipboardCommand : PSCmdlet
     {
         /// <summary>
@@ -116,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             else
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
@@ -150,11 +179,11 @@ namespace Microsoft.PowerShell.Commands
         private List<string> GetClipboardContentAsText(TextDataFormat textFormat)
         {
             List<string> result = new List<string>();
-            string textContent;
+            string textContent = null;
 #if UNIX
-            if (textFormat != TextDataFormat.Text)
+            if (textFormat != TextDataFormat.UnicodeText)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -164,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PlatformNotSupportedException)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform)),
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
@@ -188,6 +217,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
+#if !UNIX
         /// <summary>
         /// Returns the clipboard content as file info.
         /// </summary>
@@ -208,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+#endif
 
         /// <summary>
         /// Wraps the item in a PSObject and attaches some notes to the
@@ -239,6 +270,7 @@ namespace Microsoft.PowerShell.Commands
 
     }
 
+#if UNIX
     internal class ClipboardHelper
     {
         private static bool? _clipboardSupported;
@@ -341,4 +373,5 @@ namespace Microsoft.PowerShell.Commands
             StartProcess(tool, args, text);
         }
     }
+#endif
 }

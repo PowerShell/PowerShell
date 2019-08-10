@@ -398,7 +398,10 @@ Fix steps:
         Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*') {
-            if ($Options.Runtime -like 'win-arm*') {
+            # Relative paths do not work well if cwd is not changed to project
+            Push-Location $Options.Top
+
+            if ($Options.Runtime -like 'win-arm*' -or $Options.Runtime -notlike 'win*') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } else {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"

@@ -8,6 +8,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             Set-Clipboard -Value $guid
             Get-Clipboard | Should -BeExactly $guid
             Get-Clipboard -Format Text | Should -BeExactly $guid
+            Get-Clipboard -TextFormatType UnicodeText | Should -BeExactly $guid
         }
 
         It 'Get-Clipboard returns an array' {
@@ -95,18 +96,18 @@ EndSelection:000000254
         }
 
         It '-TextFormatType <format>: returns error' -TestCases @(
-            @{ format = 'UnicodeText' }
+            @{ format = 'Text' }
             @{ format = 'Rtf' }
             @{ format = 'Html' }
             @{ format = 'CommaSeparatedValue' }
         ){
             param ($format)
 
-            { Get-Clipboard -TextFormatType $format } | Should -Throw -ErrorId 'FailedToGetClipboard'
+            { Get-Clipboard -TextFormatType $format } | Should -Throw -ErrorId 'FailedToGetClipboard,Microsoft.PowerShell.Commands.GetClipboardCommand'
         }
 
         It '-AsHtml returns error' {
-            { 'hello' | Set-Clipboard -AsHtml } | Should -Throw -ErrorId 'foo'
+            { 'hello' | Set-Clipboard -AsHtml } | Should -Throw -ErrorId 'FailedToSetClipboard,Microsoft.PowerShell.Commands.SetClipboardCommand'
         }
 
         It '-Format <format>: returns error' -TestCases @(
@@ -116,7 +117,7 @@ EndSelection:000000254
         ){
             param ($format)
 
-            { Get-Clipboard -Format $format } | Should -Throw -ErrorId 'FailedToGetClipboard'
+            { Get-Clipboard -Format $format } | Should -Throw -ErrorId 'FailedToGetClipboard,Microsoft.PowerShell.Commands.GetClipboardCommand'
         }
     }
 }
