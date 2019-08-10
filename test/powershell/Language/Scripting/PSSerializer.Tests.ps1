@@ -21,7 +21,7 @@ Describe 'Tests for lossless rehydration of serialized types.' -Tags 'CI' {
                 $bpValue = $Breakpoint.$($property.Name)
                 $rehydratedBpValue = $rehydratedBp.$($property.Name)
                 $propertyType = $property.TypeNameOfValue -as [System.Type]
-                if ($bpValue -eq $null) {
+                if ($null -eq $bpValue) {
                     $rehydratedBpValue | Should -Be $null
                 } elseif ($propertyType.IsValueType) {
                     $bpValue | Should -Be $rehydratedBpValue
