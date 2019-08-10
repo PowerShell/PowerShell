@@ -44,19 +44,29 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public enum TextDataFormat
     {
+        /// <summary>
         /// Text format as default.
+        /// </summary>
         Text = 0,
 
+        /// <summary>
         /// Unicode text.
+        /// </summary>
         UnicodeText = 1,
 
+        /// <summary>
         /// Rich Text Format.
+        /// </summary>
         Rtf = 2,
 
+        /// <summary>
         /// Hyper-Text Markup Language.
+        /// </summary>
         Html = 3,
 
+        /// <summary>
         /// Comma Separated Value (CSV).
+        /// </summary>
         CommaSeparatedValue = 4
     };
 #endif
@@ -324,53 +334,41 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            string tool = "";
-            string args = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                tool = "xclip";
-                args = "-selection clipboard -out";
+                return StartProcess("xclip", "-selection clipboard -out");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                tool = "pbpaste";
+                return StartProcess("pbpaste", string.Empty);
             }
             else
             {
                 _clipboardSupported = false;
                 throw new PlatformNotSupportedException();
             }
-
-            return StartProcess(tool, args);
         }
 
         public static void SetText(string text)
         {
-            if (string.IsNullOrEmpty(text)) return;
-
             if (_clipboardSupported == false)
             {
                 throw new PlatformNotSupportedException();
             }
 
-            string tool = "";
-            string args = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                tool = "xclip";
-                args = "-selection clipboard -in";
+                StartProcess("xclip", "-selection clipboard -in");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                tool = "pbcopy";
+                StartProcess("pbcopy", string.Empty);
             }
             else
             {
                 _clipboardSupported = false;
                 throw new PlatformNotSupportedException();
             }
-
-            StartProcess(tool, args, text);
         }
     }
 #endif
