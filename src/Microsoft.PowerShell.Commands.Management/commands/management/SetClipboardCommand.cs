@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
 #if UNIX
-                    ClipboardHelper.SetText("");
+                    ClipboardHelper.SetText(string.Empty);
 #else
                     Clipboard.Clear();
 #endif
