@@ -13,7 +13,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
-#if !UNIX
+#if WINFORMS
 using System.Windows.Forms;
 #endif
 
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#if UNIX
+#if !WINFORMS
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.PathUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#if UNIX
+#if !WINFORMS
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.LiteralPathUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#if UNIX
+#if !WINFORMS
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.AsHtmlUnsupported),
                     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
 #else
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-#if UNIX
+#if !WINFORMS
             SetClipboardContent(_contentList, Append, _asHtml);
 #else
             if (_literalPath != null)
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                 setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
-#if UNIX
+#if !WINFORMS
                     ClipboardHelper.SetText(string.Empty);
 #else
                     Clipboard.Clear();
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder content = new StringBuilder();
             if (append)
             {
-#if UNIX
+#if !WINFORMS
                 content.AppendLine(ClipboardHelper.GetText());
 #else
                 if (!Clipboard.ContainsText())
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
             {
                 // Set the text data
-#if UNIX
+#if !WINFORMS
                 ClipboardHelper.SetText(content.ToString());
 #else
                 Clipboard.Clear();
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#if !UNIX
+#if WINFORMS
         /// <summary>
         /// Copy the file format to clipboard.
         /// </summary>

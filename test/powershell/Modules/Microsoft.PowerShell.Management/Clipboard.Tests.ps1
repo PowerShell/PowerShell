@@ -2,7 +2,17 @@
 # Licensed under the MIT License.
 
 Describe 'Clipboard cmdlet tests' -Tag CI {
+
     Context 'Text' {
+        BeforeAll {
+            $defaultParamValues = $PSdefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")
+        }
+
+        AfterAll {
+            $PSDefaultParameterValues = $defaultParamValues
+        }
+
         It 'Get-Clipboard returns what is in Set-Clipboard' {
             $guid = New-Guid
             Set-Clipboard -Value $guid
@@ -35,7 +45,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
     Context 'Windows' {
         BeforeAll {
             $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = !$IsWindows
+            $PSDefaultParameterValues["it:skip"] = !$IsWindows -or $env:PROCESSOR_ARCHITECTURE.Contains("arm")
         }
 
         AfterAll {

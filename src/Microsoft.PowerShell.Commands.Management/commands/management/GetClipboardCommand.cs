@@ -14,7 +14,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Media;
 using System.Runtime.InteropServices;
-#if !UNIX
+#if WINFORMS
 using System.Windows.Forms;
 #endif
 
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         Audio = 3,
     };
 
-#if UNIX
+#if !WINFORMS
     /// <summary>
     /// Defines the different text formats supported by clipboard.
     /// </summary>
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
-#if UNIX
+#if !WINFORMS
     [OutputType(typeof(string))]
 #else
     [OutputType(typeof(string), typeof(FileInfo), typeof(Image), typeof(Stream))]
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteObject(GetClipboardContentAsText(_textFormat), true);
             }
-#if UNIX
+#if !WINFORMS
             else
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat),
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<string> result = new List<string>();
             string textContent = null;
-#if UNIX
+#if !WINFORMS
             if (textFormat != TextDataFormat.UnicodeText)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported),
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-#if !UNIX
+#if WINFORMS
         /// <summary>
         /// Returns the clipboard content as file info.
         /// </summary>
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-#if UNIX
+#if !WINFORMS
     internal class ClipboardHelper
     {
         private static bool? _clipboardSupported;
@@ -344,6 +344,8 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+                // Unfortunately there isn't a built in tool to read from
+                // clipboard on Windows if WinForms is not available
                 _clipboardSupported = false;
                 throw new PlatformNotSupportedException();
             }
@@ -358,11 +360,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                StartProcess("xclip", "-selection clipboard -in");
+                StartProcess("xclip", "-selection clipboard -in", text);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                StartProcess("pbcopy", string.Empty);
+                StartProcess("pbcopy", string.Empty, text);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                StartProcess("clip", string.Empty, text);
             }
             else
             {

@@ -15,6 +15,7 @@
 
   <PropertyGroup Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' ">
     <UseWindowsForms>true</UseWindowsForms>
+    <DefineConstants>$(DefineConstants);WINFORMS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
