@@ -56,7 +56,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path
         {
-            get { return _path; }
+            get
+            {
+                return _path;
+            }
 
             set
             {
@@ -80,7 +83,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
-            get { return _literalPath; }
+            get
+            {
+                return _literalPath;
+            }
 
             set
             {
@@ -101,7 +107,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AsHtml
         {
-            get { return _asHtml; }
+            get
+            {
+                return _asHtml;
+            }
 
             set
             {

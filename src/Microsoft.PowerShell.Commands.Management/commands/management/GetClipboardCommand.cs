@@ -214,6 +214,7 @@ namespace Microsoft.PowerShell.Commands
                 string[] splitSymbol = { Environment.NewLine };
                 result.AddRange(textContent.Split(splitSymbol, StringSplitOptions.None));
             }
+
             return result;
         }
 
@@ -267,7 +268,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
     }
 
 #if UNIX
