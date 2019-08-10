@@ -243,6 +243,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                     hashImpl = SHA512.Create();
                     break;
                 case AssemblyHashAlgorithm.None:
+                    Console.WriteLine($@"No HashAlgorithm: {asmName}");
                     break;
                 default:
                     throw new NotSupportedException();
