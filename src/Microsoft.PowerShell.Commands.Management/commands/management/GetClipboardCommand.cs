@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
 #if !WINFORMS
-    internal class ClipboardHelper
+    internal static class ClipboardHelper
     {
         private static bool? _clipboardSupported;
 
