@@ -2,11 +2,14 @@
 # Licensed under the MIT License.
 
 Describe 'Clipboard cmdlet tests' -Tag CI {
+    BeforeAll {
+        $xclip = Get-Command xclip -CommandType Application -ErrorAction Ignore
+    }
 
     Context 'Text' {
         BeforeAll {
             $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")
+            $PSDefaultParameterValues["it:skip"] = $IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm") -and $xclip -eq $null
         }
 
         AfterAll {
@@ -98,7 +101,7 @@ EndSelection:000000254
     Context 'Unix' {
         BeforeAll {
             $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $IsWindows
+            $PSDefaultParameterValues["it:skip"] = $IsWindows -or ($IsLinux -and $xclip -eq $null)
         }
 
         AfterAll {

@@ -1331,9 +1331,6 @@
         <Component Id="cmpB2DC1821DBE648078AEA75AC0AB62408" Guid="{4242bbb5-81dd-481d-a46a-6397d5bce4a5}">
           <File Id="filA7C18F70F1814A08A63620BC16B1C4DC" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.IO.FileSystem.DriveInfo.dll" />
         </Component>
-        <Component Id="cmpD63D95DCAE9747E3A170CDD082EE4432" Guid="{8fb8d745-02e0-4ca3-b570-06981423b367}">
-          <File Id="filC57EEBC7B79642DF81737183462ABBE4" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Drawing.dll" />
-        </Component>
         <Component Id="cmp9C1983722FB842AEAAE7FE004439F7F5" Guid="{28fac38a-2d64-4651-b17d-822f689ad00f}">
           <File Id="fil3E3F9C4BC1D5493798264C5592B2D26B" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Security.Principal.dll" />
         </Component>
