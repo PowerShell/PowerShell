@@ -285,7 +285,8 @@ namespace Microsoft.PowerShell.Commands
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = "")
+            string stdin = "",
+            bool readStdout = true)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.UseShellExecute = false;
@@ -315,7 +316,11 @@ namespace Microsoft.PowerShell.Commands
                     process.StandardInput.Close();
                 }
 
-                stdout = process.StandardOutput.ReadToEnd();
+                if (readStdout)
+                {
+                    stdout = process.StandardOutput.ReadToEnd();
+                }
+
                 process.WaitForExit(250);
 
                 _clipboardSupported = process.ExitCode == 0;
@@ -357,15 +362,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                StartProcess("xclip", "-selection clipboard -in", text);
+                StartProcess("xclip", "-selection clipboard -in", text, readStdout : false);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                StartProcess("pbcopy", string.Empty, text);
+                StartProcess("pbcopy", string.Empty, text, readStdout : false);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                StartProcess("clip", string.Empty, text);
+                StartProcess("clip", string.Empty, text, readStdout : false);
             }
             else
             {
