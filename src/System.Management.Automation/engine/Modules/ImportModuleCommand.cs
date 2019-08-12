@@ -827,9 +827,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Send telemetry on the imported modules
-            foreach(PSModuleInfo ModuleInfo in remotelyImportedModules)
+            foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, ModuleInfo.Name);
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
             }
 
             return remotelyImportedModules;

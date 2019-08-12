@@ -22,16 +22,19 @@ namespace Microsoft.PowerShell.Telemetry
         /// telemetry of the application type (cmdlet, script, etc).
         /// </summary>
         ApplicationType,
+
         /// <summary>
         /// Send telemetry when we load a module, only module names in s_knownModuleList list
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
+
         /// <summary>
         /// Send telemetry for experimental module feature activation.
         /// All experimental engine features will be have telemetry.
         /// </summary>
         ExperimentalEngineFeatureActivation,
+
         /// <summary>
         /// Send telemetry for experimental module feature activation.
         /// Experimental module features will send telemetry based on the module it is in.
@@ -39,10 +42,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// in that module.
         /// </summary>
         ExperimentalModuleFeatureActivation,
+
         /// <summary>
         /// Send telemetry for each PowerShell.Create API.
         /// </summary>
         PowerShellCreate,
+
         /// <summary>
         /// Remote session creation.
         /// </summary>
@@ -76,7 +81,7 @@ namespace Microsoft.PowerShell.Telemetry
         // the session identifier
         private static Guid s_sessionId {get; set; }
 
-        ///<summary>
+        /// <summary>
         /// We send telemetry only a known set of modules.
         /// If it's not in this list, then we report anonymous.
         /// </summary>
@@ -101,21 +106,23 @@ namespace Microsoft.PowerShell.Telemetry
         public static bool CanSendTelemetry { get; private set; }
 
         /// <summary>
+        /// Initializes static members of the <see cref="ApplicationInsightsTelemetry"/> class.
         /// Static constructor determines whether telemetry is to be sent, and then
         /// sets the telemetry key and set the telemetry delivery mode.
-        /// Creates the session ID and
-        /// initializes the HashSet of known module names.
+        /// Creates the session ID and initializes the HashSet of known module names.
         /// Gets or constructs the unique identifier.
         /// </summary>
         static ApplicationInsightsTelemetry()
         {
             CanSendTelemetry = ! GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             // If we can't send telemetry, there's no reason to do any of this
-            if ( CanSendTelemetry ) {
+            if ( CanSendTelemetry )
+            {
                 s_telemetryClient = new TelemetryClient();
                 TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
                 TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = s_developerMode;
                 s_sessionId = Guid.NewGuid();
+
                 // use a hashset when looking for module names, it should be quicker than a string comparison
                 s_knownModules = new HashSet<string>(s_knownModuleNames, StringComparer.OrdinalIgnoreCase);
                 s_uniqueUserIdentifier = GetUniqueIdentifier();
@@ -152,12 +159,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// <summary>
         /// Send telemetry as a metric.
         /// </summary>
-        /// <parameter name="metricId">The type of telemetry that we'll be sending</parameter>
-        /// <parameter name="data">The specific details about the telemetry</parameter>
+        /// <param name="metricId">The type of telemetry that we'll be sending</param>
+        /// <param name="data">The specific details about the telemetry</param>
         internal static void SendTelemetryMetric(TelemetryType metricId, string data)
         {
 
-            if (! CanSendTelemetry)
+            if ( ! CanSendTelemetry)
             {
                 return;
             }
@@ -165,7 +172,8 @@ namespace Microsoft.PowerShell.Telemetry
             string metricName = metricId.ToString();
             string uuidString = s_uniqueUserIdentifier.ToString();
             string sessionIdString  = s_sessionId.ToString();
-            try {
+            try
+            {
                 switch (metricId)
                 {
                     case TelemetryType.ApplicationType:
@@ -184,7 +192,8 @@ namespace Microsoft.PowerShell.Telemetry
                         break;
                 }
             }
-            catch {
+            catch
+            {
                 // do nothing, telemetry can't be sent
                 // don't send the panic telemetry as if we have failed above, it will likely fail here.
             }
@@ -209,10 +218,12 @@ namespace Microsoft.PowerShell.Telemetry
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
         private static string GetModuleName(string moduleNameToValidate)
         {
-            if (s_knownModules.TryGetValue(moduleNameToValidate, out string valOut)) {
+            if (s_knownModules.TryGetValue(moduleNameToValidate, out string valOut))
+            {
                 return moduleNameToValidate;
             }
-            else {
+            else
+            {
                 return "anonymous";
             }
         }
@@ -224,7 +235,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="mode">The "mode" of the startup.</param>
         internal static void SendPSCoreStartupTelemetry(string mode)
         {
-            if ( ! CanSendTelemetry ) {
+            if ( ! CanSendTelemetry)
+            {
                 return;
             }
             var properties = new Dictionary<string, string>();
@@ -236,10 +248,12 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", (channel == null || channel == string.Empty) ? "unknown" : channel);
             properties.Add("StartMode", (mode == null || mode == string.Empty) ? "unknown" : mode);
-            try {
+            try
+            {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
             }
-            catch {
+            catch
+            {
                 // do nothing, telemetry cannot be sent
             }
         }
@@ -247,6 +261,11 @@ namespace Microsoft.PowerShell.Telemetry
         /// <summary>
         /// Try to read the file and collect the guid.
         /// </summary>
+        /// <param name="telemetryFilePath">The path to the telemetry file</param>
+        /// <param name="id">The newly created id</param>
+        /// <returns>
+        /// The method returns a bool indicating success or failure of creating the id
+        /// </returns>
         private static bool TryGetIdentifier(string telemetryFilePath, out Guid id)
         {
             if ( File.Exists(telemetryFilePath))
@@ -260,11 +279,12 @@ namespace Microsoft.PowerShell.Telemetry
                     {
                         // if the read is invalid, or wrong size, we return it
                         int n = fs.Read(buffer, 0, GuidSize);
-                        if ( n == GuidSize )
+                        if (n == GuidSize)
                         {
                             // it's possible this could through
                             id = new Guid(buffer);
-                            if ( id != Guid.Empty ) {
+                            if (id != Guid.Empty)
+                            {
                                 return true;
                             }
                         }
@@ -282,36 +302,46 @@ namespace Microsoft.PowerShell.Telemetry
         /// <summary>
         /// Try to create a unique identifier and persist it to the telemetry.uuid file.
         /// </summary>
+        /// <param name="telemetryFilePath">The path to the persisted telemetry.uuid file</param>
+        /// <param name="id">the created identifier</param>
+        /// <returns>
+        /// The method returns a bool indicating success or failure of creating the id
+        /// </returns>
         private static bool TryCreateUniqueIdentifierAndFile(string telemetryFilePath, out Guid id)
         {
-            id = Guid.Empty;
             // one last attempt to retrieve before creating incase we have a lot of simultaneous entry into the mutex.
-            if ( TryGetIdentifier(telemetryFilePath, out id) ) {
+            id = Guid.Empty;
+            if (TryGetIdentifier(telemetryFilePath, out id))
+            {
                 return true;
             }
 
             // The directory may not exist, so attempt to create it
             // CreateDirectory will simply return the directory if exists
-            try {
+            try
+            {
                 Directory.CreateDirectory(Path.GetDirectoryName(telemetryFilePath));
             }
-            catch {
-                CanSendTelemetry = false;
+            catch
+            {
                 // send a telemetry indicating a problem with the cache dir
                 // it's likely something is seriously wrong so we should at least report it.
                 // We don't want to provide reasons here, that's not the point, but we
                 // would like to know if we're having a generalized problem which we can trace statistically
+                CanSendTelemetry = false;
                 s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "cachedir");
                 return false;
             }
 
             // Create and save the new identifier, and if there's a problem, disable telemetry
-            try {
+            try
+            {
                 id = Guid.NewGuid();
                 File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
                 return true;
             }
-            catch {
+            catch
+            {
                 // another bit of telemetry to notify us about a problem with saving the unique id.
                 s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
             }
@@ -323,36 +353,43 @@ namespace Microsoft.PowerShell.Telemetry
         /// Retrieve the unique identifier from the persisted file, if it doesn't exist create it.
         /// Generate a guid which will be used as the UUID.
         /// </summary>
+        /// <returns>A guid which represents the unique identifier</returns>
         private static Guid GetUniqueIdentifier()
         {
-            Guid id = Guid.Empty;
-            string uuidPath = Path.Join(Platform.CacheDirectory, "telemetry.uuid");
             // Try to get the unique id. If this returns false, we'll 
             // create/recreate the telemetry.uuid file to persist for next startup.
-            if ( TryGetIdentifier(uuidPath, out id) ) {
+            Guid id = Guid.Empty;
+            string uuidPath = Path.Join(Platform.CacheDirectory, "telemetry.uuid");
+            if (TryGetIdentifier(uuidPath, out id))
+            {
                 return id;
             }
 
             // Multiple processes may start simultaneously so we need a system wide 
             // way to control access to the file in the case (although remote) when we have
             // simulataneous shell starts without the persisted file which attempt to create the file.
-            using ( var m = new Mutex(true, "CreateUniqueUserId") ) {
+            using (var m = new Mutex(true, "CreateUniqueUserId") )
+            {
                 // TryCreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
-                try {
+                try
+                {
                     m.WaitOne();
                     if ( TryCreateUniqueIdentifierAndFile(uuidPath, out id) ) {
                         return id;
                     }
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     // Any problem in generating a uuid will result in no telemetry being sent.
                     // Try to send the failure in telemetry, but it will have no unique id.
                     s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
                 }
-                finally {
+                finally
+                {
                     m.ReleaseMutex();
                 }
             }
+
             // something bad happened, turn off telemetry since the unique id wasn't set.
             CanSendTelemetry = false;
             return id;
