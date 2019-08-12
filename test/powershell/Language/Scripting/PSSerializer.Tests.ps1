@@ -26,7 +26,7 @@ Describe 'Tests for lossless rehydration of serialized types.' -Tags 'CI' {
                 } elseif ($propertyType.IsValueType) {
                     $bpValue | Should -Be $rehydratedBpValue
                 } elseif ($propertyType -eq [string]) {
-                    $bpValue | Should -BeExactly $bpValue
+                    $bpValue | Should -BeExactly $rehydratedBpValue
                 } else {
                     $bpValue.ToString() | Should -BeExactly $rehydratedBpValue.ToString()
                 }
