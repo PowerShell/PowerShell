@@ -144,25 +144,35 @@ Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
         $TestCasesForSupportedCommonParameters = @(
             @{
                 testName = 'Verifies ErrorVariable common parameter'
-                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Error "Error:$_" } -ErrorVariable global:var }
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Error "Error:$_" } -ErrorVariable global:actualVariable }
                 expectedResult = 'Error:1'
             },
             @{
                 testName = 'Verifies WarningVarible common parameter'
-                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:var }
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:actualVariable }
                 expectedResult = 'Warning:1'
             },
             @{
                 testName = 'Verifies InformationVariable common parameter'
-                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Information "Information:$_"} -InformationVariable global:var }
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Information "Information:$_"} -InformationVariable global:actualVariable }
                 expectedResult = 'Information:1'
             },
             @{
                 testName = 'Verifies OutVariable common parameter'
-                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel {Write-Output "Output:$_"} -OutVariable global:var }
+                scriptBlock = { 1..1 | ForEach-Object -Parallel {Write-Output "Output:$_"} -OutVariable global:actualVariable }
                 expectedResult = 'Output:1'
             }
         )
+    }
+
+    BeforeEach {
+
+        $global:actualVariable = $null
+    }
+
+    AfterAll {
+
+        $global:actualVariable = $null
     }
 
     It "<testName>" -TestCases $TestCasesNotSupportedCommonParameters {
@@ -177,7 +187,7 @@ Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
         param ($scriptBlock, $expectedResult)
 
         & $scriptBlock *>$null
-        $var[0].ToString() | Should -BeExactly $expectedResult
+        $global:actualVariable[0].ToString() | Should -BeExactly $expectedResult
     }
 }
 
