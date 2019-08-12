@@ -252,11 +252,10 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                     throw new NotSupportedException();
             }
 
-            byte[] publicKeyTokenBytes;
+            Span<byte> publicKeyTokenBytes = stackalloc byte[8];
             if (hashImpl != null)
             {
-                byte[] publicKeyHash = hashImpl.ComputeHash(publickey);
-                publicKeyTokenBytes = new byte[8];
+                Span<byte> publicKeyHash = hashImpl.ComputeHash(publickey);
                 // Note that, the low 8 bytes of the hash of public key in reverse order is the public key tokens.
                 for (int i = 1; i <= 8; i++)
                 {
@@ -269,7 +268,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
             }
 
             // Convert bytes to hex format strings in lower case.
-            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
+            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes.ToArray()).Replace("-", string.Empty).ToLowerInvariant();
             string strongAssemblyName = string.Format(CultureInfo.InvariantCulture,
                                                       "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
                                                       asmName, asmVersion, asmCulture, publicKeyTokenString);
