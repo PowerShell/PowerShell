@@ -15,6 +15,7 @@ using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using CommonParamSet = System.Management.Automation.Internal.CommonParameters;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -353,6 +354,21 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitParallelParameterSet()
         {
+            // The following common parameters are not (yet) supported in this parameter set.
+            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
+            {
+                ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(InternalCommandStrings.ParallelCommonParametersNotSupported),
+                            "ParallelCommonParametersNotSupported",
+                            ErrorCategory.NotImplemented,
+                            this));
+            }
+
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
                                 Parallel,
@@ -367,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (item is ScriptBlock)
                 {
-                    this.ThrowTerminatingError(
+                    ThrowTerminatingError(
                         new ErrorRecord(
                             new PSArgumentException(InternalCommandStrings.ParallelUsingVariableCannotBeScriptBlock),
                             "ParallelUsingVariableCannotBeScriptBlock",
@@ -380,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (MyInvocation.BoundParameters.ContainsKey(nameof(TimeoutSeconds)))
                 {
-                    this.ThrowTerminatingError(
+                    ThrowTerminatingError(
                         new ErrorRecord(
                             new PSArgumentException(InternalCommandStrings.ParallelCannotUseTimeoutWithJob),
                             "ParallelCannotUseTimeoutWithJob",
@@ -416,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
             // Validate piped InputObject
             if (_inputObject.BaseObject is ScriptBlock)
             {
-                this.WriteError(
+                WriteError(
                     new ErrorRecord(
                             new PSArgumentException(InternalCommandStrings.ParallelPipedInputObjectCannotBeScriptBlock),
                             "ParallelPipedInputObjectCannotBeScriptBlock",

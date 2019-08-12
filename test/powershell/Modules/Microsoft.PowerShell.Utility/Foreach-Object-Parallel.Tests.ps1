@@ -106,13 +106,78 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
     It 'Verifies error for script block piped variable' {
     
-        { $sb | ForEach-Object -Parallel { "Hello" } -ErrorAction Stop } | Should -Throw -ErrorId 'ParallelPipedInputObjectCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+        $actualError = $sb | ForEach-Object -Parallel { "Hello" } 2>&1
+        $actualError.FullyQualifiedErrorId | Should -BeExactly 'ParallelPipedInputObjectCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
     }
 
     It 'Verifies that parallel script blocks run in FullLanguage mode by default' {
 
         $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
         $results | Should -BeExactly 'FullLanguage'
+    }
+}
+
+Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
+
+    BeforeAll {
+
+        # Test cases
+        $TestCasesNotSupportedCommonParameters = @(
+            @{
+                testName = 'Verifies that ErrorAction common parameter is not supported'
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -ErrorAction Stop }
+            },
+            @{
+                testName = 'Verifies that WarningAction common parameter is not supported'
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -WarningAction SilentlyContinue }
+            },
+            @{
+                testName = 'Verifies that InformationAction common parameter is not supported'
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -InformationAction SilentlyContinue }
+            },
+            @{
+                testName = 'Verifies that PipelineVariable common parameter is not supported'
+                scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -PipelineVariable pipeVar }
+            }
+        )
+
+        $TestCasesForSupportedCommonParameters = @(
+            @{
+                testName = 'Verifies ErrorVariable common parameter'
+                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Error "Error:$_" } -ErrorVariable global:var }
+                expectedResult = 'Error:1'
+            },
+            @{
+                testName = 'Verifies WarningVarible common parameter'
+                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:var }
+                expectedResult = 'Warning:1'
+            },
+            @{
+                testName = 'Verifies InformationVariable common parameter'
+                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel { Write-Information "Information:$_"} -InformationVariable global:var }
+                expectedResult = 'Information:1'
+            },
+            @{
+                testName = 'Verifies OutVariable common parameter'
+                scriptBlock = { $global:var = $null; 1..1 | ForEach-Object -Parallel {Write-Output "Output:$_"} -OutVariable global:var }
+                expectedResult = 'Output:1'
+            }
+        )
+    }
+
+    It "<testName>" -TestCases $TestCasesNotSupportedCommonParameters {
+
+        param ($scriptBlock)
+
+        { & $scriptBlock } | Should -Throw -ErrorId 'ParallelCommonParametersNotSupported,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
+    It "<testName>" -TestCases $TestCasesForSupportedCommonParameters {
+
+        param ($scriptBlock, $expectedResult)
+
+        & $scriptBlock *>$null
+        $var[0].ToString() | Should -BeExactly $expectedResult
     }
 }
 
