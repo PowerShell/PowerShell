@@ -10,21 +10,21 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Security;
 using System.Threading;
-using Microsoft.PowerShell.Telemetry;
 
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cmdletization;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
-using System.Management.Automation.Language;
 using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -827,9 +827,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Send telemetry on the imported modules
-            foreach(PSModuleInfo mInfo in remotelyImportedModules )
+            foreach(PSModuleInfo ModuleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, mInfo.Name);
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, ModuleInfo.Name);
             }
 
             return remotelyImportedModules;
@@ -1831,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_FQName_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
             {
                 ImportModule_RemotelyViaPsrpSession(importModuleOptions, null, FullyQualifiedName, this.PSSession);
-                foreach ( ModuleSpecification modulespec in FullyQualifiedName )
+                foreach (ModuleSpecification modulespec in FullyQualifiedName)
                 {
                     ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                 }

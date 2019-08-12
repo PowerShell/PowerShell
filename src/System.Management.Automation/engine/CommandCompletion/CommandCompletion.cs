@@ -591,7 +591,8 @@ namespace System.Management.Automation
 
                     var completionResults = results ?? EmptyCompletionResult;
                     sw.Stop();
-                    // no telemetry here
+
+                    // no telemetry here. We don't capture tab completion performance.
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);

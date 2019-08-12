@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.PowerShell.Telemetry;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +15,6 @@ using System.Management.Automation.Runspaces.Internal;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.PowerShell.Telemetry;
 
 using Microsoft.Management.Infrastructure;
 
@@ -639,7 +639,6 @@ namespace System.Management.Automation
             Streams = new PSDataStreams(this);
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
-            // Telemetry here
             ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.PowerShellCreate, "create");
         }
 

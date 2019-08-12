@@ -141,7 +141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Retrieve the location for the various caches
+        /// Gets the location for the various caches.
         /// </summary>
         internal static string CacheDirectory
         {
