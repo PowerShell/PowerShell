@@ -3835,6 +3835,12 @@ namespace System.Management.Automation
                 _preserveDebugStopEvent.Dispose();
                 _preserveDebugStopEvent = null;
             }
+
+            if (_runspaceDebugCompleteEvent != null)
+            {
+                _runspaceDebugCompleteEvent.Dispose();
+                _runspaceDebugCompleteEvent = null;
+            }
         }
 
         #endregion
