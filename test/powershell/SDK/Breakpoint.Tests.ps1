@@ -6,6 +6,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
     BeforeAll {
         # Start a job; this will create a runspace in which we can manage breakpoints
         $job = Start-Job -ScriptBlock {
+            Set-PSBreakpoint -Command Start-Sleep
             1..240 | ForEach-Object {
                 Start-Sleep -Milliseconds 250
                 $_
@@ -17,10 +18,10 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
             }
         }
 
-        # Wait for the child job that gets created to actually start running
-        while ($job.ChildJobs.Count -eq 0 -or $job.ChildJobs[0].State -ne 'Running') {
-            Start-Sleep -Milliseconds 250
-        }
+        # Wait for the child job that gets created to hit the breakpoint. This is the
+        # only safe way to know that the job has actually entered a running state and
+        # that the remote runspace is listening for requests.
+        Wait-UntilTrue { $job.ChildJobs.Count -gt 0 -and $job.ChildJobs[0].State -eq 'AtBreakpoint' } -TimeoutInMilliseconds 10000 -IntervalInMilliseconds 250
 
         # Get the runspace for the running job
         $jobRunspace = $job.ChildJobs[0].Runspace
