@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         {
             uint offset = 0;
 #if UNIX
-            // OMI only supports UT8 without BOM
+            // OMI only supports UTF-8 without BOM
             var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 #else
             // This is what we traditionally use with Windows
