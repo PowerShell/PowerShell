@@ -171,7 +171,7 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance <see cref="PSJobTask"/> class.
+        /// Initializes a new instance of the <see cref="PSJobTask"/> class.
         /// </summary>
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Sets the debugger resume action.
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction.</param>
+        /// <param name="resumeAction">Debugger resume action.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             _wrappedDebugger.SetDebuggerAction(resumeAction);
