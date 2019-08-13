@@ -36,7 +36,7 @@ PrivateData = @{
     ExperimentalFeatures = @(
       @{
         Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
-        Description = "Enables -NoInitialBreak parameter on Debug-Runspace and Debug-Job cmdlets to allow a debugger to be attached without immediately breaking in the current location."
+        Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
       }
     )
   }

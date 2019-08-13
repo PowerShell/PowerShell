@@ -642,7 +642,7 @@ namespace System.Management.Automation
         /// Sets a command breakpoint in the debugger.
         /// </summary>
         /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
         /// <returns>The command breakpoint that was set.</returns>
         public virtual CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
         /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
         /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <returns>The line breakpoint that was set.</returns>
         public virtual LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
             throw new PSNotImplementedException();
@@ -664,7 +664,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
         /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
         /// <returns>The variable breakpoint that was set.</returns>
         public virtual VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
@@ -748,21 +748,11 @@ namespace System.Management.Automation
         /// Job object that is either a debuggable job or a container of
         /// debuggable child jobs.
         /// </param>
-        internal virtual void DebugJob(Job job) =>
-            throw new PSNotImplementedException();
-
-        /// <summary>
-        /// Sets up debugger to debug provided job or its child jobs.
-        /// </summary>
-        /// <param name="job">
-        /// Job object that is either a debuggable job or a container of
-        /// debuggable child jobs.
+        /// <param name="breakAll">
+        /// If true, the debugger automatically invokes a break all when it
+        /// attaches to the job.
         /// </param>
-        /// <param name="disableBreakAll">
-        /// If true, the debugger does not automatically invoke a break all
-        /// when it attaches to the job.
-        /// </param>
-        internal virtual void DebugJob(Job job, bool disableBreakAll) =>
+        internal virtual void DebugJob(Job job, bool breakAll) =>
             throw new PSNotImplementedException();
 
         /// <summary>
@@ -816,21 +806,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        internal virtual void DebugRunspace(Runspace runspace) =>
-            throw new PSNotImplementedException();
-
-        /// <summary>
-        /// Sets up debugger to debug provided Runspace in a nested debug session.
-        /// </summary>
         /// <param name="runspace">
         /// The runspace to debug.
         /// </param>
-        /// <param name="disableBreakAll">
-        /// If true, the debugger does not automatically invoke a break all
-        /// when it attaches to the runspace.
+        /// <param name="breakAll">
+        /// If true, the debugger automatically invokes a break all when it
+        /// attaches to the runspace.
         /// </param>
-        internal virtual void DebugRunspace(Runspace runspace, bool disableBreakAll) =>
+        internal virtual void DebugRunspace(Runspace runspace, bool breakAll) =>
             throw new PSNotImplementedException();
 
         /// <summary>
@@ -2615,7 +2598,7 @@ namespace System.Management.Automation
         /// Sets a command breakpoint in the debugger.
         /// </summary>
         /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
         /// <returns></returns>
         public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null)
@@ -2634,7 +2617,7 @@ namespace System.Management.Automation
         /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
         /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
         /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <returns></returns>
         public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null)
         {
@@ -2650,7 +2633,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
         /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
-        /// <param name="action">The action to take when the breakpoint is hit. If null, the PowerShell will break into the debugger when the breakpoint is hit.</param>
+        /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
         /// <returns></returns>
         public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null)
@@ -2727,23 +2710,11 @@ namespace System.Management.Automation
         /// Job object that is either a debuggable job or a container of
         /// debuggable child jobs.
         /// </param>
-        internal override void DebugJob(Job job)
-        {
-            DebugJob(job, disableBreakAll: false);
-        }
-
-        /// <summary>
-        /// Sets up debugger to debug provided job or its child jobs.
-        /// </summary>
-        /// <param name="job">
-        /// Job object that is either a debuggable job or a container of
-        /// debuggable child jobs.
+        /// <param name="breakAll">
+        /// If true, the debugger automatically invokes a break all when it
+        /// attaches to the job.
         /// </param>
-        /// <param name="disableBreakAll">
-        /// If true, the debugger does not automatically invoke a break all
-        /// when it attaches to the job.
-        /// </param>
-        internal override void DebugJob(Job job, bool disableBreakAll)
+        internal override void DebugJob(Job job, bool breakAll)
         {
             if (job == null) { throw new PSArgumentNullException("job"); }
 
@@ -2757,13 +2728,13 @@ namespace System.Management.Automation
 
             // If a debuggable job was passed in then add it to the
             // job running list.
-            bool jobsAdded = TryAddDebugJob(job, disableBreakAll);
+            bool jobsAdded = TryAddDebugJob(job, breakAll);
             if (!jobsAdded)
             {
                 // Otherwise treat as parent Job and iterate over child jobs.
                 foreach (Job childJob in job.ChildJobs)
                 {
-                    if (TryAddDebugJob(childJob, disableBreakAll) && !jobsAdded)
+                    if (TryAddDebugJob(childJob, breakAll) && !jobsAdded)
                     {
                         jobsAdded = true;
                     }
@@ -2776,7 +2747,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool TryAddDebugJob(Job job, bool disableBreakAll)
+        private bool TryAddDebugJob(Job job, bool breakAll)
         {
             IJobDebugger debuggableJob = job as IJobDebugger;
             if ((debuggableJob != null) && (debuggableJob.Debugger != null) &&
@@ -2789,7 +2760,7 @@ namespace System.Management.Automation
                 SetDebugJobAsync(debuggableJob, false);
                 AddToJobRunningList(
                     new PSJobStartEventArgs(job, debuggableJob.Debugger, false),
-                    disableBreakAll ? DebuggerResumeAction.Continue : DebuggerResumeAction.StepInto);
+                    breakAll ? DebuggerResumeAction.StepInto : DebuggerResumeAction.Continue);
 
                 // Raise debug stop event if job is already in stopped state.
                 if (jobDebugAlreadyStopped)
@@ -2852,17 +2823,17 @@ namespace System.Management.Automation
 
         #region Runspace Debugging
 
-        internal override void DebugRunspace(Runspace runspace)
-        {
-            DebugRunspace(runspace, disableBreakAll: false);
-        }
-
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        /// <param name="disableBreakAll">When specified, it will not turn on BreakAll.</param>
-        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
+        /// <param name="runspace">
+        /// Runspace to debug.
+        /// </param>
+        /// <param name="breakAll">
+        /// When true, this command will invoke a BreakAll when the debugger is
+        /// first attached.
+        /// </param>
+        internal override void DebugRunspace(Runspace runspace, bool breakAll)
         {
             if (runspace == null)
             {
@@ -2897,7 +2868,7 @@ namespace System.Management.Automation
 
             AddToRunningRunspaceList(new PSStandaloneMonitorRunspaceInfo(runspace));
 
-            if (!runspace.Debugger.InBreakpoint && !disableBreakAll)
+            if (!runspace.Debugger.InBreakpoint && breakAll)
             {
                 EnableDebuggerStepping(EnableNestedType.NestedRunspace);
             }
@@ -3848,7 +3819,7 @@ namespace System.Management.Automation
         {
             WaitForReadyDebug();
 
-            DebugRunspace(runspace);
+            DebugRunspace(runspace, breakAll:true);
 
             // Block this event thread until debugging has ended.
             WaitForDebugComplete();

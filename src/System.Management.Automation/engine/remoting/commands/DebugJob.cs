@@ -98,11 +98,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets a flag that prevents PowerShell from automatically performing a BreakAll when the debugger is attached to the remote target.
+        /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
         [Parameter]
-        public SwitchParameter NoInitialBreak { get; set; }
+        public SwitchParameter BreakAll { get; set; }
 
         #endregion
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Set up host script debugger to debug the job.
             _debugger = runspace.Debugger;
-            _debugger.DebugJob(_job, disableBreakAll: NoInitialBreak);
+            _debugger.DebugJob(_job, breakAll: BreakAll);
 
             // Blocking call.  Send job output to host UI while debugging and wait for Job completion.
             WaitAndReceiveJobOutput();

@@ -2010,7 +2010,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
         public override Breakpoint GetBreakpoint(int id) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(
+            InvokeRemoteBreakpointFunction<Breakpoint>(
                 DebuggerUtils.GetPSBreakpointFunctionName,
                 new Dictionary<string, object>
                 {
@@ -2069,7 +2069,7 @@ namespace System.Management.Automation
                             cmdBpParams.Add("Script", cmdBp.Script);
                         }
 
-                        InvokeVirtualBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, cmdBpParams);
+                        InvokeRemoteBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, cmdBpParams);
                         break;
 
                     case LineBreakpoint lineBp:
@@ -2089,7 +2089,7 @@ namespace System.Management.Automation
                             lineBpParams.Add("Action", lineBp.Action);
                         }
 
-                        InvokeVirtualBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, lineBpParams);
+                        InvokeRemoteBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, lineBpParams);
                         break;
 
                     case VariableBreakpoint varBp:
@@ -2109,7 +2109,7 @@ namespace System.Management.Automation
                             varBpParams.Add("Script", varBp.Script);
                         }
 
-                        InvokeVirtualBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, varBpParams);
+                        InvokeRemoteBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, varBpParams);
                         break;
 
                     default:
@@ -2137,7 +2137,7 @@ namespace System.Management.Automation
                 functionParameters.Add("Script", path);
             }
 
-            return InvokeVirtualBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
+            return InvokeRemoteBreakpointFunction<CommandBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
         public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null)
@@ -2158,7 +2158,7 @@ namespace System.Management.Automation
                 functionParameters.Add("Action", action);
             }
 
-            return InvokeVirtualBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
+            return InvokeRemoteBreakpointFunction<LineBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
         public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null)
@@ -2183,11 +2183,11 @@ namespace System.Management.Automation
                 functionParameters.Add("Script", path);
             }
 
-            return InvokeVirtualBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
+            return InvokeRemoteBreakpointFunction<VariableBreakpoint>(DebuggerUtils.SetPSBreakpointFunctionName, functionParameters);
         }
 
         public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<bool>(
+            InvokeRemoteBreakpointFunction<bool>(
                 DebuggerUtils.RemovePSBreakpointFunctionName,
                 new Dictionary<string, object>
                 {
@@ -2195,7 +2195,7 @@ namespace System.Management.Automation
                 });
 
         public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(
+            InvokeRemoteBreakpointFunction<Breakpoint>(
                 DebuggerUtils.EnablePSBreakpointFunctionName,
                 new Dictionary<string, object>
                 {
@@ -2203,7 +2203,7 @@ namespace System.Management.Automation
                 });
 
         public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
-            InvokeVirtualBreakpointFunction<Breakpoint>(
+            InvokeRemoteBreakpointFunction<Breakpoint>(
                 DebuggerUtils.DisablePSBreakpointFunctionName,
                 new Dictionary<string, object>
                 {
@@ -2793,7 +2793,7 @@ namespace System.Management.Automation
             }
         }
 
-        private T InvokeVirtualBreakpointFunction<T>(string functionName, Dictionary<string, object> parameters)
+        private T InvokeRemoteBreakpointFunction<T>(string functionName, Dictionary<string, object> parameters)
         {
             CheckForValidateState();
 

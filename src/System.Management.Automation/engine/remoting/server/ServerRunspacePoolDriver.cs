@@ -1988,25 +1988,15 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided job or its child jobs.
         /// </summary>
         /// <param name="job">
-        /// Job object that is either a debuggable job or a container
-        /// of debuggable child jobs.
+        /// Job object that is either a debuggable job or a container of
+        /// debuggable child jobs.
         /// </param>
-        internal override void DebugJob(Job job) =>
-            _wrappedDebugger.Value.DebugJob(job);
-
-        /// <summary>
-        /// Sets up debugger to debug provided job or its child jobs.
-        /// </summary>
-        /// <param name="job">
-        /// Job object that is either a debuggable job or a container
-        /// of debuggable child jobs.
+        /// <param name="breakAll">
+        /// If true, the debugger automatically invokes a break all when it
+        /// attaches to the job.
         /// </param>
-        /// <param name="disableBreakAll">
-        /// If true, the debugger does not automatically invoke a break
-        /// all when it attaches to the job.
-        /// </param>
-        internal override void DebugJob(Job job, bool disableBreakAll) =>
-            _wrappedDebugger.Value.DebugJob(job, disableBreakAll);
+        internal override void DebugJob(Job job, bool breakAll) =>
+            _wrappedDebugger.Value.DebugJob(job, breakAll);
 
         /// <summary>
         /// Removes job from debugger job list and pops its
@@ -2021,20 +2011,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        internal override void DebugRunspace(Runspace runspace)
+        /// <param name="runspace">
+        /// Runspace to debug.
+        /// </param>
+        /// <param name="breakAll">
+        /// When true, this command will invoke a BreakAll when the debugger is
+        /// first attached.
+        /// </param>
+        internal override void DebugRunspace(Runspace runspace, bool breakAll)
         {
-            _wrappedDebugger.Value.DebugRunspace(runspace);
-        }
-
-        /// <summary>
-        /// Sets up debugger to debug provided Runspace in a nested debug session.
-        /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        /// <param name="disableBreakAll"></param>
-        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
-        {
-            _wrappedDebugger.Value.DebugRunspace(runspace, disableBreakAll);
+            _wrappedDebugger.Value.DebugRunspace(runspace, breakAll);
         }
 
         /// <summary>
