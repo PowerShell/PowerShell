@@ -49,25 +49,25 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should not create a uuid file if telemetry is opted out" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         & $PWSH -command "exit"
-        Test-Path -Path $uuidPath  | Should -Be $false
+        $uuidPath  | Should -Not -Exist
     }
 
     It "Should create a uuid file if telemetry is opted in" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
         & $PWSH -command "exit"
-        Test-Path -Path $uuidPath  | Should -Be $true
+        $uuidPath  | Should -Exist
     }
 
     It "Should create a uuid file by default" {
         if ( Test-Path env:POWERSHELL_TELEMETRY_OPTOUT ) { Remove-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT }
         & $PWSH -command "exit"
-        Test-Path -Path $uuidPath  | Should -Be $true
+        $uuidPath  | Should -Exist
     }
 
     It "Should create a property uuid file when telemetry is sent" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
         & $PWSH -command "exit"
-        Test-Path -Path $uuidPath  | Should -Be $true
+        $uuidPath  | Should -Exist
         (Get-ChildItem -Path $uuidPath).Length | Should -Be 16
         [byte[]]$newBytes = Get-Content -AsByteStream -Path $uuidPath
         [System.Guid]::New($newBytes) | Should -BeOfType [System.Guid]
@@ -108,12 +108,7 @@ Describe "Telemetry for shell startup" -Tag CI {
         $g | Should -Be $ng
     }
 
-
-    It "Should properly set whether telemetry is sent based on when environment variable is not set" -TestCases $telemetryIsSetData {
-        param ( [string]$name, [string]$value, [string]$expectedValue )
-        if ( Test-Path -Path env:POWERSHELL_TELEMETRY_OPTOUT ) {
-            Remove-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT
-        }
+    It "Should properly set whether telemetry is sent based on when environment variable is not set" {
         $result = & $PWSH -c '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be "True"
     }
