@@ -67,7 +67,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Threading.Thread.dll'
             'System.Threading.ThreadPool.dll'
             'System.Xml.ReaderWriter.dll'
-            '.Xml.XDocument.dll'
         )
 
         if ($IsWindows) {
