@@ -108,6 +108,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+                new ExperimentalFeature(
+                    name: "PSForEachObjectParallel",
+                    description: "New parameter set for ForEach-Object to run script blocks in parallel")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
