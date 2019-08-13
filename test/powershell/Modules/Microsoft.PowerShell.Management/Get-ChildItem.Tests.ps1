@@ -32,6 +32,12 @@ Describe "Get-ChildItem" -Tags "CI" {
                 @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
                 @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
             )
+
+            $SkipAppExeCLinks = $true
+            if ($IsWindows -and (Get-ChildItem -Path ~\AppData\Local\Microsoft\WindowsApps\*.exe -ErrorAction Ignore) -ne $null)
+            {
+                $SkipAppExeCLinks = $false
+            }
         }
 
         It "Should list the contents of the current folder" {
@@ -173,6 +179,12 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "-Filter *. finds extension-less files" {
             $null = New-Item -Path TestDrive:/noextension -ItemType File
             (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
+        }
+
+        It "Understand APPEXECLINKs" -Skip:($SkipAppExeCLinks) {
+            $app = Get-ChildItem -Path ~\appdata\local\microsoft\windowsapps\*.exe | Select-Object -First 1
+            $app.Target | Should -Not -Be $app.FullName
+            $app.LinkType | Should -BeExactly 'AppExeCLink'
         }
     }
 
