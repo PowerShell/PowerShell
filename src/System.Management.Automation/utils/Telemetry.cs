@@ -66,6 +66,9 @@ namespace Microsoft.PowerShell.Telemetry
         // private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // Production
         private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // V7 Preview 3
 
+        // Use "anonymous" as the string to return when you can't report a name
+        private const string _anonymous = "anonymous";
+
         // the telemetry failure string
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
 
@@ -216,7 +219,7 @@ namespace Microsoft.PowerShell.Telemetry
                     return featureNameToValidate;
                 }
             }
-            return "anonymous";
+            return _anonymous;
         }
 
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
@@ -228,7 +231,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
             else
             {
-                return "anonymous";
+                return _anonymous;
             }
 
         }
