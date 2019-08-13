@@ -1840,9 +1840,6 @@ namespace System.Management.Automation
         public override List<Breakpoint> GetBreakpoints() =>
             _wrappedDebugger.Value.GetBreakpoints();
 
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
-            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
-
         public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
             _wrappedDebugger.Value.SetCommandBreakpoint(command, action, path);
 

@@ -619,13 +619,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
-        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
-            throw new PSNotImplementedException();
-
-        /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
@@ -2561,40 +2554,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set breakpoints in the runspace.
-        /// </summary>
-        /// <param name="breakpoints"></param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            if (breakpoints == null)
-            {
-                throw new PSArgumentNullException("breakpoints");
-            }
-
-            foreach (var breakpoint in breakpoints)
-            {
-                if (_idToBreakpoint.ContainsKey(breakpoint.Id)) { continue; }
-
-                switch (breakpoint)
-                {
-                    case LineBreakpoint lineBp:
-                        AddLineBreakpoint(lineBp);
-                        continue;
-                    case CommandBreakpoint cmdBp:
-                        AddCommandBreakpoint(cmdBp);
-                        continue;
-                    case VariableBreakpoint variableBp:
-                        AddVariableBreakpoint(variableBp);
-                        continue;
-                    default:
-                        // Unreachable default block
-                        Debug.Assert(false, "Unexpected breakpoint type.");
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
         /// Sets a command breakpoint in the debugger.
         /// </summary>
         /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
@@ -4156,9 +4115,6 @@ namespace System.Management.Automation
 
         public override List<Breakpoint> GetBreakpoints() =>
             _wrappedDebugger.GetBreakpoints();
-
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
-            _wrappedDebugger.SetBreakpoints(breakpoints);
 
         public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
             _wrappedDebugger.SetCommandBreakpoint(command, action, path);
