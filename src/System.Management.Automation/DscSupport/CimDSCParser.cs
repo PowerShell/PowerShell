@@ -397,8 +397,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
             }
             uint offset = 0;
             #if UNIX
+            // OMI only supports UT8 without BOM
             var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
             #else
+            // This is what we traditionally use with Windows
+            // DSC asked to keep it UTF-32 for Windows
             var encoding = new UnicodeEncoding();
             #endif
 
