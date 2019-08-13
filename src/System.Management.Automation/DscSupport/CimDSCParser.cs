@@ -2340,7 +2340,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 enumNames = propTypeName._typeDefinitionAst.Members.Select(m => m.Name).ToArray();
                 isArrayType = false;
                 embeddedInstanceType = null;
-                return "String";
+                return "string";
             }
 
             if (!embeddedInstanceTypes.Contains(propTypeName._typeDefinitionAst))
@@ -2351,7 +2351,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // The type is obviously not a string, but in the mof, we represent
             // it as string (really, embeddedinstance of the class type)
             embeddedInstanceType = propTypeName.Name.Replace('.', '_');
-            return "String";
+            return "string";
         }
 
         private static void GenerateMofForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
@@ -2718,9 +2718,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             { typeof(float) , "real32"},
             { typeof(double) , "real64"},
             { typeof(bool) , "boolean"},
-            { typeof(string), "String" },
+            { typeof(string), "string" },
             { typeof(DateTime), "datetime" },
-            { typeof(PSCredential), "String" },
+            { typeof(PSCredential), "string" },
             { typeof(char), "char16" },
         };
 
@@ -2825,7 +2825,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if (type.IsEnum)
             {
                 embeddedInstanceType = null;
-                return "String";
+                return "string";
             }
 
             if (type == typeof(Hashtable))
@@ -2835,13 +2835,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // we need an array to hold each entry in the hashtable.
                 isArrayType = true;
                 embeddedInstanceType = "MSFT_KeyValuePair";
-                return "String";
+                return "string";
             }
 
             if (type == typeof(PSCredential))
             {
                 embeddedInstanceType = "MSFT_Credential";
-                return "String";
+                return "string";
             }
 
             if (type.IsArray)
@@ -2896,7 +2896,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // The type is obviously not a string, but in the mof, we represent
                 // it as string (really, embeddedinstance of the class type)
                 embeddedInstanceType = type.FullName.Replace('.', '_');
-                return "String";
+                return "string";
             }
 
             if (missingDefaultConstructor)
@@ -2930,19 +2930,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}Key", needComma ? ", " : string.Empty);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}Required", needComma ? ", " : string.Empty);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}Read", needComma ? ", " : string.Empty);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
@@ -2973,7 +2973,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Default is write - skipped if we already have some attributes
             if (sb.Length == 1)
             {
-                sb.Append("Write");
+                sb.Append("write");
                 needComma = true;
             }
 
@@ -3002,7 +3002,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
 
-            sb.Append("] ");
+            sb.Append("]");
             return sb.ToString();
         }
 
@@ -3163,8 +3163,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void ProcessMofForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
             Dictionary<string, ScriptBlock> functionsToDefine, CimDSCParser parser, string mof, DSCResourceRunAsCredential runAsBehavior)
         {
-            Console.WriteLine(mof);
-            Console.ReadLine();
             foreach (var c in parser.ParseSchemaMofFileBuffer(mof))
             {
                 var className = c.CimSystemProperties.ClassName;
