@@ -112,7 +112,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should properly set whether telemetry is sent based on when environment variable is not set" -TestCases $telemetryIsSetData {
         param ( [string]$name, [string]$value, [string]$expectedValue )
         if ( Test-Path -Path env:POWERSHELL_TELEMETRY_OPTOUT ) {
-            Remote-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT
+            Remove-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT
         }
         $result = & $PWSH -c '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be "True"
