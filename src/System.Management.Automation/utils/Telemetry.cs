@@ -134,8 +134,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// <summary>
         /// Determine whether the environment variable is set and how.
         /// </summary>
-        /// <param name="name">The name of the environment variable</param>
-        /// <param name="defaultValue">If the environment variable is not set, use this as the default value</param>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="defaultValue">If the environment variable is not set, use this as the default value.</param>
         /// <returns>A boolean representing the value of the environment variable.</returns>
         private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
         {
@@ -194,8 +194,6 @@ namespace Microsoft.PowerShell.Telemetry
                         string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, moduleName);
                         break;
-                    default:
-                        break;
                 }
             }
             catch
@@ -253,8 +251,8 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("UUID", s_uniqueUserIdentifier.ToString());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
-            properties.Add("OSChannel", (channel == null || channel == string.Empty) ? "unknown" : channel);
-            properties.Add("StartMode", (mode == null || mode == string.Empty) ? "unknown" : mode);
+            properties.Add("OSChannel", String.IsNullOrEmpty(channel) ? "unknown" : channel);
+            properties.Add("StartMode", String.IsNullOrEmpty(mode) ? "unknown" : mode);
             try
             {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
