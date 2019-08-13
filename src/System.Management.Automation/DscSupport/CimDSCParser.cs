@@ -391,8 +391,28 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
 
         internal List<CimClass> ParseSchemaMofFileBuffer(string mof)
         {
+            if(string.IsNullOrEmpty(mof))
+            {
+                throw new Exception("mof is null");
+            }
             uint offset = 0;
-            var buffer = Encoding.Unicode.GetBytes(mof);
+            #if UNIX
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            #else
+            var encoding = new UnicodeEncoding();
+            #endif
+
+            var buffer = encoding.GetBytes(mof);
+            if(buffer is null )
+            {
+                throw new Exception("buffer is null");
+            }
+
+            if(_onClassNeeded is null )
+            {
+                throw new Exception("buffer is null");
+            }
+
             var result = new List<CimClass>(_deserializer.DeserializeClasses(buffer, ref offset, null, null, null, _onClassNeeded, null));
             return result;
         }
