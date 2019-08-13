@@ -30,7 +30,7 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of PSTask.
+        /// Initializes a new instance of the <see cref="PSTask"/> class.
         /// </summary>
         /// <param name="scriptBlock">Script block to run in task.</param>
         /// <param name="usingValuesMap">Using values passed into script block.</param>
@@ -171,7 +171,7 @@ namespace System.Management.Automation.PSTasks
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance PSJobTask.
+        /// Initializes a new instance <see cref="PSJobTask"/> class.
         /// </summary>
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
@@ -367,7 +367,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskBase.
+        /// Initializes a new instance of the <see cref="PSTaskBase"/> class.
         /// </summary>
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
@@ -483,6 +483,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets wait-able handle that signals when new data has been added to
         /// the data stream collection.
+        /// </summary>
         /// <returns>Data added wait handle.</returns>
         internal WaitHandle DataAddedWaitHandle
         {
@@ -496,7 +497,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskDataStreamWriter() { }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskDataStreamWriter.
+        /// Initializes a new instance of the <see cref="PSTaskDataStreamWriter"/> class.
         /// </summary>
         /// <param name="psCmdlet">Parent cmdlet.</param>
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
@@ -513,7 +514,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Add data stream object to the writer.
         /// </summary>
-        /// <param name="streamObject">Data stream object to write</param>
+        /// <param name="streamObject">Data stream object to write.</param>
         public void Add(PSStreamObject streamObject)
         {
             _dataStream.Add(streamObject);
@@ -614,7 +615,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskPool() { }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskPool.
+        /// Initializes a new instance of the <see cref="PSTaskPool"/> class.
         /// </summary>
         /// <param name="size">Total number of allowed running objects in pool at one time.</param>
         public PSTaskPool(int size)
@@ -641,7 +642,7 @@ namespace System.Management.Automation.PSTasks
         #region Properties
 
         /// <summary>
-        /// Gets a value indicating if pool is currently open for accepting tasks.
+        /// Gets a value indicating whether a pool is currently open for accepting tasks.
         /// </summary>
         public bool IsOpen
         {
@@ -807,6 +808,7 @@ namespace System.Management.Automation.PSTasks
                             _addAvailable.Set();
                         }
                     }
+
                     task.StateChanged -= HandleTaskStateChangedDelegate;
                     task.Dispose();
                     CheckForComplete();
@@ -862,7 +864,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskJob() { }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskJob.
+        /// Initializes a new instance of the <see cref="PSTaskJob"/> class.
         /// </summary>
         /// <param name="command">Job command text.</param>
         /// <param name="throttleLimit">Pool size limit for task job.</param>
@@ -979,7 +981,7 @@ namespace System.Management.Automation.PSTasks
                 {
                     foreach (var childJob in ChildJobs)
                     {
-                        _taskPool.Add((PSTaskChildJob) childJob);
+                        _taskPool.Add((PSTaskChildJob)childJob);
                     }
 
                     _taskPool.Close();
@@ -1010,6 +1012,7 @@ namespace System.Management.Automation.PSTasks
                         break;
                     }
                 }
+
                 SetJobState(finalState);
             }
             catch (ObjectDisposedException) 
@@ -1036,7 +1039,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskChildDebugger() { }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskChildDebugger.
+        /// Initializes a new instance of the <see cref="PSTaskChildDebugger"/> class.
         /// </summary>
         /// <param name="debugger">Script debugger associated with task.</param>
         /// <param name="jobName">Job name for associated task.</param>
@@ -1084,7 +1087,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
+        /// <param name="breakpoints">List of breakpoints.</param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
         {
             _wrappedDebugger.SetBreakpoints(breakpoints);
@@ -1219,7 +1222,7 @@ namespace System.Management.Automation.PSTasks
         private PSTaskChildJob() { }
 
         /// <summary>
-        /// Initializes a new instance of PSTaskChildJob.
+        /// Initializes a new instance of the <see cref="PSTaskChildJob"/> class.
         /// </summary>
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
@@ -1313,7 +1316,7 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Gets or sets a value indicating IAsync.
+        /// Gets or sets a value indicating whether IAsync.
         /// </summary>
         public bool IsAsync { get; set; }
 

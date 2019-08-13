@@ -174,7 +174,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// DollarUnderbar ($_) value to be used with script command.
+        /// Gets or sets DollarUnderbar ($_) value to be used with script command.
         /// This is used by foreach-object -parallel where each piped input ($_) is associated
         /// with a parallel running script block.
         /// </summary>
