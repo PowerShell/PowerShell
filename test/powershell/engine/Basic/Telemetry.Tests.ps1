@@ -125,7 +125,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should properly set whether telemetry is sent based on environment variable when <name>" -TestCases $telemetryIsSetData {
         param ( [string]$name, [string]$value, [string]$expectedValue )
         $env:POWERSHELL_TELEMETRY_OPTOUT = $value
-        $result = & $PWSH -c '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
+        $result = & $PWSH -NoProfile -Command '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be $expectedValue
     }
 

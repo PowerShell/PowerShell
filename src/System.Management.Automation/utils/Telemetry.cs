@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Telemetry
                 // use a hashset when looking for module names, it should be quicker than a string comparison
                 s_knownModules = new HashSet<string>(s_knownModuleNames, StringComparer.OrdinalIgnoreCase);
                 s_uniqueUserIdentifier = GetUniqueIdentifier();
-                s_developerMode = true; // false for production
+                s_developerMode = false;
             }
         }
 
