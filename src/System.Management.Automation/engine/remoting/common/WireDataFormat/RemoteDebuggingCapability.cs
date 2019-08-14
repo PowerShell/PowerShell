@@ -20,7 +20,7 @@ namespace System.Management.Automation.Remoting
         internal Version PSVersion { get; private set; }
 
         /// <summary>
-        /// Instantiates a new <see cref="RemoteDebuggingCapability"/> instance.
+        /// Initializes a new instance of the <see cref="RemoteDebuggingCapability"/> class.
         /// </summary>
         /// <param name="powerShellVersion">
         /// The version of PowerShell used on the remote server debugger.
