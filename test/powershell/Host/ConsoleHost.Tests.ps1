@@ -245,41 +245,78 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
-    Context "-LoadProfile Commandline switch" {
+    Context "-Login pwsh switch" {
         BeforeAll {
-            if (Test-Path $profile) {
-                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
-                Rename-Item -Path $profile -NewName "$profile.backup"
+            $profilePath = "~/.profile"
+            $backupProfilePath = "profile.bak"
+            if (Test-Path $profilePath) {
+                Move-Item -Path $profilePath -Destination $backupProfilePath -Force
             }
 
-            Set-Content -Path $profile -Value "'profile-loaded'" -Force
+            $envVarName = 'PSTEST_PROFILE_LOAD'
+
+            $guid = New-Guid
+
+            Set-Content -Force -Path $profilePath -Value @"
+export $envVarName='$guid'
+"@
         }
 
         AfterAll {
-            Remove-Item -Path $profile -ErrorAction SilentlyContinue
-
-            if (Test-Path "$profile.backup") {
-                Rename-Item -Path "$profile.backup" -NewName $profile
+            if (Test-Path $backupProfilePath) {
+                Move-Item -Path $backupProfilePath -Destination $profilePath -Force
             }
         }
 
-        It "Verifies pwsh will accept <switch> switch" -TestCases @(
-            @{ switch = "-l"},
-            @{ switch = "-loadprofile"}
-        ){
-            param($switch)
+        It "Doesn't run the login profile when -Login not used" {
+            $result = & $powershell -Command "`$env:$envVarName"
+            $result | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
 
-            if (Test-Path $profile) {
-                & pwsh $switch -command exit | Should -BeExactly "profile-loaded"
+        It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
+            $result = & $powershell -nop -c 'Write-Output "-login"'
+            $result | Should -BeExactly '-login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Doesn't falsely recognise -Login when used after -Command" {
+            $result = & $powershell -nop -c 'Write-Output' -Login
+            $result | Should -BeExactly '-Login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Accepts the <LoginSwitch> switch for -Login and behaves correctly" -TestCases @(
+            @{ LoginSwitch = '-l' }
+            @{ LoginSwitch = '-L' }
+            @{ LoginSwitch = '-login' }
+            @{ LoginSwitch = '-Login' }
+            @{ LoginSwitch = '-LOGIN' }
+            @{ LoginSwitch = '-log' }
+        ) {
+            param($LoginSwitch)
+
+            $result = & $powershell $LoginSwitch -NoProfile -Command "`$env:$envVarName"
+
+            if ($IsWindows) {
+                $result | Should -BeNullOrEmpty
+                $LASTEXITCODE | Should -Be 0
+                return
             }
-            else {
-                # In CI, may not be able to write to $profile location, so just verify that the switch is accepted
-                # and no error message is in the output
-                & pwsh $switch -command exit *>&1 | Should -BeNullOrEmpty
-            }
+
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Starts as a login shell with '-' prepended to name" -Skip:(-not (Get-Command -Name /bin/bash -ErrorAction Ignore)) {
+            $quoteEscapedPwsh = $powershell.Replace("'", "\'")
+            $pwshCommand = "`$env:$envVarName"
+            $bashCommand = "exec -a '-pwsh' '$quoteEscapedPwsh' -NoProfile -Command '`$env:$envVarName' ''"
+            $result = /bin/bash -c $bashCommand
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
         }
     }
-
 
     Context "-SettingsFile Commandline switch" {
 
