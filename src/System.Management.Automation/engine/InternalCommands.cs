@@ -6,12 +6,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using CommonParamSet = System.Management.Automation.Internal.CommonParameters;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -55,15 +59,24 @@ namespace Microsoft.PowerShell.Commands
     /// to each element of the pipeline.
     /// </summary>
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        DefaultParameterSetName = "ScriptBlockSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
+        DefaultParameterSetName = ForEachObjectCommand.ScriptBlockSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
         RemotingCapability = RemotingCapability.None)]
-    public sealed class ForEachObjectCommand : PSCmdlet
+    public sealed class ForEachObjectCommand : PSCmdlet, IDisposable
     {
+        #region Private Members
+
+        private const string ParallelParameterSet = "ParallelParameterSet";
+        private const string ScriptBlockSet = "ScriptBlockSet";
+        private const string PropertyAndMethodSet = "PropertyAndMethodSet";
+
+        #endregion
+
         /// <summary>
         /// This parameter specifies the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "ScriptBlockSet")]
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "PropertyAndMethodSet")]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public PSObject InputObject
         {
             set { _inputObject = value; }
@@ -80,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply in begin processing.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet")]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock Begin
         {
             set
@@ -97,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ScriptBlockSet")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] Process
@@ -121,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The script block to apply in complete processing.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet")]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock End
         {
             set
@@ -139,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The remaining script blocks to apply.
         /// </summary>
-        [Parameter(ParameterSetName = "ScriptBlockSet", ValueFromRemainingArguments = true)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] RemainingScripts
@@ -164,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The property or method name.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "PropertyAndMethodSet")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
         [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
         public string MemberName
@@ -181,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The arguments passed to a method invocation.
         /// </summary>
-        [Parameter(ParameterSetName = "PropertyAndMethodSet", ValueFromRemainingArguments = true)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet, ValueFromRemainingArguments = true)]
         [ValidateTrustedData]
         [Alias("Args")]
         public object[] ArgumentList
@@ -195,6 +208,45 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PropertyAndMethodSet
 
+        #region ParallelParameterSet
+
+        /// <summary>
+        /// Gets or sets a script block to run in parallel for each pipeline object.
+        /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
+        [Parameter(Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        public ScriptBlock Parallel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum number of concurrently running scriptblocks on separate threads.
+        /// The default number is 5.
+        /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        [ValidateRange(1, Int32.MaxValue)]
+        public int ThrottleLimit { get; set; } = 5;
+
+        /// <summary>
+        /// Gets or sets a timeout time in seconds, after which the parallel running scripts will be stopped
+        /// The default value is 0, indicating no timeout.
+        /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        [ValidateRange(0, (Int32.MaxValue / 1000))]
+        public int TimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Gets or sets a flag that returns a job object immediately for the parallel operation, instead of returning after
+        /// all foreach processing is completed.
+        /// </summary>
+        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
+        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        public SwitchParameter AsJob { get; set; }
+
+        #endregion
+
+        #region Overrides
+
         /// <summary>
         /// Execute the begin scriptblock at the start of processing.
         /// </summary>
@@ -203,10 +255,566 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void BeginProcessing()
         {
-            Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
+            switch (ParameterSetName)
+            {
+                case ForEachObjectCommand.ScriptBlockSet:
+                    InitScriptBlockParameterSet();
+                    break;
 
-            if (ParameterSetName != "ScriptBlockSet") return;
+                case ForEachObjectCommand.ParallelParameterSet:
+                    InitParallelParameterSet();
+                    break;
+            }
+        }
 
+        /// <summary>
+        /// Execute the processing script blocks on the current pipeline object
+        /// which is passed as it's only parameter.
+        /// </summary>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
+        protected override void ProcessRecord()
+        {
+            switch (ParameterSetName)
+            {
+                case ForEachObjectCommand.ScriptBlockSet:
+                    ProcessScriptBlockParameterSet();
+                    break;
+
+                case ForEachObjectCommand.PropertyAndMethodSet:
+                    ProcessPropertyAndMethodParameterSet();
+                    break;
+
+                case ForEachObjectCommand.ParallelParameterSet:
+                    ProcessParallelParameterSet();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Execute the end scriptblock when the pipeline is complete.
+        /// </summary>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
+        protected override void EndProcessing()
+        {
+            switch (ParameterSetName)
+            {
+                case ForEachObjectCommand.ScriptBlockSet:
+                    EndBlockParameterSet();
+                    break;
+
+                case ForEachObjectCommand.ParallelParameterSet:
+                    EndParallelParameterSet();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Handle pipeline stop signal.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            switch (ParameterSetName)
+            {
+                case ForEachObjectCommand.ParallelParameterSet:
+                    StopParallelProcessing();
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Dispose cmdlet instance.
+        /// </summary>
+        public void Dispose()
+        {
+            // Ensure all parallel task objects are disposed
+            _taskTimer?.Dispose();
+            _taskDataStreamWriter?.Dispose();
+            _taskPool?.Dispose();
+        }
+
+        #endregion
+        
+        #region Private Methods
+
+        #region PSTasks
+
+        private PSTaskPool _taskPool;
+        private PSTaskDataStreamWriter _taskDataStreamWriter;
+        private Dictionary<string, object> _usingValuesMap;
+        private Timer _taskTimer;
+        private PSTaskJob _taskJob;
+
+        private void InitParallelParameterSet()
+        {
+            // The following common parameters are not (yet) supported in this parameter set.
+            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
+            {
+                ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(InternalCommandStrings.ParallelCommonParametersNotSupported),
+                            "ParallelCommonParametersNotSupported",
+                            ErrorCategory.NotImplemented,
+                            this));
+            }
+
+            bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
+            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
+                                Parallel,
+                                allowUsingExpression,
+                                this.Context,
+                                null);
+            
+            // Validate using values map, which is a map of '$using:' variables referenced in the script.
+            // Script block variables are not allowed since their behavior is undefined outside the runspace
+            // in which they were created.
+            foreach (object item in _usingValuesMap.Values)
+            {
+                if (item is ScriptBlock)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelUsingVariableCannotBeScriptBlock),
+                            "ParallelUsingVariableCannotBeScriptBlock",
+                            ErrorCategory.InvalidType,
+                            this));
+                }
+            }
+
+            if (AsJob)
+            {
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(TimeoutSeconds)))
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelCannotUseTimeoutWithJob),
+                            "ParallelCannotUseTimeoutWithJob",
+                            ErrorCategory.InvalidOperation,
+                            this));
+                }
+
+                _taskJob = new PSTaskJob(
+                    Parallel.ToString(),
+                    ThrottleLimit);
+            }
+            else
+            {
+                _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
+                _taskPool = new PSTaskPool(ThrottleLimit);
+                _taskPool.PoolComplete += (sender, args) =>
+                {
+                    _taskDataStreamWriter.Close();
+                };
+                if (TimeoutSeconds != 0)
+                {
+                    _taskTimer = new Timer(
+                        (_) => _taskPool.StopAll(),
+                        null,
+                        TimeoutSeconds * 1000,
+                        Timeout.Infinite);
+                }
+            }
+        }
+
+        private void ProcessParallelParameterSet()
+        {
+            // Validate piped InputObject
+            if (_inputObject.BaseObject is ScriptBlock)
+            {
+                WriteError(
+                    new ErrorRecord(
+                            new PSArgumentException(InternalCommandStrings.ParallelPipedInputObjectCannotBeScriptBlock),
+                            "ParallelPipedInputObjectCannotBeScriptBlock",
+                            ErrorCategory.InvalidType,
+                            this));
+
+                return;
+            }
+
+            if (AsJob)
+            {
+                var taskChildJob = new PSTaskChildJob(
+                    Parallel,
+                    _usingValuesMap,
+                    InputObject);
+
+                _taskJob.AddJob(taskChildJob);
+            }
+            else
+            {
+                // Write any streaming data
+                _taskDataStreamWriter.WriteImmediate();
+
+                var task = new System.Management.Automation.PSTasks.PSTask(
+                     Parallel,
+                     _usingValuesMap,
+                     InputObject,
+                     _taskDataStreamWriter);
+
+                // Add task to task pool.
+                // Block if the pool is full and wait until task can be added.
+                _taskPool.Add(task, _taskDataStreamWriter);
+            }
+        }
+
+        private void EndParallelParameterSet()
+        {
+            if (AsJob)
+            {
+                _taskJob.Start();
+                JobRepository.Add(_taskJob);
+                WriteObject(_taskJob);
+            }
+            else
+            {
+                _taskDataStreamWriter.WriteImmediate();
+
+                _taskPool.Close();
+                _taskDataStreamWriter.WaitAndWrite();
+            }
+        }
+
+        private void StopParallelProcessing()
+        {
+            if (!AsJob)
+            {
+                _taskPool.StopAll();
+            }
+        }
+
+        #endregion
+
+        private void EndBlockParameterSet()
+        {
+            if (_endScript == null)
+                return;
+
+            var emptyArray = Array.Empty<object>();
+            _endScript.InvokeUsingCmdlet(
+                contextCmdlet: this,
+                useLocalScope: false,
+                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                dollarUnder: AutomationNull.Value,
+                input: emptyArray,
+                scriptThis: AutomationNull.Value,
+                args: emptyArray);
+        }
+
+        private void ProcessPropertyAndMethodParameterSet()
+        {
+            _targetString = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
+
+            if (LanguagePrimitives.IsNull(InputObject))
+            {
+                if (_arguments != null && _arguments.Length > 0)
+                {
+                    WriteError(GenerateNameParameterError("InputObject", ParserStrings.InvokeMethodOnNull,
+                                                          "InvokeMethodOnNull", _inputObject));
+                }
+                else
+                {
+                    // should process
+                    string propertyAction = string.Format(CultureInfo.InvariantCulture,
+                        InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
+
+                    if (ShouldProcess(_targetString, propertyAction))
+                    {
+                        if (Context.IsStrictVersion(2))
+                        {
+                            WriteError(GenerateNameParameterError("InputObject", InternalCommandStrings.InputObjectIsNull,
+                                                                  "InputObjectIsNull", _inputObject));
+                        }
+                        else
+                        {
+                            // we write null out because:
+                            // PS C:\> $null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}
+                            // 3
+                            // so we also want
+                            // PS C:\> $null | ForEach-object aa | ForEach-Object {$_ + 3}
+                            // 3
+                            // But if we don't write anything to the pipeline when _inputObject is null,
+                            // the result 3 will not be generated.
+                            WriteObject(null);
+                        }
+                    }
+                }
+
+                return;
+            }
+
+            ErrorRecord errorRecord = null;
+
+            // if args exist, this is explicitly a method invocation
+            if (_arguments != null && _arguments.Length > 0)
+            {
+                MethodCallWithArguments();
+            }
+            // no arg provided
+            else
+            {
+                // if inputObject is of IDictionary, get the value
+                if (GetValueFromIDictionaryInput()) { return; }
+
+                PSMemberInfo member = null;
+                if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
+                {
+                    // get the matched member(s)
+                    ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
+                        _inputObject.Members.Match(_propertyOrMethodName, PSMemberTypes.All);
+                    Dbg.Assert(members != null, "The return value of Members.Match should never be null");
+
+                    if (members.Count > 1)
+                    {
+                        // write error record: property method ambiguous
+                        StringBuilder possibleMatches = new StringBuilder();
+                        foreach (PSMemberInfo item in members)
+                        {
+                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                        }
+
+                        WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
+                                                              "AmbiguousPropertyOrMethodName", _inputObject,
+                                                              _propertyOrMethodName, possibleMatches));
+                        return;
+                    }
+
+                    if (members.Count == 1)
+                    {
+                        member = members[0];
+                    }
+                }
+                else
+                {
+                    member = _inputObject.Members[_propertyOrMethodName];
+                }
+
+                // member is a method
+                if (member is PSMethodInfo)
+                {
+                    // first we check if the member is a ParameterizedProperty
+                    PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
+                    if (targetParameterizedProperty != null)
+                    {
+                        // should process
+                        string propertyAction = string.Format(CultureInfo.InvariantCulture,
+                            InternalCommandStrings.ForEachObjectPropertyAction, targetParameterizedProperty.Name);
+
+                        // ParameterizedProperty always take parameters, so we output the member.Value directly
+                        if (ShouldProcess(_targetString, propertyAction))
+                        {
+                            WriteObject(member.Value);
+                        }
+
+                        return;
+                    }
+
+                    PSMethodInfo targetMethod = member as PSMethodInfo;
+                    Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
+                    try
+                    {
+                        // should process
+                        string methodAction = string.Format(CultureInfo.InvariantCulture,
+                            InternalCommandStrings.ForEachObjectMethodActionWithoutArguments, targetMethod.Name);
+
+                        if (ShouldProcess(_targetString, methodAction))
+                        {
+                            if (!BlockMethodInLanguageMode(InputObject))
+                            {
+                                object result = targetMethod.Invoke(Array.Empty<object>());
+                                WriteToPipelineWithUnrolling(result);
+                            }
+                        }
+                    }
+                    catch (PipelineStoppedException)
+                    {
+                        // PipelineStoppedException can be caused by select-object
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        MethodException mex = ex as MethodException;
+                        if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
+                        {
+                            WriteObject(targetMethod.Value);
+                        }
+                        else
+                        {
+                            WriteError(new ErrorRecord(ex, "MethodInvocationError", ErrorCategory.InvalidOperation, _inputObject));
+                        }
+                    }
+                }
+                else
+                {
+                    string resolvedPropertyName = null;
+                    bool isBlindDynamicAccess = false;
+                    if (member == null)
+                    {
+                        if ((_inputObject.BaseObject is IDynamicMetaObjectProvider) &&
+                            !WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
+                        {
+                            // Let's just try a dynamic property access. Note that if it
+                            // comes to depending on dynamic access, we are assuming it is a
+                            // property; we don't have ETS info to tell us up front if it
+                            // even exists or not, let alone if it is a method or something
+                            // else.
+                            //
+                            // Note that this is "truly blind"--the name did not show up in
+                            // GetDynamicMemberNames(), else it would show up as a dynamic
+                            // member.
+
+                            resolvedPropertyName = _propertyOrMethodName;
+                            isBlindDynamicAccess = true;
+                        }
+                        else
+                        {
+                            errorRecord = GenerateNameParameterError("Name", InternalCommandStrings.PropertyOrMethodNotFound,
+                                                                     "PropertyOrMethodNotFound", _inputObject,
+                                                                     _propertyOrMethodName);
+                        }
+                    }
+                    else
+                    {
+                        // member is [presumably] a property (note that it could be a
+                        // dynamic property, if it shows up in GetDynamicMemberNames())
+                        resolvedPropertyName = member.Name;
+                    }
+
+                    if (!string.IsNullOrEmpty(resolvedPropertyName))
+                    {
+                        // should process
+                        string propertyAction = string.Format(CultureInfo.InvariantCulture,
+                            InternalCommandStrings.ForEachObjectPropertyAction, resolvedPropertyName);
+
+                        if (ShouldProcess(_targetString, propertyAction))
+                        {
+                            try
+                            {
+                                WriteToPipelineWithUnrolling(_propGetter.GetValue(InputObject, resolvedPropertyName));
+                            }
+                            catch (TerminateException) // The debugger is terminating the execution
+                            {
+                                throw;
+                            }
+                            catch (MethodException)
+                            {
+                                throw;
+                            }
+                            catch (PipelineStoppedException)
+                            {
+                                // PipelineStoppedException can be caused by select-object
+                                throw;
+                            }
+                            catch (Exception ex)
+                            {
+                                // For normal property accesses, we do not generate an error
+                                // here. The problem for truly blind dynamic accesses (the
+                                // member did not show up in GetDynamicMemberNames) is that
+                                // we can't tell the difference between "it failed because
+                                // the property does not exist" (let's call this case 1) and
+                                // "it failed because accessing it actually threw some
+                                // exception" (let's call that case 2).
+                                //
+                                // PowerShell behavior for normal (non-dynamic) properties
+                                // is different for these two cases: case 1 gets an error
+                                // (which is possible because the ETS tells us up front if
+                                // the property exists or not), and case 2 does not. (For
+                                // normal properties, this catch block /is/ case 2.)
+                                //
+                                // For IDMOPs, we have the chance to attempt a "blind"
+                                // access, but the cost is that we must have the same
+                                // response to both cases (because we cannot distinguish
+                                // between the two). So we have to make a choice: we can
+                                // either swallow ALL errors (including "The property
+                                // 'Blarg' does not exist"), or expose them all.
+                                //
+                                // Here, for truly blind dynamic access, we choose to
+                                // preserve the behavior of showing "The property 'Blarg'
+                                // does not exist" (case 1) errors than to suppress
+                                // "FooException thrown when accessing Bloop property" (case
+                                // 2) errors.
+
+                                if (isBlindDynamicAccess)
+                                {
+                                    errorRecord = new ErrorRecord(ex,
+                                                                  "DynamicPropertyAccessFailed_" + _propertyOrMethodName,
+                                                                  ErrorCategory.InvalidOperation,
+                                                                  InputObject);
+                                }
+                                else
+                                {
+                                    // When the property is not gettable or it throws an exception.
+                                    // e.g. when trying to access an assembly's location property, since dynamic assemblies are not backed up by a file,
+                                    // an exception will be thrown when accessing its location property. In this case, return null.
+                                    WriteObject(null);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (errorRecord != null)
+            {
+                string propertyAction = string.Format(CultureInfo.InvariantCulture,
+                    InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
+
+                if (ShouldProcess(_targetString, propertyAction))
+                {
+                    if (Context.IsStrictVersion(2))
+                    {
+                        WriteError(errorRecord);
+                    }
+                    else
+                    {
+                        // we write null out because:
+                        // PS C:\> "string" | ForEach-Object {$_.aa} | ForEach-Object {$_ + 3}
+                        // 3
+                        // so we also want
+                        // PS C:\> "string" | ForEach-Object aa | ForEach-Object {$_ + 3}
+                        // 3
+                        // But if we don't write anything to the pipeline when no member is found,
+                        // the result 3 will not be generated.
+                        WriteObject(null);
+                    }
+                }
+            }
+        }
+
+        private void ProcessScriptBlockParameterSet()
+        {
+            for (int i = _start; i < _end; i++)
+            {
+                // Only execute scripts that aren't null. This isn't treated as an error
+                // because it allows you to parameterize a command - for example you might allow
+                // for actions before and after the main processing script. They could be null
+                // by default and therefore ignored then filled in later...
+                if (_scripts[i] != null)
+                {
+                    _scripts[i].InvokeUsingCmdlet(
+                        contextCmdlet: this,
+                        useLocalScope: false,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: InputObject,
+                        input: new object[] { InputObject },
+                        scriptThis: AutomationNull.Value,
+                        args: Array.Empty<object>());
+                }
+            }
+        }
+
+        private void InitScriptBlockParameterSet()
+        {
             // Win8: 176403: ScriptCmdlets sets the global WhatIf and Confirm preferences
             // This effects the new W8 foreach-object cmdlet with -whatif and -confirm
             // implemented. -whatif and -confirm needed only for PropertyAndMethodSet
@@ -273,323 +881,6 @@ namespace Microsoft.PowerShell.Commands
                 input: emptyArray,
                 scriptThis: AutomationNull.Value,
                 args: emptyArray);
-        }
-
-        /// <summary>
-        /// Execute the processing script blocks on the current pipeline object
-        /// which is passed as it's only parameter.
-        /// </summary>
-        /// <exception cref="ParseException">Could not parse script.</exception>
-        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
-        protected override void ProcessRecord()
-        {
-            Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
-
-            switch (ParameterSetName)
-            {
-                case "ScriptBlockSet":
-                    for (int i = _start; i < _end; i++)
-                    {
-                        // Only execute scripts that aren't null. This isn't treated as an error
-                        // because it allows you to parameterize a command - for example you might allow
-                        // for actions before and after the main processing script. They could be null
-                        // by default and therefore ignored then filled in later...
-                        if (_scripts[i] != null)
-                        {
-                            _scripts[i].InvokeUsingCmdlet(
-                                contextCmdlet: this,
-                                useLocalScope: false,
-                                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                                dollarUnder: InputObject,
-                                input: new object[] { InputObject },
-                                scriptThis: AutomationNull.Value,
-                                args: Array.Empty<object>());
-                        }
-                    }
-
-                    break;
-                case "PropertyAndMethodSet":
-
-                    _targetString = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
-
-                    if (LanguagePrimitives.IsNull(InputObject))
-                    {
-                        if (_arguments != null && _arguments.Length > 0)
-                        {
-                            WriteError(GenerateNameParameterError("InputObject", ParserStrings.InvokeMethodOnNull,
-                                                                  "InvokeMethodOnNull", _inputObject));
-                        }
-                        else
-                        {
-                            // should process
-                            string propertyAction = string.Format(CultureInfo.InvariantCulture,
-                                InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
-
-                            if (ShouldProcess(_targetString, propertyAction))
-                            {
-                                if (Context.IsStrictVersion(2))
-                                {
-                                    WriteError(GenerateNameParameterError("InputObject", InternalCommandStrings.InputObjectIsNull,
-                                                                          "InputObjectIsNull", _inputObject));
-                                }
-                                else
-                                {
-                                    // we write null out because:
-                                    // PS C:\> $null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}
-                                    // 3
-                                    // so we also want
-                                    // PS C:\> $null | ForEach-object aa | ForEach-Object {$_ + 3}
-                                    // 3
-                                    // But if we don't write anything to the pipeline when _inputObject is null,
-                                    // the result 3 will not be generated.
-                                    WriteObject(null);
-                                }
-                            }
-                        }
-
-                        return;
-                    }
-
-                    ErrorRecord errorRecord = null;
-
-                    // if args exist, this is explicitly a method invocation
-                    if (_arguments != null && _arguments.Length > 0)
-                    {
-                        MethodCallWithArguments();
-                    }
-                    // no arg provided
-                    else
-                    {
-                        // if inputObject is of IDictionary, get the value
-                        if (GetValueFromIDictionaryInput()) { return; }
-
-                        PSMemberInfo member = null;
-                        if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
-                        {
-                            // get the matched member(s)
-                            ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
-                                _inputObject.Members.Match(_propertyOrMethodName, PSMemberTypes.All);
-                            Dbg.Assert(members != null, "The return value of Members.Match should never be null");
-
-                            if (members.Count > 1)
-                            {
-                                // write error record: property method ambiguous
-                                StringBuilder possibleMatches = new StringBuilder();
-                                foreach (PSMemberInfo item in members)
-                                {
-                                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
-                                }
-
-                                WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
-                                                                      "AmbiguousPropertyOrMethodName", _inputObject,
-                                                                      _propertyOrMethodName, possibleMatches));
-                                return;
-                            }
-
-                            if (members.Count == 1)
-                            {
-                                member = members[0];
-                            }
-                        }
-                        else
-                        {
-                            member = _inputObject.Members[_propertyOrMethodName];
-                        }
-
-                        // member is a method
-                        if (member is PSMethodInfo)
-                        {
-                            // first we check if the member is a ParameterizedProperty
-                            PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
-                            if (targetParameterizedProperty != null)
-                            {
-                                // should process
-                                string propertyAction = string.Format(CultureInfo.InvariantCulture,
-                                    InternalCommandStrings.ForEachObjectPropertyAction, targetParameterizedProperty.Name);
-
-                                // ParameterizedProperty always take parameters, so we output the member.Value directly
-                                if (ShouldProcess(_targetString, propertyAction))
-                                {
-                                    WriteObject(member.Value);
-                                }
-
-                                return;
-                            }
-
-                            PSMethodInfo targetMethod = member as PSMethodInfo;
-                            Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
-                            try
-                            {
-                                // should process
-                                string methodAction = string.Format(CultureInfo.InvariantCulture,
-                                    InternalCommandStrings.ForEachObjectMethodActionWithoutArguments, targetMethod.Name);
-
-                                if (ShouldProcess(_targetString, methodAction))
-                                {
-                                    if (!BlockMethodInLanguageMode(InputObject))
-                                    {
-                                        object result = targetMethod.Invoke(Array.Empty<object>());
-                                        WriteToPipelineWithUnrolling(result);
-                                    }
-                                }
-                            }
-                            catch (PipelineStoppedException)
-                            {
-                                // PipelineStoppedException can be caused by select-object
-                                throw;
-                            }
-                            catch (Exception ex)
-                            {
-                                MethodException mex = ex as MethodException;
-                                if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
-                                {
-                                    WriteObject(targetMethod.Value);
-                                }
-                                else
-                                {
-                                    WriteError(new ErrorRecord(ex, "MethodInvocationError", ErrorCategory.InvalidOperation, _inputObject));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            string resolvedPropertyName = null;
-                            bool isBlindDynamicAccess = false;
-                            if (member == null)
-                            {
-                                if ((_inputObject.BaseObject is IDynamicMetaObjectProvider) &&
-                                    !WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
-                                {
-                                    // Let's just try a dynamic property access. Note that if it
-                                    // comes to depending on dynamic access, we are assuming it is a
-                                    // property; we don't have ETS info to tell us up front if it
-                                    // even exists or not, let alone if it is a method or something
-                                    // else.
-                                    //
-                                    // Note that this is "truly blind"--the name did not show up in
-                                    // GetDynamicMemberNames(), else it would show up as a dynamic
-                                    // member.
-
-                                    resolvedPropertyName = _propertyOrMethodName;
-                                    isBlindDynamicAccess = true;
-                                }
-                                else
-                                {
-                                    errorRecord = GenerateNameParameterError("Name", InternalCommandStrings.PropertyOrMethodNotFound,
-                                                                             "PropertyOrMethodNotFound", _inputObject,
-                                                                             _propertyOrMethodName);
-                                }
-                            }
-                            else
-                            {
-                                // member is [presumably] a property (note that it could be a
-                                // dynamic property, if it shows up in GetDynamicMemberNames())
-                                resolvedPropertyName = member.Name;
-                            }
-
-                            if (!string.IsNullOrEmpty(resolvedPropertyName))
-                            {
-                                // should process
-                                string propertyAction = string.Format(CultureInfo.InvariantCulture,
-                                    InternalCommandStrings.ForEachObjectPropertyAction, resolvedPropertyName);
-
-                                if (ShouldProcess(_targetString, propertyAction))
-                                {
-                                    try
-                                    {
-                                        WriteToPipelineWithUnrolling(_propGetter.GetValue(InputObject, resolvedPropertyName));
-                                    }
-                                    catch (TerminateException) // The debugger is terminating the execution
-                                    {
-                                        throw;
-                                    }
-                                    catch (MethodException)
-                                    {
-                                        throw;
-                                    }
-                                    catch (PipelineStoppedException)
-                                    {
-                                        // PipelineStoppedException can be caused by select-object
-                                        throw;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        // For normal property accesses, we do not generate an error
-                                        // here. The problem for truly blind dynamic accesses (the
-                                        // member did not show up in GetDynamicMemberNames) is that
-                                        // we can't tell the difference between "it failed because
-                                        // the property does not exist" (let's call this case 1) and
-                                        // "it failed because accessing it actually threw some
-                                        // exception" (let's call that case 2).
-                                        //
-                                        // PowerShell behavior for normal (non-dynamic) properties
-                                        // is different for these two cases: case 1 gets an error
-                                        // (which is possible because the ETS tells us up front if
-                                        // the property exists or not), and case 2 does not. (For
-                                        // normal properties, this catch block /is/ case 2.)
-                                        //
-                                        // For IDMOPs, we have the chance to attempt a "blind"
-                                        // access, but the cost is that we must have the same
-                                        // response to both cases (because we cannot distinguish
-                                        // between the two). So we have to make a choice: we can
-                                        // either swallow ALL errors (including "The property
-                                        // 'Blarg' does not exist"), or expose them all.
-                                        //
-                                        // Here, for truly blind dynamic access, we choose to
-                                        // preserve the behavior of showing "The property 'Blarg'
-                                        // does not exist" (case 1) errors than to suppress
-                                        // "FooException thrown when accessing Bloop property" (case
-                                        // 2) errors.
-
-                                        if (isBlindDynamicAccess)
-                                        {
-                                            errorRecord = new ErrorRecord(ex,
-                                                                          "DynamicPropertyAccessFailed_" + _propertyOrMethodName,
-                                                                          ErrorCategory.InvalidOperation,
-                                                                          InputObject);
-                                        }
-                                        else
-                                        {
-                                            // When the property is not gettable or it throws an exception.
-                                            // e.g. when trying to access an assembly's location property, since dynamic assemblies are not backed up by a file,
-                                            // an exception will be thrown when accessing its location property. In this case, return null.
-                                            WriteObject(null);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (errorRecord != null)
-                    {
-                        string propertyAction = string.Format(CultureInfo.InvariantCulture,
-                            InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
-
-                        if (ShouldProcess(_targetString, propertyAction))
-                        {
-                            if (Context.IsStrictVersion(2))
-                            {
-                                WriteError(errorRecord);
-                            }
-                            else
-                            {
-                                // we write null out because:
-                                // PS C:\> "string" | ForEach-Object {$_.aa} | ForEach-Object {$_ + 3}
-                                // 3
-                                // so we also want
-                                // PS C:\> "string" | ForEach-Object aa | ForEach-Object {$_ + 3}
-                                // 3
-                                // But if we don't write anything to the pipeline when no member is found,
-                                // the result 3 will not be generated.
-                                WriteObject(null);
-                            }
-                        }
-                    }
-
-                    break;
-            }
         }
 
         /// <summary>
@@ -795,6 +1086,8 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
+        #endregion
+
         /// <summary>
         /// Generate the appropriate error record.
         /// </summary>
@@ -829,30 +1122,6 @@ namespace Microsoft.PowerShell.Commands
                 target);
 
             return errorRecord;
-        }
-
-        /// <summary>
-        /// Execute the end scriptblock when the pipeline is complete.
-        /// </summary>
-        /// <exception cref="ParseException">Could not parse script.</exception>
-        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
-        protected override void EndProcessing()
-        {
-            if (ParameterSetName != "ScriptBlockSet") return;
-
-            if (_endScript == null)
-                return;
-
-            var emptyArray = Array.Empty<object>();
-            _endScript.InvokeUsingCmdlet(
-                contextCmdlet: this,
-                useLocalScope: false,
-                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder: AutomationNull.Value,
-                input: emptyArray,
-                scriptThis: AutomationNull.Value,
-                args: emptyArray);
         }
     }
 

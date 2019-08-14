@@ -878,6 +878,43 @@ try
         }
     }
 
+    Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+            if ($skipTest) {
+                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+            }
+        }
+    
+        AfterAll {
+    
+            if ($skipTest) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            }
+        }
+
+        It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
+
+            try 
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $results | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
     Describe "Dot sourced script block functions from trusted script files should not run FullLanguage in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
