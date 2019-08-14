@@ -193,14 +193,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string MemberName
         {
-            set
-            {
-                _propertyOrMethodName = value;
-            }
-
             get
             {
                 return _propertyOrMethodName;
+            }
+
+            set
+            {
+                _propertyOrMethodName = value;
             }
         }
 
@@ -1508,7 +1508,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets  or sets case sensitive binary operator -cle.
+        /// Gets or sets case sensitive binary operator -cle.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessOrEqualSet")]
         public SwitchParameter CLE
