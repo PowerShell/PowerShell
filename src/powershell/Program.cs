@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell
 
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;
+
             // The path to the executable this process was started from
             string pwshPath;
 
