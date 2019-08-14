@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = _binaryOperator = TokenKind.Ilt;
+                _binaryOperator = TokenKind.Ilt;
             }
         }
 
