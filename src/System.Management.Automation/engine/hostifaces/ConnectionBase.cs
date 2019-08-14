@@ -262,7 +262,6 @@ namespace System.Management.Automation.Runspaces
             OpenHelper(syncCall);
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
 
-            // Telemetry here - runspace start
 #if LEGACYTELEMETRY
             // We report startup telementry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
