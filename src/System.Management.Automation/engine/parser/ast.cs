@@ -7170,21 +7170,21 @@ namespace System.Management.Automation.Language
                 {
                     return visitor.CheckForPostAction(this, AstVisitAction.Continue);
                 }
+            }
 
-                if (action == AstVisitAction.Continue)
-                {
-                    action = Condition.InternalVisit(visitor2);
-                }
+            if (action == AstVisitAction.Continue)
+            {
+                action = Condition.InternalVisit(visitor);
+            }
 
-                if (action == AstVisitAction.Continue)
-                {
-                    action = IfTrue.InternalVisit(visitor2);
-                }
+            if (action == AstVisitAction.Continue)
+            {
+                action = IfTrue.InternalVisit(visitor);
+            }
 
-                if (action == AstVisitAction.Continue)
-                {
-                    action = IfFalse.InternalVisit(visitor2);
-                }
+            if (action == AstVisitAction.Continue)
+            {
+                action = IfFalse.InternalVisit(visitor);
             }
 
             return visitor.CheckForPostAction(this, action);

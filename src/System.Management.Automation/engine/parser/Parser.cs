@@ -6459,7 +6459,7 @@ namespace System.Management.Automation.Language
                 Token token = PeekToken();
 
                 // Skip newlines before question mark token to support (ternary operator)line continuance when the
-                // quetion -mark tokens start the next line of script. This is to support the common usage like:
+                // quetion-mark token starts on the next line of script. This is to support the common usage like:
                 //     $varName1 -eq $varName2
                 //         ? <do-something-if-true>
                 //         : <do-something-if-false>
