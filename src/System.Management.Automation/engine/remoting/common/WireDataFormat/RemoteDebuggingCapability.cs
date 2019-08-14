@@ -15,13 +15,16 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class RemoteDebuggingCapability
     {
-        private readonly Version PSVersion;
-
         private HashSet<string> _supportedCommands = new HashSet<string>();
+
+        internal Version PSVersion { get; private set; }
 
         /// <summary>
         /// Instantiates a new <see cref="RemoteDebuggingCapability"/> instance.
         /// </summary>
+        /// <param name="powerShellVersion">
+        /// The version of PowerShell used on the remote server debugger.
+        /// </param>
         /// <remarks>
         /// This should only be invoked by the static create method.
         /// </remarks>
@@ -61,6 +64,13 @@ namespace System.Management.Automation.Remoting
         /// Creates a <see cref="RemoteDebuggingCapability"/> instance that can be
         /// used to identify the remoting capabilities of the server debugger.
         /// </summary>
+        /// <param name="powerShellVersion">
+        /// The version of PowerShell used on the remote server debugger.
+        /// </param>
+        /// <returns>
+        /// A new RemoteDebuggingCapability instance that is based on the version
+        /// of PowerShell used on the remote server debugger.
+        /// </returns>
         internal static RemoteDebuggingCapability CreateDebuggingCapability(Version powerShellVersion) =>
         new RemoteDebuggingCapability(powerShellVersion);
 
@@ -83,18 +93,15 @@ namespace System.Management.Automation.Remoting
         #region DO NOT REMOVE OR CHANGE THE VALUES OF THESE CONSTANTS - it will break remote debugging compatibility with PowerShell
 
         // Commands related to debugger stop events
-
         internal const string GetDebuggerStopArgs        = "__Get-PSDebuggerStopArgs";
         internal const string SetDebuggerAction          = "__Set-PSDebuggerAction";
 
         // Miscellaneous debug commands
-
         internal const string SetDebuggerStepMode        = "__Set-PSDebuggerStepMode";
         internal const string SetDebugMode               = "__Set-PSDebugMode";
         internal const string SetUnhandledBreakpointMode = "__Set-PSUnhandledBreakpointMode";
 
         // Breakpoint commands
-
         internal const string GetBreakpoint              = "__Get-PSBreakpoint";
         internal const string SetBreakpoint              = "__Set-PSBreakpoint";
         internal const string EnableBreakpoint           = "__Enable-PSBreakpoint";

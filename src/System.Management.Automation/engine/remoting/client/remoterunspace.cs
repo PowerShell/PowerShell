@@ -2017,8 +2017,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.GetBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.GetBreakpoint)));
             }
 
             return InvokeRemoteBreakpointFunction<Breakpoint>(
@@ -2040,8 +2039,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.GetBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.GetBreakpoint)));
             }
 
             CheckForValidateState();
@@ -2073,8 +2071,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.SetBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.SetBreakpoint)));
             }
 
             var functionParameters = new Dictionary<string, object>
@@ -2103,8 +2100,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.SetBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.SetBreakpoint)));
             }
 
             var functionParameters = new Dictionary<string, object>
@@ -2134,8 +2130,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.SetBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.SetBreakpoint)));
             }
 
             var functionParameters = new Dictionary<string, object>
@@ -2169,8 +2164,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.RemoveBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.RemoveBreakpoint)));
             }
 
             return InvokeRemoteBreakpointFunction<bool>(
@@ -2189,8 +2183,7 @@ namespace System.Management.Automation
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.EnableBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.EnableBreakpoint)));
             }
 
             return InvokeRemoteBreakpointFunction<Breakpoint>(
@@ -2203,15 +2196,13 @@ namespace System.Management.Automation
 
         public override Breakpoint DisableBreakpoint(Breakpoint breakpoint)
         {
-
             // This is supported only for PowerShell versions >= 7.0
             if (!_remoteDebuggingCapability.IsCommandSupported(RemoteDebuggingCommands.DisableBreakpoint))
             {
                 throw new PSNotSupportedException(
                     StringUtil.Format(
                         DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
-                        RemoteDebuggingCommands.CleanCommandName(
-                            RemoteDebuggingCommands.DisableBreakpoint)));
+                        RemoteDebuggingCommands.CleanCommandName(RemoteDebuggingCommands.DisableBreakpoint)));
             }
 
             return InvokeRemoteBreakpointFunction<Breakpoint>(
