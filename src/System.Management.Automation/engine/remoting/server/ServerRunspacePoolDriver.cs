@@ -1262,7 +1262,7 @@ namespace System.Management.Automation
 
             var command = commands.Commands[0];
             string commandText = command.CommandText;
-            if (commandText.Equals(DebuggerUtils.GetDebuggerStopArgsFunctionName, StringComparison.OrdinalIgnoreCase))
+            if (commandText.Equals(RemoteDebuggingCommands.GetDebuggerStopArgs, StringComparison.OrdinalIgnoreCase))
             {
                 // __Get-PSDebuggerStopArgs private virtual command.
                 // No input parameters.
@@ -1276,7 +1276,7 @@ namespace System.Management.Automation
 
                 ReplaceVirtualCommandWithScript(commands, "$host.Runspace.Debugger.GetDebuggerStopArgs()");
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebuggerActionFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebuggerAction, StringComparison.OrdinalIgnoreCase))
             {
                 // __Set-PSDebuggerAction private virtual command.
                 // DebuggerResumeAction enum input parameter.
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation
                 commandArgument.ResumeAction = resumeAction ?? throw new PSArgumentException("ResumeAction");
                 result = PreProcessCommandResult.SetDebuggerAction;
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebugModeFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebugMode, StringComparison.OrdinalIgnoreCase))
             {
                 // __Set-PSDebugMode private virtual command.
                 // DebugModes enum input parameter.
@@ -1333,7 +1333,7 @@ namespace System.Management.Automation
                 commandArgument.Mode = mode ?? throw new PSArgumentException("Mode");
                 result = PreProcessCommandResult.SetDebugMode;
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebuggerStepMode, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebuggerStepMode, StringComparison.OrdinalIgnoreCase))
             {
                 // __Set-PSDebuggerStepMode private virtual command.
                 // Boolean Enabled input parameter.
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
                 commandArgument.DebuggerStepEnabled = enabled;
                 result = PreProcessCommandResult.SetDebuggerStepMode;
             }
-            else if (commandText.Equals(DebuggerUtils.SetPSUnhandledBreakpointMode, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetUnhandledBreakpointMode, StringComparison.OrdinalIgnoreCase))
             {
                 // __Set-PSUnhandledBreakpointMode private virtual command.
                 // UnhandledBreakpointMode input parameter.
@@ -1373,7 +1373,7 @@ namespace System.Management.Automation
                 commandArgument.UnhandledBreakpointMode = mode ?? throw new PSArgumentException("Mode");
                 result = PreProcessCommandResult.SetPreserveUnhandledBreakpointMode;
             }
-            else if (commandText.Equals(DebuggerUtils.GetPSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.GetBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Get-PSBreakpoint private virtual command.
                 // Input parameters:
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
-            else if (commandText.Equals(DebuggerUtils.SetPSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Set-PSBreakpoint private virtual command.
                 // Input parameters:
@@ -1461,7 +1461,7 @@ namespace System.Management.Automation
                     commands.AddParameter(commandParameter.Name, parameterValue);
                 }
             }
-            else if (commandText.Equals(DebuggerUtils.RemovePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Remove-PSBreakpoint private virtual command.
                 // Input parameters:
@@ -1475,7 +1475,7 @@ namespace System.Management.Automation
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
-            else if (commandText.Equals(DebuggerUtils.EnablePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Enable-PSBreakpoint private virtual command.
                 // Input parameters:
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
-            else if (commandText.Equals(DebuggerUtils.DisablePSBreakpointFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.DisableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Disable-PSBreakpoint private virtual command.
                 // Input parameters:

@@ -5466,17 +5466,6 @@ namespace System.Management.Automation.Internal
             Set-StrictMode -Off
         }";
 
-        internal const string SetDebugModeFunctionName = "__Set-PSDebugMode";
-        internal const string SetDebuggerActionFunctionName = "__Set-PSDebuggerAction";
-        internal const string GetDebuggerStopArgsFunctionName = "__Get-PSDebuggerStopArgs";
-        internal const string SetDebuggerStepMode = "__Set-PSDebuggerStepMode";
-        internal const string SetPSUnhandledBreakpointMode = "__Set-PSUnhandledBreakpointMode";
-        internal const string GetPSBreakpointFunctionName = "__Get-PSBreakpoint";
-        internal const string SetPSBreakpointFunctionName = "__Set-PSBreakpoint";
-        internal const string RemovePSBreakpointFunctionName = "__Remove-PSBreakpoint";
-        internal const string EnablePSBreakpointFunctionName = "__Enable-PSBreakpoint";
-        internal const string DisablePSBreakpointFunctionName = "__Disable-PSBreakpoint";
-
         private static SortedSet<string> s_noHistoryCommandNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "prompt",
