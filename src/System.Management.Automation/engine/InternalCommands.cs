@@ -515,6 +515,7 @@ namespace Microsoft.PowerShell.Commands
         private void EndBlockParameterSet()
         {
             if (_endScript == null)
+            {
                 return;
             }
 
