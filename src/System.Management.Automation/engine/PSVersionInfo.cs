@@ -330,16 +330,6 @@ namespace System.Management.Automation
             get { return s_psV6Version; }
         }
 
-        internal static SemanticVersion PSV61Version
-        {
-            get { return s_psV61Version; }
-        }
-
-        internal static SemanticVersion PSV62Version
-        {
-            get { return s_psV62Version; }
-        }
-
         internal static SemanticVersion PSV7Version
         {
             get { return s_psV7Version; }

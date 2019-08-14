@@ -2818,6 +2818,7 @@ namespace System.Management.Automation
                     }
                 }
 
+                // This helper is only used to return a single output item of type T.
                 foreach (var item in output)
                 {
                     if (item?.BaseObject is T)

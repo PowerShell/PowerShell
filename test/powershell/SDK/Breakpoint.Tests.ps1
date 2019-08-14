@@ -34,8 +34,20 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
     Context 'Managing breakpoints in the host runspace via the SDK' {
 
-        It 'Can set breakpoints' {
+        It 'Can set command breakpoints' {
             $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist') | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+        }
+
+        It 'Can set variable breakpoints' {
+            $host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+        }
+
+        It 'Can set line breakpoints' {
+            $host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+        }
+
+        It 'Can get breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints() | Should -HaveCount 3
         }
 
         It 'Can disable breakpoints' {
@@ -56,25 +68,37 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
             foreach ($bp in $host.Runspace.Debugger.GetBreakpoints()) {
                 $host.Runspace.Debugger.RemoveBreakpoint($bp) | Should -BeTrue
             }
-            $host.Runspace.Debugger.GetBreakpoints().Count | Should -Be 0
+        }
+
+        It 'Returns an empty collection when there are no breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints() | Should -HaveCount 0
         }
     }
 
     Context 'Managing breakpoints in a remote runspace via the SDK' {
 
-        It 'Can set breakpoints' {
+        AfterAll {
+            # Get rid of any breakpoints that were created in the default runspace.
+            # This is necessary due to a known bug that causes breakpoints with the
+            # same id to be created or updated in the default runspace.
+            Get-PSBreakpoint | Remove-PSBreakpoint
+        }
+
+        It 'Can set command breakpoints' {
             $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+        }
+
+        It 'Can set variable breakpoints' {
             $jobRunspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { break }) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+        }
+
+        It 'Can set line breakpoints' {
             $jobRunspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { break }) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
         }
 
-        It 'Breakpoints are triggered by the remote debugger' {
-            $startTime = [DateTime]::UtcNow
-            $maxTimeToWait = [TimeSpan]'00:00:20'
-            while ($job.State -ne 'AtBreakpoint' -and ([DateTime]::UtcNow - $startTime) -lt $maxTimeToWait) {
-                Start-Sleep -Milliseconds 100 # Give the job a bit of time to hit a breakpoint
-            }
-            $job.State | Should -Be 'AtBreakpoint'
+        It 'Can get breakpoints' {
+            # This is 4, not 3, because we set a breakpoint in our job script
+            $jobRunspace.Debugger.GetBreakpoints() | Should -HaveCount 4
         }
 
         It 'Can disable breakpoints' {
@@ -95,7 +119,50 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
                 $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeTrue
             }
-            $jobRunspace.Debugger.GetBreakpoints().Count | Should -Be 0
+        }
+
+        It 'Returns an empty collection when there are no breakpoints' {
+            $jobRunspace.Debugger.GetBreakpoints() | Should -HaveCount 0
+        }
+    }
+
+    Context 'Handling empty collections and  errors while managing breakpoints in the host runspace via the SDK' {
+
+        BeforeAll {
+            $bp = $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist')
+            $host.Runspace.Debugger.RemoveBreakpoint($bp) > $null
+        }
+
+        It 'Returns false when trying to disable a breakpoint that does not exist' {
+            $host.Runspace.Debugger.DisableBreakpoint($bp) | Should -Be $null
+        }
+
+        It 'Returns false when trying to enable a breakpoint that does not exist' {
+            $host.Runspace.Debugger.EnableBreakpoint($bp) | Should -Be $null
+        }
+
+        It 'Returns false when trying to remove a breakpoint that does not exist' {
+            $host.Runspace.Debugger.RemoveBreakpoint($bp) | Should -BeFalse
+        }
+    }
+
+    Context 'Handling errors while managing breakpoints in a remote runspace via the SDK' {
+
+        BeforeAll {
+            $bp = $jobRunspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist')
+            $jobRunspace.Debugger.RemoveBreakpoint($bp) > $null
+        }
+
+        It 'Returns false when trying to disable a breakpoint that does not exist' {
+            $jobRunspace.Debugger.DisableBreakpoint($bp) | Should -Be $null
+        }
+
+        It 'Returns false when trying to enable a breakpoint that does not exist' {
+            $jobRunspace.Debugger.EnableBreakpoint($bp) | Should -Be $null
+        }
+
+        It 'Returns false when trying to remove a breakpoint that does not exist' {
+            $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeFalse
         }
     }
 }
