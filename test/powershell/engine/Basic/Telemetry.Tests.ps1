@@ -48,25 +48,25 @@ Describe "Telemetry for shell startup" -Tag CI {
 
     It "Should not create a uuid file if telemetry is opted out" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Not -Exist
     }
 
     It "Should create a uuid file if telemetry is opted in" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Exist
     }
 
     It "Should create a uuid file by default" {
         if ( Test-Path env:POWERSHELL_TELEMETRY_OPTOUT ) { Remove-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT }
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Exist
     }
 
     It "Should create a property uuid file when telemetry is sent" {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Exist
         (Get-ChildItem -Path $uuidPath).Length | Should -Be 16
         [byte[]]$newBytes = Get-Content -AsByteStream -Path $uuidPath
@@ -76,7 +76,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should not create a telemetry file if one already exists and telemetry is opted in" {
         [byte[]]$bytes = [System.Guid]::NewGuid().ToByteArray()
         [System.IO.File]::WriteAllBytes($uuidPath, $bytes)
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         [byte[]]$newBytes = Get-Content -AsByteStream -Path $uuidPath
         Compare-Object -ReferenceObject $bytes -DifferenceObject $newBytes | Should -BeNullOrEmpty
     }
@@ -84,7 +84,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should create a new telemetry file if the current one is 00000000-0000-0000-0000-000000000000" {
         [byte[]]$zeroGuid = [System.Guid]::Empty.ToByteArray()
         [System.IO.File]::WriteAllBytes($uuidPath, $zeroGuid)
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         [byte[]]$newBytes = Get-Content -AsByteStream -Path $uuidPath
         # we could legitimately have zeros in the new guid, so we can't check for that
         # we're just making sure that there *is* a difference
@@ -94,7 +94,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     It "Should create a new telemetry file if the current one is smaller than 16 bytes" {
         $badBytes = [byte[]]::new(8);
         [System.IO.File]::WriteAllBytes($uuidPath, $badBytes)
-        & $PWSH -command "exit"
+        & $PWSH -NoProfile -Command "exit"
         [byte[]]$nb = Get-Content -AsByteStream -Path $uuidPath
         [System.Guid]::New($nb) | Should -BeOfType [System.Guid]
     }
@@ -109,7 +109,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     }
 
     It "Should properly set whether telemetry is sent based on when environment variable is not set" {
-        $result = & $PWSH -c '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
+        $result = & $PWSH -NoProfile -Command '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be "True"
     }
 

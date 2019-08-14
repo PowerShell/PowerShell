@@ -161,7 +161,6 @@ namespace Microsoft.PowerShell.Telemetry
                 default:
                     return defaultValue;
             }
-
         }
 
         /// <summary>
@@ -204,6 +203,7 @@ namespace Microsoft.PowerShell.Telemetry
                 // do nothing, telemetry can't be sent
                 // don't send the panic telemetry as if we have failed above, it will likely fail here.
             }
+
         }
 
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
@@ -233,7 +233,6 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 return _anonymous;
             }
-
         }
 
         /// <summary>
@@ -254,8 +253,8 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("UUID", s_uniqueUserIdentifier.ToString());
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
-            properties.Add("OSChannel", String.IsNullOrEmpty(channel) ? "unknown" : channel);
-            properties.Add("StartMode", String.IsNullOrEmpty(mode) ? "unknown" : mode);
+            properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
+            properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
             try
             {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
@@ -383,7 +382,8 @@ namespace Microsoft.PowerShell.Telemetry
                 try
                 {
                     m.WaitOne();
-                    if (TryCreateUniqueIdentifierAndFile(uuidPath, out id)) {
+                    if (TryCreateUniqueIdentifierAndFile(uuidPath, out id))
+                    {
                         return id;
                     }
                 }
