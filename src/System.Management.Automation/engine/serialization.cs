@@ -7096,7 +7096,7 @@ namespace Microsoft.PowerShell
 
         internal static CommandBreakpoint RehydrateCommandBreakpoint(PSObject pso)
         {
-            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk);
+            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk);
             string command = GetPropertyValue<string>(pso, "Command");
             int id = GetPropertyValue<int>(pso, "Id");
             bool enabled = GetPropertyValue<bool>(pso, "Enabled");
@@ -7111,7 +7111,7 @@ namespace Microsoft.PowerShell
 
         internal static VariableBreakpoint RehydrateVariableBreakpoint(PSObject pso)
         {
-            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk);
+            string script = GetPropertyValue<string>(pso, "Script", RehydrationFlags.MissingPropertyOk | RehydrationFlags.NullValueOk);
             string variableName = GetPropertyValue<string>(pso, "Variable");
             int id = GetPropertyValue<int>(pso, "Id");
             bool enabled = GetPropertyValue<bool>(pso, "Enabled");
