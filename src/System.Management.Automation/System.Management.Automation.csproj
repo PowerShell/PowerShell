@@ -25,7 +25,7 @@
     <PackageReference Include="System.Security.Permissions" Version="4.6.0-preview8.19405.3" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0-preview8.19405.3" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0-preview.2" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0-preview.1" />
   </ItemGroup>
 
