@@ -2922,9 +2922,6 @@
       <Component Id="cmp30126C60BD784974B74EA45AE9B04032" Guid="{777d7afa-784b-4f16-9879-a6eada18d59f}">
         <File Id="fil7352ABFC8A154701BFE3B47CFA66B8F4" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Threading.Channels.dll" />
       </Component>
-      <Component Id="cmpB6616472F56D49C0A092411F4D29EA8A" Guid="{3036bf65-f44a-4fb9-b802-01841bf587ed}">
-        <File Id="filFC27BBD7B6764674966AB7AEBC639982" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.32702.dll" />
-      </Component>
       <Component Id="cmp9EC1507780D247E095EA92A7715B4BAC" Guid="{c111d60b-4bd3-4abc-b08c-1b503dde5931}">
         <File Id="filFA98F788E7724D41A2A88F2C0298E691" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Printing.dll" />
       </Component>
@@ -3050,6 +3047,9 @@
       </Component>
       <Component Id="cmp827B25EEC28D4699BB29042B273C8CBF" Guid="{f7ccc70c-5aaf-4e6b-bf9f-c59f4e631f9c}">
         <File Id="filEF6B07EDBC8F43AE8DF88CFDF798FC22" KeyPath="yes" Source="$(env.ProductSourcePath)\System.ComponentModel.Composition.Registration.dll" />
+      </Component>
+      <Component Id="cmp45C246DB0A6548B88F0ECFAE7E04DDF9" Guid="{c0aa34fa-b8b3-4fdd-8ea9-0a7b552fd62a}">
+        <File Id="fil03DDF9C95E914AB68AE38D7B8AEF4BE9" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.37902.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3624,7 +3624,6 @@
       <ComponentRef Id="cmp0D4F53C257044BE1912BDD4E99A5F0DE" />
       <ComponentRef Id="cmpEA40E9164309426C88C4388FDCA9559D" />
       <ComponentRef Id="cmp30126C60BD784974B74EA45AE9B04032" />
-      <ComponentRef Id="cmpB6616472F56D49C0A092411F4D29EA8A" />
       <ComponentRef Id="cmp9EC1507780D247E095EA92A7715B4BAC" />
       <ComponentRef Id="cmpF2634E50875D4698921081E3C6B1D5DC" />
       <ComponentRef Id="cmpDCAA22865EF8486AB7526E046A51DBF6" />
@@ -3888,6 +3887,7 @@
       <ComponentRef Id="cmpAD1A205D445C43588868B205091DD390" />
       <ComponentRef Id="cmpD7A187ADE66347E5A7550B96BA10D493" />
       <ComponentRef Id="cmp827B25EEC28D4699BB29042B273C8CBF" />
+      <ComponentRef Id="cmp45C246DB0A6548B88F0ECFAE7E04DDF9" />
     </ComponentGroup>
   </Fragment>
 </Wix>
