@@ -109,9 +109,7 @@ namespace Microsoft.PowerShell.Telemetry
                 s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
-                s_knownModules = new HashSet<string>(
-                    new string []
-                    {
+                s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
                         "Microsoft.PowerShell.Archive",
                         "Microsoft.PowerShell.Host",
                         "Microsoft.PowerShell.Management",
@@ -123,9 +121,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "PSDesiredStateConfiguration",
                         "PSReadLine",
                         "ThreadJob",
-                    },
-                    StringComparer.OrdinalIgnoreCase
-                    );
+                    };
                 s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
             }
         }
@@ -172,7 +168,6 @@ namespace Microsoft.PowerShell.Telemetry
             }
 
             string metricName = metricId.ToString();
-            string uuidString = s_uniqueUserIdentifier;
             try
             {
                 switch (metricId)
@@ -181,15 +176,15 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, data);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, data);
                         break;
                     case TelemetryType.ExperimentalModuleFeatureActivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, experimentalFeatureName);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
                     case TelemetryType.ModuleLoad:
                         string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, moduleName);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, moduleName);
                         break;
                 }
             }
@@ -207,11 +202,12 @@ namespace Microsoft.PowerShell.Telemetry
             // An experimental feature in a module is guaranteed to start with the module name
             // we can strip out the text past the last '.' as the text before that will be the ModuleName
             int lastDotIndex = featureNameToValidate.LastIndexOf('.');
-            string moduleName = featureNameToValidate.Substring(0,lastDotIndex);
+            string moduleName = featureNameToValidate.Substring(0, lastDotIndex);
             if (s_knownModules.Contains(moduleName))
             {
                 return featureNameToValidate;
             }
+
             return _anonymous;
         }
 
@@ -222,10 +218,8 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 return moduleNameToValidate;
             }
-            else
-            {
-                return _anonymous;
-            }
+
+            return _anonymous;
         }
 
         /// <summary>
