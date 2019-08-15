@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell
             "file",
             "help",
             "inputformat",
-            "loadprofile",
+            "login",
             "noexit",
             "nologo",
             "noninteractive",
@@ -710,20 +710,22 @@ namespace Microsoft.PowerShell
                     _noExit = false;
                     break;
                 }
-                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+
+                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
                 }
+                else if (MatchSwitch(switchKey, "login", "l"))
+                {
+                    // This handles -Login on Windows only, where it does nothing.
+                    // On *nix, -Login is handled much earlier to improve startup performance.
+                }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
                     noexitSeen = true;
-                }
-                else if (MatchSwitch(switchKey, "loadprofile", "l"))
-                {
-                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {

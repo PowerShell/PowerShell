@@ -1023,11 +1023,12 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
 
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+
+        private double _readyForInputTimeInMS;
+        private int _interactiveCommandCount;
 #endif
 
         private double _profileLoadTimeInMS;
-        private double _readyForInputTimeInMS;
-        private int _interactiveCommandCount;
 
         #endregion overrides
 
@@ -1602,8 +1603,10 @@ namespace Microsoft.PowerShell
                                                    PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
             }
 
+#if LEGACYTELEMETRY
             // Record how long it took from process start to runspace open for telemetry.
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
+#endif
 
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
@@ -2517,8 +2520,10 @@ namespace Microsoft.PowerShell
                                 }
                             }
 
+#if LEGACYTELEMETRY
                             if (!inBlockMode)
                                 s_theConsoleHost._interactiveCommandCount += 1;
+#endif
                         }
                     }
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09

@@ -75,7 +75,6 @@ function Get-LinuxContainer
             Path = "$psscriptroot/../release/$os"
         }
     }
-
 }
 
 # Return a list of Windows Container Test Cases
@@ -130,7 +129,7 @@ function Test-SkipLinux
             return $true
         }
         default {
-            throw "Unknow docker os '$os'"
+            throw "Unknown docker os '$os'"
         }
     }
 }

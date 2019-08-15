@@ -304,12 +304,12 @@ namespace System.Management.Automation
         Default = 0x1,
 
         /// <summary>
-        /// PowerShell script debugging including workflow script.
+        /// PowerShell script debugging.
         /// </summary>
         LocalScript = 0x2,
 
         /// <summary>
-        /// PowerShell remote script and workflow debugging.
+        /// PowerShell remote script debugging.
         /// </summary>
         RemoteScript = 0x4
     };
@@ -1692,6 +1692,9 @@ namespace System.Management.Automation
         private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
+        // System is locked down when true. Used to disable debugger on lock down.
+        private bool? _isSystemLockedDown;
+
         private static readonly string s_processDebugPromptMatch;
 
         #endregion private members
@@ -2109,16 +2112,27 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsSystemLockedDown
+        private bool IsSystemLockedDown
         {
             get
             {
-                return (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                        System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+                if (_isSystemLockedDown == null)
+                {
+                    lock (_syncObject)
+                    {
+                        if (_isSystemLockedDown == null)
+                        {
+                            _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                                System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+                        }
+                    }
+                }
+
+                return _isSystemLockedDown.Value;
             }
         }
 
-        private static void CheckForBreakpointSupport()
+        private void CheckForBreakpointSupport()
         {
             if (IsSystemLockedDown)
             {
@@ -3319,18 +3333,6 @@ namespace System.Management.Automation
                         _lastActiveDebuggerAction = dbgCommand.ResumeAction.Value;
                         return new DebuggerCommandResults(dbgCommand.ResumeAction, true);
                     }
-
-                    // If active debugger is Workflow debugger then process command here (for "list" and "help").
-                    if (activeDebugger.GetType().FullName.Equals("Microsoft.PowerShell.Workflow.PSWorkflowDebugger", StringComparison.OrdinalIgnoreCase))
-                    {
-                        DebuggerCommand results = _commandProcessor.ProcessCommand(null, commandText, stopArgs.InvocationInfo, output);
-
-                        if ((results != null) &&
-                             results.ExecutedByDebugger)
-                        {
-                            return new DebuggerCommandResults(results.ResumeAction, true);
-                        }
-                    }
                 }
 
                 return activeDebugger.ProcessCommand(command, output);
@@ -3530,39 +3532,6 @@ namespace System.Management.Automation
                 if (nestedDebugger == null) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
-
-                // If this is a workflow debugger then ensure that there is a current active
-                // debugger that is the associated job debugger for this inline script WF runspace.
-                if (runspaceType == PSMonitorRunspaceType.WorkflowInlineScript)
-                {
-                    bool needToPushAssociatedWFDebugger = true;
-                    if (_activeDebuggers.TryPeek(out activeDebugger))
-                    {
-                        needToPushAssociatedWFDebugger = (activeDebugger.InstanceId != nestedDebugger.ParentDebuggerId);
-                        if (needToPushAssociatedWFDebugger)
-                        {
-                            // Pop incorrect active debugger.
-                            PopActiveDebugger();
-                        }
-                    }
-
-                    if (needToPushAssociatedWFDebugger)
-                    {
-                        PSJobStartEventArgs wfJobArgs = null;
-                        lock (_syncObject)
-                        {
-                            _runningJobs.TryGetValue(nestedDebugger.ParentDebuggerId, out wfJobArgs);
-                        }
-
-                        if (wfJobArgs == null)
-                        {
-                            Diagnostics.Assert(false, "We should never get a WF job InlineScript debugger without an associated WF parent job.");
-                            return;
-                        }
-
-                        PushActiveDebugger(wfJobArgs.Debugger, _jobCallStackOffset);
-                    }
-                }
 
                 // Fix up invocation info script extents for embedded nested debuggers where the script source is
                 // from the parent.
@@ -3820,6 +3789,12 @@ namespace System.Management.Automation
             {
                 _preserveDebugStopEvent.Dispose();
                 _preserveDebugStopEvent = null;
+            }
+
+            if (_runspaceDebugCompleteEvent != null)
+            {
+                _runspaceDebugCompleteEvent.Dispose();
+                _runspaceDebugCompleteEvent = null;
             }
         }
 
@@ -4225,7 +4200,7 @@ namespace System.Management.Automation
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
         /// cases where the debugged runspace is called inside a parent sccript,
-        /// such as with Workflow InlineScripts and script Invoke-Command cases.
+        /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo"></param>
         /// <returns>InvocationInfo.</returns>
@@ -4391,8 +4366,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Wrapper class for runspace debugger where the runspace is being used in an
-    /// embedded scenario such as Workflow InlineScript or Invoke-Command command
-    /// inside script.
+    /// embedded scenario such as Invoke-Command command inside script.
     /// </summary>
     internal sealed class EmbeddedRunspaceDebugger : NestedRunspaceDebugger
     {
@@ -4501,7 +4475,7 @@ namespace System.Management.Automation
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
         /// cases where the debugged runspace is called inside a parent sccript,
-        /// such as with Workflow InlineScripts and script Invoke-Command cases.
+        /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo">Invocation information from debugger stop.</param>
         /// <returns>InvocationInfo.</returns>
@@ -5346,65 +5320,6 @@ namespace System.Management.Automation.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed Internal use only")]
     public static class DebuggerUtils
     {
-        /// <summary>
-        /// Set-DebuggerVariable function.
-        /// </summary>
-        public const string SetVariableFunction = @"function Set-DebuggerVariable
-        {
-            [CmdletBinding()]
-            param(
-                [Parameter(Position=0)]
-                [HashTable]
-                $Variables
-            )
-
-            foreach($key in $Variables.Keys)
-            {
-                microsoft.powershell.utility\set-variable -Name $key -Value $Variables[$key] -Scope global
-            }
-
-            Set-StrictMode -Off
-        }";
-
-        /// <summary>
-        /// Remove-DebuggerVariable function.
-        /// </summary>
-        public const string RemoveVariableFunction = @"function Remove-DebuggerVariable
-        {
-            [CmdletBinding()]
-            param(
-                [Parameter(Position=0)]
-                [string[]]
-                $Name
-            )
-
-            foreach ($item in $Name)
-            {
-                microsoft.powershell.utility\remove-variable -name $item -scope global
-            }
-
-            Set-StrictMode -Off
-        }";
-
-        /// <summary>
-        /// Get-PSCallStack override function.
-        /// </summary>
-        public const string GetPSCallStackOverrideFunction = @"function Get-PSCallStack
-        {
-            [CmdletBinding()]
-            param()
-
-            if ($null -ne $PSWorkflowDebugger)
-            {
-                foreach ($frame in $PSWorkflowDebugger.GetCallStack())
-                {
-                    Write-Output $frame
-                }
-            }
-
-            Set-StrictMode -Off
-        }";
-
         internal const string SetDebugModeFunctionName = "__Set-PSDebugMode";
         internal const string SetDebuggerActionFunctionName = "__Set-PSDebuggerAction";
         internal const string GetDebuggerStopArgsFunctionName = "__Get-PSDebuggerStopArgs";
@@ -5437,21 +5352,6 @@ namespace System.Management.Automation.Internal
             {
                 return !(s_noHistoryCommandNames.Contains(command, StringComparer.OrdinalIgnoreCase));
             }
-        }
-
-        /// <summary>
-        /// Helper method to return an enumeration of workflow debugger
-        /// functions.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<string> GetWorkflowDebuggerFunctions()
-        {
-            return new Collection<string>()
-            {
-                SetVariableFunction,
-                RemoveVariableFunction,
-                GetPSCallStackOverrideFunction
-            };
         }
 
         /// <summary>
@@ -5512,11 +5412,6 @@ namespace System.Management.Automation.Internal
         /// Runspace from remote Invoke-Command script.
         /// </summary>
         InvokeCommand,
-
-        /// <summary>
-        /// Runspace from Workflow activity inline script.
-        /// </summary>
-        WorkflowInlineScript
     }
 
     /// <summary>
