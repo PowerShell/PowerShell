@@ -128,5 +128,4 @@ Describe "Telemetry for shell startup" -Tag CI {
         $result = & $PWSH -NoProfile -Command '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be $expectedValue
     }
-
 }
