@@ -794,6 +794,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
+                case TokenKind.QuestionEquals: return GetCoalesceExpression(right, av, tokenKind);
             }
 
             var exprs = new List<Expression>();
@@ -801,6 +802,21 @@ namespace System.Management.Automation.Language
             var getExpr = av.GetValue(this, exprs, temps);
             exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et), typeof(object), getExpr, right)));
             return Expression.Block(temps, exprs);
+        }
+
+        private Expression GetCoalesceExpression(Expression rhs, IAssignableValue leftAssignableValue, TokenKind tokenKind)
+        {
+            var exprs = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            var leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
+
+            if (tokenKind == TokenKind.QuestionEquals)
+            {
+                exprs.Add(leftAssignableValue.SetValue(this, Expression.MakeBinary(ExpressionType.Coalesce,leftExpr,rhs)));
+                return Expression.Block(temps, exprs);
+            }
+
+            return null;
         }
 
         internal Expression GetLocal(int tupleIndex)

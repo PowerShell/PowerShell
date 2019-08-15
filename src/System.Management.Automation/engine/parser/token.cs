@@ -416,6 +416,9 @@ namespace System.Management.Automation.Language
         /// <summary>The ternary operator '?'.</summary>
         QuestionMark = 100,
 
+        /// <summary>The null conditional assignment operator '?='.</summary>
+        QuestionEquals = 101,
+
         #endregion Operators
 
         #region Keywords
@@ -669,7 +672,7 @@ namespace System.Management.Automation.Language
         SpecialOperator = 0x00001000,
 
         /// <summary>
-        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', or '%='
+        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '?='
         /// </summary>
         AssignmentOperator = 0x00002000,
 
@@ -854,7 +857,7 @@ namespace System.Management.Automation.Language
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 3  */ TokenFlags.None,
+            /*      QuestionEquals  */ TokenFlags.AssignmentOperator,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
@@ -1051,7 +1054,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ string.Empty,
+            /*       QuestionEquals */ "?=",
             /*    Reserved slot 3   */ string.Empty,
             /*    Reserved slot 4   */ string.Empty,
             /*    Reserved slot 5   */ string.Empty,

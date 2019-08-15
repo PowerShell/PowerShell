@@ -4996,6 +4996,17 @@ namespace System.Management.Automation.Language
                 case '?' when InExpressionMode():
                     return this.NewToken(TokenKind.QuestionMark);
 
+                case '?':
+                    c1 = PeekChar();
+
+                    if (c1 == '=')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionEquals);
+                    }
+
+                    return ScanGenericToken(c);
+
                 case '\0':
                     if (AtEof())
                     {
