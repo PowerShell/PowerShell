@@ -35,7 +35,7 @@ begin {
         process {
             $secretValue = ConvertTo-SecureString -String $Hash -AsPlainText -Force
             $secretName = '{0}-{1}' -f $env:BUILD_REPOSITORY_NAME, $Type
-            Set-AzureRmKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $secretName -SecretValue $secretValue -Expires $null
+            Set-AzureKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $secretName -SecretValue $secretValue -Expires $null
         }
 
         end {
@@ -96,12 +96,12 @@ process {
     foreach ($secretName in $secretNames) {
         Write-Verbose "Getting secrets for $secretName"
         $keyVaultSecretName = '{0}-{1}' -f $env:BUILD_REPOSITORY_NAME, $secretName
-        $rawSecrets = Get-AzureRmKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $keyVaultSecretName -IncludeVersions
+        $rawSecrets = Get-AzureKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $keyVaultSecretName -IncludeVersions
         $secrets = [System.Collections.Generic.List[string]]::New()
 
         foreach ($rawSecret in $rawSecrets) {
             Write-Verbose "Getting secret $secretName v. $($rawSecret.Version)"
-            $secrets.Add($(Get-AzureRmKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $keyVaultSecretName -Version $rawSecret.Version).SecretValueText)
+            $secrets.Add($(Get-AzureKeyVaultSecret -VaultName 'RockyRoad-test-kv' -Name $keyVaultSecretName -Version $rawSecret.Version).SecretValueText)
         }
 
         $secretMap.Add($secretName, $secrets)
