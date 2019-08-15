@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Telemetry
         ApplicationType,
 
         /// <summary>
-        /// Send telemetry when we load a module, only module names in s_knownModuleList list
+        /// Send telemetry when we load a module, only module names in the s_knownModules list
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
@@ -75,35 +75,15 @@ namespace Microsoft.PowerShell.Telemetry
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient s_telemetryClient { get; set; }
 
-        // Set this to true to reduce the latency of sending the telemetry
-        private static bool s_developerMode { get; set; }
-
         // the unique identifier for the user, when we start we
-        private static Guid s_uniqueUserIdentifier { get; set; }
+        private static string s_uniqueUserIdentifier { get; set; }
 
         // the session identifier
-        private static Guid s_sessionId { get; set; }
+        private static string s_sessionId { get; set; }
 
-        /// <summary>
+        /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
-        /// If it's not in this list, then we report anonymous.
-        /// </summary>
-        private static string[] s_knownModuleNames = new[]
-        {
-                "Microsoft.PowerShell.Archive",
-                "Microsoft.PowerShell.Host",
-                "Microsoft.PowerShell.Management",
-                "Microsoft.PowerShell.Security",
-                "Microsoft.PowerShell.Utility",
-                "PackageManagement",
-                "Pester",
-                "PowerShellGet",
-                "PSDesiredStateConfiguration",
-                "PSReadLine",
-                "ThreadJob",
-        };
-
-        // use a hashset for quicker lookups.
+        /// If it's not in the list (initialized in the static constructor), then we report anonymous.
         private static HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
@@ -124,13 +104,29 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 s_telemetryClient = new TelemetryClient();
                 TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = s_developerMode;
-                s_sessionId = Guid.NewGuid();
+                // Set this to true to reduce latency during development
+                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
+                s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
-                s_knownModules = new HashSet<string>(s_knownModuleNames, StringComparer.OrdinalIgnoreCase);
-                s_uniqueUserIdentifier = GetUniqueIdentifier();
-                s_developerMode = false;
+                s_knownModules = new HashSet<string>(
+                    new string []
+                    {
+                        "Microsoft.PowerShell.Archive",
+                        "Microsoft.PowerShell.Host",
+                        "Microsoft.PowerShell.Management",
+                        "Microsoft.PowerShell.Security",
+                        "Microsoft.PowerShell.Utility",
+                        "PackageManagement",
+                        "Pester",
+                        "PowerShellGet",
+                        "PSDesiredStateConfiguration",
+                        "PSReadLine",
+                        "ThreadJob",
+                    },
+                    StringComparer.OrdinalIgnoreCase
+                    );
+                s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
             }
         }
 
@@ -176,8 +172,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
 
             string metricName = metricId.ToString();
-            string uuidString = s_uniqueUserIdentifier.ToString();
-            string sessionIdString  = s_sessionId.ToString();
+            string uuidString = s_uniqueUserIdentifier;
             try
             {
                 switch (metricId)
@@ -186,15 +181,15 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, data);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, data);
                         break;
                     case TelemetryType.ExperimentalModuleFeatureActivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, experimentalFeatureName);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, experimentalFeatureName);
                         break;
                     case TelemetryType.ModuleLoad:
                         string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(1, uuidString, sessionIdString, moduleName);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, uuidString, s_sessionId, moduleName);
                         break;
                 }
             }
@@ -209,15 +204,13 @@ namespace Microsoft.PowerShell.Telemetry
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
         private static string GetExperimentalFeatureName(string featureNameToValidate)
         {
-            foreach (string knownModuleName in s_knownModuleNames)
+            // An experimental feature in a module is guaranteed to start with the module name
+            // we can strip out the text past the last '.' as the text before that will be the ModuleName
+            int lastDotIndex = featureNameToValidate.LastIndexOf('.');
+            string moduleName = featureNameToValidate.Substring(0,lastDotIndex);
+            if (s_knownModules.Contains(moduleName))
             {
-                // An experimental feature in a module is guaranteed to start with the module name
-                // but we can't look up the experimental feature in the hash because there will be more than just the module name.
-                // we can't use a hashset because it's a partial comparison.
-                if (featureNameToValidate.StartsWith(knownModuleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return featureNameToValidate;
-                }
+                return featureNameToValidate;
             }
             return _anonymous;
         }
@@ -225,7 +218,7 @@ namespace Microsoft.PowerShell.Telemetry
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
         private static string GetModuleName(string moduleNameToValidate)
         {
-            if (s_knownModules.TryGetValue(moduleNameToValidate, out string valOut))
+            if (s_knownModules.Contains(moduleNameToValidate))
             {
                 return moduleNameToValidate;
             }
@@ -247,10 +240,13 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
             var properties = new Dictionary<string, string>();
+            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
+            // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
+            // which has limited usefulness
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
-            properties.Add("SessionId", s_sessionId.ToString());
-            properties.Add("UUID", s_uniqueUserIdentifier.ToString());
+            properties.Add("SessionId", s_sessionId);
+            properties.Add("UUID", s_uniqueUserIdentifier);
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
