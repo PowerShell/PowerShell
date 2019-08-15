@@ -6444,6 +6444,12 @@ namespace System.Management.Automation.Language
             // G  ternary-expression:
             // G      binary-expression  new-lines:opt   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
 
+            // TODO: remove this if-block when making 'ternary operator' an official feature.
+            if (!ExperimentalFeature.IsEnabled("PSTernaryOperator"))
+            {
+                return BinaryExpressionRule();
+            }
+
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
             try
@@ -6457,17 +6463,6 @@ namespace System.Management.Automation.Language
                 }
 
                 Token token = PeekToken();
-
-                // Skip newlines before question mark token to support (ternary operator)line continuance when the
-                // quetion-mark token starts on the next line of script. This is to support the common usage like:
-                //     $varName1 -eq $varName2
-                //         ? <do-something-if-true>
-                //         : <do-something-if-false>
-                if (token.Kind == TokenKind.NewLine && _tokenizer.IsTernaryContinuation(token.Extent))
-                {
-                    SkipNewlines();
-                    token = PeekToken();
-                }
 
                 if (token.Kind != TokenKind.QuestionMark)
                 {

@@ -721,7 +721,15 @@ namespace System.Management.Automation.Language
 
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
-        internal bool ForceEndNumberOnTernaryOpChars { get; set; }
+
+        // TODO: use auto-properties when making 'ternary operator' an official feature.
+        private bool _forceEndNumberOnTernaryOpChars;
+        internal bool ForceEndNumberOnTernaryOpChars
+        {
+            get { return _forceEndNumberOnTernaryOpChars; }
+            set { _forceEndNumberOnTernaryOpChars = value && ExperimentalFeature.IsEnabled("PSTernaryOperator"); }
+        }
+
         internal bool WantSimpleName { get; set; }
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
@@ -1348,13 +1356,6 @@ namespace System.Management.Automation.Language
             // If the first non-whitespace & non-comment (regular or block) character following a newline is a pipe, we have
             // pipe continuation.
             return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '|');
-        }
-
-        internal bool IsTernaryContinuation(IScriptExtent extent)
-        {
-            // If the first non-whitespace character following a newline is a question mark, we have
-            // ternary continuation.
-            return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '?');
         }
 
         private bool ContinuationAfterExtent(IScriptExtent extent, char continuationChar)
