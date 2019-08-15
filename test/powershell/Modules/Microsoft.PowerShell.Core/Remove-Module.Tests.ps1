@@ -399,6 +399,7 @@ Describe "Remove-Module core module on module path by name" -Tags "CI" {
         # Remove system paths because PS 6 modify $env:PSModulePath
         $env:PSModulePath = ""
         $moduleName = "Microsoft.PowerShell.Security"
+        Remove-Module -Name $moduleName -Force -ErrorAction SilentlyContinue
     }
 
     AfterAll {
@@ -422,10 +423,6 @@ Describe "Remove-Module core module on module path by name" -Tags "CI" {
         $a = Get-Module -Name $moduleName
         { Remove-Module -ModuleInfo $a } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
-    }
-
-	AfterEach {
-        Import-Module -Name $moduleName -Force
     }
 }
 
