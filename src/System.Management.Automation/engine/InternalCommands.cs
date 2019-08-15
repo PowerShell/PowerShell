@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A thin wrapper over a property-getting Callsite, to allow reuse when possible.
     /// </summary>
-    struct DynamicPropertyGetter
+    internal struct DynamicPropertyGetter
     {
         private CallSite<Func<CallSite, object, object>> _getValueDynamicSite;
 
@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
             // If wildcards are involved, the resolved property name could potentially
             // be different on every object... but probably not, so we'll attempt to
             // reuse the callsite if possible.
-
             if (!propertyName.Equals(_lastUsedPropertyName, StringComparison.OrdinalIgnoreCase))
             {
                 _lastUsedPropertyName = propertyName;
@@ -91,81 +90,93 @@ namespace Microsoft.PowerShell.Commands
         private List<ScriptBlock> _scripts = new List<ScriptBlock>();
 
         /// <summary>
-        /// The script block to apply in begin processing.
+        /// Gets or sets the script block to apply in begin processing.
         /// </summary>
         [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock Begin
         {
-            set
-            {
-                _scripts.Insert(0, value);
-            }
-
             get
             {
                 return null;
             }
+
+            set
+            {
+                _scripts.Insert(0, value);
+            }
         }
 
         /// <summary>
-        /// The script block to apply.
+        /// Gets or sets the script block to apply.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] Process
         {
-            set
-            {
-                if (value == null)
-                    _scripts.Add(null);
-                else
-                    _scripts.AddRange(value);
-            }
-
             get
             {
                 return null;
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    _scripts.Add(null);
+                }
+                else
+                {
+                    _scripts.AddRange(value);
+                }
             }
         }
 
         private ScriptBlock _endScript;
         private bool _setEndScript;
+
         /// <summary>
-        /// The script block to apply in complete processing.
+        /// Gets or sets the script block to apply in complete processing.
         /// </summary>
         [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet)]
         public ScriptBlock End
         {
+            get
+            {
+                return _endScript;
+            }
+
             set
             {
                 _endScript = value;
                 _setEndScript = true;
             }
-
-            get
-            {
-                return _endScript;
-            }
         }
 
         /// <summary>
-        /// The remaining script blocks to apply.
+        /// Gets or sets the remaining script blocks to apply.
         /// </summary>
         [Parameter(ParameterSetName = ForEachObjectCommand.ScriptBlockSet, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
         public ScriptBlock[] RemainingScripts
         {
+            get
+            {
+                return null;
+            }
+
             set
             {
                 if (value == null)
+                {
                     _scripts.Add(null);
+                }
                 else
+                {
                     _scripts.AddRange(value);
+                }
             }
-
-            get { return null; }
         }
 
         private int _start, _end;
@@ -175,16 +186,22 @@ namespace Microsoft.PowerShell.Commands
         #region PropertyAndMethodSet
 
         /// <summary>
-        /// The property or method name.
+        /// Gets or sets the property or method name.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
         [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
         public string MemberName
         {
-            set { _propertyOrMethodName = value; }
+            get
+            {
+                return _propertyOrMethodName;
+            }
 
-            get { return _propertyOrMethodName; }
+            set
+            {
+                _propertyOrMethodName = value;
+            }
         }
 
         private string _propertyOrMethodName;
@@ -341,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-        
+
         #region Private Methods
 
         #region PSTasks
@@ -375,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
                                 allowUsingExpression,
                                 this.Context,
                                 null);
-            
+
             // Validate using values map, which is a map of '$using:' variables referenced in the script.
             // Script block variables are not allowed since their behavior is undefined outside the runspace
             // in which they were created.
@@ -498,7 +515,9 @@ namespace Microsoft.PowerShell.Commands
         private void EndBlockParameterSet()
         {
             if (_endScript == null)
+            {
                 return;
+            }
 
             var emptyArray = Array.Empty<object>();
             _endScript.InvokeUsingCmdlet(
@@ -890,8 +909,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // resolve the name
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> methods =
-                _inputObject.Members.Match(_propertyOrMethodName,
-                                           PSMemberTypes.Methods | PSMemberTypes.ParameterizedProperty);
+                _inputObject.Members.Match(
+                    _propertyOrMethodName,
+                    PSMemberTypes.Methods | PSMemberTypes.ParameterizedProperty);
 
             Dbg.Assert(methods != null, "The return value of Members.Match should never be null.");
             if (methods.Count > 1)
@@ -903,15 +923,23 @@ namespace Microsoft.PowerShell.Commands
                     possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
                 }
 
-                WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousMethodName,
-                                                      "AmbiguousMethodName", _inputObject,
-                                                      _propertyOrMethodName, possibleMatches));
+                WriteError(GenerateNameParameterError(
+                    "Name",
+                    InternalCommandStrings.AmbiguousMethodName,
+                    "AmbiguousMethodName",
+                    _inputObject,
+                    _propertyOrMethodName,
+                    possibleMatches));
             }
             else if (methods.Count == 0 || !(methods[0] is PSMethodInfo))
             {
                 // write error record: method no found
-                WriteError(GenerateNameParameterError("Name", InternalCommandStrings.MethodNotFound,
-                                                      "MethodNotFound", _inputObject, _propertyOrMethodName));
+                WriteError(GenerateNameParameterError(
+                    "Name",
+                    InternalCommandStrings.MethodNotFound,
+                    "MethodNotFound",
+                    _inputObject,
+                    _propertyOrMethodName));
             }
             else
             {
@@ -955,8 +983,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the string representation of the passed-in object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">Source object.</param>
+        /// <returns>String representation of the source object.</returns>
         private static string GetStringRepresentation(object obj)
         {
             string objInString;
@@ -983,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get the value by taking _propertyOrMethodName as the key, if the
         /// input object is a IDictionary.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if success.</returns>
         private bool GetValueFromIDictionaryInput()
         {
             object target = PSObject.Base(_inputObject);
@@ -993,8 +1021,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (hash != null && hash.Contains(_propertyOrMethodName))
                 {
-                    string keyAction = string.Format(CultureInfo.InvariantCulture,
-                            InternalCommandStrings.ForEachObjectKeyAction, _propertyOrMethodName);
+                    string keyAction = string.Format(
+                        CultureInfo.InvariantCulture,
+                        InternalCommandStrings.ForEachObjectKeyAction,
+                        _propertyOrMethodName);
                     if (ShouldProcess(_targetString, keyAction))
                     {
                         object result = hash[_propertyOrMethodName];
@@ -1017,7 +1047,7 @@ namespace Microsoft.PowerShell.Commands
         /// Unroll the object to be output. If it's of type IEnumerator, unroll and output it
         /// by calling WriteOutIEnumerator. If it's not, unroll and output it by calling WriteObject(obj, true)
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">Source object.</param>
         private void WriteToPipelineWithUnrolling(object obj)
         {
             IEnumerator objAsEnumerator = LanguagePrimitives.GetEnumerator(obj);
@@ -1034,7 +1064,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unroll an IEnumerator and output all entries.
         /// </summary>
-        /// <param name="list"></param>
+        /// <param name="list">Source list.</param>
         private void WriteOutIEnumerator(IEnumerator list)
         {
             if (list != null)
@@ -1055,7 +1085,8 @@ namespace Microsoft.PowerShell.Commands
         /// Check if the language mode is the restrictedLanguageMode before invoking a method.
         /// Write out error message and return true if we are in restrictedLanguageMode.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="inputObject">Source object.</param>
+        /// <returns>True if we are in restrictedLanguageMode.</returns>
         private bool BlockMethodInLanguageMode(Object inputObject)
         {
             // Cannot invoke a method in RestrictedLanguage mode
@@ -1136,39 +1167,46 @@ namespace Microsoft.PowerShell.Commands
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object.
+        /// Gets or sets the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
-            set { _inputObject = value; }
+            get
+            {
+                return _inputObject;
+            }
 
-            get { return _inputObject; }
+            set
+            {
+                _inputObject = value;
+            }
         }
 
         private PSObject _inputObject = AutomationNull.Value;
 
         private ScriptBlock _script;
         /// <summary>
-        /// The script block to apply.
+        /// Gets or sets the script block to apply.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ScriptBlockSet")]
         public ScriptBlock FilterScript
         {
-            set
-            {
-                _script = value;
-            }
-
             get
             {
                 return _script;
             }
+
+            set
+            {
+                _script = value;
+            }
         }
 
         private string _property;
+
         /// <summary>
-        /// The property to retrieve value.
+        /// Gets or sets the property to retrieve value.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "EqualSet")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CaseSensitiveEqualSet")]
@@ -1204,14 +1242,21 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Property
         {
-            set { _property = value; }
+            get
+            {
+                return _property;
+            }
 
-            get { return _property; }
+            set
+            {
+                _property = value;
+            }
         }
 
         private object _convertedValue;
         private object _value = true;
         private bool _valueNotSpecified = true;
+
         /// <summary>
         /// The value to compare against.
         /// </summary>
@@ -1247,13 +1292,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = "IsNotSet")]
         public object Value
         {
+            get
+            {
+                return _value;
+            }
+
             set
             {
                 _value = value;
                 _valueNotSpecified = false;
             }
-
-            get { return _value; }
         }
 
         #region binary operator parameters
@@ -1265,363 +1313,546 @@ namespace Microsoft.PowerShell.Commands
         private bool _forceBooleanEvaluation = true;
 
         /// <summary>
-        /// Binary operator -Equal
+        /// Gets or sets binary operator -Equal
         /// It's the default parameter set, so -EQ is not mandatory.
         /// </summary>
         [Parameter(ParameterSetName = "EqualSet")]
         [Alias("IEQ")]
         public SwitchParameter EQ
         {
+            get
+            {
+                return _binaryOperator == TokenKind.Ieq;
+            }
+
             set
             {
                 _binaryOperator = TokenKind.Ieq;
                 _forceBooleanEvaluation = false;
             }
-
-            get { return _binaryOperator == TokenKind.Ieq; }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -ceq.
+        /// Gets or sets case sensitive binary operator -ceq.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveEqualSet")]
         public SwitchParameter CEQ
         {
-            set { _binaryOperator = TokenKind.Ceq; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ceq;
+            }
 
-            get { return _binaryOperator == TokenKind.Ceq; }
+            set
+            {
+                _binaryOperator = TokenKind.Ceq;
+            }
         }
 
         /// <summary>
-        /// Binary operator -NotEqual.
+        /// Gets or sets binary operator -NotEqual.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "NotEqualSet")]
         [Alias("INE")]
         public SwitchParameter NE
         {
-            set { _binaryOperator = TokenKind.Ine; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ine;
+            }
 
-            get { return _binaryOperator == TokenKind.Ine; }
+            set
+            {
+                _binaryOperator = TokenKind.Ine;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cne.
+        /// Gets or sets case sensitive binary operator -cne.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotEqualSet")]
         public SwitchParameter CNE
         {
-            set { _binaryOperator = TokenKind.Cne; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cne;
+            }
 
-            get { return _binaryOperator == TokenKind.Cne; }
+            set
+            {
+                _binaryOperator = TokenKind.Cne;
+            }
         }
 
         /// <summary>
-        /// Binary operator -GreaterThan.
+        /// Gets or sets binary operator -GreaterThan.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "GreaterThanSet")]
         [Alias("IGT")]
         public SwitchParameter GT
         {
-            set { _binaryOperator = TokenKind.Igt; }
+            get
+            {
+                return _binaryOperator == TokenKind.Igt;
+            }
 
-            get { return _binaryOperator == TokenKind.Igt; }
+            set
+            {
+                _binaryOperator = TokenKind.Igt;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cgt.
+        /// Gets or sets case sensitive binary operator -cgt.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveGreaterThanSet")]
         public SwitchParameter CGT
         {
-            set { _binaryOperator = TokenKind.Cgt; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cgt;
+            }
 
-            get { return _binaryOperator == TokenKind.Cgt; }
+            set
+            {
+                _binaryOperator = TokenKind.Cgt;
+            }
         }
 
         /// <summary>
-        /// Binary operator -LessThan.
+        /// Gets or sets binary operator -LessThan.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LessThanSet")]
         [Alias("ILT")]
         public SwitchParameter LT
         {
-            set { _binaryOperator = _binaryOperator = TokenKind.Ilt; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ilt;
+            }
 
-            get { return _binaryOperator == TokenKind.Ilt; }
+            set
+            {
+                _binaryOperator = TokenKind.Ilt;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -clt.
+        /// Gets -sets case sensitive binary operator -clt.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessThanSet")]
         public SwitchParameter CLT
         {
-            set { _binaryOperator = TokenKind.Clt; }
+            get
+            {
+                return _binaryOperator == TokenKind.Clt;
+            }
 
-            get { return _binaryOperator == TokenKind.Clt; }
+            set
+            {
+                _binaryOperator = TokenKind.Clt;
+            }
         }
 
         /// <summary>
-        /// Binary operator -GreaterOrEqual.
+        /// Gets or sets binary operator -GreaterOrEqual.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "GreaterOrEqualSet")]
         [Alias("IGE")]
         public SwitchParameter GE
         {
-            set { _binaryOperator = TokenKind.Ige; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ige;
+            }
 
-            get { return _binaryOperator == TokenKind.Ige; }
+            set
+            {
+                _binaryOperator = TokenKind.Ige;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cge.
+        /// Gets or sets case sensitive binary operator -cge.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveGreaterOrEqualSet")]
         public SwitchParameter CGE
         {
-            set { _binaryOperator = TokenKind.Cge; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cge;
+            }
 
-            get { return _binaryOperator == TokenKind.Cge; }
+            set
+            {
+                _binaryOperator = TokenKind.Cge;
+            }
         }
 
         /// <summary>
-        /// Binary operator -LessOrEqual.
+        /// Gets or sets binary operator -LessOrEqual.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LessOrEqualSet")]
         [Alias("ILE")]
         public SwitchParameter LE
         {
-            set { _binaryOperator = TokenKind.Ile; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ile;
+            }
 
-            get { return _binaryOperator == TokenKind.Ile; }
+            set
+            {
+                _binaryOperator = TokenKind.Ile;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cle.
+        /// Gets or sets case sensitive binary operator -cle.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessOrEqualSet")]
         public SwitchParameter CLE
         {
-            set { _binaryOperator = TokenKind.Cle; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cle;
+            }
 
-            get { return _binaryOperator == TokenKind.Cle; }
+            set
+            {
+                _binaryOperator = TokenKind.Cle;
+            }
         }
 
         /// <summary>
-        /// Binary operator -Like.
+        ///Gets or sets binary operator -Like.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LikeSet")]
         [Alias("ILike")]
         public SwitchParameter Like
         {
-            set { _binaryOperator = TokenKind.Ilike; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ilike;
+            }
 
-            get { return _binaryOperator == TokenKind.Ilike; }
+            set
+            {
+                _binaryOperator = TokenKind.Ilike;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -clike.
+        /// Gets or sets case sensitive binary operator -clike.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLikeSet")]
         public SwitchParameter CLike
         {
-            set { _binaryOperator = TokenKind.Clike; }
+            get
+            {
+                return _binaryOperator == TokenKind.Clike;
+            }
 
-            get { return _binaryOperator == TokenKind.Clike; }
+            set
+            {
+                _binaryOperator = TokenKind.Clike;
+            }
         }
 
         /// <summary>
-        /// Binary operator -NotLike.
+        /// Gets or sets binary operator -NotLike.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "NotLikeSet")]
         [Alias("INotLike")]
         public SwitchParameter NotLike
         {
-            set { _binaryOperator = TokenKind.Inotlike; }
+            get
+            {
+                return false;
+            }
 
-            get { return false; }
+            set
+            {
+                _binaryOperator = TokenKind.Inotlike;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cnotlike.
+        /// Gets or sets case sensitive binary operator -cnotlike.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotLikeSet")]
         public SwitchParameter CNotLike
         {
-            set { _binaryOperator = TokenKind.Cnotlike; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cnotlike;
+            }
 
-            get { return _binaryOperator == TokenKind.Cnotlike; }
+            set
+            {
+                _binaryOperator = TokenKind.Cnotlike;
+            }
         }
 
         /// <summary>
-        /// Binary operator -Match.
+        /// Get or sets binary operator -Match.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
         [Alias("IMatch")]
         public SwitchParameter Match
         {
-            set { _binaryOperator = TokenKind.Imatch; }
+            get
+            {
+                return _binaryOperator == TokenKind.Imatch;
+            }
 
-            get { return _binaryOperator == TokenKind.Imatch; }
+            set
+            {
+                _binaryOperator = TokenKind.Imatch;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cmatch.
+        /// Gets or sets case sensitive binary operator -cmatch.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveMatchSet")]
         public SwitchParameter CMatch
         {
-            set { _binaryOperator = TokenKind.Cmatch; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cmatch;
+            }
 
-            get { return _binaryOperator == TokenKind.Cmatch; }
+            set
+            {
+                _binaryOperator = TokenKind.Cmatch;
+            }
         }
 
         /// <summary>
-        /// Binary operator -NotMatch.
+        /// Gets or sets binary operator -NotMatch.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "NotMatchSet")]
         [Alias("INotMatch")]
         public SwitchParameter NotMatch
         {
-            set { _binaryOperator = TokenKind.Inotmatch; }
+            get
+            {
+                return _binaryOperator == TokenKind.Inotmatch;
+            }
 
-            get { return _binaryOperator == TokenKind.Inotmatch; }
+            set
+            {
+                _binaryOperator = TokenKind.Inotmatch;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cnotmatch.
+        /// Gets or sets case sensitive binary operator -cnotmatch.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotMatchSet")]
         public SwitchParameter CNotMatch
         {
-            set { _binaryOperator = TokenKind.Cnotmatch; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cnotmatch;
+            }
 
-            get { return _binaryOperator == TokenKind.Cnotmatch; }
+            set
+            {
+                _binaryOperator = TokenKind.Cnotmatch;
+            }
         }
 
         /// <summary>
-        /// Binary operator -Contains.
+        /// Gets or sets binary operator -Contains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ContainsSet")]
         [Alias("IContains")]
         public SwitchParameter Contains
         {
-            set { _binaryOperator = TokenKind.Icontains; }
+            get
+            {
+                return _binaryOperator == TokenKind.Icontains;
+            }
 
-            get { return _binaryOperator == TokenKind.Icontains; }
+            set
+            {
+                _binaryOperator = TokenKind.Icontains;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -ccontains.
+        /// Gets or sets case sensitive binary operator -ccontains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveContainsSet")]
         public SwitchParameter CContains
         {
-            set { _binaryOperator = TokenKind.Ccontains; }
+            get
+            {
+                return _binaryOperator == TokenKind.Ccontains;
+            }
 
-            get { return _binaryOperator == TokenKind.Ccontains; }
+            set
+            {
+                _binaryOperator = TokenKind.Ccontains;
+            }
         }
 
         /// <summary>
-        /// Binary operator -NotContains.
+        /// Gets or sets binary operator -NotContains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "NotContainsSet")]
         [Alias("INotContains")]
         public SwitchParameter NotContains
         {
-            set { _binaryOperator = TokenKind.Inotcontains; }
+            get
+            {
+                return _binaryOperator == TokenKind.Inotcontains;
+            }
 
-            get { return _binaryOperator == TokenKind.Inotcontains; }
+            set
+            {
+                _binaryOperator = TokenKind.Inotcontains;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cnotcontains.
+        /// Gets or sets case sensitive binary operator -cnotcontains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotContainsSet")]
         public SwitchParameter CNotContains
         {
-            set { _binaryOperator = TokenKind.Cnotcontains; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cnotcontains;
+            }
 
-            get { return _binaryOperator == TokenKind.Cnotcontains; }
+            set
+            {
+                _binaryOperator = TokenKind.Cnotcontains;
+            }
         }
 
         /// <summary>
-        /// Binary operator -In.
+        /// Gets or sets binary operator -In.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "InSet")]
         [Alias("IIn")]
         public SwitchParameter In
         {
-            set { _binaryOperator = TokenKind.In; }
+            get
+            {
+                return _binaryOperator == TokenKind.In;
+            }
 
-            get { return _binaryOperator == TokenKind.In; }
+            set
+            {
+                _binaryOperator = TokenKind.In;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cin.
+        /// Gets or sets case sensitive binary operator -cin.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveInSet")]
         public SwitchParameter CIn
         {
-            set { _binaryOperator = TokenKind.Cin; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cin;
+            }
 
-            get { return _binaryOperator == TokenKind.Cin; }
+            set
+            {
+                _binaryOperator = TokenKind.Cin;
+            }
         }
 
         /// <summary>
-        /// Binary operator -NotIn.
+        /// Gets or sets binary operator -NotIn.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "NotInSet")]
         [Alias("INotIn")]
         public SwitchParameter NotIn
         {
-            set { _binaryOperator = TokenKind.Inotin; }
+            get
+            {
+                return _binaryOperator == TokenKind.Inotin;
+            }
 
-            get { return _binaryOperator == TokenKind.Inotin; }
+            set
+            {
+                _binaryOperator = TokenKind.Inotin;
+            }
         }
 
         /// <summary>
-        /// Case sensitive binary operator -cnotin.
+        /// Gets or sets case sensitive binary operator -cnotin.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveNotInSet")]
         public SwitchParameter CNotIn
         {
-            set { _binaryOperator = TokenKind.Cnotin; }
+            get
+            {
+                return _binaryOperator == TokenKind.Cnotin;
+            }
 
-            get { return _binaryOperator == TokenKind.Cnotin; }
+            set
+            {
+                _binaryOperator = TokenKind.Cnotin;
+            }
         }
 
         /// <summary>
-        /// Binary operator -Is.
+        /// Gets or sets binary operator -Is.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "IsSet")]
         public SwitchParameter Is
         {
-            set { _binaryOperator = TokenKind.Is; }
+            get
+            {
+                return _binaryOperator == TokenKind.Is;
+            }
 
-            get { return _binaryOperator == TokenKind.Is; }
+            set
+            {
+                _binaryOperator = TokenKind.Is;
+            }
         }
 
         /// <summary>
-        /// Binary operator -IsNot.
+        /// Gets or sets binary operator -IsNot.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "IsNotSet")]
         public SwitchParameter IsNot
         {
-            set { _binaryOperator = TokenKind.IsNot; }
+            get
+            {
+                return _binaryOperator == TokenKind.IsNot;
+            }
 
-            get { return _binaryOperator == TokenKind.IsNot; }
+            set
+            {
+                _binaryOperator = TokenKind.IsNot;
+            }
         }
 
         /// <summary>
-        /// Binary operator -Not.
+        /// Gets or sets binary operator -Not.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Not")]
         public SwitchParameter Not
         {
-            set { _binaryOperator = TokenKind.Not; }
+            get
+            {
+                return _binaryOperator == TokenKind.Not;
+            }
 
-            get { return _binaryOperator == TokenKind.Not; }
+            set
+            {
+                _binaryOperator = TokenKind.Not;
+            }
         }
 
         #endregion binary operator parameters
@@ -1649,20 +1880,21 @@ namespace Microsoft.PowerShell.Commands
         private static Tuple<CallSite<Func<CallSite, object, IEnumerator>>, CallSite<Func<CallSite, object, object, object>>> GetContainsCallSites(bool ignoreCase)
         {
             var enumerableSite = CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get());
-            var eqSite =
+            var equalSite =
                 CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(
                     ExpressionType.Equal, ignoreCase, scalarCompare: true));
 
-            return Tuple.Create(enumerableSite, eqSite);
+            return Tuple.Create(enumerableSite, equalSite);
         }
 
         private void CheckLanguageMode()
         {
             if (Context.LanguageMode.Equals(PSLanguageMode.RestrictedLanguage))
             {
-                string message = string.Format(CultureInfo.InvariantCulture,
-                                               InternalCommandStrings.OperationNotAllowedInRestrictedLanguageMode,
-                                               _binaryOperator);
+                string message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    InternalCommandStrings.OperationNotAllowedInRestrictedLanguageMode,
+                    _binaryOperator);
                 PSInvalidOperationException exception =
                     new PSInvalidOperationException(message);
                 ThrowTerminatingError(new ErrorRecord(exception, "OperationNotAllowedInRestrictedLanguageMode", ErrorCategory.InvalidOperation, null));
@@ -1673,7 +1905,9 @@ namespace Microsoft.PowerShell.Commands
         {
             var val = operand as string;
             if (val == null)
+            {
                 return operand;
+            }
 
             var wildcardOptions = _binaryOperator == TokenKind.Ilike || _binaryOperator == TokenKind.Inotlike
                 ? WildcardOptions.IgnoreCase
@@ -1685,7 +1919,9 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             if (_script != null)
+            {
                 return;
+            }
 
             switch (_binaryOperator)
             {
@@ -1772,6 +2008,7 @@ namespace Microsoft.PowerShell.Commands
                 case TokenKind.Not:
                     _operationDelegate = GetCallSiteDelegateBoolean(ExpressionType.NotEqual, ignoreCase: true);
                     break;
+
                 // the second to last parameter in ContainsOperator has flipped semantics compared to others.
                 // "true" means "contains" while "false" means "notcontains"
                 case TokenKind.Icontains:
@@ -1882,7 +2119,9 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             if (_inputObject == AutomationNull.Value)
+            {
                 return;
+            }
 
             if (_script != null)
             {
@@ -1928,7 +2167,10 @@ namespace Microsoft.PowerShell.Commands
 
                 bool strictModeWithError = false;
                 object lvalue = GetValue(ref strictModeWithError);
-                if (strictModeWithError) return;
+                if (strictModeWithError)
+                {
+                    return;
+                }
 
                 try
                 {
@@ -2045,9 +2287,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Context.IsStrictVersion(2))
                 {
-                    WriteError(ForEachObjectCommand.GenerateNameParameterError("Property",
-                                                                               InternalCommandStrings.PropertyNotFound,
-                                                                               "PropertyNotFound", _inputObject, _property));
+                    WriteError(ForEachObjectCommand.GenerateNameParameterError(
+                        "Property",
+                        InternalCommandStrings.PropertyNotFound,
+                        "PropertyNotFound",
+                        _inputObject,
+                        _property));
                     error = true;
                 }
             }
@@ -2094,7 +2339,6 @@ namespace Microsoft.PowerShell.Commands
                     // showing "The property 'Blarg' does not exist" (case 1) errors than to
                     // suppress "FooException thrown when accessing Bloop property" (case
                     // 2) errors.
-
                     if (isBlindDynamicAccess && Context.IsStrictVersion(2))
                     {
                         WriteError(new ErrorRecord(ex,
@@ -2118,7 +2362,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the matched PSMembers.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Matched PSMembers.</returns>
         private ReadOnlyPSMemberInfoCollection<PSMemberInfo> GetMatchMembers()
         {
             if (!WildcardPattern.ContainsWildcardCharacters(_property))
@@ -2146,54 +2390,78 @@ namespace Microsoft.PowerShell.Commands
     public sealed class SetPSDebugCommand : PSCmdlet
     {
         /// <summary>
-        /// Sets the script tracing level.
+        /// Gets or sets the script tracing level.
         /// </summary>
         [Parameter(ParameterSetName = "on")]
         [ValidateRange(0, 2)]
         public int Trace
         {
-            set { _trace = value; }
+            get
+            {
+                return _trace;
+            }
 
-            get { return _trace; }
+            set
+            {
+                _trace = value;
+            }
         }
 
         private int _trace = -1;
 
         /// <summary>
-        /// Turns stepping on and off.
+        /// Gets or sets stepping on and off.
         /// </summary>
         [Parameter(ParameterSetName = "on")]
         public SwitchParameter Step
         {
-            set { _step = value; }
+            get
+            {
+                return (SwitchParameter)_step;
+            }
 
-            get { return (SwitchParameter)_step; }
+            set
+            {
+                _step = value;
+            }
         }
 
         private bool? _step;
 
         /// <summary>
-        /// Turns strict mode on and off.
+        /// Gets or sets strict mode on and off.
         /// </summary>
         [Parameter(ParameterSetName = "on")]
         public SwitchParameter Strict
         {
-            set { _strict = value; }
+            get
+            {
+                return (SwitchParameter)_strict;
+            }
 
-            get { return (SwitchParameter)_strict; }
+            set
+            {
+                _strict = value;
+            }
         }
 
         private bool? _strict;
 
         /// <summary>
-        /// Turns all script debugging features off.
+        /// Gets or sets all script debugging features off.
         /// </summary>
         [Parameter(ParameterSetName = "off")]
         public SwitchParameter Off
         {
-            get { return _off; }
+            get
+            {
+                return _off;
+            }
 
-            set { _off = value; }
+            set
+            {
+                _off = value;
+            }
         }
 
         private bool _off;
@@ -2215,9 +2483,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.Debugger.EnableTracing(_trace, _step);
                 }
+
                 // Version 0 is the same as off
                 if (_strict != null)
+                {
                     Context.EngineSessionState.GlobalScope.StrictModeVersion = new Version((bool)_strict ? 1 : 0, 0);
+                }
             }
         }
     }
@@ -2245,15 +2516,20 @@ namespace Microsoft.PowerShell.Commands
     public class SetStrictModeCommand : PSCmdlet
     {
         /// <summary>
-        /// The following is the definition of the input parameter "Off".
-        /// Turns strict mode off.
+        /// Gets or sets strict mode off.
         /// </summary>
         [Parameter(ParameterSetName = "Off", Mandatory = true)]
         public SwitchParameter Off
         {
-            get { return _off; }
+            get
+            {
+                return _off;
+            }
 
-            set { _off = value; }
+            set
+            {
+                _off = value;
+            }
         }
 
         private SwitchParameter _off;
@@ -2310,25 +2586,33 @@ namespace Microsoft.PowerShell.Commands
                 if (version == null || !PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...
-                    throw new ValidationMetadataException("InvalidPSVersion",
-                        null, Metadata.ValidateVersionFailure, arguments);
+                    throw new ValidationMetadataException(
+                        "InvalidPSVersion",
+                        null,
+                        Metadata.ValidateVersionFailure,
+                        arguments);
                 }
             }
         }
 
         /// <summary>
-        /// The following is the definition of the input parameter "Version".
-        /// Turns strict mode in the current scope.
+        /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
-        [ArgumentToVersionTransformation()]
-        [ValidateVersion()]
+        [ArgumentToVersionTransformation]
+        [ValidateVersion]
         [Alias("v")]
         public Version Version
         {
-            get { return _version; }
+            get
+            {
+                return _version;
+            }
 
-            set { _version = value; }
+            set
+            {
+                _version = value;
+            }
         }
 
         private Version _version;
