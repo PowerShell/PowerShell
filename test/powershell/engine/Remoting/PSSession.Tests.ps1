@@ -23,7 +23,7 @@ Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
 
         $cmdInfo = Get-Command New-PSSessionOption
 
-        $commonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
+        $commonParameterCount = [System.Management.Automation.Cmdlet]::CommonParameters.Count
         $cmdInfo.Parameters.Count | Should -Be ($commonParameterCount + 2) -Because "Only -SkipCACheck and -SkipCNCheck switch parameters are available"
 
         { $null = $cmdInfo.ResolveParameter("SkipCACheck") } | Should -Not -Throw -Because "SkipCACheck parameter should be available"
