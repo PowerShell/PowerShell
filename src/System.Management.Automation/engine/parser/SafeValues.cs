@@ -31,7 +31,7 @@ using System.Management.Automation.Internal;
  *  o VisitArrayExpression may be safe if its components are safe
  *  o VisitArrayLiteral may be safe if its components are safe
  *  o VisitHashtable may be safe if its components are safe
- *
+ *  o VisitTernaryExpression may be safe if its components are safe
  */
 
 namespace System.Management.Automation.Language
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Language
 
         public static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
         {
-            s_context = context;
+            t_context = context;
             if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
@@ -383,8 +383,11 @@ namespace System.Management.Automation.Language
             throw PSTraceSource.NewArgumentException("ast");
         }
 
+        /// <summary>
+        /// This field needs to be thread-static to make 'GetSafeValue' thread safe.
+        /// </summary>
         [ThreadStatic]
-        private static ExecutionContext s_context;
+        private static ExecutionContext t_context;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
 
@@ -537,9 +540,9 @@ namespace System.Management.Automation.Language
             object[] safeValues = new object[expandableStringExpressionAst.NestedExpressions.Count];
             // retrieve OFS, and if it doesn't exist set it to space
             string ofs = null;
-            if (s_context != null)
+            if (t_context != null)
             {
-                ofs = s_context.SessionState.PSVariable.GetValue("OFS") as string;
+                ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
 
             if (ofs == null)
@@ -647,12 +650,12 @@ namespace System.Management.Automation.Language
 
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
-            if (s_context == null)
+            if (t_context == null)
             {
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(ternaryExpressionAst, true, s_context, null);
+            return Compiler.GetExpressionValue(ternaryExpressionAst, true, t_context, null);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
@@ -665,24 +668,24 @@ namespace System.Management.Automation.Language
 
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
-            if (s_context == null)
+            if (t_context == null)
             {
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(unaryExpressionAst, true, s_context, null);
+            return Compiler.GetExpressionValue(unaryExpressionAst, true, t_context, null);
         }
 
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
             // at this point, we know we're safe because we checked both the type and the child,
             // so now we can just call the compiler and indicate that it's trusted (at this point)
-            if (s_context == null)
+            if (t_context == null)
             {
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(convertExpressionAst, true, s_context, null);
+            return Compiler.GetExpressionValue(convertExpressionAst, true, t_context, null);
         }
 
         public object VisitConstantExpression(ConstantExpressionAst constantExpressionAst)
@@ -733,9 +736,9 @@ namespace System.Management.Automation.Language
                 return Path.GetDirectoryName(scriptFileName);
             }
 
-            if (s_context != null)
+            if (t_context != null)
             {
-                return VariableOps.GetVariableValue(variableExpressionAst.VariablePath, s_context, variableExpressionAst);
+                return VariableOps.GetVariableValue(variableExpressionAst.VariablePath, t_context, variableExpressionAst);
             }
 
             throw PSTraceSource.NewArgumentException("ast");
