@@ -5233,8 +5233,18 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invocationInfo">The invocation information for the current command.</param>
         /// <param name="breakpoints">The breakpoint(s) that caused the script to break in the debugger.</param>
+        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
+            : this(invocationInfo, breakpoints, triggerObject: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSDebugContext"/> class.
+        /// </summary>
+        /// <param name="invocationInfo">The invocation information for the current command.</param>
+        /// <param name="breakpoints">The breakpoint(s) that caused the script to break in the debugger.</param>
         /// <param name="triggerObject">The object that caused the script to break in the debugger.</param>
-        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject = null)
+        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject)
         {
             if (breakpoints == null)
             {
