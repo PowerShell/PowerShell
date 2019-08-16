@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
 #if !WINFORMS
             else
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedFormat), "FailedToGetClipboardUnsupportedFormat", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
             else if (Format == ClipboardFormat.Image)
@@ -187,12 +187,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> GetClipboardContentAsText(TextDataFormat textFormat)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             string textContent = null;
 #if !WINFORMS
             if (textFormat != TextDataFormat.UnicodeText)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.TextFormatUnsupported), "FailedToGetClipboardUnsupportedTextFormat", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
             try
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PlatformNotSupportedException)
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform), "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(ClipboardResources.UnsupportedPlatform), "FailedToGetClipboardUnsupportedPlatform", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 #else
             if (!Clipboard.ContainsText(textFormat))

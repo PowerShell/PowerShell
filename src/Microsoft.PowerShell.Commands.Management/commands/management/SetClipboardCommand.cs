@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
                     string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
-                    "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
+                    "FailedToSetClipboardInvalidHtmlCombine", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
             if (Value != null)
