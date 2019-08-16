@@ -29,7 +29,7 @@ namespace System.Management.Automation.Language
     {
         // ReSharper disable InconsistentNaming
         internal const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-        internal const BindingFlags staticFlags = BindingFlags.Static | BindingFlags.NonPublic;
+        internal const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.NonPublic;
         internal const BindingFlags staticPublicFlags = BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
@@ -39,38 +39,38 @@ namespace System.Management.Automation.Language
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), StaticFlags);
         internal static readonly MethodInfo ArrayOps_GetMDArrayValueOrSlice =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValueOrSlice), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValueOrSlice), StaticFlags);
         internal static readonly MethodInfo ArrayOps_GetNonIndexable =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetNonIndexable), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetNonIndexable), StaticFlags);
         internal static readonly MethodInfo ArrayOps_IndexStringMessage =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.IndexStringMessage), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.IndexStringMessage), StaticFlags);
         internal static readonly MethodInfo ArrayOps_Multiply =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), StaticFlags);
         internal static readonly MethodInfo ArrayOps_SetMDArrayValue =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), StaticFlags);
         internal static readonly MethodInfo ArrayOps_SlicingIndex =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SlicingIndex), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SlicingIndex), StaticFlags);
 
         internal static readonly ConstructorInfo BreakException_ctor =
             typeof(BreakException).GetConstructor(InstanceFlags, null, CallingConventions.Standard,
                                                   new Type[] { typeof(string) }, null);
 
         internal static readonly MethodInfo CharOps_CompareIeq =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareIeq), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareIeq), StaticFlags);
         internal static readonly MethodInfo CharOps_CompareIne =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareIne), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareIne), StaticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIeq =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), StaticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), StaticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), StaticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameter), staticFlags);
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameter), StaticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameterWithArgument =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterWithArgument), staticFlags);
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterWithArgument), StaticFlags);
 
         internal static readonly MethodInfo CommandRedirection_UnbindForExpression =
             typeof(CommandRedirection).GetMethod(nameof(CommandRedirection.UnbindForExpression), InstanceFlags);
@@ -90,35 +90,35 @@ namespace System.Management.Automation.Language
             typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.OnSequencePointHit), InstanceFlags);
 
         internal static readonly MethodInfo EnumerableOps_AddEnumerable =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddEnumerable), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddEnumerable), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_AddObject =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddObject), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddObject), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_Compare =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_GetEnumerator =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_GetCOMEnumerator =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetCOMEnumerator), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetCOMEnumerator), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_GetGenericEnumerator =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetGenericEnumerator), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetGenericEnumerator), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_GetSlice =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetSlice), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetSlice), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_MethodInvoker =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MethodInvoker), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MethodInvoker), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_Where =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Where), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Where), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_ForEach =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ForEach), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ForEach), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_Multiply =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Multiply), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Multiply), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_PropertyGetter =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.PropertyGetter), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.PropertyGetter), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_SlicingIndex =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_ToArray =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), StaticFlags);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), StaticFlags);
 
         internal static readonly ConstructorInfo ErrorRecord__ctor =
             typeof(ErrorRecord).GetConstructor(InstanceFlags | BindingFlags.Public, null, CallingConventions.Standard,
@@ -128,19 +128,19 @@ namespace System.Management.Automation.Language
             typeof(Exception).GetProperty(nameof(Exception.Message));
 
         internal static readonly MethodInfo ExceptionHandlingOps_CheckActionPreference =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.CheckActionPreference), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.CheckActionPreference), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToArgumentConversionException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToArgumentConversionException), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToArgumentConversionException), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToException), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToException), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToMethodInvocationException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_FindMatchingHandler =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_RestoreStoppingPipeline =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.RestoreStoppingPipeline), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.RestoreStoppingPipeline), StaticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_SuspendStoppingPipeline =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.SuspendStoppingPipeline), staticFlags);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.SuspendStoppingPipeline), StaticFlags);
 
         internal static readonly PropertyInfo ExecutionContext_CurrentExceptionBeingHandled =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.CurrentExceptionBeingHandled), InstanceFlags);
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Language
         internal static readonly PropertyInfo ExecutionContext_ExceptionHandlerInEnclosingStatementBlock =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.PropagateExceptionsToEnclosingStatementBlock), InstanceFlags);
         internal static readonly MethodInfo ExecutionContext_IsStrictVersion =
-            typeof(ExecutionContext).GetMethod(nameof(ExecutionContext.IsStrictVersion), staticFlags);
+            typeof(ExecutionContext).GetMethod(nameof(ExecutionContext.IsStrictVersion), StaticFlags);
         internal static readonly PropertyInfo ExecutionContext_QuestionMarkVariableValue =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.QuestionMarkVariableValue), InstanceFlags);
         internal static readonly PropertyInfo ExecutionContext_LanguageMode =
@@ -184,16 +184,16 @@ namespace System.Management.Automation.Language
             typeof(FunctionContext).GetMethod(nameof(FunctionContext.PushTrapHandlers), InstanceFlags);
 
         internal static readonly MethodInfo FunctionOps_DefineFunction =
-            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags);
+            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), StaticFlags);
 
         internal static readonly ConstructorInfo Hashtable_ctor =
             typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
                                              CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
 
         internal static readonly MethodInfo HashtableOps_Add =
-            typeof(HashtableOps).GetMethod(nameof(HashtableOps.Add), staticFlags);
+            typeof(HashtableOps).GetMethod(nameof(HashtableOps.Add), StaticFlags);
         internal static readonly MethodInfo HashtableOps_AddKeyValuePair =
-            typeof(HashtableOps).GetMethod(nameof(HashtableOps.AddKeyValuePair), staticFlags);
+            typeof(HashtableOps).GetMethod(nameof(HashtableOps.AddKeyValuePair), StaticFlags);
 
         internal static readonly PropertyInfo ICollection_Count =
             typeof(ICollection).GetProperty(nameof(ICollection.Count));
@@ -215,19 +215,19 @@ namespace System.Management.Automation.Language
             typeof(IList).GetMethod("get_Item");
 
         internal static readonly MethodInfo InterpreterError_NewInterpreterException =
-            typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), staticFlags);
+            typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), StaticFlags);
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
-            typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), staticFlags);
+            typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), StaticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
         internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), staticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
         internal static readonly MethodInfo LocalPipeline_GetExecutionContextFromTLS =
-            typeof(LocalPipeline).GetMethod(nameof(LocalPipeline.GetExecutionContextFromTLS), staticFlags);
+            typeof(LocalPipeline).GetMethod(nameof(LocalPipeline.GetExecutionContextFromTLS), StaticFlags);
 
         internal static readonly MethodInfo LoopFlowException_MatchLabel =
             typeof(LoopFlowException).GetMethod(nameof(LoopFlowException.MatchLabel), InstanceFlags);
@@ -250,30 +250,30 @@ namespace System.Management.Automation.Language
                                                      CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
 
         internal static readonly MethodInfo Parser_ScanNumber =
-            typeof(Parser).GetMethod(nameof(Parser.ScanNumber), staticFlags);
+            typeof(Parser).GetMethod(nameof(Parser.ScanNumber), StaticFlags);
 
         internal static readonly MethodInfo ParserOps_ContainsOperatorCompiled =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.ContainsOperatorCompiled), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.ContainsOperatorCompiled), StaticFlags);
         internal static readonly MethodInfo ParserOps_ImplicitOp =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.ImplicitOp), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.ImplicitOp), StaticFlags);
         internal static readonly MethodInfo ParserOps_JoinOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.JoinOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.JoinOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_LikeOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_MatchOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_RangeOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_GetRangeEnumerator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), StaticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.SplitOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.SplitOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_UnaryJoinOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.UnaryJoinOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.UnaryJoinOperator), StaticFlags);
         internal static readonly MethodInfo ParserOps_UnarySplitOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), StaticFlags);
 
         internal static readonly ConstructorInfo Pipe_ctor =
             typeof(Pipe).GetConstructor(InstanceFlags, null, CallingConventions.Standard, new Type[] { typeof(List<object>) }, null);
@@ -283,54 +283,54 @@ namespace System.Management.Automation.Language
             typeof(Pipe).GetMethod(nameof(Pipe.SetVariableListForTemporaryPipe), InstanceFlags);
 
         internal static readonly MethodInfo PipelineOps_CheckAutomationNullInCommandArgument =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgument), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgument), StaticFlags);
         internal static readonly MethodInfo PipelineOps_CheckAutomationNullInCommandArgumentArray =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgumentArray), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgumentArray), StaticFlags);
         internal static readonly MethodInfo PipelineOps_CheckForInterrupts =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckForInterrupts), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckForInterrupts), StaticFlags);
         internal static readonly MethodInfo PipelineOps_GetExitException =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.GetExitException), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.GetExitException), StaticFlags);
         internal static readonly MethodInfo PipelineOps_FlushPipe =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), StaticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipeline =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipeline), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipeline), StaticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipelineInBackground =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), StaticFlags);
         internal static readonly MethodInfo PipelineOps_Nop =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), StaticFlags);
         internal static readonly MethodInfo PipelineOps_PipelineResult =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.PipelineResult), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.PipelineResult), StaticFlags);
         internal static readonly MethodInfo PipelineOps_ClearPipe =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.ClearPipe), staticFlags);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.ClearPipe), StaticFlags);
 
         internal static readonly MethodInfo PSGetDynamicMemberBinder_GetIDictionaryMember =
-            typeof(PSGetDynamicMemberBinder).GetMethod(nameof(PSGetDynamicMemberBinder.GetIDictionaryMember), staticFlags);
+            typeof(PSGetDynamicMemberBinder).GetMethod(nameof(PSGetDynamicMemberBinder.GetIDictionaryMember), StaticFlags);
 
         internal static readonly MethodInfo PSGetMemberBinder_CloneMemberInfo =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.CloneMemberInfo), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.CloneMemberInfo), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_GetAdaptedValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetAdaptedValue), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetAdaptedValue), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_GetTypeTableFromTLS =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetTypeTableFromTLS), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetTypeTableFromTLS), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_IsTypeNameSame =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.IsTypeNameSame), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.IsTypeNameSame), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetGenericDictionaryValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetGenericDictionaryValue), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetGenericDictionaryValue), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetInstanceMember =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), StaticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetIDictionaryValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), StaticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_InvokeAdaptedMember =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedMember), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedMember), StaticFlags);
         internal static readonly MethodInfo PSInvokeMemberBinder_InvokeAdaptedSetMember =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedSetMember), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedSetMember), StaticFlags);
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), StaticFlags);
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), StaticFlags);
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), StaticFlags);
 
         internal static readonly MethodInfo PSMethodInfo_Invoke =
             typeof(PSMethodInfo).GetMethod(nameof(PSMethodInfo.Invoke));
@@ -339,19 +339,19 @@ namespace System.Management.Automation.Language
             typeof(PSNoteProperty).GetProperty(nameof(PSNoteProperty.Value));
 
         internal static readonly MethodInfo PSObject_Base =
-            typeof(PSObject).GetMethod(nameof(PSObject.Base), staticFlags);
+            typeof(PSObject).GetMethod(nameof(PSObject.Base), StaticFlags);
         internal static readonly PropertyInfo PSObject_BaseObject =
             typeof(PSObject).GetProperty(nameof(PSObject.BaseObject));
         internal static readonly PropertyInfo PSObject_IsDeserialized =
             typeof(PSObject).GetProperty(nameof(PSObject.IsDeserialized), InstanceFlags);
         internal static readonly MethodInfo PSObject_ToStringParser =
-            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), staticFlags, null, new[] { typeof(ExecutionContext), typeof(object) }, null);
+            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), StaticFlags, null, new[] { typeof(ExecutionContext), typeof(object) }, null);
 
         internal static readonly PropertyInfo PSReference_Value =
             typeof(PSReference).GetProperty(nameof(PSReference.Value));
 
         internal static readonly MethodInfo PSScriptMethod_InvokeScript =
-            typeof(PSScriptMethod).GetMethod(nameof(PSScriptMethod.InvokeScript), staticFlags);
+            typeof(PSScriptMethod).GetMethod(nameof(PSScriptMethod.InvokeScript), StaticFlags);
 
         internal static readonly MethodInfo PSScriptProperty_InvokeGetter =
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeGetter), InstanceFlags);
@@ -359,38 +359,38 @@ namespace System.Management.Automation.Language
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeSetter), InstanceFlags);
 
         internal static readonly MethodInfo PSSetMemberBinder_SetAdaptedValue =
-            typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetAdaptedValue), staticFlags);
+            typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetAdaptedValue), StaticFlags);
 
         internal static readonly MethodInfo PSVariableAssignmentBinder_CopyInstanceMembersOfValueType =
-            typeof(PSVariableAssignmentBinder).GetMethod(nameof(PSVariableAssignmentBinder.CopyInstanceMembersOfValueType), staticFlags);
+            typeof(PSVariableAssignmentBinder).GetMethod(nameof(PSVariableAssignmentBinder.CopyInstanceMembersOfValueType), StaticFlags);
         internal static readonly FieldInfo PSVariableAssignmentBinder__mutableValueWithInstanceMemberVersion =
-            typeof(PSVariableAssignmentBinder).GetField(nameof(PSVariableAssignmentBinder.s_mutableValueWithInstanceMemberVersion), staticFlags);
+            typeof(PSVariableAssignmentBinder).GetField(nameof(PSVariableAssignmentBinder.s_mutableValueWithInstanceMemberVersion), StaticFlags);
 
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeNonPublic =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), StaticFlags);
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeByRefLike =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), StaticFlags);
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), StaticFlags);
 
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), StaticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSBaseMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSBaseMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSBaseMemberSet), StaticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSExtendedMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSExtendedMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSExtendedMemberSet), StaticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSObjectMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSObjectMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSObjectMemberSet), StaticFlags);
         internal static readonly MethodInfo ReservedNameMembers_PSTypeNames =
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.PSTypeNames));
 
         internal static readonly MethodInfo RestrictedLanguageChecker_CheckDataStatementLanguageModeAtRuntime =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementLanguageModeAtRuntime), staticFlags);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementLanguageModeAtRuntime), StaticFlags);
         internal static readonly MethodInfo RestrictedLanguageChecker_CheckDataStatementAstAtRuntime =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementAstAtRuntime), staticFlags);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementAstAtRuntime), StaticFlags);
 
         internal static readonly MethodInfo RestrictedLanguageChecker_EnsureUtilityModuleLoaded =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), StaticFlags);
 
         internal static readonly ConstructorInfo ReturnException_ctor =
             typeof(ReturnException).GetConstructor(InstanceFlags, null, CallingConventions.Standard, new Type[] { typeof(object) }, null);
@@ -427,50 +427,50 @@ namespace System.Management.Automation.Language
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo StringOps_Compare =
-            typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags);
+            typeof(StringOps).GetMethod(nameof(StringOps.Compare), StaticFlags);
         internal static readonly MethodInfo StringOps_Equals =
-            typeof(StringOps).GetMethod(nameof(StringOps.Equals), staticFlags);
+            typeof(StringOps).GetMethod(nameof(StringOps.Equals), StaticFlags);
 
         internal static readonly MethodInfo StringOps_FormatOperator =
-            typeof(StringOps).GetMethod(nameof(StringOps.FormatOperator), staticFlags);
+            typeof(StringOps).GetMethod(nameof(StringOps.FormatOperator), StaticFlags);
         internal static readonly MethodInfo StringOps_Multiply =
-            typeof(StringOps).GetMethod(nameof(StringOps.Multiply), staticFlags);
+            typeof(StringOps).GetMethod(nameof(StringOps.Multiply), StaticFlags);
 
         internal static readonly MethodInfo SwitchOps_ConditionSatisfiedRegex =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedRegex), staticFlags);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedRegex), StaticFlags);
         internal static readonly MethodInfo SwitchOps_ConditionSatisfiedWildcard =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), staticFlags);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), StaticFlags);
         internal static readonly MethodInfo SwitchOps_ResolveFilePath =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), staticFlags);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), StaticFlags);
 
         internal static readonly MethodInfo TypeOps_AsOperator =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), StaticFlags);
         internal static readonly MethodInfo TypeOps_AddPowerShellTypesToTheScope =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.AddPowerShellTypesToTheScope), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.AddPowerShellTypesToTheScope), StaticFlags);
         internal static readonly MethodInfo TypeOps_InitPowerShellTypesAtRuntime =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.InitPowerShellTypesAtRuntime), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.InitPowerShellTypesAtRuntime), StaticFlags);
         internal static readonly MethodInfo TypeOps_SetCurrentTypeResolutionState =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.SetCurrentTypeResolutionState), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.SetCurrentTypeResolutionState), StaticFlags);
         internal static readonly MethodInfo TypeOps_SetAssemblyDefiningPSTypes =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), StaticFlags);
         internal static readonly MethodInfo TypeOps_IsInstance =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), StaticFlags);
         internal static readonly MethodInfo TypeOps_ResolveTypeName =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.ResolveTypeName), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.ResolveTypeName), StaticFlags);
 
         internal static readonly MethodInfo VariableOps_GetUsingValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetUsingValue), staticFlags);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetUsingValue), StaticFlags);
         internal static readonly MethodInfo VariableOps_GetVariableAsRef =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableAsRef), staticFlags);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableAsRef), StaticFlags);
         internal static readonly MethodInfo VariableOps_GetVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableValue), staticFlags);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableValue), StaticFlags);
         internal static readonly MethodInfo VariableOps_GetAutomaticVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetAutomaticVariableValue), staticFlags);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetAutomaticVariableValue), StaticFlags);
         internal static readonly MethodInfo VariableOps_SetVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), staticFlags);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), StaticFlags);
 
         internal static readonly MethodInfo Utils_IsComObject =
-            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags);
+            typeof(Utils).GetMethod(nameof(Utils.IsComObject), StaticFlags);
 
         internal static readonly MethodInfo ClassOps_ValidateSetProperty =
             typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags);
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Language
             _executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 
             s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
-            
+
             s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
 
             s_setDollarQuestionToTrue = Expression.Assign(
@@ -3159,11 +3159,11 @@ namespace System.Management.Automation.Language
             //         goto DispatchNextStatementTarget;
             //     }
             // LN:
-            // 
+            //
             // Note that we deliberately do not push trap handlers
             // so that those can be handled by the enclosing statement block instead.
 
-            var exprs = new List<Expression>(); 
+            var exprs = new List<Expression>();
 
             // A pipeline chain is left-hand-side deep,
             // so to compile from left to right, we need to start from the leaf
