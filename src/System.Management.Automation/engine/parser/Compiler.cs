@@ -990,7 +990,9 @@ namespace System.Management.Automation.Language
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
         {
             if (targetType == null && argType == null)
+            {
                 return null;
+            }
 
             return new PSMethodInvocationConstraints(targetType, new[] { argType });
         }
@@ -998,7 +1000,9 @@ namespace System.Management.Automation.Language
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type[] argTypes)
         {
             if (targetType == null && (argTypes == null || argTypes.Length == 0))
+            {
                 return null;
+            }
 
             return new PSMethodInvocationConstraints(targetType, argTypes);
         }
@@ -1570,7 +1574,10 @@ namespace System.Management.Automation.Language
                 if (attribute is ExperimentalAttribute expAttribute)
                 {
                     // Only honor the first seen experimental attribute, ignore the others.
-                    if (!hasSeenExpAttribute && expAttribute.ToHide) { return null; }
+                    if (!hasSeenExpAttribute && expAttribute.ToHide)
+                    {
+                        return null;
+                    }
 
                     // Do not add experimental attributes to the attribute list.
                     hasSeenExpAttribute = true;
@@ -1579,7 +1586,10 @@ namespace System.Management.Automation.Language
                 else if (attribute is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
-                    if (paramAttribute.ToHide) { continue; }
+                    if (paramAttribute.ToHide)
+                    {
+                        continue;
+                    }
 
                     hasEnabledParamAttribute = true;
                     usesCmdletBinding = true;
@@ -1596,7 +1606,10 @@ namespace System.Management.Automation.Language
 
             // If all 'ParameterAttribute' declared for the parameter are hidden due to
             // an experimental feature, then the parameter should be ignored.
-            if (hasParameterAttribute && !hasEnabledParamAttribute) { return null; }
+            if (hasParameterAttribute && !hasEnabledParamAttribute)
+            {
+                return null;
+            }
 
             attributes.Reverse();
             if (!hasParameterAttribute)
@@ -1799,7 +1812,9 @@ namespace System.Management.Automation.Language
         private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
         {
             if (lambda == null)
+            {
                 return null;
+            }
 
             if (compileInterpretChoice == CompileInterpretChoice.AlwaysCompile)
             {
@@ -2106,7 +2121,10 @@ namespace System.Management.Automation.Language
             if (pipelineAst != null && !pipelineAst.Background)
             {
                 var expr = pipelineAst.GetPureExpression();
-                if (expr != null) { return Compile(expr); }
+                if (expr != null)
+                {
+                    return Compile(expr);
+                }
             }
 
             return CaptureAstResults(stmt, context, generateRedirectExprs);
@@ -3335,7 +3353,7 @@ namespace System.Management.Automation.Language
             else
             {
                 var pipeElements = pipelineAst.PipelineElements;
-                var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
+                var firstCommandExpr = pipeElements[0] as CommandExpressionAst;
 
                 if (firstCommandExpr != null && pipeElements.Count == 1)
                 {
@@ -3961,7 +3979,7 @@ namespace System.Management.Automation.Language
                 throw new PSArgumentException("Type doesn't have constructor with a given signature");
             }
 
-            return (Expression.Throw(Expression.New(constructor, argExprs), resultType));
+            return Expression.Throw(Expression.New(constructor, argExprs), resultType);
         }
 
         internal static Expression CreateThrow(Type resultType, Type exception, params object[] exceptionArgs)
@@ -4435,7 +4453,7 @@ namespace System.Management.Automation.Language
 
             exprs.Add(Expression.Label(breakLabel));
             enterLoop.LoopStatementCount = _stmtCount - preStmtCount;
-            return (enterLoop.Loop = new PowerShellLoopExpression(exprs));
+            return enterLoop.Loop = new PowerShellLoopExpression(exprs);
         }
 
         private Expression GenerateDoLoop(LoopStatementAst loopStatement)
@@ -5265,7 +5283,10 @@ namespace System.Management.Automation.Language
                         {
                             lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)
+                            {
                                 return Expression.TypeIs(lhs, isType);
+                            }
+
                             return Expression.Not(Expression.TypeIs(lhs, isType));
                         }
                     }
@@ -5531,11 +5552,15 @@ namespace System.Management.Automation.Language
         {
             var constExpr = expr as ConstantExpression;
             if (constExpr == null)
+            {
                 return expr;
+            }
 
             var val = constExpr.Value as string;
             if (val == null)
+            {
                 return expr;
+            }
 
             return Expression.Constant(WildcardPattern.Get(val, options));
         }
@@ -6220,7 +6245,7 @@ namespace System.Management.Automation.Language
 
             return InvokeMemberExpressionAst.Arguments == null
                ? Array.Empty<Expression>()
-               : (InvokeMemberExpressionAst.Arguments.Select(compiler.Compile)).ToArray();
+               : InvokeMemberExpressionAst.Arguments.Select(compiler.Compile).ToArray();
         }
 
         public Expression GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps)
@@ -6303,7 +6328,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(_targetExprTemp, targetExpr));
 
             var index = IndexExpressionAst.Index;
-            var arrayLiteral = (index as ArrayLiteralAst);
+            var arrayLiteral = index as ArrayLiteralAst;
             var constraints = GetInvocationConstraints();
             Expression result;
             if (arrayLiteral != null)
@@ -6337,7 +6362,7 @@ namespace System.Management.Automation.Language
             var temp = Expression.Variable(rhs.Type);
 
             var index = IndexExpressionAst.Index;
-            var arrayLiteral = (index as ArrayLiteralAst);
+            var arrayLiteral = index as ArrayLiteralAst;
             var constraints = GetInvocationConstraints();
             var targetExpr = GetTargetExpr(compiler);
             Expression setExpr;
