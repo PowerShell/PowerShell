@@ -657,7 +657,7 @@ namespace System.Management.Automation.Language
         private static readonly Expression s_currentExceptionBeingHandled;
         private static readonly CatchBlock s_catchFlowControl;
 
-        private static readonly CatchBlock[] _stmtCatchHandlers;
+        private static readonly CatchBlock[] s_stmtCatchHandlers;
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length, StringComparer.OrdinalIgnoreCase);
@@ -694,7 +694,7 @@ namespace System.Management.Automation.Language
                     Expression.Call(
                         CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
                             Compiler._functionContext, exception)));
-            _stmtCatchHandlers = new CatchBlock[] { s_catchFlowControl, catchAll };
+            s_stmtCatchHandlers = new CatchBlock[] { s_catchFlowControl, catchAll };
 
             s_currentExceptionBeingHandled = Expression.Property(
                 s_executionContextParameter, CachedReflectionInfo.ExecutionContext_CurrentExceptionBeingHandled);
@@ -2679,7 +2679,7 @@ namespace System.Management.Automation.Language
             }
 
             exprs.Add(ExpressionCache.Empty);
-            return Expression.TryCatch(Expression.Block(exprs), _stmtCatchHandlers);
+            return Expression.TryCatch(Expression.Block(exprs), s_stmtCatchHandlers);
         }
 
         private void GenerateFunctionEpilog(List<Expression> exprs, IScriptExtent exitExtent)
@@ -2885,7 +2885,7 @@ namespace System.Management.Automation.Language
                 var exprList = new List<Expression>(3);
                 CompileTrappableExpression(exprList, statements[0]);
                 exprList.Add(ExpressionCache.Empty);
-                var expr = Expression.TryCatch(Expression.Block(exprList), _stmtCatchHandlers);
+                var expr = Expression.TryCatch(Expression.Block(exprList), s_stmtCatchHandlers);
                 exprs.Add(expr);
             }
             else
