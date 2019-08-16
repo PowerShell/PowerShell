@@ -30,7 +30,7 @@ namespace System.Management.Automation.Language
         // ReSharper disable InconsistentNaming
         internal const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.NonPublic;
         internal const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.NonPublic;
-        internal const BindingFlags staticPublicFlags = BindingFlags.Static | BindingFlags.Public;
+        internal const BindingFlags StaticPublicFlags = BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
         internal static readonly ConstructorInfo ObjectList_ctor =
@@ -420,10 +420,10 @@ namespace System.Management.Automation.Language
         internal static readonly ConstructorInfo String_ctor_char_int =
             typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
         internal static readonly MethodInfo String_Concat_String =
-            typeof(string).GetMethod(nameof(string.Concat), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Concat), StaticPublicFlags, null,
                                      CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Equals), StaticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo StringOps_Compare =
@@ -473,13 +473,13 @@ namespace System.Management.Automation.Language
             typeof(Utils).GetMethod(nameof(Utils.IsComObject), StaticFlags);
 
         internal static readonly MethodInfo ClassOps_ValidateSetProperty =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), StaticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallBaseCtor =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallBaseCtor), staticPublicFlags);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallBaseCtor), StaticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallMethodNonVirtually =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallMethodNonVirtually), staticPublicFlags);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallMethodNonVirtually), StaticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallVoidMethodNonVirtually =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallVoidMethodNonVirtually), staticPublicFlags);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallVoidMethodNonVirtually), StaticPublicFlags);
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), instancePublicFlags);
