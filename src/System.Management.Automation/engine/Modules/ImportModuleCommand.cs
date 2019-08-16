@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Security;
@@ -17,13 +18,13 @@ using System.Threading;
 
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cmdletization;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
-using System.Management.Automation.Language;
 using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -825,6 +826,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // Send telemetry on the imported modules
+            foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
+            {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
+            }
+
             return remotelyImportedModules;
         }
 
@@ -1251,6 +1258,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (RemoteDiscoveryHelper.CimModule remoteCimModule in remotePsCimModules)
             {
                 ImportModule_RemotelyViaCimModuleData(importModuleOptions, remoteCimModule, cimSession);
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, remoteCimModule.ModuleName);
             }
         }
 
@@ -1743,6 +1751,7 @@ namespace Microsoft.PowerShell.Commands
                 // of doing Get-Module -list
                 foreach (PSModuleInfo module in ModuleInfo)
                 {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, module.Name);
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
                         localAction: delegate ()
@@ -1772,6 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Assembly suppliedAssembly in Assembly)
                     {
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, suppliedAssembly.GetName().Name);
                         ImportModule_ViaAssembly(importModuleOptions, suppliedAssembly);
                     }
                 }
@@ -1785,6 +1795,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
+                        // Telemetry here - report module load
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
 #if LEGACYTELEMETRY
                         TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
@@ -1809,6 +1821,7 @@ namespace Microsoft.PowerShell.Commands
                     BaseGuid = modulespec.Guid;
 
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                     if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
@@ -1818,6 +1831,10 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_FQName_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
             {
                 ImportModule_RemotelyViaPsrpSession(importModuleOptions, null, FullyQualifiedName, this.PSSession);
+                foreach (ModuleSpecification modulespec in FullyQualifiedName)
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
+                }
             }
             else
             {

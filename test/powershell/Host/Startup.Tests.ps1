@@ -43,7 +43,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Private.CoreLib.dll'
             'System.Private.Uri.dll'
             'System.Private.Xml.dll'
-            'System.Private.Xml.Linq.dll'
             'System.Reflection.Emit.ILGeneration.dll'
             'System.Reflection.Emit.Lightweight.dll'
             'System.Reflection.Primitives.dll'
@@ -67,9 +66,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Threading.Tasks.Parallel.dll'
             'System.Threading.Thread.dll'
             'System.Threading.ThreadPool.dll'
-            'System.Threading.Timer.dll'
             'System.Xml.ReaderWriter.dll'
-            'System.Xml.XDocument.dll'
         )
 
         if ($IsWindows) {

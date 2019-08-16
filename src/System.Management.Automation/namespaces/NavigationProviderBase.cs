@@ -308,7 +308,7 @@ namespace System.Management.Automation.Provider
         /// If the <paramref name="childIsLeaf"/> is True, then we don't normalize the child path, and would do
         /// some checks to decide whether to normalize the parent path.
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>New path string.</returns>
         protected string MakePath(string parent, string child, bool childIsLeaf)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -318,33 +318,24 @@ namespace System.Management.Automation.Provider
                 if (parent == null &&
                     child == null)
                 {
-                    // If both are null it is an error
-
-                    throw PSTraceSource.NewArgumentException("parent");
+                    throw PSTraceSource.NewArgumentException(nameof(parent));
                 }
-                else if (string.IsNullOrEmpty(parent) &&
-                         string.IsNullOrEmpty(child))
-                {
-                    // If both are empty, just return the empty string.
 
+                if (string.IsNullOrEmpty(parent) &&
+                    string.IsNullOrEmpty(child))
+                {
                     result = string.Empty;
                 }
                 else if (string.IsNullOrEmpty(parent) &&
                          !string.IsNullOrEmpty(child))
                 {
-                    // If the parent is empty but the child is not, return the
-                    // child
-
                     result = NormalizePath(child);
                 }
                 else if (!string.IsNullOrEmpty(parent) &&
-                         string.IsNullOrEmpty(child))
+                         (string.IsNullOrEmpty(child) ||
+                          child.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
+                          child.Equals(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)))
                 {
-                    // If the child is empty but the parent is not, return the
-                    // parent with the path separator appended.
-
-                    // Append the default path separator
-
                     if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         result = parent;
@@ -357,7 +348,6 @@ namespace System.Management.Automation.Provider
                 else
                 {
                     // Both parts are not empty so join them
-
                     // 'childIsLeaf == true' indicates that 'child' is actually the name of a child item and
                     // guaranteed to exist. In this case, we don't normalize the child path.
                     if (childIsLeaf)
@@ -368,51 +358,17 @@ namespace System.Management.Automation.Provider
                     {
                         // Normalize the path so that only the default path separator is used as a
                         // separator even if the user types the alternate slash.
-
                         parent = NormalizePath(parent);
                         child = NormalizePath(child);
                     }
 
-                    // Joins the paths
-
-                    StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
-
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
+                    ReadOnlySpan<char> appendChild = child.AsSpan();
+                    if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            builder.Append(child, 1, child.Length - 1);
-                        }
-                        else
-                        {
-                            builder.Append(child);
-                        }
-                    }
-                    else
-                    {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            if (parent.Length == 0)
-                            {
-                                builder.Append(child, 1, child.Length - 1);
-                            }
-                            else
-                            {
-                                builder.Append(child);
-                            }
-                        }
-                        else
-                        {
-                            if (parent.Length > 0 && child.Length > 0)
-                            {
-                                builder.Append(StringLiterals.DefaultPathSeparator);
-                            }
-
-                            builder.Append(child);
-                        }
+                        appendChild = appendChild.Slice(1);
                     }
 
-                    result = builder.ToString();
+                    result = IO.Path.Join(parent.AsSpan(), appendChild);
                 }
 
                 return result;

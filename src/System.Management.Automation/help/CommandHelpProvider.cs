@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             HelpCategory categoriesHandled = (HelpCategory.Alias
-                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow);
+                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)
             {
