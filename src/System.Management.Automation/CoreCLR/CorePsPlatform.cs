@@ -140,6 +140,21 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets the location for the various caches.
+        /// </summary>
+        internal static string CacheDirectory
+        {
+            get
+            {
+#if UNIX
+                return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+#else
+                return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
+#endif
+            }
+        }
+
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
