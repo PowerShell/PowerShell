@@ -51,19 +51,22 @@ namespace System.Management.Automation
             {
                 if (!ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
                 {
-                    return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                    return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
                         "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
                         "ErrorVariable", "WarningVariable", "OutVariable",
-                        "OutBuffer", "PipelineVariable", "InformationVariable" };
+                        "OutBuffer", "PipelineVariable", "InformationVariable"
+                    };
                 }
 
                 // If you add new common parameters, manually sort them into this list
-                return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
                     "Debug", "DebugAction", "DebugVariable", "ErrorAction", "ErrorVariable",
                     "InformationAction", "InformationVariable", "OutBuffer", "OutVariable",
                     "PipelineVariable", "ProgressAction", "ProgressVariable",
-                    "Verbose", "VerboseAction", "VerboseVariable", "WarningAction", "WarningVariable" };
-                ;
+                    "Verbose", "VerboseAction", "VerboseVariable", "WarningAction", "WarningVariable"
+                };
             }
         );
 

@@ -5320,6 +5320,7 @@ namespace System.Management.Automation
                         .AddParameter("VerboseAction", ActionPreference.Ignore)
                         .AddParameter("WarningAction", ActionPreference.Ignore);
                 }
+
                 return this;
             }
         }

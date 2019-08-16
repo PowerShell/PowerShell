@@ -143,7 +143,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command what to do when an informational record occurs.
         /// </remarks>
         [Parameter]
-        [Alias("ia","infa")]
+        [Alias("ia", "infa")]
         public ActionPreference InformationAction
         {
             get { return _commandRuntime.InformationPreference; }
