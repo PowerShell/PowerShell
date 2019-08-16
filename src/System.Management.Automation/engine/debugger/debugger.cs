@@ -4876,7 +4876,7 @@ namespace System.Management.Automation
         public DebuggerCommandProcessor()
         {
             _commandTable = new Dictionary<string, DebuggerCommand>(StringComparer.OrdinalIgnoreCase);
-            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, repeatOnEnter:true, executedByDebugger:false);
+            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, repeatOnEnter: true, executedByDebugger: false);
             _commandTable[StepOutCommand] = _commandTable[StepOutShortcut] = new DebuggerCommand(StepOutCommand, DebuggerResumeAction.StepOut, repeatOnEnter: false, executedByDebugger: false);
             _commandTable[StepOverCommand] = _commandTable[StepOverShortcut] = new DebuggerCommand(StepOverCommand, DebuggerResumeAction.StepOver, repeatOnEnter: true, executedByDebugger: false);
             _commandTable[ContinueCommand] = _commandTable[ContinueShortcut] = new DebuggerCommand(ContinueCommand, DebuggerResumeAction.Continue, repeatOnEnter: false, executedByDebugger: false);
