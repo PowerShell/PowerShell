@@ -4,28 +4,28 @@
 #if !UNIX
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using Runspaces = System.Management.Automation.Runspaces;
-using Dbg = System.Management.Automation;
-using Security = System.Management.Automation.Security;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections;
-using System.Runtime.InteropServices;
 using System.Management.Automation.Provider;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using System.IO;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.XPath;
-using System.Security;
 using DWORD = System.UInt32;
+using Runspaces = System.Management.Automation.Runspaces;
+using Security = System.Management.Automation.Security;
+using Sma = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -1188,7 +1188,7 @@ namespace Microsoft.PowerShell.Commands
                         // satisfies the filter, output it.  Otherwise, don't.
 
                         X509Certificate2 cert = item as X509Certificate2;
-                        Dbg.Diagnostics.Assert(cert != null, "item should be a certificate");
+                        Sma.Diagnostics.Assert(cert != null, "item should be a certificate");
 
                         // If it's Win8 or above, filter matching for certain properties is done by
                         // the certificate enumeration filter at the API level. In that case,
@@ -1299,18 +1299,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                System.Management.Automation.PowerShell ps = null;
-                ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                            .AddCommand(importModuleCommand)
-                                .AddParameter("Name", moduleName)
-                                .AddParameter("Scope", StringLiterals.Global)
-                                .AddParameter("DebugAction", ActionPreference.Ignore)
-                                .AddParameter("ErrorAction", ActionPreference.Ignore)
-                                .AddParameter("InformationAction", ActionPreference.Ignore)
-                                .AddParameter("ProgressAction", ActionPreference.Ignore)
-                                .AddParameter("VerboseAction", ActionPreference.Ignore)
-                                .AddParameter("WarningAction", ActionPreference.Ignore);
-                ps.Invoke();
+                using (var ps = Sma.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                {
+                    ps.AddCommand(importModuleCommand)
+                      .AddParameter("Name", moduleName)
+                      .AddParameter("Scope", StringLiterals.Global)
+                      .IgnoreMessageStreamParameters()
+                      .Invoke();
+                }
             }
             catch (Exception)
             {
@@ -2684,7 +2680,7 @@ namespace Microsoft.PowerShell.Commands
                 if (s_pathCache.ContainsKey(path))
                 {
                     item = s_pathCache[path];
-                    Dbg.Diagnostics.Assert(item != null, "GetCachedItem");
+                    Sma.Diagnostics.Assert(item != null, "GetCachedItem");
                 }
             }
 

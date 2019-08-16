@@ -5291,6 +5291,39 @@ namespace System.Management.Automation
             return (runspacePool != null) ? (runspacePool.RemoteRunspacePoolInternal) : null;
         }
 
+        internal PowerShell IgnoreMessageStreamParameters()
+        {
+            lock (_syncObject)
+            {
+                if (_psCommand.Commands.Count == 0)
+                {
+                    throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
+                }
+
+                AssertChangesAreAccepted();
+                if (!ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
+                {
+                    _psCommand
+                        .AddParameter("ErrorAction", ActionPreference.Ignore)
+                        .AddParameter("WarningAction", ActionPreference.Ignore)
+                        .AddParameter("InformationAction", ActionPreference.Ignore)
+                        .AddParameter("Verbose", false)
+                        .AddParameter("Debug", false);
+                }
+                else
+                {
+                    _psCommand
+                        .AddParameter("DebugAction", ActionPreference.Ignore)
+                        .AddParameter("ErrorAction", ActionPreference.Ignore)
+                        .AddParameter("InformationAction", ActionPreference.Ignore)
+                        .AddParameter("ProgressAction", ActionPreference.Ignore)
+                        .AddParameter("VerboseAction", ActionPreference.Ignore)
+                        .AddParameter("WarningAction", ActionPreference.Ignore);
+                }
+                return this;
+            }
+        }
+
         #endregion
 
         #region Worker

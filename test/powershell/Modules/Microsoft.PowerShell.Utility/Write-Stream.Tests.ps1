@@ -126,10 +126,14 @@ Describe "Stream writer tests" -Tags "CI" {
         }
     }
 
-    Context 'Stream Variable Tests' {
-        # These tests validate that output from any stream can be captured in a variable
+    Context 'Stream Common Parameter Tests' {
+        # These tests validate the *Variable and *Action common parameters
 
-        $streams = @('Error', 'Warning', 'Verbose', 'Debug', 'Information', 'Progress')
+        $streams = if ($EnabledExperimentalFeatures.Contains('PSNewCommonParameters')) {
+            @('Error', 'Warning', 'Verbose', 'Debug', 'Information', 'Progress')
+        } else {
+            @('Error', 'Warning', 'Information')
+        }
         $streamTestCases = foreach ($stream in $streams) {
             @{
                 Stream = $stream
@@ -221,7 +225,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamData | Should -BeOfType "System.Management.Automation.${Stream}Record"
         }
 
-        It 'Should prefer -VerboseAction over -Verbose when both are provided' {
+        It 'Should prefer -VerboseAction over -Verbose when both are provided' -Skip:$(-not $EnabledExperimentalFeatures.Contains('PSNewCommonParameters')) {
             $parameters = @{
                 'Verbose' = $true
             }
@@ -235,7 +239,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamData.Count | Should -Be 0
         }
 
-        It 'Should prefer -DebugAction over -Debug when both are provided' {
+        It 'Should prefer -DebugAction over -Debug when both are provided' -Skip:$(-not $EnabledExperimentalFeatures.Contains('PSNewCommonParameters')) {
             $parameters = @{
                 'Debug' = $true
             }

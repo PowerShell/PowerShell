@@ -250,15 +250,7 @@ namespace System.Management.Automation
                 powershell.AddCommand(command);
             }
 
-            powershell
-                .AddParameter("DebugAction", ActionPreference.Ignore)
-                .AddParameter("ErrorAction", ActionPreference.Ignore)
-                .AddParameter("InformationAction", ActionPreference.Ignore)
-                .AddParameter("ProgressAction", ActionPreference.Ignore)
-                .AddParameter("VerboseAction", ActionPreference.Ignore)
-                .AddParameter("WarningAction", ActionPreference.Ignore);
-
-            return powershell;
+            return powershell.IgnoreMessageStreamParameters();
         }
     }
 }

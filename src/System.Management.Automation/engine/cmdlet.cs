@@ -49,13 +49,21 @@ namespace System.Management.Automation
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
+                if (!ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
+                {
+                    return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                        "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
+                        "ErrorVariable", "WarningVariable", "OutVariable",
+                        "OutBuffer", "PipelineVariable", "InformationVariable" };
+                }
+
+                // If you add new common parameters, manually sort them into this list
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                    "Verbose", "Debug",
-                    "ErrorAction", "WarningAction", "VerboseAction",
-                    "DebugAction", "InformationAction", "ProgressAction",
-                    "ErrorVariable", "WarningVariable", "VerboseVariable",
-                    "DebugVariable", "InformationVariable", "ProgressVariable",
-                    "OutVariable", "OutBuffer", "PipelineVariable" };
+                    "Debug", "DebugAction", "DebugVariable", "ErrorAction", "ErrorVariable",
+                    "InformationAction", "InformationVariable", "OutBuffer", "OutVariable",
+                    "PipelineVariable", "ProgressAction", "ProgressVariable",
+                    "Verbose", "VerboseAction", "VerboseVariable", "WarningAction", "WarningVariable" };
+                ;
             }
         );
 

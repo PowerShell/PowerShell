@@ -266,17 +266,15 @@ namespace System.Management.Automation
 
             string moduleName = Path.GetFileNameWithoutExtension(modulePath);
 
-            var modules = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(getModuleCommand)
-                    .AddParameter("List", true)
-                    .AddParameter("Name", moduleName)
-                    .AddParameter("DebugAction", ActionPreference.Ignore)
-                    .AddParameter("ErrorAction", ActionPreference.Ignore)
-                    .AddParameter("InformationAction", ActionPreference.Ignore)
-                    .AddParameter("ProgressAction", ActionPreference.Ignore)
-                    .AddParameter("VerboseAction", ActionPreference.Ignore)
-                    .AddParameter("WarningAction", ActionPreference.Ignore)
-                    .Invoke<PSModuleInfo>();
+            Collection<PSModuleInfo> modules = null;
+            using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+            {
+                modules = ps.AddCommand(getModuleCommand)
+                            .AddParameter("List", true)
+                            .AddParameter("Name", moduleName)
+                            .IgnoreMessageStreamParameters()
+                            .Invoke<PSModuleInfo>();
+            }
 
             lock (_lockObject)
             {

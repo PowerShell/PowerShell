@@ -593,17 +593,14 @@ namespace System.Management.Automation
 
             try
             {
-                PowerShell.Create(RunspaceMode.CurrentRunspace)
-                    .AddCommand(getModuleCommand)
-                        .AddParameter("List", true)
-                        .AddParameter("Name", modulePath)
-                        .AddParameter("DebugAction", ActionPreference.Ignore)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("InformationAction", ActionPreference.Ignore)
-                        .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore)
-                    .Invoke();
+                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+                {
+                    ps.AddCommand(getModuleCommand)
+                      .AddParameter("List", true)
+                      .AddParameter("Name", modulePath)
+                      .IgnoreMessageStreamParameters()
+                      .Invoke();
+                }
             }
             catch (Exception e)
             {

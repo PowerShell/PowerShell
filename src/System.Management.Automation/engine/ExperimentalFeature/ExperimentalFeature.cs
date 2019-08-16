@@ -110,7 +110,10 @@ namespace System.Management.Automation
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
                     name: "PSForEachObjectParallel",
-                    description: "New parameter set for ForEach-Object to run script blocks in parallel")
+                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                new ExperimentalFeature(
+                    name: "PSNewCommonParameters",
+                    description: "New -DebugAction, -DebugVariable, -ProgressAction, -ProgressVariable, -VerboseAction, and -VerboseVariable common parameters"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

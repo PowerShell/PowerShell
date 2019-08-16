@@ -109,6 +109,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command what to do when a verbose record
         /// occurs.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("va")]
         public ActionPreference VerboseAction
@@ -125,6 +126,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command what to do when a debug record
         /// occurs.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("da")]
         public ActionPreference DebugAction
@@ -141,7 +143,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command what to do when an informational record occurs.
         /// </remarks>
         [Parameter]
-        [Alias("infa")]
+        [Alias("ia","infa")]
         public ActionPreference InformationAction
         {
             get { return _commandRuntime.InformationPreference; }
@@ -155,6 +157,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This parameter tells the command what to do when an progress record occurs.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("pra")]
         public ActionPreference ProgressAction
@@ -209,6 +212,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command which variable to populate with verbose messages.
         /// Use +varname to append to the variable rather than clearing it.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("vv")]
         [ValidateVariableName]
@@ -226,6 +230,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command which variable to populate with debug messages.
         /// Use +varname to append to the variable rather than clearing it.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("dv")]
         [ValidateVariableName]
@@ -260,6 +265,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command which variable to populate with progress messages.
         /// Use +varname to append to the variable rather than clearing it.
         /// </remarks>
+        [Experimental("PSNewCommonParameters", ExperimentAction.Show)]
         [Parameter]
         [Alias("prv")]
         [ValidateVariableName]

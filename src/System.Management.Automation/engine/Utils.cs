@@ -962,23 +962,17 @@ namespace System.Management.Automation
 
                     context.AutoLoadingModuleInProgress.Add(module);
 
-                    PowerShell ps = null;
-
                     try
                     {
-                        ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
-                            .AddCommand(importModuleCommand)
-                            .AddParameter("Name", module)
-                            .AddParameter("Scope", StringLiterals.Global)
-                            .AddParameter("PassThru")
-                            .AddParameter("DebugAction", ActionPreference.Ignore)
-                            .AddParameter("ErrorAction", ActionPreference.Ignore)
-                            .AddParameter("InformationAction", ActionPreference.Ignore)
-                            .AddParameter("ProgressAction", ActionPreference.Ignore)
-                            .AddParameter("VerboseAction", ActionPreference.Ignore)
-                            .AddParameter("WarningAction", ActionPreference.Ignore);
-
-                        ps.Invoke<PSModuleInfo>();
+                        using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+                        {
+                            ps.AddCommand(importModuleCommand)
+                              .AddParameter("Name", module)
+                              .AddParameter("Scope", StringLiterals.Global)
+                              .AddParameter("PassThru")
+                              .IgnoreMessageStreamParameters()
+                              .Invoke<PSModuleInfo>();
+                        }
                     }
                     catch (Exception)
                     {
@@ -987,10 +981,6 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (ps != null)
-                        {
-                            ps.Dispose();
-                        }
                     }
                 }
             }
@@ -1016,43 +1006,32 @@ namespace System.Management.Automation
                                                      null, null, context);
             var getModuleCommand = new System.Management.Automation.Runspaces.Command(commandInfo);
 
-            PowerShell ps = null;
             try
             {
-                ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
-                        .AddCommand(getModuleCommand)
-                        .AddParameter("Name", module)
-                        .AddParameter("ListAvailable")
-                        .AddParameter("DebugAction", ActionPreference.Ignore)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("InformationAction", ActionPreference.Ignore)
-                        .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore);
-
-                Collection<PSModuleInfo> gmoOutPut = ps.Invoke<PSModuleInfo>();
-                if (gmoOutPut != null)
+                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
                 {
-                    if (result == null)
+                    ps.AddCommand(getModuleCommand)
+                      .AddParameter("Name", module)
+                      .AddParameter("ListAvailable")
+                      .IgnoreMessageStreamParameters();
+
+                    Collection<PSModuleInfo> gmoOutPut = ps.Invoke<PSModuleInfo>();
+                    if (gmoOutPut != null)
                     {
-                        result = gmoOutPut.ToList<PSModuleInfo>();
-                    }
-                    else
-                    {
-                        result.AddRange(gmoOutPut);
+                        if (result == null)
+                        {
+                            result = gmoOutPut.ToList<PSModuleInfo>();
+                        }
+                        else
+                        {
+                            result.AddRange(gmoOutPut);
+                        }
                     }
                 }
             }
             catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-            }
-            finally
-            {
-                if (ps != null)
-                {
-                    ps.Dispose();
-                }
             }
 
             return result;
@@ -1077,44 +1056,33 @@ namespace System.Management.Automation
                                                      null, null, context);
             var getModuleCommand = new Runspaces.Command(commandInfo);
 
-            PowerShell ps = null;
             try
             {
-                ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
-                        .AddCommand(getModuleCommand)
-                        .AddParameter("FullyQualifiedName", fullyQualifiedName)
-                        .AddParameter("ListAvailable")
-                        .AddParameter("DebugAction", ActionPreference.Ignore)
-                        .AddParameter("ErrorAction", ActionPreference.Ignore)
-                        .AddParameter("InformationAction", ActionPreference.Ignore)
-                        .AddParameter("ProgressAction", ActionPreference.Ignore)
-                        .AddParameter("VerboseAction", ActionPreference.Ignore)
-                        .AddParameter("WarningAction", ActionPreference.Ignore);
-
-                Collection<PSModuleInfo> gmoOutput = ps.Invoke<PSModuleInfo>();
-                if (gmoOutput != null)
+                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
                 {
-                    if (result == null)
+                    ps.AddCommand(getModuleCommand)
+                      .AddParameter("FullyQualifiedName", fullyQualifiedName)
+                      .AddParameter("ListAvailable")
+                      .IgnoreMessageStreamParameters();
+
+                    Collection<PSModuleInfo> gmoOutput = ps.Invoke<PSModuleInfo>();
+                    if (gmoOutput != null)
                     {
-                        result = gmoOutput.ToList();
-                    }
-                    else
-                    {
-                        // append to result
-                        result.AddRange(gmoOutput);
+                        if (result == null)
+                        {
+                            result = gmoOutput.ToList();
+                        }
+                        else
+                        {
+                            // append to result
+                            result.AddRange(gmoOutput);
+                        }
                     }
                 }
             }
             catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-            }
-            finally
-            {
-                if (ps != null)
-                {
-                    ps.Dispose();
-                }
             }
 
             return result;

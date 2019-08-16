@@ -919,21 +919,17 @@ namespace System.Management.Automation
 
             discoveryTracer.WriteLine("Attempting to load module: {0}", moduleName);
 
-            PowerShell ps = null;
             try
             {
-                ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
-                    .AddCommand(importModuleCommand)
-                    .AddParameter("Name", moduleName)
-                     .AddParameter("Scope", StringLiterals.Global)
-                     .AddParameter("PassThru")
-                     .AddParameter("DebugAction", ActionPreference.Ignore)
-                     .AddParameter("ErrorAction", ActionPreference.Ignore)
-                     .AddParameter("InformationAction", ActionPreference.Ignore)
-                     .AddParameter("ProgressAction", ActionPreference.Ignore)
-                     .AddParameter("VerboseAction", ActionPreference.Ignore)
-                     .AddParameter("WarningAction", ActionPreference.Ignore);
-                matchingModules = (Collection<PSModuleInfo>)ps.Invoke<PSModuleInfo>();
+                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+                {
+                    ps.AddCommand(importModuleCommand)
+                      .AddParameter("Name", moduleName)
+                      .AddParameter("Scope", StringLiterals.Global)
+                      .AddParameter("PassThru")
+                      .IgnoreMessageStreamParameters();
+                    matchingModules = ps.Invoke<PSModuleInfo>();
+                }
             }
             catch (Exception e)
             {
