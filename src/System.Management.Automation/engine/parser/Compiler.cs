@@ -222,7 +222,7 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
         internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), StaticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Language
     {
         internal static readonly ParameterExpression s_executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
-        internal static readonly ParameterExpression _returnPipe;
+        internal static readonly ParameterExpression s_returnPipe;
         private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_setDollarQuestionToTrue;
@@ -683,7 +683,7 @@ namespace System.Management.Automation.Language
                 s_executionContextParameter);
 
             s_getCurrentPipe = Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__outputPipe);
-            _returnPipe = Expression.Variable(s_getCurrentPipe.Type, "returnPipe");
+            s_returnPipe = Expression.Variable(s_getCurrentPipe.Type, "returnPipe");
 
             var exception = Expression.Variable(typeof(Exception), "exception");
 
@@ -2281,7 +2281,7 @@ namespace System.Management.Automation.Language
 
             if (CompilingMemberFunction)
             {
-                temps.Add(_returnPipe);
+                temps.Add(s_returnPipe);
             }
 
             CompileStatementListWithTraps(statements, traps, actualBodyExprs, temps);
@@ -2634,7 +2634,7 @@ namespace System.Management.Automation.Language
                 // Member functions don't write to the pipeline, they return values.
                 // Set the default pipe to the null pipe, but remember the pipe parameter
                 // so when we do compile the return statement, we can write to it's pipe.
-                exprs.Add(Expression.Assign(_returnPipe, s_getCurrentPipe));
+                exprs.Add(Expression.Assign(s_returnPipe, s_getCurrentPipe));
                 exprs.Add(Expression.Assign(s_getCurrentPipe, ExpressionCache.NullPipe));
 
                 Diagnostics.Assert(_memberFunctionType.Type != null, "Member function type should not be null");
@@ -5157,12 +5157,12 @@ namespace System.Management.Automation.Language
                     if (MemberFunctionReturnType != typeof(void))
                     {
                         // Write directly to the pipe - don't use the dynamic site (CallAddPipe) as that could enumerate.
-                        returnValue = Expression.Call(_returnPipe, CachedReflectionInfo.Pipe_Add,
+                        returnValue = Expression.Call(s_returnPipe, CachedReflectionInfo.Pipe_Add,
                             returnValue.Convert(MemberFunctionReturnType).Cast(typeof(object)));
                     }
 
                     return Expression.Block(UpdatePosition(returnStatementAst.Pipeline),
-                                            Expression.Assign(s_getCurrentPipe, _returnPipe),
+                                            Expression.Assign(s_getCurrentPipe, s_returnPipe),
                                             returnValue,
                                             returnExpr);
                 }
