@@ -7,7 +7,7 @@ using namespace System.Management.Automation.Language
 Describe "Ternary Operator" -Tags CI {
     Context "Parsing of ternary operator" {
         BeforeAll {
-            $testCases_1 = @(
+            $testCases_basic = @(
                 @{ Script = '$true?2:3'; TokenKind = [TokenKind]::Variable; }
                 @{ Script = '$false?';   TokenKind = [TokenKind]::Variable; }
                 @{ Script = '$:abc';     TokenKind = [TokenKind]::Variable; }
@@ -21,14 +21,14 @@ Describe "Ternary Operator" -Tags CI {
                 @{ Script = '?2:3';      TokenKind = [TokenKind]::Generic;  }
             )
 
-            $testCases_2 = @(
+            $testCases_incomplete = @(
                 @{ Script = '$true ?';     ErrorId = "ExpectedValueExpression";         AstType = [ErrorExpressionAst] }
                 @{ Script = '$true ? 3';   ErrorId = "MissingColonInTernaryExpression"; AstType = [ErrorExpressionAst] }
                 @{ Script = '$true ? 3 :'; ErrorId = "ExpectedValueExpression";         AstType = [TernaryExpressionAst] }
             )
         }
 
-        It "Question-mark and colon parsed correctly in '<Script>' when not in ternary expression context" -TestCases $testCases_1 {
+        It "Question-mark and colon parsed correctly in '<Script>' when not in ternary expression context" -TestCases $testCases_basic {
             param($Script, $TokenKind)
 
             $tks = $null
@@ -55,7 +55,7 @@ Describe "Ternary Operator" -Tags CI {
             2?3:4 | Should -BeExactly '2?3:4'
         }
 
-        It "Generate incomplete parsing error properly for '<Script>'" -TestCases $testCases_2 {
+        It "Generate incomplete parsing error properly for '<Script>'" -TestCases $testCases_incomplete {
             param($Script, $ErrorId, $AstType)
 
             $ers = $null
@@ -98,7 +98,7 @@ Describe "Ternary Operator" -Tags CI {
 
     Context "Using of ternary operator" {
         BeforeAll {
-            $testCases_1 = @(
+            $testCases = @(
                 ## Condition: variable and constant expressions
                 @{ Script = { $true ? 1 : 2 };  ExpectedValue = 1 }
                 @{ Script = { $true? ?1 :2 };   ExpectedValue = 2 }
@@ -136,7 +136,7 @@ Describe "Ternary Operator" -Tags CI {
             )
         }
 
-        It "Basic uses of ternary operator - '<Script>'" -TestCases $testCases_1 {
+        It "Basic uses of ternary operator - '<Script>'" -TestCases $testCases {
             param($Script, $ExpectedValue)
             & $Script | Should -BeExactly $ExpectedValue
         }

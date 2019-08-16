@@ -6800,9 +6800,12 @@ namespace System.Management.Automation.Language
 
                 if (_ungotToken != null)
                 {
+                    // Possibly a signed number. Need to resync.
                     bool needResync = _ungotToken.Kind == TokenKind.Minus;
+
                     if (!needResync)
                     {
+                        // A generic token possibly composed of numbers and ternary operator chars. Need to resync.
                         needResync = endNumberOnTernaryOpChars && _ungotToken.Kind == TokenKind.Generic;
                     }
 

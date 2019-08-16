@@ -655,7 +655,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(ternaryExpressionAst, true, t_context, null);
+            return Compiler.GetExpressionValue(ternaryExpressionAst, isTrustedInput: true, t_context, usingValues: null);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(unaryExpressionAst, true, t_context, null);
+            return Compiler.GetExpressionValue(unaryExpressionAst, isTrustedInput: true, t_context, usingValues: null);
         }
 
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("ast");
             }
 
-            return Compiler.GetExpressionValue(convertExpressionAst, true, t_context, null);
+            return Compiler.GetExpressionValue(convertExpressionAst, isTrustedInput: true, t_context, usingValues: null);
         }
 
         public object VisitConstantExpression(ConstantExpressionAst constantExpressionAst)
