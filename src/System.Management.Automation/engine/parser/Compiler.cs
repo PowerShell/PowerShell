@@ -657,7 +657,7 @@ namespace System.Management.Automation.Language
         private static readonly Expression s_currentExceptionBeingHandled;
         private static readonly CatchBlock s_catchFlowControl;
 
-        internal static readonly CatchBlock[] _stmtCatchHandlers;
+        private static readonly CatchBlock[] _stmtCatchHandlers;
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length, StringComparer.OrdinalIgnoreCase);
