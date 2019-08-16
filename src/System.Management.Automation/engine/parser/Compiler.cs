@@ -31,7 +31,7 @@ namespace System.Management.Automation.Language
         internal const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.NonPublic;
         internal const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.NonPublic;
         internal const BindingFlags StaticPublicFlags = BindingFlags.Static | BindingFlags.Public;
-        internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
+        internal const BindingFlags InstancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
         internal static readonly ConstructorInfo ObjectList_ctor =
             typeof(List<object>).GetConstructor(Type.EmptyTypes);
@@ -482,7 +482,7 @@ namespace System.Management.Automation.Language
             typeof(ClassOps).GetMethod(nameof(ClassOps.CallVoidMethodNonVirtually), StaticPublicFlags);
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
-            typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), instancePublicFlags);
+            typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
         // ReSharper restore InconsistentNaming
     }
 
