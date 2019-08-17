@@ -605,3 +605,9 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $result | Should -BeNullOrEmpty
     }
 }
+
+Describe "PATHEXT defaults" -Tags 'CI' {
+    It "PATHEXT contains .CPL" -Skip:(!$IsWindows) {
+        $env:PATHEXT.Split(";") | Should -Contain ".CPL"
+    }
+}

@@ -35,6 +35,34 @@ namespace System.Management.Automation
         /// </summary>
         internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
+#if !UNIX
+            // Update the env variable PathEXT to contain .CPL
+            var pathext = Environment.GetEnvironmentVariable("PathEXT");
+            pathext = pathext ?? string.Empty;
+            bool cplExist = false;
+            if (pathext != string.Empty)
+            {
+                string[] entries = pathext.Split(Utils.Separators.Semicolon);
+                foreach (string entry in entries)
+                {
+                    string ext = entry.Trim();
+                    if (ext.Equals(".CPL", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cplExist = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!cplExist)
+            {
+                pathext = (pathext == string.Empty) ? ".CPL" :
+                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase)
+                    ? (pathext + ".CPL") : (pathext + ";.CPL");
+                Environment.SetEnvironmentVariable("PathEXT", pathext);
+            }
+#endif
+
             Context = new ExecutionContext(this, hostInterface, iss);
 
             EngineParser = new Language.Parser();
