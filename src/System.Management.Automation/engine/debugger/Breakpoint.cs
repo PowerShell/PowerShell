@@ -72,7 +72,7 @@ namespace System.Management.Automation
         protected Breakpoint(string script, ScriptBlock action)
         {
             Enabled = true;
-            Script = script;
+            Script = string.IsNullOrEmpty(script) ? null : script;
             Id = Interlocked.Increment(ref s_lastID);
             Action = action;
             HitCount = 0;
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         protected Breakpoint(string script, ScriptBlock action, int id)
         {
             Enabled = true;
-            Script = script;
+            Script = string.IsNullOrEmpty(script) ? null : script;
             Id = id;
             Action = action;
             HitCount = 0;

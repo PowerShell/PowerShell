@@ -9,6 +9,7 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.CompilerServices;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -153,6 +154,7 @@ namespace System.Management.Automation
                 if (IsModuleFeatureName(name))
                 {
                     list.Add(name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalModuleFeatureActivation, name);
                 }
                 else if (IsEngineFeatureName(name))
                 {
@@ -160,6 +162,7 @@ namespace System.Management.Automation
                     {
                         feature.Enabled = true;
                         list.Add(name);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureActivation, name);
                     }
                     else
                     {

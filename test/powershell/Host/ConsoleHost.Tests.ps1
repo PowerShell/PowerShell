@@ -886,8 +886,9 @@ public enum ShowWindowCommands : int
 }
 
 Describe "Console host api tests" -Tag CI {
-    Context "String escape sequences" {
+    Context "String escape and control sequences" {
         $esc = [char]0x1b
+        $csi = [char]0x9b
         $testCases =
             @{InputObject = "abc"; Length = 3; Name = "No escapes"},
             @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
@@ -898,11 +899,29 @@ Describe "Console host api tests" -Tag CI {
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
+            @{InputObject = "${csi}31mabc"; Length = 3; Name = "C1 CSI at start"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 3; Name = "C1 CSI at start and end"}
+            @{InputObject = "abc${csi}m"; Length = 3; Name = "C1 CSI, no params"}
+            @{InputObject = "abc${csi}#{"; Length = 3; Name = "C1 CSI, XTPUSHSGR"}
+            @{InputObject = "abc${csi}#}"; Length = 3; Name = "C1 CSI, XTPOPSGR"}
+            @{InputObject = "abc${csi}#p"; Length = 3; Name = "C1 CSI, XTPUSHSGR (alias)"}
+            @{InputObject = "abc${csi}#q"; Length = 3; Name = "C1 CSI, XTPOPSGR (alias)"}
+            @{InputObject = "abc${esc}[0#p"; Length = 3; Name = "XTPUSHSGR, with param"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 3; Name = "XTPOPSGR, with multiple params"}
         }
         else
         {
             @{InputObject = "$esc[31mabc"; Length = 8; Name = "Escape at start - no virtual term support"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 12; Name = "Escape at start and end - no virtual term support"}
+            @{InputObject = "${csi}31mabc"; Length = 7; Name = "C1 CSI at start - no virtual term support"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 10; Name = "C1 CSI at start and end - no virtual term support"}
+            @{InputObject = "abc${csi}m"; Length = 5; Name = "C1 CSI, no params - no virtual term support"}
+            @{InputObject = "abc${csi}#{"; Length = 6; Name = "C1 CSI, XTPUSHSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#}"; Length = 6; Name = "C1 CSI, XTPOPSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#p"; Length = 6; Name = "C1 CSI, XTPUSHSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${csi}#q"; Length = 6; Name = "C1 CSI, XTPOPSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${esc}[0#p"; Length = 8; Name = "XTPUSHSGR, with param - no virtual term support"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 10; Name = "XTPOPSGR, with multiple params - no virtual term support"}
         }
 
         It "Should properly calculate buffer cell width of '<Name>'" -TestCases $testCases {
