@@ -1508,7 +1508,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Check if a screen reviewer utility is running.
         /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
-        /// as PSReadLine is not accessibility-firendly enough as of today.
+        /// since PSReadLine is not accessibility-firendly enough as of today.
         /// </summary>
         private bool IsScreenReaderActive()
         {
@@ -1520,6 +1520,10 @@ namespace Microsoft.PowerShell
             _screenReaderActive = false;
             if (Platform.IsWindowsDesktop)
             {
+                // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
+                // Quoted from https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // accessibility parameter 'SPI_GETSCREENREADER':
+                // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
                 bool enabled = false;
                 if (SystemParametersInfo(SPI_GETSCREENREADER, 0, ref enabled, 0))
                 {
