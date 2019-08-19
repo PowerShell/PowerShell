@@ -23,8 +23,8 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.PowerShell.Telemetry;
+using Microsoft.PowerShell.Commands;
 
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -55,6 +55,11 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
+        private const uint SPI_GETSCREENREADER = 0x0046;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref bool pvParam, uint fWinIni);
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
@@ -582,7 +587,7 @@ namespace Microsoft.PowerShell
             }
 
             // Connect a disconnected command.
-            this.runningCmd = Microsoft.PowerShell.Commands.EnterPSSessionCommand.ConnectRunningPipeline(remoteRunspace);
+            this.runningCmd = EnterPSSessionCommand.ConnectRunningPipeline(remoteRunspace);
 
             // Push runspace.
             _runspaceRef.Override(remoteRunspace, hostGlobalLock, out _isRunspacePushed);
@@ -590,7 +595,7 @@ namespace Microsoft.PowerShell
 
             if (this.runningCmd != null)
             {
-                Microsoft.PowerShell.Commands.EnterPSSessionCommand.ContinueCommand(
+                EnterPSSessionCommand.ContinueCommand(
                     remoteRunspace,
                     this.runningCmd,
                     this,
@@ -858,7 +863,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentCulture
         {
             get
@@ -875,7 +879,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentUICulture
         {
             get
@@ -890,7 +893,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// </summary>
         /// <exception/>
-
         public override void SetShouldExit(int exitCode)
         {
             lock (hostGlobalLock)
@@ -1504,12 +1506,28 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method is here only to make V1 tests compatible with V2. DO NOT USE THIS FUNCTION! Use DoCreateRunspace instead.
+        /// Check if a screen reviewer utility is running.
+        /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
+        /// as PSReadLine is not accessibility-firendly enough as of today.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private void InitializeRunspace(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs)
+        private bool IsScreenReaderActive()
         {
-            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, configurationName: null, initialCommandArgs: initialCommandArgs);
+            if (_screenReaderActive.HasValue)
+            {
+                return _screenReaderActive.Value;
+            }
+
+            _screenReaderActive = false;
+            if (Platform.IsWindowsDesktop)
+            {
+                bool enabled = false;
+                if (SystemParametersInfo(SPI_GETSCREENREADER, 0, ref enabled, 0))
+                {
+                    _screenReaderActive = enabled;
+                }
+            }
+
+            return _screenReaderActive.Value;
         }
 
         private bool LoadPSReadline()
@@ -1542,6 +1560,7 @@ namespace Microsoft.PowerShell
                 bool psReadlineFailed = false;
 
                 // Load PSReadline by default unless there is no use:
+                //    - screen reader is active, such as NVDA, indicating non-visual access
                 //    - we're running a command/file and just exiting
                 //    - stdin is redirected by a parent process
                 //    - we're not interactive
@@ -1549,8 +1568,8 @@ namespace Microsoft.PowerShell
                 // It's also important to have a scenario where PSReadline is not loaded so it can be updated, e.g.
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
-                ReadOnlyCollection<Microsoft.PowerShell.Commands.ModuleSpecification> defaultImportModulesList = null;
-                if (LoadPSReadline())
+                ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
+                if (LoadPSReadline() && !IsScreenReaderActive())
                 {
                     // Create and open Runspace with PSReadline.
                     defaultImportModulesList = DefaultInitialSessionState.Modules;
@@ -2834,6 +2853,7 @@ namespace Microsoft.PowerShell
         private bool _setShouldExitCalled;
         private bool _isRunningPromptLoop;
         private bool _wasInitialCommandEncoded;
+        private bool? _screenReaderActive;
 
         // hostGlobalLock is used to sync public method calls (in case multiple threads call into the host) and access to
         // state that persists across method calls, like progress data. It's internal because the ui object also
