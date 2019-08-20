@@ -1144,8 +1144,7 @@ namespace System.Management.Automation
             {
                 if (obj != null)
                 {
-                    PSObject mshObj = PSObject.AsPSObject(obj);
-                    returnValue.Append(PSObject.ToString(context, mshObj, separator, format, formatProvider, false, false));
+                    returnValue.Append(PSObject.ToString(context, obj, separator, format, formatProvider, false, false));
                 }
 
                 returnValue.Append(separatorToUse);
@@ -1156,9 +1155,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            int separatorLength = separatorToUse.Length;
-            returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
-            return returnValue.ToString();
+            return returnValue.ToString(0, returnValue.Length - separatorToUse.Length);
         }
 
         private static string ToStringEmptyBaseObject(ExecutionContext context, PSObject mshObj, string separator, string format, IFormatProvider formatProvider)
