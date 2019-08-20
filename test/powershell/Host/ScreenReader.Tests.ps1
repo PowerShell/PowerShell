@@ -43,6 +43,6 @@ Describe "Validate start of console host" -Tag CI {
 
         ## The warning message about screen reader should be returned, but the PSReadLine module should not be loaded.
         $output[0] | Should -BeLike "Warning:*'Import-Module PSReadLine'."
-        $output[1] | Should -BeExactly [string]::Empty
+        $output[1] | Should -BeExactly ([string]::Empty)
     }
 }
