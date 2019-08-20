@@ -66,6 +66,7 @@ beta.7
 beta.8
 beta.9
 beta2
+bgelens
 Bhaal22
 bjh7242
 bool
@@ -173,6 +174,7 @@ disconnect-pssession
 displaydataquery
 distro
 distros
+dll
 dlls
 dlwyatt
 dockerbasedbuild
@@ -328,6 +330,7 @@ isnot
 itemtype
 itpro
 jameswtruher
+Jawz84
 jazzdelightsme
 jeffbi
 jen
@@ -411,6 +414,7 @@ mkdir
 mklement0
 move-itemproperty
 msbuild
+msftrncs
 mshsnapinloadunload
 msi
 ms-psrp
@@ -518,6 +522,7 @@ preview.2
 preview.3
 preview.4
 preview1-24530-04
+preview7
 productversion
 program.cs
 prototyyppi
@@ -591,6 +596,7 @@ remove-wsmaninstance
 rename-itemproperty
 rename-localgroup
 rename-localuser
+reparse
 repo
 reportgenerator
 resgen

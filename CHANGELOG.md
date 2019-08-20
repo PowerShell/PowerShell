@@ -1,5 +1,88 @@
 # Changelog
 
+## v7.0.0-preview.3 - 08/20/2019
+
+### Breaking Changes
+
+- Remove `kill` alias for `Stop-Process` cmdlet on Unix (#10098) (Thanks @iSazonov!)
+- Support for starting PowerShell as a login shell (`pwsh -Login` / `pwsh -l`) support (#10050)
+
+### Engine Updates and Fixes
+
+- Additional Telemetry - implementation of [`RFC0036`](https://github.com/PowerShell/PowerShell-RFC/pull/158) (#10336)
+- Implement `ForEach-Object -Parallel` as an experimental feature (#10229)
+- Skip `JumpList` on `NanoServer` and `IoT` (#10164)
+- Make `Get-DscResource` work with class based resources (#10350)
+- Fix `#requires -version` for `pwsh` 7 to include `6.1` and `6.2` in `PSCompatibleVersions` (#9943) (Thanks @bgelens!)
+- Add dispose of `_runspaceDebugCompleteEvent` event object. (#10323)
+- Fix performance regression from disabling debugger in system lockdown mode (#10269)
+- Special case the `posix` locale in `WildcardPattern` (#10186)
+- Use `Platform.IsWindowsDesktop` instead of checking both NanoServer and IoT (#10205)
+
+### General Cmdlet Updates and Fixes
+
+- Enable Experimental Features by default on Preview builds (#10228)
+- Enable `-sta` and `-mta` switches for `pwsh` (`-sta` is required for `GUIs`) (#10061)
+- Make breakpoints display better over PowerShell remoting (#10339) (Thanks @KirkMunro!)
+- Add support for `AppX` reparse points (#10331)
+- Make module name matching for `get-module -FullyQualifiedName` case insensitive (#10329)
+- Expose `PreRelease` label in `PSModuleInfo` formatter (#10316)
+- Add `-Raw` switch to `Select-String` which allows returning only the string that was matched (#9901) (Thanks @Jawz84!)
+
+- ### Performance
+
+- Reduce allocations in `MakePath()` method (#10027) (Thanks @iSazonov!)
+- Remove extra check that the system dll exists (#10244) (Thanks @iSazonov!)
+- Avoid boxing when passing value type arguments to `PSTraceSource.WriteLine` (#10052) (Thanks @iSazonov!)
+- Reduce allocations in `Escape()` and `Unescape()` (#10041) (Thanks @iSazonov!)
+
+### Code Cleanup
+
+- Add the license header to `nanoserver.tests.ps1` (#10171)
+- Mark `-parallel` and `-throttlelimit` reserved for `foreach` and `switch` statements (#10328) (Thanks @KirkMunro!)
+- Deprecate workflow debugging code (#10321) (Thanks @KirkMunro!)
+- Fix style issues in `InternalCommands.cs` (#10352) (Thanks @iSazonov!)
+- Deprecate internal `HelpCategory.Workflow` enumeration (#10319) (Thanks @KirkMunro!)
+- Update `Microsoft.PowerShell.CoreCLR.Eventing` to resolve conflict with `System.Diagnostics.EventLog` (#10305)
+- Don't collect process start time as it's not being used on `consolehost` startup (#10294)
+- .NET Core 3.0 now aborts the thread for us. Remove the `ThreadAbortException` code (#10230) (Thanks @iSazonov!)
+- Use `nameof()` in `LocationGlobber` and `PathInfo` (#10200) (Thanks @iSazonov!)
+
+### Tools
+
+- Fix Hungarian prefix `my` (#9976) (Thanks @RDIL!)
+- Fix spelling error in issue template (#10256)
+- Quote arguments in `.vscode/tasks.json` in case of spaces (#10204) (Thanks @msftrncs!)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+- Add tests for `WildcardPattern.Escape()` and `Unescape()` (#10090) (Thanks @iSazonov!)
+- Cleanup Docker release testing (#10310) (Thanks @RDIL!)
+
+### Build and Packaging Improvements
+
+- Update `Microsoft.Management.Infrastructure` version to `2.0.0-preview.2` (#10366)
+- Move to `.NET Core 3.0 preview.8` (#10351) (#10227) (Thanks @bergmeister!)
+- Bump `NJsonSchema` from `10.0.21` to `10.0.22` (#10364)
+- Add `Microsoft.PowerShell.CoreCLR.Eventing.dll` to exception list for build fix (#10337)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `3.1.0` to `3.2.1` (#10273) (#10330)
+- Revert the temporary AzDevOps artifact workaround (#10260)
+- Fix macOS build break (#10207)
+
+### Documentation and Help Content
+
+- Update docs for `7.0.0-preview.2` release (#10160) (#10176)
+- `PSSA` also includes formatting (#10172)
+- Refactor security policy documentation so that they appear in the Security policy tab of GitHub (#9905) (Thanks @bergmeister!)
+- Add tooling section to PR template (#10144)
+- Update `README.md` and `metadata.json` for next releases (#10087)
+- Update DotNet Support links (#10145)
+- Update our language on our policy applying to security issues (#10304)
+- Update dead links from `powershell.com` (#10297)
+- Create `Distribution_Request` issue template (#10253)
+- Fix: Removed dependency file with `Dependabot` (#10212) (Thanks @RDIL!)
+
 ## v7.0.0-preview.2 - 07/17/2019
 
 ### Breaking Changes
