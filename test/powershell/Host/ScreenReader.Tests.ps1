@@ -3,6 +3,10 @@
 
 Describe "Validate start of console host" -Tag CI {
     BeforeAll {
+        if (-not $IsWindows) {
+            return
+        }
+
         $csharp_source = @'
             using System;
             using System.Runtime.InteropServices;
@@ -33,8 +37,10 @@ Describe "Validate start of console host" -Tag CI {
     }
 
     AfterAll {
-        ## Make the screen reader status in-active.
-        $utilType::DeactivateScreenReader()
+        if ($IsWindows) {
+            ## Make the screen reader status in-active.
+            $utilType::DeactivateScreenReader()
+        }
     }
 
     It "PSReadLine should not be auto-loaded when screen reader status is active" -Skip:(-not $IsWindows) {
