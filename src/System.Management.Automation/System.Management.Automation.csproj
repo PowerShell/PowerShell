@@ -103,11 +103,11 @@
     <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
     <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
-    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
-    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
-    <Compile Remove="namespaces\TransactedRegistry.cs" />
-    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
-    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
+    <Compile Remove="providers\SafeTransactionHandle.cs" />
+    <Compile Remove="providers\SafeRegistryHandle.cs" />
+    <Compile Remove="providers\TransactedRegistry.cs" />
+    <Compile Remove="providers\TransactedRegistryKey.cs" />
+    <Compile Remove="providers\TransactedRegistrySecurity.cs" />
     <Compile Remove="utils\BackgroundDispatcher.cs" />
     <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
