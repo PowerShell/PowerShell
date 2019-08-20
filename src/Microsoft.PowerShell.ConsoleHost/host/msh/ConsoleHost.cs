@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell
                 }
 
                 s_cpp = new CommandLineParameterParser(
-                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
+                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : new NullHostUserInterface(),
                     bannerText, helpText);
 
                 s_cpp.Parse(args);
@@ -1322,7 +1322,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
             Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
@@ -1382,23 +1381,6 @@ namespace Microsoft.PowerShell
             while (false);
 
             return exitCode;
-        }
-
-        /// <summary>
-        /// This method is retained to make V1 tests compatible with V2 as signature of this method
-        /// is slightly changed in v2.
-        /// </summary>
-        /// <param name="bannerText"></param>
-        /// <param name="helpText"></param>
-        /// <param name="isPrestartWarned"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private uint Run(string bannerText, string helpText, bool isPrestartWarned, string[] args)
-        {
-            s_cpp = new CommandLineParameterParser(this.UI, bannerText, helpText);
-            s_cpp.Parse(args);
-            return Run(s_cpp, isPrestartWarned);
         }
 
         /// <summary>
@@ -1573,20 +1555,28 @@ namespace Microsoft.PowerShell
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
                 ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
-                if (LoadPSReadline() && !IsScreenReaderActive())
+                if (LoadPSReadline())
                 {
-                    // Create and open Runspace with PSReadline.
-                    defaultImportModulesList = DefaultInitialSessionState.Modules;
-                    DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
-                    consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
-                    try
+                    if (IsScreenReaderActive())
                     {
-                        OpenConsoleRunspace(consoleRunspace, staMode);
+                        s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.PSReadLineDisabledWhenScreenReaderIsActive);
+                        s_theConsoleHost.UI.WriteLine();
                     }
-                    catch (Exception)
+                    else
                     {
-                        consoleRunspace = null;
-                        psReadlineFailed = true;
+                        // Create and open Runspace with PSReadline.
+                        defaultImportModulesList = DefaultInitialSessionState.Modules;
+                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
+                        consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
+                        try
+                        {
+                            OpenConsoleRunspace(consoleRunspace, staMode);
+                        }
+                        catch (Exception)
+                        {
+                            consoleRunspace = null;
+                            psReadlineFailed = true;
+                        }
                     }
                 }
 
