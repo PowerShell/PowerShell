@@ -5,6 +5,21 @@ using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
 Describe "Ternary Operator" -Tags CI {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSTernaryOperator')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSTernaryOperator' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
     Context "Parsing of ternary operator" {
         BeforeAll {
             $testCases_basic = @(
@@ -55,7 +70,7 @@ Describe "Ternary Operator" -Tags CI {
             2?3:4 | Should -BeExactly '2?3:4'
         }
 
-        It "Generate incomplete parsing error properly for '<Script>'" -TestCases $testCases_incomplete {
+        It "Incomplete ternary expression '<Script>' should generate correct error" -TestCases $testCases_incomplete {
             param($Script, $ErrorId, $AstType)
 
             $ers = $null
@@ -68,7 +83,7 @@ Describe "Ternary Operator" -Tags CI {
             $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType $AstType
         }
 
-        It "Generate ternary ast when possible" {
+        It "Generate ternary AST when operands are missing - '`$true ? :'" {
             $ers = $null
             $result = [Parser]::ParseInput('$true ? :', [ref]$null, [ref]$ers)
             $ers.Count | Should -Be 2
@@ -82,7 +97,9 @@ Describe "Ternary Operator" -Tags CI {
             $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
             $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
             $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+        }
 
+        It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
             $ers = $null
             $result = [Parser]::ParseInput('$true ? : 3', [ref]$null, [ref]$ers)
             $ers.Count | Should -Be 1
@@ -136,7 +153,7 @@ Describe "Ternary Operator" -Tags CI {
             )
         }
 
-        It "Basic uses of ternary operator - '<Script>'" -TestCases $testCases {
+        It "Ternary expression '<Script>' should generate correct results" -TestCases $testCases {
             param($Script, $ExpectedValue)
             & $Script | Should -BeExactly $ExpectedValue
         }
@@ -167,7 +184,7 @@ Describe "Ternary Operator" -Tags CI {
             & $result | Should -BeExactly 'Core'
         }
 
-        It "Tab completion for variables assigned with ternary expression" {
+        It "Tab completion for variables assigned with ternary expression should work as expected" {
             ## Type inference for the ternary expression should aggregate the inferred values from both branches
             $text1 = '$var1 = $IsCoreCLR ? (Get-Item $PSHome) : (Get-Process -Id $PID); $var1.Full'
             $result = TabExpansion2 -inputScript $text1 -cursorColumn $text1.Length
