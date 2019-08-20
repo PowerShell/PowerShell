@@ -116,7 +116,7 @@ EndSelection:000000254
         ){
             param ($format)
 
-            { Get-Clipboard -TextFormatType $format } | Should -Throw -ErrorId 'FailedToGetClipboard,Microsoft.PowerShell.Commands.GetClipboardCommand'
+            { Get-Clipboard -TextFormatType $format } | Should -Throw -ErrorId 'FailedToGetClipboardUnsupportedTextFormat,Microsoft.PowerShell.Commands.GetClipboardCommand'
         }
 
         It '-AsHtml returns error' {
@@ -130,7 +130,7 @@ EndSelection:000000254
         ){
             param ($format)
 
-            { Get-Clipboard -Format $format } | Should -Throw -ErrorId 'FailedToGetClipboard,Microsoft.PowerShell.Commands.GetClipboardCommand'
+            { Get-Clipboard -Format $format } | Should -Throw -ErrorId 'FailedToGetClipboardUnsupportedFormat,Microsoft.PowerShell.Commands.GetClipboardCommand'
         }
     }
 }
