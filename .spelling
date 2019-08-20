@@ -871,6 +871,8 @@ zhenggu
 analytics
  - docs/debugging/README.md
 corehost
+ - docs/learning-powershell/README.md
+PSKoans
  - docs/testing-guidelines/CodeCoverageAnalysis.md
 de5f69c
  - docs/testing-guidelines/TestRoadmap.md
