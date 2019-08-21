@@ -105,14 +105,14 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         /// <param name="initializationScript"></param>
         /// <param name="useWow64"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, null)
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory: null)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Default initializes the underlying dotnet process class
         /// </summary>
-        public PowerShellProcessInstance() : this(null, null, null, false, null)
+        public PowerShellProcessInstance() : this(powerShellVersion: null, credential: null, initializationScript: null, useWow64: false, workingDirectory: null)
         {
         }
 

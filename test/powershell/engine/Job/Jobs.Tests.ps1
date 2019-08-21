@@ -84,10 +84,9 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
-            foreach ($tempPath in $invalidPaths)
-            {
-                {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw
-            }
+            param($path,$case)
+
+            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw
         }
 
         It "Create job with native command" {
