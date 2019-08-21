@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.SetCommandBreakpoint(Command[i], Action, path.ToString()));
+                                Context.Debugger.SetCommandBreakpoint(Command[i], Action, path));
                         }
                     }
                     else
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path.ToString()));
+                                Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path));
                         }
                     }
                     else
