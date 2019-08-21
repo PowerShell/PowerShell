@@ -3259,12 +3259,9 @@ namespace System.Management.Automation.Runspaces
 
                     if (proceedWithSetLocation && setLocation)
                     {
-                        CmdletProviderContext providerContext = new CmdletProviderContext(context);
-
                         try
                         {
-                            providerContext.SuppressWildcardExpansion = true;
-                            context.EngineSessionState.SetLocation(Directory.GetCurrentDirectory(), providerContext);
+                            context.EngineSessionState.SetLocationFileSystemFast(Directory.GetCurrentDirectory());
                         }
                         catch (ItemNotFoundException)
                         {
@@ -3272,7 +3269,7 @@ namespace System.Management.Automation.Runspaces
                             // default drive to $pshome
                             System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
                             string defaultPath = System.IO.Path.GetDirectoryName(PsUtils.GetMainModule(currentProcess).FileName);
-                            context.EngineSessionState.SetLocation(defaultPath, providerContext);
+                            context.EngineSessionState.SetLocationFast(defaultPath);
                         }
                     }
                 }

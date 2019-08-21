@@ -591,6 +591,79 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Changes the current working directory to the path specified.
+        /// It is only for FileSystem provider paths and optimized to be fast.
+        /// </summary>
+        /// <param name="path">
+        /// The file system path of the new current working directory.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> is null.
+        /// </exception>
+        /// <exception cref="DriveNotFoundException">
+        /// If <paramref name="path"/> refers to a drive that does not exist.
+        /// </exception>
+        internal void SetLocationFileSystemFast(string path)
+        {
+            if (path == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
+            }
+
+            PathInfo current = null;
+            if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
+            {
+                // It is under a condition to avoid the unneeded allocation - CurrentLocation always allocates.
+                current = CurrentLocation;
+            }
+
+            PSDriveInfo previousWorkingDrive = CurrentDrive;
+
+            if (LocationGlobber.IsProviderDirectPath(path))
+            {
+                // The path is a provider-direct path so use the current
+                // provider and its hidden drive but don't modify the path
+                // at all.
+                ProviderInfo provider = CurrentLocation.Provider;
+                CurrentDrive = provider.HiddenDrive;
+            }
+            else
+            {
+                // See if the path is a relative or absolute
+                // path.
+                if (Globber.IsAbsolutePath(path, out string driveName))
+                {
+                    // Since the path is an absolute path
+                    // we need to change the current working
+                    // drive
+                    CurrentDrive = GetDrive(driveName);
+
+                    // Now that the current working drive is set,
+                    // process the rest of the path as a relative path.
+                }
+            }
+
+            string currentPath = path.Substring(CurrentDrive.Root.Length);
+
+            CurrentDrive.CurrentLocation = currentPath;
+
+            // Now make sure the current drive is set in the provider's
+            // current working drive hashtable
+            ProvidersCurrentWorkingDrive[CurrentDrive.Provider] = CurrentDrive;
+
+            // Set the $PWD variable to the new location
+            this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
+
+            // If an action has been defined for location changes, invoke it now.
+            if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
+            {
+                var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
+                PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
+                s_tracer.WriteLine("Invoked LocationChangedAction");
+            }
+        }
+
+        /// <summary>
         /// Determines if the specified path is the current working directory
         /// or a parent of the current working directory.
         /// </summary>
