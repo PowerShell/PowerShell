@@ -3312,7 +3312,6 @@ function New-GlobalToolNupkg
                 Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
                 Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
                 Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
                 Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
