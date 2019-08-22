@@ -273,22 +273,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private bool ShouldProcessOutOfBand
+        private bool ShouldProcessOutOfBand(PSObject so)
         {
-            get
+            if (_shape == FormatShape.Undefined || _parameters == null)
             {
-                if (_shape == FormatShape.Undefined || _parameters == null)
-                {
-                    return true;
-                }
-
-                return !_parameters.forceFormattingAlsoOnOutOfBand;
+                return true;
             }
+
+            var typeNames = so.InternalTypeNames;
+            ViewDefinition view = DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, typeNames);
+            if (view != null && view.outOfBand && so.WriteStream == WriteStreamType.None)
+            {
+                return false;
+            }
+
+            return !_parameters.forceFormattingAlsoOnOutOfBand;
         }
 
         private bool ProcessOutOfBandObjectOutsideDocumentSequence(PSObject so)
         {
-            if (!ShouldProcessOutOfBand)
+            if (!ShouldProcessOutOfBand(so))
             {
                 return false;
             }
@@ -314,7 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool ProcessOutOfBandObjectInsideDocumentSequence(PSObject so)
         {
-            if (!ShouldProcessOutOfBand)
+            if (!ShouldProcessOutOfBand(so))
             {
                 return false;
             }
