@@ -885,7 +885,6 @@ namespace System.Management.Automation
             builtinTypeAccelerators.Add("psnoteproperty", typeof(PSNoteProperty));
             builtinTypeAccelerators.Add("psaliasproperty", typeof(PSAliasProperty));
             builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
-            builtinTypeAccelerators.Add("actionpreference", typeof(ActionPreference));
         }
 
         internal static string FindBuiltinAccelerator(Type type, string expectedKey = null)
