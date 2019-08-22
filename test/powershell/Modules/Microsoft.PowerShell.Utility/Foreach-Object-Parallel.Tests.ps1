@@ -121,56 +121,65 @@ Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
 
     BeforeAll {
 
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+
         # Test cases
         $TestCasesNotSupportedCommonParameters = @(
             @{
-                testName = 'Verifies that ErrorAction common parameter is not supported'
+                testName    = 'Verifies that ErrorAction common parameter is not supported'
                 scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -ErrorAction Stop }
             },
             @{
-                testName = 'Verifies that WarningAction common parameter is not supported'
+                testName    = 'Verifies that WarningAction common parameter is not supported'
                 scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -WarningAction SilentlyContinue }
             },
             @{
-                testName = 'Verifies that InformationAction common parameter is not supported'
+                testName    = 'Verifies that InformationAction common parameter is not supported'
                 scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -InformationAction SilentlyContinue }
             },
             @{
-                testName = 'Verifies that PipelineVariable common parameter is not supported'
+                testName    = 'Verifies that PipelineVariable common parameter is not supported'
                 scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -PipelineVariable pipeVar }
             }
         )
 
         $TestCasesForSupportedCommonParameters = @(
             @{
-                testName = 'Verifies ErrorVariable common parameter'
-                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Error "Error:$_" } -ErrorVariable global:actualVariable }
+                testName       = 'Verifies ErrorVariable common parameter'
+                scriptBlock    = { 1..1 | ForEach-Object -Parallel { Write-Error "Error:$_" } -ErrorVariable global:actualVariable }
                 expectedResult = 'Error:1'
             },
             @{
-                testName = 'Verifies WarningVarible common parameter'
-                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:actualVariable }
+                testName       = 'Verifies WarningVarible common parameter'
+                scriptBlock    = { 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:actualVariable }
                 expectedResult = 'Warning:1'
             },
             @{
-                testName = 'Verifies InformationVariable common parameter'
-                scriptBlock = { 1..1 | ForEach-Object -Parallel { Write-Information "Information:$_"} -InformationVariable global:actualVariable }
+                testName       = 'Verifies InformationVariable common parameter'
+                scriptBlock    = { 1..1 | ForEach-Object -Parallel { Write-Information "Information:$_" } -InformationVariable global:actualVariable }
                 expectedResult = 'Information:1'
             },
             @{
-                testName = 'Verifies OutVariable common parameter'
-                scriptBlock = { 1..1 | ForEach-Object -Parallel {Write-Output "Output:$_"} -OutVariable global:actualVariable }
+                testName       = 'Verifies OutVariable common parameter'
+                scriptBlock    = { 1..1 | ForEach-Object -Parallel { Write-Output "Output:$_" } -OutVariable global:actualVariable }
                 expectedResult = 'Output:1'
             }
         )
     }
 
     BeforeEach {
-
         $global:actualVariable = $null
     }
 
     AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
 
         $global:actualVariable = $null
     }
