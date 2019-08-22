@@ -761,8 +761,7 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
-        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public SwitchParameter UseCulture { get; set; }
