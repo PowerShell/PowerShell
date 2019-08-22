@@ -7,7 +7,7 @@ Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $oldInformationPreference = $InformationPreference
         $oldProgressPreference = $ProgressPreference
-        $InformationPreference = "Ignore"
+        $InformationPreference = "SilentlyContinue"
         $ProgressPreference = "SilentlyContinue"
 
         $hostName = [System.Net.Dns]::GetHostName()
