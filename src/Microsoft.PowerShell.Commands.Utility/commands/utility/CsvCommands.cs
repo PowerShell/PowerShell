@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertTo-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "DelimiterPath",
+    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "Delimiter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public sealed class ConvertToCsvCommand : BaseCsvWritingCommand
