@@ -1131,9 +1131,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            int separatorLength = separatorToUse.Length;
-            returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
-            return returnValue.ToString();
+            return returnValue.ToString(0, returnValue.Length - separatorToUse.Length);
         }
 
         internal static string ToStringEnumerable(ExecutionContext context, IEnumerable enumerable, string separator, string format, IFormatProvider formatProvider)
