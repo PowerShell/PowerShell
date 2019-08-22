@@ -2950,11 +2950,17 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _debugPreference = value;
                 _isDebugPreferenceSet = true;
             }
         }
 
+        private bool _isVerbosePreferenceSet = false;
         private bool _isVerbosePreferenceCached = false;
         private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
         /// <summary>
@@ -2967,6 +2973,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (_isVerbosePreferenceSet)
+                {
+                    return _verbosePreference;
+                }
+
                 if (IsVerboseFlagSet)
                 {
                     if (Verbose)
@@ -2999,6 +3010,18 @@ namespace System.Management.Automation
                 }
 
                 return _verbosePreference;
+            }
+
+
+            set
+            {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
+                _verbosePreference = value;
+                _isVerbosePreferenceSet = true;
             }
         }
 
@@ -3037,6 +3060,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _warningPreference = value;
                 IsWarningActionSet = true;
             }
@@ -3202,6 +3230,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _errorAction = value;
                 IsErrorActionSet = true;
             }
@@ -3232,6 +3265,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _progressPreference = value;
                 _isProgressPreferenceSet = true;
             }
@@ -3264,6 +3302,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _informationPreference = value;
                 IsInformationActionSet = true;
             }
