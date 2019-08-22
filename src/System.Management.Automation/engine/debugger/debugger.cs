@@ -1226,19 +1226,13 @@ namespace System.Management.Automation
                     return;
                 }
 
-                bool havePendingBreakpoint = false;
                 foreach ((int breakpointId, LineBreakpoint item) in _pendingBreakpoints)
                 {
                     if (item.IsScriptBreakpoint && item.Script.Equals(functionContext._file, StringComparison.OrdinalIgnoreCase))
                     {
-                        havePendingBreakpoint = true;
+                        SetPendingBreakpoints(functionContext);
                         break;
                     }
-                }
-
-                if (havePendingBreakpoint)
-                {
-                    SetPendingBreakpoints(functionContext);
                 }
             }
         }

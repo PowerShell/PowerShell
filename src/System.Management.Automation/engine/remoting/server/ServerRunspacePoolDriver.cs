@@ -1470,8 +1470,7 @@ namespace System.Management.Automation
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId});" +
-                    "$bp -ne $null -and $host.Runspace.Debugger.RemoveBreakpoint($bp)";
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); $bp -ne $null -and $host.Runspace.Debugger.RemoveBreakpoint($bp)";
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
@@ -1480,13 +1479,11 @@ namespace System.Management.Automation
                 // __Enable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
-                // Returns bool.
+                // Returns Breakpoint.
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId});" +
-                    "if ($bp -eq $null) {return};" +
-                    "$host.Runspace.Debugger.EnableBreakpoint($bp)";
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.EnableBreakpoint($bp)}}";
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
@@ -1495,13 +1492,11 @@ namespace System.Management.Automation
                 // __Disable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
-                // Returns bool.
+                // Returns Breakpoint.
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId});" +
-                    "if ($bp -eq $null) {return};" +
-                    "$host.Runspace.Debugger.DisableBreakpoint($bp)";
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.DisableBreakpoint($bp)}}";
 
                 ReplaceVirtualCommandWithScript(commands, script);
             }
