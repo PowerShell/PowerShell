@@ -61,9 +61,7 @@ namespace System.Management.Automation
             CommandDiscovery = new CommandDiscovery(Context);
 
             // Load the iss, resetting everything to it's defaults...
-            iss.Bind(Context, /*updateOnly*/ false);
-
-            InitialSessionState.SetSessionStateDrive(Context, true);
+            iss.Bind(Context, updateOnly: false, module: null, noClobber: false, local: false, setLocation: true);
         }
 
         /// <summary>
