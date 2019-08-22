@@ -5005,6 +5005,12 @@ namespace System.Management.Automation.Language
                         return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionEquals);
                     }
 
+                    if (c1 == '?')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestion);
+                    }
+
                     return ScanGenericToken(c);
 
                 case '\0':

@@ -419,6 +419,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional assignment operator '?='.</summary>
         QuestionEquals = 101,
 
+        /// <summary>The null conditional assignment operator '?='.</summary>
+        QuestionQuestion = 101,
+
         #endregion Operators
 
         #region Keywords
@@ -858,7 +861,7 @@ namespace System.Management.Automation.Language
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
             /*      QuestionEquals  */ TokenFlags.AssignmentOperator,
-            /*     Reserved slot 4  */ TokenFlags.None,
+            /*    QuestionQuestion  */ TokenFlags.BinaryOperator,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,

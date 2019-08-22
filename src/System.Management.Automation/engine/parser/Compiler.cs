@@ -5247,6 +5247,15 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_SplitOperator,
                         _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
+                case TokenKind.QuestionQuestion:
+                    if (lhs is ConstantExpression lhsConstExpr && lhsConstExpr.Value != null)
+                    {
+                        return lhs;
+                    }
+                    else
+                    {
+                        return Expression.Coalesce(lhs, rhs);
+                    }
             }
 
             throw new InvalidOperationException("Unknown token in binary operator.");
