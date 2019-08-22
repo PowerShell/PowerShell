@@ -129,3 +129,51 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
     }
 }
+
+Describe "Default enablement of Experimental Features" -Tags CI {
+    BeforeAll {
+        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+
+        Function BeEnabled {
+            [CmdletBinding()]
+            Param(
+                $ActualValue,
+                $Name,
+                [switch]$Negate
+            )
+
+            $failure = if ($Negate) {
+                "Expected: Feature $Name to not be Enabled"
+            }
+            else {
+                "Expected: Feature $Name to be Enabled"
+            }
+
+            return [PSCustomObject]@{
+                Succeeded = if ($Negate) {
+                    $ActualValue -eq $false
+                }
+                else {
+                    $ActualValue -eq $true
+                }
+                FailureMessage = $failure
+            }
+        }
+
+        Add-AssertionOperator -Name 'BeEnabled' -Test $Function:BeEnabled
+    }
+
+    It "On stable builds, Experimental Features are not enabled" -Skip:($isPreview) {
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+        }
+    }
+
+    It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+        (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
+
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+        }
+    }
+}

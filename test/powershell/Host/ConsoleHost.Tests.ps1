@@ -245,41 +245,78 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
-    Context "-LoadProfile Commandline switch" {
+    Context "-Login pwsh switch" {
         BeforeAll {
-            if (Test-Path $profile) {
-                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
-                Rename-Item -Path $profile -NewName "$profile.backup"
+            $profilePath = "~/.profile"
+            $backupProfilePath = "profile.bak"
+            if (Test-Path $profilePath) {
+                Move-Item -Path $profilePath -Destination $backupProfilePath -Force
             }
 
-            Set-Content -Path $profile -Value "'profile-loaded'" -Force
+            $envVarName = 'PSTEST_PROFILE_LOAD'
+
+            $guid = New-Guid
+
+            Set-Content -Force -Path $profilePath -Value @"
+export $envVarName='$guid'
+"@
         }
 
         AfterAll {
-            Remove-Item -Path $profile -ErrorAction SilentlyContinue
-
-            if (Test-Path "$profile.backup") {
-                Rename-Item -Path "$profile.backup" -NewName $profile
+            if (Test-Path $backupProfilePath) {
+                Move-Item -Path $backupProfilePath -Destination $profilePath -Force
             }
         }
 
-        It "Verifies pwsh will accept <switch> switch" -TestCases @(
-            @{ switch = "-l"},
-            @{ switch = "-loadprofile"}
-        ){
-            param($switch)
+        It "Doesn't run the login profile when -Login not used" {
+            $result = & $powershell -Command "`$env:$envVarName"
+            $result | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
 
-            if (Test-Path $profile) {
-                & pwsh $switch -command exit | Should -BeExactly "profile-loaded"
+        It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
+            $result = & $powershell -nop -c 'Write-Output "-login"'
+            $result | Should -BeExactly '-login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Doesn't falsely recognise -Login when used after -Command" {
+            $result = & $powershell -nop -c 'Write-Output' -Login
+            $result | Should -BeExactly '-Login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Accepts the <LoginSwitch> switch for -Login and behaves correctly" -TestCases @(
+            @{ LoginSwitch = '-l' }
+            @{ LoginSwitch = '-L' }
+            @{ LoginSwitch = '-login' }
+            @{ LoginSwitch = '-Login' }
+            @{ LoginSwitch = '-LOGIN' }
+            @{ LoginSwitch = '-log' }
+        ) {
+            param($LoginSwitch)
+
+            $result = & $powershell $LoginSwitch -NoProfile -Command "`$env:$envVarName"
+
+            if ($IsWindows) {
+                $result | Should -BeNullOrEmpty
+                $LASTEXITCODE | Should -Be 0
+                return
             }
-            else {
-                # In CI, may not be able to write to $profile location, so just verify that the switch is accepted
-                # and no error message is in the output
-                & pwsh $switch -command exit *>&1 | Should -BeNullOrEmpty
-            }
+
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Starts as a login shell with '-' prepended to name" -Skip:(-not (Get-Command -Name /bin/bash -ErrorAction Ignore)) {
+            $quoteEscapedPwsh = $powershell.Replace("'", "\'")
+            $pwshCommand = "`$env:$envVarName"
+            $bashCommand = "exec -a '-pwsh' '$quoteEscapedPwsh' -NoProfile -Command '`$env:$envVarName' ''"
+            $result = /bin/bash -c $bashCommand
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
         }
     }
-
 
     Context "-SettingsFile Commandline switch" {
 
@@ -849,8 +886,9 @@ public enum ShowWindowCommands : int
 }
 
 Describe "Console host api tests" -Tag CI {
-    Context "String escape sequences" {
+    Context "String escape and control sequences" {
         $esc = [char]0x1b
+        $csi = [char]0x9b
         $testCases =
             @{InputObject = "abc"; Length = 3; Name = "No escapes"},
             @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
@@ -861,11 +899,29 @@ Describe "Console host api tests" -Tag CI {
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
+            @{InputObject = "${csi}31mabc"; Length = 3; Name = "C1 CSI at start"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 3; Name = "C1 CSI at start and end"}
+            @{InputObject = "abc${csi}m"; Length = 3; Name = "C1 CSI, no params"}
+            @{InputObject = "abc${csi}#{"; Length = 3; Name = "C1 CSI, XTPUSHSGR"}
+            @{InputObject = "abc${csi}#}"; Length = 3; Name = "C1 CSI, XTPOPSGR"}
+            @{InputObject = "abc${csi}#p"; Length = 3; Name = "C1 CSI, XTPUSHSGR (alias)"}
+            @{InputObject = "abc${csi}#q"; Length = 3; Name = "C1 CSI, XTPOPSGR (alias)"}
+            @{InputObject = "abc${esc}[0#p"; Length = 3; Name = "XTPUSHSGR, with param"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 3; Name = "XTPOPSGR, with multiple params"}
         }
         else
         {
             @{InputObject = "$esc[31mabc"; Length = 8; Name = "Escape at start - no virtual term support"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 12; Name = "Escape at start and end - no virtual term support"}
+            @{InputObject = "${csi}31mabc"; Length = 7; Name = "C1 CSI at start - no virtual term support"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 10; Name = "C1 CSI at start and end - no virtual term support"}
+            @{InputObject = "abc${csi}m"; Length = 5; Name = "C1 CSI, no params - no virtual term support"}
+            @{InputObject = "abc${csi}#{"; Length = 6; Name = "C1 CSI, XTPUSHSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#}"; Length = 6; Name = "C1 CSI, XTPOPSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#p"; Length = 6; Name = "C1 CSI, XTPUSHSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${csi}#q"; Length = 6; Name = "C1 CSI, XTPOPSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${esc}[0#p"; Length = 8; Name = "XTPUSHSGR, with param - no virtual term support"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 10; Name = "XTPOPSGR, with multiple params - no virtual term support"}
         }
 
         It "Should properly calculate buffer cell width of '<Name>'" -TestCases $testCases {
