@@ -3170,18 +3170,23 @@ namespace System.Management.Automation.Language
             return comparer(target.Expression.Cast(target.LimitType), ExpressionCache.Constant(0).Cast(target.LimitType)).Cast(typeof(object));
         }
 
-        private DynamicMetaObject CompareLT(DynamicMetaObject target,
-                                            DynamicMetaObject arg,
-                                            DynamicMetaObject errorSuggestion)
+        private DynamicMetaObject CompareLT(
+            DynamicMetaObject target,
+            DynamicMetaObject arg,
+            DynamicMetaObject errorSuggestion)
         {
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerable == null && (target.Value == null || arg.Value == null))
+            if (enumerable == null
+                && (LanguagePrimitives.IsNullLike(target.Value)
+                    || LanguagePrimitives.IsNullLike(arg.Value)))
             {
-                Expression result =
-                      target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.LessThan)
-                    : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                    : arg.Value != null ? ExpressionCache.BoxedTrue
-                    : ExpressionCache.BoxedFalse;
+                Expression result = target.LimitType.IsNumeric()
+                    ? CompareWithZero(target, Expression.LessThan)
+                    : arg.LimitType.IsNumeric()
+                        ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
+                        : !LanguagePrimitives.IsNullLike(arg.Value)
+                            ? ExpressionCache.BoxedTrue
+                            : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3190,18 +3195,23 @@ namespace System.Management.Automation.Language
                 ?? BinaryComparison(target, arg, e => Expression.LessThan(e, ExpressionCache.Constant(0)));
         }
 
-        private DynamicMetaObject CompareLE(DynamicMetaObject target,
-                                            DynamicMetaObject arg,
-                                            DynamicMetaObject errorSuggestion)
+        private DynamicMetaObject CompareLE(
+            DynamicMetaObject target,
+            DynamicMetaObject arg,
+            DynamicMetaObject errorSuggestion)
         {
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerable == null && (target.Value == null || arg.Value == null))
+            if (enumerable == null
+                && (LanguagePrimitives.IsNullLike(target.Value)
+                    || LanguagePrimitives.IsNullLike(arg.Value)))
             {
-                Expression result =
-                      target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.LessThan)
-                    : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                    : target.Value != null ? ExpressionCache.BoxedFalse
-                    : ExpressionCache.BoxedTrue;
+                Expression result = target.LimitType.IsNumeric()
+                    ? CompareWithZero(target, Expression.LessThan)
+                    : arg.LimitType.IsNumeric()
+                        ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
+                        : !LanguagePrimitives.IsNullLike(target.Value)
+                            ? ExpressionCache.BoxedFalse
+                            : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3210,20 +3220,25 @@ namespace System.Management.Automation.Language
                 ?? BinaryComparison(target, arg, e => Expression.LessThanOrEqual(e, ExpressionCache.Constant(0)));
         }
 
-        private DynamicMetaObject CompareGT(DynamicMetaObject target,
-                                            DynamicMetaObject arg,
-                                            DynamicMetaObject errorSuggestion)
+        private DynamicMetaObject CompareGT(
+            DynamicMetaObject target,
+            DynamicMetaObject arg,
+            DynamicMetaObject errorSuggestion)
         {
             // Handle a null operand as a special case here unless the target is enumerable or if one of the operands is numeric,
             // in which case null is converted to 0 and regular numeric comparison is done.
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerable == null && (target.Value == null || arg.Value == null))
+            if (enumerable == null
+                && (LanguagePrimitives.IsNullLike(target.Value)
+                    || LanguagePrimitives.IsNullLike(arg.Value)))
             {
-                Expression result =
-                      target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.GreaterThanOrEqual)
-                    : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.LessThan)
-                    : target.Value != null ? ExpressionCache.BoxedTrue
-                    : ExpressionCache.BoxedFalse;
+                Expression result = target.LimitType.IsNumeric()
+                    ? CompareWithZero(target, Expression.GreaterThanOrEqual)
+                    : arg.LimitType.IsNumeric()
+                        ? CompareWithZero(arg, Expression.LessThan)
+                        : !LanguagePrimitives.IsNullLike(target.Value)
+                            ? ExpressionCache.BoxedTrue
+                            : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3232,20 +3247,25 @@ namespace System.Management.Automation.Language
                 ?? BinaryComparison(target, arg, e => Expression.GreaterThan(e, ExpressionCache.Constant(0)));
         }
 
-        private DynamicMetaObject CompareGE(DynamicMetaObject target,
-                                            DynamicMetaObject arg,
-                                            DynamicMetaObject errorSuggestion)
+        private DynamicMetaObject CompareGE(
+            DynamicMetaObject target,
+            DynamicMetaObject arg,
+            DynamicMetaObject errorSuggestion)
         {
             // Handle a null operand as a special case here unless the target is enumerable or if one of the operands is numeric,
             // in which case null is converted to 0 and regular numeric comparison is done.
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerable == null && (target.Value == null || arg.Value == null))
+            if (enumerable == null
+                && (LanguagePrimitives.IsNullLike(target.Value)
+                    || LanguagePrimitives.IsNullLike(arg.Value)))
             {
-                Expression result =
-                      target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.GreaterThanOrEqual)
-                    : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.LessThan)
-                    : arg.Value != null ? ExpressionCache.BoxedFalse
-                    : ExpressionCache.BoxedTrue;
+                Expression result = target.LimitType.IsNumeric()
+                    ? CompareWithZero(target, Expression.GreaterThanOrEqual)
+                    : arg.LimitType.IsNumeric()
+                        ? CompareWithZero(arg, Expression.LessThan)
+                        : !LanguagePrimitives.IsNullLike(arg.Value)
+                            ? ExpressionCache.BoxedFalse
+                            : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
