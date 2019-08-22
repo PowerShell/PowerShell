@@ -86,4 +86,33 @@ Describe 'Null Representatives' -Tags 'CI' {
             @{ Value = [NullString]::Value; ExpectedCount = 5 }
         )
     }
+
+    Context 'Numeric Comparisons' {
+        BeforeAll {
+            $TestValues = @(
+                @{ Value = { $null } }
+                @{ Value = { [DBNull]::Value } }
+                @{ Value = { [NullString]::Value } }
+                @{ Value = { [AutomationNull]::Value } }
+            )
+        }
+
+        It '<Value> should be considered greater than or equal to 0' -TestCases $TestValues {
+            param($Value)
+
+            0 -ge $Value.InvokeReturnAsIs() | Should -BeTrue
+        }
+
+        It '<Value> should be less than 1' -TestCases $TestValues {
+            param($Value)
+
+            $Value.InvokeReturnAsIs() -lt 1 | Should -BeTrue
+        }
+
+        It '<Value> should be greater than -1' -TestCases $TestValues {
+            param($Value)
+
+            $Value.InvokeReturnAsIs() -gt -1 | Should -BeTrue
+        }
+    }
 }
