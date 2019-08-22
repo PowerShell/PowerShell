@@ -3012,7 +3012,6 @@ namespace System.Management.Automation
                 return _verbosePreference;
             }
 
-
             set
             {
                 if (value == ActionPreference.Suspend)

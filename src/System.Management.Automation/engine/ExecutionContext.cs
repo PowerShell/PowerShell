@@ -604,6 +604,7 @@ namespace System.Management.Automation
                         result = (T)PSObject.Base(val);
                         defaultUsed = false;
                     }
+
                     if (result is ActionPreference actionPreferenceValue)
                     {
                         CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
