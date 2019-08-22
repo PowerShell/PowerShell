@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertFrom-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "DelimiterPath",
+    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "Delimiter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
     public sealed class ConvertFromCsvCommand : PSCmdlet
     {
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
+        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
