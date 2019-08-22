@@ -294,7 +294,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                     Write-Progress -Activity 'This shows progress'
                 }
                 Test-Break -WarningAction Break -InformationAction Break *>$null
-                $WarningPreference = $VerbosePreference = $DebugPreference = $InformationPreference = $ProgressPreference = [actionpreference]::Break
+                $WarningPreference = $VerbosePreference = $DebugPreference = $InformationPreference = $ProgressPreference = [System.Management.Automation.ActionPreference]::Break
                 Test-Break *>$null
             }
 
@@ -314,23 +314,23 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
             $results[1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 84
         }
 
-        It 'Write-Warning should trigger a breakpoint from $WarningPreference = [actionpreference]::Break' {
+        It 'Write-Warning should trigger a breakpoint from $WarningPreference = [System.Management.Automation.ActionPreference]::Break' {
             $results[2] | ShouldHaveExtent -Line 5 -FromColumn 21 -ToColumn 71
         }
 
-        It 'Write-Verbose should trigger a breakpoint from $VerbosePreference = [actionpreference]::Break' {
+        It 'Write-Verbose should trigger a breakpoint from $VerbosePreference = [System.Management.Automation.ActionPreference]::Break' {
             $results[3] | ShouldHaveExtent -Line 6 -FromColumn 21 -ToColumn 71
         }
 
-        It 'Write-Debug should trigger a breakpoint from $DebugPreference = [actionpreference]::Break' {
+        It 'Write-Debug should trigger a breakpoint from $DebugPreference = [System.Management.Automation.ActionPreference]::Break' {
             $results[4] | ShouldHaveExtent -Line 7 -FromColumn 21 -ToColumn 67
         }
 
-        It 'Write-Information should trigger a breakpoint from $InformationPreference = [actionpreference]::Break' {
+        It 'Write-Information should trigger a breakpoint from $InformationPreference = [System.Management.Automation.ActionPreference]::Break' {
             $results[5] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 84
         }
 
-        It 'Write-Progress should trigger a breakpoint from $ProgressPreference = [actionpreference]::Break' {
+        It 'Write-Progress should trigger a breakpoint from $ProgressPreference = [System.Management.Automation.ActionPreference]::Break' {
             $results[6] | ShouldHaveExtent -Line 9 -FromColumn 21 -ToColumn 67
         }
     }
@@ -339,7 +339,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
 
         BeforeAll {
             $job = Start-Job {
-                $ErrorActionPreference = [actionpreference]::Break
+                $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Break
                 Get-Process -TheAnswer 42
             }
         }
