@@ -2764,7 +2764,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the object existed before the function call, the function
         /// returns a handle to the existing job object.
         /// </returns>
-        [DllImport(PinvokeDllNames.CreateJobObjectDllName, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
 
         /// <summary>
