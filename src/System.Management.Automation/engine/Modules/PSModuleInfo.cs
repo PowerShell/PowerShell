@@ -1206,17 +1206,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Lists the workflows exported by this module.
-        /// </summary>
-        public Dictionary<string, FunctionInfo> ExportedWorkflows
-        {
-            get
-            {
-                return new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
-            }
-        }
-
-        /// <summary>
         /// </summary>
         public ReadOnlyCollection<string> ExportedDscResources
         {
@@ -1582,10 +1571,6 @@ namespace System.Management.Automation
         /// Indicates that this is cmdlets-over-objects module (a powershell file with a .CDXML extension)
         /// </summary>
         Cim,
-        /// <summary>
-        /// Indicates that this is workflow module (a powershell file with a .XAML extension)
-        /// </summary>
-        Workflow,
     }
 
     /// <summary>

@@ -50,6 +50,16 @@ case "$1" in
 esac
 '@
 
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
+'@
+
     MacOSLauncherScript = @'
 #!/usr/bin/env bash
 open {0}

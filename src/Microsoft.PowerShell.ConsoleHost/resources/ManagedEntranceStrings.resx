@@ -125,14 +125,14 @@ https://aka.ms/powershell
 Type 'help' to get help.</value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
-    <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
+    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
                   [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
                   [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
-                  [-Interactive] [-LoadProfile] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}]  [-SettingsFile &lt;filePath&gt;] [-Version]
+                  [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
                   [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
@@ -293,10 +293,18 @@ All parameters are case-insensitive.</value>
     Present an interactive prompt to the user. Inverse for NonInteractive
     parameter.
 
--LoadProfile | -l
+-Login | -l
 
-    Load the PowerShell profiles. This is the default behavior even if this is
-    not specified.
+    On Linux and macOS, starts PowerShell as a login shell,
+    using /bin/sh to execute login profiles such as /etc/profile and ~/.profile.
+    On Windows, this switch does nothing.
+
+    Note that "-Login" is only supported as the first parameter to pwsh.
+
+-MTA
+
+    Start the shell using a multi-threaded apartment.
+    Only available on Windows.
 
 -NoExit | -noe
 
@@ -333,6 +341,11 @@ Hides the copyright banner at startup.
     "-ConfigurationName" argument.
 
     Example: "pwsh -SettingsFile c:\myproject\powershell.config.json"
+
+-STA
+
+    Start the shell using a single-threaded apartment.  This is the default.
+    Only available on Windows.
 
 -Version | -v
 

@@ -392,8 +392,8 @@ Possible matches are</value>
   <data name="IncompleteSwitchStatement" xml:space="preserve">
     <value>The switch statement was incomplete.</value>
   </data>
-  <data name="ParallelNotSupported" xml:space="preserve">
-    <value>The '-parallel' parameter can be used only within a workflow.</value>
+  <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
+    <value>The {0} '-{1}' parameter is reserved for future use.</value>
   </data>
   <data name="MissingFilenameOption" xml:space="preserve">
     <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>

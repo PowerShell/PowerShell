@@ -210,4 +210,10 @@
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
     <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
   </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>Parameter -MTA is not supported on this platform.</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>Parameter -STA is not supported on this platform.</value>
+  </data>
 </root>

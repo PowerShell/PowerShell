@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.PowerShell.Telemetry;
 
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -123,12 +124,8 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string profileDir;
-#if UNIX
-                profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
-#else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-
+                string profileDir = Platform.CacheDirectory;
+#if ! UNIX
                 if (!Directory.Exists(profileDir))
                 {
                     Directory.CreateDirectory(profileDir);
@@ -194,36 +191,20 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
-                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
-                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
-                // we always have to execute this call because we do not know if it has been created yet.
-                // The JumpList does persist as long as the filepath of the executable does not change but there
-                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
-                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
-                    }
-                    catch
-                    {
-                        // Sporadic failures have been observed in some environments. Since the JumpList persists once it
-                        // has been registered, there is no harm suppressing the occasional failure.
-                    }
-                }
-                );
+                TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
                         s_cpp.ConfigurationName);
@@ -231,12 +212,14 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SSHServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
                         s_cpp.ConfigurationName);
@@ -260,7 +243,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
@@ -1041,11 +1024,12 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
 
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+
+        private double _readyForInputTimeInMS;
+        private int _interactiveCommandCount;
 #endif
 
         private double _profileLoadTimeInMS;
-        private double _readyForInputTimeInMS;
-        private int _interactiveCommandCount;
 
         #endregion overrides
 
@@ -1391,11 +1375,7 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-#if STAMODE
                 exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
-#else
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName);
-#endif
             }
             while (false);
 
@@ -1470,12 +1450,12 @@ namespace Microsoft.PowerShell
 
                 _runspaceRef.Runspace.Close();
                 _runspaceRef = null;
-#if STAMODE
-                if (staMode) // don't recycle the Runspace in STA mode
+
+                if (staMode)
                 {
+                    // don't continue the session in STA mode
                     ShouldEndSession = true;
                 }
-#endif
             }
 
             return ExitCode;
@@ -1514,11 +1494,7 @@ namespace Microsoft.PowerShell
             {
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
                 Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-#if STAMODE
                 DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
-#else
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.InitialCommandArgs);
-#endif
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1628,25 +1604,21 @@ namespace Microsoft.PowerShell
                                                    PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
             }
 
+#if LEGACYTELEMETRY
             // Record how long it took from process start to runspace open for telemetry.
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
+#endif
 
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-#if STAMODE
-            // staMode will have following values:
-            // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
-            // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
-            // ThreadOptions should match on FullPS and NanoPS for corresponding ApartmentStates.
-            if (staMode)
+            if (staMode && Platform.IsWindowsDesktop)
             {
-                // we can't change ApartmentStates on CoreCLR
                 runspace.ApartmentState = ApartmentState.STA;
             }
-#endif
+
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
@@ -2549,8 +2521,10 @@ namespace Microsoft.PowerShell
                                 }
                             }
 
+#if LEGACYTELEMETRY
                             if (!inBlockMode)
                                 s_theConsoleHost._interactiveCommandCount += 1;
+#endif
                         }
                     }
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
@@ -2914,18 +2888,14 @@ namespace Microsoft.PowerShell
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
-#if STAMODE
             StaMode = staMode;
-#endif
             ConfigurationName = configurationName;
             InitialCommandArgs = initialCommandArgs;
         }
 
         internal string InitialCommand { get; set; }
         internal bool SkipProfiles { get; set; }
-#if STAMODE
         internal bool StaMode { get; set; }
-#endif
         internal string ConfigurationName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }

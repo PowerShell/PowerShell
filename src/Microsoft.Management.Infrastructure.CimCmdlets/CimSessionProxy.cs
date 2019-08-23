@@ -2114,10 +2114,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.PropertyName != null)
             {
-                pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassProperties != null)
                 {
+                    pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
                     foreach (CimPropertyDeclaration decl in cimClass.CimClassProperties)
                     {
                         DebugHelper.WriteLog("--- property name : {0}", 1, decl.Name);
@@ -2138,10 +2138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.MethodName != null)
             {
-                pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassMethods != null)
                 {
+                    pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                     foreach (CimMethodDeclaration decl in cimClass.CimClassMethods)
                     {
                         DebugHelper.WriteLog("--- method name : {0}", 1, decl.Name);
@@ -2162,10 +2162,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.QualifierName != null)
             {
-                pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassQualifiers != null)
                 {
+                    pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
                     foreach (CimQualifier qualifier in cimClass.CimClassQualifiers)
                     {
                         DebugHelper.WriteLog("--- qualifier name : {0}", 1, qualifier.Name);

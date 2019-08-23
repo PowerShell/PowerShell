@@ -220,6 +220,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("alpine-x64",
                      "fxdependent",
+                     "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
@@ -265,12 +266,12 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v15/Server/sqlite3'"
+        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3'"
         Push-Location $PSScriptRoot
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v15/Server/sqlite3 --exclude src/Modules/nuget.config
+            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config
         } finally {
             Pop-Location
         }
@@ -328,7 +329,7 @@ Fix steps:
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
-    if ($Options.Runtime -like 'win*' -or ($Options.Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+    if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $Environment.IsWindows)) {
         $Arguments += "/property:IsWindows=true"
     }
     else {
@@ -380,30 +381,50 @@ Fix steps:
     }
 
     try {
-        # Relative paths do not work well if cwd is not changed to project
-        Push-Location $Options.Top
-        Write-Log "Run dotnet $Arguments from $pwd"
-        Start-NativeExecution { dotnet $Arguments }
 
-        if ($CrossGen -and $Options.Runtime -ne 'fxdependent') {
-            ## fxdependent package cannot be CrossGen'ed
-            Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-            Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
-        } else {
+        if ($Options.Runtime -notlike 'fxdependent*') {
+            # Relative paths do not work well if cwd is not changed to project
+            Push-Location $Options.Top
+
+            if ($Options.Runtime -like 'win-arm*') {
+                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
+            } else {
+                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
+            }
+
+            Write-Log "Run dotnet $Arguments from $pwd"
+            Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
 
-            if ($Options.Runtime -eq 'fxdependent') {
-                $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
+            if ($CrossGen) {
+                ## fxdependent package cannot be CrossGen'ed
+                Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
+                Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
+            }
 
-                try {
-                    Push-Location $globalToolSrcFolder
-                    $Arguments += "--output", $publishPath
-                    Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
-                    Start-NativeExecution { dotnet $Arguments }
-                }
-                finally {
-                    Pop-Location
-                }
+        } else {
+            $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
+
+            if ($Options.Runtime -eq 'fxdependent') {
+                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
+            } elseif ($Options.Runtime -eq 'fxdependent-win-desktop') {
+                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
+            }
+
+            # Relative paths do not work well if cwd is not changed to project
+            Push-Location $Options.Top
+            Write-Log "Run dotnet $Arguments from $pwd"
+            Start-NativeExecution { dotnet $Arguments }
+            Write-Log "PowerShell output: $($Options.Output)"
+
+            try {
+                Push-Location $globalToolSrcFolder
+                $Arguments += "--output", $publishPath
+                Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                Start-NativeExecution { dotnet $Arguments }
+            }
+            finally {
+                Pop-Location
             }
         }
     } finally {
@@ -423,6 +444,31 @@ Fix steps:
         Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
     } finally {
         Pop-Location
+    }
+
+    # publish powershell.config.json
+    $config = @{}
+    if ($Environment.IsWindows) {
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+    }
+
+    if ($ReleaseTag) {
+        $psVersion = $ReleaseTag
+    }
+    else {
+        $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
+    }
+
+    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
+        $expFeatures = [System.Collections.Generic.List[string]]::new()
+        & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+        $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
+    }
+
+    if ($config.Count -gt 0) {
+        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
@@ -479,17 +525,27 @@ function Restore-PSPackage
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
 
-        if ($Options.Runtime -eq 'fxdependent') {
+        if ($Options.Runtime -like 'fxdependent*') {
             $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
         }
     }
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
 
-        if($Options.Runtime -ne 'fxdependent') {
-            $RestoreArguments = @("--runtime",$Options.Runtime, "--verbosity")
+        $sdkToUse = if (($Options.Runtime -eq 'fxdependent-win-desktop' -or $Options.Runtime -like 'win*')) { # this is fxd or some windows runtime
+            if ($Options.Runtime -like 'win-arm*') {
+                'Microsoft.NET.Sdk'
+            } else {
+                'Microsoft.NET.Sdk.WindowsDesktop'
+            }
         } else {
-            $RestoreArguments = @("--verbosity")
+            'Microsoft.NET.Sdk'
+        }
+
+        if ($Options.Runtime -notlike 'fxdependent*') {
+            $RestoreArguments = @("--runtime", $Options.Runtime, "/property:SDKToUse=$sdkToUse", "--verbosity")
+        } else {
+            $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
         }
 
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
@@ -580,6 +636,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "alpine-x64",
                      "fxdependent",
+                     "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
@@ -638,7 +695,7 @@ function New-PSOptions {
         }
     }
 
-    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $Environment.IsWindows)) {
         "powershell-win-core"
     } else {
         "powershell-unix"
@@ -652,7 +709,7 @@ function New-PSOptions {
         Write-Verbose "Using framework '$Framework'"
     }
 
-    $Executable = if ($Runtime -eq 'fxdependent') {
+    $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
     } elseif ($Environment.IsLinux -or $Environment.IsMacOS) {
         "pwsh"
@@ -662,7 +719,7 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -eq 'fxdependent') {
+        if ($Runtime -like 'fxdependent*') {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
         } else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
@@ -955,7 +1012,7 @@ function Start-PSPester {
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
     # Disable telemetry for all startups of pwsh in tests
-    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 1;"
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1096,7 +1153,7 @@ function Start-PSPester {
     try {
         $originalModulePath = $env:PSModulePath
         $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
-        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 'yes'
         if ($Unelevate)
         {
             Start-UnelevatedProcess -process $powershell -arguments ($PSFlags + "-c $Command")
@@ -1474,7 +1531,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
+    $installObtainUrl = "https://dot.net/v1"
+    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
@@ -1487,7 +1545,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                curl -sO $obtainUrl/uninstall/$uninstallScript
+                curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1497,13 +1555,13 @@ function Install-Dotnet {
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
-            curl -sO $obtainUrl/$installScript
+            curl -sO $installObtainUrl/$installScript
             bash ./$installScript -c $Channel -v $Version
         }
     } elseif ($Environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
-        Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+        Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
 
         if (-not $Environment.IsCoreCLR) {
             & ./$installScript -Channel $Channel -Version $Version
@@ -2158,7 +2216,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "System.Management.Automation.dll"
     )
@@ -2166,6 +2223,7 @@ function Start-CrossGen {
     # Add Windows specific libraries
     if ($Environment.IsWindows) {
         $psCoreAssemblyList += @(
+            "Microsoft.PowerShell.CoreCLR.Eventing.dll",
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",

@@ -137,5 +137,6 @@ namespace System.Management.Automation
         internal const string DeleteServiceDllName = "api-ms-win-service-management-l1-1-0.dll";             /*124*/
         internal const string QueryServiceConfigDllName = "api-ms-win-service-management-l2-1-0.dll";        /*125*/
         internal const string QueryServiceConfig2DllName = "api-ms-win-service-management-l2-1-0.dll";       /*126*/
+        internal const string SetServiceObjectSecurityDllName = "api-ms-win-service-management-l2-1-0.dll";  /*127*/
     }
 }

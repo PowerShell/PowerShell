@@ -909,11 +909,6 @@ namespace System.Management.Automation
         DefaultHelp = 0x1000,
 
         ///<summary>
-        /// Help for a Workflow.
-        /// </summary>
-        Workflow = 0x2000,
-
-        ///<summary>
         /// Help for a Configuration.
         /// </summary>
         Configuration = 0x4000,

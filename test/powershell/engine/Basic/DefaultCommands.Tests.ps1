@@ -5,6 +5,17 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $FullCLR = !$isCoreCLR
         $CoreWindows = $isCoreCLR -and $IsWindows
         $CoreUnix = $isCoreCLR -and !$IsWindows
+        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        if ($IsWindows) {
+            $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
+        }
+        else {
+            $configPath = Join-Path -Path $env:HOME -ChildPath '.config' -AdditionalChildPath 'powershell'
+        }
+
+        if (Test-Path "$configPath/powershell.config.json") {
+            Move-Item -Path "$configPath/powershell.config.json"  -Destination "$configPath/powershell.config.json.backup"
+        }
 
         $AllScope = '[System.Management.Automation.ScopedItemOptions]::AllScope'
         $ReadOnly = '[System.Management.Automation.ScopedItemOptions]::ReadOnly'
@@ -94,7 +105,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "ise",                              "powershell_ise.exe",               $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwmi",                             "Invoke-WMIMethod",                 $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwr",                              "Invoke-WebRequest",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
+"Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "lp",                               "Out-Printer",                      $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "ls",                               "Get-ChildItem",                    $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "man",                              "help",                             $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
@@ -485,11 +496,48 @@ Describe "Verify approved aliases list" -Tags "CI" {
             # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
             # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
             $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "PSWorkflow", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core")
-            Import-Module -Name $moduleList -ErrorAction SilentlyContinue
-            $currentAliasList = Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source }
+            $getAliases = {
+                param($moduleList)
+
+                if ($moduleList -is [string]) {
+                    $moduleList = $moduleList | ConvertFrom-Json
+                }
+
+                Import-Module -Name $moduleList -ErrorAction SilentlyContinue
+                Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source }
+            }
+
+            $getCommands = {
+                param($moduleList)
+
+                if ($moduleList -is [string]) {
+                    $moduleList = $moduleList | ConvertFrom-Json
+                }
+
+                Import-Module -Name $moduleList -ErrorAction SilentlyContinue
+                Get-Command -CommandType Cmdlet | Where-Object { $moduleList -contains $_.Source }
+            }
+
+            # On Preview releases, Experimental Features may add new cmdlets/aliases, so we get cmdlets/aliases with features disabled
+            if ($isPreview) {
+                $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
+                Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
+                $currentAliasList = pwsh -out XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
+                $currentCmdletList = pwsh -out XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
+            }
+            else {
+                $currentAliasList = & $getAliases $moduleList
+                $currentCmdletList = & $getCommands $moduleList
+            }
 
             $commandList  = $commandString | ConvertFrom-CSV -Delimiter ","
             $aliasFullList  = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  }
+    }
+
+    AfterAll {
+        if (Test-Path "$configPath/powershell.config.json.backup") {
+            Move-Item -Path "$configPath/powershell.config.json.backup"  -Destination "$configPath/powershell.config.json"
+        }
     }
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
@@ -530,13 +578,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
         $cmdletList = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet" } | Select-Object -ExpandProperty Name
-        $currentCmdletList = (Get-Command -CommandType Cmdlet | Where-Object { $moduleList -contains $_.Source }).Name
 
-        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $cmdletList
-
-        # Below 'Should Be' don't show full list wrong Cmdlets so we output them explicitly
-        # if all Cmdlets is Ok we output nothing
-        $result | Write-Host
+        $result = (Compare-Object -ReferenceObject $currentCmdletList.Name -DifferenceObject $cmdletList).InputObject
         $result | Should -BeNullOrEmpty
     }
 
@@ -545,12 +588,13 @@ Describe "Verify approved aliases list" -Tags "CI" {
             Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"} |
             Select-Object -Property Name, ConfirmImpact
 
-        $currentCmdletList = Get-Command -CommandType Cmdlet |
+        # if Preview, $currentCmdletList is deserialized, so we re-hydrate them so comparison succeeds
+        $currentCmdletList = $currentCmdletList | ForEach-Object { Get-Command $_.Name } |
             Where-Object { $moduleList -contains $_.Source -and $null -ne $_.ImplementingType } |
             Select-Object -Property Name, @{
                 Name = 'ConfirmImpact'
                 Expression = {
-                    if ($t = $_.ImplementingType) {
+                    if (($t = $_.ImplementingType)) {
                         $t.GetCustomAttributes($true).Where{$_.TypeId.Name -eq 'CmdletAttribute'}.ConfirmImpact
                     }
                 }
@@ -558,9 +602,12 @@ Describe "Verify approved aliases list" -Tags "CI" {
 
         # -PassThru is provided to give meaningful output when differences arise
         $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList -Property ConfirmImpact -PassThru
-
-        # As above, the test message doesn't give full list, so we write-host it explicitly
-        $result | Sort-Object -Property Name, SideIndicator | Write-Host
         $result | Should -BeNullOrEmpty
+    }
+}
+
+Describe "PATHEXT defaults" -Tags 'CI' {
+    It "PATHEXT contains .CPL" -Skip:(!$IsWindows) {
+        $env:PATHEXT.Split(";") | Should -Contain ".CPL"
     }
 }
