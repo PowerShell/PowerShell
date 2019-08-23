@@ -145,9 +145,9 @@ namespace System.Management.Automation.Language
             if (!string.IsNullOrEmpty(sourceLine))
             {
                 int spacesBeforeError = position.StartColumnNumber - 1;
-                int errorLength = (position.StartLineNumber == position.EndLineNumber)
+                int errorLength = (position.StartLineNumber == position.EndLineNumber && position.EndColumnNumber <= sourceLine.Length + 1)
                                       ? position.EndColumnNumber - position.StartColumnNumber
-                                      : sourceLine.TrimEnd().Length - position.StartColumnNumber + 1;
+                                      : sourceLine.Length - position.StartColumnNumber + 1;
 
                 // Expand tabs before figuring out if we need to truncate the line
                 if (sourceLine.IndexOf('\t') != -1)

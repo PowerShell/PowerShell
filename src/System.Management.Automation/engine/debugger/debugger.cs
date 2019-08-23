@@ -667,6 +667,15 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal virtual void Break(object triggerObject = null)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Passes the debugger command to the internal script debugger command processor.  This
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
@@ -946,6 +955,11 @@ namespace System.Management.Automation
                 return _isLocalSession.Value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the object that triggered the current breakpoint.
+        /// </summary>
+        private object TriggerObject { get; set; }
 
         #endregion properties
 
@@ -1734,7 +1748,9 @@ namespace System.Management.Automation
                 return;
             }
 
-            _context.SetVariable(SpecialVariables.PSDebugContextVarPath, new PSDebugContext(invocationInfo, breakpoints));
+            bool oldQuestionMarkVariableValue = _context.QuestionMarkVariableValue;
+
+            _context.SetVariable(SpecialVariables.PSDebugContextVarPath, new PSDebugContext(invocationInfo, breakpoints, TriggerObject));
 
             FunctionInfo defaultPromptInfo = null;
             string originalPromptString = null;
@@ -1847,6 +1863,8 @@ namespace System.Management.Automation
 
                 DebuggerStopEventArgs oldArgs;
                 _debuggerStopEventArgs.TryPop(out oldArgs);
+
+                _context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
                 _inBreakpoint = false;
             }
@@ -2497,6 +2515,39 @@ namespace System.Management.Automation
             else
             {
                 DisableDebuggerStepping();
+            }
+        }
+
+        /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal override void Break(object triggerObject = null)
+        {
+            if (!IsDebugHandlerSubscribed &&
+                (UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
+            {
+                // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
+                // so that this command is effective.
+                UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+            }
+
+            // Store the triggerObject so that we can add it to PSDebugContext
+            TriggerObject = triggerObject;
+
+            // Set debugger to step mode so that a break can occur.
+            SetDebuggerStepMode(true);
+
+            // If the debugger is enabled and we are not in a breakpoint, trigger an immediate break in the current location
+            if (_context._debuggingMode > 0)
+            {
+                using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
+                {
+                    if (enumerator.MoveNext())
+                    {
+                        OnSequencePointHit(enumerator.Current.FunctionContext);
+                    }
+                }
             }
         }
 
@@ -4101,6 +4152,15 @@ namespace System.Management.Automation
             get { return _wrappedDebugger.IsActive; }
         }
 
+        /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal override void Break(object triggerObject = null)
+        {
+            _wrappedDebugger.Break(triggerObject);
+        }
+
         #endregion
 
         #region IDisposable
@@ -4776,15 +4836,15 @@ namespace System.Management.Automation
         public DebuggerCommandProcessor()
         {
             _commandTable = new Dictionary<string, DebuggerCommand>(StringComparer.OrdinalIgnoreCase);
-            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, true, false);
-            _commandTable[StepOutCommand] = _commandTable[StepOutShortcut] = new DebuggerCommand(StepOutCommand, DebuggerResumeAction.StepOut, false, false);
-            _commandTable[StepOverCommand] = _commandTable[StepOverShortcut] = new DebuggerCommand(StepOverCommand, DebuggerResumeAction.StepOver, true, false);
-            _commandTable[ContinueCommand] = _commandTable[ContinueShortcut] = new DebuggerCommand(ContinueCommand, DebuggerResumeAction.Continue, false, false);
-            _commandTable[StopCommand] = _commandTable[StopShortcut] = new DebuggerCommand(StopCommand, DebuggerResumeAction.Stop, false, false);
-            _commandTable[GetStackTraceShortcut] = new DebuggerCommand("get-pscallstack", null, false, false);
-            _commandTable[HelpCommand] = _commandTable[HelpShortcut] = _helpCommand = new DebuggerCommand(HelpCommand, null, false, true);
-            _commandTable[ListCommand] = _commandTable[ListShortcut] = _listCommand = new DebuggerCommand(ListCommand, null, true, true);
-            _commandTable[string.Empty] = new DebuggerCommand(string.Empty, null, false, true);
+            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, repeatOnEnter: true, executedByDebugger: false);
+            _commandTable[StepOutCommand] = _commandTable[StepOutShortcut] = new DebuggerCommand(StepOutCommand, DebuggerResumeAction.StepOut, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[StepOverCommand] = _commandTable[StepOverShortcut] = new DebuggerCommand(StepOverCommand, DebuggerResumeAction.StepOver, repeatOnEnter: true, executedByDebugger: false);
+            _commandTable[ContinueCommand] = _commandTable[ContinueShortcut] = new DebuggerCommand(ContinueCommand, DebuggerResumeAction.Continue, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[StopCommand] = _commandTable[StopShortcut] = new DebuggerCommand(StopCommand, DebuggerResumeAction.Stop, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[GetStackTraceShortcut] = new DebuggerCommand("get-pscallstack", null, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[HelpCommand] = _commandTable[HelpShortcut] = _helpCommand = new DebuggerCommand(HelpCommand, null, repeatOnEnter: false, executedByDebugger: true);
+            _commandTable[ListCommand] = _commandTable[ListShortcut] = _listCommand = new DebuggerCommand(ListCommand, null, repeatOnEnter: true, executedByDebugger: true);
+            _commandTable[string.Empty] = new DebuggerCommand(string.Empty, null, repeatOnEnter: false, executedByDebugger: true);
         }
 
         /// <summary>
@@ -5129,11 +5189,22 @@ namespace System.Management.Automation
     public class PSDebugContext
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PSDebugContext"/> class.
         /// </summary>
-        /// <param name="invocationInfo">InvocationInfo.</param>
-        /// <param name="breakpoints">Breakpoints.</param>
+        /// <param name="invocationInfo">The invocation information for the current command.</param>
+        /// <param name="breakpoints">The breakpoint(s) that caused the script to break in the debugger.</param>
         public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
+            : this(invocationInfo, breakpoints, triggerObject: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSDebugContext"/> class.
+        /// </summary>
+        /// <param name="invocationInfo">The invocation information for the current command.</param>
+        /// <param name="breakpoints">The breakpoint(s) that caused the script to break in the debugger.</param>
+        /// <param name="triggerObject">The object that caused the script to break in the debugger.</param>
+        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject)
         {
             if (breakpoints == null)
             {
@@ -5142,6 +5213,7 @@ namespace System.Management.Automation
 
             this.InvocationInfo = invocationInfo;
             this.Breakpoints = breakpoints.ToArray();
+            this.Trigger = triggerObject;
         }
 
         /// <summary>
@@ -5154,6 +5226,11 @@ namespace System.Management.Automation
         /// were hit. Otherwise, the execution was suspended as part of a step operation.
         /// </summary>
         public Breakpoint[] Breakpoints { get; private set; }
+
+        /// <summary>
+        /// Gets the object that triggered the current dynamic breakpoint.
+        /// </summary>
+        public object Trigger { get; private set; }
     }
 
     #endregion
