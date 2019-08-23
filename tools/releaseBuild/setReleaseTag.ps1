@@ -19,6 +19,8 @@ function New-BuildInfoJson {
         [switch] $IsDaily
     )
 
+    $blobName = $ReleaseTag  -replace '\.', '-'
+
     $isPreview = $ReleaseTag -like '*-*'
 
     $filename = 'stable.json'
@@ -33,6 +35,7 @@ function New-BuildInfoJson {
 
     @{
         ReleaseTag = $ReleaseTag
+        BlobName = $blobName
     } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
 
     $resolvedPath = (Resolve-Path -Path $filename).ProviderPath
@@ -76,7 +79,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             $versionPart = $versionPart -replace '-.*$'
         }
 
-        $releaseTag = "$versionPart-daily.$((get-date).AddHours(2).ToString('yyyyMMddHH'))"
+        $releaseTag = "$versionPart-daily.$((get-date).AddHours(2).ToString('yyyyMMdd'))"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
