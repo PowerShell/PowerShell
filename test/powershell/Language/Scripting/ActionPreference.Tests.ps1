@@ -120,7 +120,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $DisplayValue
         )
 
-        $global:e = {
+        $e = {
             Set-Variable -Name $ActionPreferenceVariableName -Value $Value
             Test-ActionPreferenceVariableSuspendValue -Value $Value
         } | Should -Throw -ErrorId "System.NotSupportedException$(if ($StreamName -ne 'Error') {",Microsoft.PowerShell.Commands.Write${StreamName}Command"})" -PassThru
