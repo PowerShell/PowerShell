@@ -355,7 +355,7 @@ namespace System.Management.Automation.Runspaces
                                 }
                                 elseif ($_.Duration.TotalMinutes -ge 1) {
                                     $formatString = ""m\:ss\.fff""
-                                } 
+                                }
                                 else {
                                     $formatString = ""s\.fff""
                                 }
@@ -1224,12 +1224,18 @@ namespace System.Management.Automation.Runspaces
                     .GroupByScriptBlock("Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent", customControl: sharedControls[0])
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
+                    .AddHeader(Alignment.Left, label: "PreRelease", width: 10)
                     .AddHeader(Alignment.Left, width: 35)
                     .AddHeader(Alignment.Left, width: 9, label: "PSEdition")
                     .AddHeader(Alignment.Left, label: "ExportedCommands")
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
+                        .AddScriptBlockColumn(@"
+                            if ($_.PrivateData -and $_.PrivateData.PSData)
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }")
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn(@"
                             $result = [System.Collections.ArrayList]::new()
@@ -1256,11 +1262,17 @@ namespace System.Management.Automation.Runspaces
                 TableControl.Create()
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
+                    .AddHeader(Alignment.Left, label: "PreRelease", width: 10)
                     .AddHeader(Alignment.Left, width: 35)
                     .AddHeader(Alignment.Left, label: "ExportedCommands")
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
+                        .AddScriptBlockColumn(@"
+                            if ($_.PrivateData -and $_.PrivateData.PSData)
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }")
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
@@ -1279,6 +1291,13 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Description")
                         .AddItemProperty(@"ModuleType")
                         .AddItemProperty(@"Version")
+                        .AddItemScriptBlock(
+                            @"
+                            if ($_.PrivateData -and $_.PrivateData.PSData)
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }",
+                            label: "PreRelease")
                         .AddItemProperty(@"NestedModules")
                         .AddItemScriptBlock(@"$_.ExportedFunctions.Keys", label: "ExportedFunctions")
                         .AddItemScriptBlock(@"$_.ExportedCmdlets.Keys", label: "ExportedCmdlets")

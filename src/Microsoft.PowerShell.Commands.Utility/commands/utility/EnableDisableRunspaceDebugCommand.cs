@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The optional breakpoint objects to use for debugging.
+        /// Gets or sets the optional breakpoint objects to use for debugging.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
         [Parameter(Position = 1,
@@ -555,19 +555,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Runspace currentRunspace = this.Context.CurrentRunspace;
 
-            if ((currentRunspace != null) && (currentRunspace.Debugger != null))
+            if (currentRunspace != null && currentRunspace.Debugger != null)
             {
-                if (!currentRunspace.Debugger.IsDebugHandlerSubscribed &&
-                    (currentRunspace.Debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
-                {
-                    // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
-                    // so that this command is effective.
-                    currentRunspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-                }
-
-                // Set debugger to step mode so that a break occurs immediately.
-                currentRunspace.Debugger.SetDebuggerStepMode(true);
                 WriteVerbose(string.Format(CultureInfo.InvariantCulture, Debugger.DebugBreakMessage, MyInvocation.ScriptLineNumber, MyInvocation.ScriptName));
+
+                currentRunspace.Debugger.Break();
             }
         }
 

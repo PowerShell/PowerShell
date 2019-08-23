@@ -22,6 +22,10 @@ Describe "PSVersionTable" -Tags "CI" {
             $expectedGitCommitIdPattern = "^$mainVersionPattern$"
             $unexpectectGitCommitIdPattern = $fullVersionPattern
         }
+
+        $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0"
+        $powerShellCompatibleVersions = $PSVersionTable.PSCompatibleVersions |
+            ForEach-Object {$_.ToString(2).SubString(0,3)}
     }
 
     It "Should have version table entries" {
@@ -156,6 +160,18 @@ Describe "PSVersionTable" -Tags "CI" {
         } finally {
             $PSVersionTable.Add("PSVersion", $VersionValue)
             $PSVersionTable.Add("PSEdition", $EditionValue)
+        }
+    }
+
+    It "Verify PSCompatibleVersions has an entry for all known versions of PowerShell" {
+        foreach ($version in $powerShellVersions) {
+            $version | Should -BeIn $powerShellCompatibleVersions
+        }
+    }
+
+    It "Verify PSCompatibleVersions has no unknown PowerShell entries" {
+        foreach ($version in $powerShellCompatibleVersions) {
+            $version | Should -BeIn $powerShellVersions
         }
     }
 }

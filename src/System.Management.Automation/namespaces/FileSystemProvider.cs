@@ -1845,11 +1845,10 @@ namespace Microsoft.PowerShell.Commands
                                 //  a) the user has asked to with the -FollowSymLinks switch parameter and
                                 //  b) the directory pointed to by the symlink has not already been visited,
                                 //     preventing symlink loops.
-                                //  c) it is not a name surrogate making it not a symlink
+                                //  c) it is not a reparse point with a target
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory) &&
-                                        InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(recursiveDirectory.FullName))
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2001,8 +2000,7 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo) &&
-                    InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(fileInfo.FullName))
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -7704,6 +7702,8 @@ namespace Microsoft.PowerShell.Commands
 
         private const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
 
+        private const uint IO_REPARSE_TAG_APPEXECLINK = 0x8000001B;
+
         private const string NonInterpretedPathPrefix = @"\??\";
 
         private const int MAX_PATH = 260;
@@ -7788,6 +7788,17 @@ namespace Microsoft.PowerShell.Commands
             public ushort PrintNameLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct REPARSE_DATA_BUFFER_APPEXECLINK
+        {
+            public uint ReparseTag;
+            public ushort ReparseDataLength;
+            public ushort Reserved;
+            public uint StringCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
+            public byte[] StringList;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -7989,13 +8000,23 @@ namespace Microsoft.PowerShell.Commands
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
-                    if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
-                        linkType = "SymbolicLink";
-                    else if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
-                        linkType = "Junction";
-                    else
+                    switch (reparseDataBuffer.ReparseTag)
                     {
-                        linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                        case IO_REPARSE_TAG_SYMLINK:
+                            linkType = "SymbolicLink";
+                            break;
+
+                        case IO_REPARSE_TAG_MOUNT_POINT:
+                            linkType = "Junction";
+                            break;
+
+                        case IO_REPARSE_TAG_APPEXECLINK:
+                            linkType = "AppExeCLink";
+                            break;
+
+                        default:
+                            linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                            break;
                     }
 
                     return linkType;
@@ -8026,22 +8047,25 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsNameSurrogateReparsePoint(string filePath)
+        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
         {
+            if (!IsReparsePoint(fileInfo))
+            {
+                return false;
+            }
 #if !UNIX
             var data = new WIN32_FIND_DATA();
-            using (SafeFileHandle handle = FindFirstFileEx(filePath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (SafeFileHandle handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                // Name surrogates are reparse points that point to other named entities local to the filesystem (like symlinks)
+                // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem (like symlinks)
                 // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
                 // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0)
+                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 & IO_REPARSE_TAG_APPEXECLINK) != IO_REPARSE_TAG_APPEXECLINK)
                 {
                     return false;
                 }
             }
 #endif
-            // true means the reparse point is a symlink
             return true;
         }
 
@@ -8205,25 +8229,33 @@ namespace Microsoft.PowerShell.Commands
                     throw new Win32Exception(lastError);
                 }
 
-                // Unmarshal to symbolic link to look for tags.
-                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
-
-                if (reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_SYMLINK && reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT)
-                    return null;
-
                 string targetDir = null;
 
-                if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
-                {
-                    targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
-                }
+                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
-                if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
+                switch (reparseDataBuffer.ReparseTag)
                 {
-                    // Since this is a junction we need to unmarshal to the correct structure.
-                    REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
+                    case IO_REPARSE_TAG_SYMLINK:
+                        targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
+                        break;
 
-                    targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
+                    case IO_REPARSE_TAG_MOUNT_POINT:
+                        REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
+                        targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
+                        break;
+
+                    case IO_REPARSE_TAG_APPEXECLINK:
+                        REPARSE_DATA_BUFFER_APPEXECLINK reparseAppExeDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_APPEXECLINK>(outBuffer);
+                        // The target file is at index 2
+                        if (reparseAppExeDataBuffer.StringCount >= 3)
+                        {
+                            string temp = Encoding.Unicode.GetString(reparseAppExeDataBuffer.StringList);
+                            targetDir = temp.Split('\0')[2];
+                        }
+                        break;
+
+                    default:
+                        return null;
                 }
 
                 if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))

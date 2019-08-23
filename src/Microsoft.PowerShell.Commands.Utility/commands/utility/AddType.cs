@@ -616,7 +616,7 @@ namespace Microsoft.PowerShell.Commands
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static readonly Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
+        private static readonly HashSet<string> s_sourceTypesCache = new HashSet<string>();
         private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<string> newTypes)
         {
-            AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor(_syntaxTreesHash);
+            AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor();
             visitor.Visit(compilation.Assembly.GlobalNamespace);
 
             foreach (var symbolName in visitor.DuplicateSymbols)
@@ -1074,15 +1074,8 @@ namespace Microsoft.PowerShell.Commands
         // Visit symbols in all namespaces and collect duplicates.
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
-            private readonly int _hash;
-
             public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
             public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
-
-            public AllNamedTypeSymbolsVisitor(int hash)
-            {
-                _hash = hash;
-            }
 
             public override void VisitNamespace(INamespaceSymbol symbol)
             {
@@ -1099,12 +1092,9 @@ namespace Microsoft.PowerShell.Commands
                 // It is namespace-fully-qualified name
                 var symbolFullName = symbol.ToString();
 
-                if (s_sourceTypesCache.TryGetValue(symbolFullName, out int hash))
+                if (s_sourceTypesCache.TryGetValue(symbolFullName, out _))
                 {
-                    if (hash == _hash)
-                    {
-                        DuplicateSymbols.Add(symbolFullName);
-                    }
+                    DuplicateSymbols.Add(symbolFullName);
                 }
                 else
                 {
@@ -1117,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var typeName in newTypes)
             {
-                s_sourceTypesCache.Add(typeName, _syntaxTreesHash);
+                s_sourceTypesCache.Add(typeName);
             }
         }
 

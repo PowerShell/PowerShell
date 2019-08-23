@@ -515,9 +515,12 @@ namespace System.Management.Automation
         // This is the start of the real implementation of autocomplete/intellisense/tab completion
         private static CommandCompletion CompleteInputImpl(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
+#if LEGACYTELEMETRY
+            // We could start collecting telemetry at a later date.
+            // We will leave the #if to remind us that we did this once.
             var sw = new Stopwatch();
             sw.Start();
-
+#endif
             using (var powershell = PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -590,8 +593,10 @@ namespace System.Management.Automation
                     }
 
                     var completionResults = results ?? EmptyCompletionResult;
-                    sw.Stop();
+
 #if LEGACYTELEMETRY
+                    // no telemetry here. We don't capture tab completion performance.
+                    sw.Stop();
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
