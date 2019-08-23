@@ -8060,7 +8060,10 @@ namespace Microsoft.PowerShell.Commands
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem (like symlinks)
                 // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
                 // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 & IO_REPARSE_TAG_APPEXECLINK) != IO_REPARSE_TAG_APPEXECLINK)
+                if (!handle.IsInvalid
+                    && data.dwReserved0 != IO_REPARSE_TAG_SYMLINK
+                    && data.dwReserved0 != IO_REPARSE_TAG_MOUNT_POINT
+                    && data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK)
                 {
                     return false;
                 }
