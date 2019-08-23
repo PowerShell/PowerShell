@@ -739,120 +739,105 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ErrorRecord()
         {
+            var formatNativeCommandError = "$_.Exception.Message";
+            var isNativeCommandError = "$_.FullyQualifiedErrorId -in @('NativeCommandErrorMessage', 'NativeCommandError')";
+            var isNotNativeCommandErrorScript = $"-not ({isNativeCommandError})";
+
+            var customControlNormalView = CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(formatNativeCommandError, selectedByScript: isNativeCommandError)
+                        .AddScriptBlockExpressionBinding(@"
+                                    $sb = [System.Text.StringBuilder]::new()
+
+                                    $myinv = $_.InvocationInfo
+                                    if ($myinv -and $myinv.MyCommand) {
+                                        switch -regex ($myinv.MyCommand.CommandType) {
+                                            ([System.Management.Automation.CommandTypes]::ExternalScript) {
+                                                if ($myinv.MyCommand.Path) {
+                                                    $sb = $sb.Append($myinv.MyCommand.Path).Append(' : ')
+                                                }
+
+                                                break
+                                            }
+
+                                            ([System.Management.Automation.CommandTypes]::Script) {
+                                                if ($myinv.MyCommand.ScriptBlock) {
+                                                    $sb = $sb.Append($myinv.MyCommand.ScriptBlock.ToString()).Append(' : ')
+                                                }
+
+                                                break
+                                            }
+
+                                            default {
+                                                if ($myinv.InvocationName -notmatch '^[&\.]?$') {
+                                                    $sb = $sb.Append($myinv.InvocationName).Append(' : ')
+                                                } elseif ($myinv.MyCommand.Name) {
+                                                    $sb = $sb.Append($myinv.MyCommand.Name).Append(' : ')
+                                                }
+
+                                                break
+                                            }
+                                        }
+                                    } elseif ($myinv -and $myinv.InvocationName) {
+                                        $sb = $sb.Append($myinv.InvocationName).Append(' : ')
+                                    }
+
+                                    $posmsg = [System.Text.StringBuilder]::new()
+
+                                    if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
+                                        $posmsg = $posmsg.Append(' : ').Append($_.PSMessageDetails)
+                                    }
+
+                                    if ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
+                                        $posmsg = $posmsg.AppendLine().Append($myinv.PositionMessage)
+                                    }
+
+                                    $posmsg = $posmsg.AppendLine().Append('+ CategoryInfo          : ')
+                                    $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+                                    if ($null -ne $errorCategoryMsg) {
+                                        $posmsg = $posmsg.Append($errorCategoryMsg)
+                                    } else {
+                                        $posmsg = $posmsg.Append($_.CategoryInfo)
+                                    }
+
+                                    $posmsg = $posmsg.AppendLine().Append('+ FullyQualifiedErrorId : ').Append($_.FullyQualifiedErrorId)
+
+                                    $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+                                    if ($null -ne $originInfo -and $null -ne $originInfo.PSComputerName) {
+                                        $posmsg = $posmsg.AppendLine().Append('+ PSComputerName        : ').Append($originInfo.PSComputerName)
+                                    }
+
+                                    if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+                                        $posmsg = $posmsg.Insert(0, $_.ErrorDetails.Message)
+                                        $sb = $sb.Append($posmsg)
+                                    } else {
+                                        $posmsg = $posmsg.Insert(0, $_.Exception.Message)
+                                        $sb = $sb.Append($posmsg).AppendLine()
+                                    }
+
+                                    $sb.ToString()
+                                ", selectedByScript: isNotNativeCommandErrorScript)
+                    .EndEntry()
+                .EndControl();
+
+            var customControlCategoryView = CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(formatNativeCommandError, selectedByScript: isNativeCommandError)
+                        .AddScriptBlockExpressionBinding("$_.CategoryInfo.GetMessage()", selectedByScript: isNotNativeCommandErrorScript)
+                    .EndEntry()
+                .EndControl();
+
             yield return new FormatViewDefinition("ErrorInstance",
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""CategoryView"")
-                                    {
-                                        $myinv = $_.InvocationInfo
-                                        if ($myinv -and $myinv.MyCommand)
-                                        {
-                                            switch -regex ( $myinv.MyCommand.CommandType )
-                                            {
-                                                ([System.Management.Automation.CommandTypes]::ExternalScript)
-                                                {
-                                                    if ($myinv.MyCommand.Path)
-                                                    {
-                                                        $myinv.MyCommand.Path + "" : ""
-                                                    }
-
-                                                    break
-                                                }
-
-                                                ([System.Management.Automation.CommandTypes]::Script)
-                                                {
-                                                    if ($myinv.MyCommand.ScriptBlock)
-                                                    {
-                                                        $myinv.MyCommand.ScriptBlock.ToString() + "" : ""
-                                                    }
-
-                                                    break
-                                                }
-                                                default
-                                                {
-                                                    if ($myinv.InvocationName -match '^[&\.]?$')
-                                                    {
-                                                        if ($myinv.MyCommand.Name)
-                                                        {
-                                                            $myinv.MyCommand.Name + "" : ""
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        $myinv.InvocationName + "" : ""
-                                                    }
-
-                                                    break
-                                                }
-                                            }
-                                        }
-                                        elseif ($myinv -and $myinv.InvocationName)
-                                        {
-                                            $myinv.InvocationName + "" : ""
-                                        }
-                                    }
-                                ")
-                        .AddScriptBlockExpressionBinding(@"
-                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
-                                        $_.Exception.Message
-                                   }
-                                   else
-                                   {
-                                        $myinv = $_.InvocationInfo
-                                        if ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
-                                            $posmsg = $myinv.PositionMessage
-                                        } else {
-                                            $posmsg = """"
-                                        }
-
-                                        if ($posmsg -ne """")
-                                        {
-                                            $posmsg = ""`n"" + $posmsg
-                                        }
-
-                                        if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
-                                        }
-
-                                        $indent = 4
-
-                                        $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
-
-                                        if ($null -ne $errorCategoryMsg)
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
-                                        }
-                                        else
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
-                                        }
-
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
-
-                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
-                                        {
-                                            $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
-                                        }
-
-                                        if ($ErrorView -eq ""CategoryView"") {
-                                            $_.CategoryInfo.GetMessage()
-                                        }
-                                        elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            $_.Exception.Message + $posmsg + ""`n ""
-                                        } else {
-                                            $_.ErrorDetails.Message + $posmsg
-                                        }
-                                   }
-                                ")
+                        .AddScriptBlockExpressionBinding("$_", selectedByScript: "$ErrorView -replace 'View$' -notin @('Category')", customControl: customControlNormalView)
+                        .AddScriptBlockExpressionBinding("$_", selectedByScript: "$ErrorView -replace 'View$' -eq 'Category'", customControl: customControlCategoryView)
                     .EndEntry()
                 .EndControl());
+
+            yield return new FormatViewDefinition("Normal", customControlNormalView);
+
+            yield return new FormatViewDefinition("Category", customControlCategoryView);
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_WarningRecord()
