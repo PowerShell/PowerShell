@@ -379,6 +379,7 @@ namespace System.Management.Automation.Internal.Host
             switch (preference)
             {
                 case ActionPreference.Continue:
+                case ActionPreference.Break:
                     WriteDebugLineHelper(message);
                     break;
                 case ActionPreference.SilentlyContinue:
