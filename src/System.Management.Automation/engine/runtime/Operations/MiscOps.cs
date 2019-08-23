@@ -108,10 +108,13 @@ namespace System.Management.Automation
 
                     if (string.IsNullOrEmpty(commandName))
                     {
-                        throw InterpreterError.NewInterpreterException(command, typeof(RuntimeException),
-                                                                       commandExtent, "BadExpression",
-                                                                       ParserStrings.BadExpression,
-                                                                       dotSource ? "." : "&");
+                        throw InterpreterError.NewInterpreterException(
+                            command,
+                            typeof(RuntimeException),
+                            commandExtent,
+                            "BadExpression",
+                            ParserStrings.BadExpression,
+                            dotSource ? "." : "&");
                     }
 
                     try
@@ -329,7 +332,10 @@ namespace System.Management.Automation
                     object parameterValue = de.Value;
                     string parameterText = GetParameterText(parameterName);
 
-                    if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
+                    if (markUntrustedData)
+                    {
+                        ExecutionContext.MarkObjectAsUntrusted(parameterValue);
+                    }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
@@ -343,7 +349,10 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
-                        if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
+                        if (markUntrustedData)
+                        {
+                            ExecutionContext.MarkObjectAsUntrusted(obj);
+                        }
 
                         yield return SplatEnumerableElement(obj, splatAst);
                     }
@@ -1335,15 +1344,15 @@ namespace System.Management.Automation
             }
 
             // Add key and values from left hand side...
-            foreach (object myKey in lvalDict.Keys)
+            foreach (object key in lvalDict.Keys)
             {
-                newDictionary.Add(myKey, lvalDict[myKey]);
+                newDictionary.Add(key, lvalDict[key]);
             }
 
             // and the right-hand side
-            foreach (object myKey in rvalDict.Keys)
+            foreach (object key in rvalDict.Keys)
             {
-                newDictionary.Add(myKey, rvalDict[myKey]);
+                newDictionary.Add(key, rvalDict[key]);
             }
 
             return newDictionary;
@@ -1595,25 +1604,38 @@ namespace System.Management.Automation
             // set $? to false indicating an error
             context.QuestionMarkVariableValue = false;
 
-            bool anyTrapHandlers = funcContext._traps.Any() && funcContext._traps.Last().Item2 != null;
+            ActionPreference preference = GetErrorActionPreference(context);
 
-            if (!anyTrapHandlers && !ExceptionHandlingOps.NeedToQueryForActionPreference(rte, context))
+            // If the exception was not rethrown and we are not currently
+            // handling an exception, then the exception is new, and we
+            // can break on it if requested.
+            if (!rte.WasRethrown &&
+                context.CurrentExceptionBeingHandled == null &&
+                preference == ActionPreference.Break)
+            {
+                context.Debugger?.Break(rte);
+            }
+
+            // Item2 in the trap tuples is the action (script) for the trap.
+            // A null action script is only used to indicate when exceptions
+            // should be thrown up to a higher level, and doesn't count as an
+            // actual trap handler in the function context.
+            bool anyTrapHandlers = funcContext._traps.Count > 0 && funcContext._traps[funcContext._traps.Count - 1].Item2 != null;
+
+            if (anyTrapHandlers)
+            {
+                // update the action preference according to how the exception is
+                // handled in the trap statement(s).
+                preference = ProcessTraps(funcContext, rte);
+            }
+            else if (ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
                 throw rte;
             }
-
-            ActionPreference preference;
-            if (anyTrapHandlers)
+            else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
             {
-                preference = ProcessTraps(funcContext, rte);
+                preference = InquireForActionPreference(rte.Message, context);
             }
-            else
-            {
-                preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
-            }
-
-            // set the value of $? here in case it is reset in trap handling.
-            context.QuestionMarkVariableValue = false;
 
             if ((preference == ActionPreference.SilentlyContinue) ||
                 (preference == ActionPreference.Ignore))
@@ -1637,12 +1659,7 @@ namespace System.Management.Automation
                 throw rte;
             }
 
-            bool b = ExceptionHandlingOps.ReportErrorRecord(extent, rte, context);
-
-            // set the value of $? here in case it is reset in error reporting
-            context.QuestionMarkVariableValue = false;
-
-            if (!b)
+            if (!ReportErrorRecord(extent, rte, context))
             {
                 throw rte;
             }
@@ -1680,10 +1697,12 @@ namespace System.Management.Automation
             if (handler != -1)
             {
                 Diagnostics.Assert(exception != null, "Exception object can't be null.");
+
+                var context = funcContext._executionContext;
+
                 try
                 {
                     ErrorRecord err = rte.ErrorRecord;
-                    var context = funcContext._executionContext;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
                     if (context.CurrentCommandProcessor != null)
@@ -1747,13 +1766,37 @@ namespace System.Management.Automation
                     // Terminate this block of statements.
                     return ActionPreference.Stop;
                 }
+                finally
+                {
+                    // The questionmark variable will always be false when we process a trap, so
+                    // set it to false to ensure it didn't change as a result of anything done
+                    // inside the trap
+                    context.QuestionMarkVariableValue = false;
+                }
             }
 
             return ActionPreference.Stop;
         }
 
         /// <summary>
-        /// Determine if we should continue or not after and error or exception....
+        /// Gets the current error action preference value.
+        /// </summary>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The preference the user selected.</returns>
+        /// <remarks>
+        /// Error action is decided by error action preference. If preference is inquire, we will
+        /// prompt user for their preference.
+        /// </remarks>
+        internal static ActionPreference GetErrorActionPreference(ExecutionContext context)
+        {
+            return context.GetEnumPreference(
+                SpecialVariables.ErrorActionPreferenceVarPath,
+                ActionPreference.Continue,
+                out _);
+        }
+
+        /// <summary>
+        /// Determine if we should continue or not after an error or exception.
         /// </summary>
         /// <param name="rte">The RuntimeException which was reported.</param>
         /// <param name="message">The message to display.</param>
@@ -1766,10 +1809,11 @@ namespace System.Management.Automation
         internal static ActionPreference QueryForAction(RuntimeException rte, string message, ExecutionContext context)
         {
             // 906264 "$ErrorActionPreference="Inquire" prevents original non-terminating error from being reported to $error"
-            bool defaultUsed;
             ActionPreference preference =
-                context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath,
-                                          ActionPreference.Continue, out defaultUsed);
+                context.GetEnumPreference(
+                    SpecialVariables.ErrorActionPreferenceVarPath,
+                    ActionPreference.Continue,
+                    out _);
 
             if (preference != ActionPreference.Inquire || rte.SuppressPromptInInterpreter)
                 return preference;
@@ -1808,11 +1852,15 @@ namespace System.Management.Automation
 
             string caption = ParserStrings.ExceptionActionPromptCaption;
 
+            bool oldQuestionMarkVariableValue = context.QuestionMarkVariableValue;
+
             int choice;
             while ((choice = ui.PromptForChoice(caption, message, choices, 0)) == 3)
             {
                 context.EngineHostInterface.EnterNestedPrompt();
             }
+
+            context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
             if (choice == 0)
                 return ActionPreference.Continue;
@@ -1863,13 +1911,13 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool NeedToQueryForActionPreference(RuntimeException rte, ExecutionContext context)
+        internal static bool ExceptionCannotBeStoppedContinuedOrIgnored(RuntimeException rte, ExecutionContext context)
         {
-            return !context.PropagateExceptionsToEnclosingStatementBlock
-                   && context.ShellFunctionErrorOutputPipe != null
-                   && !context.CurrentPipelineStopping
-                   && !rte.SuppressPromptInInterpreter
-                   && !(rte is PipelineStoppedException);
+            return context.PropagateExceptionsToEnclosingStatementBlock
+                   || context.ShellFunctionErrorOutputPipe == null
+                   || context.CurrentPipelineStopping
+                   || rte.SuppressPromptInInterpreter
+                   || rte is PipelineStoppedException;
         }
 
         /// <summary>
@@ -1901,10 +1949,13 @@ namespace System.Management.Automation
 
             context.ShellFunctionErrorOutputPipe.Add(errorWrap);
 
+            // set the value of $? here in case it is reset in error reporting.
+            context.QuestionMarkVariableValue = false;
+
             return true;
         }
 
-        internal static RuntimeException ConvertToException(object result, IScriptExtent extent)
+        internal static RuntimeException ConvertToException(object result, IScriptExtent extent, bool rethrow)
         {
             result = PSObject.Base(result);
 
@@ -1913,13 +1964,14 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 runtimeException.WasThrownFromThrowStatement = true;
+                runtimeException.WasRethrown = rethrow;
                 return runtimeException;
             }
 
             ErrorRecord er = result as ErrorRecord;
             if (er != null)
             {
-                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 
                 return runtimeException;
@@ -1929,7 +1981,7 @@ namespace System.Management.Automation
             if (exception != null)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
-                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 return runtimeException;
             }
@@ -1940,7 +1992,7 @@ namespace System.Management.Automation
             exception = new RuntimeException(message, null);
 
             er = new ErrorRecord(exception, message, ErrorCategory.OperationStopped, null);
-            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true };
+            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
             runtimeException.SetTargetObject(result);
             InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 

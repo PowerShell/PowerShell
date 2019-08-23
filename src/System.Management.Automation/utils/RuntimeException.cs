@@ -284,6 +284,8 @@ namespace System.Management.Automation
 
         private bool _thrownByThrowStatement;
 
+        internal bool WasRethrown { get; set; }
+
         /// <summary>
         /// Fix for BUG: Windows Out Of Band Releases: 906263 and 906264
         /// The interpreter prompt CommandBaseStrings:InquireHalt

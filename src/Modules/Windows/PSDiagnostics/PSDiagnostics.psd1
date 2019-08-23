@@ -3,7 +3,7 @@
     Author="PowerShell"
     CompanyName="Microsoft Corporation"
     Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
-    ModuleVersion="6.1.0.0"
+    ModuleVersion="7.0.0.0"
     CompatiblePSEditions = @("Core")
     PowerShellVersion="3.0"
     ModuleToProcess="PSDiagnostics.psm1"
