@@ -36,12 +36,12 @@ namespace System.Management.Automation
         internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
 #if !UNIX
-            // Update the env variable PathEXT to contain .CPL
-            var pathext = Environment.GetEnvironmentVariable("PathEXT");
+            // Update the env variable PATHEXT to contain .CPL
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
 
             if (string.IsNullOrEmpty(pathext))
             {
-                Environment.SetEnvironmentVariable("PathEXT", ".CPL");
+                Environment.SetEnvironmentVariable("PATHEXT", ".CPL");
             }
             else if (!(pathext.EndsWith(";.CPL", StringComparison.OrdinalIgnoreCase) ||
                        pathext.StartsWith(".CPL;", StringComparison.OrdinalIgnoreCase) ||
@@ -51,7 +51,7 @@ namespace System.Management.Automation
                 // Fast skip if we already added the extention as ";.CPL".
                 // Fast skip if user already added the extention.
                 pathext = pathext + ";.CPL";
-                Environment.SetEnvironmentVariable("PathEXT", pathext);
+                Environment.SetEnvironmentVariable("PATHEXT", pathext);
             }
 #endif
 
