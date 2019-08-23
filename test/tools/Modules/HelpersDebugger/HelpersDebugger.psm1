@@ -30,14 +30,19 @@ $debuggerStopHandler = {
             $stringDbgCommand = $script:dbgCmdQueue.Dequeue()
         }
         $dbgCmd = [System.Management.Automation.PSCommand]::new()
-        $dbgCmd.AddCommand($stringDbgCommand)
+        $dbgCmd.AddScript($stringDbgCommand) > $null
         $output = [System.Management.Automation.PSDataCollection[PSObject]]::new()
         $result = $Host.Runspace.Debugger.ProcessCommand($dbgCmd, $output)
+        if ($stringDbgCommand -eq '$?' -and $output.Count -eq 1) {
+            $output[0] = $PSDebugContext.Trigger -isnot [System.Management.Automation.ErrorRecord]
+        }
         $script:dbgResults += [pscustomobject]@{
-            PSTypeName = 'DebuggerCommandResult'
-            Command = $stringDbgCommand
-            Context = $PSDebugContext
-            Output  = $output
+            PSTypeName          = 'DebuggerCommandResult'
+            Command             = $stringDbgCommand
+            Context             = $PSDebugContext
+            Output              = $output
+            EvaluatedByDebugger = $result.EvaluatedByDebugger
+            ResumeAction        = $result.ResumeAction
         }
     } while ($result -eq $null -or $result.ResumeAction -eq $null)
     $e.ResumeAction = $result.ResumeAction

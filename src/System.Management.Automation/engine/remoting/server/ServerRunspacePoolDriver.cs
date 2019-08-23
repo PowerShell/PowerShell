@@ -2104,6 +2104,11 @@ namespace System.Management.Automation
             return _wrappedDebugger.Value.GetCallStack();
         }
 
+        internal override void Break(object triggerObject = null)
+        {
+            _wrappedDebugger.Value.Break(triggerObject);
+        }
+
         #endregion
 
         #region IDisposable

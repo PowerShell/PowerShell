@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Add-Type" -Tags "CI" {
     BeforeAll {
         $guid = [Guid]::NewGuid().ToString().Replace("-","")
@@ -65,7 +66,7 @@ Describe "Add-Type" -Tags "CI" {
         $code = @"
 using System.Management.Automation;
 [System.Management.Automation.Cmdlet("Get", "Thing$guid", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
-public class AttributeTest$guid : PSCmdlet
+public class SMAAttributeTest$guid : PSCmdlet
 {
     protected override void EndProcessing()
 
@@ -205,6 +206,15 @@ public class AttributeTest$guid : PSCmdlet
 
         # Catch non-termination information error for CompilerOptions.
         { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "Throw if the type already exists" {
+        Add-Type -TypeDefinition "public class Foo$guid {}"
+
+        # The cmdlet writes TYPE_ALREADY_EXISTS for every duplicated type and then terminates with COMPILER_ERRORS.
+        # So here we check 2 errors.
+        { Add-Type -TypeDefinition "public class Foo$guid { public int Bar {get {return 42;} }" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        $error[1].FullyQualifiedErrorId | Should -BeExactly "TYPE_ALREADY_EXISTS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "OutputType parameter requires that the OutputAssembly parameter be specified." {
