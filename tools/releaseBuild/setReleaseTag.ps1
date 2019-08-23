@@ -117,7 +117,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     }
 }
 
-$vstsCommandString = "vso[task.setvariable variable=IS_DAILY]$($isDaily.ToString().ToLowerInvariant()))"
+$vstsCommandString = "vso[task.setvariable variable=IS_DAILY]$($isDaily.ToString().ToLowerInvariant())"
 Write-Verbose -Message "$vstsCommandString" -Verbose
 Write-Host -Object "##$vstsCommandString"
 
