@@ -3133,6 +3133,11 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 
         if ($packageBuildTokens)
         {
+            if($packageBuildTokens.length -gt 4)
+            {
+                $packageBuildTokens = $packageBuildTokens.Substring(0,4)
+            }
+
             $packageVersion = $packageVersion + '.' + $packageBuildTokens
         }
         else
