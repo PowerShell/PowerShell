@@ -86,7 +86,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 
         if ($CreateJson.IsPresent)
         {
-            New-BuildInfoJson -ReleaseTag $releaseTag
+            New-BuildInfoJson -ReleaseTag $releaseTag -IsDaily
         }
     }
     else
