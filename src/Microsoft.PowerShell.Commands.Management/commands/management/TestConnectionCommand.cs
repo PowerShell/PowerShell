@@ -47,31 +47,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets whether to force use of the IPv4 protocol.
         /// </summary>
-        [Parameter(ParameterSetName = PingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        [Parameter(ParameterSetName = TraceRouteSet)]
-        [Parameter(ParameterSetName = MtuSizeDetectSet)]
-        [Parameter(ParameterSetName = TcpPortSet)]
+        [Parameter]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
         /// Gets or sets whether to force use of the IPv6 protocol.
         /// </summary>
-        [Parameter(ParameterSetName = PingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        [Parameter(ParameterSetName = TraceRouteSet)]
-        [Parameter(ParameterSetName = MtuSizeDetectSet)]
-        [Parameter(ParameterSetName = TcpPortSet)]
+        [Parameter]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
         /// Gets or sets whether to do reverse DNS lookup to get names for IP addresses.
         /// </summary>
-        [Parameter(ParameterSetName = PingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        [Parameter(ParameterSetName = TraceRouteSet)]
-        [Parameter(ParameterSetName = MtuSizeDetectSet)]
-        [Parameter(ParameterSetName = TcpPortSet)]
+        [Parameter]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -147,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         /// Default is to return typed result object(s).
         /// When used with standard -Ping parameter set or -TraceRoute, a simple $true/$false value is returned.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Quiet { get; set; }
 
         /// <summary>
@@ -156,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         /// It is not the cmdlet timeout! It is a timeout for waiting one ping response.
         /// The default (from Windows) is 5 second.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int TimeoutSeconds { get; set; } = 5;
 
@@ -199,8 +187,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            //_sender.PingCompleted += OnPingCompleted;
-
             if (ParameterSetName == RepeatPingSet)
             {
                 Count = int.MaxValue;
