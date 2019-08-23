@@ -80,9 +80,18 @@ jobs:
       artifactFilter: "*.pkg"
       condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
+  - task: AzureFileCopy@1
+    displayName: 'AzureBlob File Copy - unsigned'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\macos'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - task: AzureFileCopy@1
-    displayName: 'AzureBlob File Copy'
+    displayName: 'AzureBlob File Copy - signed'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'
       azureSubscription: '$(AzureFileCopySubscription)'
