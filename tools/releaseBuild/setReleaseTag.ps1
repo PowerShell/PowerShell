@@ -42,6 +42,7 @@ function New-BuildInfoJson {
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoPath]$resolvedPath"
     Write-Verbose -Message "$vstsCommandString" -Verbose
     Write-Host -Object "##$vstsCommandString"
+
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
 }
 
@@ -54,6 +55,7 @@ $branchOnly = $branchOnly -replace '[_\-]'
 
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
+    $isDaily = $false
     # Branch is named release-<semver>
     if($Branch -match '^.*(release[-/])')
     {
@@ -70,6 +72,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     }
     if($Branch -eq 'master' -or $Branch -like '*dailytest*')
     {
+        $isDaily = $true
         Write-verbose "daily build" -verbose
         $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
         $metadata = Get-content $metaDataJsonPath | ConvertFrom-Json
@@ -113,5 +116,9 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         }
     }
 }
+
+$vstsCommandString = "vso[task.setvariable variable=IS_DAILY]$($isDaily.ToString().ToLowerInvariant()))"
+Write-Verbose -Message "$vstsCommandString" -Verbose
+Write-Host -Object "##$vstsCommandString"
 
 Write-Output $releaseTag

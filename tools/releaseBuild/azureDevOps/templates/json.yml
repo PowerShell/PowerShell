@@ -28,7 +28,7 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: 'BuildInfo'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['IS_DAILY'], 'true'))
 
   - task: AzureCLI@1
     displayName: 'Make blob public'
@@ -36,7 +36,7 @@ jobs:
       azureSubscription: '$(AzureFileCopySubscription)'
       scriptLocation: inlineScript
       inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion) --public-access blob'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['IS_DAILY'], 'true'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
