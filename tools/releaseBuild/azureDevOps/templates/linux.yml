@@ -86,12 +86,12 @@ jobs:
       Get-ChildItem -Path '$(System.ArtifactsDirectory)\rpm\*.rpm' -recurse | ForEach-Object { $authenticodefiles += $_.FullName}
       tools/releaseBuild/generatePackgeSigning.ps1 -LinuxFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate RPM Signing Xml'
-    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'), ne(variables['SKIP_SIGNING'], 'Yes')))
 
   - powershell: |
       Get-Content "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Capture RPM signing xml'
-    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'), ne(variables['SKIP_SIGNING'], 'Yes'))
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign RPM $(System.ArtifactsDirectory)\package.xml'
@@ -102,7 +102,7 @@ jobs:
       outPathRoot: '$(Build.StagingDirectory)\signedPackages'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
-    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'), ne(variables['SKIP_SIGNING'], 'Yes'))
 
   - task: AzureFileCopy@1
     displayName: 'Upload to Azure - DEB and tar.gz'
@@ -125,7 +125,7 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), ne(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+      condition: and(and(succeeded(), or(ne(variables['Build.Reason'], 'Manual'), ne(variables['SKIP_SIGNING'], 'Yes'))),eq(variables['buildName'], 'RPM'))
 
   - task: AzureFileCopy@1
     displayName: 'Upload to Azure - RPM - Signed'
@@ -135,17 +135,17 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+    condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'), ne(variables['SKIP_SIGNING'], 'Yes'))
 
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\rpm\release
-      condition: and(and(succeeded(), ne(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+      condition: and(and(succeeded(), or(ne(variables['Build.Reason'], 'Manual'), ne(variables['SKIP_SIGNING'], 'Yes'))),eq(variables['buildName'], 'RPM'))
 
   - template: upload-final-results.yml
     parameters:
       artifactPath: '$(Build.StagingDirectory)\signedPackages'
-      condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+      condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'), ne(variables['SKIP_SIGNING'], 'Yes'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
