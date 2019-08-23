@@ -6,7 +6,7 @@ steps:
       $shouldSign = $false
     }
 
-    if($env:SKIP_SIGNING -ne 'Yes')
+    if($env:SKIP_SIGNING -eq 'Yes')
     {
       $shouldSign = $false
     }
