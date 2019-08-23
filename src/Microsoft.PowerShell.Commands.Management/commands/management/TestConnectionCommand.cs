@@ -34,8 +34,6 @@ namespace Microsoft.PowerShell.Commands
         private const int DefaultMaxHops = 128;
 
         private readonly Ping _sender = new Ping();
-        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
-        private PingCompletedEventArgs _pingCompleteArgs;
 
         #region Parameters
 
@@ -201,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            _sender.PingCompleted += OnPingCompleted;
+            //_sender.PingCompleted += OnPingCompleted;
 
             if (ParameterSetName == RepeatPingSet)
             {
@@ -233,14 +231,6 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             }
-        }
-
-        /// <summary>
-        /// StopProcessing implementation so we can handle Ctrl+C properly.
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _sender?.SendAsyncCancel();
         }
 
         #region ConnectionTest
@@ -313,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
 
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
 
-            var timer = new Stopwatch();
+            //var timer = new Stopwatch();
             PingReply reply;
 
             do
@@ -328,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        reply = DoPing(targetAddress, timeout, buffer, pingOptions, timer);
+                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                         if (hostname == null
                             && ResolveDestination
@@ -351,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
                                 hostname,
                                 reply,
                                 pingOptions,
-                                timer.ElapsedMilliseconds,
+                                reply.RoundtripTime,
                                 buffer.Length,
                                 i),
                             Source,
@@ -359,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                             targetAddress);
 
                         WriteObject(status);
-                        timer.Reset();
+                        //timer.Reset();
                     }
                     catch (PingException ex)
                     {
@@ -431,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = DoPing(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -531,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    reply = DoPing(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -686,49 +676,12 @@ namespace Microsoft.PowerShell.Commands
             return sendBuffer;
         }
 
-        private PingReply DoPing(
-            IPAddress targetAddress,
-            int timeout,
-            byte[] buffer,
-            PingOptions pingOptions,
-            Stopwatch timer = null)
-        {
-            timer?.Start();
-            _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
-            _pingComplete.Wait();
-            timer?.Stop();
-
-            // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
-            Thread.Sleep(1);
-            _pingComplete.Reset();
-
-            if (_pingCompleteArgs.Cancelled)
-            {
-                // The only cancellation we have implemented is on pipeline stops.
-                throw new PipelineStoppedException();
-            }
-
-            if (_pingCompleteArgs.Error != null)
-            {
-                throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
-            }
-
-            return _pingCompleteArgs.Reply;
-        }
-
-        private static void OnPingCompleted(object sender, PingCompletedEventArgs e)
-        {
-            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
-            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
-        }
-
         /// <summary>
         /// IDisposable implementation.
         /// </summary>
         public void Dispose()
         {
             _sender?.Dispose();
-            _pingComplete?.Dispose();
         }
 
         /// <summary>
