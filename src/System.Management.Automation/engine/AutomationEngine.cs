@@ -50,7 +50,7 @@ namespace System.Management.Automation
             {
                 // Fast skip if we already added the extention as ";.CPL".
                 // Fast skip if user already added the extention.
-                pathext = pathext + ";.CPL";
+                pathext += pathext[pathext.Length - 1] == ';' ? ".CPL" : ";.CPL";
                 Environment.SetEnvironmentVariable("PATHEXT", pathext);
             }
 #endif
