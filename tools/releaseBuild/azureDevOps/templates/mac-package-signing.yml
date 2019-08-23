@@ -11,6 +11,8 @@ jobs:
 
   steps:
 
+  - template: shouldSign.yml
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -55,7 +57,7 @@ jobs:
       outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload-final-results.yml
     parameters:
@@ -70,13 +72,13 @@ jobs:
       $targzPath = dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | select-object -expandproperty fullname
       Copy-Item -Path $targzPath -Destination $destination
     displayName: 'Extract and copy macOS artifacts for upload'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\azureMacOs
       artifactFilter: "*.pkg"
-      condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+      condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
 
   - task: AzureFileCopy@1
@@ -87,7 +89,7 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'

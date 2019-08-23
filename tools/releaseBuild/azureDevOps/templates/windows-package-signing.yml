@@ -15,6 +15,7 @@ jobs:
 
   steps:
 
+  - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -57,7 +58,7 @@ jobs:
       outPathRoot: '$(Build.StagingDirectory)\signedPackages'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml
     parameters:
