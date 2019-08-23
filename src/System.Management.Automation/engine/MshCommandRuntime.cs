@@ -5,13 +5,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Security;
 using System.Management.Automation.Host;
-using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -269,6 +268,12 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Writes an object enumerated from a collection to the output pipe.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The enumerated object that needs to be written to the pipeline.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -276,7 +281,7 @@ namespace System.Management.Automation
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         private void DoWriteEnumeratedObject(object sendToPipeline)
         {
@@ -411,6 +416,12 @@ namespace System.Management.Automation
             if (WriteHelper_ShouldWrite(
                 preference, lastProgressContinueStatus))
             {
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(progressRecord);
+                }
+
                 ui.WriteProgress(sourceId, progressRecord);
             }
 
@@ -476,6 +487,12 @@ namespace System.Management.Automation
                 if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
+                }
+
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
                 if (DebugOutputPipe != null)
@@ -568,6 +585,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (VerboseOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -658,6 +681,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (WarningOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -717,6 +746,12 @@ namespace System.Management.Automation
             ActionPreference preference = InformationPreference;
             if (overrideInquire && preference == ActionPreference.Inquire)
                 preference = ActionPreference.Continue;
+
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(record);
+            }
 
             if (preference != ActionPreference.Ignore)
             {
@@ -2057,6 +2092,14 @@ namespace System.Management.Automation
 
             CmdletInvocationException e =
                 new CmdletInvocationException(errorRecord);
+
+            // If the error action preference is set to break, break immediately
+            // into the debugger
+            if (ErrorAction == ActionPreference.Break)
+            {
+                Context.Debugger?.Break(e.InnerException ?? e);
+            }
+
             // Code sees only that execution stopped
             throw ManageException(e);
         }
@@ -2641,8 +2684,12 @@ namespace System.Management.Automation
         #region Write
         internal bool UseSecurityContextRun = true;
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2661,8 +2708,12 @@ namespace System.Management.Automation
             this.OutputPipe.Add(sendToPipeline);
         }
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Enumerates and writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to enumerate and write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2684,7 +2735,9 @@ namespace System.Management.Automation
             foreach (object toConvert in enumerable)
             {
                 if (AutomationNull.Value == toConvert)
+                {
                     continue;
+                }
 
                 object converted = LanguagePrimitives.AsPSObjectOrNull(toConvert);
                 convertedList.Add(converted);
@@ -2748,6 +2801,12 @@ namespace System.Management.Automation
             if (overrideInquire && preference == ActionPreference.Inquire)
             {
                 preference = ActionPreference.Continue;
+            }
+
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(errorRecord);
             }
 
 #if CORECLR
@@ -2989,7 +3048,7 @@ namespace System.Management.Automation
                 if (!_isConfirmPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference<ConfirmImpact>(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
                     _isConfirmPreferenceCached = true;
                 }
 
@@ -3021,7 +3080,7 @@ namespace System.Management.Automation
 
                 if (!_isDebugPreferenceCached)
                 {
-                    _debugPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out _);
+                    _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out _);
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -3084,7 +3143,7 @@ namespace System.Management.Automation
 
                 if (!_isVerbosePreferenceCached)
                 {
-                    _verbosePreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.VerbosePreferenceVarPath, _verbosePreference, out _);
+                    _verbosePreference = Context.GetEnumPreference(SpecialVariables.VerbosePreferenceVarPath, _verbosePreference, out _);
 
                     // If the host couldn't prompt for the verbose action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -3141,7 +3200,7 @@ namespace System.Management.Automation
 
                 if (!_isWarningPreferenceCached)
                 {
-                    _warningPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out _);
+                    _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out _);
 
                     // If the host couldn't prompt for the warning action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -3321,7 +3380,7 @@ namespace System.Management.Automation
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _errorAction = Context.GetEnumPreference<ActionPreference>(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
+                    _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
                     _isErrorActionPreferenceCached = true;
                 }
 
@@ -3361,7 +3420,7 @@ namespace System.Management.Automation
                 if (!_isProgressPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _progressPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
+                    _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
                     _isProgressPreferenceCached = true;
                 }
 
@@ -3394,7 +3453,7 @@ namespace System.Management.Automation
                 if (!_isInformationPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _informationPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
+                    _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
                     _isInformationPreferenceCached = true;
                 }
 
@@ -3489,6 +3548,7 @@ namespace System.Management.Automation
                 case ActionPreference.Continue:
                 case ActionPreference.Stop:
                 case ActionPreference.Inquire:
+                case ActionPreference.Break:
                     return true;
 
                 default:
@@ -3541,6 +3601,7 @@ namespace System.Management.Automation
                 case ActionPreference.Ignore: // YesToAll
                 case ActionPreference.SilentlyContinue:
                 case ActionPreference.Continue:
+                case ActionPreference.Break:
                     return ContinueStatus.Yes;
 
                 case ActionPreference.Stop:

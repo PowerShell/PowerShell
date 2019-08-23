@@ -52,13 +52,13 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
                 Name = 'Microsoft.PowerShell.Managemen*'
                 TestCaseName = 'Wildcard'
                 ExpectedName = 'Microsoft.PowerShell.Management'
-                ModuleVersion = '6.1.0.0'
+                ModuleVersion = '7.0.0.0'
             }
             @{
                 Name = 'microsoft.powershell.managemen*'
                 TestCaseName = 'Mismatched case'
                 ExpectedName = 'Microsoft.PowerShell.Management'
-                ModuleVersion = '6.1.0.0'
+                ModuleVersion = '7.0.0.0'
             }
         )
 

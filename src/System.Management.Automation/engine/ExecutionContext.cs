@@ -570,9 +570,7 @@ namespace System.Management.Automation
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
             if (val is T)
             {
                 if (val is ActionPreference)
@@ -1046,7 +1044,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
                     InitialSessionState.defaultDebugPreference,
                     out defaultUsed);
@@ -1067,7 +1065,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
                     InitialSessionState.defaultVerbosePreference,
                     out defaultUsed);
@@ -1088,7 +1086,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     InitialSessionState.defaultErrorActionPreference,
                     out defaultUsed);
@@ -1109,7 +1107,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
                     InitialSessionState.defaultWarningPreference,
                     out defaultUsed);
@@ -1130,7 +1128,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
                     InitialSessionState.defaultInformationPreference,
                     out defaultUsed);
@@ -1190,7 +1188,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ConfirmImpact>(
+                return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
                     InitialSessionState.defaultConfirmPreference,
                     out defaultUsed);
