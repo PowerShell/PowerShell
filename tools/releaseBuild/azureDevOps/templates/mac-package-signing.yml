@@ -80,10 +80,17 @@ jobs:
       artifactFilter: "*.pkg"
       condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
+  - powershell: |
+      $null = new-item -type directory -path "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+    displayName: 'Create unsigned folder to upload'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
   - task: AzureFileCopy@1
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\macos'
+      SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
