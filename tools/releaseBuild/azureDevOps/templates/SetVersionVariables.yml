@@ -1,10 +1,12 @@
 parameters:
   ReleaseTagVar: v6.2.0
   ReleaseTagVarName: ReleaseTagVar
+  CreateJson: 'no'
 
 steps:
 - powershell: |
-    $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}"
+    $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
+    $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
     Write-Host "sending " + $vstsCommandString

@@ -6,8 +6,41 @@ param(
     [string]$Branch=$env:BUILD_SOURCEBRANCH,
 
     [Parameter(HelpMessage='The variable name to put the new release tagin.')]
-    [string]$Variable='ReleaseTag'
+    [string]$Variable='ReleaseTag',
+
+    [switch]$CreateJson
 )
+
+function New-BuildInfoJson {
+    param(
+        [parameter(Mandatory = $true)]
+        [string]
+        $ReleaseTag,
+        [switch] $IsDaily
+    )
+
+    $isPreview = $ReleaseTag -like '*-*'
+
+    $filename = 'stable.json'
+    if($isPreview)
+    {
+        $filename = 'preview.json'
+    }
+    if($IsDaily.IsPresent)
+    {
+        $filename = 'daily.json'
+    }
+
+    @{
+        ReleaseTag = $ReleaseTag
+    } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
+
+    $resolvedPath = (Resolve-Path -Path $filename).ProviderPath
+    $vstsCommandString = "vso[task.setvariable variable=BuildInfoPath]$resolvedPath"
+    Write-Verbose -Message "$vstsCommandString" -Verbose
+    Write-Host -Object "##$vstsCommandString"
+    Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
+}
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"
 # the branch name is expected to be release-<semver> or <previewname>
@@ -26,6 +59,32 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
+
+        if ($CreateJson.IsPresent)
+        {
+            New-BuildInfoJson -ReleaseTag $releaseTag
+        }
+    }
+    if($Branch -eq 'master' -or $Branch -like '*dailytest*')
+    {
+        Write-verbose "daily build" -verbose
+        $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
+        $metadata = Get-content $metaDataJsonPath | ConvertFrom-Json
+        $versionPart = $metadata.PreviewReleaseTag
+        if($versionPart -match '-.*$')
+        {
+            $versionPart = $versionPart -replace '-.*$'
+        }
+
+        $releaseTag = "$versionPart-daily.$((get-date).AddHours(2).ToString('yyyyMMddHH'))"
+        $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
+        Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
+        Write-Host -Object "##$vstsCommandString"
+
+        if ($CreateJson.IsPresent)
+        {
+            New-BuildInfoJson -ReleaseTag $releaseTag
+        }
     }
     else
     {
@@ -44,6 +103,11 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
+
+        if ($CreateJson.IsPresent)
+        {
+            New-BuildInfoJson -ReleaseTag $releaseTag
+        }
     }
 }
 
