@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
+            WriteTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
 
             TraceRouteResult traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
 
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WriteConsoleTraceRouteHeader(string resolvedTargetName, string targetAddress)
+        private void WriteTraceRouteHeader(string resolvedTargetName, string targetAddress)
         {
             _testConnectionProgressBarActivity = StringUtil.Format(
                 TestConnectionResources.TraceRouteStart,
