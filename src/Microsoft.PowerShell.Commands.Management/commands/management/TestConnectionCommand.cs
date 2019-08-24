@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(bool), ParameterSetName = new[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
     [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new[] { TraceRouteSet })]
-    public class TestConnectionCommand : PSCmdlet
+    public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         private const string DefaultPingSet = "DefaultPing";
         private const string RepeatPingSet = "RepeatPing";
@@ -936,6 +936,34 @@ namespace Microsoft.PowerShell.Commands
             return sendBuffer;
         }
 
+        /// <summary>
+        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _sender.Dispose();
+                }
+
+                disposed = true;
+            }
+        }
+
         // Count of pings sent per each trace route hop.
         // Default = 3 (from Windows).
         // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -944,6 +972,8 @@ namespace Microsoft.PowerShell.Commands
         /// Create the default send buffer once and cache it.
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
+
+        private bool disposed = false;
 
         private readonly Ping _sender = new Ping();
 
@@ -954,5 +984,13 @@ namespace Microsoft.PowerShell.Commands
         private const string ProgressRecordSpace = " ";
 
         private const string TestConnectionExceptionId = "TestConnectionException";
+
+        /// <summary>
+        /// Finalizer for IDisposable class.
+        /// </summary>
+        ~TestConnectionCommand()
+        {
+            Dispose(disposing: false);
+        }
     }
 }
