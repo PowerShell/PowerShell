@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            base.BeginProcessing();
+            _sender.PingCompleted += OnPingComplete;
 
             switch (ParameterSetName)
             {
@@ -216,6 +216,16 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// On receiving the StopProcessing() request, the cmdlet will immediately cancel any in-progress ping request.
+        /// This allows a cancellation to occur during a ping request without having to wait for a potentially very
+        /// long timeout.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _sender?.SendAsyncCancel();
         }
 
         #region ConnectionTest
@@ -335,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
                         traceRouteReply.PingReplies.Add(reply);
                     }
@@ -553,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -693,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -957,6 +967,7 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender.Dispose();
+                    _pingComplete?.Dispose();
                 }
 
                 disposed = true;
@@ -975,6 +986,40 @@ namespace Microsoft.PowerShell.Commands
         private bool disposed = false;
 
         private readonly Ping _sender = new Ping();
+        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
+        private PingCompletedEventArgs _pingCompleteArgs;
+
+        private PingReply SendCancellablePing(
+            IPAddress targetAddress,
+            int timeout,
+            byte[] buffer,
+            PingOptions pingOptions)
+        {
+            _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
+            _pingComplete.Wait();
+
+            // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
+            Thread.Sleep(1);
+
+            if (_pingCompleteArgs.Cancelled)
+            {
+                // The only cancellation we have implemented is on pipeline stops.
+                throw new PipelineStoppedException();
+            }
+
+            if (_pingCompleteArgs.Error != null)
+            {
+                throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
+            }
+
+            return _pingCompleteArgs.Reply;
+        }
+
+        private static void OnPingComplete(object sender, PingCompletedEventArgs e)
+        {
+            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
+            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
+        }
 
         // Random value for WriteProgress Activity Id.
         private static readonly int s_ProgressId = 174593053;
