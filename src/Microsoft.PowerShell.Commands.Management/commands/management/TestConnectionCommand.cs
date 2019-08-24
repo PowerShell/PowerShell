@@ -330,7 +330,6 @@ namespace Microsoft.PowerShell.Commands
             TraceRouteResult traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
 
             int currentHop = 1;
-            Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
             PingReply reply = null;
             int timeout = TimeoutSeconds * 1000;
@@ -348,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                         traceRouteReply.PingReplies.Add(reply);
                     }
@@ -552,7 +551,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Ping sender = new Ping();
                 PingOptions pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
 
@@ -568,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -698,7 +696,6 @@ namespace Microsoft.PowerShell.Commands
             bool quietResult = true;
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            Ping sender = new Ping();
             PingReply reply;
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             PingReport pingReport = new PingReport(Source, resolvedTargetName);
@@ -709,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -959,6 +956,8 @@ namespace Microsoft.PowerShell.Commands
         /// Create the default send buffer once and cache it.
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
+
+        private readonly Ping _sender = new Ping();
 
         // Random value for WriteProgress Activity Id.
         private static readonly int s_ProgressId = 174593053;
