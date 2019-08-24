@@ -24,11 +24,11 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { TraceRouteSet })]
     public class TestConnectionCommand : PSCmdlet
     {
-        private const string DefaultPingSet = "PingCount";
-        private const string RepeatPingSet = "PingContinues";
+        private const string DefaultPingSet = "DefaultPing";
+        private const string RepeatPingSet = "RepeatPing";
         private const string TraceRouteSet = "TraceRoute";
-        private const string TcpPortSet = "ConnectionByTCPPort";
-        private const string MtuSizeDetectSet = "DetectionOfMTUSize";
+        private const string TcpPortSet = "TcpPort";
+        private const string MtuSizeDetectSet = "MtuSizeDetect";
 
         #region Parameters
 
