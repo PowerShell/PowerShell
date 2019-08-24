@@ -42,19 +42,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Force using IPv4 protocol.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
         /// Force using IPv6 protocol.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
         /// Do reverse DNS lookup to get names for IP addresses.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         /// Set short output kind ('bool' for Ping, 'int' for MTU size ...).
         /// Default is to return typed result object(s).
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Quiet;
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         /// It is not the cmdlet timeout! It is a timeout for waiting one ping response.
         /// The default (from Windows) is 5 second.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int TimeoutSeconds { get; set; } = 5;
 
