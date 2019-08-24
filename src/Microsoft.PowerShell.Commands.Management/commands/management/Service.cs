@@ -112,6 +112,41 @@ namespace Microsoft.PowerShell.Commands
             WriteError(new ErrorRecord(exception, errorId, category, targetObject));
         }
 
+        internal void SetServiceSecurityDescriptor(
+            ServiceController service,
+            string securityDescriptorSddl,
+            NakedWin32Handle hService
+            )
+        {
+            var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
+            RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
+            var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
+
+            byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
+            discretionaryAcl.GetBinaryForm(rawDacl, 0);
+            rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
+            byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
+            rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
+
+            bool status = NativeMethods.SetServiceObjectSecurity(
+                        hService,
+                        SecurityInfos.DiscretionaryAcl,
+                        securityDescriptorByte);
+
+            if (!status)
+            {
+                int lastError = Marshal.GetLastWin32Error();
+                Win32Exception exception = new Win32Exception(lastError);
+                bool accessDenied = exception.NativeErrorCode == NativeMethods.ERROR_ACCESS_DENIED;
+                WriteNonTerminatingError(
+                    service,
+                    exception,
+                    nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
+                    StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, service.ServiceName, exception.Message),
+                    accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
+            }
+
+        }
         #endregion Internal
     }
     #endregion ServiceBaseCommand
@@ -1888,33 +1923,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
-                        var rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptorSddl);
-                        RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
-                        var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
-
-                        byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
-                        discretionaryAcl.GetBinaryForm(rawDacl, 0);
-                        rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
-                        byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
-                        rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
-
-                        status = NativeMethods.SetServiceObjectSecurity(
-                                    hService,
-                                    SecurityInfos.DiscretionaryAcl,
-                                    securityDescriptorByte);
-
-                        if (!status)
-                        {
-                            int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
-                            bool accessDenied = exception.NativeErrorCode == NativeMethods.ERROR_ACCESS_DENIED;
-                            WriteNonTerminatingError(
-                                service,
-                                exception,
-                                nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
-                                StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, Name, exception.Message),
-                                accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
-                        }
+                        SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
                     }
 
                     if (PassThru.IsPresent)
@@ -2081,6 +2090,18 @@ namespace Microsoft.PowerShell.Commands
         internal PSCredential credential = null;
 
         /// <summary>
+        /// Sets the SecurityDescriptorSddl of the service using a SDDL string.
+        /// </summary>
+        [Parameter]
+        [Alias("sd")]
+        [ValidateNotNullOrEmpty]
+        public string SecurityDescriptorSddl
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Other services on which the new service depends.
         /// </summary>
         /// <value></value>
@@ -2192,7 +2213,7 @@ namespace Microsoft.PowerShell.Commands
                     hScManager,
                     Name,
                     DisplayName,
-                    NativeMethods.SERVICE_CHANGE_CONFIG,
+                    NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER,
                     NativeMethods.SERVICE_WIN32_OWN_PROCESS,
                     dwStartType,
                     NativeMethods.SERVICE_ERROR_NORMAL,
@@ -2271,6 +2292,12 @@ namespace Microsoft.PowerShell.Commands
                             ServiceResources.CouldNotNewServiceDelayedAutoStart,
                             ErrorCategory.PermissionDenied);
                     }
+                }
+
+                if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                {
+                    ServiceController service = new ServiceController(Name) ;
+                    SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
                 }
 
                 // write the ServiceController for the new service
