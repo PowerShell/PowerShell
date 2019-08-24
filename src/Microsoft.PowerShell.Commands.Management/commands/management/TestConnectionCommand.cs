@@ -410,14 +410,13 @@ namespace Microsoft.PowerShell.Commands
                 targetAddress,
                 MaxHops);
 
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
+            WriteVerbose(_testConnectionProgressBarActivity);
 
             ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             WriteProgress(record);
         }
 
         private string _testConnectionProgressBarActivity;
-        private static string[] s_PSHostTag = new string[] { "PSHOST" };
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
@@ -447,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                 msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceRouteReply.Hop);
             }
 
-            WriteInformation(msg, s_PSHostTag);
+            WriteVerbose(msg);
 
             ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
@@ -455,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteTraceRouteFooter()
         {
-            WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
+            WriteVerbose(TestConnectionResources.TraceRouteComplete);
 
             var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
             {
@@ -772,7 +771,7 @@ namespace Microsoft.PowerShell.Commands
                 targetAddress,
                 BufferSize);
 
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
+            WriteVerbose(_testConnectionProgressBarActivity);
 
             ProgressRecord record = new ProgressRecord(
                 s_ProgressId,
@@ -798,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
                     reply.Options?.Ttl);
             }
 
-            WriteInformation(msg, s_PSHostTag);
+            WriteVerbose(msg);
 
             ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
@@ -806,7 +805,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingFooter()
         {
-            WriteInformation(TestConnectionResources.PingComplete, s_PSHostTag);
+            WriteVerbose(TestConnectionResources.PingComplete);
 
             var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
             {
