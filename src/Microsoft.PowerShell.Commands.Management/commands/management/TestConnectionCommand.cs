@@ -16,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
+    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingSet,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
     [OutputType(typeof(PingReport), ParameterSetName = new[] { DefaultPingSet })]
     [OutputType(typeof(PingReply), ParameterSetName = new[] { RepeatPingSet, MtuSizeDetectSet })]
     [OutputType(typeof(bool), ParameterSetName = new[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
@@ -219,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region ConnectionTest
 
-        private void ProcessConnectionByTCPPort(String targetNameOrAddress)
+        private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
             string resolvedTargetName;
             IPAddress targetAddress;
@@ -301,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion ConnectionTest
 
         #region TracerouteTest
-        private void ProcessTraceroute(String targetNameOrAddress)
+        private void ProcessTraceroute(string targetNameOrAddress)
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
@@ -316,11 +317,11 @@ namespace Microsoft.PowerShell.Commands
 
             TraceRouteResult traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
 
-            Int32 currentHop = 1;
+            int currentHop = 1;
             Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
             PingReply reply = null;
-            Int32 timeout = TimeoutSeconds * 1000;
+            int timeout = TimeoutSeconds * 1000;
 
             do
             {
@@ -345,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
                             TestConnectionResources.NoPingResult,
                             resolvedTargetName,
                             ex.Message);
-                        Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
+                        Exception pingException = new PingException(message, ex.InnerException);
                         ErrorRecord errorRecord = new ErrorRecord(
                             pingException,
                             TestConnectionExceptionId,
@@ -519,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion TracerouteTest
 
         #region MTUSizeTest
-        private void ProcessMTUSize(String targetNameOrAddress)
+        private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply reply, replyResult = null;
             string resolvedTargetName;
@@ -535,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
-            Int32 timeout = TimeoutSeconds * 1000;
+            int timeout = TimeoutSeconds * 1000;
 
             try
             {
@@ -578,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
                                 TestConnectionResources.NoPingResult,
                                 targetAddress,
                                 reply.Status.ToString());
-                            Exception pingException = new System.Net.NetworkInformation.PingException(message);
+                            Exception pingException = new PingException(message);
                             ErrorRecord errorRecord = new ErrorRecord(
                                 pingException,
                                 TestConnectionExceptionId,
@@ -603,7 +604,7 @@ namespace Microsoft.PowerShell.Commands
             catch (PingException ex)
             {
                 string message = StringUtil.Format(TestConnectionResources.NoPingResult, targetAddress, ex.Message);
-                Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
+                Exception pingException = new PingException(message, ex.InnerException);
                 ErrorRecord errorRecord = new ErrorRecord(
                     pingException,
                     TestConnectionExceptionId,
@@ -668,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region PingTest
 
-        private void ProcessPing(String targetNameOrAddress)
+        private void ProcessPing(string targetNameOrAddress)
         {
             string resolvedTargetName;
             IPAddress targetAddress;
@@ -689,8 +690,8 @@ namespace Microsoft.PowerShell.Commands
             PingReply reply;
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             PingReport pingReport = new PingReport(Source, resolvedTargetName);
-            Int32 timeout = TimeoutSeconds * 1000;
-            Int32 delay = Delay * 1000;
+            int timeout = TimeoutSeconds * 1000;
+            int delay = Delay * 1000;
 
             for (int i = 1; i <= Count; i++)
             {
@@ -701,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (PingException ex)
                 {
                     string message = StringUtil.Format(TestConnectionResources.NoPingResult, resolvedTargetName, ex.Message);
-                    Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
+                    Exception pingException = new PingException(message, ex.InnerException);
                     ErrorRecord errorRecord = new ErrorRecord(
                         pingException,
                         TestConnectionExceptionId,
@@ -835,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool InitProcessPing(String targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
+        private bool InitProcessPing(string targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
         {
             resolvedTargetName = targetNameOrAddress;
 
@@ -866,7 +867,7 @@ namespace Microsoft.PowerShell.Commands
                         TestConnectionResources.NoPingResult,
                         resolvedTargetName,
                         TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new System.Net.NetworkInformation.PingException(message, ex);
+                    Exception pingException = new PingException(message, ex);
                     ErrorRecord errorRecord = new ErrorRecord(
                         pingException,
                         TestConnectionExceptionId,
@@ -895,7 +896,7 @@ namespace Microsoft.PowerShell.Commands
                             TestConnectionResources.NoPingResult,
                             resolvedTargetName,
                             TestConnectionResources.TargetAddressAbsent);
-                        Exception pingException = new System.Net.NetworkInformation.PingException(message, null);
+                        Exception pingException = new PingException(message, null);
                         ErrorRecord errorRecord = new ErrorRecord(
                             pingException,
                             TestConnectionExceptionId,
