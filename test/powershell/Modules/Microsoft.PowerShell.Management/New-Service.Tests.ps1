@@ -15,23 +15,23 @@ Describe "New-Service cmdlet tests" -Tags "CI" {
     }
 
     $testCases =
-    @{ data = $null          ; binaryPathName = 'TestDrive:\test.ext' },
-    @{ data = [String]::Empty; binaryPathName = 'TestDrive:\test.ext' }
+    @{ data = $null         ; binaryPathName = 'TestDrive:\test.ext' },
+    @{ data = 'TestService' ; binaryPathName = $null }
 
-    Context 'Check null or empty value to the -Name parameter' {
-        It 'Should throw if <value> is not passed to -Name parameter' -TestCases $testCases {
+    Context 'Check null value to the parameters' {
+        It 'Should throw if <value> is not passed to parameters' -TestCases $testCases {
             param($data, $binaryPathName)
             { $null = New-Service -Name $data -BinaryPathName $binaryPathName -ErrorAction Stop } |
-            Should -Throw -ErrorId 'ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.NewServiceCommand'
+            Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.NewServiceCommand'
         }
     }
 
     $testCases =
-    @{ data = 'TestService' ; binaryPathName = [string]::Empty },
-    @{ data = 'TestService' ; binaryPathName = $null }
+    @{ data = [string]::Empty ; binaryPathName = 'TestDrive:\test.ext' },
+    @{ data = 'TestService'   ; binaryPathName = [string]::Empty }
 
-    Context 'Check null or empty value to the -BinaryPathName parameter' {
-        It 'Should throw if <value> is not passed to -BinaryPathName parameter' -TestCases $testCases {
+    Context 'Check empty value to the parameters' {
+        It 'Should throw if <value> is not passed to parameters' -TestCases $testCases {
             param($data, $binaryPathName)
             { $null = New-Service -Name $data -BinaryPathName $binaryPathName -ErrorAction Stop } |
             Should -Throw -ErrorId 'ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.NewServiceCommand'
@@ -39,30 +39,34 @@ Describe "New-Service cmdlet tests" -Tags "CI" {
     }
 
     Context 'Creates New service with given properties using New-Service' {
-        BeforeAll {
-            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
-            $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
-            $TestServiceName1 = 'TestServiceName1'
-            $svccmd = Get-Command $svcbinaryname
+        BeforeEach {
+            $TestServiceName1 = 'TestService'
+            $svccmd = Get-Command $TestServiceName1
             $svccmd | Should -Not -BeNullOrEmpty
             $BinaryPathName = $svccmd.Path
+            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+            $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
             $ServiceSetting = @{
                 Name = $TestServiceName1
                 BinaryPathName = $BinaryPathName
                 SecurityDescriptorSddl  =$SecurityDescriptorSddl
                 StartupType = 'Manual'
-                Desciption  = 'Test Service'
+                Description  = 'Test Service'
+            }
+        }
+
+        AfterEach {
+            if(Get-Service -Name $TestServiceName1 -ErrorAction SilentlyContinue){
+                Remove-Service -Name $TestServiceName1
             }
         }
 
         It 'Creates New service with given properties' {
-            $Service = {New-Service @ServiceSetting -ErrorAction Stop} | Should -Not -Throw -Passthru
-
-            $Service | Should -Not -BeNullOrEmpty
-            $Service.Name | Should -Be $BinaryPathName
-            $Service.BinaryPathName | Should -Be $TestServiceName1
-            $Service.StartupType | Should -Be $StartupType
-            $Service.Desciption | Should -Be $Desciption
+            {$Script:Service = New-Service @ServiceSetting -ErrorAction Stop} | Should -Not -Throw
+            $Script:Service | Should -Not -BeNullOrEmpty
+            $Script:Service.ServiceName | Should -Be $TestServiceName1
+            $Script:Service.StartupType | Should -Be $StartupType
+            $Script:Service.Desciption | Should -Be $Desciption
 
             $Counter = 0
             $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
@@ -79,17 +83,15 @@ Describe "New-Service cmdlet tests" -Tags "CI" {
             }
         }
 
-        it 'Throws exception if wrong SecurityDescriptor is provided' {
-            $ServiceSetting.SecurityDescriptorSddl = $WrongSecurityDescriptorSddl
-            {New-Service @ServiceSetting -ErrorAction Stop} | Should -Not -Throw -ErrorId 'System.ArgumentException,Microsoft.PowerShell.Commands.NewServiceCommand'
+        it 'Throws exception if wrong StartType is provided' {
+            $ServiceSetting.StartupType = 'bar'
+            $ExpectedErrorID = 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.NewServiceCommand'
+            {New-Service @ServiceSetting -ErrorAction Stop} | Should -Throw -ErrorId $ExpectedErrorID
         }
 
-        it 'Throws exception if wrong StartType is provided' {
-            $ServiceSetting.StartType = 'bar'
-            $ExpectedErrorID = 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.NewServiceCommand'
-            $ExpectedMessage = "Cannot bind parameter 'StartupType'. Cannot convert value "bar" to type `"Microsoft.PowerShell.Commands.ServiceStartupType`". Error: `"Unable to match the identifier name bar to a valid enumerator name. Specify one of the following enumerator names and try again:
-            Automatic, Manual, Disabled, AutomaticDelayedStart, InvalidValue`""
-            {New-Service @ServiceSetting -ErrorAction Stop} | Should -Not -Throw -ErrorId $ExpectedErrorID -ExpectedMessage $ExpectedMessage
+        it 'Throws exception if wrong SecurityDescriptor is provided' {
+            $ServiceSetting.SecurityDescriptorSddl = $WrongSecurityDescriptorSddl
+            {New-Service @ServiceSetting -ErrorAction Stop} | Should -Throw -ErrorId 'System.ArgumentException,Microsoft.PowerShell.Commands.NewServiceCommand'
         }
     }
 }

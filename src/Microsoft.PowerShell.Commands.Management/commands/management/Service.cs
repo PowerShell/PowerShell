@@ -2123,6 +2123,7 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
+            ServiceController service = null;
             Diagnostics.Assert(!string.IsNullOrEmpty(Name),
                 "null ServiceName");
             Diagnostics.Assert(!string.IsNullOrEmpty(BinaryPathName),
@@ -2296,12 +2297,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                 {
-                    ServiceController service = new ServiceController(Name);
+                    service = new ServiceController(Name);
                     SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
                 }
 
                 // write the ServiceController for the new service
-                ServiceController service = new ServiceController(Name); // ensure dispose
+                service = new ServiceController(Name); // ensure dispose
                 WriteObject(service);
             }
             finally
