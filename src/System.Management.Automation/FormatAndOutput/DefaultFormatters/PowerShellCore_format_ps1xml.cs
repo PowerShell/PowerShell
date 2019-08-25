@@ -257,77 +257,16 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
 
             yield return new ExtendedTypeDefinition(
-            "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
-            ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
 
             yield return new ExtendedTypeDefinition(
-            "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
-            ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
-        {
-            yield return new FormatViewDefinition(
-                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
-                TableControl.Create()
-                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
-                    .AddHeader(Alignment.Left, label: "Source", width: 16)
-                    .AddHeader(Alignment.Left, label: "Address", width: 15)
-                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
-                    .AddHeader(Alignment.Right, label: "BufferSize(B)", width: 10)
-                    .AddHeader(Alignment.Center, label: "Status", width: 16)
-                    .StartRowDefinition()
-                        .AddPropertyColumn("Ping")
-                        .AddPropertyColumn("Source")
-                        .AddScriptBlockColumn(@"
-                            if ($_.Address) {
-                                $_.Address
-                            }
-                            else {
-                                '*'
-                            }
-                        ")
-                        .AddScriptBlockColumn(@"
-                            if ($_.Status -eq 'TimedOut') {
-                                '*'
-                            }
-                            else {
-                                $_.Latency
-                            }
-                        ")
-                        .AddPropertyColumn("BufferSize")
-                        .AddPropertyColumn("Status")
-                    .EndRowDefinition()
-                    .GroupByProperty("Destination")
-                .EndTable());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus()
-        {
-            yield return new FormatViewDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
-                TableControl.Create()
-                    .AddHeader(Alignment.Left, label: "Source", width: 16)
-                    .AddHeader(Alignment.Left, label: "Address", width: 15)
-                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
-                    .AddHeader(Alignment.Center, label: "Status", width: 16)
-                    .AddHeader(Alignment.Right, label: "MtuSize(B)", width: 7)
-                    .StartRowDefinition()
-                        .AddPropertyColumn("Source")
-                        .AddPropertyColumn("Address")
-                        .AddScriptBlockColumn(@"
-                            if ($_.Status -eq 'TimedOut') {
-                                '*'
-                            }
-                            else {
-                                $_.Latency
-                            }
-                        ")
-                        .AddPropertyColumn("Status")
-                        .AddPropertyColumn("MtuSize")
-                    .EndRowDefinition()
-                    .GroupByProperty("Destination")
-                .EndTable());
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -1510,6 +1449,110 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Address", width: 15)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Right, label: "BufferSize(B)", width: 10)
+                    .AddHeader(Alignment.Center, label: "Status", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Ping")
+                        .AddPropertyColumn("Source")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Address) {
+                                $_.Address
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddPropertyColumn("BufferSize")
+                        .AddPropertyColumn("Status")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Address", width: 15)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Center, label: "Status", width: 16)
+                    .AddHeader(Alignment.Right, label: "MtuSize(B)", width: 7)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Address")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("MtuSize")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Hop", width: 3)
+                    .AddHeader(Alignment.Left, label: "Hostname", width: 22)
+                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Center, label: "Status", width: 16)
+                    .AddHeader(Alignment.Left, label: "Source", width: 12)
+                    .AddHeader(Alignment.Left, label: "TargetAddress", width: 15)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Hop")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Hostname) {
+                                $_.HostName
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
+                        .AddPropertyColumn("Ping")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("TargetAddress")
+                    .EndRowDefinition()
+                    .GroupByProperty("Target")
+                .EndTable());
         }
     }
 }
