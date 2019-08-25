@@ -35,33 +35,34 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Do ping test.
+        /// Gets or sets whether to do ping test.
+        /// Default is true.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
-        /// Force using IPv4 protocol.
+        /// Gets or sets whether to force use of IPv4 protocol.
         /// </summary>
         [Parameter]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
-        /// Force using IPv6 protocol.
+        /// Gets or sets whether to force use of IPv6 protocol.
         /// </summary>
         [Parameter]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
-        /// Do reverse DNS lookup to get names for IP addresses.
+        /// Gets or sets whether to do reverse DNS lookup to get names for IP addresses.
         /// </summary>
         [Parameter]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
-        /// Source from which to do a test (ping, trace route, ...).
-        /// The default is Local Host.
+        /// Gets the source from which to run the selected test.
+        /// The default is localhost.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
@@ -71,9 +72,9 @@ namespace Microsoft.PowerShell.Commands
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
-        /// The number of times the Ping data packets can be forwarded by routers.
-        /// As gateways and routers transmit packets through a network,
-        /// they decrement the Time-to-Live (TTL) value found in the packet header.
+        /// Gets or sets the number of times the Ping data packets can be forwarded by routers.
+        /// As gateways and routers transmit packets through a network, they decrement the Time-to-Live (TTL)
+        /// value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         private const int sMaxHops = 128;
 
         /// <summary>
-        /// Count of attempts.
+        /// Gets or sets the number of ping attempts.
         /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
@@ -94,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         public int Count { get; set; } = 4;
 
         /// <summary>
-        /// Delay between attempts.
+        /// Gets or sets the delay between ping attempts.
         /// The default (from Windows) is 1 second.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
@@ -103,9 +104,9 @@ namespace Microsoft.PowerShell.Commands
         public int Delay { get; set; } = 1;
 
         /// <summary>
-        /// Buffer size to send.
-        /// The default (from Windows) is 32 bites.
-        /// Max value is 65500 (limit from Windows API).
+        /// Gets or sets the buffer size to send with the ping packet.
+        /// The default (from Windows) is 32 bytes.
+        /// Max value is 65500 (limitation imposed by Windows API).
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
@@ -114,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         public int BufferSize { get; set; } = DefaultSendBufferSize;
 
         /// <summary>
-        /// Don't fragment ICMP packages.
+        /// Gets or sets whether to prevent fragmentation of the ICMP packets.
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingSet)]
@@ -122,31 +123,30 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
-        /// Continue ping until user press Ctrl-C
-        /// or Int.MaxValue threshold reached.
+        /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
         [Parameter(ParameterSetName = RepeatPingSet)]
         public SwitchParameter Continues { get; set; }
 
         /// <summary>
-        /// Set short output kind ('bool' for Ping, 'int' for MTU size ...).
-        /// Default is to return typed result object(s).
+        /// Gets or sets whether to enable quiet output mode, reducing output to a single simple value only.
+        /// By default, objects are emitted.
+        /// With this switch, standard ping and -Traceroute returns only true / false, and -MtuSize returns an integer.
         /// </summary>
         [Parameter]
         public SwitchParameter Quiet;
 
         /// <summary>
-        /// Time-out value in seconds.
+        /// Gets or sets the timeout value for an individual ping in seconds.
         /// If a response is not received in this time, no response is assumed.
-        /// It is not the cmdlet timeout! It is a timeout for waiting one ping response.
-        /// The default (from Windows) is 5 second.
+        /// The default (from Windows) is 5 seconds.
         /// </summary>
         [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int TimeoutSeconds { get; set; } = 5;
 
         /// <summary>
-        /// Destination - computer name or IP address.
+        /// Gets or sets the destination hostname or IP address.
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -158,19 +158,21 @@ namespace Microsoft.PowerShell.Commands
         public string[] TargetName { get; set; }
 
         /// <summary>
-        /// Detect MTU size.
+        /// Gets or sets whether to detect Maximum Transmission Unit size.
+        /// When selected, only a single ping result is returned, indicating the maximum buffer size
+        /// the route to the destination can support without fragmenting the ICMP packets.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
         public SwitchParameter MTUSizeDetect { get; set; }
 
         /// <summary>
-        /// Do traceroute test.
+        /// Gets or sets whether to perform a traceroute test.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = TraceRouteSet)]
         public SwitchParameter Traceroute { get; set; }
 
         /// <summary>
-        /// Do tcp connection test.
+        /// Gets or sets whether to perform a TCP connection test.
         /// </summary>
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
@@ -179,10 +181,11 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         /// <summary>
-        /// Init the cmdlet.
+        /// BeginProcessing implementation for TestConnectionCommand.
         /// </summary>
         protected override void BeginProcessing()
         {
+            // Add the event handler to the PingCompleted event, to inform the cmdlet when pings are completed.
             _sender.PingCompleted += OnPingComplete;
 
             switch (ParameterSetName)
@@ -221,8 +224,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// On receiving the StopProcessing() request, the cmdlet will immediately cancel any in-progress ping request.
-        /// This allows a cancellation to occur during a ping request without having to wait for a potentially very
-        /// long timeout.
+        /// This allows a cancellation to occur during a ping request without having to wait for the timeout.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -335,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
 
                 var hopReplies = new List<TraceStatus>(DefaultTraceRoutePingCount);
 
-                // In the specific case we don't use 'Count' property.
+                // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
@@ -400,7 +402,8 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     hopReplies.Add(hopResult);
-                    // We use short delay because it is impossible DoS with trace route.
+
+                    // We use a short delay because it is impossible to DoS with traceroute.
                     Thread.Sleep(50);
                 }
 
@@ -461,14 +464,13 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             WriteVerbose(StringUtil.Format(
                 TestConnectionResources.MTUSizeDetectStart,
                 resolvedTargetName,
                 targetAddress.ToString(),
                 BufferSize));
 
-            // Cautious! Algorithm is sensitive to changing boundary values.
+            // Caution! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
@@ -496,7 +498,6 @@ namespace Microsoft.PowerShell.Commands
 
                     reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
-                    // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
                     {
                         HighMTUSize = CurrentMTUSize;
@@ -510,7 +511,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // Target host don't reply - try again up to 'Count'.
+                        // If the host did't reply, try again up to the 'Count' value.
                         if (retry >= Count)
                         {
                             string message = StringUtil.Format(
@@ -632,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbosePing(reply);
                 }
 
-                // Delay between ping but not after last ping.
+                // Delay between pings, but not after last ping.
                 if (i < Count && Delay > 0)
                 {
                     Thread.Sleep(delay);
@@ -749,7 +750,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Users most often use the default buffer size so we cache the buffer.
-        // Creates and filles a send buffer. This follows the ping.exe and CoreFX model.
+        // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
         private byte[] GetSendBuffer(int bufferSize)
         {
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
@@ -801,21 +802,24 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        // Count of pings sent per each trace route hop.
-        // Default = 3 (from Windows).
-        // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
+        // Count of pings sent to each trace route hop. Default mimics Windows' defaults.
+        // If this value changes, we need to update 'ConsoleTraceRouteReply' resource string.
         private const int DefaultTraceRoutePingCount = 3;
 
-        /// Create the default send buffer once and cache it.
+        // Default size for the send buffer.
         private const int DefaultSendBufferSize = 32;
+
         private static byte[] s_DefaultSendBuffer = null;
 
         private bool disposed = false;
 
         private readonly Ping _sender = new Ping();
+
         private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
+
         private PingCompletedEventArgs _pingCompleteArgs;
 
+        // Uses the SendAsync() method to send pings, so that Ctrl+C can halt the request early if needed.
         private PingReply SendCancellablePing(
             IPAddress targetAddress,
             int timeout,
@@ -833,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_pingCompleteArgs.Cancelled)
             {
-                // The only cancellation we have implemented is on pipeline stops.
+                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
                 throw new PipelineStoppedException();
             }
 
@@ -845,6 +849,8 @@ namespace Microsoft.PowerShell.Commands
             return _pingCompleteArgs.Reply;
         }
 
+        // This event is triggered when the ping is completed, and passes along the eventargs so that we know
+        // if the ping was cancelled, or an exception was thrown.
         private static void OnPingComplete(object sender, PingCompletedEventArgs e)
         {
             ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
