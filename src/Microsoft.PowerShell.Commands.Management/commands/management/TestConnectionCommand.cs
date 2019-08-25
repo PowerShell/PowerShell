@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteConnectionTestHeader(resolvedTargetName, targetAddress.ToString());
+            WriteVerboseConnectionTestHeader(resolvedTargetName, targetAddress.ToString());
 
             TcpClient client = new TcpClient();
 
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
-                    WriteConnectionTestProgress(targetNameOrAddress, targetString, i);
+                    WriteVerboseConnectionTest(targetNameOrAddress, targetString, i);
 
                     Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
                     Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
@@ -277,37 +277,26 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 client.Close();
-                WriteConnectionTestFooter();
             }
 
             WriteObject(false);
         }
 
-        private void WriteConnectionTestHeader(string resolvedTargetName, string targetAddress)
+        private void WriteVerboseConnectionTestHeader(string resolvedTargetName, string targetAddress)
         {
-            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.ConnectionTestStart, resolvedTargetName, targetAddress);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
+            WriteVerbose(StringUtil.Format(
+                TestConnectionResources.ConnectionTestStart,
+                resolvedTargetName,
+                targetAddress));
         }
 
-        private void WriteConnectionTestProgress(string targetNameOrAddress, string targetAddress, int timeout)
+        private void WriteVerboseConnectionTest(string targetNameOrAddress, string targetAddress, int timeout)
         {
-            var msg = StringUtil.Format(
+            WriteVerbose(StringUtil.Format(
                 TestConnectionResources.ConnectionTestDescription,
                 targetNameOrAddress,
                 targetAddress,
-                timeout);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteConnectionTestFooter()
-        {
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
+                timeout));
         }
 
         #endregion ConnectionTest
@@ -324,7 +313,11 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
+            WriteVerbose(StringUtil.Format(
+                TestConnectionResources.TraceRouteStart,
+                resolvedTargetName,
+                targetAddress.ToString(),
+                MaxHops));
 
             int currentHop = 1;
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
@@ -411,13 +404,13 @@ namespace Microsoft.PowerShell.Commands
                     Thread.Sleep(50);
                 }
 
-                WriteTraceRouteProgress(hopReplies);
+                WriteVerboseTraceHop(hopReplies);
 
             } while (reply != null
                 && currentHop <= sMaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
-            WriteTraceRouteFooter();
+            WriteVerbose(TestConnectionResources.TraceRouteComplete);
 
             if (Quiet.IsPresent)
             {
@@ -425,23 +418,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WriteTraceRouteHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(
-                TestConnectionResources.TraceRouteStart,
-                resolvedTargetName,
-                targetAddress,
-                MaxHops);
-
-            WriteVerbose(_testConnectionProgressBarActivity);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private string _testConnectionProgressBarActivity;
-
-        private void WriteTraceRouteProgress(IList<TraceStatus> traceRouteReplies)
+        private void WriteVerboseTraceHop(IList<TraceStatus> traceRouteReplies)
         {
             string msg;
             if (traceRouteReplies[2].Status == IPStatus.Success)
@@ -469,20 +446,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteVerbose(msg);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteTraceRouteFooter()
-        {
-            WriteVerbose(TestConnectionResources.TraceRouteComplete);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
         }
 
         #endregion TracerouteTest
@@ -498,7 +461,12 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteMTUSizeHeader(resolvedTargetName, targetAddress.ToString());
+
+            WriteVerbose(StringUtil.Format(
+                TestConnectionResources.MTUSizeDetectStart,
+                resolvedTargetName,
+                targetAddress.ToString(),
+                BufferSize));
 
             // Cautious! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
@@ -515,7 +483,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
-                    WriteMTUSizeProgress(CurrentMTUSize, retry);
+                    WriteVerbose(StringUtil.Format(
+                        TestConnectionResources.MTUSizeDetectDescription,
+                        CurrentMTUSize,
+                        retry));
 
                     WriteDebug(StringUtil.Format(
                         "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
@@ -581,8 +552,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteMTUSizeFooter();
-
             if (Quiet.IsPresent)
             {
                 WriteObject(CurrentMTUSize);
@@ -591,35 +560,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(new PingMtuStatus(Source, targetAddress.ToString(), replyResult));
             }
-        }
-
-        private void WriteMTUSizeHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress,
-                BufferSize);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeProgress(int currentMTUSize, int retry)
-        {
-            var msg = StringUtil.Format(TestConnectionResources.MTUSizeDetectDescription, currentMTUSize, retry);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeFooter()
-        {
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
         }
 
         #endregion MTUSizeTest
@@ -637,7 +577,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (!Continues.IsPresent)
             {
-                WritePingHeader(resolvedTargetName, targetAddress.ToString());
+                WriteVerbose(StringUtil.Format(
+                TestConnectionResources.MTUSizeDetectStart,
+                resolvedTargetName,
+                targetAddress.ToString(),
+                BufferSize));
             }
 
             bool quietResult = true;
@@ -685,7 +629,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
                     }
 
-                    WritePingProgress(reply);
+                    WriteVerbosePing(reply);
                 }
 
                 // Delay between ping but not after last ping.
@@ -697,7 +641,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!Continues.IsPresent)
             {
-                WritePingFooter();
+                WriteVerbose(TestConnectionResources.PingComplete);
             }
 
             if (Quiet.IsPresent)
@@ -706,56 +650,23 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WritePingHeader(string resolvedTargetName, string targetAddress)
+        private void WriteVerbosePing(PingReply reply)
         {
-            _testConnectionProgressBarActivity = StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress,
-                BufferSize);
-
-            WriteVerbose(_testConnectionProgressBarActivity);
-
-            ProgressRecord record = new ProgressRecord(
-                s_ProgressId,
-                _testConnectionProgressBarActivity,
-                ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private void WritePingProgress(PingReply reply)
-        {
-            string msg;
             if (reply.Status != IPStatus.Success)
             {
-                msg = TestConnectionResources.PingTimeOut;
+                WriteVerbose(TestConnectionResources.PingTimeOut);
             }
             else
             {
-                msg = StringUtil.Format(
+                WriteVerbose(StringUtil.Format(
                     TestConnectionResources.PingReply,
                     reply.Address.ToString(),
                     reply.Buffer.Length,
                     reply.RoundtripTime,
-                    reply.Options?.Ttl);
+                    reply.Options?.Ttl));
             }
-
-            WriteVerbose(msg);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
         }
 
-        private void WritePingFooter()
-        {
-            WriteVerbose(TestConnectionResources.PingComplete);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
-        }
         #endregion PingTest
 
         private bool InitProcessPing(string targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
@@ -939,12 +850,6 @@ namespace Microsoft.PowerShell.Commands
             ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
             ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
-
-        // Random value for WriteProgress Activity Id.
-        private static readonly int s_ProgressId = 174593053;
-
-        // Empty message string for Progress Bar.
-        private const string ProgressRecordSpace = " ";
 
         private const string TestConnectionExceptionId = "TestConnectionException";
 
