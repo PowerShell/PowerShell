@@ -26,11 +26,42 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(TraceStatus), ParameterSetName = new[] { TraceRouteSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
+        #region ParameterSetName Constants
+
         private const string DefaultPingSet = "DefaultPing";
         private const string RepeatPingSet = "RepeatPing";
         private const string TraceRouteSet = "TraceRoute";
         private const string TcpPortSet = "TcpPort";
         private const string MtuSizeDetectSet = "MtuSizeDetect";
+
+        #endregion
+
+        #region Cmdlet Defaults
+
+        // Count of pings sent to each trace route hop. Default mimics Windows' defaults.
+        // If this value changes, we need to update 'ConsoleTraceRouteReply' resource string.
+        private const int DefaultTraceRoutePingCount = 3;
+
+        // Default size for the send buffer.
+        private const int DefaultSendBufferSize = 32;
+
+        private const string TestConnectionExceptionId = "TestConnectionException";
+
+        #endregion
+
+        #region Private Fields
+
+        private static byte[] s_DefaultSendBuffer = null;
+
+        private bool disposed = false;
+
+        private readonly Ping _sender = new Ping();
+
+        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
+
+        private PingCompletedEventArgs _pingCompleteArgs;
+
+        #endregion
 
         #region Parameters
 
@@ -237,9 +268,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -310,9 +339,7 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -333,7 +360,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Clear the stored router name for every hop
                 string routerName = null;
-                TraceStatus hopResult = null;
                 pingOptions.Ttl = currentHop;
                 currentHop++;
 
@@ -343,6 +369,7 @@ namespace Microsoft.PowerShell.Commands
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
+                    TraceStatus hopResult;
                     try
                     {
                         reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions, timer);
@@ -459,9 +486,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply reply, replyResult = null;
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -571,9 +596,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -792,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -803,23 +826,6 @@ namespace Microsoft.PowerShell.Commands
                 disposed = true;
             }
         }
-
-        // Count of pings sent to each trace route hop. Default mimics Windows' defaults.
-        // If this value changes, we need to update 'ConsoleTraceRouteReply' resource string.
-        private const int DefaultTraceRoutePingCount = 3;
-
-        // Default size for the send buffer.
-        private const int DefaultSendBufferSize = 32;
-
-        private static byte[] s_DefaultSendBuffer = null;
-
-        private bool disposed = false;
-
-        private readonly Ping _sender = new Ping();
-
-        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
-
-        private PingCompletedEventArgs _pingCompleteArgs;
 
         // Uses the SendAsync() method to send pings, so that Ctrl+C can halt the request early if needed.
         private PingReply SendCancellablePing(
@@ -858,8 +864,6 @@ namespace Microsoft.PowerShell.Commands
             ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
             ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
-
-        private const string TestConnectionExceptionId = "TestConnectionException";
 
         /// <summary>
         /// The class contains information about the source, the destination and ping results.
