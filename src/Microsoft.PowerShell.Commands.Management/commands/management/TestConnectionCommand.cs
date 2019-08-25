@@ -125,8 +125,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        public SwitchParameter Continues { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = RepeatPingSet)]
+        [Alias("Continues", "Continuous")]
+        public SwitchParameter Repeat { get; set; }
 
         /// <summary>
         /// Gets or sets whether to enable quiet output mode, reducing output to a single simple value only.
@@ -163,7 +164,8 @@ namespace Microsoft.PowerShell.Commands
         /// the route to the destination can support without fragmenting the ICMP packets.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
-        public SwitchParameter MTUSizeDetect { get; set; }
+        [Alias("MtuSizeDetect")]
+        public SwitchParameter MtuSize { get; set; }
 
         /// <summary>
         /// Gets or sets whether to perform a traceroute test.
@@ -176,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
-        public int TCPPort { get; set; }
+        public int TcpPort { get; set; }
 
         #endregion Parameters
 
@@ -248,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Task connectionTask = client.ConnectAsync(targetAddress, TCPPort);
+                Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
                 string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
@@ -576,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!Continues.IsPresent)
+            if (!Repeat.IsPresent)
             {
                 WriteVerbose(StringUtil.Format(
                 TestConnectionResources.MTUSizeDetectStart,
@@ -614,7 +616,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Continues.IsPresent)
+                if (Repeat.IsPresent)
                 {
                     WriteObject(reply);
                 }
@@ -640,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (!Continues.IsPresent)
+            if (!Repeat.IsPresent)
             {
                 WriteVerbose(TestConnectionResources.PingComplete);
             }
