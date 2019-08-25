@@ -589,17 +589,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                var res = PSObject.AsPSObject(replyResult);
-
-                PSMemberInfo sourceProperty = new PSNoteProperty("Source", Source);
-                res.Members.Add(sourceProperty);
-                PSMemberInfo destinationProperty = new PSNoteProperty("Destination", targetNameOrAddress);
-                res.Members.Add(destinationProperty);
-                PSMemberInfo mtuSizeProperty = new PSNoteProperty("MTUSize", CurrentMTUSize);
-                res.Members.Add(mtuSizeProperty);
-                res.TypeNames.Insert(0, "PingReply#MTUSize");
-
-                WriteObject(res);
+                WriteObject(new PingMtuStatus(Source, targetAddress.ToString(), replyResult));
             }
         }
 
