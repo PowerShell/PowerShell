@@ -2296,16 +2296,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                 {
-                    ServiceController service = new ServiceController(Name) ;
+                    ServiceController service = new ServiceController(Name);
                     SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
                 }
 
                 // write the ServiceController for the new service
-                using (ServiceController service =
-                    new ServiceController(Name)) // ensure dispose
-                {
-                    WriteObject(service);
-                }
+                ServiceController service = new ServiceController(Name); // ensure dispose
+                WriteObject(service);
             }
             finally
             {
