@@ -43,7 +43,7 @@ Describe "New-Service cmdlet tests" -Tags "CI" {
             $TestServiceName1 = 'TestService'
             $svccmd = Get-Command $TestServiceName1
             $svccmd | Should -Not -BeNullOrEmpty
-            $BinaryPathName = 'C:\WINDOWS\system32\cmd.exe' #$svccmd.Path
+            $BinaryPathName = $svccmd.Path
             $ServiceSetting = @{
                 Name = $TestServiceName1
                 BinaryPathName = $BinaryPathName
