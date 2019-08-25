@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingReport), ParameterSetName = new[] { DefaultPingSet })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new[] { DefaultPingSet })]
     [OutputType(typeof(PingReply), ParameterSetName = new[] { RepeatPingSet, MtuSizeDetectSet })]
     [OutputType(typeof(bool), ParameterSetName = new[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
     [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
@@ -695,11 +695,10 @@ namespace Microsoft.PowerShell.Commands
 
             PingReply reply;
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
-            PingReport pingReport = new PingReport(Source, resolvedTargetName);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
-            for (int i = 1; i <= Count; i++)
+            for (uint i = 1; i <= Count; i++)
             {
                 try
                 {
@@ -733,7 +732,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        pingReport.Replies.Add(reply);
+                        WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
                     }
 
                     WritePingProgress(reply);
@@ -754,10 +753,6 @@ namespace Microsoft.PowerShell.Commands
             if (Quiet.IsPresent)
             {
                 WriteObject(quietResult);
-            }
-            else
-            {
-                WriteObject(pingReport);
             }
         }
 
@@ -811,35 +806,6 @@ namespace Microsoft.PowerShell.Commands
             };
             WriteProgress(record);
         }
-
-        /// <summary>
-        /// The class contains an information about the source, the destination and ping results.
-        /// </summary>
-        public class PingReport
-        {
-            internal PingReport(string source, string destination)
-            {
-                Source = source;
-                Destination = destination;
-                Replies = new List<PingReply>();
-            }
-
-            /// <summary>
-            /// Source from which to ping.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Destination to which to ping.
-            /// </summary>
-            public string Destination { get; }
-
-            /// <summary>
-            /// Ping results for every ping attempt.
-            /// </summary>
-            public List<PingReply> Replies { get; }
-        }
-
         #endregion PingTest
 
         private bool InitProcessPing(string targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
@@ -1028,6 +994,127 @@ namespace Microsoft.PowerShell.Commands
         private const string ProgressRecordSpace = " ";
 
         private const string TestConnectionExceptionId = "TestConnectionException";
+
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
+            /// This constructor allows manually specifying the initial values for the cases where the PingReply
+            /// object may be missing some information, specifically in the instances where PingReply objects are
+            /// utilised to perform a traceroute.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="options">The PingOptions specified when the ping was sent.</param>
+            /// <param name="latency">The manually measured latency of the ping attempt.</param>
+            /// <param name="bufferSize">The buffer size.</param>
+            /// <param name="pingNum">The sequence number in the sequence of pings to the hop point.</param>
+            internal PingStatus(
+                string source,
+                string destination,
+                PingReply reply,
+                PingOptions options,
+                long latency,
+                int bufferSize,
+                uint pingNum)
+                : this(source, destination, reply, pingNum)
+            {
+                _options = options;
+                _latency = latency;
+                _bufferSize = bufferSize;
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="pingNum">The sequence number of the ping in the sequence of pings to the target.</param>
+            internal PingStatus(string source, string destination, PingReply reply, uint pingNum)
+            {
+                Ping = pingNum;
+                Reply = reply;
+                Source = source;
+                Destination = destination ?? reply.Address.ToString();
+            }
+
+            // These values should only be set if this PingStatus was created as part of a traceroute.
+            private readonly int _bufferSize = -1;
+            private readonly long _latency = -1;
+            private readonly PingOptions _options;
+
+            /// <summary>
+            /// Gets the sequence number of this ping in the sequence of pings to the <see cref="Destination"/>
+            /// </summary>
+            public uint Ping { get; }
+
+            /// <summary>
+            /// Gets the source from which the ping was sent.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the destination which was pinged.
+            /// </summary>
+            public string Destination { get; }
+
+            /// <summary>
+            /// Gets the target address of the ping.
+            /// </summary>
+            public IPAddress Address { get => Reply.Status == IPStatus.Success ? Reply.Address : null; }
+
+            /// <summary>
+            /// Gets the roundtrip time of the ping in milliseconds.
+            /// </summary>
+            public long Latency { get => _latency >= 0 ? _latency : Reply.RoundtripTime; }
+
+            /// <summary>
+            /// Gets the returned status of the ping.
+            /// </summary>
+            public IPStatus Status { get => Reply.Status; }
+
+            /// <summary>
+            /// Gets the size in bytes of the buffer data sent in the ping.
+            /// </summary>
+            public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : Reply.Buffer.Length; }
+
+            /// <summary>
+            /// Gets the reply object from this ping.
+            /// </summary>
+            public PingReply Reply { get; }
+
+            /// <summary>
+            /// Gets the options used when sending the ping.
+            /// </summary>
+            public PingOptions Options { get => _options ?? Reply.Options; }
+        }
+
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingMtuStatus : PingStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingMtuStatus"/> class.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            internal PingMtuStatus(string source, string destination, PingReply reply)
+                : base(source, destination, reply, 1)
+            {
+            }
+
+            /// <summary>
+            /// Gets the maximum transmission unit size on the network path between the source and destination.
+            /// </summary>
+            public int MtuSize { get => BufferSize; }
+        }
 
         /// <summary>
         /// Finalizer for IDisposable class.
