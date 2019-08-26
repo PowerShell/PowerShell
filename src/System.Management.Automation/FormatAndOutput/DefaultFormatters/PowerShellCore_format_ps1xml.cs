@@ -739,9 +739,9 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ErrorRecord()
         {
-            var formatNativeCommandError = "$_.Exception.Message";
             var isNativeCommandError = "$_.FullyQualifiedErrorId -in @('NativeCommandErrorMessage', 'NativeCommandError')";
-            var isNotNativeCommandErrorScript = $"-not ({isNativeCommandError})";
+            var isNotNativeCommandError = "$_.FullyQualifiedErrorId -notin @('NativeCommandErrorMessage', 'NativeCommandError')";
+            var formatNativeCommandError = "$_.Exception.Message";
 
             var customControlNormalView = CustomControl.Create()
                     .StartEntry()
@@ -809,21 +809,20 @@ namespace System.Management.Automation.Runspaces
 
                                     if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
                                         $posmsg = $posmsg.Insert(0, $_.ErrorDetails.Message)
-                                        $sb = $sb.Append($posmsg)
                                     } else {
                                         $posmsg = $posmsg.Insert(0, $_.Exception.Message)
-                                        $sb = $sb.Append($posmsg).AppendLine()
                                     }
+                                    $sb = $sb.Append($posmsg).AppendLine()
 
                                     $sb.ToString()
-                                ", selectedByScript: isNotNativeCommandErrorScript)
+                                ", selectedByScript: isNotNativeCommandError)
                     .EndEntry()
                 .EndControl();
 
             var customControlCategoryView = CustomControl.Create()
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(formatNativeCommandError, selectedByScript: isNativeCommandError)
-                        .AddScriptBlockExpressionBinding("$_.CategoryInfo.GetMessage()", selectedByScript: isNotNativeCommandErrorScript)
+                        .AddScriptBlockExpressionBinding("$_.CategoryInfo.GetMessage()", selectedByScript: isNotNativeCommandError)
                     .EndEntry()
                 .EndControl();
 
