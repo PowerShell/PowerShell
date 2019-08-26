@@ -43,19 +43,31 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Force using IPv4 protocol.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
         /// Force using IPv6 protocol.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
         /// Do reverse DNS lookup to get names for IP addresses.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
