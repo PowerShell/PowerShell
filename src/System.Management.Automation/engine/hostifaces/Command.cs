@@ -174,6 +174,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Gets or sets DollarUnderbar ($_) value to be used with script command.
+        /// This is used by foreach-object -parallel where each piped input ($_) is associated
+        /// with a parallel running script block.
+        /// </summary>
+        internal object DollarUnderbar { get; set; } = AutomationNull.Value;
+
+        /// <summary>
         /// Checks if the current command marks the end of a statement (see PowerShell.AddStatement())
         /// </summary>
         public bool IsEndOfStatement { get; internal set; }
@@ -495,7 +502,8 @@ namespace System.Management.Automation.Runspaces
                     commandProcessorBase = new DlrScriptCommandProcessor(scriptBlock,
                                                                          executionContext, _useLocalScope ?? false,
                                                                          origin,
-                                                                         executionContext.EngineSessionState);
+                                                                         executionContext.EngineSessionState,
+                                                                         DollarUnderbar);
                 }
             }
             else

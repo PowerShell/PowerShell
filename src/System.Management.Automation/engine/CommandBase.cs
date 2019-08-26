@@ -277,18 +277,26 @@ namespace System.Management.Automation
     public enum ActionPreference
     {
         /// <summary>Ignore this event and continue</summary>
-        SilentlyContinue,
+        SilentlyContinue = 0,
+
         /// <summary>Stop the command</summary>
-        Stop,
+        Stop = 1,
+
         /// <summary>Handle this event as normal and continue</summary>
-        Continue,
+        Continue = 2,
+
         /// <summary>Ask whether to stop or continue</summary>
-        Inquire,
+        Inquire = 3,
+
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
-        Ignore,
+        Ignore = 4,
+
         /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
-        Suspend,
-    }
+        Suspend = 5,
+
+        /// <summary>Enter the debugger.</summary>
+        Break = 6,
+    } // enum ActionPreference
     #endregion ActionPreference
 
     #region ConfirmImpact

@@ -392,7 +392,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         internal List<CimClass> ParseSchemaMofFileBuffer(string mof)
         {
             uint offset = 0;
-            var buffer = Encoding.Unicode.GetBytes(mof);
+#if UNIX
+            // OMI only supports UTF-8 without BOM
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+#else
+            // This is what we traditionally use with Windows
+            // DSC asked to keep it UTF-32 for Windows
+            var encoding = new UnicodeEncoding();
+#endif
+
+            var buffer = encoding.GetBytes(mof);
+
             var result = new List<CimClass>(_deserializer.DeserializeClasses(buffer, ref offset, null, null, null, _onClassNeeded, null));
             return result;
         }

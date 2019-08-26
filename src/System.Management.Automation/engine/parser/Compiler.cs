@@ -4958,7 +4958,8 @@ namespace System.Management.Automation.Language
                 UpdatePosition(throwStatementAst),
                 Expression.Throw(Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_ConvertToException,
                                                  throwExpr.Convert(typeof(object)),
-                                                 Expression.Constant(throwStatementAst.Extent))));
+                                                 Expression.Constant(throwStatementAst.Extent),
+                                                 Expression.Constant(throwStatementAst.IsRethrow))));
         }
 
         #endregion Statements

@@ -43,7 +43,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Private.CoreLib.dll'
             'System.Private.Uri.dll'
             'System.Private.Xml.dll'
-            'System.Private.Xml.Linq.dll'
             'System.Reflection.Emit.ILGeneration.dll'
             'System.Reflection.Emit.Lightweight.dll'
             'System.Reflection.Primitives.dll'
@@ -67,9 +66,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Threading.Tasks.Parallel.dll'
             'System.Threading.Thread.dll'
             'System.Threading.ThreadPool.dll'
-            'System.Threading.Timer.dll'
             'System.Xml.ReaderWriter.dll'
-            'System.Xml.XDocument.dll'
         )
 
         if ($IsWindows) {
@@ -106,6 +103,11 @@ Describe "Validate start of console host" -Tag CI {
     }
 
     It "No new assemblies are loaded" {
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "Missing MI library causes list to be different"
+            return
+        }
+
         $diffs = Compare-Object -ReferenceObject $allowedAssemblies -DifferenceObject $loadedAssemblies
 
         if ($null -ne $diffs) {

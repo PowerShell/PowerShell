@@ -108,7 +108,12 @@ Describe "Test-Connection" -tags "CI" {
             # After .Net Core fix we should have 'DontFragment | Should -Be $true' here.
             $result1.Replies[0].Options.Ttl          | Should -BeLessOrEqual 128
             if (!$isWindows) {
-                $result1.Replies[0].Options.DontFragment | Should -BeNullOrEmpty
+                if ( (Get-PlatformInfo) -eq "alpine" ) {
+                    $result1.Replies[0].Options.DontFragment | Should -Be $true
+                }
+                else {
+                    $result1.Replies[0].Options.DontFragment | Should -BeNullOrEmpty
+                }
                 # depending on the network configuration any of the following should be returned
                 $result2.Replies[0].Status               | Should -BeIn "TtlExpired","TimedOut","Success"
             } else {

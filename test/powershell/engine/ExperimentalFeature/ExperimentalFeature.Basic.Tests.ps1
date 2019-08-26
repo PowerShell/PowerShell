@@ -36,10 +36,6 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         }
     }
 
-    It "No experimental feature is enabled" {
-        $EnabledExperimentalFeatures.Count | Should -Be 0
-    }
-
     It "Replace existing command <Name> - version one should be shown" -TestCases @(
         @{ Name = "Invoke-AzureFunction"; CommandType = "Function" }
         @{ Name = "Invoke-AzureFunctionCSharp"; CommandType = "Cmdlet" }

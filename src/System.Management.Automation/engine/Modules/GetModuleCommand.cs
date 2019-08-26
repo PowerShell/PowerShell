@@ -573,9 +573,11 @@ namespace Microsoft.PowerShell.Commands
             IDictionary<string, ModuleSpecification> moduleSpecTable,
             PSModuleInfo module)
         {
+            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             foreach (ModuleSpecification moduleSpec in moduleSpecTable.Values)
             {
-                if (moduleSpec.Name == module.Name || moduleSpec.Name == module.Path || module.Path.Contains(moduleSpec.Name))
+                WildcardPattern namePattern = WildcardPattern.Get(moduleSpec.Name, options);
+                if (namePattern.IsMatch(module.Name) || moduleSpec.Name == module.Path || module.Path.Contains(moduleSpec.Name))
                 {
                     yield return moduleSpec;
                 }

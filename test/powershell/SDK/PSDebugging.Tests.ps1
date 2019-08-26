@@ -187,7 +187,7 @@ Describe "Runspace Debugging API tests" -tag CI {
     Context "PSStandaloneMonitorRunspaceInfo tests" {
         BeforeAll {
             $runspace = [runspacefactory]::CreateRunspace()
-            $runspaceType = [PSMonitorRunspaceType]::WorkflowInlineScript
+            $runspaceType = [PSMonitorRunspaceType]::InvokeCommand
             $monitorInfo = [PSStandaloneMonitorRunspaceInfo]::new($runspace)
             $instanceId = $runspace.InstanceId
             $parentDebuggerId = [guid]::newguid()

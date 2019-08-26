@@ -446,6 +446,31 @@ Fix steps:
         Pop-Location
     }
 
+    # publish powershell.config.json
+    $config = @{}
+    if ($Environment.IsWindows) {
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+    }
+
+    if ($ReleaseTag) {
+        $psVersion = $ReleaseTag
+    }
+    else {
+        $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
+    }
+
+    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
+        $expFeatures = [System.Collections.Generic.List[string]]::new()
+        & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+        $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
+    }
+
+    if ($config.Count -gt 0) {
+        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+    }
+
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
@@ -981,13 +1006,19 @@ function Start-PSPester {
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     if(!$SkipTestToolBuild.IsPresent)
     {
-        Publish-PSTestTools | ForEach-Object {Write-Host $_}
+        $publishArgs = @{ }
+        # if we are building for Alpine, we must include the runtime as linux-x64
+        # will not build runnable test tools
+        if ( $Environment.IsAlpine ) {
+            $publishArgs['runtime'] = 'alpine-x64'
+        }
+        Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
     # Disable telemetry for all startups of pwsh in tests
-    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 1;"
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1128,7 +1159,7 @@ function Start-PSPester {
     try {
         $originalModulePath = $env:PSModulePath
         $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
-        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 'yes'
         if ($Unelevate)
         {
             Start-UnelevatedProcess -process $powershell -arguments ($PSFlags + "-c $Command")
@@ -1506,8 +1537,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dot.net/v1"    
-    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"    
+    $installObtainUrl = "https://dot.net/v1"
+    $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
@@ -2191,7 +2222,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "System.Management.Automation.dll"
     )
@@ -2199,6 +2229,7 @@ function Start-CrossGen {
     # Add Windows specific libraries
     if ($Environment.IsWindows) {
         $psCoreAssemblyList += @(
+            "Microsoft.PowerShell.CoreCLR.Eventing.dll",
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",

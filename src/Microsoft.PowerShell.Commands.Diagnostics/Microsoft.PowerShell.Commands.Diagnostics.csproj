@@ -27,4 +27,9 @@
     <Compile Remove="gen\GetEventResources.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="GetEventCommand.cs" />
+    <Compile Remove="NewWinEventCommand.cs" />
+  </ItemGroup>
+
 </Project>
