@@ -18,11 +18,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingReport), ParameterSetName = new[] { DefaultPingSet })]
-    [OutputType(typeof(PingReply), ParameterSetName = new[] { RepeatPingSet, MtuSizeDetectSet })]
-    [OutputType(typeof(bool), ParameterSetName = new[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
-    [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
-    [OutputType(typeof(TraceRouteReply), ParameterSetName = new[] { TraceRouteSet })]
+    [OutputType(typeof(PingReport), ParameterSetName = new string[] { DefaultPingSet })]
+    [OutputType(typeof(PingReply), ParameterSetName = new string[] { RepeatPingSet, MtuSizeDetectSet })]
+    [OutputType(typeof(bool), ParameterSetName = new string[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
+    [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectSet })]
+    [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { TraceRouteSet })]
     public class TestConnectionCommand : PSCmdlet
     {
         private const string DefaultPingSet = "DefaultPing";
