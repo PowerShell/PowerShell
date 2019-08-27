@@ -1130,8 +1130,9 @@ namespace System.Management.Automation
                 {
                     PSObject mshObj = PSObject.AsPSObject(obj);
                     returnValue.Append(PSObject.ToString(context, mshObj, separator, format, formatProvider, false, false));
-                    returnValue.Append(separatorToUse);
                 }
+
+                returnValue.Append(separatorToUse);
             }
 
             if (returnValue.Length == 0)
