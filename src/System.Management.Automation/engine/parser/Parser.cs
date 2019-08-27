@@ -6442,7 +6442,7 @@ namespace System.Management.Automation.Language
             // G      ternary-expression
             // G
             // G  ternary-expression:
-            // G      binary-expression  new-lines:opt   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
+            // G      binary-expression   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
 
             // TODO: remove this if-block when making 'ternary operator' an official feature.
             if (!ExperimentalFeature.IsEnabled("PSTernaryOperator"))
