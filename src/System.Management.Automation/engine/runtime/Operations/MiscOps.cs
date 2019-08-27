@@ -327,6 +327,7 @@ namespace System.Management.Automation
                     endBlock: null,
                     dynamicParamBlock: null);
                 newScriptBlockAst.PostParseChecksPerformed = sbAst.PostParseChecksPerformed;
+                sbAst.Parent.SetParent(newScriptBlockAst);
 
                 return new ScriptBlock(newScriptBlockAst, isFilter: false);
             };
