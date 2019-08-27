@@ -3135,6 +3135,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
         {
             if($packageBuildTokens.length -gt 4)
             {
+                # MSIX will fail if it is more characters
                 $packageBuildTokens = $packageBuildTokens.Substring(0,4)
             }
 
