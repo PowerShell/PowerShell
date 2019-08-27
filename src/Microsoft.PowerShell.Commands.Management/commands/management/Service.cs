@@ -2779,7 +2779,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>If the function succeeds, the return value is nonzero.
         /// If the function fails, the return value is zero.
         /// </returns>
-        [DllImport(PinvokeDllNames.AssignProcessToJobObjectDllName, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AssignProcessToJobObject(SafeHandle hJob, IntPtr hProcess);
 
@@ -2805,7 +2805,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>If the function succeeds, the return value is nonzero.
         /// If the function fails, the return value is zero.
         /// </returns>
-        [DllImport(PinvokeDllNames.QueryInformationJobObjectDllName, EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
