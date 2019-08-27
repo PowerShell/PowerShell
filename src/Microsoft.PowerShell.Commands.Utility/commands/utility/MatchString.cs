@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly IReadOnlyList<int> _matchLengths;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatchInfo"/> class.
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasis disabled.
         /// </summary>
         public MatchInfo()
         {
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasized matched text.
-        /// Used when the Emphasize parameter is set and virtual terminal sequences are supported.
+        /// Used when virtual terminal sequences are supported.
         /// </summary>
         /// <param name="matchIndexes">Sets the matchIndexes.</param>
         /// <param name="matchLengths">Sets the matchLengths.</param>
@@ -1168,10 +1168,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating if the matching portion of the string should be highlighted.
+        /// Gets or sets a value indicating if highlighting should be disabled.
         /// </summary>
         [Parameter]
-        public SwitchParameter Emphasize { get; set; }
+        public SwitchParameter NoEmphasis { get; set; }
 
         /// <summary>
         /// Gets or sets files to include. Files matching
@@ -1655,7 +1655,7 @@ namespace Microsoft.PowerShell.Commands
             List<int> indexes = null;
             List<int> lengths = null;
 
-            bool shouldEmphasize = Emphasize && Host.UI.SupportsVirtualTerminal;
+            bool shouldEmphasize = !NoEmphasis && Host.UI.SupportsVirtualTerminal;
 
             // If Emphasize is set and VT is supported,
             // the lengths and starting indexes of regex matches

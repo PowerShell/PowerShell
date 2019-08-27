@@ -72,55 +72,52 @@ Describe "Select-String" -Tags "CI" {
 	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -BeExactly "hello", "Hello"
 	}
 
-	it "Should output a string with the first match highlighted when Emphasize is used" {
+	it "Should output a string with the first match highlighted" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize | Out-String
+			$result = $testinputone | Select-String -Pattern "l" | Out-String
 			$result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
 		}
 		else
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result = $testinputone | Select-String -Pattern "l" | Out-String
 			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 
-	it "Should output a string with all matches highlighted when Emphasize and AllMatch is used" {
+	it "Should output a string with all matches highlighted when AllMatch is used" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Out-String
+			$result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
 			$result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
 		}
 		else
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
 			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 
-	it "Should output a string with the first match highlighted when Emphasize and SimpleMatch is used" {
+	it "Should output a string with the first match highlighted when SimpleMatch is used" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
 			$result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
 		}
 		else
 		{
-			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
 			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 
-	it "Should return an array of matching strings without virtual terminal sequences when Emphasize is used" {
-		$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "hello", "hello"
+	it "Should output a string without highlighting when NoEmphasis is used" {
+		$result = $testinputone | Select-String -Pattern "l" -NoEmphasis | Out-String
+		$result | Should -Be "`nhello`nHello`n`n"
 	}
 
-	it "Should return the same as NotMatch" {
-	    $firstMatch = $testinputone | Select-String -pattern "goodbye" -NotMatch
-	    $secondMatch = $testinputone | Select-String -pattern "goodbye" -n
-
-	    $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
-	    $equal | Should -BeTrue
+	it "Should return an array of matching strings without virtual terminal sequences" {
+		$testinputone | Select-String -Pattern "l" | Should -Be "hello", "hello"
 	}
 
 	It "Should return a string type when -Raw is used" {
@@ -130,7 +127,6 @@ Describe "Select-String" -Tags "CI" {
 
 	It "Should return ParameterBindingException when -Raw and -Quiet are used together" {
 		{ $testinputone | Select-String -Pattern "hello" -Raw -Quiet -ErrorAction Stop } | Should -Throw -ExceptionType ([System.Management.Automation.ParameterBindingException])
-	}
     }
 
     Context "Filesystem actions" {
