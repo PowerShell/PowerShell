@@ -70,6 +70,8 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        #region Common Parameters
+
         /// <summary>
         /// This parameter specifies the current pipeline object.
         /// </summary>
@@ -84,6 +86,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSObject _inputObject = AutomationNull.Value;
+
+        #endregion
 
         #region ScriptBlockSet
 
@@ -355,6 +359,7 @@ namespace Microsoft.PowerShell.Commands
             _taskTimer?.Dispose();
             _taskDataStreamWriter?.Dispose();
             _taskPool?.Dispose();
+            _taskCollection?.Dispose();
         }
 
         #endregion
@@ -368,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<string, object> _usingValuesMap;
         private Timer _taskTimer;
         private PSTaskJob _taskJob;
+        private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
 
         private void InitParallelParameterSet()
         {
@@ -411,6 +417,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (AsJob)
             {
+                // Set up for returning a job object.
                 if (MyInvocation.BoundParameters.ContainsKey(nameof(TimeoutSeconds)))
                 {
                     ThrowTerminatingError(
@@ -424,24 +431,59 @@ namespace Microsoft.PowerShell.Commands
                 _taskJob = new PSTaskJob(
                     Parallel.ToString(),
                     ThrottleLimit);
+
+                return;
             }
-            else
+
+            // Set up for synchronous processing and data streaming.
+            _taskCollection = new PSDataCollection<System.Management.Automation.PSTasks.PSTask>();
+            _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
+            _taskPool = new PSTaskPool(ThrottleLimit);
+            _taskPool.PoolComplete += (sender, args) =>
             {
-                _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
-                _taskPool = new PSTaskPool(ThrottleLimit);
-                _taskPool.PoolComplete += (sender, args) =>
-                {
-                    _taskDataStreamWriter.Close();
-                };
-                if (TimeoutSeconds != 0)
-                {
-                    _taskTimer = new Timer(
-                        (_) => _taskPool.StopAll(),
-                        null,
-                        TimeoutSeconds * 1000,
-                        Timeout.Infinite);
-                }
+                _taskDataStreamWriter.Close();
+            };
+
+            // Create timeout timer if requested.
+            if (TimeoutSeconds != 0)
+            {
+                _taskTimer = new Timer(
+                    (_) => { _taskCollection.Complete(); _taskPool.StopAll(); },
+                    null,
+                    TimeoutSeconds * 1000,
+                    Timeout.Infinite);
             }
+
+            // Task collection handler.
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                (_) =>
+                {
+                    while (true)
+                    {
+                        _taskCollection.WaitHandle.WaitOne();
+
+                        var isOpen = _taskCollection.IsOpen;
+
+                        try
+                        {
+                            foreach (var task in _taskCollection.ReadAll())
+                            {
+                                _taskPool.Add(task);
+                            }
+                        }
+                        catch
+                        { 
+                            _taskCollection.Complete();
+                        }
+
+                        if (!isOpen)
+                        {
+                            break;
+                        }
+                    }
+
+                    _taskPool.Close();
+                });
         }
 
         private void ProcessParallelParameterSet()
@@ -461,27 +503,34 @@ namespace Microsoft.PowerShell.Commands
 
             if (AsJob)
             {
+                // Add child task job.
                 var taskChildJob = new PSTaskChildJob(
                     Parallel,
                     _usingValuesMap,
                     InputObject);
 
                 _taskJob.AddJob(taskChildJob);
+
+                return;
             }
-            else
+
+            // Write any streaming data
+            _taskDataStreamWriter.WriteImmediate();
+
+            // Add to task collection for processing.
+            if (_taskCollection.IsOpen)
             {
-                // Write any streaming data
-                _taskDataStreamWriter.WriteImmediate();
-
-                var task = new System.Management.Automation.PSTasks.PSTask(
-                     Parallel,
-                     _usingValuesMap,
-                     InputObject,
-                     _taskDataStreamWriter);
-
-                // Add task to task pool.
-                // Block if the pool is full and wait until task can be added.
-                _taskPool.Add(task, _taskDataStreamWriter);
+                try
+                {
+                    _taskCollection.Add(
+                        new System.Management.Automation.PSTasks.PSTask(
+                            Parallel,
+                            _usingValuesMap,
+                            InputObject,
+                            _taskDataStreamWriter));
+                }
+                catch (InvalidOperationException)
+                { }
             }
         }
 
@@ -489,25 +538,24 @@ namespace Microsoft.PowerShell.Commands
         {
             if (AsJob)
             {
+                // Start and return parent job object.
                 _taskJob.Start();
                 JobRepository.Add(_taskJob);
                 WriteObject(_taskJob);
-            }
-            else
-            {
-                _taskDataStreamWriter.WriteImmediate();
 
-                _taskPool.Close();
-                _taskDataStreamWriter.WaitAndWrite();
+                return;
             }
+            
+            // Close task collection and wait for processing to complete while streaming data.
+            _taskDataStreamWriter.WriteImmediate();
+            _taskCollection.Complete();
+            _taskDataStreamWriter.WaitAndWrite();
         }
 
         private void StopParallelProcessing()
         {
-            if (!AsJob)
-            {
-                _taskPool.StopAll();
-            }
+            _taskCollection?.Complete();
+            _taskPool?.StopAll();
         }
 
         #endregion
