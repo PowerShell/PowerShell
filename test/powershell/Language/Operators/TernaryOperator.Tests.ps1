@@ -1,9 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-using namespace System.Management.Automation
-using namespace System.Management.Automation.Language
-
 Describe "Using of ternary operator" -Tags CI {
     BeforeAll {
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSTernaryOperator')
@@ -35,8 +32,8 @@ Describe "Using of ternary operator" -Tags CI {
                 @{ Script = { $($p = Get-Process -Id $PID; $p.Name -eq 'pwsh') ? 'Core' : 'Desktop' }; ExpectedValue = 'Core' }
                 @{ Script = { ($a = 1) ? 2 : 3 };  ExpectedValue = 2 }
                 @{ Script = { $($a = 1) ? 2 : 3 }; ExpectedValue = 3 }
-                @{ Script = { (Write-Warning -Message warning) ? 1 : 2 }; ExpectedValue = 2 }
-                @{ Script = { (Write-Error -Message error) ? 1 : 2 };     ExpectedValue = 2 }
+                @{ Script = { (Write-Warning -Message warning -WarningAction SilentlyContinue) ? 1 : 2 }; ExpectedValue = 2 }
+                @{ Script = { (Write-Error -Message error -ErrorAction SilentlyContinue) ? 1 : 2 };     ExpectedValue = 2 }
 
                 ## Condition: unary and binary expression expressions
                 @{ Script = { -not $IsCoreCLR ? 'Desktop' : 'Core' };             ExpectedValue = 'Core' }
@@ -68,7 +65,7 @@ Describe "Using of ternary operator" -Tags CI {
     }
 
     It "Ternary expression which generates a terminating error should halt appropriately" {
-        (write-error -Message error -ErrorAction Stop) ? 1 : 2 } | Should -Throw -ErrorId Microsoft.PowerShell.Commands.WriteErrorException
+        { (write-error -Message error -ErrorAction Stop) ? 1 : 2 } | Should -Throw -ErrorId Microsoft.PowerShell.Commands.WriteErrorException
     }
 
     It "Use ternary operator in parameter default values" {

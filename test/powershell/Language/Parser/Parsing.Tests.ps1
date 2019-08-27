@@ -324,23 +324,26 @@ Describe "Ternary Operator parsing" -Tags CI {
         }
         else {
             $testCases_basic = @(
-                @{ Script = '$true?2:3'; TokenKind = [TokenKind]::Variable; }
-                @{ Script = '$false?';   TokenKind = [TokenKind]::Variable; }
-                @{ Script = '$:abc';     TokenKind = [TokenKind]::Variable; }
-                @{ Script = '$env:abc';  TokenKind = [TokenKind]::Variable; }
-                @{ Script = '$env:123';  TokenKind = [TokenKind]::Variable; }
-                @{ Script = 'a?2:2';     TokenKind = [TokenKind]::Generic;  }
-                @{ Script = '1?2:3';     TokenKind = [TokenKind]::Generic;  }
-                @{ Script = 'a?';        TokenKind = [TokenKind]::Generic;  }
-                @{ Script = 'a?b';       TokenKind = [TokenKind]::Generic;  }
-                @{ Script = '1?';        TokenKind = [TokenKind]::Generic;  }
-                @{ Script = '?2:3';      TokenKind = [TokenKind]::Generic;  }
+                @{ Script = '$true?2:3'; TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$false?';   TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$:abc';     TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$env:abc';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$env:123';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = 'a?2:2';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '1?2:3';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = 'a?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = 'a?b';       TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '1?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '?2:3';      TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
             )
 
             $testCases_incomplete = @(
-                @{ Script = '$true ?';     ErrorId = "ExpectedValueExpression";         AstType = [ErrorExpressionAst] }
-                @{ Script = '$true ? 3';   ErrorId = "MissingColonInTernaryExpression"; AstType = [ErrorExpressionAst] }
-                @{ Script = '$true ? 3 :'; ErrorId = "ExpectedValueExpression";         AstType = [TernaryExpressionAst] }
+                @{ Script = '$true ?';     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = '$true ? 3';   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = '$true ? 3 :'; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
+                @{ Script = "`$true`t?";     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = "`$true`t?`t3";   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = "`$true`t?`t3`t:"; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
             )
         }
     }
@@ -351,12 +354,12 @@ Describe "Ternary Operator parsing" -Tags CI {
         }
     }
 
-    It "Question-mark and colon parsed correctly in '<Script>' when not in ternary expression context" -TestCases $testCases_basic {
+    It "Question-mark and colon parsed correctly in <Script> when not in ternary expression context" -TestCases $testCases_basic {
         param($Script, $TokenKind)
 
         $tks = $null
         $ers = $null
-        $result = [Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
 
         $tks[0].Kind | Should -BeExactly $TokenKind
         $tks[0].Text | Should -BeExactly $Script
@@ -378,11 +381,11 @@ Describe "Ternary Operator parsing" -Tags CI {
         2?3:4 | Should -BeExactly '2?3:4'
     }
 
-    It "Incomplete ternary expression '<Script>' should generate correct error" -TestCases $testCases_incomplete {
+    It "Incomplete ternary expression <Script> should generate correct error" -TestCases $testCases_incomplete {
         param($Script, $ErrorId, $AstType)
 
         $ers = $null
-        $result = [Parser]::ParseInput($Script, [ref]$null, [ref]$ers)
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$ers)
 
         $ers.Count | Should -Be 1
         $ers.IncompleteInput | Should -BeTrue
@@ -393,7 +396,7 @@ Describe "Ternary Operator parsing" -Tags CI {
 
     It "Generate ternary AST when operands are missing - '`$true ? :'" {
         $ers = $null
-        $result = [Parser]::ParseInput('$true ? :', [ref]$null, [ref]$ers)
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? :', [ref]$null, [ref]$ers)
         $ers.Count | Should -Be 2
 
         $ers[0].IncompleteInput | Should -BeFalse
@@ -409,7 +412,7 @@ Describe "Ternary Operator parsing" -Tags CI {
 
     It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
         $ers = $null
-        $result = [Parser]::ParseInput('$true ? : 3', [ref]$null, [ref]$ers)
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? : 3', [ref]$null, [ref]$ers)
         $ers.Count | Should -Be 1
 
         $ers.IncompleteInput | Should -BeFalse
