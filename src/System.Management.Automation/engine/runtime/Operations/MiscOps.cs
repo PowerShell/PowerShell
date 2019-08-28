@@ -341,6 +341,12 @@ namespace System.Management.Automation
         {
             const string ForEachObject_ProcessParam = "Process";
 
+            // Skip optimization if the debugger is enabled, so a breakpoint set on the command 'ForEach-Object' works properly.
+            if (context._debuggingMode > 0)
+            {
+                return false;
+            }
+
             if (commandProcessor.CommandInfo is CmdletInfo cmdlet && cmdlet.ImplementingType == typeof(ForEachObjectCommand))
             {
                 int indexAdvanceOffset = 0;
