@@ -419,8 +419,11 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional assignment operator '?='.</summary>
         QuestionEquals = 101,
 
-        /// <summary>The null conditional assignment operator '?='.</summary>
+        /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 101,
+
+        /// <summary>The null conditional member access operator '?.'.</summary>
+        QuestionDot = 102,
 
         #endregion Operators
 
@@ -862,7 +865,7 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
             /*      QuestionEquals  */ TokenFlags.AssignmentOperator,
             /*    QuestionQuestion  */ TokenFlags.BinaryOperator,
-            /*     Reserved slot 5  */ TokenFlags.None,
+            /*         QuestionDot  */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 6  */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
@@ -879,7 +882,7 @@ namespace System.Management.Automation.Language
             /*     Reserved slot 19 */ TokenFlags.None,
             /*     Reserved slot 20 */ TokenFlags.None,
 
-            #endregion Flags for operators
+            #endregion Flags for operators5
 
             #region Flags for keywords
 
@@ -1058,8 +1061,8 @@ namespace System.Management.Automation.Language
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
             /*       QuestionEquals */ "?=",
-            /*    Reserved slot 3   */ string.Empty,
-            /*    Reserved slot 4   */ string.Empty,
+            /*     QuestionQuestion */ "??",
+            /*          QuestionDot */ "?.",
             /*    Reserved slot 5   */ string.Empty,
             /*    Reserved slot 6   */ string.Empty,
             /*    Reserved slot 7   */ string.Empty,
