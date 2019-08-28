@@ -327,7 +327,7 @@ namespace System.Management.Automation
                     endBlock: null,
                     dynamicParamBlock: null);
                 newScriptBlockAst.PostParseChecksPerformed = sbAst.PostParseChecksPerformed;
-                sbAst.Parent.SetParent(newScriptBlockAst);
+                sbAst.Parent?.SetParent(newScriptBlockAst);
 
                 return new ScriptBlock(newScriptBlockAst, isFilter: false);
             };
@@ -341,8 +341,11 @@ namespace System.Management.Automation
         {
             const string ForEachObject_ProcessParam = "Process";
 
-            // Skip optimization if the debugger is enabled, so a breakpoint set on the command 'ForEach-Object' works properly.
-            if (context._debuggingMode > 0)
+            // Skip optimization in the following cases
+            //  1. the debugger is enabled -- so a breakpoint set on the command 'ForEach-Object' works properly.
+            //  2. the 'ConstrainedLanguageMode' has been used for the current runspace -- the language mode transition is tricky,
+            //     and it's better to use the same old code path for safety.
+            if (context._debuggingMode > 0 || context.HasRunspaceEverUsedConstrainedLanguageMode)
             {
                 return false;
             }
@@ -391,6 +394,7 @@ namespace System.Management.Automation
                         ScriptBlock sbRewritten = s_astRewriteCache.GetValue(sbAst, s_astRewriteCallback);
                         ScriptBlock sbToUse = sbRewritten.Clone();
                         sbToUse.SessionStateInternal = processScriptBlock.SessionStateInternal;
+                        sbToUse.LanguageMode = processScriptBlock.LanguageMode;
 
                         // We always clone the script block, so that the cached value doesn't hold on to any session state.
                         // Foreach-Object invokes the script block in the caller's scope, so do not use new scope.
