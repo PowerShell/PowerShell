@@ -273,16 +273,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private bool ShouldProcessOutOfBand(PSObject so)
+        private bool ShouldProcessOutOfBand(PSObject so, bool hasOutOfBandView)
         {
             if (_shape == FormatShape.Undefined || _parameters == null)
             {
                 return true;
             }
 
-            var typeNames = so.InternalTypeNames;
-            ViewDefinition view = DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, typeNames);
-            if (view != null && view.outOfBand && so.WriteStream == WriteStreamType.None)
+            if (hasOutOfBandView && so.WriteStream == WriteStreamType.None)
             {
                 return false;
             }
@@ -292,62 +290,62 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool ProcessOutOfBandObjectOutsideDocumentSequence(PSObject so)
         {
-            if (!ShouldProcessOutOfBand(so))
+            var typeNames = so.InternalTypeNames;
+            ViewDefinition oobView = DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, typeNames);
+
+            if (!ShouldProcessOutOfBand(so, oobView != null))
             {
                 return false;
             }
 
-            if (so.InternalTypeNames.Count == 0)
+            if (typeNames.Count == 0)
             {
                 return false;
             }
 
-            List<ErrorRecord> errors;
-            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
-                _typeInfoDataBase, so, _enumerationLimit, false, out errors);
-            WriteErrorRecords(errors);
-
-            if (fed != null)
-            {
-                this.WriteObject(fed);
-                return true;
-            }
-
-            return false;
+            return ProcessOutOfBand(so, oobView, isProcessingError: false);
         }
 
         private bool ProcessOutOfBandObjectInsideDocumentSequence(PSObject so)
         {
-            if (!ShouldProcessOutOfBand(so))
+            var typeNames = so.InternalTypeNames;
+            ViewDefinition oobView = DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, typeNames);
+
+            if (!ShouldProcessOutOfBand(so, oobView != null))
             {
                 return false;
             }
 
-            var typeNames = so.InternalTypeNames;
             if (_viewManager.ViewGenerator.IsObjectApplicable(typeNames))
             {
                 return false;
             }
 
-            return ProcessOutOfBand(so, isProcessingError: false);
+            return ProcessOutOfBand(so, oobView, isProcessingError: false);
         }
 
-        private bool ProcessOutOfBand(PSObject so, bool isProcessingError)
+        private bool ProcessOutOfBand(PSObject so, ViewDefinition oobView, bool isProcessingError)
         {
             List<ErrorRecord> errors;
-            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
-                                    _typeInfoDataBase, so, _enumerationLimit, true, out errors);
+            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(TerminatingErrorContext, _expressionFactory,
+                _typeInfoDataBase, so, oobView, _enumerationLimit, false, out errors);
+
             if (!isProcessingError)
+            {
                 WriteErrorRecords(errors);
+            }
 
             if (fed != null)
             {
-                this.WriteObject(fed);
+                WriteObject(fed);
                 return true;
             }
 
             return false;
         }
+
+        private bool ProcessOutOfBand(PSObject so, bool isProcessingError) =>
+            ProcessOutOfBand(so, DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, so.InternalTypeNames), isProcessingError);
 
         protected void WriteInternalErrorMessage(string message)
         {
@@ -384,8 +382,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // see NTRAID#Windows OS Bug-932722-2004/10/21-kevinloo ("Output: SS: Swallowing exceptions")
             foreach (ErrorRecord errorRecord in errorRecordList)
             {
-                // we are recursing on formatting errors: isProcessingError == true
-                ProcessOutOfBand(PSObjectHelper.AsPSObject(errorRecord), true);
+                // we are recursing on formatting errors
+                ProcessOutOfBand(PSObjectHelper.AsPSObject(errorRecord), isProcessingError: true);
             }
         }
 

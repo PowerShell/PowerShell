@@ -480,12 +480,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
-                    TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
+                    TypeInfoDataBase db, PSObject so, ViewDefinition view, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
         {
             errors = null;
-
-            var typeNames = so.InternalTypeNames;
-            ViewDefinition view = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
 
             ViewGenerator outOfBandViewGenerator;
             if (view != null)
@@ -504,7 +501,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                if (DefaultScalarTypes.IsTypeInList(typeNames)
+                if (DefaultScalarTypes.IsTypeInList(so.InternalTypeNames)
                     || !HasNonRemotingProperties(so))
                 {
                     // we force a ToString() on well known types

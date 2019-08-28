@@ -376,6 +376,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static ViewDefinition GetOutOfBandView(PSPropertyExpressionFactory expressionFactory,
                                                         TypeInfoDataBase db, Collection<string> typeNames)
         {
+            if (typeNames.Count == 0)
+            {
+                return null;
+            }
+
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
