@@ -236,7 +236,7 @@ if (-not $IsWinEnv) {
     }
 }
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-New-Item -ItemType Directory -Path $tempDir -Force -ErrorAction SilentlyContinue
+$null = New-Item -ItemType Directory -Path $tempDir -Force -ErrorAction SilentlyContinue
 try {
     # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
     # aborted: Could not create SSL/TLS secure channel. error.
@@ -285,7 +285,7 @@ try {
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
+        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
@@ -341,7 +341,7 @@ try {
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
+        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
@@ -379,7 +379,7 @@ try {
         if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-            New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
+            $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
             Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
         }
 
