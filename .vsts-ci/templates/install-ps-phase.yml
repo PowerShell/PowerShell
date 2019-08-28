@@ -21,7 +21,7 @@ jobs:
   displayName: ${{ parameters.jobName }}
 
   steps:
-  - powershell: |
+  - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
     condition: succeededOrFailed()
@@ -37,6 +37,6 @@ jobs:
     continueOnError: ${{ parameters.continueOnError }}
 
   - ${{ if ne(parameters.verification, '') }}:
-    - powershell: ${{ parameters.verification }}
+    - pwsh: ${{ parameters.verification }}
       displayName: Verification
       continueOnError: ${{ parameters.continueOnError }}
