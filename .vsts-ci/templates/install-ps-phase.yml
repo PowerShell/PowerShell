@@ -1,5 +1,5 @@
 parameters:
-  pool: 'Hosted Ubuntu 1604'
+  pool: 'ubuntu-latest'
   jobName: 'none'
   scriptName: ''
   container: ''
@@ -16,7 +16,7 @@ jobs:
     container: ${{ parameters.container }}
 
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 
