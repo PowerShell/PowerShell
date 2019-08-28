@@ -355,9 +355,12 @@ namespace System.Management.Automation
 
                 if (commandIndex == cmdElementsLength - 1)
                 {
+                    // Target ForEach-Object syntax:
+                    //  * `... | ForEach-Object { ... } | ...`
+                    //  * `... | ForEach-Object -process:{ ... } | ...`
                     var currentElement = commandElements[commandIndex];
                     if (currentElement.ArgumentSpecified && !currentElement.ArgumentSplatted &&
-                        (!currentElement.ParameterAndArgumentSpecified || string.Equals(currentElement.ParameterName, "Process", StringComparison.OrdinalIgnoreCase)))
+                        (!currentElement.ParameterAndArgumentSpecified || ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase)))
                     {
                         processScriptBlock = currentElement.ArgumentValue as ScriptBlock;
                         indexAdvanceOffset = 1;
@@ -365,11 +368,13 @@ namespace System.Management.Automation
                 }
                 else if (commandIndex == cmdElementsLength - 2)
                 {
+                    // Target ForEach-Object syntax:
+                    //  * `... | ForEach-Object -Process { ... } | ...`
                     var currentElement = commandElements[commandIndex];
                     var nextElement = commandElements[commandIndex + 1];
 
                     if (currentElement.ParameterNameSpecified && !currentElement.ArgumentSpecified &&
-                        string.Equals(currentElement.ParameterName, ForEachObject_ProcessParam, StringComparison.OrdinalIgnoreCase) &&
+                        ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase) &&
                         nextElement.ArgumentSpecified && !nextElement.ArgumentSplatted && !nextElement.ParameterNameSpecified)
                     {
                         processScriptBlock = nextElement.ArgumentValue as ScriptBlock;
