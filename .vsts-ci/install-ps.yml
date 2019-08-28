@@ -123,10 +123,10 @@ phases:
     jobName: InstallPowerShellPS1UbuntuDaily
     pool: ubuntu-latest
     verification: |
+      Write-Verbose $PSVersionTable.PSVersion -verbose
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
       {
-        # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
-        Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
 
 - template: templates/install-ps-phase.yml
@@ -135,20 +135,24 @@ phases:
     jobName: InstallPowerShellMacOSDaily
     pool: macOS-latest
     verification: |
+      Write-Verbose $PSVersionTable.PSVersion -verbose
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
       {
-        # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
-        Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
 
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
     jobName: InstallPowerShellWindowsDaily
     pool: windows-latest
     verification: |
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-daily\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
       {
-        # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
-        Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+        throw "powershell was not upgraded: $newVersion"
       }
