@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
 
             string argsString = args.Length > 0 ? string.Join(" ", args) : null;
             var pwshPath = Path.Combine(currentPath, platformFolder, PwshDllName);
-            string processArgs = string.IsNullOrEmpty(argsString) ? $"{pwshPath}" : $"{pwshPath} -c {argsString}";
+            string processArgs = string.IsNullOrEmpty(argsString) ? $"{pwshPath}" : $"{pwshPath} {argsString}";
 
             if (File.Exists(pwshPath))
             {
