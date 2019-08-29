@@ -350,63 +350,66 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (commandProcessor.CommandInfo is CmdletInfo cmdlet && cmdlet.ImplementingType == typeof(ForEachObjectCommand))
+            var cmdlet = commandProcessor.CommandInfo as CmdletInfo;
+            if (cmdlet == null || cmdlet.ImplementingType != typeof(ForEachObjectCommand))
             {
-                int indexAdvanceOffset = 0;
-                int cmdElementsLength = commandElements.Length;
-                ScriptBlock processScriptBlock = null;
+                return false;
+            }
 
-                if (commandIndex == cmdElementsLength - 1)
+            int indexAdvanceOffset = 0;
+            int cmdElementsLength = commandElements.Length;
+            ScriptBlock processScriptBlock = null;
+
+            if (commandIndex == cmdElementsLength - 1)
+            {
+                // Target ForEach-Object syntax:
+                //  * `... | ForEach-Object { ... } | ...`
+                //  * `... | ForEach-Object -process:{ ... } | ...`
+                var currentElement = commandElements[commandIndex];
+                if (currentElement.ArgumentSpecified && !currentElement.ArgumentSplatted &&
+                    (!currentElement.ParameterAndArgumentSpecified || ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    // Target ForEach-Object syntax:
-                    //  * `... | ForEach-Object { ... } | ...`
-                    //  * `... | ForEach-Object -process:{ ... } | ...`
-                    var currentElement = commandElements[commandIndex];
-                    if (currentElement.ArgumentSpecified && !currentElement.ArgumentSplatted &&
-                        (!currentElement.ParameterAndArgumentSpecified || ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        processScriptBlock = currentElement.ArgumentValue as ScriptBlock;
-                        indexAdvanceOffset = 1;
-                    }
+                    processScriptBlock = currentElement.ArgumentValue as ScriptBlock;
+                    indexAdvanceOffset = 1;
                 }
-                else if (commandIndex == cmdElementsLength - 2)
-                {
-                    // Target ForEach-Object syntax:
-                    //  * `... | ForEach-Object -Process { ... } | ...`
-                    var currentElement = commandElements[commandIndex];
-                    var nextElement = commandElements[commandIndex + 1];
+            }
+            else if (commandIndex == cmdElementsLength - 2)
+            {
+                // Target ForEach-Object syntax:
+                //  * `... | ForEach-Object -Process { ... } | ...`
+                var currentElement = commandElements[commandIndex];
+                var nextElement = commandElements[commandIndex + 1];
 
-                    if (currentElement.ParameterNameSpecified && !currentElement.ArgumentSpecified &&
-                        ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase) &&
-                        nextElement.ArgumentSpecified && !nextElement.ArgumentSplatted && !nextElement.ParameterNameSpecified)
-                    {
-                        processScriptBlock = nextElement.ArgumentValue as ScriptBlock;
-                        indexAdvanceOffset = 2;
-                    }
+                if (currentElement.ParameterNameSpecified && !currentElement.ArgumentSpecified &&
+                    ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase) &&
+                    nextElement.ArgumentSpecified && !nextElement.ArgumentSplatted && !nextElement.ParameterNameSpecified)
+                {
+                    processScriptBlock = nextElement.ArgumentValue as ScriptBlock;
+                    indexAdvanceOffset = 2;
                 }
+            }
 
-                if (processScriptBlock != null && processScriptBlock.Ast is ScriptBlockAst sbAst)
+            if (processScriptBlock != null && processScriptBlock.Ast is ScriptBlockAst sbAst)
+            {
+                if (!sbAst.IsConfiguration && sbAst.ParamBlock == null && sbAst.BeginBlock == null &&
+                    sbAst.ProcessBlock == null && sbAst.DynamicParamBlock == null && sbAst.EndBlock != null &&
+                    sbAst.EndBlock.Unnamed)
                 {
-                    if (!sbAst.IsConfiguration && sbAst.ParamBlock == null && sbAst.BeginBlock == null &&
-                        sbAst.ProcessBlock == null && sbAst.DynamicParamBlock == null && sbAst.EndBlock != null &&
-                        sbAst.EndBlock.Unnamed)
-                    {
-                        ScriptBlock sbRewritten = s_astRewriteCache.GetValue(sbAst, s_astRewriteCallback);
-                        ScriptBlock sbToUse = sbRewritten.Clone();
-                        sbToUse.SessionStateInternal = processScriptBlock.SessionStateInternal;
-                        sbToUse.LanguageMode = processScriptBlock.LanguageMode;
+                    ScriptBlock sbRewritten = s_astRewriteCache.GetValue(sbAst, s_astRewriteCallback);
+                    ScriptBlock sbToUse = sbRewritten.Clone();
+                    sbToUse.SessionStateInternal = processScriptBlock.SessionStateInternal;
+                    sbToUse.LanguageMode = processScriptBlock.LanguageMode;
 
-                        // We always clone the script block, so that the cached value doesn't hold on to any session state.
-                        // Foreach-Object invokes the script block in the caller's scope, so do not use new scope.
-                        commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(
-                            sbToUse,
-                            context,
-                            useNewScope: false,
-                            commandSessionState);
+                    // We always clone the script block, so that the cached value doesn't hold on to any session state.
+                    // Foreach-Object invokes the script block in the caller's scope, so do not use new scope.
+                    commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(
+                        sbToUse,
+                        context,
+                        useNewScope: false,
+                        commandSessionState);
 
-                        commandIndex += indexAdvanceOffset;
-                        return true;
-                    }
+                    commandIndex += indexAdvanceOffset;
+                    return true;
                 }
             }
 
