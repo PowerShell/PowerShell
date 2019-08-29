@@ -479,8 +479,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
-        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
-                    TypeInfoDataBase db, PSObject so, ViewDefinition view, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
+        internal static FormatEntryData GenerateOutOfBandData(
+            TerminatingErrorContext errorContext,
+            PSPropertyExpressionFactory expressionFactory,
+            TypeInfoDataBase db,
+            PSObject so,
+            ViewDefinition view,
+            int enumerationLimit,
+            bool useToStringFallback,
+            out List<ErrorRecord> errors)
         {
             errors = null;
 

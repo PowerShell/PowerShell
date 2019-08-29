@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            return ProcessOutOfBand(so, oobView, isProcessingError: false);
+            return ProcessOutOfBand(so, oobView, useToStringFallback: false, isProcessingError: false);
         }
 
         private bool ProcessOutOfBandObjectInsideDocumentSequence(PSObject so)
@@ -321,14 +321,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            return ProcessOutOfBand(so, oobView, isProcessingError: false);
+            return ProcessOutOfBand(so, oobView, useToStringFallback: true, isProcessingError: false);
         }
 
-        private bool ProcessOutOfBand(PSObject so, ViewDefinition oobView, bool isProcessingError)
+        private bool ProcessOutOfBand(PSObject so, ViewDefinition oobView, bool useToStringFallback, bool isProcessingError)
         {
             List<ErrorRecord> errors;
-            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(TerminatingErrorContext, _expressionFactory,
-                _typeInfoDataBase, so, oobView, _enumerationLimit, false, out errors);
+            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(
+                TerminatingErrorContext,
+                _expressionFactory,
+                _typeInfoDataBase,
+                so,
+                oobView,
+                _enumerationLimit,
+                useToStringFallback,
+                out errors);
 
             if (!isProcessingError)
             {
@@ -344,8 +351,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        private bool ProcessOutOfBand(PSObject so, bool isProcessingError) =>
-            ProcessOutOfBand(so, DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, so.InternalTypeNames), isProcessingError);
+        private void ProcessOutOfBand(PSObject so, bool isProcessingError) =>
+            ProcessOutOfBand(
+                so,
+                DisplayDataQuery.GetOutOfBandView(_expressionFactory, _typeInfoDataBase, so.InternalTypeNames),
+                useToStringFallback: true,
+                isProcessingError);
 
         protected void WriteInternalErrorMessage(string message)
         {
