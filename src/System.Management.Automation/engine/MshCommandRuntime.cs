@@ -3019,7 +3019,6 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isVerbosePreferenceSet = false;
         private bool _isVerbosePreferenceCached = false;
         private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
         /// <summary>
@@ -3032,11 +3031,6 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isVerbosePreferenceSet)
-                {
-                    return _verbosePreference;
-                }
-
                 if (IsVerboseFlagSet)
                 {
                     if (Verbose)
@@ -3069,17 +3063,6 @@ namespace System.Management.Automation
                 }
 
                 return _verbosePreference;
-            }
-
-            set
-            {
-                if (value == ActionPreference.Suspend)
-                {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
-                }
-
-                _verbosePreference = value;
-                _isVerbosePreferenceSet = true;
             }
         }
 

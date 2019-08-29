@@ -623,23 +623,26 @@ namespace System.Management.Automation
 
         private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue)
         {
-            // We don't want to support "Ignore" as action preferences, as it leads to bad
-            // scripting habits. They are only supported as cmdlet overrides.
-            if (preference == ActionPreference.Ignore)
+            string message = null;
+            switch (preference)
             {
-                // Reset the variable value
-                EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
-                string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
-                throw new NotSupportedException(message);
+                case ActionPreference.Ignore:
+                    // We don't want to support "Ignore" as action preferences, as it leads to bad
+                    // scripting habits. They are only supported as cmdlet overrides.
+                    message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
+                    break;
+
+                case ActionPreference.Suspend:
+                    // ActionPreference.Suspend is reserved for future use. When it is used, reset
+                    // the variable to its default.
+                    message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
+                    break;
             }
 
-            // ActionPreference.Suspend is reserved for future use. When it is used, reset
-            // the variable to its default.
-            if (preference == ActionPreference.Suspend)
+            if (message != null)
             {
                 // Reset the variable value
                 EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
-                string message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
                 throw new NotSupportedException(message);
             }
         }
