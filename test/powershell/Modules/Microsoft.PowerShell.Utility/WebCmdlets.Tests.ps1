@@ -780,6 +780,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=2&type=${type}"
     }
 
+    It "Verify Invoke-WebRequest supresses terminating errors with -SkipHttpErrorCheck" {
+        $Query = @{
+            statuscode = 404
+            responsephrase = 'Not found'
+            contenttype = 'text/plain'
+            body = 'oops'
+            headers = "{}"
+        }
+
+        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+        $command = "Invoke-WebRequest -SkipHttpErrorCheck -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        $result.output.StatusCode | Should -be 404
+        $result.output.Content | Should -match "oops"
+        $result.error | Should -be $null
+    }
+
     Context "Redirect" {
         It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
             param($redirectType, $redirectedMethod)
@@ -2259,6 +2276,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..3 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
+    It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
+        $Query = @{
+            statuscode = 404
+            responsephrase = 'Not found'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
+
+        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+        $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        $result.output.message | Should -match "oops"
+        $result.output.error | Should -be $null
+    }
+
     #region Redirect tests
 
     It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
@@ -3387,4 +3420,3 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $result.Hello | Should -Be "world"
     }
 }
-
