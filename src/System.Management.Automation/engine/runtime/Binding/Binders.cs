@@ -3184,9 +3184,9 @@ namespace System.Management.Automation.Language
                     ? CompareWithZero(target, Expression.LessThan)
                     : arg.LimitType.IsNumeric()
                         ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                        : !LanguagePrimitives.IsNullLike(arg.Value)
-                            ? ExpressionCache.BoxedTrue
-                            : ExpressionCache.BoxedFalse;
+                        : LanguagePrimitives.IsNullLike(arg.Value)
+                            ? ExpressionCache.BoxedFalse
+                            : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3209,9 +3209,9 @@ namespace System.Management.Automation.Language
                     ? CompareWithZero(target, Expression.LessThan)
                     : arg.LimitType.IsNumeric()
                         ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                        : !LanguagePrimitives.IsNullLike(target.Value)
-                            ? ExpressionCache.BoxedFalse
-                            : ExpressionCache.BoxedTrue;
+                        : LanguagePrimitives.IsNullLike(target.Value)
+                            ? ExpressionCache.BoxedTrue
+                            : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3236,9 +3236,9 @@ namespace System.Management.Automation.Language
                     ? CompareWithZero(target, Expression.GreaterThanOrEqual)
                     : arg.LimitType.IsNumeric()
                         ? CompareWithZero(arg, Expression.LessThan)
-                        : !LanguagePrimitives.IsNullLike(target.Value)
-                            ? ExpressionCache.BoxedTrue
-                            : ExpressionCache.BoxedFalse;
+                        : LanguagePrimitives.IsNullLike(target.Value)
+                            ? ExpressionCache.BoxedFalse
+                            : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
@@ -3263,9 +3263,9 @@ namespace System.Management.Automation.Language
                     ? CompareWithZero(target, Expression.GreaterThanOrEqual)
                     : arg.LimitType.IsNumeric()
                         ? CompareWithZero(arg, Expression.LessThan)
-                        : !LanguagePrimitives.IsNullLike(arg.Value)
-                            ? ExpressionCache.BoxedFalse
-                            : ExpressionCache.BoxedTrue;
+                        : LanguagePrimitives.IsNullLike(arg.Value)
+                            ? ExpressionCache.BoxedTrue
+                            : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
             }
