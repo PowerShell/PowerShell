@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter Resume { get; set; }
 
         /// <summary>
-        /// Ignores the HTTP status code in the response, and acts as if error statuses are successes.
+        /// Gets or sets whether to skip checking HTTP status for error codes.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
@@ -1253,7 +1253,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Add the content headers
             if (request.Content == null)
-            {   
+            {
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
             }
