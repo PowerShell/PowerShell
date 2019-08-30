@@ -798,20 +798,118 @@ namespace System.Management.Automation
 #if !UNIX
         private static readonly Dictionary<string, string> GroupPolicyKeys = new Dictionary<string, string>
         {
-            {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
-            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
-            {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
+            {nameof(ScriptExecution), @"Software\Policies\PowerShellCore"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\PowerShellCore\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\PowerShellCore\ModuleLogging"},
             {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
-            {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
-            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
-            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
+            {nameof(Transcription), @"Software\Policies\PowerShellCore\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\PowerShellCore\UpdatableHelp"},
+            {nameof(ConsoleSessionConfiguration), @"Software\Policies\PowerShellCore\ConsoleSessionConfiguration"}
         };
+
+        private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>
+        {
+            {nameof(ScriptExecution), @"Software\Policies\Microsoft\Windows\PowerShell"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging"},
+            {nameof(Transcription), @"Software\Policies\Microsoft\Windows\PowerShell\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp"},
+        };
+
+        private const string PolicySettingFallbackKey = "UseWindowsPowerShellPolicySetting";
 
         private static readonly ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_cachedPoliciesFromRegistry =
             new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
 
         private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
             key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Read policy settings from a registry key into a policy object.
+        /// </summary>
+        /// <param name="instance">Policy object that will be filled with values from registry.</param>
+        /// <param name="instanceType">Type of policy object used.</param>
+        /// <param name="gpoKey">Registry key that has policy settings.</param>
+        /// <returns>True if any property was successfully set on the policy object.</returns>
+        private static bool ReadPolicySettingsFromRegistryKey(object instance, Type instanceType, RegistryKey gpoKey)
+        {
+            var properties = instanceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            bool isAnyPropertySet = false;
+
+            string[] valueNames = gpoKey.GetValueNames();
+            string[] subKeyNames = gpoKey.GetSubKeyNames();
+            var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
+            var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
+
+            foreach (var property in properties)
+            {
+                string settingName = property.Name;
+                object rawRegistryValue = null;
+
+                // Get the raw value from registry.
+                if (valueNameSet != null && valueNameSet.Contains(settingName))
+                {
+                    rawRegistryValue = gpoKey.GetValue(settingName);
+                }
+                else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
+                {
+                    using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
+                    {
+                        if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                    }
+                }
+
+                // Get the actual property value based on the property type.
+                // If the final property value is not null, then set the property.
+                if (rawRegistryValue != null)
+                {
+                    Type propertyType = property.PropertyType;
+                    object propertyValue = null;
+
+                    switch (propertyType)
+                    {
+                        case var _ when propertyType == typeof(bool?):
+                            if (rawRegistryValue is int rawIntValue)
+                            {
+                                if (rawIntValue == 1) { propertyValue = true; }
+                                else if (rawIntValue == 0) { propertyValue = false; }
+                            }
+
+                            break;
+                        case var _ when propertyType == typeof(string):
+                            if (rawRegistryValue is string rawStringValue)
+                            {
+                                propertyValue = rawStringValue;
+                            }
+
+                            break;
+                        case var _ when propertyType == typeof(string[]):
+                            if (rawRegistryValue is string[] rawStringArrayValue)
+                            {
+                                propertyValue = rawStringArrayValue;
+                            }
+                            else if (rawRegistryValue is string stringValue)
+                            {
+                                propertyValue = new string[] { stringValue };
+                            }
+
+                            break;
+                        default:
+                            Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
+                            break;
+                    }
+
+                    // Set the property if the value is not null
+                    if (propertyValue != null)
+                    {
+                        property.SetValue(instance, propertyValue);
+                        isAnyPropertySet = true;
+                    }
+                }
+            }
+
+            return isAnyPropertySet;
+        }
 
         /// <summary>
         /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
@@ -833,79 +931,22 @@ namespace System.Management.Automation
                 // The corresponding GPO key exists, then create an instance of T
                 // and populate its properties with the settings
                 object tInstance = Activator.CreateInstance(tType, nonPublic: true);
-                var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
                 bool isAnyPropertySet = false;
 
-                string[] valueNames = gpoKey.GetValueNames();
-                string[] subKeyNames = gpoKey.GetSubKeyNames();
-                var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
-                var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
-
-                foreach (var property in properties)
+                if ((int)gpoKey.GetValue(PolicySettingFallbackKey, 0) == 1) // when this policy flag is set (REG_DWORD "1") use Windows PS policy reg key
                 {
-                    string settingName = property.Name;
-                    object rawRegistryValue = null;
-
-                    // Get the raw value from registry.
-                    if (valueNameSet != null && valueNameSet.Contains(settingName))
+                    WindowsPowershellGroupPolicyKeys.TryGetValue(tType.Name, out string winPowershellGpoKeyPath);
+                    Diagnostics.Assert(winPowershellGpoKeyPath != null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
+                    using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
                     {
-                        rawRegistryValue = gpoKey.GetValue(settingName);
+                        // If the corresponding Windows PS GPO key doesn't exist, return null
+                        if (winPowershellGpoKey == null) { return null; }
+                        isAnyPropertySet = ReadPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
                     }
-                    else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
-                    {
-                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
-                        {
-                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
-                        }
-                    }
-
-                    // Get the actual property value based on the property type.
-                    // If the final property value is not null, then set the property.
-                    if (rawRegistryValue != null)
-                    {
-                        Type propertyType = property.PropertyType;
-                        object propertyValue = null;
-
-                        switch (propertyType)
-                        {
-                            case var _ when propertyType == typeof(bool?):
-                                if (rawRegistryValue is int rawIntValue)
-                                {
-                                    if (rawIntValue == 1) { propertyValue = true; }
-                                    else if (rawIntValue == 0) { propertyValue = false; }
-                                }
-
-                                break;
-                            case var _ when propertyType == typeof(string):
-                                if (rawRegistryValue is string rawStringValue)
-                                {
-                                    propertyValue = rawStringValue;
-                                }
-
-                                break;
-                            case var _ when propertyType == typeof(string[]):
-                                if (rawRegistryValue is string[] rawStringArrayValue)
-                                {
-                                    propertyValue = rawStringArrayValue;
-                                }
-                                else if (rawRegistryValue is string stringValue)
-                                {
-                                    propertyValue = new string[] { stringValue };
-                                }
-
-                                break;
-                            default:
-                                Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
-                                break;
-                        }
-
-                        // Set the property if the value is not null
-                        if (propertyValue != null)
-                        {
-                            property.SetValue(tInstance, propertyValue);
-                            isAnyPropertySet = true;
-                        }
-                    }
+                }
+                else // if PolicySettingFallbackKey is Not set - use PowerShell Core policy reg key
+                {
+                    isAnyPropertySet = ReadPolicySettingsFromRegistryKey(tInstance, tType, gpoKey);
                 }
 
                 // If no property is set, then we consider this policy as undefined
