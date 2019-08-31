@@ -781,7 +781,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Verify Invoke-WebRequest supresses terminating errors with -SkipHttpErrorCheck" {
-        $Query = @{
+        $query = @{
             statuscode = 404
             responsephrase = 'Not found'
             contenttype = 'text/plain'
@@ -789,12 +789,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             headers = "{}"
         }
 
-        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-WebRequest -SkipHttpErrorCheck -Uri '$uri'"
-        $result = ExecuteWebCommand -command $command
-        $result.output.StatusCode | Should -be 404
-        $result.output.Content | Should -match "oops"
-        $result.error | Should -be $null
+        $result = ExecuteWebCommand -Command $command
+        $result.output.StatusCode | Should -Be 404
+        $result.output.Content | Should -Match "oops"
+        $result.error | Should -Be $null
     }
 
     Context "Redirect" {
@@ -2277,7 +2277,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
-        $Query = @{
+        $query = @{
             statuscode = 404
             responsephrase = 'Not found'
             contenttype = 'application/json'
@@ -2285,11 +2285,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             headers = "{}"
         }
 
-        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
-        $result = ExecuteWebCommand -command $command
-        $result.output.message | Should -match "oops"
-        $result.output.error | Should -be $null
+        $result = ExecuteWebCommand -Command $command
+        $result.output.message | Should -Match "oops"
+        $result.output.error | Should -Be $null
     }
 
     It "Verify Invoke-RestMethod assigns status code with -StatusCodeVariable" {
