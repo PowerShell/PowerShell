@@ -2293,7 +2293,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Verify Invoke-RestMethod assigns status code with -StatusCodeVariable" {
-        $Query = @{
+        $query = @{
             statuscode = 200
             responsephrase = 'OK'
             contenttype = 'application/json'
@@ -2301,9 +2301,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             headers = "{}"
         }
 
-        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         Invoke-RestMethod -SkipHttpErrorCheck -StatusCodeVariable code -Uri "$uri"
-        $code | Should -be 200
+        $code | Should -Be 200
     }
 
     #region Redirect tests
