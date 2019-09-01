@@ -20,6 +20,11 @@ jobs:
     clean: true
     persistCredentials: true
 
+  - template: shouldSign.yml
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
   - task: PkgESSetupBuild@10
     displayName: 'Initialize build'
     env:
@@ -31,11 +36,7 @@ jobs:
       disableWorkspace: true
       disableBuildTools: true
       disableNugetPack: true
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
-
-  - template: SetVersionVariables.yml
-    parameters:
-      ReleaseTagVar: $(ReleaseTagVar)
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - template: insert-nuget-config-azfeed.yml
 
@@ -107,12 +108,12 @@ jobs:
       outPathRoot: '$(Symbols)\signed'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
        New-Item -ItemType Directory -Path $(Symbols)\signed -Force
     displayName: 'Create empty signed folder'
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
        tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-$(Architecture)-package -BuildPath $(Symbols) -SignedFilesPath $(Symbols)\signed

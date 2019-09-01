@@ -68,7 +68,7 @@ namespace System.Management.Automation
 
             object command;
             IScriptExtent commandExtent;
-            var cpiCommand = commandElements[commandIndex];
+            var cpiCommand = commandElements[commandIndex++];
             if (cpiCommand.ParameterNameSpecified)
             {
                 command = cpiCommand.ParameterText;
@@ -156,12 +156,16 @@ namespace System.Management.Automation
                 }
             }
 
-            InternalCommand cmd = commandProcessor.Command;
-            commandProcessor.UseLocalScope = !dotSource &&
-                                             (cmd is ScriptCommand || cmd is PSScriptCmdlet);
+            // If possible, rewrite the 'ForEach-Object' command into a filter-like script block in the pipeline.
+            //   e.g. 1..2 | ForEach-Object { $_ + 1 }  =>  1..2 | . { process { $_ + 1 } }
+            if (!TryRewriteForEachObjectCommand(context, commandSessionState, commandElements, ref commandProcessor, ref commandIndex))
+            {
+                InternalCommand cmd = commandProcessor.Command;
+                commandProcessor.UseLocalScope = !dotSource && (cmd is ScriptCommand || cmd is PSScriptCmdlet);
+            }
 
             bool isNativeCommand = commandProcessor is NativeCommandProcessor;
-            for (int i = commandIndex + 1; i < commandElements.Length; ++i)
+            for (int i = commandIndex; i < commandElements.Length; ++i)
             {
                 var cpi = commandElements[i];
 
@@ -309,6 +313,107 @@ namespace System.Management.Automation
             }
 
             return commandProcessor;
+        }
+
+        private static ConditionalWeakTable<ScriptBlockAst, ScriptBlock> s_astRewriteCache = new ConditionalWeakTable<ScriptBlockAst, ScriptBlock>();
+        private static ConditionalWeakTable<ScriptBlockAst, ScriptBlock>.CreateValueCallback s_astRewriteCallback =
+            sbAst =>
+            {
+                ScriptBlockAst newScriptBlockAst = new ScriptBlockAst(
+                    sbAst.Extent,
+                    paramBlock: null,
+                    beginBlock: null,
+                    processBlock: (NamedBlockAst)sbAst.EndBlock.Copy(),
+                    endBlock: null,
+                    dynamicParamBlock: null);
+                newScriptBlockAst.PostParseChecksPerformed = sbAst.PostParseChecksPerformed;
+                sbAst.Parent?.SetParent(newScriptBlockAst);
+
+                return new ScriptBlock(newScriptBlockAst, isFilter: false);
+            };
+
+        private static bool TryRewriteForEachObjectCommand(
+            ExecutionContext context,
+            SessionStateInternal commandSessionState,
+            CommandParameterInternal[] commandElements,
+            ref CommandProcessorBase commandProcessor,
+            ref int commandIndex)
+        {
+            const string ForEachObject_ProcessParam = "Process";
+
+            // Skip optimization in the following cases
+            //  1. the debugger is enabled -- so a breakpoint set on the command 'ForEach-Object' works properly.
+            //  2. the 'ConstrainedLanguageMode' has been used for the current runspace -- the language mode transition is tricky,
+            //     and it's better to use the same old code path for safety.
+            if (context._debuggingMode > 0 || context.HasRunspaceEverUsedConstrainedLanguageMode)
+            {
+                return false;
+            }
+
+            var cmdlet = commandProcessor.CommandInfo as CmdletInfo;
+            if (cmdlet == null || cmdlet.ImplementingType != typeof(ForEachObjectCommand))
+            {
+                return false;
+            }
+
+            int indexAdvanceOffset = 0;
+            int cmdElementsLength = commandElements.Length;
+            ScriptBlock processScriptBlock = null;
+
+            if (commandIndex == cmdElementsLength - 1)
+            {
+                // Target ForEach-Object syntax:
+                //  * `... | ForEach-Object { ... } | ...`
+                //  * `... | ForEach-Object -process:{ ... } | ...`
+                var currentElement = commandElements[commandIndex];
+                if (currentElement.ArgumentSpecified && !currentElement.ArgumentSplatted &&
+                    (!currentElement.ParameterAndArgumentSpecified || ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    processScriptBlock = currentElement.ArgumentValue as ScriptBlock;
+                    indexAdvanceOffset = 1;
+                }
+            }
+            else if (commandIndex == cmdElementsLength - 2)
+            {
+                // Target ForEach-Object syntax:
+                //  * `... | ForEach-Object -Process { ... } | ...`
+                var currentElement = commandElements[commandIndex];
+                var nextElement = commandElements[commandIndex + 1];
+
+                if (currentElement.ParameterNameSpecified && !currentElement.ArgumentSpecified &&
+                    ForEachObject_ProcessParam.Equals(currentElement.ParameterName, StringComparison.OrdinalIgnoreCase) &&
+                    nextElement.ArgumentSpecified && !nextElement.ArgumentSplatted && !nextElement.ParameterNameSpecified)
+                {
+                    processScriptBlock = nextElement.ArgumentValue as ScriptBlock;
+                    indexAdvanceOffset = 2;
+                }
+            }
+
+            if (processScriptBlock != null && processScriptBlock.Ast is ScriptBlockAst sbAst)
+            {
+                if (!sbAst.IsConfiguration && sbAst.ParamBlock == null && sbAst.BeginBlock == null &&
+                    sbAst.ProcessBlock == null && sbAst.DynamicParamBlock == null && sbAst.EndBlock != null &&
+                    sbAst.EndBlock.Unnamed)
+                {
+                    ScriptBlock sbRewritten = s_astRewriteCache.GetValue(sbAst, s_astRewriteCallback);
+                    ScriptBlock sbToUse = sbRewritten.Clone();
+                    sbToUse.SessionStateInternal = processScriptBlock.SessionStateInternal;
+                    sbToUse.LanguageMode = processScriptBlock.LanguageMode;
+
+                    // We always clone the script block, so that the cached value doesn't hold on to any session state.
+                    // Foreach-Object invokes the script block in the caller's scope, so do not use new scope.
+                    commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(
+                        sbToUse,
+                        context,
+                        useNewScope: false,
+                        commandSessionState);
+
+                    commandIndex += indexAdvanceOffset;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static IEnumerable<CommandParameterInternal> Splat(object splattedValue, Ast splatAst)

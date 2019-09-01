@@ -236,7 +236,7 @@ if (-not $IsWinEnv) {
     }
 }
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-New-Item -ItemType Directory -Path $tempDir -Force -ErrorAction SilentlyContinue
+$null = New-Item -ItemType Directory -Path $tempDir -Force -ErrorAction SilentlyContinue
 try {
     # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
     # aborted: Could not create SSL/TLS secure channel. error.
@@ -244,34 +244,63 @@ try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
     if ($Daily) {
-        if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
-            throw "PackageManagement module is required to install daily PowerShell."
+        $metadata = Invoke-RestMethod https://pscoretestdata.blob.core.windows.net/buildinfo/daily.json
+        $release = $metadata.ReleaseTag -replace '^v'
+        $blobName = $metadata.BlobName
+
+        if ($IsWinEnv) {
+            if ($UseMSI) {
+                $packageName = "PowerShell-${release}-win-${architecture}.msi"
+            } else {
+                $packageName = "PowerShell-${release}-win-${architecture}.zip"
+            }
+        } elseif ($IsLinuxEnv) {
+            $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
+        } elseif ($IsMacOSEnv) {
+            $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
         }
 
         if ($architecture -ne "x64") {
             throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64."
         }
 
-        ## Register source if not yet
-        if (-not (Get-PackageSource -Name powershell-core-daily -ErrorAction SilentlyContinue)) {
-            $packageSource = "https://powershell.myget.org/F/powershell-core-daily"
-            Write-Verbose "Register powershell-core-daily package source '$packageSource' with PackageManagement" -Verbose
-            Register-PackageSource -Name powershell-core-daily -Location $packageSource -ProviderName nuget -Trusted -ErrorAction SilentlyContinue
+
+        $downloadURL = "https://pscoretestdata.blob.core.windows.net/${blobName}/${packageName}"
+        Write-Verbose "About to download package from '$downloadURL'" -Verbose
+
+        $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
+        if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
+            # On Windows PowerShell, progress can make the download significantly slower
+            $oldProgressPreference = $ProgressPreference
+            $ProgressPreference = "SilentlyContinue"
         }
 
+        try {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        } finally {
+            if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
+                $ProgressPreference = $oldProgressPreference
+            }
+        }
+
+        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
+
+        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
-            $packageName = "powershell-win-x64-win7-x64"
-        } elseif ($IsLinuxEnv) {
-            $packageName = "powershell-linux-x64"
-        } elseif ($IsMacOSEnv) {
-            $packageName = "powershell-osx-x64"
+            if ($UseMSI -and $Quiet) {
+                Write-Verbose "Performing quiet install"
+                $process = Start-Process msiexec -ArgumentList "/i", $packagePath, "/quiet" -Wait -PassThru
+                if ($process.exitcode -ne 0) {
+                    throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
+                }
+            } elseif ($UseMSI) {
+                Start-Process $packagePath -Wait
+            } else {
+                Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
+            }
+        } else {
+            tar zxf $packagePath -C $contentPath
         }
-
-        $package = Find-Package -Source powershell-core-daily -AllowPrereleaseVersions -Name $packageName
-        Write-Verbose "Daily package found. Name: $packageName; Version: $($package.Version)" -Verbose
-
-        Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion -ErrorAction SilentlyContinue
-        $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
     } else {
         $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
         if ($Preview) {
@@ -312,7 +341,7 @@ try {
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
+        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
@@ -350,7 +379,7 @@ try {
         if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-            New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
+            $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
             Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
         }
 
