@@ -4615,7 +4615,11 @@ namespace System.Management.Automation.Language
 
                     if (c1 == '@')
                     {
-                        return NewToken(TokenKind.AtAtCurly);
+                        var c2 = PeekChar();
+                        if (c2 == '{')
+                        {
+                            return NewToken(TokenKind.AtAtCurly);
+                        }
                     }
 
                     UngetChar();
