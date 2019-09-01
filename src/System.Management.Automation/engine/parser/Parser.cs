@@ -6988,10 +6988,9 @@ namespace System.Management.Automation.Language
                 endExtent = rCurly.Extent;
             }
 
-            var hashtableAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs)
+            var hashtableAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs, splatted)
             {
                 IsSchemaElement = parsingSchemaElement,
-                Splatted = splatted
             };
             return hashtableAst;
         }

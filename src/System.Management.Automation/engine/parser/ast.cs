@@ -9548,11 +9548,12 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the literal, from '@{' to the closing '}'.</param>
         /// <param name="keyValuePairs">The optionally null or empty list of key/value pairs.</param>
+        /// <param name="splatted">Whether it is splatted.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public HashtableAst(IScriptExtent extent, IEnumerable<KeyValuePair> keyValuePairs)
+        public HashtableAst(IScriptExtent extent, IEnumerable<KeyValuePair> keyValuePairs, bool splatted)
             : base(extent)
         {
             if (keyValuePairs != null)
@@ -9564,6 +9565,7 @@ namespace System.Management.Automation.Language
             {
                 this.KeyValuePairs = s_emptyKeyValuePairs;
             }
+            Splatted = splatted;
         }
 
         /// <summary>
@@ -9590,7 +9592,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            return new HashtableAst(this.Extent, newKeyValuePairs);
+            return new HashtableAst(this.Extent, newKeyValuePairs, this.Splatted);
         }
 
         /// <summary>
@@ -9604,7 +9606,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets or sets a value indicating whether inline splatting syntax (@@) was used, false otherwise.
         /// </summary>
-        public bool Splatted { get; set;  }
+        public bool Splatted { get; }
 
         #region Visitors
 
