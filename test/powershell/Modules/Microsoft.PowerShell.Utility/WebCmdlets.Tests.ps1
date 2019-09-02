@@ -797,6 +797,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.error | Should -Be $null
     }
 
+    It "Verify Invoke-WebRequest terminates without -SkipHttpErrorCheck" {
+        $query = @{
+            statuscode = 404
+            responsephrase = 'Not found'
+            contenttype = 'text/plain'
+            body = 'oops'
+            headers = "{}"
+        }
+
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output | Should -Be $null
+        $result.error | Should -Not -Be $null
+    }
+
     Context "Redirect" {
         It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
             param($redirectType, $redirectedMethod)
@@ -2290,6 +2306,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -Command $command
         $result.output.message | Should -Match "oops"
         $result.output.error | Should -Be $null
+    }
+
+    It "Verify Invoke-RestMethod terminates without -SkipHttpErrorCheck" {
+        $query = @{
+            statuscode = 404
+            responsephrase = 'Not found'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
+
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-RestMethod -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output | Should -Be $null
+        $result.error | Should -Not -Be $null
     }
 
     It "Verify Invoke-RestMethod assigns status code with -StatusCodeVariable" {
