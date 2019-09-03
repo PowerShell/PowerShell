@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     while (tailResultQueue.Count >= ReadCount)
                     {
-                        ArrayList outputList = new ArrayList((int)ReadCount);
+                        var outputList = new List<object>((int)ReadCount);
                         for (int idx = 0; idx < ReadCount; idx++, count++)
                             outputList.Add(tailResultQueue.Dequeue());
                         // Write out the content as an array of objects
