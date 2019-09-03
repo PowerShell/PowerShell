@@ -448,10 +448,10 @@ namespace Microsoft.PowerShell.Commands
             if (TimeoutSeconds != 0)
             {
                 _taskTimer = new Timer(
-                    (_) => { _taskCollection.Complete(); _taskPool.StopAll(); },
-                    null,
-                    TimeoutSeconds * 1000,
-                    Timeout.Infinite);
+                    callback: (_) => { _taskCollection.Complete(); _taskPool.StopAll(); },
+                    state: null,
+                    dueTime: TimeoutSeconds * 1000,
+                    period: Timeout.Infinite);
             }
 
             // Task collection handler.
