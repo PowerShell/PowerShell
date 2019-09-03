@@ -997,7 +997,7 @@ namespace Microsoft.PowerShell.Commands
         private const string TestConnectionExceptionId = "TestConnectionException";
 
         /// <summary>
-        /// Finalizer for IDisposable class.
+        /// Finalizes an instance of the <see cref="TestConnectionCommand"/> class.
         /// </summary>
         ~TestConnectionCommand()
         {
