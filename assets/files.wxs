@@ -3048,8 +3048,8 @@
       <Component Id="cmp827B25EEC28D4699BB29042B273C8CBF" Guid="{f7ccc70c-5aaf-4e6b-bf9f-c59f4e631f9c}">
         <File Id="filEF6B07EDBC8F43AE8DF88CFDF798FC22" KeyPath="yes" Source="$(env.ProductSourcePath)\System.ComponentModel.Composition.Registration.dll" />
       </Component>
-      <Component Id="cmp45C246DB0A6548B88F0ECFAE7E04DDF9" Guid="{c0aa34fa-b8b3-4fdd-8ea9-0a7b552fd62a}">
-        <File Id="fil03DDF9C95E914AB68AE38D7B8AEF4BE9" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.37902.dll" />
+      <Component Id="cmp712842BFA391403DA3F21B2A4C729ED3" Guid="{e141999c-71cc-4c7f-9f2b-11b1005bd5dc}">
+        <File Id="filDB5CFCFC242B419586E36CD5B281216A" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.42102.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3887,7 +3887,7 @@
       <ComponentRef Id="cmpAD1A205D445C43588868B205091DD390" />
       <ComponentRef Id="cmpD7A187ADE66347E5A7550B96BA10D493" />
       <ComponentRef Id="cmp827B25EEC28D4699BB29042B273C8CBF" />
-      <ComponentRef Id="cmp45C246DB0A6548B88F0ECFAE7E04DDF9" />
+      <ComponentRef Id="cmp712842BFA391403DA3F21B2A4C729ED3" />
     </ComponentGroup>
   </Fragment>
 </Wix>
