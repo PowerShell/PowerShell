@@ -2302,7 +2302,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write the ServiceController for the new service
-                service = new ServiceController(Name); // ensure dispose
+                service = new ServiceController(Name);
                 WriteObject(service);
             }
             finally
