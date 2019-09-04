@@ -115,12 +115,11 @@ namespace Microsoft.PowerShell.Commands
         internal void SetServiceSecurityDescriptor(
             ServiceController service,
             string securityDescriptorSddl,
-            NakedWin32Handle hService
-            )
+            NakedWin32Handle hService)
         {
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
             RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
-            var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
+            var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl);
 
             byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
             discretionaryAcl.GetBinaryForm(rawDacl, 0);
@@ -1923,7 +1922,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
-                        SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
+                        SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                     }
 
                     if (PassThru.IsPresent)
@@ -2295,10 +2294,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                 {
                     service = new ServiceController(Name);
-                    SetServiceSecurityDescriptor(service,SecurityDescriptorSddl,hService);
+                    SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                 }
 
                 // write the ServiceController for the new service
