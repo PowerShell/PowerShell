@@ -181,4 +181,7 @@
     <value>The following common parameters are not currently supported in the Parallel parameter set:
 ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
   </data>
+  <data name="ParallelPipedInputProcessingError" xml:space="preserve">
+    <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
+  </data>
 </root>

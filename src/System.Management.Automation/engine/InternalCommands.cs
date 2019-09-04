@@ -374,6 +374,7 @@ namespace Microsoft.PowerShell.Commands
         private Timer _taskTimer;
         private PSTaskJob _taskJob;
         private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
+        private Exception _taskCollectionException;
 
         private void InitParallelParameterSet()
         {
@@ -458,30 +459,49 @@ namespace Microsoft.PowerShell.Commands
             System.Threading.ThreadPool.QueueUserWorkItem(
                 (_) =>
                 {
+                    // As piped input are converted to PSTasks and added to the _taskCollection,
+                    // transfer the task to the _taskPool on this dedicated thread.
+                    // The _taskPool will block this thread when it is full, and allow more tasks to
+                    // be added only when a currently running task completes and makes space in the pool.
+                    // Continue adding any tasks appearing in _taskCollection until the collection is closed.
                     while (true)
                     {
+                        // This handle will unblock the thread when a new task is available or the _taskCollection
+                        // is closed.
                         _taskCollection.WaitHandle.WaitOne();
 
-                        var isOpen = _taskCollection.IsOpen;
+                        // Task collection open state is volatile.
+                        // Record current task collection open state here, to be checked after processing.
+                        bool isOpen = _taskCollection.IsOpen;
 
                         try
                         {
+                            // Read all tasks in the collection.
                             foreach (var task in _taskCollection.ReadAll())
                             {
+                                // This _taskPool method will block if the pool is full and will unblock
+                                // only after a task completes making more space.
                                 _taskPool.Add(task);
                             }
                         }
-                        catch
-                        { 
+                        catch (Exception ex)
+                        {
+                            // Close the _taskCollection on an unexpected exception so the pool closes and
+                            // lets any running tasks complete.
                             _taskCollection.Complete();
+                            _taskCollectionException = ex;
+                            break;
                         }
 
+                        // Loop is exited only when task collection is closed and all task
+                        // collection tasks are processed.
                         if (!isOpen)
                         {
                             break;
                         }
                     }
 
+                    // We are done adding tasks and can close the task pool.
                     _taskPool.Close();
                 });
         }
@@ -522,6 +542,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // Create a PSTask based on this piped input and add it to the task collection.
+                    // A dedicated thread will add it to the PSTask pool in a performant manner.
                     _taskCollection.Add(
                         new System.Management.Automation.PSTasks.PSTask(
                             Parallel,
@@ -530,7 +552,10 @@ namespace Microsoft.PowerShell.Commands
                             _taskDataStreamWriter));
                 }
                 catch (InvalidOperationException)
-                { }
+                {
+                    // This exception is thrown if the task collection is closed, which should not happen.
+                    Dbg.Assert(false, "Should not add to a closed PSTask collection");
+                }
             }
         }
 
@@ -550,6 +575,19 @@ namespace Microsoft.PowerShell.Commands
             _taskDataStreamWriter.WriteImmediate();
             _taskCollection.Complete();
             _taskDataStreamWriter.WaitAndWrite();
+
+            // Check for an unexpected error from the _taskCollection handler thread and report here.
+            var ex = _taskCollectionException;
+            if (ex != null)
+            {
+                var msg = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ParallelPipedInputProcessingError, ex);
+                WriteError(
+                    new ErrorRecord(
+                        exception: new InvalidOperationException(msg),
+                        errorId: "ParallelPipedInputProcessingError",
+                        errorCategory: ErrorCategory.InvalidOperation,
+                        targetObject: this));
+            }
         }
 
         private void StopParallelProcessing()

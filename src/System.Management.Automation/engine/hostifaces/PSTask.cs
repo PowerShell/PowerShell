@@ -689,7 +689,7 @@ namespace System.Management.Automation.PSTasks
                 return false;
             }
 
-            // Block until either room is available, or a stop is commanded
+            // Block until either space is available, or a stop is commanded
             var index = WaitHandle.WaitAny(_waitHandles);
 
             switch (index)
