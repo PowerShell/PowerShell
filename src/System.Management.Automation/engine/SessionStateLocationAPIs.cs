@@ -621,7 +621,7 @@ namespace System.Management.Automation
 
             if (LocationGlobber.IsProviderDirectPath(path))
             {
-                // The path is a provider-direct path so use the current
+                // The path is a provider-direct (drive is implicitly in the provider path) path so use the current
                 // provider and its hidden drive but don't modify the path
                 // at all.
                 ProviderInfo provider = CurrentLocation.Provider;
