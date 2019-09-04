@@ -596,6 +596,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="path">
         /// The file system path of the new current working directory.
+        /// The path must be an absolute file system path like 'c:\folder' or direct path like '/folder'.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -617,8 +618,6 @@ namespace System.Management.Automation
                 current = CurrentLocation;
             }
 
-            PSDriveInfo previousWorkingDrive = CurrentDrive;
-
             if (LocationGlobber.IsProviderDirectPath(path))
             {
                 // The path is a provider-direct (drive is implicitly in the provider path) path so use the current
@@ -629,18 +628,7 @@ namespace System.Management.Automation
             }
             else
             {
-                // See if the path is a relative or absolute
-                // path.
-                if (Globber.IsAbsolutePath(path, out string driveName))
-                {
-                    // Since the path is an absolute path
-                    // we need to change the current working
-                    // drive
-                    CurrentDrive = GetDrive(driveName);
-
-                    // Now that the current working drive is set,
-                    // process the rest of the path as a relative path.
-                }
+                Dbg.Diagnostics.Assert(Globber.IsAbsolutePath(path, out string driveName), "Path must be an absolute file system path");
             }
 
             string currentPath = path.Substring(CurrentDrive.Root.Length);
