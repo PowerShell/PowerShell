@@ -7859,8 +7859,23 @@ namespace Microsoft.PowerShell.Commands
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFileHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
+        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
+        {
+            private SafeFindHandle() : base(true) { }
+
+            protected override bool ReleaseHandle()
+            {
+                return FindClose(this.handle);
+            }
+
+            [DllImport(PinvokeDllNames.FindCloseDllName)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool FindClose(IntPtr handle);
+        }
+
+        // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
         {
@@ -8055,7 +8070,7 @@ namespace Microsoft.PowerShell.Commands
             }
 #if !UNIX
             var data = new WIN32_FIND_DATA();
-            using (SafeFileHandle handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem (like symlinks)
                 // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
