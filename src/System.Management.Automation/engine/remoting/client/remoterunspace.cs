@@ -1809,7 +1809,8 @@ namespace System.Management.Automation
         private bool _remoteDebugSupported;
         private bool _isActive;
         private int _breakpointCount;
-        private Version _serverPSVersion;
+        private RemoteDebuggingCapability _remoteDebuggingCapability;
+        private bool? _remoteBreakpointManagementIsSupported;
         private volatile bool _handleDebuggerStop;
         private bool _isDebuggerSteppingEnabled;
         private UnhandledBreakpointProcessingMode _unhandledBreakpointMode;
@@ -2006,26 +2007,164 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            _runspace.Debugger?.SetBreakpoints(breakpoints);
-        }
-
-        /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) =>
-            _runspace.Debugger?.GetBreakpoint(id);
+        public override Breakpoint GetBreakpoint(int id)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.GetBreakpoint);
+
+            return InvokeRemoteBreakpointFunction<Breakpoint>(
+                RemoteDebuggingCommands.GetBreakpoint,
+                new Dictionary<string, object>
+                {
+                    { "Id", id },
+                });
+        }
 
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
-        public override List<Breakpoint> GetBreakpoints() =>
-            _runspace.Debugger?.GetBreakpoints();
+        public override List<Breakpoint> GetBreakpoints()
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.GetBreakpoint);
+
+            CheckForValidateState();
+
+            var breakpoints = new List<Breakpoint>();
+
+            using (PowerShell ps = GetNestedPowerShell())
+            {
+                ps.AddCommand(RemoteDebuggingCommands.GetBreakpoint);
+
+                Collection<PSObject> output = ps.Invoke<PSObject>();
+                foreach (var item in output)
+                {
+                    if (item?.BaseObject is Breakpoint bp)
+                    {
+                        breakpoints.Add(bp);
+                    }
+                }
+            }
+
+            return breakpoints;
+        }
+
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
+
+            var functionParameters = new Dictionary<string, object>
+            {
+                { "Command", command },
+            };
+
+            if (action != null)
+            {
+                functionParameters.Add("Action", action);
+            }
+
+            if (path != null)
+            {
+                functionParameters.Add("Script", path);
+            }
+
+            return InvokeRemoteBreakpointFunction<CommandBreakpoint>(RemoteDebuggingCommands.SetBreakpoint, functionParameters);
+        }
+
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
+
+            var functionParameters = new Dictionary<string, object>
+            {
+                { "Script", path },
+                { "Line", line },
+            };
+
+            if (column != 0)
+            {
+                functionParameters.Add("Column", column);
+            }
+
+            if (action != null)
+            {
+                functionParameters.Add("Action", action);
+            }
+
+            return InvokeRemoteBreakpointFunction<LineBreakpoint>(RemoteDebuggingCommands.SetBreakpoint, functionParameters);
+        }
+
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
+
+            var functionParameters = new Dictionary<string, object>
+            {
+                { "Variable", variableName },
+            };
+
+            if (accessMode != VariableAccessMode.Write)
+            {
+                functionParameters.Add("Mode", accessMode);
+            }
+
+            if (action != null)
+            {
+                functionParameters.Add("Action", action);
+            }
+
+            if (path != null)
+            {
+                functionParameters.Add("Script", path);
+            }
+
+            return InvokeRemoteBreakpointFunction<VariableBreakpoint>(RemoteDebuggingCommands.SetBreakpoint, functionParameters);
+        }
+
+        public override bool RemoveBreakpoint(Breakpoint breakpoint)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.RemoveBreakpoint);
+
+            return InvokeRemoteBreakpointFunction<bool>(
+                RemoteDebuggingCommands.RemoveBreakpoint,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
+        }
+
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.EnableBreakpoint);
+
+            return InvokeRemoteBreakpointFunction<Breakpoint>(
+                RemoteDebuggingCommands.EnableBreakpoint,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
+        }
+
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.DisableBreakpoint);
+
+            return InvokeRemoteBreakpointFunction<Breakpoint>(
+                RemoteDebuggingCommands.DisableBreakpoint,
+                new Dictionary<string, object>
+                {
+                    { "Id", breakpoint.Id },
+                });
+        }
 
         /// <summary>
         /// SetDebuggerAction.
@@ -2039,7 +2178,7 @@ namespace System.Management.Automation
 
             using (PowerShell ps = GetNestedPowerShell())
             {
-                ps.AddCommand(DebuggerUtils.SetDebuggerActionFunctionName).AddParameter("ResumeAction", resumeAction);
+                ps.AddCommand(RemoteDebuggingCommands.SetDebuggerAction).AddParameter("ResumeAction", resumeAction);
                 ps.Invoke();
 
                 // If an error exception is returned then throw it here.
@@ -2065,7 +2204,7 @@ namespace System.Management.Automation
             {
                 using (PowerShell ps = GetNestedPowerShell())
                 {
-                    ps.AddCommand(DebuggerUtils.GetDebuggerStopArgsFunctionName);
+                    ps.AddCommand(RemoteDebuggingCommands.GetDebuggerStopArgs);
                     Collection<PSObject> output = ps.Invoke<PSObject>();
                     foreach (var item in output)
                     {
@@ -2102,7 +2241,7 @@ namespace System.Management.Automation
             using (PowerShell ps = GetNestedPowerShell())
             {
                 ps.SetIsNested(false);
-                ps.AddCommand(DebuggerUtils.SetDebugModeFunctionName).AddParameter("Mode", mode);
+                ps.AddCommand(RemoteDebuggingCommands.SetDebugMode).AddParameter("Mode", mode);
                 ps.Invoke();
             }
 
@@ -2120,8 +2259,7 @@ namespace System.Management.Automation
             CheckForValidateState();
 
             // This is supported only for PowerShell versions >= 5.0
-            if ((_serverPSVersion == null) ||
-                (_serverPSVersion.Major < PSVersionInfo.PSV5Version.Major))
+            if (!_remoteDebuggingCapability.IsCommandSupported(RemoteDebuggingCommands.SetDebuggerStepMode))
             {
                 return;
             }
@@ -2134,7 +2272,7 @@ namespace System.Management.Automation
                 // Send Enable-DebuggerStepping virtual command.
                 using (PowerShell ps = GetNestedPowerShell())
                 {
-                    ps.AddCommand(DebuggerUtils.SetDebuggerStepMode).AddParameter("Enabled", enabled);
+                    ps.AddCommand(RemoteDebuggingCommands.SetDebuggerStepMode).AddParameter("Enabled", enabled);
                     ps.Invoke();
                     _isDebuggerSteppingEnabled = enabled;
                 }
@@ -2202,8 +2340,7 @@ namespace System.Management.Automation
                 CheckForValidateState();
 
                 // This is supported only for PowerShell versions >= 5.0
-                if ((_serverPSVersion == null) ||
-                    (_serverPSVersion < PSVersionInfo.PSV5Version))
+                if (!_remoteDebuggingCapability.IsCommandSupported(RemoteDebuggingCommands.SetUnhandledBreakpointMode))
                 {
                     return;
                 }
@@ -2213,7 +2350,7 @@ namespace System.Management.Automation
                 // Send Set-PSUnhandledBreakpointMode virtual command.
                 using (PowerShell ps = GetNestedPowerShell())
                 {
-                    ps.AddCommand(DebuggerUtils.SetPSUnhandledBreakpointMode).AddParameter("UnhandledBreakpointMode", value);
+                    ps.AddCommand(RemoteDebuggingCommands.SetUnhandledBreakpointMode).AddParameter("UnhandledBreakpointMode", value);
                     ps.Invoke();
                 }
 
@@ -2303,7 +2440,7 @@ namespace System.Management.Automation
                 SetRemoteDebug(true, RunspaceAvailability.RemoteDebug);
             }
 
-            _serverPSVersion = serverPSVersion;
+            _remoteDebuggingCapability = RemoteDebuggingCapability.CreateDebuggingCapability(serverPSVersion);
 
             _breakpointCount = breakpointCount;
             _isDebuggerSteppingEnabled = breakAll;
@@ -2607,6 +2744,59 @@ namespace System.Management.Automation
             else
             {
                 if (_isActive) { _isActive = false; }
+            }
+        }
+
+        private T InvokeRemoteBreakpointFunction<T>(string functionName, Dictionary<string, object> parameters)
+        {
+            CheckForValidateState();
+
+            using (PowerShell ps = GetNestedPowerShell())
+            {
+                ps.AddCommand(functionName);
+                foreach (var parameterName in parameters.Keys)
+                {
+                    ps.AddParameter(parameterName, parameters[parameterName]);
+                }
+
+                Collection<PSObject> output = ps.Invoke<PSObject>();
+
+                // If an error exception is returned then throw it here.
+                if (ps.ErrorBuffer.Count > 0)
+                {
+                    Exception e = ps.ErrorBuffer[0].Exception;
+                    if (e != null)
+                    {
+                        throw e;
+                    }
+                }
+
+                // This helper is only used to return a single output item of type T.
+                foreach (var item in output)
+                {
+                    if (item?.BaseObject is T)
+                    {
+                        return (T)item.BaseObject;
+                    }
+                }
+
+                return default(T);
+            }
+        }
+
+        private void CheckRemoteBreakpointManagementSupport(string breakpointCommandNameToCheck)
+        {
+            if (_remoteBreakpointManagementIsSupported == null)
+            {
+                _remoteBreakpointManagementIsSupported = _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
+            }
+
+            if (!_remoteBreakpointManagementIsSupported.Value)
+            {
+                throw new PSNotSupportedException(
+                    StringUtil.Format(
+                        DebuggerStrings.CommandNotSupportedForRemoteUseInServerDebugger,
+                        RemoteDebuggingCommands.CleanCommandName(breakpointCommandNameToCheck)));
             }
         }
 

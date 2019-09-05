@@ -3909,27 +3909,29 @@ namespace System.Management.Automation
             return _wrappedDebugger.ProcessCommand(command, output);
         }
 
-        /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            _wrappedDebugger.SetBreakpoints(breakpoints);
-        }
-
-        /// <summary>
-        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
-        /// </summary>
-        /// <param name="id">Id of the breakpoint you want.</param>
         public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.GetBreakpoint(id);
 
-        /// <summary>
-        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
-        /// </summary>
         public override List<Breakpoint> GetBreakpoints() =>
             _wrappedDebugger.GetBreakpoints();
+
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetCommandBreakpoint(command, action, path);
+
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
+            _wrappedDebugger.SetLineBreakpoint(path, line, column, action);
+
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetVariableBreakpoint(variableName, accessMode, action, path);
+
+        public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.RemoveBreakpoint(breakpoint);
+
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.EnableBreakpoint(breakpoint);
+
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.DisableBreakpoint(breakpoint);
 
         /// <summary>
         /// Sets the debugger resume action.
