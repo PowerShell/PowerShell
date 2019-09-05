@@ -256,7 +256,7 @@ try {
 
         if($currentlyInstalledVersion -eq $release) {
             Write-Verbose "Latest PowerShell Daily already installed." -Verbose
-	    return
+            return
         }
 
         if ($IsWinEnv) {
