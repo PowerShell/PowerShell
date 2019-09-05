@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
 
-        private bool disposed = false;
+        private bool disposed;
 
         private readonly Ping _sender = new Ping();
 
