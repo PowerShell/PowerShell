@@ -41,4 +41,10 @@ Describe "ForEach-Object" -Tags "CI" {
         $sbToUse = GetScriptBlock
         1 | ForEach-Object $sbToUse | Should -BeExactly "ForEachObjectTest-Zoo"
     }
+
+    It "ForEach-Object scriptblock should get the 'InvocationInfo' from the caller scope" {
+        $file = New-Item TestDrive:\test.ps1 -ItemType File -Force
+        Set-Content -Path $file -Value '1 | ForEach-Object { $MyInvocation.MyCommand.Name }'
+        TestDrive:\test.ps1 | Should -BeExactly "test.ps1"
+    }
 }

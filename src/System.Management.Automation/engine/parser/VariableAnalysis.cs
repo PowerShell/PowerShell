@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
@@ -191,6 +190,25 @@ namespace System.Management.Automation.Language
             }
         }
 
+        // Add a variable to the variable dictionary
+        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
+        {
+            if (!_variables.ContainsKey(variableName))
+            {
+                var details = new VariableAnalysisDetails
+                {
+                    BitIndex = _variables.Count,
+                    LocalTupleIndex = index,
+                    Name = variableName,
+                    Type = type,
+                    Automatic = automatic,
+                    PreferenceVariable = preferenceVariable,
+                    Assigned = false,
+                };
+                _variables.Add(variableName, details);
+            }
+        }
+
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
         {
             if (dataStatementAst.Variable != null)
@@ -293,28 +311,9 @@ namespace System.Management.Automation.Language
             // We don't want to discover any variables in traps - they get their own scope.
             return AstVisitAction.SkipChildren;
         }
-
-        // Add a variable to the variable dictionary
-        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
-        {
-            if (!_variables.ContainsKey(variableName))
-            {
-                var details = new VariableAnalysisDetails
-                {
-                    BitIndex = _variables.Count,
-                    LocalTupleIndex = index,
-                    Name = variableName,
-                    Type = type,
-                    Automatic = automatic,
-                    PreferenceVariable = preferenceVariable,
-                    Assigned = false,
-                };
-                _variables.Add(variableName, details);
-            }
-        }
     }
 
-    internal class VariableAnalysis : ICustomAstVisitor
+    internal class VariableAnalysis : ICustomAstVisitor2
     {
         // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we haven't
         // analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
@@ -1060,6 +1059,28 @@ namespace System.Management.Automation.Language
             return null;
         }
 
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var ifTrue = new Block();
+            var ifFalse = new Block();
+            var after = new Block();
+
+            ternaryExpressionAst.Condition.Accept(this);
+            _currentBlock.FlowsTo(ifTrue);
+            _currentBlock.FlowsTo(ifFalse);
+            _currentBlock = ifTrue;
+
+            ternaryExpressionAst.IfTrue.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = ifFalse;
+
+            ternaryExpressionAst.IfFalse.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = after;
+
+            return null;
+        }
+
         public object VisitTrap(TrapStatementAst trapStatementAst)
         {
             trapStatementAst.Body.Accept(this);
@@ -1639,7 +1660,7 @@ namespace System.Management.Automation.Language
 
                 // The right operand is conditionally evaluated.  We aren't generating any code here, just
                 // modeling the flow graph, so we just visit the right operand in a new block, and have
-                // both the current and new blocks both flow to a post-expression block.
+                // both the current and new blocks flow to a post-expression block.
                 var targetBlock = new Block();
                 var nextBlock = new Block();
                 _currentBlock.FlowsTo(targetBlock);
@@ -1823,5 +1844,19 @@ namespace System.Management.Automation.Language
             blockStatementAst.Body.Accept(this);
             return null;
         }
+
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => null;
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) => null;
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) => null;
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => null;
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) => null;
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => null;
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) => null;
     }
 }
