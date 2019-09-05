@@ -602,11 +602,15 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly ManualResetEvent _addAvailable;
-        private readonly ManualResetEvent _stopAll;
-        private readonly Dictionary<int, PSTaskBase> _taskPool;
         private readonly int _sizeLimit;
+        private readonly ManualResetEvent _stopAll;
         private readonly object _syncObject;
+        private readonly Dictionary<int, PSTaskBase> _taskPool;
+        private readonly WaitHandle[] _waitHandles;
         private bool _isOpen;
+
+        private const int AddAvailable = 0;
+        private const int Stop = 1;
 
         #endregion
 
@@ -625,6 +629,11 @@ namespace System.Management.Automation.PSTasks
             _syncObject = new object();
             _addAvailable = new ManualResetEvent(true);
             _stopAll = new ManualResetEvent(false);
+            _waitHandles = new WaitHandle[]
+            {
+                _addAvailable,      // index 0
+                _stopAll,           // index 1
+            };
             _taskPool = new Dictionary<int, PSTaskBase>(size);
         }
 
@@ -672,46 +681,21 @@ namespace System.Management.Automation.PSTasks
         /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
         /// <param name="task">Task to be added to pool.</param>
-        /// <param name="dataStreamWriter">Optional cmdlet data stream writer.</param>
         /// <returns>True when task is successfully added.</returns>
-        public bool Add(
-            PSTaskBase task, 
-            PSTaskDataStreamWriter dataStreamWriter = null)
+        public bool Add(PSTaskBase task)
         {
             if (!_isOpen)
             {
                 return false;
             }
 
-            WaitHandle[] waitHandles;
-            if (dataStreamWriter != null)
-            {
-                waitHandles = new WaitHandle[]
-                {
-                    _addAvailable,                          // index 0
-                    _stopAll,                               // index 1
-                    dataStreamWriter.DataAddedWaitHandle    // index 2
-                };
-            }
-            else
-            {
-                waitHandles = new WaitHandle[]
-                {
-                    _addAvailable,                          // index 0
-                    _stopAll,                               // index 1
-                };
-            }
+            // Block until either space is available, or a stop is commanded
+            var index = WaitHandle.WaitAny(_waitHandles);
 
-            // Block until either room is available, data is ready for writing, or a stop command
-            while (true)
+            switch (index)
             {
-                var index = WaitHandle.WaitAny(waitHandles);
-
-                // Add new task
-                if (index == 0)
-                {
+                case AddAvailable:
                     task.StateChanged += HandleTaskStateChangedDelegate;
-
                     lock (_syncObject)
                     {
                         if (!_isOpen)
@@ -727,21 +711,13 @@ namespace System.Management.Automation.PSTasks
 
                         task.Start();
                     }
-
                     return true;
-                }
 
-                // Stop all
-                if (index == 1)
-                {
+                case Stop:
                     return false;
-                }
-                
-                // Data ready for writing
-                if (index == 2)
-                {
-                    dataStreamWriter.WriteImmediate();
-                }
+
+                default:
+                    return false;
             }
         }
 
@@ -977,7 +953,7 @@ namespace System.Management.Automation.PSTasks
             // This thread will end once all jobs reach a finished state by either running
             // to completion, terminating with error, or stopped.
             System.Threading.ThreadPool.QueueUserWorkItem(
-                (state) => 
+                (_) => 
                 {
                     foreach (var childJob in ChildJobs)
                     {
