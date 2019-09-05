@@ -118,8 +118,8 @@ namespace Microsoft.PowerShell.Commands
             NakedWin32Handle hService)
         {
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
-            RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
-            var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl);
+            RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
+            var discretionaryAcl = new DiscretionaryAcl (false, false, rawDiscretionaryAcl);
 
             byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
             discretionaryAcl.GetBinaryForm(rawDacl, 0);
@@ -128,9 +128,9 @@ namespace Microsoft.PowerShell.Commands
             rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
 
             bool status = NativeMethods.SetServiceObjectSecurity(
-                        hService,
-                        SecurityInfos.DiscretionaryAcl,
-                        securityDescriptorByte);
+                hService,
+                SecurityInfos.DiscretionaryAcl,
+                securityDescriptorByte);
 
             if (!status)
             {
