@@ -250,7 +250,7 @@ try {
 
         # Get version from currently installed PowerShell Daily if available.
         $pwshPath = Join-Path $Destination "pwsh"
-	$currentlyInstalledVersion = if(Test-Path $pwshPath) {
+        $currentlyInstalledVersion = if(Test-Path $pwshPath) {
             ((& $pwshPath -version) -split " ")[1]
         }
 
