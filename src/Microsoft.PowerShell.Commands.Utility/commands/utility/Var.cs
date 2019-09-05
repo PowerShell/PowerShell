@@ -747,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_valueList == null)
                     {
-                        _valueList = new ArrayList();
+                        _valueList = new List<object>();
                     }
 
                     _valueList.Add(Value);
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ArrayList _valueList;
+        private List<object> _valueList;
 
         /// <summary>
         /// Sets the variable if the name was specified as a formal parameter

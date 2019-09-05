@@ -32,7 +32,7 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private ArrayList _runningPipelines = new ArrayList();
+        private List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
         private object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
         private bool _bSessionStateProxyCallInProgress = false;
@@ -1522,7 +1522,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                runningPipelines = (RemotePipeline[])_runningPipelines.ToArray(typeof(RemotePipeline));
+                runningPipelines = _runningPipelines.ToArray();
             }
 
             if (runningPipelines.Length > 0)
