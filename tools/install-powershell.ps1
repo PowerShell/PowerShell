@@ -248,6 +248,17 @@ try {
         $release = $metadata.ReleaseTag -replace '^v'
         $blobName = $metadata.BlobName
 
+        # Get version from currently installed PowerShell Daily if available.
+        $pwshPath = Join-Path $Destination "pwsh"
+	$currentlyInstalledVersion = if(Test-Path $pwshPath) {
+            ((& $pwshPath -version) -split " ")[1]
+        }
+
+        if($currentlyInstalledVersion -eq $release) {
+            Write-Verbose "Latest PowerShell Daily already installed." -Verbose
+	    return
+        }
+
         if ($IsWinEnv) {
             if ($UseMSI) {
                 $packageName = "PowerShell-${release}-win-${architecture}.msi"
