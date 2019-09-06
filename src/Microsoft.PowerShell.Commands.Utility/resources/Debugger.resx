@@ -174,4 +174,7 @@
   <data name="DebugBreakMessage" xml:space="preserve">
     <value>Wait-Debugger called on line {0} in {1}.</value>
   </data>
+  <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
+    <value>A breakpoint associated with another runspace cannot be updated because there is no runspace with instance ID '{0}'.</value>
+  </data>
 </root>
