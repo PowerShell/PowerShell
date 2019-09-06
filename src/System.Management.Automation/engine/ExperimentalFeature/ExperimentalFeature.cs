@@ -111,7 +111,10 @@ namespace System.Management.Automation
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
                     name: "PSForEachObjectParallel",
-                    description: "New parameter set for ForEach-Object to run script blocks in parallel")
+                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                new ExperimentalFeature(
+                    name: "PSTernaryOperator",
+                    description: "Support the ternary operator in PowerShell langauge.")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

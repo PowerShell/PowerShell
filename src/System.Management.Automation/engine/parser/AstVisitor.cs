@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 
 namespace System.Management.Automation.Language
@@ -151,6 +150,8 @@ namespace System.Management.Automation.Language
     /// <summary/>
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
+        private object DefaultVisit(Ast ast) => null;
+
         /// <summary/>
         object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst);
 
@@ -171,6 +172,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
+
+        /// <summary/>
+        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
     }
 
 #if DEBUG
@@ -312,6 +316,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return CheckParent(ast); }
 
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return CheckParent(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
     }
 
     /// <summary>
@@ -544,6 +550,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return Check(ast); }
 
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
     }
 
     /// <summary>
@@ -680,5 +688,7 @@ namespace System.Management.Automation.Language
         public virtual object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return null; }
         /// <summary/>
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
+        /// <summary/>
+        public virtual object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return null; }
     }
 }

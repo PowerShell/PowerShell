@@ -374,13 +374,26 @@ namespace System.Management.Automation.Language
             return c.IsWhitespace();
         }
 
-        // Return true if the character ends the current number token.  This allows the tokenizer
-        // to scan '7z' as a single token, but '7+' as 2 tokens.
-        internal static bool ForceStartNewTokenAfterNumber(this char c)
+        /// <summary>
+        /// Check if the current character forces to end scanning a number token.
+        /// This allows the tokenizer to scan '7z' as a single token, but '7+' as 2 tokens.
+        /// </summary>
+        /// <param name="c">The character to check.</param>
+        /// <param name="forceEndNumberOnTernaryOperatorChars">
+        /// In some cases, we want '?' and ':' to end a number token too, so they can be
+        /// treated as the ternary operator tokens.
+        /// </param>
+        /// <returns>Return true if the character ends the current number token.</returns>
+        internal static bool ForceStartNewTokenAfterNumber(this char c, bool forceEndNumberOnTernaryOperatorChars)
         {
             if (c < 128)
             {
-                return (s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0;
+                if ((s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0)
+                {
+                    return true;
+                }
+
+                return forceEndNumberOnTernaryOperatorChars && (c == '?' || c == ':');
             }
 
             return c.IsDash();

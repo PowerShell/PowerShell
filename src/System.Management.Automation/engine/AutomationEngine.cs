@@ -36,30 +36,22 @@ namespace System.Management.Automation
         internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
 #if !UNIX
-            // Update the env variable PathEXT to contain .CPL
-            var pathext = Environment.GetEnvironmentVariable("PathEXT");
-            pathext = pathext ?? string.Empty;
-            bool cplExist = false;
-            if (pathext != string.Empty)
-            {
-                string[] entries = pathext.Split(Utils.Separators.Semicolon);
-                foreach (string entry in entries)
-                {
-                    string ext = entry.Trim();
-                    if (ext.Equals(".CPL", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cplExist = true;
-                        break;
-                    }
-                }
-            }
+            // Update the env variable PATHEXT to contain .CPL
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
 
-            if (!cplExist)
+            if (string.IsNullOrEmpty(pathext))
             {
-                pathext = (pathext == string.Empty) ? ".CPL" :
-                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase)
-                    ? (pathext + ".CPL") : (pathext + ";.CPL");
-                Environment.SetEnvironmentVariable("PathEXT", pathext);
+                Environment.SetEnvironmentVariable("PATHEXT", ".CPL");
+            }
+            else if (!(pathext.EndsWith(";.CPL", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.StartsWith(".CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Contains(";.CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Equals(".CPL", StringComparison.OrdinalIgnoreCase)))
+            {
+                // Fast skip if we already added the extention as ";.CPL".
+                // Fast skip if user already added the extention.
+                pathext += pathext[pathext.Length - 1] == ';' ? ".CPL" : ";.CPL";
+                Environment.SetEnvironmentVariable("PATHEXT", pathext);
             }
 #endif
 
@@ -69,9 +61,7 @@ namespace System.Management.Automation
             CommandDiscovery = new CommandDiscovery(Context);
 
             // Load the iss, resetting everything to it's defaults...
-            iss.Bind(Context, /*updateOnly*/ false);
-
-            InitialSessionState.SetSessionStateDrive(Context, true);
+            iss.Bind(Context, updateOnly: false, module: null, noClobber: false, local: false, setLocation: true);
         }
 
         /// <summary>

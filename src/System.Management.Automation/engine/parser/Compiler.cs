@@ -4974,6 +4974,16 @@ namespace System.Management.Automation.Language
                 rhs.Cast(typeof(object)));
         }
 
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var expr = Expression.Condition(
+                Compile(ternaryExpressionAst.Condition).Convert(typeof(bool)),
+                Compile(ternaryExpressionAst.IfTrue).Convert(typeof(object)),
+                Compile(ternaryExpressionAst.IfFalse).Convert(typeof(object)));
+
+            return expr;
+        }
+
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
             object constantValue;

@@ -2396,7 +2396,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        iss.Bind(Context, /*updateOnly*/ true);
+                        iss.Bind(Context, updateOnly: true, module: null, noClobber: false, local: false, setLocation: false);
                     }
                     catch (Exception e)
                     {
@@ -6765,7 +6765,7 @@ namespace Microsoft.PowerShell.Commands
                         iss.DisableFormatUpdates = true;
 
                     // Load the cmdlets and providers, bound to the new module...
-                    iss.Bind(Context, /*updateOnly*/ true, module, options.NoClobber, options.Local);
+                    iss.Bind(Context, updateOnly: true, module, options.NoClobber, options.Local, setLocation: false);
 
                     // Scan all of the types in the assembly to register JobSourceAdapters.
                     IEnumerable<Type> allTypes = new Type[] { };

@@ -34,6 +34,7 @@ FunctionsToExport = @(
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
+        'Get-PlatformInfo'
     )
 
 CmdletsToExport= @()
