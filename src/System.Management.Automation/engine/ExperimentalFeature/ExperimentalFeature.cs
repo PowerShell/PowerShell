@@ -115,6 +115,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNewCommonParameters",
                     description: "New -DebugAction, -DebugVariable, -ProgressAction, -ProgressVariable, -VerboseAction, and -VerboseVariable common parameters"),
+                new ExperimentalFeature(
+                    name: "PSTernaryOperator",
+                    description: "Support the ternary operator in PowerShell language."),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

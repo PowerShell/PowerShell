@@ -73,6 +73,11 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)
 
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "MI library not available for Alpine"
+            return
+        }
+
         $er = { & $scriptBlock } | Should -Throw -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand' -PassThru
         $er.Exception.ErrorCode | Should -Be $expectedErrorCode
     }

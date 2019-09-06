@@ -2097,12 +2097,7 @@ namespace System.Management.Automation.Runspaces
 
         private object _syncObject = new Object();
 
-        internal void Bind(ExecutionContext context, bool updateOnly)
-        {
-            Bind(context, updateOnly, null, /*noClobber*/false, /*local*/ false);
-        }
-
-        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local)
+        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {
             Host = context.EngineHostInterface;
             lock (_syncObject)
@@ -2205,7 +2200,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            SetSessionStateDrive(context, setLocation: false);
+            SetSessionStateDrive(context, setLocation: setLocation);
         }
 
         private void Bind_SetVariables(SessionStateInternal ss)
@@ -4550,7 +4545,6 @@ end {
                     new SessionStateAliasEntry("mi", "Move-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("mp", "Move-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nal", "New-Alias", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("nbp", "New-PSBreakpoint", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ndr", "New-PSDrive", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ni", "New-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nv", "New-Variable", string.Empty, ReadOnly),

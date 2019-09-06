@@ -1,0 +1,17 @@
+steps:
+- powershell: |
+    $shouldSign = $true
+    if($env:BUILD_REASON -ne 'Manual')
+    {
+      $shouldSign = $false
+    }
+
+    if($env:SKIP_SIGNING -eq 'Yes')
+    {
+      $shouldSign = $false
+    }
+
+    $vstsCommandString = "vso[task.setvariable variable=SHOULD_SIGN]$($shouldSign.ToString().ToLowerInvariant())"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set SHOULD_SIGN Variable'

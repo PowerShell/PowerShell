@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         private void InitializeResolvedNameMshParameters()
         {
             // temp list of properties with wildcards resolved
-            ArrayList resolvedNameProperty = new ArrayList();
+            var resolvedNameProperty = new List<object>();
 
             foreach (MshParameter p in _propertyMshParameterList)
             {

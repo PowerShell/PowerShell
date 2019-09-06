@@ -338,13 +338,9 @@ namespace Microsoft.PowerShell.Commands
                 if (ReadCount <= 0 || (ReadCount >= tailResultQueue.Count && ReadCount != 1))
                 {
                     count = tailResultQueue.Count;
-                    ArrayList outputList = new ArrayList();
-                    while (tailResultQueue.Count > 0)
-                    {
-                        outputList.Add(tailResultQueue.Dequeue());
-                    }
+
                     // Write out the content as an array of objects
-                    WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
+                    WriteContentObject(tailResultQueue.ToArray(), count, holder.PathInfo, currentContext);
                 }
                 else if (ReadCount == 1)
                 {
@@ -356,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     while (tailResultQueue.Count >= ReadCount)
                     {
-                        ArrayList outputList = new ArrayList();
+                        var outputList = new List<object>((int)ReadCount);
                         for (int idx = 0; idx < ReadCount; idx++, count++)
                             outputList.Add(tailResultQueue.Dequeue());
                         // Write out the content as an array of objects
@@ -366,11 +362,8 @@ namespace Microsoft.PowerShell.Commands
                     int remainder = tailResultQueue.Count;
                     if (remainder > 0)
                     {
-                        ArrayList outputList = new ArrayList();
-                        for (; remainder > 0; remainder--, count++)
-                            outputList.Add(tailResultQueue.Dequeue());
                         // Write out the content as an array of objects
-                        WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
+                        WriteContentObject(tailResultQueue.ToArray(), count, holder.PathInfo, currentContext);
                     }
                 }
             }

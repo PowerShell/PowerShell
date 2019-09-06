@@ -258,6 +258,8 @@ namespace System.Management.Automation
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.SkipChildren; }
 
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.SkipChildren; }
+
         // Visit one the other variations:
         //  - Dotting scripts
         //  - Setting aliases

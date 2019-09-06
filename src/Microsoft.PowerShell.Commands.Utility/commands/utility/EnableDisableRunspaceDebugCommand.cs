@@ -350,22 +350,6 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        /// <summary>
-        /// Gets or sets the optional breakpoint objects to use for debugging.
-        /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceParameterSet)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceIdParameterSet)]
-        public Breakpoint[] Breakpoint
-        {
-            get;
-            set;
-        }
-
         #endregion
 
         #region Overrides
@@ -427,12 +411,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         debugger.SetDebuggerStepMode(false);
                     }
-                }
-
-                // If any breakpoints were provided, set those in the debugger.
-                if (Breakpoint?.Length > 0)
-                {
-                    debugger.SetBreakpoints(Breakpoint);
                 }
             }
         }
