@@ -623,25 +623,11 @@ namespace System.Management.Automation
 
         private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue)
         {
-            string message = null;
-            switch (preference)
+            if (preference == ActionPreference.Suspend)
             {
-                case ActionPreference.Ignore:
-                    // We don't want to support "Ignore" as action preferences, as it leads to bad
-                    // scripting habits. They are only supported as cmdlet overrides.
-                    message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
-                    break;
-
-                case ActionPreference.Suspend:
-                    // ActionPreference.Suspend is reserved for future use. When it is used, reset
-                    // the variable to its default.
-                    message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
-                    break;
-            }
-
-            if (message != null)
-            {
-                // Reset the variable value
+                // ActionPreference.Suspend is reserved for future use. When it is used, reset
+                // the variable to its default.
+                string message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
                 EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
                 throw new NotSupportedException(message);
             }

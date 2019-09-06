@@ -83,22 +83,28 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
     }
 
-    It 'ActionPreference Ignore Works' {
-        $errorCount = $error.Count
-        Get-Process -Name asdfasdfsadfsadf -ErrorAction Ignore
-
-        $error.Count | Should -BeExactly $errorCount
+    It 'Action preference of Ignore can be set as a preference variable using a string value' {
+        try {
+            Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+            $GLOBAL:ErrorActionPreference = 'Ignore'
+            $errorCount = $error.Count
+            Get-Process -Name asdfasdfasdf
+            $error.Count | Should -BeExactly $errorCount
+        } finally {
+            Remove-Variable -Name ErrorActionPreference -Scope Global
+            # Re-create the action preference variable as a strongly typed variable like it was before
+            [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $orgin
+        }
     }
 
-    It 'action preference of Ignore cannot be set as a preference variable' {
+    It 'Action preference of Ignore can be set as a preference variable using an enumerated value' {
         try {
-            $e = {
-                $GLOBAL:errorActionPreference = "Ignore"
-                Get-Process -Name asdfasdfasdf
-            } | Should -Throw -ErrorId 'System.NotSupportedException' -PassThru
-            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
+            $GLOBAL:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Ignore
+            $errorCount = $error.Count
+            Get-Process -Name asdfasdfasdf
+            $error.Count | Should -BeExactly $errorCount
         } finally {
-            $GLOBAL:errorActionPreference = $orgin
+            $GLOBAL:ErrorActionPreference = $orgin
         }
     }
 
