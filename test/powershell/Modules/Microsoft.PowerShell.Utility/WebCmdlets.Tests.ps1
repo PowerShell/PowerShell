@@ -2340,7 +2340,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             statuscode = 500
             responsephrase = 'Internal Server Error'
             contenttype = 'application/json'
-            body = '{"message": "works"}'
+            body = '{"message": "oops"}'
             headers = "{}"
         }
 
