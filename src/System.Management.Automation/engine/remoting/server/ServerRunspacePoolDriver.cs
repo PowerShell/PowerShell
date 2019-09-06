@@ -152,8 +152,8 @@ namespace System.Management.Automation
 
             // Create a new server host and associate for host call
             // integration
-            _remoteHost = new ServerDriverRemoteHost(clientRunspacePoolId,
-                Guid.Empty, hostInfo, transportManager, null);
+            _remoteHost = new ServerDriverRemoteHost(
+                clientRunspacePoolId, Guid.Empty, hostInfo, transportManager, null);
 
             _configData = configData;
             _applicationPrivateData = applicationPrivateData;

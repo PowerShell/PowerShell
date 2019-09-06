@@ -199,7 +199,8 @@ namespace System.Management.Automation.Remoting
             string configurationName = null,
             string initialLocation = null)
         {
-            Dbg.Assert((senderInfo != null) & (senderInfo.UserInfo != null),
+            Dbg.Assert(
+                (senderInfo != null) & (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
 
             s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
@@ -212,7 +213,8 @@ namespace System.Management.Automation.Remoting
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
-            ServerRemoteSession result = new ServerRemoteSession(senderInfo,
+            ServerRemoteSession result = new ServerRemoteSession(
+                senderInfo,
                 configurationProviderId,
                 initializationParameters,
                 transportManager)
@@ -237,13 +239,20 @@ namespace System.Management.Automation.Remoting
         /// <param name="configurationName"></param>
         /// <param name="initialLocation"></param>
         /// <returns></returns>
-        internal static ServerRemoteSession CreateServerRemoteSession(PSSenderInfo senderInfo,
+        internal static ServerRemoteSession CreateServerRemoteSession(
+            PSSenderInfo senderInfo,
             string initializationScriptForOutOfProcessRunspace,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName, string initialLocation)
+            string configurationName,
+            string initialLocation)
         {
-            ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
-                "Microsoft.PowerShell", string.Empty, transportManager, configurationName, initialLocation);
+            ServerRemoteSession result = CreateServerRemoteSession(
+                senderInfo,
+                "Microsoft.PowerShell",
+                string.Empty,
+                transportManager,
+                configurationName: configurationName,
+                initialLocation: initialLocation);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }

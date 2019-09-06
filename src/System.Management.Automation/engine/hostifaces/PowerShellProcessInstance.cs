@@ -43,19 +43,22 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
         /// </summary>
-        /// <param name="powerShellVersion"></param>
-        /// <param name="credential"></param>
-        /// <param name="initializationScript"></param>
-        /// <param name="useWow64"></param>
-        /// <param name="workingDirectory"></param>
+        /// <param name="powerShellVersion">Specifies the version of powershell.</param>
+        /// <param name="credential">Specifies a user account credentials.</param>
+        /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
+        /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
             string processArguments = " -s -NoLogo -NoProfile";
 
             if (!string.IsNullOrWhiteSpace(workingDirectory))
             {
-                processArguments = string.Format(CultureInfo.InvariantCulture,
-                    "{0} -wd {1}", processArguments, workingDirectory);
+                processArguments = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0} -wd {1}",
+                    processArguments,
+                    workingDirectory);
             }
 
             if (initializationScript != null)
@@ -65,8 +68,11 @@ namespace System.Management.Automation.Runspaces
                 {
                     string encodedCommand =
                         Convert.ToBase64String(Encoding.Unicode.GetBytes(scripBlockAsString));
-                    processArguments = string.Format(CultureInfo.InvariantCulture,
-                        "{0} -EncodedCommand {1}", processArguments, encodedCommand);
+                    processArguments = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0} -EncodedCommand {1}",
+                        processArguments,
+                        encodedCommand);
                 }
             }
 
@@ -110,7 +116,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Default initializes the underlying dotnet process class
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Default initializes the underlying dotnet process class.
         /// </summary>
         public PowerShellProcessInstance() : this(powerShellVersion: null, credential: null, initializationScript: null, useWow64: false, workingDirectory: null)
         {
