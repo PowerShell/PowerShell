@@ -370,6 +370,13 @@ $redirectTests = @(
 Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
+        $NotFoundQuery = @{
+            statuscode = 404
+            responsephrase = 'Not Found'
+            contenttype = 'text/plain'
+            body = 'oops'
+            headers = "{}"
+        }
     }
 
     # Validate the output of Invoke-WebRequest
@@ -781,36 +788,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Verify Invoke-WebRequest supresses terminating errors with -SkipHttpErrorCheck" {
-        $query = @{
-            statuscode = 404
-            responsephrase = 'Not found'
-            contenttype = 'text/plain'
-            body = 'oops'
-            headers = "{}"
-        }
-
-        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-WebRequest -SkipHttpErrorCheck -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
         $result.output.StatusCode | Should -Be 404
-        $result.output.Content | Should -Match "oops"
-        $result.error | Should -Be $null
+        $result.output.Content | Should -BeExactly "oops"
+        $result.error | Should -BeNullOrEmpty
     }
 
     It "Verify Invoke-WebRequest terminates without -SkipHttpErrorCheck" {
-        $query = @{
-            statuscode = 404
-            responsephrase = 'Not found'
-            contenttype = 'text/plain'
-            body = 'oops'
-            headers = "{}"
-        }
-
-        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
-        $result.output | Should -Be $null
-        $result.error | Should -Not -Be $null
+        $result.output | Should -BeNullOrEmpty
+        $result.error | Should -Not -BeNullOrEmpty
     }
 
     Context "Redirect" {
@@ -1963,6 +1954,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
+
+        $NotFoundQuery = @{
+            statuscode = 404
+            responsephrase = 'Not Found'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -2293,35 +2292,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
-        $query = @{
-            statuscode = 404
-            responsephrase = 'Not found'
-            contenttype = 'application/json'
-            body = '{"message": "oops"}'
-            headers = "{}"
-        }
-
-        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
-        $result.output.message | Should -Match "oops"
-        $result.output.error | Should -Be $null
+        $result.output.message | Should -BeExactly "oops"
+        $result.output.error | Should -BeNullOrEmpty
     }
 
     It "Verify Invoke-RestMethod terminates without -SkipHttpErrorCheck" {
-        $query = @{
-            statuscode = 404
-            responsephrase = 'Not found'
-            contenttype = 'application/json'
-            body = '{"message": "oops"}'
-            headers = "{}"
-        }
-
-        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-RestMethod -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
-        $result.output | Should -Be $null
-        $result.error | Should -Not -Be $null
+        $result.output | Should -BeNullOrEmpty
+        $result.error | Should -Not -BeNullOrEmpty
     }
 
     It "Verify Invoke-RestMethod assigns status code with -StatusCodeVariable" {
