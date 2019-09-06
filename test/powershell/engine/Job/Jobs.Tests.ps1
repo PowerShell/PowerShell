@@ -28,9 +28,9 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
         BeforeAll {
             $invalidPathTestCases = @(
-                @{ path = "This is an invalid path"; case = "invalid path"}
-                @{ path = ""; case = "empty string"}
-                @{ path = " "; case = "whitespace string (single space)"}
+                @{ path = "This is an invalid path"; case = "invalid path"; errorId = "DirectoryNotFoundException,Microsoft.PowerShell.Commands.StartJobCommand"}
+                @{ path = ""; case = "empty string"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+                @{ path = " "; case = "whitespace string (single space)"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
             )
         }
 
@@ -84,9 +84,9 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
-            param($path,$case)
+            param($path, $case, $expectedErrorId)
 
-            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw
+            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $expectedErrorId
         }
 
         It "Create job with native command" {
