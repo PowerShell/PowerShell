@@ -28,10 +28,10 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Remove-PSBreakpoint.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113325")]
-    [OutputType(typeof(CommandBreakpoint), ParameterSetName = new string[] { CommandParameterSetName })]
-    [OutputType(typeof(LineBreakpoint), ParameterSetName = new string[] { LineParameterSetName })]
-    [OutputType(typeof(VariableBreakpoint), ParameterSetName = new string[] { VariableParameterSetName })]
-    [OutputType(typeof(Breakpoint), ParameterSetName = new string[] { TypeParameterSetName, IdParameterSetName })]
+    [OutputType(typeof(CommandBreakpoint), ParameterSetName = new [] { CommandParameterSetName })]
+    [OutputType(typeof(LineBreakpoint), ParameterSetName = new [] { LineParameterSetName })]
+    [OutputType(typeof(VariableBreakpoint), ParameterSetName = new [] { VariableParameterSetName })]
+    [OutputType(typeof(Breakpoint), ParameterSetName = new [] { TypeParameterSetName, IdParameterSetName })]
     public class GetPSBreakpointCommand : PSBreakpointAccessorCommandBase
     {
         #region strings

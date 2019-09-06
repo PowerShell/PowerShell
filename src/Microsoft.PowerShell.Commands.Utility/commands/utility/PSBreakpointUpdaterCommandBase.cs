@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            var matchingRunspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { runspaceInstanceId });
+            var matchingRunspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new [] { runspaceInstanceId });
             if (matchingRunspaces.Count != 1)
             {
                 WriteError(
