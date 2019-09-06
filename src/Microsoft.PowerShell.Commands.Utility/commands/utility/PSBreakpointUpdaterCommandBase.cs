@@ -51,17 +51,6 @@ namespace Microsoft.PowerShell.Commands
         #region overrides
 
         /// <summary>
-        /// Identifies the default runspace when we don't have a breakpoint object to work with.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            if (ParameterSetName.Equals(IdParameterSetName, StringComparison.OrdinalIgnoreCase))
-            {
-                base.BeginProcessing();
-            }
-        }
-
-        /// <summary>
         /// Gathers the list of breakpoints to process and calls ProcessBreakpoints.
         /// </summary>
         protected override void ProcessRecord()

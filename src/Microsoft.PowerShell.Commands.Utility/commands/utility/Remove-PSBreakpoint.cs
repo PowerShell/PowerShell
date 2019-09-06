@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Remove-PSBreakpoint.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint",
+    [Cmdlet(VerbsCommon.Remove, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = BreakpointParameterSetName,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113375")]
     public class RemovePSBreakpointCommand : PSBreakpointUpdaterCommandBase
     {
