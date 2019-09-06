@@ -762,14 +762,14 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     _sender.Dispose();
                 }
 
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
 
-        private bool disposed;
+        private bool _disposed;
 
         private readonly Ping _sender = new Ping();
 
