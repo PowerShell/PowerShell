@@ -27,6 +27,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
             $testservice2 | Should -Not -BeNullOrEmpty
         }
+
         Function CheckSecurityDescriptorSddl {
             Param(
                 [Parameter(Mandatory)]

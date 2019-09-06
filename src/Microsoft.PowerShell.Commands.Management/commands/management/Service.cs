@@ -2294,14 +2294,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                // write the ServiceController for the new service
+                service = new ServiceController(Name);
+
                 if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                 {
-                    service = new ServiceController(Name);
                     SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                 }
 
-                // write the ServiceController for the new service
-                service = new ServiceController(Name);
                 WriteObject(service);
             }
             finally
