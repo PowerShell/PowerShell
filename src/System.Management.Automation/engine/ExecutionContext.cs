@@ -573,10 +573,12 @@ namespace System.Management.Automation
             object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
             if (val is T)
             {
+                // We don't want to support "Ignore" as action preferences, as it leads to bad
+                // scripting habits. They are only supported as cmdlet overrides.
                 if (val is ActionPreference)
                 {
                     ActionPreference preference = (ActionPreference)val;
-                    if (preference == ActionPreference.Suspend)
+                    if ((preference == ActionPreference.Ignore) || (preference == ActionPreference.Suspend))
                     {
                         // Reset the variable value
                         EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultPref);
