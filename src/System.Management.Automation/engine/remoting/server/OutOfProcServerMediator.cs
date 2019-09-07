@@ -325,7 +325,7 @@ namespace System.Management.Automation.Remoting.Server
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
-            ServerRemoteSession _ = ServerRemoteSession.CreateServerRemoteSession(
+            ServerRemoteSession.CreateServerRemoteSession(
                 senderInfo,
                 _initialCommand,
                 tm,
