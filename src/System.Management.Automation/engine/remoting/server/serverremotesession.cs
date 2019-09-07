@@ -88,7 +88,7 @@ namespace System.Management.Automation.Remoting
         // Specifies an optional endpoint configuration for out-of-proc session use.
         // Creates a pushed remote runspace session created with this configuration name.
         private string _configurationName;
-        
+
         // Specifies an initial location of the powershell session.
         private string _initialLocation;
 
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
             string initialLocation = null)
         {
             Dbg.Assert(
-                (senderInfo != null) & (senderInfo.UserInfo != null),
+                (senderInfo != null) && (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
 
             s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);

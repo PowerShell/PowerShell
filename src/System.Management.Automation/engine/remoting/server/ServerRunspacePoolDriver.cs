@@ -88,7 +88,7 @@ namespace System.Management.Automation
         private string _configurationName;
 
         // Optional initial location of the PowerShell session
-        private string _initialLocation;
+        private readonly string _initialLocation;
 
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
@@ -621,14 +621,14 @@ namespace System.Management.Automation
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
             }
-            
+
             if (!string.IsNullOrWhiteSpace(_initialLocation))
             {
                 var setLocationCommand = new Command("Set-Location");
                 setLocationCommand.Parameters.Add(new CommandParameter("LiteralPath", _initialLocation));
                 InvokeScript(setLocationCommand, args);
             }
-    
+
             // Run startup scripts
             InvokeStartupScripts(args);
 
