@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PSDesiredStateConfiguration" Version="2.0" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="2.0.2" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 
