@@ -16,16 +16,16 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.DirectoryServices" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Management" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Security.Permissions" Version="4.6.0-preview8.19405.3" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0-preview8.19405.3" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.DirectoryServices" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Management" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0-preview9.19421.4" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0-preview.2" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0-preview.1" />

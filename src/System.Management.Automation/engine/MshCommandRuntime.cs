@@ -3097,6 +3097,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _debugPreference = value;
                 IsDebugActionSet = true;
             }
@@ -3219,7 +3224,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _warningPreference = value;
@@ -3391,7 +3396,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceSupportedOnlyOnWorkflow);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _errorAction = value;
@@ -3429,6 +3434,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _progressPreference = value;
                 IsProgressActionSet = true;
             }
@@ -3464,7 +3474,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _informationPreference = value;
