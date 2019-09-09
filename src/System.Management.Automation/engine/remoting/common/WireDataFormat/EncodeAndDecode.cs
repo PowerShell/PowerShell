@@ -1912,7 +1912,7 @@ namespace System.Management.Automation
             string computerName = GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsComputerName);
             Guid runspaceId = GetPropertyValue<Guid>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsRunspaceId);
 
-            ArrayList sourceArgs = new ArrayList();
+            var sourceArgs = new List<object>();
             foreach (object argument in RemotingDecoder.EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsSourceArgs))
             {
                 sourceArgs.Add(argument);

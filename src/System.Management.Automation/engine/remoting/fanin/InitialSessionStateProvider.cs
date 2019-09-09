@@ -1858,7 +1858,7 @@ namespace System.Management.Automation.Remoting
             {
                 string customizationString = customization.ToString();
 
-                ArrayList customizationValue = new ArrayList();
+                var customizationValue = new List<object>();
 
                 // First, take all values from the master config table
                 if (_configHash.ContainsKey(customizationString))
@@ -1866,7 +1866,7 @@ namespace System.Management.Automation.Remoting
                     IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(_configHash[customization]);
                     if (existingValueAsCollection != null)
                     {
-                        foreach (Object value in existingValueAsCollection)
+                        foreach (object value in existingValueAsCollection)
                         {
                             customizationValue.Add(value);
                         }
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation.Remoting
                 IEnumerable newValueAsCollection = LanguagePrimitives.GetEnumerable(childConfigHash[customization]);
                 if (newValueAsCollection != null)
                 {
-                    foreach (Object value in newValueAsCollection)
+                    foreach (object value in newValueAsCollection)
                     {
                         customizationValue.Add(value);
                     }

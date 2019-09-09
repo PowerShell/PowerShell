@@ -72,11 +72,11 @@ namespace System.Management.Automation
             $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
         ";
 
-        private static ArrayList s_suggestions = InitializeSuggestions();
+        private static List<Hashtable> s_suggestions = InitializeSuggestions();
 
-        private static ArrayList InitializeSuggestions()
+        private static List<Hashtable> InitializeSuggestions()
         {
-            ArrayList suggestions = new ArrayList(
+            var suggestions = new List<Hashtable>(
                 new Hashtable[]
                 {
                     NewSuggestion(
@@ -307,10 +307,10 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        internal static ArrayList GetSuggestion(Runspace runspace)
+        internal static List<string> GetSuggestion(Runspace runspace)
         {
             LocalRunspace localRunspace = runspace as LocalRunspace;
-            if (localRunspace == null) { return new ArrayList(); }
+            if (localRunspace == null) { return new List<string>(); }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
@@ -320,7 +320,7 @@ namespace System.Management.Automation
             HistoryInfo[] entries = history.GetEntries(-1, 1, true);
 
             if (entries.Length == 0)
-                return new ArrayList();
+                return new List<string>();
 
             HistoryInfo lastHistory = entries[0];
 
@@ -363,7 +363,7 @@ namespace System.Management.Automation
                 Runspace.DefaultRunspace = runspace;
             }
 
-            ArrayList suggestions = null;
+            List<string> suggestions = null;
 
             try
             {
@@ -383,9 +383,9 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
+        internal static List<string> GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
         {
-            ArrayList returnSuggestions = new ArrayList();
+            var returnSuggestions = new List<string>();
 
             PSModuleInfo invocationModule = new PSModuleInfo(true);
             invocationModule.SessionState.PSVariable.Set("lastHistory", lastHistory);

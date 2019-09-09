@@ -5,6 +5,11 @@ Import-Module HelpersCommon
 
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "MI library not available for Alpine"
+            return
+        }
+
         { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
            Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
@@ -12,6 +17,11 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "MI library not available for Alpine"
+            return
+        }
+
         $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
@@ -23,6 +33,11 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     }
 
     It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "MI library not available for Alpine"
+            return
+        }
+
         $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 

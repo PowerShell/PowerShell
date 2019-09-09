@@ -721,6 +721,15 @@ namespace System.Management.Automation.Language
 
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
+
+        // TODO: use auto-properties when making 'ternary operator' an official feature.
+        private bool _forceEndNumberOnTernaryOpChars;
+        internal bool ForceEndNumberOnTernaryOpChars
+        {
+            get { return _forceEndNumberOnTernaryOpChars; }
+            set { _forceEndNumberOnTernaryOpChars = value && ExperimentalFeature.IsEnabled("PSTernaryOperator"); }
+        }
+
         internal bool WantSimpleName { get; set; }
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
@@ -1342,15 +1351,15 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        internal bool IsPipeContinuance(IScriptExtent extent)
+        internal bool IsPipeContinuation(IScriptExtent extent)
         {
-            return extent.EndOffset < _script.Length && PipeContinuanceAfterExtent(extent);
+            // If the first non-whitespace & non-comment (regular or block) character following a newline is a pipe, we have
+            // pipe continuation.
+            return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '|');
         }
 
-        private bool PipeContinuanceAfterExtent(IScriptExtent extent)
+        private bool ContinuationAfterExtent(IScriptExtent extent, char continuationChar)
         {
-            // If the first non-comment (regular or block) character following a newline is a pipe, we have
-            // pipe continuance.
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
 
@@ -1372,7 +1381,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1384,7 +1393,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1409,10 +1418,10 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                return c == '|';
+                return c == continuationChar;
             }
 
-            return _script[_script.Length - 1] == '|';
+            return _script[_script.Length - 1] == continuationChar;
         }
 
         private int SkipLineComment(int i)
@@ -3858,7 +3867,7 @@ namespace System.Management.Automation.Language
                 firstChar == '.' || (firstChar >= '0' && firstChar <= '9')
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
-            ReadOnlySpan<char> strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+            string strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
 
             // the token is not a number. i.e. 77z.exe
             if (strNum == null)
@@ -3900,7 +3909,7 @@ namespace System.Management.Automation.Language
         /// OR
         /// Return the string format of the number.
         /// </returns>
-        private ReadOnlySpan<char> ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
         {
             format = NumberFormat.Decimal;
             suffix = NumberSuffixFlags.None;
@@ -4106,7 +4115,7 @@ namespace System.Management.Automation.Language
 
             if (!c.ForceStartNewToken())
             {
-                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber())
+                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber(ForceEndNumberOnTernaryOpChars))
                 {
                     notNumber = true;
                 }
@@ -4129,7 +4138,7 @@ namespace System.Management.Automation.Language
                 sb[0] = '-';
             }
 
-            return GetStringAndRelease(sb).AsSpan();
+            return GetStringAndRelease(sb);
         }
 
         #endregion Numbers
@@ -4953,7 +4962,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         // check if the next token is actually a number
-                        ReadOnlySpan<char> strNum = ScanNumberHelper(c, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+                        string strNum = ScanNumberHelper(c, out _, out _, out _, out _);
                         // rescan characters after the check
                         _currentIndex = _tokenStart;
                         c = GetChar();
@@ -4983,6 +4992,9 @@ namespace System.Management.Automation.Language
                     }
 
                     return this.NewToken(TokenKind.Colon);
+
+                case '?' when InExpressionMode():
+                    return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
                     if (AtEof())

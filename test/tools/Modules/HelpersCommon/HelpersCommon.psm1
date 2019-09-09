@@ -363,3 +363,21 @@ function New-ComplexPassword
 
     $password
 }
+
+# return a specific string with regard to platform information
+function Get-PlatformInfo
+{
+    if ( $IsWindows ) {
+        return "windows"
+    }
+    if ( $IsMacOS ) {
+        return "macos"
+    }
+    if ( $IsLinux ) {
+        $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
+        if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
+            return $osrelease.ID
+        }
+        return "unknown"
+    }
+}

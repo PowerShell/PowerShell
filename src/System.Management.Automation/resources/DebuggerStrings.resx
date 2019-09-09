@@ -237,6 +237,9 @@ The current session does not support debugging; operation will continue.
   <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
     <value>Cannot push a debugger object onto itself.</value>
   </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>The {0} command is not supported for remote use in the version of PowerShell that is running in the remote runspace.</value>
+  </data>
   <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
     <value>Process</value>
   </data>

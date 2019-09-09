@@ -413,6 +413,9 @@ namespace System.Management.Automation.Language
         /// <summary>The PS class base class and implemented interfaces operator ':'. Also used in base class ctor calls.</summary>
         Colon = 99,
 
+        /// <summary>The ternary operator '?'.</summary>
+        QuestionMark = 100,
+
         #endregion Operators
 
         #region Keywords
@@ -655,7 +658,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         CaseSensitiveOperator = 0x00000400,
 
-        // Unused = 0x00000800,
+        /// <summary>
+        /// The token is a ternary operator '?'.
+        /// </summary>
+        TernaryOperator = 0x00000800,
 
         /// <summary>
         /// The operators '&amp;', '|', and the member access operators ':' and '::'.
@@ -847,7 +853,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 2  */ TokenFlags.None,
+            /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 3  */ TokenFlags.None,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,

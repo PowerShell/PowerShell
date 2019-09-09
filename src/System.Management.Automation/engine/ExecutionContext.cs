@@ -573,18 +573,9 @@ namespace System.Management.Automation
             object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
             if (val is T)
             {
-                // We don't want to support "Ignore" as action preferences, as it leads to bad
-                // scripting habits. They are only supported as cmdlet overrides.
-                if (val is ActionPreference)
+                if (val is ActionPreference actionPreferenceValue)
                 {
-                    ActionPreference preference = (ActionPreference)val;
-                    if ((preference == ActionPreference.Ignore) || (preference == ActionPreference.Suspend))
-                    {
-                        // Reset the variable value
-                        EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultPref);
-                        string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
-                        throw new NotSupportedException(message);
-                    }
+                    CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
                 }
 
                 T convertedResult = (T)val;
@@ -611,6 +602,11 @@ namespace System.Management.Automation
                         result = (T)PSObject.Base(val);
                         defaultUsed = false;
                     }
+
+                    if (result is ActionPreference actionPreferenceValue)
+                    {
+                        CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
+                    }
                 }
                 catch (InvalidCastException)
                 {
@@ -623,6 +619,18 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue)
+        {
+            if (preference == ActionPreference.Suspend)
+            {
+                // ActionPreference.Suspend is reserved for future use. When it is used, reset
+                // the variable to its default.
+                string message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
+                EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
+                throw new NotSupportedException(message);
+            }
         }
 
         /// <summary>
