@@ -1183,9 +1183,6 @@
       <Component Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" Guid="{3383D3BD-2174-4FC4-BC14-4AB4309D3E88}">
         <File Id="fil3EEF1D08102F0A83F48EFBB44396FCBA" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-libraryloader-l1-1-1.dll" />
       </Component>
-      <Component Id="cmp09b8252b795440eca75bc6a0811a3f10" Guid="{1334ea0d-abb9-4f4d-948d-17d7602e63be}">
-        <File Id="fil0a4b944b312642a4a68181302623e0b5" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.dll" />
-      </Component>
       <Component Id="cmpf2a3c81eb19246b6be74af07e70a06f0" Guid="{678cb6a4-49e8-41be-a5cb-67a77c3cf612}">
         <File Id="fil90f9e9f09d6744f68331100e6d7da03d" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.dll" />
       </Component>
@@ -2185,11 +2182,14 @@
           </Component>
         </Directory>
       </Directory>
-      <Component Id="cmpF587CB8BBBAF443CA4276A2C533CB385" Guid="{e7e798f0-466c-4373-832c-6ae537c6ccc1}">
-        <File Id="fil44211B4A68AA4466A2789F540D12DDB8" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27817.01.dll" />
+      <Component Id="cmp7A79FF035BB843E89DC22E9EEEFFD3A0" Guid="{c02ae51e-ed46-4e0d-91ea-8a997ad72043}">
+        <File Id="fil056AD29D20A4403181A4C294922D62E6" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28008.01.dll" />
       </Component>
-      <Component Id="cmp00E2814B5CF046F48557C7BB92458801" Guid="{6049e918-9ba1-4426-96e2-db883b2b8694}">
-        <File Id="fil0F6E2EE2838A4CBCAE56A59D954A7337" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27817.01.dll" />
+      <Component Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" Guid="{50d7aa94-fcaa-4418-8a7f-2cafd3dee77c}">
+        <File Id="fil58F60CDE7E154249820022F5280A3C80" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.Signed.dll" />
+      </Component>
+      <Component Id="cmpDE9E274B93E34380A2CD5E73CC0EC71D" Guid="{7664d7b9-3462-4438-b32b-d6887f9f1bc9}">
+        <File Id="filD28EB9CE1D5A4998AAB7D6C1532B37AA" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28008.01.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2589,7 +2589,6 @@
       <ComponentRef Id="cmp30357FCEAC7B88BDCF0B20D55C22F61F" />
       <ComponentRef Id="cmp557A49B03E72CD07149A6CD0595C9245" />
       <ComponentRef Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" />
-      <ComponentRef Id="cmp09b8252b795440eca75bc6a0811a3f10" />
       <ComponentRef Id="cmpf2a3c81eb19246b6be74af07e70a06f0" />
       <ComponentRef Id="cmp918c5338524c41a2ac739a0ded94cc0d" />
       <ComponentRef Id="cmp75c6b7b418bb4f439dd5519c570a14e0" />
@@ -2888,8 +2887,9 @@
       <ComponentRef Id="cmpC1D0D334836C4821B04087DDFE167637" />
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
-      <ComponentRef Id="cmpF587CB8BBBAF443CA4276A2C533CB385" />
-      <ComponentRef Id="cmp00E2814B5CF046F48557C7BB92458801" />
+      <ComponentRef Id="cmp7A79FF035BB843E89DC22E9EEEFFD3A0" />
+      <ComponentRef Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" />
+      <ComponentRef Id="cmpDE9E274B93E34380A2CD5E73CC0EC71D" />
     </ComponentGroup>
   </Fragment>
 </Wix>
