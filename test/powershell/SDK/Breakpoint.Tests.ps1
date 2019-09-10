@@ -109,7 +109,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
 
         It 'Doesn''t manipulate any breakpoints in the default runspace' {
-            # Issue 10167 fix:
+            # Issue https://github.com/PowerShell/PowerShell/issues/10167 fix:
             # Ensure that breakpoints were not created in the default runspace.
             # Prior to this issue being fixed, breakpoints with the same id
             # would be created or updated in the default runspace.
