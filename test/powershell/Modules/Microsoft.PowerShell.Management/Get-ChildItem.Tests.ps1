@@ -186,6 +186,18 @@ Describe "Get-ChildItem" -Tags "CI" {
             $app.Target | Should -Not -Be $app.FullName
             $app.LinkType | Should -BeExactly 'AppExeCLink'
         }
+
+        It "Wildcard matching behavior is the same between -Path and -Include parameters when using escape characters" {
+            try {
+                New-Item -Type File 'a`[b]' -ErrorAction SilentlyContinue > $null
+                $WithInclude = Get-ChildItem * -Include 'a```[b`]'
+                $WithPath = Get-ChildItem -Path 'a```[b`]'
+                $WithInclude.Name | Should -BeExactly 'a`[b]'
+                $WithPath.Name | Should -BeExactly 'a`[b]'
+            } finally {
+                Remove-Item -Path 'a`[b]' -ErrorAction SilentlyContinue
+            }
+        }
     }
 
     Context 'Env: Provider' {
