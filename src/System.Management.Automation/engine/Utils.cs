@@ -798,13 +798,13 @@ namespace System.Management.Automation
 #if !UNIX
         private static readonly Dictionary<string, string> GroupPolicyKeys = new Dictionary<string, string>
         {
-            {nameof(ScriptExecution), @"Software\Policies\PowerShellCore"},
-            {nameof(ScriptBlockLogging), @"Software\Policies\PowerShellCore\ScriptBlockLogging"},
-            {nameof(ModuleLogging), @"Software\Policies\PowerShellCore\ModuleLogging"},
+            {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
             {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
-            {nameof(Transcription), @"Software\Policies\PowerShellCore\Transcription"},
-            {nameof(UpdatableHelp), @"Software\Policies\PowerShellCore\UpdatableHelp"},
-            {nameof(ConsoleSessionConfiguration), @"Software\Policies\PowerShellCore\ConsoleSessionConfiguration"}
+            {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
+            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
 
         private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>
