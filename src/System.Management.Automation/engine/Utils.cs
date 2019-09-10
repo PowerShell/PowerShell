@@ -822,7 +822,7 @@ namespace System.Management.Automation
             new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
 
         private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
-            key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.OrdinalIgnoreCase);
+            key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.Ordinal);
 
         /// <summary>
         /// Read policy settings from a registry key into a policy object.
@@ -831,7 +831,7 @@ namespace System.Management.Automation
         /// <param name="instanceType">Type of policy object used.</param>
         /// <param name="gpoKey">Registry key that has policy settings.</param>
         /// <returns>True if any property was successfully set on the policy object.</returns>
-        private static bool ReadPolicySettingsFromRegistryKey(object instance, Type instanceType, RegistryKey gpoKey)
+        private static bool TrySetPolicySettingsFromRegistryKey(object instance, Type instanceType, RegistryKey gpoKey)
         {
             var properties = instanceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
             bool isAnyPropertySet = false;
@@ -933,20 +933,22 @@ namespace System.Management.Automation
                 object tInstance = Activator.CreateInstance(tType, nonPublic: true);
                 bool isAnyPropertySet = false;
 
-                if ((int)gpoKey.GetValue(PolicySettingFallbackKey, 0) == 1) // when this policy flag is set (REG_DWORD "1") use Windows PS policy reg key
+                // if PolicySettingFallbackKey is Not set - use PowerShell Core policy reg key
+                if ((int)gpoKey.GetValue(PolicySettingFallbackKey, 0) == 0)
                 {
+                    isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, gpoKey);
+                }
+                else
+                {
+                    // when PolicySettingFallbackKey flag is set (REG_DWORD "1") use Windows PS policy reg key
                     WindowsPowershellGroupPolicyKeys.TryGetValue(tType.Name, out string winPowershellGpoKeyPath);
                     Diagnostics.Assert(winPowershellGpoKeyPath != null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
                     using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
                     {
                         // If the corresponding Windows PS GPO key doesn't exist, return null
                         if (winPowershellGpoKey == null) { return null; }
-                        isAnyPropertySet = ReadPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
+                        isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
                     }
-                }
-                else // if PolicySettingFallbackKey is Not set - use PowerShell Core policy reg key
-                {
-                    isAnyPropertySet = ReadPolicySettingsFromRegistryKey(tInstance, tType, gpoKey);
                 }
 
                 // If no property is set, then we consider this policy as undefined

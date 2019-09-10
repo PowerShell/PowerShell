@@ -42,8 +42,15 @@ if (-not (Test-Elevated))
     throw 'This script must be run from an elevated process.'
 }
 
-$admx = Get-Item -Path (Join-Path -Path $Path -ChildPath 'PowerShellCoreExecutionPolicy.admx')
-$adml = Get-Item -Path (Join-Path -Path $Path -ChildPath 'PowerShellCoreExecutionPolicy.adml')
+if ([System.Management.Automation.Platform]::IsNanoServer)
+{
+    throw 'Group policy definitions are not supported on Nano Server.'
+}
+
+$admxName = 'PowerShellCoreExecutionPolicy.admx'
+$admlName = 'PowerShellCoreExecutionPolicy.adml'
+$admx = Get-Item -Path (Join-Path -Path $Path -ChildPath $admxName)
+$adml = Get-Item -Path (Join-Path -Path $Path -ChildPath $admlName)
 $admxTargetPath = Join-Path -Path $env:WINDIR -ChildPath "PolicyDefinitions"
 $admlTargetPath = Join-Path -Path $admxTargetPath -ChildPath "en-US"
 
@@ -58,6 +65,24 @@ foreach ($file in $files)
 
 Write-Verbose "Copying $admx to $admxTargetPath"
 Copy-Item -Path $admx -Destination $admxTargetPath -Force
+$admxTargetFullPath = Join-Path -Path $admxTargetPath -ChildPath $admxName
+if (Test-Path -Path $admxTargetFullPath)
+{
+    Write-Verbose "$admxName was installed successfully"
+}
+else
+{
+    Write-Error "Could not install $admxName"
+}
 
 Write-Verbose "Copying $adml to $admlTargetPath"
 Copy-Item -Path $adml -Destination $admlTargetPath -Force
+$admlTargetFullPath = Join-Path -Path $admlTargetPath -ChildPath $admlName
+if (Test-Path -Path $admlTargetFullPath)
+{
+    Write-Verbose "$admlName was installed successfully"
+}
+else
+{
+    Write-Error "Could not install $admlName"
+}

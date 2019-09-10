@@ -18,7 +18,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
     Context 'Group policy settings tests' {
 
         BeforeEach {
-            $KeyRoot = 'HKCU:\Software\Policies\PowerShellCore'
+            $KeyRoot = 'HKCU:\Software\Policies\Microsoft\PowerShellCore'
             if (-not (Test-Path $KeyRoot)) {$null = New-Item $KeyRoot}
 
             $WinPSKeyRoot = 'HKCU:\Software\Policies\Microsoft\Windows\PowerShell'
@@ -26,11 +26,11 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         AfterEach {
-            Remove-item $KeyRoot -Recurse -Force
-            Remove-item $WinPSKeyRoot -Recurse -Force
+            Remove-item $KeyRoot -Recurse -Force > $null
+            Remove-item $WinPSKeyRoot -Recurse -Force > $null
         }
 
-        It 'Execution policy test'{
+        It 'Execution policy test' {
             function TestFeature
             {
                 param([string]$KeyPath)
@@ -53,7 +53,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             TestFeature -KeyPath $WinPSKeyRoot
         }
 
-        It 'Module logging policy test'{
+        It 'Module logging policy test' {
             function TestFeature
             {
                 param([string]$KeyPath)
@@ -81,14 +81,8 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-item $ModuleNamesKeyPath -Recurse -Force
                 # usually event becomes visible in the log after ~500 ms
-                For ($i=0; $i -le 50; $i++) # set timeout for 5 seconds
-                {
-                    $ExecutingPipelineEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)}
-                    if ($ExecutingPipelineEvent) {break }
-                    sleep -Milliseconds 100
-                }
-            
-                $ExecutingPipelineEvent | Should Not BeNullOrEmpty
+                # set timeout for 5 seconds
+                Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 | Should -BeTrue
             }
             
             $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
@@ -103,7 +97,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             TestFeature -KeyPath $WinKeyPath
         }
 
-        It 'ScriptBlock logging policy test'{
+        It 'ScriptBlock logging policy test' {
             function TestFeature
             {
                 param([string]$KeyPath)
@@ -115,18 +109,12 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Remove-ItemProperty -Path $KeyPath -Name EnableScriptBlockLogging -Force
                 Remove-ItemProperty -Path $KeyPath -Name EnableScriptBlockInvocationLogging -Force
                 # usually event becomes visible in the log after ~500 ms
-                For ($i=0; $i -le 50; $i++) # set timeout for 5 seconds
-                {
-                    $CreatingScriptblockEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4104 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)}
-                    if ($CreatingScriptblockEvent) {break }
-                    sleep -Milliseconds 100
-                }
+                # set timeout for 5 seconds
+                Wait-UntilTrue -sb { $script:CreatingScriptblockEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4104 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)}; $script:CreatingScriptblockEvent } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 | Should -BeTrue
 
-                $CreatingScriptblockEvent | Should Not BeNullOrEmpty
-
-                $sbStringStart = $CreatingScriptblockEvent.Message.IndexOf('ScriptBlock ID:')
-                $sbStringEnd = $CreatingScriptblockEvent.Message.IndexOf(0x0D, $sbStringStart)
-                $sbString = $CreatingScriptblockEvent.Message.Substring($sbStringStart, $sbStringEnd - $sbStringStart)
+                $sbStringStart = $script:CreatingScriptblockEvent.Message.IndexOf('ScriptBlock ID:')
+                $sbStringEnd = $script:CreatingScriptblockEvent.Message.IndexOf(0x0D, $sbStringStart)
+                $sbString = $script:CreatingScriptblockEvent.Message.Substring($sbStringStart, $sbStringEnd - $sbStringStart)
 
                 $StartedScriptBlockInvocationEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4105 } -MaxEvents 5 | ? {$_.Message.Contains($sbString)}
                 $StartedScriptBlockInvocationEvent | Should Not BeNullOrEmpty
@@ -146,7 +134,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             TestFeature -KeyPath $WinKeyPath
         }
 
-        It 'Transcription policy test'{
+        It 'Transcription policy test' {
 
             function TestFeature
             {
@@ -186,7 +174,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             TestFeature -KeyPath $WinKeyPath
         }
 
-        It 'Default SourcePath on Update-Help policy test'{
+        It 'Default SourcePath on Update-Help policy test' {
             function TestFeature
             {
                 param([string]$KeyPath)
@@ -207,7 +195,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Update-Help -Module Microsoft.PowerShell.Utility -Force
             }
 
-            $HKLM_KeyRoot = 'HKLM:\Software\Policies\PowerShellCore'
+            $HKLM_KeyRoot = 'HKLM:\Software\Policies\Microsoft\PowerShellCore'
             if (-not (Test-Path $HKLM_KeyRoot)) {$null = New-Item $HKLM_KeyRoot}
             $KeyPath = Join-Path $HKLM_KeyRoot 'UpdatableHelp'
             if (-not (Test-Path $KeyPath)) {$null = New-Item $KeyPath}
@@ -226,7 +214,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             Remove-item $HKLM_WinPSKeyRoot -Recurse -Force
         }
 
-        It 'Session configuration policy test'{
+        It 'Session configuration policy test' {
             function TestFeature
             {
                 param([string]$KeyPath)

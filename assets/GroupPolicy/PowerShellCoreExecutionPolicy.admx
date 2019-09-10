@@ -15,7 +15,7 @@
     </category>
   </categories>
   <policies>
-    <policy name="EnableScripts" class="Both" displayName="$(string.EnableScripts)" explainText="$(string.EnableScripts_Explain)" presentation="$(presentation.EnableScripts)" key="Software\Policies\PowerShellCore" valueName="EnableScripts">
+    <policy name="EnableScripts" class="Both" displayName="$(string.EnableScripts)" explainText="$(string.EnableScripts_Explain)" presentation="$(presentation.EnableScripts)" key="Software\Policies\Microsoft\PowerShellCore" valueName="EnableScripts">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
@@ -45,7 +45,7 @@
         </enum>
       </elements>
     </policy>
-    <policy name="EnableModuleLogging" class="Both" displayName="$(string.EnableModuleLogging)" explainText="$(string.EnableModuleLogging_Explain)" presentation="$(presentation.EnableModuleLogging)" key="Software\Policies\PowerShellCore\ModuleLogging" valueName="EnableModuleLogging">
+    <policy name="EnableModuleLogging" class="Both" displayName="$(string.EnableModuleLogging)" explainText="$(string.EnableModuleLogging_Explain)" presentation="$(presentation.EnableModuleLogging)" key="Software\Policies\Microsoft\PowerShellCore\ModuleLogging" valueName="EnableModuleLogging">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
@@ -56,10 +56,10 @@
       </disabledValue>
       <elements>
         <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
-        <list id="Listbox_ModuleNames" key="Software\Policies\PowerShellCore\ModuleLogging\ModuleNames" />
+        <list id="Listbox_ModuleNames" key="Software\Policies\Microsoft\PowerShellCore\ModuleLogging\ModuleNames" />
       </elements>
     </policy>
-    <policy name="EnableTranscripting" class="Both" displayName="$(string.EnableTranscripting)" explainText="$(string.EnableTranscripting_Explain)" presentation="$(presentation.EnableTranscripting)" key="Software\Policies\PowerShellCore\Transcription" valueName="EnableTranscripting">
+    <policy name="EnableTranscripting" class="Both" displayName="$(string.EnableTranscripting)" explainText="$(string.EnableTranscripting_Explain)" presentation="$(presentation.EnableTranscripting)" key="Software\Policies\Microsoft\PowerShellCore\Transcription" valueName="EnableTranscripting">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
@@ -74,7 +74,7 @@
         <boolean id="EnableInvocationHeader" valueName="EnableInvocationHeader" />
       </elements>
     </policy>
-    <policy name="EnableScriptBlockLogging" class="Both" displayName="$(string.EnableScriptBlockLogging)" explainText="$(string.EnableScriptBlockLogging_Explain)" presentation="$(presentation.EnableScriptBlockLogging)" key="Software\Policies\PowerShellCore\ScriptBlockLogging" valueName="EnableScriptBlockLogging">
+    <policy name="EnableScriptBlockLogging" class="Both" displayName="$(string.EnableScriptBlockLogging)" explainText="$(string.EnableScriptBlockLogging_Explain)" presentation="$(presentation.EnableScriptBlockLogging)" key="Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging" valueName="EnableScriptBlockLogging">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
@@ -88,7 +88,7 @@
         <boolean id="EnableScriptBlockInvocationLogging" valueName="EnableScriptBlockInvocationLogging" />
       </elements>
     </policy>    
-    <policy name="EnableUpdateHelpDefaultSourcePath" class="Both" displayName="$(string.EnableUpdateHelpDefaultSourcePath)" explainText="$(string.EnableUpdateHelpDefaultSourcePath_Explain)" presentation="$(presentation.EnableUpdateHelpDefaultSourcePath)" key="Software\Policies\PowerShellCore\UpdatableHelp" valueName="EnableUpdateHelpDefaultSourcePath">
+    <policy name="EnableUpdateHelpDefaultSourcePath" class="Both" displayName="$(string.EnableUpdateHelpDefaultSourcePath)" explainText="$(string.EnableUpdateHelpDefaultSourcePath_Explain)" presentation="$(presentation.EnableUpdateHelpDefaultSourcePath)" key="Software\Policies\Microsoft\PowerShellCore\UpdatableHelp" valueName="EnableUpdateHelpDefaultSourcePath">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
@@ -102,7 +102,7 @@
         <text id="SourcePathForUpdateHelp" valueName="DefaultSourcePath" required="true"/>
       </elements>
     </policy>
-    <policy name="ConsoleSessionConfiguration" class="Both" displayName="$(string.ConsoleSessionConfiguration)" explainText="$(string.ConsoleSessionConfiguration_Explain)" presentation="$(presentation.ConsoleSessionConfiguration)" key="Software\Policies\PowerShellCore\ConsoleSessionConfiguration" valueName="EnableConsoleSessionConfiguration">
+    <policy name="ConsoleSessionConfiguration" class="Both" displayName="$(string.ConsoleSessionConfiguration)" explainText="$(string.ConsoleSessionConfiguration_Explain)" presentation="$(presentation.ConsoleSessionConfiguration)" key="Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration" valueName="EnableConsoleSessionConfiguration">
       <parentCategory ref="PowerShell" />
       <supportedOn ref="SUPPORTED_WIN7" />
       <enabledValue>
