@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -86,6 +87,9 @@ namespace System.Management.Automation
         // Results in a configured remote runspace pushed onto driver host.
         private string _configurationName;
 
+        // Optional initial location of the PowerShell session
+        private readonly string _initialLocation;
+
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
         /// </summary>
@@ -120,6 +124,7 @@ namespace System.Management.Automation
         /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
         /// <param name="psClientVersion">Client PowerShell version.</param>
         /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
+        /// <param name="initialLocation">Optional initial location of the powershell.</param>
         internal ServerRunspacePoolDriver(
             Guid clientRunspacePoolId,
             int minRunspaces,
@@ -134,7 +139,8 @@ namespace System.Management.Automation
             bool isAdministrator,
             RemoteSessionCapability serverCapability,
             Version psClientVersion,
-            string configurationName)
+            string configurationName,
+            string initialLocation)
         {
             Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
@@ -142,11 +148,12 @@ namespace System.Management.Automation
             _clientPSVersion = psClientVersion;
 
             _configurationName = configurationName;
+            _initialLocation = initialLocation;
 
             // Create a new server host and associate for host call
             // integration
-            _remoteHost = new ServerDriverRemoteHost(clientRunspacePoolId,
-                Guid.Empty, hostInfo, transportManager, null);
+            _remoteHost = new ServerDriverRemoteHost(
+                clientRunspacePoolId, Guid.Empty, hostInfo, transportManager, null);
 
             _configData = configData;
             _applicationPrivateData = applicationPrivateData;
@@ -613,6 +620,13 @@ namespace System.Management.Automation
                 // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
+            }
+
+            if (!string.IsNullOrWhiteSpace(_initialLocation))
+            {
+                var setLocationCommand = new Command("Set-Location");
+                setLocationCommand.Parameters.Add(new CommandParameter("LiteralPath", _initialLocation));
+                InvokeScript(setLocationCommand, args);
             }
 
             // Run startup scripts
