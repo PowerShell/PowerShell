@@ -462,7 +462,10 @@ Fix steps:
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
         $expFeatures = [System.Collections.Generic.List[string]]::new()
-        & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+        & $publishPath\pwsh -noprofile -out XML -command {
+            Get-Module -ListAvailable
+            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+        }
         $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
     }
 

@@ -8,6 +8,7 @@
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.3.0" />
     <PackageReference Include="PSReadLine" Version="2.0.0-beta4" />
     <PackageReference Include="ThreadJob" Version="2.0.1" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="2.0.3" />
   </ItemGroup>
 
 </Project>
