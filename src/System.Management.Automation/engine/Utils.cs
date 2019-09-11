@@ -841,68 +841,72 @@ namespace System.Management.Automation
             var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
             var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
 
-            foreach (var property in properties)
+            // If there are any values or subkeys in the registry key - read them into the policy instance object
+            if ((valueNameSet != null) || (subKeyNameSet != null))
             {
-                string settingName = property.Name;
-                object rawRegistryValue = null;
+                foreach (var property in properties)
+                {
+                    string settingName = property.Name;
+                    object rawRegistryValue = null;
 
-                // Get the raw value from registry.
-                if (valueNameSet != null && valueNameSet.Contains(settingName))
-                {
-                    rawRegistryValue = gpoKey.GetValue(settingName);
-                }
-                else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
-                {
-                    using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
+                    // Get the raw value from registry.
+                    if (valueNameSet != null && valueNameSet.Contains(settingName))
                     {
-                        if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                        rawRegistryValue = gpoKey.GetValue(settingName);
                     }
-                }
-
-                // Get the actual property value based on the property type.
-                // If the final property value is not null, then set the property.
-                if (rawRegistryValue != null)
-                {
-                    Type propertyType = property.PropertyType;
-                    object propertyValue = null;
-
-                    switch (propertyType)
+                    else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
                     {
-                        case var _ when propertyType == typeof(bool?):
-                            if (rawRegistryValue is int rawIntValue)
-                            {
-                                if (rawIntValue == 1) { propertyValue = true; }
-                                else if (rawIntValue == 0) { propertyValue = false; }
-                            }
-
-                            break;
-                        case var _ when propertyType == typeof(string):
-                            if (rawRegistryValue is string rawStringValue)
-                            {
-                                propertyValue = rawStringValue;
-                            }
-
-                            break;
-                        case var _ when propertyType == typeof(string[]):
-                            if (rawRegistryValue is string[] rawStringArrayValue)
-                            {
-                                propertyValue = rawStringArrayValue;
-                            }
-                            else if (rawRegistryValue is string stringValue)
-                            {
-                                propertyValue = new string[] { stringValue };
-                            }
-
-                            break;
-                        default:
-                            throw System.Management.Automation.Interpreter.Assert.Unreachable;
+                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
+                        {
+                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                        }
                     }
 
-                    // Set the property if the value is not null
-                    if (propertyValue != null)
+                    // Get the actual property value based on the property type.
+                    // If the final property value is not null, then set the property.
+                    if (rawRegistryValue != null)
                     {
-                        property.SetValue(instance, propertyValue);
-                        isAnyPropertySet = true;
+                        Type propertyType = property.PropertyType;
+                        object propertyValue = null;
+
+                        switch (propertyType)
+                        {
+                            case var _ when propertyType == typeof(bool?):
+                                if (rawRegistryValue is int rawIntValue)
+                                {
+                                    if (rawIntValue == 1) { propertyValue = true; }
+                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                }
+
+                                break;
+                            case var _ when propertyType == typeof(string):
+                                if (rawRegistryValue is string rawStringValue)
+                                {
+                                    propertyValue = rawStringValue;
+                                }
+
+                                break;
+                            case var _ when propertyType == typeof(string[]):
+                                if (rawRegistryValue is string[] rawStringArrayValue)
+                                {
+                                    propertyValue = rawStringArrayValue;
+                                }
+                                else if (rawRegistryValue is string stringValue)
+                                {
+                                    propertyValue = new string[] { stringValue };
+                                }
+
+                                break;
+                            default:
+                                throw System.Management.Automation.Interpreter.Assert.Unreachable;
+                        }
+
+                        // Set the property if the value is not null
+                        if (propertyValue != null)
+                        {
+                            property.SetValue(instance, propertyValue);
+                            isAnyPropertySet = true;
+                        }
                     }
                 }
             }
