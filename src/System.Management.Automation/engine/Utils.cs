@@ -895,8 +895,7 @@ namespace System.Management.Automation
 
                             break;
                         default:
-                            Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
-                            break;
+                            throw System.Management.Automation.Interpreter.Assert.Unreachable;
                     }
 
                     // Set the property if the value is not null

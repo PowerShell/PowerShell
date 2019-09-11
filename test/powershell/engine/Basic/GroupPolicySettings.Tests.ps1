@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -35,7 +38,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             {
                 param([string]$KeyPath)
 
-                Set-ItemProperty -Path $KeyPath -Name EnableScripts -Value 1 -Force    
+                Set-ItemProperty -Path $KeyPath -Name EnableScripts -Value 1 -Force
 
                 Set-ItemProperty -Path $KeyPath -Name ExecutionPolicy -Value 'Unrestricted' -Force
                 (Get-ExecutionPolicy) | Should -Be 'Unrestricted'
@@ -57,26 +60,26 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             function TestFeature
             {
                 param([string]$KeyPath)
-            
+
                 $ModuleToLog = 'Microsoft.PowerShell.Utility'
                 $ModuleNamesKeyPath = Join-Path $KeyPath 'ModuleNames'
                 if (-not (Test-Path $ModuleNamesKeyPath)) {$null = New-Item $ModuleNamesKeyPath}
-            
+
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -Be $False # without GP logging for the module should be OFF
-            
-                # enable GP    
+
+                # enable GP
                 [string]$RareCommand = Get-Random
                 Set-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Value 1 -Force
                 Set-ItemProperty -Path $ModuleNamesKeyPath -Name $ModuleToLog -Value $ModuleToLog -Force
-            
+
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog # this will read and start using GP setting
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -Be $True # with GP logging for the module should be ON
-                
+
                 Get-Alias $RareCommand -ErrorAction SilentlyContinue | Out-Null
-            
+
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $False # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-item $ModuleNamesKeyPath -Recurse -Force
@@ -84,16 +87,16 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 # set timeout for 5 seconds
                 Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 | Should -BeTrue
             }
-            
+
             $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
             if (-not (Test-Path $KeyPath)) {$null = New-Item $KeyPath}
-            
+
             TestFeature -KeyPath $KeyPath
-            
+
             Set-ItemProperty -Path $KeyPath -Name UseWindowsPowerShellPolicySetting -Value 1 -Force
             $WinKeyPath = Join-Path $WinPSKeyRoot 'ModuleLogging'
             if (-not (Test-Path $WinKeyPath)) {$null = New-Item $WinKeyPath}
-            
+
             TestFeature -KeyPath $WinKeyPath
         }
 
@@ -190,7 +193,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 # this should throw error cause we didn't save the help for this module locally;
                 # this ensures that Update-Help is not going to Internet to download help
                 { Update-Help -Module Microsoft.PowerShell.Management -Force -ErrorAction Stop } | Should -Throw -ErrorId "UnableToRetrieveHelpInfoXml,Microsoft.PowerShell.Commands.UpdateHelpCommand"
-                
+
                 # this should use saved help in location specified in the policy and should NOT throw error
                 Update-Help -Module Microsoft.PowerShell.Utility -Force
             }
