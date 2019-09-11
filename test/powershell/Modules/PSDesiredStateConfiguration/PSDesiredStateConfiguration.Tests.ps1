@@ -47,7 +47,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         }
 
         It "The module should have $expectedCommandCount commands" {
-            if($commands.Count -ne $expectedCommandCount)
+            if ($commands.Count -ne $expectedCommandCount)
             {
                 $modulePath = (Get-Module PSDesiredStateConfiguration).Path
                 Write-Verbose -Verbose -Message "PSDesiredStateConfiguration Path: $modulePath"
