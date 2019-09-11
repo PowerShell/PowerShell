@@ -55,6 +55,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             }
             $commands.Count | Should -Be $expectedCommandCount
         }
+
         It "The module should have the Configuration Command" {
             $commands | Where-Object {$_.Name -eq 'Configuration'} | Should -Not -BeNullOrEmpty
         }
