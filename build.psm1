@@ -493,16 +493,7 @@ Fix steps:
     if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
-
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
-
-            # Make sure we add the experimental features from the modules
-            Get-Module -ListAvailable | Where-Object {$_.Path -like "${pshome}*" -and $_.ExperimentalFeatures} | Select-Object -ExpandProperty ExperimentalFeatures | ForEach-Object {
-                if (!$expFeatures.Contains($_.Name)) {
-                    $expFeatures.Add($_.Name)
-                }
-            }
-
             ConvertTo-Json $expFeatures.ToArray()
         }
 
