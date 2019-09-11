@@ -459,21 +459,6 @@ Fix steps:
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
     }
 
-    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
-        $expFeatures = [System.Collections.Generic.List[string]]::new()
-        & $publishPath\pwsh -noprofile -out XML -command {
-            Get-Module -ListAvailable
-            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
-        }
-        $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
-    }
-
-    if ($config.Count -gt 0) {
-        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
-        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
-    }
-
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
@@ -502,6 +487,31 @@ Fix steps:
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if ($PSModuleRestore) {
         Restore-PSModuleToBuild -PublishPath $publishPath
+    }
+
+    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
+        $json = & $publishPath\pwsh -noprofile -command {
+            $expFeatures = [System.Collections.Generic.List[string]]::new()
+
+            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+
+            # Make sure we add the experimental features from the modules
+            Get-Module -ListAvailable | Where-Object {$_.Path -like "${pshome}*" -and $_.ExperimentalFeatures} | Select-Object -ExpandProperty ExperimentalFeatures | ForEach-Object {
+                if (!$expFeatures.Contains($_.Name)) {
+                    $expFeatures.Add($_.Name)
+                }
+            }
+
+            ConvertTo-Json $expFeatures.ToArray()
+        }
+
+        $config += @{ ExperimentalFeatures = ($json | ConvertFrom-Json) }
+    }
+
+    if ($config.Count -gt 0) {
+        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
     }
 
     # Restore the Pester module
