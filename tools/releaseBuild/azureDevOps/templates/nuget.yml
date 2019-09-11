@@ -77,6 +77,8 @@ jobs:
       packageSources: 'https://nuget.org/api/v2'
       installRoot: '$(GenAPIToolPath)'
 
+  - template: shouldSign.yml
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -167,7 +169,7 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: AzureFileCopy@1
     displayName: 'Upload global tool packages to Azure'
@@ -178,7 +180,7 @@ jobs:
       storage: '$(GlobalToolStorageAccount)'
       ContainerName: 'tool'
       blobPrefix: '$(Version)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

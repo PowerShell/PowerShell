@@ -2743,10 +2743,6 @@ function New-MSIPackage
     else
     {
         $errorMessage = "Failed to create $msiLocationPath"
-        if ($null -ne $env:CI)
-        {
-           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
-        }
         throw $errorMessage
     }
 }
@@ -3133,6 +3129,12 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 
         if ($packageBuildTokens)
         {
+            if($packageBuildTokens.length -gt 4)
+            {
+                # MSIX will fail if it is more characters
+                $packageBuildTokens = $packageBuildTokens.Substring(0,4)
+            }
+
             $packageVersion = $packageVersion + '.' + $packageBuildTokens
         }
         else
@@ -3312,7 +3314,6 @@ function New-GlobalToolNupkg
                 Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
                 Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
                 Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
                 Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }

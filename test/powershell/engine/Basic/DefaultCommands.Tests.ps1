@@ -116,7 +116,6 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "move",                             "Move-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""
 "Alias",        "mp",                               "Move-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "mv",                               "Move-Item",                        $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
-"Alias",        "nbp",                              "New-PSBreakpoint",                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "nal",                              "New-Alias",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "ndr",                              "New-PSDrive",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "ni",                               "New-Item",                         $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
@@ -603,5 +602,11 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # -PassThru is provided to give meaningful output when differences arise
         $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList -Property ConfirmImpact -PassThru
         $result | Should -BeNullOrEmpty
+    }
+}
+
+Describe "PATHEXT defaults" -Tags 'CI' {
+    It "PATHEXT contains .CPL" -Skip:(!$IsWindows) {
+        $env:PATHEXT.Split(";") | Should -Contain ".CPL"
     }
 }

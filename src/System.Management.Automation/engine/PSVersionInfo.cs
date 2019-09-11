@@ -61,6 +61,7 @@ namespace System.Management.Automation
         private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, preReleaseLabel: null, buildLabel: null);
         private static readonly SemanticVersion s_psV61Version = new SemanticVersion(6, 1, 0, preReleaseLabel: null, buildLabel: null);
         private static readonly SemanticVersion s_psV62Version = new SemanticVersion(6, 2, 0, preReleaseLabel: null, buildLabel: null);
+        private static readonly SemanticVersion s_psV7Version = new SemanticVersion(7, 0, 0, preReleaseLabel: null, buildLabel: null);
         private static readonly SemanticVersion s_psSemVersion;
         private static readonly Version s_psVersion;
 
@@ -327,6 +328,11 @@ namespace System.Management.Automation
         internal static SemanticVersion PSV6Version
         {
             get { return s_psV6Version; }
+        }
+
+        internal static SemanticVersion PSV7Version
+        {
+            get { return s_psV7Version; }
         }
 
         internal static SemanticVersion PSCurrentVersion

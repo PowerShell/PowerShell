@@ -1006,13 +1006,19 @@ function Start-PSPester {
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     if(!$SkipTestToolBuild.IsPresent)
     {
-        Publish-PSTestTools | ForEach-Object {Write-Host $_}
+        $publishArgs = @{ }
+        # if we are building for Alpine, we must include the runtime as linux-x64
+        # will not build runnable test tools
+        if ( $Environment.IsAlpine ) {
+            $publishArgs['runtime'] = 'alpine-x64'
+        }
+        Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
     # Disable telemetry for all startups of pwsh in tests
-    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 1;"
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1153,7 +1159,7 @@ function Start-PSPester {
     try {
         $originalModulePath = $env:PSModulePath
         $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
-        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 'yes'
         if ($Unelevate)
         {
             Start-UnelevatedProcess -process $powershell -arguments ($PSFlags + "-c $Command")

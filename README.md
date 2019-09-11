@@ -74,21 +74,21 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-raspbian64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.2/powershell-6.2.2-linux-arm64.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-x86.msi
-[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-preview_7.0.0-preview.2-1.ubuntu.18.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-preview_7.0.0-preview.2-1.ubuntu.16.04_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-preview_7.0.0-preview.2-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-preview-7.0.0_preview.2-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-7.0.0-preview.2-osx-x64.pkg
-[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-arm32.zip
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/PowerShell-7.0.0-preview.2-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-7.0.0-preview.2-osx-x64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-7.0.0-preview.2-linux-x64.tar.gz
-[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-7.0.0-preview.2-linux-arm32.tar.gz
-[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.2/powershell-7.0.0-preview.2-linux-arm64.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-preview_7.0.0-preview.3-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-preview_7.0.0-preview.3-1.ubuntu.16.04_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-preview_7.0.0-preview.3-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-preview-7.0.0_preview.3-1.rhel.7.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-7.0.0-preview.3-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/PowerShell-7.0.0-preview.3-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-7.0.0-preview.3-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-7.0.0-preview.3-linux-x64.tar.gz
+[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-7.0.0-preview.3-linux-arm32.tar.gz
+[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.3/powershell-7.0.0-preview.3-linux-arm64.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
@@ -219,7 +219,7 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/services/application-insights/).
 To opt-out of sending telemetry, create an environment variable called `POWERSHELL_TELEMETRY_OPTOUT` set to a value of `1` before starting PowerShell from the installed location.
-The telemetry we collect fall under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
+The telemetry we collect falls under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
 
 ## Governance
 

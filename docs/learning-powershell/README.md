@@ -102,6 +102,7 @@ Note that all bash commands should continue working on PowerShell session.
 - [Learn PowerShell Video Library][idera-learn-powershell] from Idera
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
+- [Interactive learning with PSKoans](https://aka.ms/pskoans)
 
 ### Commercial Resources
 

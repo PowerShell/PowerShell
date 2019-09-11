@@ -350,22 +350,6 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        /// <summary>
-        /// The optional breakpoint objects to use for debugging.
-        /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceParameterSet)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
-        [Parameter(Position = 1,
-                   ParameterSetName = CommonRunspaceCommandBase.RunspaceIdParameterSet)]
-        public Breakpoint[] Breakpoint
-        {
-            get;
-            set;
-        }
-
         #endregion
 
         #region Overrides
@@ -427,12 +411,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         debugger.SetDebuggerStepMode(false);
                     }
-                }
-
-                // If any breakpoints were provided, set those in the debugger.
-                if (Breakpoint?.Length > 0)
-                {
-                    debugger.SetBreakpoints(Breakpoint);
                 }
             }
         }
@@ -555,19 +533,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Runspace currentRunspace = this.Context.CurrentRunspace;
 
-            if ((currentRunspace != null) && (currentRunspace.Debugger != null))
+            if (currentRunspace != null && currentRunspace.Debugger != null)
             {
-                if (!currentRunspace.Debugger.IsDebugHandlerSubscribed &&
-                    (currentRunspace.Debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
-                {
-                    // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
-                    // so that this command is effective.
-                    currentRunspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-                }
-
-                // Set debugger to step mode so that a break occurs immediately.
-                currentRunspace.Debugger.SetDebuggerStepMode(true);
                 WriteVerbose(string.Format(CultureInfo.InvariantCulture, Debugger.DebugBreakMessage, MyInvocation.ScriptLineNumber, MyInvocation.ScriptName));
+
+                currentRunspace.Debugger.Break();
             }
         }
 

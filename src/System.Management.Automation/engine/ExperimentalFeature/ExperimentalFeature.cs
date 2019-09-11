@@ -9,6 +9,7 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.CompilerServices;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -110,7 +111,10 @@ namespace System.Management.Automation
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
                     name: "PSForEachObjectParallel",
-                    description: "New parameter set for ForEach-Object to run script blocks in parallel")
+                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                new ExperimentalFeature(
+                    name: "PSTernaryOperator",
+                    description: "Support the ternary operator in PowerShell langauge.")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -150,6 +154,7 @@ namespace System.Management.Automation
                 if (IsModuleFeatureName(name))
                 {
                     list.Add(name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalModuleFeatureActivation, name);
                 }
                 else if (IsEngineFeatureName(name))
                 {
@@ -157,6 +162,7 @@ namespace System.Management.Automation
                     {
                         feature.Enabled = true;
                         list.Add(name);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureActivation, name);
                     }
                     else
                     {
