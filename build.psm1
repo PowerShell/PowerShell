@@ -497,7 +497,8 @@ Fix steps:
             ConvertTo-Json $expFeatures.ToArray()
         }
 
-        $config += @{ ExperimentalFeatures = ($json | ConvertFrom-Json) }
+
+        $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
     }
 
     if ($config.Count -gt 0) {
