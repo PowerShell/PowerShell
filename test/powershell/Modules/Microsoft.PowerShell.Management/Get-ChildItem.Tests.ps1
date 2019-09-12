@@ -188,15 +188,23 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Wildcard matching behavior is the same between -Path and -Include parameters when using escape characters" {
-            try {
-                New-Item -Type File 'a`[b]' -ErrorAction SilentlyContinue > $null
-                $WithInclude = Get-ChildItem * -Include 'a```[b`]'
-                $WithPath = Get-ChildItem -Path 'a```[b`]'
-                $WithInclude.Name | Should -BeExactly 'a`[b]'
-                $WithPath.Name | Should -BeExactly 'a`[b]'
-            } finally {
-                Remove-Item -Path 'a`[b]' -ErrorAction SilentlyContinue
-            }
+            $expectedPath = Join-Path -Path $TestDrive -ChildPath 'a`[b]'
+            $escapedPath = 'a```[b`]'
+            $escapedPath = 'a```[b`]'
+            $escapedPathWithWildcard = 'a```[b*'
+            New-Item -Type File $expectedPath -ErrorAction SilentlyContinue > $null
+
+            $WithInclude = Get-ChildItem * -Include $escapedPath
+            $WithPath = Get-ChildItem -Path $escapedPath
+
+            $WithInclude.Name | Should -BeExactly $expectedPath
+            $WithPath.Name | Should -BeExactly $expectedPath
+
+            $WithInclude = Get-ChildItem * -Include $escapedPathWithWildcard
+            $WithPath = Get-ChildItem -Path $escapedPathWithWildcard
+
+            $WithInclude.Name | Should -BeExactly $expectedPath
+            $WithPath.Name | Should -BeExactly $expectedPath
         }
     }
 
