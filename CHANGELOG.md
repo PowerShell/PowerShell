@@ -1,5 +1,20 @@
 # Changelog
 
+## v6.2.3 - 09/12/2019
+
+### Engine Updates and Fixes
+
+- Fix debugger performance regression in system lock down mode (#10269)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9946)
+- Fix macOS build break (#10207)
+
 ## v6.2.2 - 07/16/2019
 
 ### Breaking Changes
