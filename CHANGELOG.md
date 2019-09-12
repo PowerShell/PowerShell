@@ -457,6 +457,21 @@
 - Update docs for `6.2.0-rc.1` release (#9022)
 - Update release template (#8996)
 
+## v6.2.3 - 09/12/2019
+
+### Engine Updates and Fixes
+
+- Fix debugger performance regression in system lock down mode (#10269)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9946)
+- Fix macOS build break (#10207)
+
 ## v6.2.2 - 07/16/2019
 
 ### Breaking Changes
@@ -1220,6 +1235,12 @@
 - Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## 6.1.6 - 2019-09-12
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9945)
 
 ## 6.1.5 - 2019-07-16
 
