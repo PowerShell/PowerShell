@@ -45,7 +45,7 @@ If you disable or do not configure this policy setting, it reverts to a per-mach
       <string id="EnableTranscripting_Explain">
         This policy setting lets you capture the input and output of PowerShell Core commands into text-based transcripts.
 
-        If you enable this policy setting, PowerShell Core will enable transcripting for PowerShell Core and any other
+        If you enable this policy setting, PowerShell Core will enable transcription logging for PowerShell Core and any other
         applications that leverage the PowerShell Core engine. By default, PowerShell Core will record transcript output to each users' My Documents
         directory, with a file name that includes 'PowerShell_transcript', along with the computer name and time started. Enabling this policy is equivalent
         to calling the Start-Transcript cmdlet on each PowerShell Core session.
