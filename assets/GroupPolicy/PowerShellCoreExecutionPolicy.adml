@@ -53,7 +53,7 @@ If you disable or do not configure this policy setting, it reverts to a per-mach
         If you disable this policy setting, transcription logging of PowerShell-based applications is disabled by default, although transcripting can still be enabled
         through the Start-Transcript cmdlet.
         
-        If you use the OutputDirectory setting to enable transcript logging to a shared location, be sure to limit access to that directory to prevent users
+        If you use the OutputDirectory setting to enable transcription logging to a shared location, be sure to limit access to that directory to prevent users
         from viewing the transcripts of other users or computers.
 
         Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.
