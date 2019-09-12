@@ -446,12 +446,6 @@ Fix steps:
         Pop-Location
     }
 
-    # publish powershell.config.json
-    $config = @{}
-    if ($Environment.IsWindows) {
-        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
-    }
-
     if ($ReleaseTag) {
         $psVersion = $ReleaseTag
     }
@@ -489,6 +483,12 @@ Fix steps:
         Restore-PSModuleToBuild -PublishPath $publishPath
     }
 
+    # publish powershell.config.json
+    $config = @{}
+    if ($Environment.IsWindows) {
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+    }
+
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
         $json = & $publishPath\pwsh -noprofile -command {
@@ -496,7 +496,6 @@ Fix steps:
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
             ConvertTo-Json $expFeatures.ToArray()
         }
-
 
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
     }
