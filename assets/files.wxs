@@ -3051,6 +3051,15 @@
       <Component Id="cmp712842BFA391403DA3F21B2A4C729ED3" Guid="{e141999c-71cc-4c7f-9f2b-11b1005bd5dc}">
         <File Id="filDB5CFCFC242B419586E36CD5B281216A" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.42102.dll" />
       </Component>
+      <Component Id="cmpECBD8DFB18AD451AB3D81803DECC13BF" Guid="{c6e5a982-3e3d-4e16-82c3-34c564bec4fe}">
+        <File Id="fil639FFF2D706848E18758EE576F1B527D" KeyPath="yes" Source="$(env.ProductSourcePath)\PowerShellCoreExecutionPolicy.adml" />
+      </Component>
+      <Component Id="cmp01B3850D6E55468AA84B758FDE8CA59E" Guid="{a3d1978c-325b-4795-bb3a-cbfb8b29c855}">
+        <File Id="filFE64839ED9F24059906D693E9D52015A" KeyPath="yes" Source="$(env.ProductSourcePath)\PowerShellCoreExecutionPolicy.admx" />
+      </Component>
+      <Component Id="cmpF6FDA6202E9D4CEF9F21A23D32571BFC" Guid="{e0776aa4-b3aa-4a15-a497-697b510fba8c}">
+        <File Id="fil9120D0A4381F4B34B80AB37D2EFBCF7D" KeyPath="yes" Source="$(env.ProductSourcePath)\InstallPSCorePolicyDefinitions.ps1" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -3888,6 +3897,9 @@
       <ComponentRef Id="cmpD7A187ADE66347E5A7550B96BA10D493" />
       <ComponentRef Id="cmp827B25EEC28D4699BB29042B273C8CBF" />
       <ComponentRef Id="cmp712842BFA391403DA3F21B2A4C729ED3" />
+      <ComponentRef Id="cmpECBD8DFB18AD451AB3D81803DECC13BF" />
+      <ComponentRef Id="cmp01B3850D6E55468AA84B758FDE8CA59E" />
+      <ComponentRef Id="cmpF6FDA6202E9D4CEF9F21A23D32571BFC" />
     </ComponentGroup>
   </Fragment>
 </Wix>
