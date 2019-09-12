@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.1.6 - 2019-09-12
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9945)
+
 ## 6.1.5 - 2019-07-16
 
 ### Breaking changes
