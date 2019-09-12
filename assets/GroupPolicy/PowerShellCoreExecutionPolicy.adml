@@ -21,7 +21,7 @@ If you disable this policy setting, no scripts are allowed to run.
 
 Note: This policy setting exists under both "Computer Configuration" and "User Configuration" in the Local Group Policy Editor. The "Computer Configuration" has precedence over "User Configuration."
 
-If you disable or do not configure this policy setting, it reverts to a per-machine preference setting; the default if that is not configured is "No scripts allowed."</string>
+If you disable or do not configure this policy setting, it reverts to a per-machine preference setting; the default if that is not configured is "Allow local scripts and remote signed scripts."</string>
       <string id="PowerShell">PowerShell Core</string>
       <string id="RemoteSignedScripts">Allow local scripts and remote signed scripts</string>
       <string id="SUPPORTED_WIN7">At least Microsoft Windows 7 or Windows Server 2008 family</string>
