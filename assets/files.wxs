@@ -1699,6 +1699,14 @@
               <File Id="fil98D6A2CAE08A408BB0215CD1DD6C7A0F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\helpers\DscResourceInfo.psm1" />
             </Component>
           </Directory>
+          <Directory Name="en-US" Id="dir28499A54B1694A25BB7EFA06CAE3272E">
+            <Component Id="cmpAC685A1C6E354E228EB6A1DD95FF03D5" Guid="{c377f473-c4e3-4005-9424-a1711f60fdfc}">
+              <File Id="filD2DD9066D1A148EBB7AD542DAC529862" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\en-US\about_PSDesiredStateConfiguration.md" />
+            </Component>
+          </Directory>
+          <Component Id="cmp67C4A6FC5E48487BB31DE411CF38B0B2" Guid="{321941e8-214c-470e-9002-ee21ef600145}">
+            <File Id="fil747B2801746E4FFCB93000BBA1089F15" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.cat" />
+          </Component>
         </Directory>
         <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
           <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495" Guid="{D4374EC0-26FC-4607-AF6B-35721698E8A5}">
@@ -3897,6 +3905,8 @@
       <ComponentRef Id="cmpD7A187ADE66347E5A7550B96BA10D493" />
       <ComponentRef Id="cmp827B25EEC28D4699BB29042B273C8CBF" />
       <ComponentRef Id="cmp712842BFA391403DA3F21B2A4C729ED3" />
+      <ComponentRef Id="cmpAC685A1C6E354E228EB6A1DD95FF03D5" />
+      <ComponentRef Id="cmp67C4A6FC5E48487BB31DE411CF38B0B2" />
       <ComponentRef Id="cmpECBD8DFB18AD451AB3D81803DECC13BF" />
       <ComponentRef Id="cmp01B3850D6E55468AA84B758FDE8CA59E" />
       <ComponentRef Id="cmpF6FDA6202E9D4CEF9F21A23D32571BFC" />
