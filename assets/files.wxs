@@ -205,9 +205,6 @@
       <Component Id="cmpDB015975B1AF141A6CDDA12B31DA2B74" Guid="{A4DB5B79-7F75-4D04-8CD3-764173FBD2C8}">
         <File Id="filAB89FE6AB1DADD58D58CAEF1DB5535C1" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.Management.Infrastructure.Native.dll" />
       </Component>
-      <Component Id="cmp6656B94731627C46DA81F79A51A024E3" Guid="{D530139F-7957-404C-8BD2-B50CBE5A5491}">
-        <File Id="filE98A810D52361DA893AD23E0B8E81507" KeyPath="yes" Source="$(env.ProductSourcePath)\pwrshplugin.pdb" />
-      </Component>
       <Component Id="cmp78C94EF3D79D1B59DE4388AA2667668E" Guid="{F3CAAC93-C7F5-464E-8B0A-014423941590}">
         <File Id="fil3B354385633C6093E72CB08E11614534" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-string-obsolete-l1-1-1.dll" />
       </Component>
@@ -3140,7 +3137,6 @@
       <ComponentRef Id="cmp689C7CE34E0246D8B56D370E898354CE" />
       <ComponentRef Id="cmp634E012FEF6122735D91DE4B1BCC1116" />
       <ComponentRef Id="cmpDB015975B1AF141A6CDDA12B31DA2B74" />
-      <ComponentRef Id="cmp6656B94731627C46DA81F79A51A024E3" />
       <ComponentRef Id="cmp78C94EF3D79D1B59DE4388AA2667668E" />
       <ComponentRef Id="cmp2C924B87CA7B55E4B688163D0424BF1B" />
       <ComponentRef Id="cmp0D69AF816E19455A8CF5034C61317EA3" />
