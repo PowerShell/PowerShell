@@ -34,7 +34,7 @@ If you disable or do not configure this policy setting, it reverts to a per-mach
 
         If you disable this policy setting, logging of execution events is disabled for all PowerShell Core modules. Disabling this policy setting for a module is equivalent to setting the LogPipelineExecutionDetails property of the module to False.
 
-        If this policy setting is not configured, the LogPipelineExecutionDetails property of a module or snap-in determines whether the execution events of a module or snap-in are logged. By default, the LogPipelineExecutionDetails property of all modules and snap-ins is set to False.
+        If this policy setting is not configured, the LogPipelineExecutionDetails property of a module determines whether the execution events of a module are logged. By default, the LogPipelineExecutionDetails property of all modules is set to False.
 
         To add modules and snap-ins to the policy setting list, click Show, and then type the module names in the list. The modules and snap-ins in the list must be installed on the computer.
 
