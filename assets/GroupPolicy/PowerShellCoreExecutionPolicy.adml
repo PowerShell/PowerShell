@@ -13,7 +13,7 @@ If you enable this policy setting, the scripts selected in the drop-down list ar
 
 The "Allow only signed scripts" policy setting allows scripts to execute only if they are signed by a trusted publisher.
 
-The "Allow local scripts and remote signed scripts" policy setting allows any local scrips to run; scripts that originate from the Internet must be signed by a trusted publisher.
+The "Allow local scripts and remote signed scripts" policy setting allows any local scrips to run; scripts that originate from the internet must be signed by a trusted publisher.
 
 The "Allow all scripts" policy setting allows all scripts to run.
 
