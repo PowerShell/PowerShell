@@ -490,10 +490,19 @@ Fix steps:
     }
 
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
+    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+
+            # Make sure ExperimentalFeatures from modules in PSHome are added
+            # https://github.com/PowerShell/PowerShell/issues/10550
+            @("PSDesiredStateConfiguration.InvokeDscResource") | ForEach-Object {
+                if (!$expFeatures.Contains($_)) {
+                    $expFeatures.Add($_)
+                }
+            }
+
             ConvertTo-Json $expFeatures.ToArray()
         }
 
