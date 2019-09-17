@@ -1845,7 +1845,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  a) the user has asked to with the -FollowSymLinks switch parameter and
                                 //  b) the directory pointed to by the symlink has not already been visited,
                                 //     preventing symlink loops.
-                                //  c) it is not a reparse point with a target
+                                //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
                                     if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
@@ -8069,13 +8069,15 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 #if !UNIX
+            // It is a reparse point and we should check some reparse point tags.
             var data = new WIN32_FIND_DATA();
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem (like symlinks)
-                // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
-                // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 & IO_REPARSE_TAG_APPEXECLINK) != IO_REPARSE_TAG_APPEXECLINK)
+                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/en-us/windows/win32/fileio/reparse-point-tags
+                // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
+                // (like symlinks and mount points).
+                // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
+                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
