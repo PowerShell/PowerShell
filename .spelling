@@ -111,6 +111,7 @@ codepage
 commanddiscovery
 commandsearch
 comobject
+composability
 config
 connect-pssession
 consolehost
@@ -320,6 +321,7 @@ interactivetesting
 interop
 interoperation
 invoke-cimmethod
+Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
 iot
@@ -467,6 +469,7 @@ offthewoll
 oising
 omi
 omnisharp
+OneDrive
 oneget.org
 opencover
 opencover.zip
@@ -611,6 +614,7 @@ robo210
 ronn
 rpalo
 runspace
+runspaces
 runspaceinit
 runtime
 runtimes
@@ -868,6 +872,8 @@ uninstallation
 vongrippen
 yurko7
 zhenggu
+davinci26
+vedhasp
 analytics
  - docs/debugging/README.md
 corehost
