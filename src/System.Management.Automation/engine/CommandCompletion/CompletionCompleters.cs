@@ -1993,16 +1993,23 @@ namespace System.Management.Automation
             CompletionContext context,
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
+            var parameterName = parameter.Name;
+            ScriptBlock customCompleter;
             if (string.IsNullOrEmpty(commandName))
             {
-                return;
+                customCompleter = GetCustomArgumentCompleter(
+                                    "CustomArgumentCompleters",
+                                    new[] { commandAst.GetCommandName() + ":" + parameterName, parameterName },
+                                    context);
+            }
+            else
+            {
+                customCompleter =  GetCustomArgumentCompleter(
+                                    "CustomArgumentCompleters",
+                                    new[] { commandName + ":" + parameterName, parameterName },
+                                    context);
             }
 
-            var parameterName = parameter.Name;
-            var customCompleter = GetCustomArgumentCompleter(
-                    "CustomArgumentCompleters",
-                    new[] { commandName + ":" + parameterName, parameterName },
-                    context);
             if (customCompleter != null)
             {
                 if (InvokeScriptArgumentCompleter(
