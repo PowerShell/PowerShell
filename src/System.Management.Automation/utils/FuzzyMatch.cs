@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 
 namespace System.Management.Automation
 {
@@ -31,8 +31,8 @@ namespace System.Management.Automation
         /// <returns>The distance value where the lower the value the shorter the distance between the two strings representing a closer match.</returns>
         public static int GetDamerauLevenshteinDistance(string string1, string string2)
         {
-            string1 = string1.ToUpperInvariant();
-            string2 = string2.ToUpperInvariant();
+            string1 = string1.ToUpper(CultureInfo.CurrentCulture);
+            string2 = string2.ToUpper(CultureInfo.CurrentCulture);
 
             var bounds = new { Height = string1.Length + 1, Width = string2.Length + 1 };
 
