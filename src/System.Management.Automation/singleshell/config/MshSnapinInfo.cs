@@ -1039,11 +1039,6 @@ namespace System.Management.Automation
 
                 string moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
 
-                if (!File.Exists(moduleName))
-                {
-                    moduleName = defaultMshSnapinInfo.AssemblyName;
-                }
-
                 PSSnapInInfo defaultMshSnapin = new PSSnapInInfo(
                     defaultMshSnapinInfo.PSSnapInName,
                     isDefault: true,
