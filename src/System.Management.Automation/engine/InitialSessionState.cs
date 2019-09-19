@@ -1417,7 +1417,6 @@ namespace System.Management.Automation.Runspaces
 
             List<string> allowedTypes = new List<string>();
             allowedTypes.Add("types.ps1xml");
-            allowedTypes.Add("typesV3.ps1xml");
             RemoveDisallowedEntries(
                 iss.Types,
                 allowedTypes,

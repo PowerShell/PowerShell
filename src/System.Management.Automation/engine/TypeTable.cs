@@ -3497,7 +3497,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Load types.ps1xml, typesv3.ps1xml into the typetable.
+        /// Load types.ps1xml into the typetable.
         /// </summary>
         /// <exception cref="System.Security.SecurityException">
         /// if caller doesn't have permission to read the PowerShell registry key
@@ -3515,16 +3515,14 @@ namespace System.Management.Automation.Runspaces
         public static List<string> GetDefaultTypeFiles()
         {
             string typesFilePath = string.Empty;
-            string typesV3FilePath = string.Empty;
 
             var psHome = Utils.DefaultPowerShellAppBase;
             if (!string.IsNullOrEmpty(psHome))
             {
                 typesFilePath = Path.Combine(psHome, "types.ps1xml");
-                typesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
             }
 
-            return new List<string>() { typesFilePath, typesV3FilePath };
+            return new List<string>() { typesFilePath };
         }
 
         /// <summary>
@@ -4489,11 +4487,6 @@ namespace System.Management.Automation.Runspaces
             if (string.Equals(Path.Combine(psHome, "types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
             {
                 ProcessTypeData(filePath, errors, Types_Ps1Xml.Get());
-                result = true;
-            }
-            else if (string.Equals(Path.Combine(psHome, "typesv3.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
-            {
-                ProcessTypeData(filePath, errors, TypesV3_Ps1Xml.Get());
                 result = true;
             }
             else if (string.Equals(Path.Combine(psHome, "GetEvent.types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
