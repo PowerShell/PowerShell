@@ -2009,6 +2009,83 @@ namespace System.Management.Automation.Runspaces
           ""$($this.Major).$($this.Minor).$($this.Build)""+$suffix
             ")));
             yield return td252;
+
+            var td253 = new TypeData(@"System.Security.Cryptography.X509Certificates.X509Certificate2", true);
+            td253.Members.Add("EnhancedKeyUsageList",
+                new ScriptPropertyData(@"EnhancedKeyUsageList", GetScriptBlock(@",(new-object Microsoft.Powershell.Commands.EnhancedKeyUsageProperty -argumentlist $this).EnhancedKeyUsageList;"), null));
+            td253.Members.Add("DnsNameList",
+                new ScriptPropertyData(@"DnsNameList", GetScriptBlock(@",(new-object Microsoft.Powershell.Commands.DnsNameProperty -argumentlist $this).DnsNameList;"), null));
+            td253.Members.Add("SendAsTrustedIssuer",
+                new ScriptPropertyData(@"SendAsTrustedIssuer", GetScriptBlock(@"[Microsoft.Powershell.Commands.SendAsTrustedIssuerProperty]::ReadSendAsTrustedIssuerProperty($this)"), GetScriptBlock(@"$sendAsTrustedIssuer = $args[0]
+                    [Microsoft.Powershell.Commands.SendAsTrustedIssuerProperty]::WriteSendAsTrustedIssuerProperty($this,$this.PsPath,$sendAsTrustedIssuer)")));
+            yield return td253;
+
+            var td254 = new TypeData(@"System.Management.Automation.Remoting.PSSenderInfo", true);
+            td254.Members.Add("ConnectedUser",
+                new ScriptPropertyData(@"ConnectedUser", GetScriptBlock(@"$this.UserInfo.Identity.Name"), null));
+            td254.Members.Add("RunAsUser",
+                new ScriptPropertyData(@"RunAsUser", GetScriptBlock(@"if($null -ne $this.UserInfo.WindowsIdentity)
+            {
+                $this.UserInfo.WindowsIdentity.Name
+            }"), null));
+            yield return td254;
+
+            var td255 = new TypeData(@"System.Management.Automation.CompletionResult", true);
+            td255.SerializationDepth = 1;
+            yield return td255;
+
+            var td256 = new TypeData(@"Deserialized.System.Management.Automation.CompletionResult", true);
+            td256.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td256;
+
+            var td257 = new TypeData(@"System.Management.Automation.CommandCompletion", true);
+            td257.SerializationDepth = 1;
+            yield return td257;
+
+            var td258 = new TypeData(@"Deserialized.System.Management.Automation.CommandCompletion", true);
+            td258.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td258;
+
+            var td259 = new TypeData(@"Microsoft.PowerShell.Commands.ModuleSpecification", true);
+            td259.SerializationDepth = 1;
+            yield return td259;
+
+            var td260 = new TypeData(@"Deserialized.Microsoft.PowerShell.Commands.ModuleSpecification", true);
+            td260.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td260;
+
+            var td261 = new TypeData(@"System.Management.Automation.JobStateEventArgs", true);
+            td261.SerializationDepth = 2;
+            yield return td261;
+
+            var td262 = new TypeData(@"Deserialized.System.Management.Automation.JobStateEventArgs", true);
+            td262.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td262;
+
+            var td263 = new TypeData(@"System.Exception", true);
+            td263.SerializationDepth = 1;
+            yield return td263;
+
+            var td264 = new TypeData(@"System.Management.Automation.Remoting.PSSessionOption", true);
+            td264.SerializationDepth = 1;
+            yield return td264;
+
+            var td265 = new TypeData(@"Deserialized.System.Management.Automation.Remoting.PSSessionOption", true);
+            td265.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td265;
+
+            var td266 = new TypeData(@"System.Management.Automation.DebuggerStopEventArgs", true);
+            td266.Members.Add("SerializedInvocationInfo",
+                new CodePropertyData("SerializedInvocationInfo", GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), "GetInvocationInfo"), null) { IsHidden = true });
+            td266.SerializationMethod = "SpecificProperties";
+            td266.SerializationDepth = 2;
+            td266.PropertySerializationSet =
+                new PropertySetData(new[] { "Breakpoints", "ResumeAction", "SerializedInvocationInfo" }) { Name = "PropertySerializationSet" };
+            yield return td266;
+
+            var td267 = new TypeData(@"Deserialized.System.Management.Automation.DebuggerStopEventArgs", true);
+            td267.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
+            yield return td267;
         }
     }
 }
