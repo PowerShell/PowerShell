@@ -687,6 +687,42 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
+            $script = @'
+function Test-Completion {
+    param (
+        [String]$TestVal
+    )
+}
+
+Register-ArgumentCompleter -CommandName Test-Completion -ParameterName TestVal -ScriptBlock $completer
+
+Test-Completion -TestVal
+'@
+            # Workaround to prevent editors from trimming required trailing space.
+            $script += " "
+            $scriptBl = {
+                function Test-Completion {
+                    param (
+                        [String]$TestVal
+                    )
+                }
+                [scriptblock]$completer = {
+                    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+                    @('Val1', 'Val2')
+                }
+                Register-ArgumentCompleter -CommandName Test-Completion -ParameterName TestVal -ScriptBlock $completer
+            }
+            $pwsh = [PowerShell]::Create()
+            $pwsh.AddScript($scriptBl)
+            $pwsh.Invoke()
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($script, $script.Length, $null, $pwsh)
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Val1'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Val2'
+        }
+
         It "Tab completion for enum type parameter of a custom function" {
             function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
             $inputStr = "baz -name "
