@@ -2004,7 +2004,7 @@ namespace System.Management.Automation
             }
             else
             {
-                customCompleter =  GetCustomArgumentCompleter(
+                customCompleter = GetCustomArgumentCompleter(
                                     "CustomArgumentCompleters",
                                     new[] { commandName + ":" + parameterName, parameterName },
                                     context);
