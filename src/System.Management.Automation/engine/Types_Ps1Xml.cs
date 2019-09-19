@@ -1993,6 +1993,8 @@ namespace System.Management.Automation.Runspaces
             td251.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
             yield return td251;
 
+            #region Types from TypesV3_Ps1Xml.cs
+
             var td252 = new TypeData(@"System.Version#IncludeLabel", true);
             td252.Members.Add("ToString",
                 new ScriptMethodData(@"ToString", GetScriptBlock(@"
@@ -2086,6 +2088,58 @@ namespace System.Management.Automation.Runspaces
             var td267 = new TypeData(@"Deserialized.System.Management.Automation.DebuggerStopEventArgs", true);
             td267.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
             yield return td267;
+
+            #endregion Types from TypesV3_Ps1Xml.cs
+
+            #region Types from GetEvent_Types_Ps1Xml
+
+            var td268 = new TypeData(@"System.Diagnostics.Eventing.Reader.EventLogConfiguration", true);
+            td268.DefaultDisplayPropertySet =
+                new PropertySetData(new[] { "LogName", "MaximumSizeInBytes", "RecordCount", "LogMode" }) { Name = "DefaultDisplayPropertySet" };
+            yield return td268;
+
+            var td269 = new TypeData(@"System.Diagnostics.Eventing.Reader.EventLogRecord", true);
+            td269.DefaultDisplayPropertySet =
+                new PropertySetData(new[] { "TimeCreated", "ProviderName", "Id", "Message" }) { Name = "DefaultDisplayPropertySet" };
+            yield return td269;
+
+            var td270 = new TypeData(@"System.Diagnostics.Eventing.Reader.ProviderMetadata", true);
+            td270.Members.Add("ProviderName",
+                new AliasPropertyData("ProviderName", "Name"));
+            td270.DefaultDisplayPropertySet =
+                new PropertySetData(new[] { "Name", "LogLinks" }) { Name = "DefaultDisplayPropertySet" };
+            yield return td270;
+
+#if !CORECLR
+            var td271 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.CounterSet", true);
+            td271.Members.Add("Counter",
+                new AliasPropertyData("Counter", "Paths"));
+            yield return td271;
+
+            var td272 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample", true);
+            td272.DefaultDisplayPropertySet =
+                new PropertySetData(new[] { "Path", "InstanceName", "CookedValue" }) { Name = "DefaultDisplayPropertySet" };
+            yield return td272;
+
+            var td273 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet", true);
+            td273.DefaultDisplayPropertySet =
+                new PropertySetData(new[] { "Timestamp", "Readings" }) { Name = "DefaultDisplayPropertySet" };
+            yield return td273;
+
+            var td274 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet", true);
+            td274.Members.Add("Readings",
+                new ScriptPropertyData(@"Readings", GetScriptBlock(@"$strPaths = """"
+          foreach ($ctr in $this.CounterSamples)
+          {
+              $strPaths += ($ctr.Path + "" :"" + ""`n"")
+              $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")
+          }
+
+          return $strPaths"), null));
+            yield return td274;
+#endif
+
+            #endregion Types from GetEvent_Types_Ps1Xml.cs
         }
     }
 }
