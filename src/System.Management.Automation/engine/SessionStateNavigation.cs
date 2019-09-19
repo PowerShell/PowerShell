@@ -256,7 +256,7 @@ namespace System.Management.Automation
             {
                 isProviderQualified = true;
 
-                // remove the qualifier
+                // remove the qualifier with '::' trail
                 result = path.Slice(qualifier.Length + 2);
             }
             else
