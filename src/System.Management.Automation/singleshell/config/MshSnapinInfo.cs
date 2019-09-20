@@ -948,8 +948,7 @@ namespace System.Management.Automation
             ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
 
             // System.Management.Automation formats & types files
-            Collection<string> types = new Collection<string>();
-            types.Add("types.ps1xml");
+            Collection<string> types = new Collection<string> { "types.ps1xml" };
             Collection<string> formats = new Collection<string>(new string[]
                         {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
                          "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
@@ -1007,8 +1006,7 @@ namespace System.Management.Automation
                         {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
                          "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
-            Collection<string> smaTypes = new Collection<string>();
-            smaTypes.Add("types.ps1xml");
+            Collection<string> smaTypes = new Collection<string>() { "types.ps1xml" };
 
             // create default mshsnapininfo objects..
             Collection<PSSnapInInfo> engineMshSnapins = new Collection<PSSnapInInfo>();

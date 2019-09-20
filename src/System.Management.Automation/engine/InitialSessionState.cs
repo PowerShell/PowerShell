@@ -1415,8 +1415,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that only PowerShell core formats are included in the restricted session.
             IncludePowerShellCoreFormats(iss);
 
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.Add("types.ps1xml");
+            List<string> allowedTypes = new List<string>() { "types.ps1xml" };
             RemoveDisallowedEntries(
                 iss.Types,
                 allowedTypes,
