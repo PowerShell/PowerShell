@@ -509,7 +509,8 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessParallelParameterSet()
         {
             // Validate piped InputObject
-            if (_inputObject.BaseObject is ScriptBlock)
+            if (_inputObject != null && 
+                _inputObject.BaseObject is ScriptBlock)
             {
                 WriteError(
                     new ErrorRecord(
