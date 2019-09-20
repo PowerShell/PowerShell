@@ -6991,6 +6991,13 @@ namespace System.Management.Automation
             return expr != null && (bool)expr.Accept(this);
         }
 
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            return (bool)ternaryExpressionAst.Condition.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfTrue.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfFalse.Accept(this);
+        }
+
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
             return (bool)binaryExpressionAst.Left.Accept(this) && (bool)binaryExpressionAst.Right.Accept(this);

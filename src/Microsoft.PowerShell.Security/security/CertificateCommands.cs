@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // list of files that were not found
         //
-        private ArrayList _filesNotFound = new ArrayList();
+        private List<string> _filesNotFound = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the GetPfxCertificateCommand

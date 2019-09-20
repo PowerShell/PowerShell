@@ -291,7 +291,7 @@ namespace System.Management.Automation
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
         Ignore = 4,
 
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
+        /// <summary>Reserved for future use.</summary>
         Suspend = 5,
 
         /// <summary>Enter the debugger.</summary>

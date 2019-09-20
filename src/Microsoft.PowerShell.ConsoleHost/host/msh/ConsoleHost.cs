@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
+                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
@@ -2670,7 +2670,7 @@ namespace Microsoft.PowerShell
                 // Output any training suggestions
                 try
                 {
-                    ArrayList suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
+                    List<string> suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
 
                     if (suggestions.Count > 0)
                     {

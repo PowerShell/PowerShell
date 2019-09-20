@@ -75,13 +75,13 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.NewCommandBreakpoint(path.ToString(), Command[i], Action));
+                                Context.Debugger.SetCommandBreakpoint(Command[i], Action, path));
                         }
                     }
                     else
                     {
                         WriteObject(
-                            Context.Debugger.NewCommandBreakpoint(Command[i], Action));
+                            Context.Debugger.SetCommandBreakpoint(Command[i], Action));
                     }
                 }
             }
@@ -97,13 +97,13 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.NewVariableBreakpoint(path.ToString(), Variable[i], Mode, Action));
+                                Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path));
                         }
                     }
                     else
                     {
                         WriteObject(
-                            Context.Debugger.NewVariableBreakpoint(Variable[i], Mode, Action));
+                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action));
                     }
                 }
             }
@@ -130,16 +130,8 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (string path in scripts)
                     {
-                        if (Column != 0)
-                        {
-                            WriteObject(
-                                Context.Debugger.NewStatementBreakpoint(path, Line[i], Column, Action));
-                        }
-                        else
-                        {
-                            WriteObject(
-                                Context.Debugger.NewLineBreakpoint(path, Line[i], Action));
-                        }
+                        WriteObject(
+                            Context.Debugger.SetLineBreakpoint(path, Line[i], Column, Action));
                     }
                 }
             }

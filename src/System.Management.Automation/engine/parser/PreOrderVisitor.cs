@@ -186,6 +186,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         public virtual AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.Continue; }
     }
 
     /// <summary>
