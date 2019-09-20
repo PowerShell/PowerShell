@@ -3618,7 +3618,7 @@ namespace System.Management.Automation.Language
             : this(extent,
                    isFilter,
                    isWorkflow,
-                   (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
+                   (functionNameToken is StringToken stringFunctionNameToken) ? stringFunctionNameToken.Value : functionNameToken.Text,
                    parameters,
                    body)
         {
