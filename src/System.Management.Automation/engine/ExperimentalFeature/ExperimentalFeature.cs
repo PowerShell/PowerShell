@@ -114,7 +114,7 @@ namespace System.Management.Automation
                     description: "New parameter set for ForEach-Object to run script blocks in parallel"),
                 new ExperimentalFeature(
                     name: "PSTernaryOperator",
-                    description: "Support the ternary operator in PowerShell langauge."),
+                    description: "Support the ternary operator in PowerShell language"),
                 new ExperimentalFeature(
                     name: "PSGeneralizedSplatting",
                     description: "Preliminary support for generalized splatting, currently only inline splatting."),
