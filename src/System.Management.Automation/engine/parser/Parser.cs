@@ -7088,10 +7088,13 @@ namespace System.Management.Automation.Language
             List<KeyValuePair> keyValuePairs = new List<KeyValuePair>();
 
             bool splatted = false;
-            if (atCurlyToken.Kind == TokenKind.AtAtCurly)
+            if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
             {
-                NextToken(); // to skip the first '@' to allow the parsing of the hashtable
-                splatted = true;
+                if (atCurlyToken.Kind == TokenKind.AtAtCurly)
+                {
+                    NextToken(); // to skip the first '@' to allow the parsing of the hashtable
+                    splatted = true;
+                }
             }
 
             while (true)

@@ -4622,12 +4622,15 @@ namespace System.Management.Automation.Language
                         return ScanHereStringExpandable();
                     }
 
-                    if (c1 == '@')
+                    if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
                     {
-                        var c2 = PeekChar();
-                        if (c2 == '{')
+                        if (c1 == '@')
                         {
-                            return NewToken(TokenKind.AtAtCurly);
+                            var c2 = PeekChar();
+                            if (c2 == '{')
+                            {
+                                return NewToken(TokenKind.AtAtCurly);
+                            }
                         }
                     }
 

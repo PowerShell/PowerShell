@@ -3542,7 +3542,10 @@ namespace System.Management.Automation.Language
                             splatted = variableExpressionAst.Splatted;
                             break;
                         case HashtableAst hashTableAst:
-                            splatted = hashTableAst.Splatted;
+                            if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
+                            {
+                                splatted = hashTableAst.Splatted;
+                            }
                             break;
                     }
 
