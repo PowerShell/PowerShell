@@ -1995,20 +1995,19 @@ namespace System.Management.Automation
         {
             var parameterName = parameter.Name;
             ScriptBlock customCompleter;
-            if (string.IsNullOrEmpty(commandName))
-            {
-                customCompleter = GetCustomArgumentCompleter(
-                                    "CustomArgumentCompleters",
-                                    new[] { commandAst.GetCommandName() + ":" + parameterName, parameterName },
-                                    context);
-            }
-            else
-            {
-                customCompleter = GetCustomArgumentCompleter(
-                                    "CustomArgumentCompleters",
-                                    new[] { commandName + ":" + parameterName, parameterName },
-                                    context);
-            }
+
+            // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
+            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // See issue https://github.com/PowerShell/PowerShell/issues/10567
+            var parameterFullName = string.IsNullOrEmpty(commandName)
+                        ? commandAst.GetCommandName() + ":" + parameterName
+                        : commandName + ":" + parameterName;
+
+            customCompleter = GetCustomArgumentCompleter(
+                "CustomArgumentCompleters",
+                new[] { parameterFullName, parameterName },
+                context
+            );
 
             if (customCompleter != null)
             {
