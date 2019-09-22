@@ -4629,7 +4629,7 @@ namespace System.Management.Automation.Language
                             var c2 = PeekChar();
                             if (c2 == '{')
                             {
-                                return NewToken(TokenKind.AtAtCurly);
+                                return NewToken(TokenKind.AtAt);
                             }
                         }
                     }

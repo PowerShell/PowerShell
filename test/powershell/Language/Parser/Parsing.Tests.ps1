@@ -435,11 +435,11 @@ Describe "Generalized Splatting - Parsing" -Tags CI {
         else {
             $testCases_basic = @(
                 @{  Script        = 'Verb-Noun @@{ "ParameterName"="ParameterValue" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAtCurly;
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAt;
                     TokenPosition = 1
                 }
                 @{  Script        = 'Verb-Noun @@{ "ParameterName1"="ParameterValue1"; "ParameterName2"="ParameterValue2" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAtCurly;
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAt;
                     TokenPosition = 1
                 }
             )

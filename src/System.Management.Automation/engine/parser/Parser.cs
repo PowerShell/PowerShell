@@ -6080,7 +6080,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.AtParen:
                     case TokenKind.AtCurly:
                     case TokenKind.LCurly:
-                    case TokenKind.AtAtCurly:
+                    case TokenKind.AtAt:
                         UngetToken(token);
                         exprAst = PrimaryExpressionRule(withMemberAccess: true);
                         Diagnostics.Assert(exprAst != null, "PrimaryExpressionRule should never return null");
@@ -7011,7 +7011,7 @@ namespace System.Management.Automation.Language
                     break;
 
                 case TokenKind.AtCurly:
-                case TokenKind.AtAtCurly:
+                case TokenKind.AtAt:
                     expr = HashExpressionRule(token, parsingSchemaElement: false);
                     break;
 
@@ -7090,7 +7090,7 @@ namespace System.Management.Automation.Language
             bool splatted = false;
             if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
             {
-                if (atCurlyToken.Kind == TokenKind.AtAtCurly)
+                if (atCurlyToken.Kind == TokenKind.AtAt)
                 {
                     NextToken(); // to skip the first '@' to allow the parsing of the hashtable
                     splatted = true;

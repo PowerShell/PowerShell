@@ -574,8 +574,8 @@ namespace System.Management.Automation.Language
         /// <summary>The 'base' keyword</summary>
         Base = 168,
 
-        /// <summary>The opening token of an inlined splat expression '@@{'.</summary>
-        AtAtCurly = 169,
+        /// <summary>The opening token of a generalized splat expression '@@'.</summary>
+        AtAt = 169,
 
         #endregion Keywords
     }
@@ -931,7 +931,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
-            /*            AtAtCurly */ TokenFlags.None,
+            /*            AtAt */ TokenFlags.None,
 
             #endregion Flags for keywords
         };
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
-            /*            AtAtCurly */ "@@splat",
+            /*            AtAt */ "@@",
 
             #endregion Text for keywords
         };
