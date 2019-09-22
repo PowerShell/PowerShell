@@ -1359,17 +1359,18 @@ Describe 'Splatting' -Tags 'CI' {
         }
 
         It "Splatting using inlined hashtable '@@{key=value}'" {
-            Get-Item @@{ Path = $tempFile } | Should -Not -BeNullOrEmpty
+            Get-Item @@{ Path = $tempFile; Verbose = $true } | Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'Parameter mismatches' {
-        It "Splatting using hashtable variable '@var'" {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSGeneralizedSplatting')
+        It "Splatting using hashtable variable '@var'" -Skip:$skipTest {
             $splattedHashTable = @{ ParameterThatDoesNotExist = $tempFile }
             { Get-Item @splattedHashTable } | Should -Throw -ErrorId 'NamedParameterNotFound'
         }
 
-        It "Splatting using inlined hashtable '@@{key=value}'" {
+        It "Splatting using inlined hashtable '@@{key=value}'" -Skip:$skipTest {
             { Get-Item @@{ ParameterThatDoesNotExist = $tempFile } } | Should -Throw -ErrorId 'NamedParameterNotFound'
         }
     }

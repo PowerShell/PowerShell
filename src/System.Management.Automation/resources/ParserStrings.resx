@@ -212,6 +212,9 @@ Possible matches are</value>
   <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
     <value>Splatted variables like '@{0}' cannot be part of a comma-separated list of arguments.</value>
   </data>
+  <data name="GeneralizedSplattingOnlyPermittedForCommands" xml:space="preserve">
+    <value>'{0}' uses the generalized splatting operator, which can be used only as an inline argument to a command. Declare a hashtable variable instead if the intent is to splat it to a command at a later time.</value>
+  </data>
   <data name="MissingFileSpecification" xml:space="preserve">
     <value>Missing file specification after redirection operator.</value>
   </data>

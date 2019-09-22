@@ -1085,6 +1085,18 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitHashtable(HashtableAst hashtableAst)
         {
+            if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
+            {
+                // Check usage of generalized splatting, which supports only arguments to a command at the moment
+                if (hashtableAst.Splatted && !(hashtableAst.Parent is CommandAst))
+                {
+                    _parser.ReportError(hashtableAst.Extent,
+                        nameof(ParserStrings.GeneralizedSplattingOnlyPermittedForCommands),
+                        ParserStrings.GeneralizedSplattingOnlyPermittedForCommands,
+                        hashtableAst);
+                }
+            }
+
             HashSet<string> keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var entry in hashtableAst.KeyValuePairs)
             {
