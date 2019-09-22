@@ -110,7 +110,8 @@ Note that all bash commands should continue working on PowerShell session.
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
 - [Learn Windows PowerShell in a Month of Lunches][learn-win-powershell] by Don Jones and Jeffrey Hicks
-- [Learn PowerShell in a Month of Lunches][learn-powershell] by Travis Plunk (@TravisEz13), Tyler LeonHardt (@tylerleonhardt), Don Jones, and Jeffery Hicks
+- [Learn PowerShell in a Month of Lunches][learn-powershell] by Travis Plunk (@TravisEz13),
+  Tyler Leonhardt (@tylerleonhardt), Don Jones, and Jeffery Hicks
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
