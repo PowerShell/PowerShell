@@ -2006,8 +2006,7 @@ namespace System.Management.Automation
             customCompleter = GetCustomArgumentCompleter(
                 "CustomArgumentCompleters",
                 new[] { parameterFullName, parameterName },
-                context
-            );
+                context);
 
             if (customCompleter != null)
             {
