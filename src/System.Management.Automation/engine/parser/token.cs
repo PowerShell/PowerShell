@@ -931,7 +931,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
-            /*            AtAt */ TokenFlags.None,
+            /*                 AtAt */ TokenFlags.None,
 
             #endregion Flags for keywords
         };
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
-            /*            AtAt */ "@@",
+            /*                 AtAt */ "@@",
 
             #endregion Text for keywords
         };
