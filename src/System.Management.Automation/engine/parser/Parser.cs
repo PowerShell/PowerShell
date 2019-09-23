@@ -5820,7 +5820,7 @@ namespace System.Management.Automation.Language
                         return new StatementChainAst(
                             ExtentOf(currentPipelineChain, nextStatement),
                             currentPipelineChain,
-                            nextStatement,
+                            (ChainableStatementAst)nextStatement,
                             currentChainOperatorToken.Kind);
                     }
                 }

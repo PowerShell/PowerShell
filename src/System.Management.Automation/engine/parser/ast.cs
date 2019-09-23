@@ -5026,7 +5026,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the break statement.
     /// </summary>
-    public class BreakStatementAst : StatementAst
+    public class BreakStatementAst : ChainableStatementAst
     {
         /// <summary>
         /// Construct a break statement ast.
@@ -5083,7 +5083,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the continue statement.
     /// </summary>
-    public class ContinueStatementAst : StatementAst
+    public class ContinueStatementAst : ChainableStatementAst
     {
         /// <summary>
         /// Construct a continue statement.
@@ -5140,7 +5140,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the return statement.
     /// </summary>
-    public class ReturnStatementAst : StatementAst
+    public class ReturnStatementAst : ChainableStatementAst
     {
         /// <summary>
         /// Construct a return statement.
@@ -5197,7 +5197,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the exit statement.
     /// </summary>
-    public class ExitStatementAst : StatementAst
+    public class ExitStatementAst : ChainableStatementAst
     {
         /// <summary>
         /// Construct an exit statement.
@@ -5254,7 +5254,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the throw statement.
     /// </summary>
-    public class ThrowStatementAst : StatementAst
+    public class ThrowStatementAst : ChainableStatementAst
     {
         /// <summary>
         /// Construct a throw statement.
@@ -5343,10 +5343,25 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// Represents a statement that may appear on the RHS of a chain operator.
+    /// </summary>
+    public abstract class ChainableStatementAst : StatementAst
+    {
+        /// <summary>
+        /// Construct a new chain statement AST with the given extent.
+        /// </summary>
+        /// <param name="extent">The script extent of the chainable statement this AST represents.</param>
+        /// <returns></returns>
+        protected ChainableStatementAst(IScriptExtent extent) : base(extent)
+        {
+        }
+    }
+
+    /// <summary>
     /// A command-oriented flow-controlled pipeline chain.
     /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
     /// </summary>
-    public class StatementChainAst : StatementAst
+    public class StatementChainAst : ChainableStatementAst
     {
         /// <summary>
         /// Create a new statement chain AST from two statements and an operator.
@@ -5358,7 +5373,7 @@ namespace System.Management.Automation.Language
         public StatementChainAst(
             IScriptExtent extent,
             PipelineBaseAst lhsStatement,
-            StatementAst rhsStatement,
+            ChainableStatementAst rhsStatement,
             TokenKind chainOperator)
             : base(extent)
         {
@@ -5393,7 +5408,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The right hand statement in the chain.
         /// </summary>
-        public StatementAst RhsStatement { get; }
+        public ChainableStatementAst RhsStatement { get; }
 
         /// <summary>
         /// The chaining operator used.
@@ -5410,35 +5425,40 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            if (!(visitor is ICustomAstVisitor2 visitor2))
-            {
-                return null;
-            }
-
-            return visitor2.VisitStatementChain(this);
+            return (visitor as ICustomAstVisitor2)?.VisitStatementChain(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
-            var visitAction = AstVisitAction.Continue;
+            AstVisitAction action;
+
+            // Can only visit new AST type if using AstVisitor2
             if (visitor is AstVisitor2 visitor2)
             {
-                visitAction = visitor2.VisitStatementChain(this);
+                action = visitor2.VisitStatementChain(this);
 
-                if (visitAction != AstVisitAction.Continue)
+                // If SkipChildren or StopVisit, we end and run post action here
+                switch (action)
                 {
-                    return visitAction;
+                    case AstVisitAction.SkipChildren:
+                        return visitor2.CheckForPostAction(this, AstVisitAction.Continue);
+
+                    case AstVisitAction.StopVisit:
+                        return visitor2.CheckForPostAction(this, AstVisitAction.StopVisit);
                 }
             }
 
-            visitAction = LhsStatement.InternalVisit(visitor);
+            // To get here we haven't got an AstVisitor2,
+            // or we did and the action is Continue.
+            // So no need to check -- just proceed.
+            action = LhsStatement.InternalVisit(visitor);
 
-            if (visitAction == AstVisitAction.StopVisit)
+            if (action != AstVisitAction.StopVisit)
             {
-                return visitAction;
+                action = RhsStatement.InternalVisit(visitor);
             }
 
-            return RhsStatement.InternalVisit(visitor);
+            return visitor.CheckForPostAction(this, action);
         }
     }
 
@@ -5519,35 +5539,40 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            if (!(visitor is ICustomAstVisitor2 visitor2))
-            {
-                return null;
-            }
-
-            return visitor2.VisitPipelineChain(this);
+            return (visitor as ICustomAstVisitor2)?.VisitPipelineChain(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
-            var visitAction = AstVisitAction.Continue;
+            AstVisitAction action;
+
+            // Can only visit new AST type if using AstVisitor2
             if (visitor is AstVisitor2 visitor2)
             {
-                visitAction = visitor2.VisitPipelineChain(this);
+                action = visitor2.VisitPipelineChain(this);
 
-                if (visitAction != AstVisitAction.Continue)
+                // If SkipChildren or StopVisit, we end and run post action here
+                switch (action)
                 {
-                    return visitAction;
+                    case AstVisitAction.SkipChildren:
+                        return visitor2.CheckForPostAction(this, AstVisitAction.Continue);
+
+                    case AstVisitAction.StopVisit:
+                        return visitor2.CheckForPostAction(this, AstVisitAction.StopVisit);
                 }
             }
 
-            visitAction = LhsPipeline.InternalVisit(visitor);
+            // To get here we haven't got an AstVisitor2,
+            // or we did and the action is Continue.
+            // So no need to check -- just proceed.
+            action = LhsPipeline.InternalVisit(visitor);
 
-            if (visitAction == AstVisitAction.StopVisit)
+            if (action != AstVisitAction.StopVisit)
             {
-                return visitAction;
+                action = RhsPipeline.InternalVisit(visitor);
             }
 
-            return RhsPipeline.InternalVisit(visitor);
+            return visitor.CheckForPostAction(this, action);
         }
     }
 
