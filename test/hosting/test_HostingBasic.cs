@@ -141,7 +141,7 @@ namespace PowerShell.Hosting.SDK.Tests
         }
 
         [Fact]
-        public static void TestAddType()
+        public static void TestAddTypeCmdletInHostScenario()
         {
             string code = @"
                 using System;
