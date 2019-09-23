@@ -2814,6 +2814,17 @@ function New-MSIXPackage
         $ProductVersion += ".0"
     }
 
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
+
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
     $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion)
