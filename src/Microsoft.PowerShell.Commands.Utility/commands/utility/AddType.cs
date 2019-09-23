@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region LoadAssembly
 
-        // We now ship .Net Core's reference assemblies with PowerShell, so that Add-Type can work
+        // We now ship .NET Core's reference assemblies with PowerShell, so that Add-Type can work
         // in a predictable way and won't be broken when we move to newer version of .NET Core.
         // The reference assemblies are located at '$PSHOME\ref' for pwsh.
         //
@@ -610,7 +610,10 @@ namespace Microsoft.PowerShell.Commands
         // the location of 'System.Management.Automation.dll'.
         private static readonly string s_netcoreAppRefFolder = PathType.Combine(
             PathType.GetDirectoryName(
-                (Assembly.GetEntryAssembly() ?? typeof(PSObject).Assembly).Location), "ref");
+                (Assembly.GetEntryAssembly() ?? typeof(PSObject).Assembly).Location),
+            "ref");
+
+        // Path to the folder where .NET Core runtime assemblies are located.
         private static readonly string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
         // These assemblies are always automatically added to ReferencedAssemblies.
