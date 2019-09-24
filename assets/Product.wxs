@@ -163,7 +163,7 @@
               <CreateFolder/>
             </Component>
             <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
-              <Environment Id="POWERSHELL_DISTRIBUTION_CHANNEL" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
+              <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
             </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
               <!-- create key for easy detection of a particular version of a powershell core package
