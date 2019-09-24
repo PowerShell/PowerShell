@@ -117,25 +117,29 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         it "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
-            $expectedName = (Get-GoodCertificateObject).DnsNameList[0].Unicode
-            $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList[0].Punycode
+            $expectedName = (Get-GoodCertificateObject).DnsNameList
+            $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
-            $cert | Should -Not -Be null
-            $cert.DnsNameList | Should -Not -Be null
-            $cert.DnsNameList.Count | Should -Be 1
-            $cert.DnsNameList[0].Unicode | Should -Be $expectedName
-            $cert.DnsNameList[0].Punycode | Should -Be $expectedEncodedName
+            $cert | Should -Not -Be $null
+            $cert.DnsNameList | Should -Not -Be $null
+            $cert.DnsNameList.Count | Should -Be 3
+            $cert.DnsNameList[0].Unicode | Should -Be $expectedName[0].Unicode
+            $cert.DnsNameList[0].Punycode | Should -Be $expectedEncodedName[0].Punycode
+            $cert.DnsNameList[1].Unicode | Should -Be $expectedName[1].Unicode
+            $cert.DnsNameList[1].Punycode | Should -Be $expectedEncodedName[1].Punycode
+            $cert.DnsNameList[2].Unicode | Should -Be $expectedName[2].Unicode
+            $cert.DnsNameList[2].Punycode | Should -Be $expectedEncodedName[2].Punycode
         }
-        it "Should be able to get DNSNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
+        it "Should be able to get EnhancedKeyUsageList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
-            $cert | Should -Not -Be null
-            $cert.EnhancedKeyUsageList | Should -Not -Be null
-            $cert.EnhancedKeyUsageList.Count | Should -Be 1
+            $cert | Should -Not -Be $null
+            $cert.EnhancedKeyUsageList | should not be null
+            $cert.EnhancedKeyUsageList.Count | Should -Be 3
             $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
@@ -158,6 +162,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
     }
     Context "Get-ChildItem tests"{
+        BeforeAll {
+            $cert = Get-GoodServerCertificateObject
+        }
         it "Should filter to codesign certificates" {
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
@@ -165,6 +172,59 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $allCerts | Should -Not -Be null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
             $nonCodeSignCertCount | Should -Not -Be 0
+        }
+        it "Should filter to ExpiringInDays certificates" {
+            $thumbprint = $cert.Thumbprint
+            $NotAfter = $cert.NotAfter
+            $before = ($NotAfter.AddDays(-1) - (Get-Date)).Days
+            $after = ($NotAfter.AddDays(+1) - (Get-Date)).Days
+            $beforeCerts = Get-ChildItem cert:\CurrentUser\My\$thumbprint -ExpiringInDays $before
+            $afterCerts = Get-ChildItem cert:\CurrentUser\My\$thumbprint -ExpiringInDays $after
+
+            $beforeCerts.Count | Should -Be 0
+            $afterCerts.Count | Should -Be 1
+            $afterCerts.Thumbprint | Should -BeExactly $thumbprint
+        }
+        it "Should filter to DocumentEncryptionCert certificates" {
+            $thumbprint = $cert.Thumbprint
+            $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DocumentEncryptionCert
+
+            $certs.Count | Should -Be 1
+            $certs.Thumbprint | Should -BeExactly $thumbprint
+        }
+        it "Should filter to DNSName certificates: <name>" -TestCases @(
+            @{ Name = "in Subject";                  SearchName = '*ncipher*'; Count = 1; Thumbprint = $cert.Thumbprint }
+            @{ Name = "in Subject Alternative Name"; SearchName = '*conto*';   Count = 1; Thumbprint = $cert.Thumbprint }
+            @{ Name = "not existing name";           SearchName = '*QWERTY*';  Count = 0; Thumbprint = $null }
+        ) {
+            param($name, $searchName, $count, $thumbprint)
+
+            $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DNSName $searchName
+
+            $certs.Count | Should -Be $count
+            $certs.Thumbprint | Should -BeExactly $thumbprint
+
+        }
+        it "Should filter to SSLServerAuthentication certificates" {
+            $thumbprint = $cert.Thumbprint
+
+            $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -SSLServerAuthentication
+
+            $certs.Count | Should -Be 1
+            $certs.Thumbprint | Should -BeExactly $thumbprint
+        }
+        it "Should filter to EKU certificates: <name>" -TestCases @(
+            @{ Name = "can filter by name";                            EKU = '*encryp*';                             Count = 1; Thumbprint = $cert.Thumbprint }
+            @{ Name = "can filter by OID";                             EKU = '*1.4.1.311.80.1*';                     Count = 1; Thumbprint = $cert.Thumbprint }
+            @{ Name = "all patterns should be passed - positive test"; EKU = "1.3.6.1.5.5.7.3.2","*1.4.1.311.80.1*"; Count = 1; Thumbprint = $cert.Thumbprint }
+            @{ Name = "all patterns should be passed - negative test"; EKU = "*QWERTY*","*encryp*";                  Count = 0; Thumbprint = $null }
+        ) {
+            param($name, $ekuSearch, $count, $thumbprint)
+
+            $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -EKU $ekuSearch
+
+            $certs.Count | Should -Be $count
+            $certs.Thumbprint | Should -BeExactly $thumbprint
         }
     }
 }
