@@ -1525,6 +1525,14 @@ namespace System.Management.Automation
                 // So, replace null characters with the Unicode `SYMBOL FOR NULL`
                 // We don't just remove the characters to preserve the fact that a null character was there.
                 textToLog = textToLog.Replace('\u0000', '\u2400');
+#if UNIX
+                if (Platform.IsLinux)
+                {
+                    // Syslog encodes CR and NL to their octal values.
+                    // We will replace them with a unicode charater for easier viewing
+                    textToLog = textToLog.Replace('\u000A', '\u23CE').Replace('\u000D', '\u23CE');
+                }
+#endif
             }
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
