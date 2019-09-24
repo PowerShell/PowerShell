@@ -140,6 +140,9 @@ namespace PowerShell.Hosting.SDK.Tests
             }
         }
 
+        /// <summary>
+        /// Reference assemblies should be handled correctly so that Add-Type works in the hosting scenario
+        /// </summary>
         [Fact]
         public static void TestAddTypeCmdletInHostScenario()
         {
