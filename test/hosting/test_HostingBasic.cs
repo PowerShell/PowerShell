@@ -139,5 +139,40 @@ namespace PowerShell.Hosting.SDK.Tests
                 File.Delete(target);
             }
         }
+
+        /// <summary>
+        /// Reference assemblies should be handled correctly so that Add-Type works in the hosting scenario.
+        /// </summary>
+        [Fact]
+        public static void TestAddTypeCmdletInHostScenario()
+        {
+            string code = @"
+                using System;
+                public class Foo
+                {
+                    public Foo(string name, string path)
+                    {
+                        this.Name = name;
+                        this.Path = path;
+                    }
+
+                    public string Name;
+                    public string Path;
+                }
+            ";
+
+            using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
+            {
+                ps.AddCommand("Add-Type").AddParameter("TypeDefinition", code).Invoke();
+                ps.Commands.Clear();
+
+                var results = ps.AddScript("[Foo]::new('Joe', 'Unknown')").Invoke();
+                Assert.Single(results);
+
+                dynamic foo = results[0];
+                Assert.Equal("Joe", foo.Name);
+                Assert.Equal("Unknown", foo.Path);
+            }
+        }
     }
 }
