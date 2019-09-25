@@ -1555,47 +1555,47 @@ namespace System.Management.Automation
 
         private static string FormatLogString(string textToLog)
         {
-            // characters we ar translating from
-            const char nullControlChar = '\u0000';
-            // new line / line feed control character
-            const char lfControlChar = '\u000A';
-            // carriage return control character
-            const char crControlChar = '\u000D';
+            // characters we are translating from
+
+            const char NullControlChar = '\u0000';
 
             // The null symbol - `␀`
-            const char nullSymbolChar = '\u2400';
-
-            // We chose the return symbol because we believe it is more associated with these concepts
-            // than the carriage return (␍), line feed (␊), or new line (␤) symbols.
-            // The return symbol - `⏎`
-            const char returnSymbolChar = '\u23CE';
+            const char NullSymbolChar = '\u2400';
 
             // No logging mechanism(s) cannot handle null and rendering may not be able to handle
             // null as we have the string defined as a null terminated string in the manifest.
             // So, replace null characters with the Unicode `SYMBOL FOR NULL`
             // We don't just remove the characters to preserve the fact that a null character was there.
 #if UNIX
+            const char LinefeedControlChar = '\u000A';
+            const char CarriageReturnControlChar = '\u000D';
+
+            // We chose the return symbol because we believe it is more associated with these concepts
+            // than the carriage return (␍), line feed (␊), or new line (␤) symbols.
+            // The return symbol - `⏎`
+            const char ReturnSymbolChar = '\u23CE';
+
             if (Platform.IsLinux)
             {
                 // Because the creation of the string builder is expensive
                 // We only do this on Linux where we are doing multiple replace operations
                 StringBuilder logBuilder = new StringBuilder(textToLog);
 
-                logBuilder.Replace(nullControlChar, nullSymbolChar);
+                logBuilder.Replace(NullControlChar, NullSymbolChar);
 
                 // Syslog (only used on Linux) encodes CR and NL to their octal values.
                 // We will replace them with a unicode charater for easier viewing
-                logBuilder.Replace(lfControlChar, returnSymbolChar);
-                logBuilder.Replace(crControlChar, returnSymbolChar);
+                logBuilder.Replace(LinefeedControlChar, ReturnSymbolChar);
+                logBuilder.Replace(CarriageReturnControlChar, ReturnSymbolChar);
 
                 return logBuilder.ToString();
             }
             else
             {
-                return textToLog.Replace(nullControlChar, nullSymbolChar);
+                return textToLog.Replace(NullControlChar, NullSymbolChar);
             }
 #else
-                return textToLog.Replace(nullControlChar, nullSymbolChar);
+                return textToLog.Replace(NullControlChar, NullSymbolChar);
 #endif
         }
 
