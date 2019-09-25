@@ -1592,6 +1592,16 @@ function New-UnifiedNugetPackage
                 CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
             }
 
+            if ($file -eq "Microsoft.PowerShell.SDK.dll")
+            {
+                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # This is to make 'Add-Type' work in application that hosts PowerShell.
+
+                $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
+                $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
+                Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
+            }
+
             #region nuspec
             # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
             $deps = [System.Collections.ArrayList]::new()
