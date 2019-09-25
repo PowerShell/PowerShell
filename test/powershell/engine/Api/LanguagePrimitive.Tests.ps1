@@ -146,7 +146,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
         # The script actually returns a enum value, and the converted delegate should return the boxed enum value.
         $handlerReturnObject = [System.Func[string, object]] { param([string]$str) [Test.API.TestEnum]::Music }
         # The script actually returns a string, and the converted delegate should return the corresponding enum value.
-        $handlerReturnEnum = [System.Func[string, TestEnum]] { param([string]$str) "Music" }
+        $handlerReturnEnum = [System.Func[string, Test.API.TestEnum]] { param([string]$str) "Music" }
         $test = [Test.API.LanguagePrimitivesTest]::new($handlerReturnObject, $handlerReturnEnum)
 
         $test.TestHandlerReturnEnum() | Should -BeTrue
