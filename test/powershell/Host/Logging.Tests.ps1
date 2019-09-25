@@ -211,7 +211,7 @@ $pid
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"`u{23CE}")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
@@ -240,7 +240,7 @@ $pid
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"`u{23CE}")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
