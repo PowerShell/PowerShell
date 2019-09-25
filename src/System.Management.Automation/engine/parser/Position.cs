@@ -141,6 +141,7 @@ namespace System.Management.Automation.Language
 
             string sourceLine = position.StartScriptPosition.Line.TrimEnd();
 
+            string whitespaceFill = string.Empty;
             string message = string.Empty;
             if (!string.IsNullOrEmpty(sourceLine))
             {
@@ -230,20 +231,61 @@ namespace System.Management.Automation.Language
                 }
 
                 if (needsPrefixDots)
-                    sb.Append("... ");
+                {
+                    sb.Append("\u2026 ");
+                }
+
                 sb.Append(sourceLine);
+
                 if (needsSuffixDots)
-                    sb.Append(" ...");
+                {
+                    sb.Append(" \u2026");
+                }
+
                 sb.Append(Environment.NewLine);
-                sb.Append("+ ");
-                sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 4 : 0));
-                // errorLength of 0 happens at EOF - always write out 1.
-                sb.Append('~', errorLength > 0 ? errorLength : 1);
+                if (ExperimentalFeature.IsEnabled("PSErrorView"))
+                {
+                    whitespaceFill = "      ".Substring(0, position.StartLineNumber.ToString().Length);
+                    sb.Append(whitespaceFill);
+                    sb.Append("\x1b[1;36m | ");
+                    sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 2 : 0));
+                    // errorLength of 0 happens at EOF - always write out 1.
+                    sb.Append("\x1b[1;31m");
+                    sb.Append('^', errorLength > 0 ? errorLength : 1);
+                    sb.Append("\x1b[0m");
+                }
+                else
+                {
+                    sb.Append("+ ");
+                    sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 2 : 0));
+                    // errorLength of 0 happens at EOF - always write out 1.
+                    sb.Append('~', errorLength > 0 ? errorLength : 1);
+                }
+
                 message = sb.ToString();
             }
 
-            return StringUtil.Format(ParserStrings.TextForPositionMessage, fileName, position.StartLineNumber,
-                                     position.StartColumnNumber, message);
+            if (ExperimentalFeature.IsEnabled("PSErrorView"))
+            {
+                return StringUtil.Format(
+                    ParserStrings.TextForPositionMessageNew,
+                    fileName,
+                    position.StartLineNumber,
+                    position.StartColumnNumber,
+                    message,
+                    whitespaceFill).Replace('#','\x1b');
+
+            }
+            else
+            {
+                return StringUtil.Format(
+                    ParserStrings.TextForPositionMessage,
+                    fileName,
+                    position.StartLineNumber,
+                    position.StartColumnNumber,
+                    message);
+
+            }
         }
 
         /// <summary>

@@ -611,6 +611,11 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>At {0}:{1} char:{2}
 + {3}</value>
   </data>
+  <data name="TextForPositionMessageNew" xml:space="preserve">
+    <value>#[0mAt {0}:{1} char:{2}
+#[1;36m{4} |
+#[1;36m{1} | #[0m{3} </value>
+  </data>
   <data name="TextForCharPositionMessage" xml:space="preserve">
     <value>At char:{0}</value>
   </data>

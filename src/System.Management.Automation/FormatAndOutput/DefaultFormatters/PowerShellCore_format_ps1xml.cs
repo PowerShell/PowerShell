@@ -794,6 +794,32 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                   $newErrorView = (Get-ExperimentalFeature -Name PSErrorView).Enabled
+
+                                   $resetColor = ""`e[0m""
+
+                                   function Get-VT100Color([ConsoleColor] $color) {
+                                       switch ($color) {
+                                           [ConsoleColor]::Black { ""`e[2;30m"" }
+                                           [ConsoleColor]::DarkRed { ""`e[2;31m"" }
+                                           [ConsoleColor]::DarkGreen { ""`e[2;32m"" }
+                                           [ConsoleColor]::DarkYellow { ""`e[2;33m"" }
+                                           [ConsoleColor]::DarkBlue { ""`e[2;34m"" }
+                                           [ConsoleColor]::DarkMagenta { ""`e[2;35m"" }
+                                           [ConsoleColor]::DarkCyan { ""`e[2;36m"" }
+                                           [ConsoleColor]::Gray { ""`e[2;37m"" }
+                                           [ConsoleColor]::DarkGray { ""`e[1;30m"" }
+                                           [ConsoleColor]::Red { ""`e[1;31m"" }
+                                           [ConsoleColor]::Green { ""`e[1;32m"" }
+                                           [ConsoleColor]::Yellow { ""`e[1;33m"" }
+                                           [ConsoleColor]::Blue { ""`e[1;34m"" }
+                                           [ConsoleColor]::Magenta { ""`e[1;35m"" }
+                                           [ConsoleColor]::Cyan { ""`e[1;36m"" }
+                                           [ConsoleColor]::White { ""`e[1;37m"" }
+                                           default { ""`e[1;31m"" }
+                                       }
+                                   }
+
                                    if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
                                         $_.Exception.Message
                                    }
@@ -813,6 +839,32 @@ namespace System.Management.Automation.Runspaces
 
                                         if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
                                             $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
+                                        }
+
+                                        if ($newErrorView) {
+                                            $errorColor = """"
+                                            if ($Host.PrivateData) {
+                                                $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
+                                            }
+
+                                            if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
+                                                if ($_.Exception -is [System.Management.Automation.ParseException]) {
+                                                    $posmsg = $_.Exception.Message + $posmsg
+                                                }
+                                                else {
+                                                    $posmsg += $errorColor + $_.Exception.Message
+                                                }
+                                            }
+                                            else {
+                                                $posmsg += $errorColor + $_.ErrorDetails.Message
+                                            }
+
+                                            $category = """"
+                                            if ($_.CategoryInfo.Category) {
+                                                $category = ""[$($_.CategoryInfo.Category)]""
+                                            }
+
+                                            return ""${errorColor}Error ${category}${resetColor}: $($_.CategoryInfo.Reason)`n${posmsg}${resetcolor}""
                                         }
 
                                         $indent = 4
