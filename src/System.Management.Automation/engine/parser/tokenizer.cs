@@ -4994,9 +4994,6 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
-                    return this.NewToken(TokenKind.QuestionMark);
-
-                case '?':
                     c1 = PeekChar();
 
                     if (c1 == '=')
@@ -5011,7 +5008,7 @@ namespace System.Management.Automation.Language
                         return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestion);
                     }
 
-                    return ScanGenericToken(c);
+                    return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
                     if (AtEof())

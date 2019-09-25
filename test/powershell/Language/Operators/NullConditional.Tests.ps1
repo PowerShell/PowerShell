@@ -63,6 +63,9 @@ Describe 'NullConditionalOperations' -tag 'CI' {
     }
 
     Context 'Null coalesce operator ??' {
+        BeforeEach {
+            $x = $null
+        }
 
         It 'Variable does not exist' {
             $variableDoesNotExist ?? 100 | Should -Be 100
