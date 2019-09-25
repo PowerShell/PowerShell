@@ -417,7 +417,7 @@ namespace System.Management.Automation.Language
         QuestionMark = 100,
 
         /// <summary>The null conditional assignment operator '?='.</summary>
-        QuestionEquals = 101,
+        QuestionQuestionEquals = 101,
 
         /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 102,
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Language
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*      QuestionEquals  */ TokenFlags.AssignmentOperator,
+         /* QuestionQuestionEquals  */ TokenFlags.AssignmentOperator,
             /*    QuestionQuestion  */ TokenFlags.BinaryOperator,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*       QuestionEquals */ "?=",
+          /* QuestionQuestionEquals */ "??=",
             /*     QuestionQuestion */ "??",
             /*    Reserved slot 4   */ string.Empty,
             /*    Reserved slot 5   */ string.Empty,

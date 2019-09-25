@@ -3,7 +3,7 @@
 
 Describe 'NullConditionalOperations' -tag 'CI' {
 
-    Context "Null conditional assignment operator ?=" {
+    Context "Null conditional assignment operator ??=" {
         BeforeAll {
             $someGuid = New-Guid
 
@@ -21,17 +21,17 @@ Describe 'NullConditionalOperations' -tag 'CI' {
         It 'Variable doesnot exist' {
             Remove-Variable variableDoesNotExist -ErrorAction SilentlyContinue -Force
 
-            $variableDoesNotExist ?= 1
+            $variableDoesNotExist ??= 1
             $variableDoesNotExist | Should -Be 1
 
-            $variableDoesNotExist ?= 2
+            $variableDoesNotExist ??= 2
             $variableDoesNotExist | Should -Be 1
         }
 
         It 'Variable exists and is null' {
             $variableDoesNotExist = $null
 
-            $variableDoesNotExist ?= 2
+            $variableDoesNotExist ??= 2
             $variableDoesNotExist | Should -Be 2
         }
 
@@ -39,25 +39,25 @@ Describe 'NullConditionalOperations' -tag 'CI' {
             param ($name, $valueToSet)
 
             $x = $null
-            $x ?= $valueToSet
+            $x ??= $valueToSet
             $x | Should -Be $valueToSet
         }
 
         It 'Validate hashtable can be set' {
             $x = $null
-            $x ?= @{ 1 = '1' }
+            $x ??= @{ 1 = '1' }
             $x.Keys | Should -Be @(1)
         }
 
         It 'Validate lhs is returned' {
             $x = 100
-            $x ?= 200
+            $x ??= 200
             $x | Should -Be 100
         }
 
         It 'Error case' {
             $e = $null
-            $null = [System.Management.Automation.Language.Parser]::ParseInput('1 ?= 100', [ref] $null, [ref] $e)
+            $null = [System.Management.Automation.Language.Parser]::ParseInput('1 ??= 100', [ref] $null, [ref] $e)
             $e[0].ErrorId | Should -BeExactly 'InvalidLeftHandSide'
         }
     }
@@ -102,11 +102,11 @@ Describe 'NullConditionalOperations' -tag 'CI' {
 
     Context 'Combined usage of null conditional operators' {
 
-        It '?? and ?= used together' {
-            $x ?= 100 ?? 200
+        It '?? and ??= used together' {
+            $x ??= 100 ?? 200
             $x | Should -Be 100
 
-            $y ?= 100 ?? 200
+            $y ??= 100 ?? 200
             $y | Should -Be 100
         }
     }

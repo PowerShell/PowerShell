@@ -794,7 +794,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionEquals: return GetCoalesceExpression(right, av, tokenKind);
+                case TokenKind.QuestionQuestionEquals: return GetCoalesceExpression(right, av, tokenKind);
             }
 
             var exprs = new List<Expression>();
@@ -810,7 +810,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
 
-            if (tokenKind == TokenKind.QuestionEquals)
+            if (tokenKind == TokenKind.QuestionQuestionEquals)
             {
                 exprs.Add(leftAssignableValue.SetValue(this, Expression.MakeBinary(ExpressionType.Coalesce,leftExpr,rhs)));
                 return Expression.Block(temps, exprs);
