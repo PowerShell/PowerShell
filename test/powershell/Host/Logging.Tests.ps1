@@ -130,6 +130,7 @@ function Get-RegEx
     $regex = $regex -replace '\-', '\-'
     $regex = $regex -replace '\$', '\$'
     $regex = $regex -replace '\^', '\^'
+    $regex = $regex -replace "\`u{23CE}", "[`u{23CE}\?]"
     return $regex
 }
 
