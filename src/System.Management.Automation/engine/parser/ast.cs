@@ -432,7 +432,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// A placeholder statement used when there are syntactic errors in the source script.
     /// </summary>
-    public class ErrorStatementAst : PipelineBaseAst
+    public class ErrorStatementAst : ChainableAst
     {
         internal ErrorStatementAst(IScriptExtent extent, IEnumerable<Ast> nestedAsts = null)
             : base(extent)
@@ -5026,7 +5026,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the break statement.
     /// </summary>
-    public class BreakStatementAst : ChainableStatementAst
+    public class BreakStatementAst : StatementAst
     {
         /// <summary>
         /// Construct a break statement ast.
@@ -5083,7 +5083,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the continue statement.
     /// </summary>
-    public class ContinueStatementAst : ChainableStatementAst
+    public class ContinueStatementAst : StatementAst
     {
         /// <summary>
         /// Construct a continue statement.
@@ -5140,7 +5140,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the return statement.
     /// </summary>
-    public class ReturnStatementAst : ChainableStatementAst
+    public class ReturnStatementAst : StatementAst
     {
         /// <summary>
         /// Construct a return statement.
@@ -5197,7 +5197,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the exit statement.
     /// </summary>
-    public class ExitStatementAst : ChainableStatementAst
+    public class ExitStatementAst : StatementAst
     {
         /// <summary>
         /// Construct an exit statement.
@@ -5254,7 +5254,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast representing the throw statement.
     /// </summary>
-    public class ThrowStatementAst : ChainableStatementAst
+    public class ThrowStatementAst : StatementAst
     {
         /// <summary>
         /// Construct a throw statement.
@@ -5343,16 +5343,15 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Represents a statement that may appear on the RHS of a chain operator.
+    /// An AST representing a syntax element chainable with '&amp;&amp;' or '||'.
     /// </summary>
-    public abstract class ChainableStatementAst : StatementAst
+    public abstract class ChainableAst : PipelineBaseAst
     {
         /// <summary>
-        /// Construct a new chain statement AST with the given extent.
+        /// Construct a new chainable AST with the given extent.
         /// </summary>
-        /// <param name="extent">The script extent of the chainable statement this AST represents.</param>
-        /// <returns></returns>
-        protected ChainableStatementAst(IScriptExtent extent) : base(extent)
+        /// <param name="extent">The script extent of the AST.</param>
+        protected ChainableAst(IScriptExtent extent) : base(extent)
         {
         }
     }
@@ -5361,132 +5360,27 @@ namespace System.Management.Automation.Language
     /// A command-oriented flow-controlled pipeline chain.
     /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
     /// </summary>
-    public class StatementChainAst : ChainableStatementAst
-    {
-        /// <summary>
-        /// Create a new statement chain AST from two statements and an operator.
-        /// </summary>
-        /// <param name="lhsStatement">The statement to the left of the operator.</param>
-        /// <param name="rhsStatement">The statement to the right of the operator.</param>
-        /// <param name="chainOperator">The operator used.</param>
-        /// <param name="extent">The extent of the chained statement.</param>
-        public StatementChainAst(
-            IScriptExtent extent,
-            PipelineBaseAst lhsStatement,
-            ChainableStatementAst rhsStatement,
-            TokenKind chainOperator)
-            : base(extent)
-        {
-            if (lhsStatement == null)
-            {
-                throw new ArgumentNullException(nameof(lhsStatement));
-            }
-
-            if (rhsStatement == null)
-            {
-                throw new ArgumentNullException(nameof(rhsStatement));
-            }
-
-            if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
-            {
-                throw new ArgumentException(nameof(chainOperator));
-            }
-
-            LhsStatement = lhsStatement;
-            RhsStatement = rhsStatement;
-            Operator = chainOperator;
-
-            SetParent(LhsStatement);
-            SetParent(RhsStatement);
-        }
-
-        /// <summary>
-        /// The left hand statement in the chain.
-        /// </summary>
-        public PipelineBaseAst LhsStatement { get; }
-
-        /// <summary>
-        /// The right hand statement in the chain.
-        /// </summary>
-        public ChainableStatementAst RhsStatement { get; }
-
-        /// <summary>
-        /// The chaining operator used.
-        /// </summary>
-        public TokenKind Operator { get; }
-
-        /// <summary>
-        /// Create a copy of this Ast.
-        /// </summary>
-        public override Ast Copy()
-        {
-            return new StatementChainAst(Extent, CopyElement(LhsStatement), CopyElement(RhsStatement), Operator);
-        }
-
-        internal override object Accept(ICustomAstVisitor visitor)
-        {
-            return (visitor as ICustomAstVisitor2)?.VisitStatementChain(this);
-        }
-
-        internal override AstVisitAction InternalVisit(AstVisitor visitor)
-        {
-            AstVisitAction action;
-
-            // Can only visit new AST type if using AstVisitor2
-            if (visitor is AstVisitor2 visitor2)
-            {
-                action = visitor2.VisitStatementChain(this);
-
-                // If SkipChildren or StopVisit, we end and run post action here
-                switch (action)
-                {
-                    case AstVisitAction.SkipChildren:
-                        return visitor2.CheckForPostAction(this, AstVisitAction.Continue);
-
-                    case AstVisitAction.StopVisit:
-                        return visitor2.CheckForPostAction(this, AstVisitAction.StopVisit);
-                }
-            }
-
-            // To get here we haven't got an AstVisitor2,
-            // or we did and the action is Continue.
-            // So no need to check -- just proceed.
-            action = LhsStatement.InternalVisit(visitor);
-
-            if (action != AstVisitAction.StopVisit)
-            {
-                action = RhsStatement.InternalVisit(visitor);
-            }
-
-            return visitor.CheckForPostAction(this, action);
-        }
-    }
-
-    /// <summary>
-    /// A command-oriented flow-controlled pipeline chain.
-    /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
-    /// </summary>
-    public class PipelineChainAst : PipelineBaseAst
+    public class PipelineChainAst : ChainableAst
     {
         /// <summary>
         /// Create a new statement chain AST from two statements and an operator.
         /// </summary>
         /// <param name="extent">The extent of the chained statement.</param>
-        /// <param name="lhsPipeline">The statement to the left of the operator.</param>
-        /// <param name="rhsPipeline">The statement to the right of the operator.</param>
+        /// <param name="lhsChain">The pipeline or pipeline chain to the left of the operator.</param>
+        /// <param name="rhsPipeline">The pipeline to the right of the operator.</param>
         /// <param name="chainOperator">The operator used.</param>
-        /// <param name="background">If true, the pipeline chain should be backgrounded</param>
+        /// <param name="background">True when this chain has been invoked with the background operator, false otherwise.</param>
         public PipelineChainAst(
             IScriptExtent extent,
-            PipelineBaseAst lhsPipeline,
-            PipelineBaseAst rhsPipeline,
+            ChainableAst lhsChain,
+            ChainableAst rhsPipeline,
             TokenKind chainOperator,
             bool background = false)
             : base(extent)
         {
-            if (lhsPipeline == null)
+            if (lhsChain == null)
             {
-                throw new ArgumentNullException(nameof(lhsPipeline));
+                throw new ArgumentNullException(nameof(lhsChain));
             }
 
             if (rhsPipeline == null)
@@ -5499,7 +5393,7 @@ namespace System.Management.Automation.Language
                 throw new ArgumentException(nameof(chainOperator));
             }
 
-            LhsPipeline = lhsPipeline;
+            LhsPipeline = lhsChain;
             RhsPipeline = rhsPipeline;
             Operator = chainOperator;
             Background = background;
@@ -5509,14 +5403,14 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The left hand statement in the chain.
+        /// The left hand pipeline in the chain.
         /// </summary>
-        public PipelineBaseAst LhsPipeline { get; }
+        public ChainableAst LhsPipeline { get; }
 
         /// <summary>
-        /// The right hand statement in the chain.
+        /// The right hand pipeline in the chain.
         /// </summary>
-        public PipelineBaseAst RhsPipeline { get; }
+        public ChainableAst RhsPipeline { get; }
 
         /// <summary>
         /// The chaining operator used.
@@ -5524,9 +5418,8 @@ namespace System.Management.Automation.Language
         public TokenKind Operator { get; }
 
         /// <summary>
-        /// 
+        /// Indicates whether this chain has been invoked with the background operator.
         /// </summary>
-        /// <value></value>
         public bool Background { get; }
 
         /// <summary>
@@ -5611,7 +5504,7 @@ namespace System.Management.Automation.Language
     /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
     /// A pipeline must have at least 1 command.  The first command may be an expression or a command invocation.
     /// </summary>
-    public class PipelineAst : PipelineBaseAst
+    public class PipelineAst : ChainableAst
     {
         /// <summary>
         /// Construct a pipeline from a collection of commands.
@@ -5719,6 +5612,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the PipelineAst instance.
         /// </summary>
+        /// <returns>A fresh copy of this PipelineAst instance.</returns>
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);

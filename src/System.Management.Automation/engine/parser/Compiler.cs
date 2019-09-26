@@ -2907,8 +2907,9 @@ namespace System.Management.Automation.Language
                     Compiler._functionContext, exception);
                 var catchAll = Expression.Catch(
                     exception,
-                    Expression.Block(callCheckActionPreference,
-                    Expression.Goto(dispatchNextStatementTarget)));
+                    Expression.Block(
+                        callCheckActionPreference,
+                        Expression.Goto(dispatchNextStatementTarget)));
 
                 var expr = Expression.TryCatch(Expression.Block(tryBodyExprs),
                                                new CatchBlock[] { s_catchFlowControl, catchAll });
@@ -3081,36 +3082,7 @@ namespace System.Management.Automation.Language
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            // Pipeline chains can have partial assignment results and need to be handled differently
-            if (RequiresPartialAssignmentHandling(assignmentStatementAst))
-            {
-                return CompilePartialResultAssignment(assignmentStatementAst);
-            }
-
             return CompileAssignment(assignmentStatementAst);
-        }
-
-        private bool RequiresPartialAssignmentHandling(AssignmentStatementAst assignmentStatementAst)
-        {
-            StatementAst rhsStatementAst = assignmentStatementAst.Right;
-            while (true)
-            {
-                switch (rhsStatementAst)
-                {
-                    case AssignmentStatementAst subAssignmentAst:
-                        rhsStatementAst = subAssignmentAst.Right;
-                        continue;
-
-                    case StatementChainAst _:
-                        return true;
-
-                    case PipelineChainAst pipelineChainAst:
-                        return !pipelineChainAst.Background;
-
-                    default:
-                        return false;
-                }
-            }
         }
 
         private Expression CompileAssignment(
@@ -3148,163 +3120,18 @@ namespace System.Management.Automation.Language
             return Expression.Block(exprs);
         }
 
-        private Expression CompilePartialResultAssignment(AssignmentStatementAst assignmentStatementAst)
+        public object VisitPipelineChain(PipelineChainAst statementChainAst)
         {
-            // The normal assignment logic won't work for us,
-            // since capture/assign presumes the entire right-hand expression must either fail or succeed.
-            // Even CaptureAstContext.AssignmentWithResultPreservation throws
-            // when a captured expression that throws is evaluated,
-            // causing assignment not to happen.
-            //
-            // Instead, we need to create a temporary pipe,
-            // incrementally fill it with the expression result
-            // and in any event assign the result to the given variables;
-            // The logic looks like:
-            //    List<object> resultList;
-            //    Pipe oldPipe;
-            //    try {
-            //        oldPipe = funcContext._currentPipe;
-            //        resultList = new List<object>();
-            //        funcContext._currentPipe = new Pipe(resultList);
-            //        SetVariableListForTemporaryPipe(oldPipe, funcContext._currentPipe);
-            //        <rhs expression with temp pipe implicit>
-            //    } finally {
-            //        <assign lhs from result list>
-            //        funcContext._currentPipe = oldipe;
-            //    }
-
-            // First we need to get all the variables we intend to assign.
-            // This builds the list of them from the outside in,
-            // so in $x = $y = $z = expr, $x is 0, $y is 1 and $z is 2.
-            var variablesToAssign = new List<(ExpressionAst, TokenKind)>();
-            StatementAst baseStatementAst = null;
-            AssignmentStatementAst currentAssignmentAst = assignmentStatementAst;
-            while (currentAssignmentAst != null)
-            {
-                variablesToAssign.Add((currentAssignmentAst.Left, currentAssignmentAst.Operator));
-
-                baseStatementAst = currentAssignmentAst.Right;
-                currentAssignmentAst = baseStatementAst as AssignmentStatementAst;
-            }
-
-            // Set up parameters to remember values we need to reuse
-            ParameterExpression resultList = NewTemp(typeof(List<object>), nameof(resultList));
-            ParameterExpression oldPipe = NewTemp(typeof(Pipe), nameof(oldPipe));
-            ParameterExpression valueResult = NewTemp(typeof(object), nameof(valueResult));
-            var temps = new ParameterExpression[]
-            {
-                resultList,
-                oldPipe,
-                valueResult
-            };
-            
-            // The try block main body
-            var tryBodyExprs = new Expression[]
-            {
-                Expression.Assign(oldPipe, s_getCurrentPipe),
-                Expression.Assign(
-                    resultList,
-                    Expression.New(CachedReflectionInfo.ObjectList_ctor)),
-                Expression.Assign(
-                    s_getCurrentPipe,
-                    Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)),
-                Expression.Call(
-                    oldPipe,
-                    CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe,
-                    s_getCurrentPipe),
-                Compile(baseStatementAst)
-            };
-
-            // Build the finally block, which will have three statements
-            var finallyBlockExprs = new List<Expression>(3)
-            {
-                // The reassignment of the old pipe
-                Expression.Assign(s_getCurrentPipe, oldPipe),
-                // Drain the temporary pipe we used into the right value and store the result
-                // in case the whole assignment expression value is needed by an enclosing context
-                // (like a conditional)
-                Expression.Assign(valueResult,
-                    Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList))
-            };
-
-            // Now perform the assignment of the result to all the assignable things on the left hand side
-            // We move from the innermost assignment out, since things like += could change the value as we move left
-            Expression assignmentExpression = valueResult;
-            for (int i = variablesToAssign.Count - 1; i >= 0; i--)
-            {
-                ExpressionAst lhsExpressionAst = variablesToAssign[i].Item1;
-                TokenKind assignmentOperator = variablesToAssign[i].Item2;
-
-                // Deal with LHS array assignment like $x, $y, $z = stmt
-                ArrayLiteralAst arrayLhs = null;
-                switch (lhsExpressionAst)
-                {
-                    case ArrayLiteralAst arrayLiteralAst:
-                        arrayLhs = arrayLiteralAst;
-                        break;
-
-                    case ParenExpressionAst parenExpressionAst:
-                        arrayLhs = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
-                        break;
-                }
-
-                // Handle destructuring assignment like $x, $y = ...
-                if (arrayLhs != null)
-                {
-                    assignmentExpression = DynamicExpression.Dynamic(
-                        PSArrayAssignmentRHSBinder.Get(arrayLhs.Elements.Count),
-                        typeof(IList),
-                        assignmentExpression);
-                }
-
-                // Assign the expression to the current LHS
-                assignmentExpression = Expression.Block(
-                    UpdatePosition(lhsExpressionAst.Parent),
-                    ReduceAssignment(
-                        (ISupportsAssignment)lhsExpressionAst,
-                        assignmentOperator,
-                        assignmentExpression));
-            }
-
-            // Add the final compiled assignment
-            finallyBlockExprs.Add(assignmentExpression);
-
-            return Expression.Block(
-                temps,
-                new Expression[]
-                {
-                    UpdatePosition(assignmentStatementAst),
-                    Expression.TryFinally(
-                        Expression.Block(tryBodyExprs),
-                        Expression.Block(finallyBlockExprs)),
-                    // Include the value so that the assignment itself has the proper value for use in conditions
-                    valueResult
-                });
-        }
-
-        public object VisitStatementChain(StatementChainAst statementChainAst)
-        {
-            return CompileStatementChain(statementChainAst.LhsStatement, statementChainAst.RhsStatement, statementChainAst.Operator);
-        }
-
-        public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
-        {
-            if (pipelineChainAst.Background)
+            // If the statement chain is backgrounded,
+            // we defer that to the background operation call
+            if (statementChainAst.Background)
             {
                 return Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
-                    Expression.Constant(pipelineChainAst),
+                    Expression.Constant(statementChainAst),
                     _functionContext);
             }
 
-            return CompileStatementChain(pipelineChainAst.LhsPipeline, pipelineChainAst.RhsPipeline, pipelineChainAst.Operator);
-        }
-
-        private Expression CompileStatementChain(
-            StatementAst lhsStatement,
-            StatementAst rhsStatement,
-            TokenKind chainOperator)
-        {
             // We want to generate code like:
             //
             // dispatchIndex = 0;
@@ -3361,14 +3188,14 @@ namespace System.Management.Automation.Language
                     ExpressionCache.Constant(0)));
             tryBodyExprs.Add(Expression.Label(label0));
             tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
-            tryBodyExprs.Add(Compile(lhsStatement));
+            tryBodyExprs.Add(Compile(statementChainAst.LhsPipeline));
 
             // Remainder of try statement body
             // L1: dispatchIndex = 2; if ($?) pipeline2;
             // ...
-            StatementAst rhs = rhsStatement;
+            StatementAst rhs = statementChainAst.RhsPipeline;
             bool stillUnrolling = true;
-            TokenKind currentChainOperator = chainOperator;
+            TokenKind currentChainOperator = statementChainAst.Operator;
             int chainIndex = 1;
             do
             {
@@ -3407,18 +3234,13 @@ namespace System.Management.Automation.Language
                         currentChainOperator = pipelineChain.Operator;
                         continue;
 
-                    case StatementChainAst statementChain:
-                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(statementChain.LhsStatement)));
-                        rhs = statementChain.RhsStatement;
-                        currentChainOperator = statementChain.Operator;
-                        continue;
-
                     default:
                         tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(rhs)));
                         stillUnrolling = false;
                         continue;
                 }
-            } while (stillUnrolling);
+            }
+            while (stillUnrolling);
 
             // Add empty expression to make the block value void
             tryBodyExprs.Add(ExpressionCache.Empty);
@@ -3441,11 +3263,13 @@ namespace System.Management.Automation.Language
                 exception);
             CatchBlock catchAll = Expression.Catch(
                 exception,
-                Expression.Block(callCheckActionPreference,
-                Expression.Goto(dispatchNextStatementTargetLabel)));
+                Expression.Block(
+                    callCheckActionPreference,
+                    Expression.Goto(dispatchNextStatementTargetLabel)));
 
-            TryExpression expr = Expression.TryCatch(Expression.Block(tryBodyExprs),
-                                            new CatchBlock[] { s_catchFlowControl, catchAll });
+            TryExpression expr = Expression.TryCatch(
+                Expression.Block(tryBodyExprs),
+                new CatchBlock[] { s_catchFlowControl, catchAll });
 
             exprs.Add(expr);
             exprs.Add(Expression.Label(afterLabel));

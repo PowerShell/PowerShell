@@ -1197,7 +1197,8 @@ namespace System.Management.Automation.Language
                                 // ErrorRecovery: ?
 
                                 IScriptExtent errorPosition = After(token);
-                                ReportIncompleteInput(errorPosition,
+                                ReportIncompleteInput(
+                                    errorPosition,
                                     nameof(ParserStrings.MissingExpressionInNamedArgument),
                                     ParserStrings.MissingExpressionInNamedArgument);
                                 expr = new ErrorExpressionAst(errorPosition);
@@ -1246,7 +1247,8 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: Pretend we saw the argument and keep going.
 
                         IScriptExtent errorExtent = After(commaToken);
-                        ReportIncompleteInput(errorExtent,
+                        ReportIncompleteInput(
+                            errorExtent,
                             nameof(ParserStrings.MissingExpressionAfterToken),
                             ParserStrings.MissingExpressionAfterToken,
                             commaToken.Kind.Text());
@@ -1923,7 +1925,7 @@ namespace System.Management.Automation.Language
             // G      trap-statement
             // G      try-statement
             // G      data-statement
-            // G      pipeline   statement-terminator
+            // G      pipeline-chain   statement-terminator
             // G
             // G  labeled-statement:
             // G      switch-statement
@@ -2066,7 +2068,7 @@ namespace System.Management.Automation.Language
                     if (attributes != null)
                     {
                         Resync(restorePoint);
-                        statement = StatementChainRule();
+                        statement = PipelineChainRule();
                     }
                     else
                     {
@@ -2117,7 +2119,7 @@ namespace System.Management.Automation.Language
                         UngetToken(token);
                     }
 
-                    statement = StatementChainRule();
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2228,7 +2230,7 @@ namespace System.Management.Automation.Language
         private ReturnStatementAst ReturnStatementRule(Token token)
         {
             // G  flow-control-statement:
-            // G      'return'   pipeline:opt
+            // G      'return'   pipeline-chain:opt
 
             PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
@@ -2240,7 +2242,7 @@ namespace System.Management.Automation.Language
         private ExitStatementAst ExitStatementRule(Token token)
         {
             // G  flow-control-statement:
-            // G      'exit'   pipeline:opt
+            // G      'exit'   pipeline-chain:opt
 
             PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
@@ -2254,21 +2256,10 @@ namespace System.Management.Automation.Language
             // G  flow-control-statement:
             // G      'throw'    pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineRule(allowBackground: true);
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
-
-            // If the next token is a statement chain operator,
-            // just report the error and keep parsing
-            Token nextToken = PeekToken();
-            if (nextToken.Kind == TokenKind.AndAnd || nextToken.Kind == TokenKind.OrOr)
-            {
-                ReportError(
-                    nextToken.Extent,
-                    nameof(ParserStrings.StatementChainOperatorAfterThrow),
-                    ParserStrings.StatementChainOperatorAfterThrow);
-            }
 
             return new ThrowStatementAst(extent, pipeline);
         }
@@ -2284,6 +2275,7 @@ namespace System.Management.Automation.Language
             // G      for-statement
             // G      while-statement
             // G      do-statement
+            // G      pipeline-chain
 
             StatementAst statement;
             Token token = NextToken();
@@ -2307,7 +2299,7 @@ namespace System.Management.Automation.Language
                 default:
                     // We can only unget 1 token, but have 2 to unget, so resync on the label.
                     Resync(label);
-                    statement = StatementChainRule();
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2376,12 +2368,12 @@ namespace System.Management.Automation.Language
         private StatementAst IfStatementRule(Token ifToken)
         {
             // G  if-statement:
-            // G      'if'   new-lines:opt   '('   pipeline-statement   ')'   statement-block   elseif-clauses:opt   else-clause:opt
+            // G      'if'   new-lines:opt   '('   pipeline-chain   ')'   statement-block   elseif-clauses:opt   else-clause:opt
             // G  elseif-clauses:
             // G      elseif-clause
             // G      elseif-clauses   elseif-clause
             // G  elseif-clause:
-            // G      'elseif'   new-lines:opt   '('   pipeline-statement   ')'   statement-block
+            // G      'elseif'   new-lines:opt   '('   pipeline-chain   ')'   statement-block
             // G  else-clause:
             // G      'else'   statement-block
 
@@ -2415,7 +2407,8 @@ namespace System.Management.Automation.Language
                     // to find a close paren and statement block.
 
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(errorPosition,
+                    ReportIncompleteInput(
+                        errorPosition,
                         nameof(ParserStrings.IfStatementMissingCondition),
                         ParserStrings.IfStatementMissingCondition,
                         keyword.Text);
@@ -3464,11 +3457,11 @@ namespace System.Management.Automation.Language
             // G            new-lines:opt   for-initializer:opt
             // G            new-lines:opt   ')'   statement-block
             // G  for-initializer:
-            // G      pipeline
+            // G      pipeline-chain
             // G  for-condition:
-            // G      pipeline
+            // G      pipeline-chain
             // G  for-iterator:
-            // G      pipeline
+            // G      pipeline-chain
 
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
@@ -3563,6 +3556,9 @@ namespace System.Management.Automation.Language
         {
             // G  while-statement:
             // G      'while '  new-lines:opt   '('   new-lines:opt   while-condition   new-lines:opt   ')'   statement-block
+            // G
+            // G   while-condition:
+            // G       pipeline-chain
 
             SkipNewlines();
 
@@ -3589,7 +3585,8 @@ namespace System.Management.Automation.Language
                 // to find a close paren and statement block.
 
                 IScriptExtent errorPosition = After(lParen);
-                ReportIncompleteInput(errorPosition,
+                ReportIncompleteInput(
+                    errorPosition,
                     nameof(ParserStrings.MissingExpressionAfterKeyword),
                     ParserStrings.MissingExpressionAfterKeyword,
                     whileToken.Kind.Text());
@@ -5706,24 +5703,35 @@ namespace System.Management.Automation.Language
 
         #region Pipelines
 
-        private StatementAst StatementChainRule(bool mustBePipeline = false)
+        private PipelineBaseAst PipelineChainRule()
         {
-            // G  statement-chain:
-            // G      flow-control-statement
-            // G      pipeline-chain chain-operator statement-chain
+            // G  pipeline-chain:
+            // G      pipeline
+            // G      pipeline-chain chain-operator pipeline
             // G
             // G  chain-operator:
             // G      '||'
             // G      '&&'
 
+            // If this feature is not enabled,
+            // just look for pipelines as before.
             if (!s_pipelineChainsEnabled)
             {
                 return PipelineRule(allowBackground: true);
             }
 
+            RuntimeHelpers.EnsureSufficientExecutionStack();
+
+            // First look for assignment, since PipelineRule once handled that and this supercedes that.
+            // We may end up with an expression here as a result,
+            // in which case we hang on to it to pass it into the first pipeline rule call.
+
             Token assignToken = null;
             ExpressionAst expr;
 
+            // Look for an expression,
+            // which could either be a variable to assign to,
+            // or the first expression in a pipeline: "Hi" | % { $_ }
             var oldTokenizerMode = _tokenizer.Mode;
             try
             {
@@ -5746,6 +5754,7 @@ namespace System.Management.Automation.Language
                 SetTokenizerMode(oldTokenizerMode);
             }
 
+            // If we have an assign token, deal with assignment
             if (expr != null && assignToken != null)
             {
                 SkipNewlines();
@@ -5757,75 +5766,46 @@ namespace System.Management.Automation.Language
                     // pipeline, so just keep parsing.
 
                     IScriptExtent errorExtent = After(assignToken);
-                    ReportIncompleteInput(errorExtent,
+                    ReportIncompleteInput(
+                        errorExtent,
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         assignToken.Kind.Text());
                     statement = new ErrorStatementAst(errorExtent);
                 }
 
-                return new AssignmentStatementAst(ExtentOf(expr, statement),
-                    expr, assignToken.Kind, statement, assignToken.Extent);
+                return new AssignmentStatementAst(
+                    ExtentOf(expr, statement),
+                    expr,
+                    assignToken.Kind,
+                    statement,
+                    assignToken.Extent);
             }
 
+            // Start scanning for a pipeline chain,
+            // possibly starting with the expression from earlier
             ExpressionAst startExpression = expr;
-            PipelineBaseAst currentPipelineChain = null;
+            ChainableAst currentPipelineChain = null;
             Token currentChainOperatorToken = null;
             Token nextToken = null;
             bool background = false;
             while (true)
             {
-                StatementAst nextStatement;
-                if (mustBePipeline || startExpression != null)
+                // Look for the next pipeline in the chain,
+                // at this point we should already have parsed all assignments
+                // in enclosing calls to PipelineChainRule
+                PipelineAst nextPipeline;
+                if (startExpression != null)
                 {
-                    nextStatement = PipelineRule(startExpression);
+                    nextPipeline = (PipelineAst)PipelineRule(startExpression);
                     startExpression = null;
                 }
                 else
                 {
-                    // Look ahead for a control flow keyword
-                    nextToken = NextToken();
-                    bool usedControlFlowStatement = true;
-                    switch (nextToken.Kind)
-                    {
-                        case TokenKind.Throw:
-                            nextStatement = ThrowStatementRule(nextToken);
-                            break;
-
-                        case TokenKind.Return:
-                            nextStatement = ReturnStatementRule(nextToken);
-                            break;
-
-                        case TokenKind.Exit:
-                            nextStatement = ExitStatementRule(nextToken);
-                            break;
-
-                        case TokenKind.Break:
-                            nextStatement = BreakStatementRule(nextToken);
-                            break;
-
-                        case TokenKind.Continue:
-                            nextStatement = ContinueStatementRule(nextToken);
-                            break;
-
-                        default:
-                            UngetToken(nextToken);
-                            nextStatement = PipelineRule();
-                            usedControlFlowStatement = false;
-                            break;
-                    }
-
-                    if (usedControlFlowStatement)
-                    {
-                        return new StatementChainAst(
-                            ExtentOf(currentPipelineChain, nextStatement),
-                            currentPipelineChain,
-                            (ChainableStatementAst)nextStatement,
-                            currentChainOperatorToken.Kind);
-                    }
+                    nextPipeline = (PipelineAst)PipelineRule();
                 }
 
-                if (nextStatement == null)
+                if (nextPipeline == null)
                 {
                     if (currentChainOperatorToken == null)
                     {
@@ -5837,7 +5817,8 @@ namespace System.Management.Automation.Language
                     // Otherwise, we need to report that we were
                     // expecting something after the last non-statement token
                     IScriptExtent errorPosition = After(currentChainOperatorToken);
-                    ReportIncompleteInput(errorPosition,
+                    ReportIncompleteInput(
+                        errorPosition,
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         currentChainOperatorToken.Text);
@@ -5862,14 +5843,16 @@ namespace System.Management.Automation.Language
                     case TokenKind.Ampersand:
                         SkipToken();
                         nextToken = PeekToken();
+
                         switch (nextToken.Kind)
                         {
                             case TokenKind.AndAnd:
                             case TokenKind.OrOr:
                                 SkipToken();
-                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInStatementChain), ParserStrings.BackgroundOperatorInStatementChain);
-                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextStatement, nextToken.Extent));
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInPipelineChain), ParserStrings.BackgroundOperatorInPipelineChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextPipeline, nextToken.Extent));
                         }
+
                         background = true;
                         goto default;
 
@@ -5881,28 +5864,28 @@ namespace System.Management.Automation.Language
                         {
                             if (!background)
                             {
-                                return nextStatement;
+                                return nextPipeline;
                             }
 
                             // Set background on the pipeline AST
-                            ((PipelineAst)nextStatement).Background = true;
-                            return nextStatement;
+                            nextPipeline.Background = true;
+                            return nextPipeline;
                         }
 
                         return new PipelineChainAst(
-                            ExtentOf(currentPipelineChain.Extent, nextStatement.Extent),
+                            ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                             currentPipelineChain,
-                            (PipelineBaseAst)nextStatement,
+                            nextPipeline,
                             currentChainOperatorToken.Kind,
                             background);
                 }
 
                 // Assemble the new chain statement AST
-                var nextPipelineChain = (PipelineBaseAst)nextStatement;
+                ChainableAst nextPipelineChain = nextPipeline;
                 currentPipelineChain = currentPipelineChain == null
                     ? nextPipelineChain
                     : new PipelineChainAst(
-                        ExtentOf(currentPipelineChain.Extent, nextStatement.Extent),
+                        ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                         currentPipelineChain,
                         nextPipelineChain,
                         currentChainOperatorToken.Kind);
@@ -5915,25 +5898,12 @@ namespace System.Management.Automation.Language
                 {
                     ReportIncompleteInput(
                         After(nextToken),
-                        nameof(ParserStrings.EmptyChainElement),
-                        ParserStrings.EmptyChainElement);
+                        nameof(ParserStrings.EmptyPipelineChainElement),
+                        ParserStrings.EmptyPipelineChainElement);
 
                     return currentPipelineChain;
                 }
             }
-        }
-
-        private PipelineBaseAst PipelineChainRule()
-        {
-            // G  pipeline-chain:
-            // G      pipeline
-            // G      pipeline chain-operator pipeline-chain
-            // G
-            // G  chain-operator:
-            // G      '||'
-            // G      '&&'
-
-            return (PipelineBaseAst)StatementChainRule(mustBePipeline: true);
         }
 
         private PipelineBaseAst PipelineRule(
@@ -5975,7 +5945,7 @@ namespace System.Management.Automation.Language
                         // When pipeline chains are not enabled, we must process assignment.
                         // We are looking for <expr> = <statement>, and have seen <expr>.
                         // Now looking for '='
-                        if (!s_pipelineChainsEnabled && expr == null)
+                        if (!s_pipelineChainsEnabled && expr != null)
                         {
                             // We peek here because we are in expression mode,
                             // otherwise =0 will get scanned as a single token.
@@ -5999,7 +5969,8 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: this is a semantic error, so just keep parsing.
 
-                        ReportError(expr.Extent,
+                        ReportError(
+                            expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
                     }
@@ -6053,8 +6024,10 @@ namespace System.Management.Automation.Language
                     }
 
                     var exprExtent = lastRedirection != null ? ExtentOf(expr, lastRedirection) : expr.Extent;
-                    commandAst = new CommandExpressionAst(exprExtent, expr,
-                                                          redirections != null ? redirections.Where(r => r != null) : null);
+                    commandAst = new CommandExpressionAst(
+                        exprExtent,
+                        expr,
+                        redirections?.Where(r => r != null));
                 }
                 else
                 {
@@ -6077,7 +6050,8 @@ namespace System.Management.Automation.Language
                     // point before, but the pipe could be the first character), otherwise the empty element
                     // is after the pipe character.
                     IScriptExtent errorPosition = nextToken != null ? After(nextToken) : PeekToken().Extent;
-                    ReportIncompleteInput(errorPosition,
+                    ReportIncompleteInput(
+                        errorPosition,
                         nameof(ParserStrings.EmptyPipeElement),
                         ParserStrings.EmptyPipeElement);
                 }
@@ -6086,7 +6060,7 @@ namespace System.Management.Automation.Language
                 expr = null;
                 nextToken = PeekToken();
 
-                // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
+                // Skip newlines before pipe tokens to support (pipe)line continuation when pipe
                 // tokens start the next line of script
                 if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuation(nextToken.Extent))
                 {
@@ -6119,6 +6093,7 @@ namespace System.Management.Automation.Language
                         ReportError(
                             nextToken.Extent,
                             nameof(ParserStrings.InvalidEndOfLine),
+                            ParserStrings.InvalidEndOfLine,
                             nextToken.Text);
 
                         if (PeekToken().Kind == TokenKind.EndOfInput)
@@ -6127,7 +6102,6 @@ namespace System.Management.Automation.Language
                         }
 
                         break;
-
 
                     case TokenKind.Ampersand:
                         // When pipeline chains are not enabled, pipelines always handle backgrounding
@@ -6149,7 +6123,8 @@ namespace System.Management.Automation.Language
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;
-                            ReportIncompleteInput(After(nextToken),
+                            ReportIncompleteInput(
+                                After(nextToken),
                                 nameof(ParserStrings.EmptyPipeElement),
                                 ParserStrings.EmptyPipeElement);
                         }
@@ -7605,7 +7580,7 @@ namespace System.Management.Automation.Language
         private ExpressionAst ParenthesizedExpressionRule(Token lParen)
         {
             // G  parenthesized-expression:
-            // G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
+            // G      '('   new-lines:opt   pipeline-chain   new-lines:opt   ')'
             Token rParen;
             PipelineBaseAst pipelineAst;
 
@@ -7621,7 +7596,8 @@ namespace System.Management.Automation.Language
                 if (pipelineAst == null)
                 {
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(errorPosition,
+                    ReportIncompleteInput(
+                        errorPosition,
                         nameof(ParserStrings.ExpectedExpression),
                         ParserStrings.ExpectedExpression);
                     pipelineAst = new ErrorStatementAst(errorPosition);
@@ -7905,7 +7881,8 @@ namespace System.Management.Automation.Language
                 // the closing bracket, but build an expression that can't compile.
 
                 var errorExtent = After(lBracket);
-                ReportIncompleteInput(errorExtent,
+                ReportIncompleteInput(
+                    errorExtent,
                     nameof(ParserStrings.MissingArrayIndexExpression),
                     ParserStrings.MissingArrayIndexExpression);
                 indexExpr = new ErrorExpressionAst(lBracket.Extent);

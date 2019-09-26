@@ -191,9 +191,6 @@ namespace System.Management.Automation.Language
         public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.Continue; }
 
         /// <summary/>
-        public virtual AstVisitAction VisitStatementChain(StatementChainAst statementChain) { return AstVisitAction.Continue; }
-
-        /// <summary/>
         public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) { return AstVisitAction.Continue; }
     }
 

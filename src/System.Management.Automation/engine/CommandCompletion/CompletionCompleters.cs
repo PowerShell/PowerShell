@@ -7081,11 +7081,6 @@ namespace System.Management.Automation
             return parenExpressionAst.Pipeline.Accept(this);
         }
 
-        public object VisitStatementChain(StatementChainAst statementChainAst)
-        {
-            return false;
-        }
-
         public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
         {
             return false;

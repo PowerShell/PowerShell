@@ -2339,14 +2339,6 @@ namespace System.Management.Automation
             return GetArrayType(types);
         }
 
-        object ICustomAstVisitor2.VisitStatementChain(StatementChainAst statementChainAst)
-        {
-            var types = new List<PSTypeName>();
-            types.AddRange(InferTypes(statementChainAst.LhsStatement));
-            types.AddRange(InferTypes(statementChainAst.RhsStatement));
-            return GetArrayType(types);
-        }
-
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
         {
             var pipe = (PipelineAst)commandAst.Parent;
