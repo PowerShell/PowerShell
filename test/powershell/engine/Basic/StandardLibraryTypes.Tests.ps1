@@ -31,6 +31,4 @@ Describe "Types referenced by PowerShell Standard should not be missing" {
             }
         }
     }
-
-
 }
