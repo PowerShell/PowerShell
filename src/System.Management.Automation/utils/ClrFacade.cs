@@ -60,7 +60,7 @@ namespace System.Management.Automation
         {
             return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
                    AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-                       !TypeDefiner.DynamicClassAssemblyName.Equals(a.GetName().Name, StringComparison.Ordinal));
+                       !a.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal));
         }
 
         /// <summary>
@@ -279,19 +279,6 @@ namespace System.Management.Automation
 #endif
 
         #region Misc
-
-        /// <summary>
-        /// Facade for RemotingServices.IsTransparentProxy(object)
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsTransparentProxy(object obj)
-        {
-#if CORECLR // Namespace System.Runtime.Remoting is not in CoreCLR
-            return false;
-#else
-            return System.Runtime.Remoting.RemotingServices.IsTransparentProxy(obj);
-#endif
-        }
 
         /// <summary>
         /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)

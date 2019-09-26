@@ -23,6 +23,7 @@ FunctionsToExport = @(
         'Enable-Testhook'
         'Get-RandomFileName'
         'New-RandomHexString'
+        'New-ComplexPassword'
         'Send-VstsLogFile'
         'Set-TesthookResult'
         'Start-NativeExecution'
@@ -33,6 +34,7 @@ FunctionsToExport = @(
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
+        'Get-PlatformInfo'
     )
 
 CmdletsToExport= @()

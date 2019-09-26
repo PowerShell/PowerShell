@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Security.AccessControl;
@@ -21,7 +20,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using WSManNativeApi = System.Management.Automation.Remoting.Client.WSManNativeApi;
 using PowerShellApi = System.Management.Automation.PowerShell;
 
-using Microsoft.Win32;
 using System.Security;
 using System.Collections.Generic;
 using System.Security.Principal;
@@ -1053,7 +1051,6 @@ else
                     maxObjectSizeMB.Value,
                     Environment.NewLine));
             }
-#if !CORECLR // No ApartmentState In CoreCLR
             if (threadAptState.HasValue)
             {
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -1062,7 +1059,6 @@ else
                     threadAptState.Value,
                     Environment.NewLine));
             }
-#endif
             if (threadOptions.HasValue)
             {
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -2044,7 +2040,6 @@ else
         internal PSCredential runAsCredential;
         internal bool isRunAsCredentialSpecified;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the Runspace created for the shell.
         /// </summary>
@@ -2065,7 +2060,6 @@ else
         }
 
         internal ApartmentState? threadAptState;
-#endif
 
         /// <summary>
         /// ThreadOptions of the Runspace created for the shell.
@@ -2204,7 +2198,6 @@ else
         /// This enables the user to specify an SDDL on the shell.
         /// The default SDDL is the default used by Wsman.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sddl")]
         [Parameter()]
         public string SecurityDescriptorSddl
         {
@@ -2351,7 +2344,6 @@ else
         /// </summary>
         [Parameter(ParameterSetName = NameParameterSetName)]
         [Parameter(ParameterSetName = AssemblyNameParameterSetName)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ModulesToImport
         {
             get
@@ -2847,7 +2839,6 @@ $args[0] | ForEach-Object {{
 
         /// <summary>
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, Mandatory = false)]
         [ValidateNotNullOrEmpty()]
         public string[] Name { get; set; }
@@ -3233,9 +3224,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN,
             ConfigurationDataFromXML.MAXRCVDCMDSIZETOKEN,
             ConfigurationDataFromXML.THREADOPTIONSTOKEN,
-#if !CORECLR // No ApartmentState In CoreCLR
             ConfigurationDataFromXML.THREADAPTSTATETOKEN,
-#endif
             ConfigurationDataFromXML.PSVERSIONTOKEN,
             ConfigurationDataFromXML.MAXPSVERSIONTOKEN,
             ConfigurationDataFromXML.SESSIONCONFIGTOKEN,
@@ -3431,15 +3420,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     if (psObjectCollection == null || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
-                    }
-
-                    // UseSharedProcess Can not be False for Workflow session type configuration
-                    //
-                    if (UseSharedProcess == false &&
-                        psObjectCollection[0] != null &&
-                        string.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        throw new PSInvalidOperationException(RemotingErrorIdStrings.UseSharedProcessCannotBeFalseForWorkflowSessionType);
                     }
                 }
             }
@@ -3746,13 +3726,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         else
                         {
                             modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(this.modulesToImport).Trim();
-                            // Add the built-in module path if it's a workflow config
-                            if (!string.IsNullOrEmpty(modulePathParameter))
-                            {
-                                List<object> modifiedModulePath = new List<object>(modulesToImport);
-                                modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
-                                modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(modifiedModulePath.ToArray()).Trim();
-                            }
                         }
                     }
 
@@ -3876,12 +3849,10 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN, input));
             }
 
-#if !CORECLR // No ApartmentState In CoreCLR
             if (threadAptState.HasValue)
             {
                 result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.THREADAPTSTATETOKEN, threadAptState.Value));
             }
-#endif
 
             if (threadOptions.HasValue)
             {
@@ -4286,7 +4257,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// <summary>
         /// Configurations to Enable.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
@@ -4318,7 +4288,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// This enables the user to specify an SDDL for whom the session
         /// configuration is enabled.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sddl")]
         [Parameter()]
         public string SecurityDescriptorSddl
         {
@@ -4574,7 +4543,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// <summary>
         /// Configurations to Enable.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
@@ -5436,7 +5404,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
 
             if (!string.IsNullOrEmpty(this.Username))
             {
-                if (this.Username.IndexOf("\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (this.Username.Contains('\\'))
                 {
                     validator = null;
 
@@ -5514,7 +5482,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     /// <summary>
     /// This class is public for implementation reasons only and should not be used.
     /// </summary>
-    [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed for resources from scripts")]
     public static class RemotingErrorResources
     {
         /// <summary>

@@ -1878,7 +1878,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     // Test error code for possible session connection retry.
                     if (sessionTM.RetrySessionCreation(errorStruct.errorCode))
@@ -1975,7 +1975,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2095,7 +2095,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2198,7 +2198,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2304,7 +2304,7 @@ namespace System.Management.Automation.Remoting.Client
                 // way of notifying the same using state change events.
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2371,7 +2371,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
+                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,

@@ -1241,26 +1241,29 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the content headers
-            if (request.Content != null)
+            if (request.Content == null)
+            {   
+                request.Content = new StringContent(string.Empty);
+                request.Content.Headers.Clear();
+            }
+
+            foreach (var entry in WebSession.ContentHeaders)
             {
-                foreach (var entry in WebSession.ContentHeaders)
+                if (SkipHeaderValidation)
                 {
-                    if (SkipHeaderValidation)
+                    request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                }
+                else
+                {
+                    try
                     {
-                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                        request.Content.Headers.Add(entry.Key, entry.Value);
                     }
-                    else
+                    catch (FormatException ex)
                     {
-                        try
-                        {
-                            request.Content.Headers.Add(entry.Key, entry.Value);
-                        }
-                        catch (FormatException ex)
-                        {
-                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                            ThrowTerminatingError(er);
-                        }
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
                     }
                 }
             }

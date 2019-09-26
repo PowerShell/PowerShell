@@ -13,7 +13,8 @@ RUN apt-get update \
         ca-certificates \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -22,8 +23,8 @@ RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
 ADD $PACKAGELOCATION/$PACKAGENAME .
-RUN mkdir -p /opt/microsoft/powershell
-RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
+RUN mkdir -p /opt/microsoft/powershell \
+    && tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 
 # Download and run tests
 RUN $TESTDOWNLOADCOMMAND

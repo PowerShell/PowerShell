@@ -4,34 +4,35 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
+using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
-using System.Management.Automation.Security;
-using System.Threading;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
+using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Management.Automation.Language;
+using System.Text;
+using System.Threading;
+using Microsoft.PowerShell.Telemetry;
+using Microsoft.PowerShell.Commands;
 
-using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using System.Management.Automation.Tracing;
-using System.Threading.Tasks;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
-using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -54,6 +55,11 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
+        private const uint SPI_GETSCREENREADER = 0x0046;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref bool pvParam, uint fWinIni);
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
@@ -123,12 +129,8 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string profileDir;
-#if UNIX
-                profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
-#else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-
+                string profileDir = Platform.CacheDirectory;
+#if ! UNIX
                 if (!Directory.Exists(profileDir))
                 {
                     Directory.CreateDirectory(profileDir);
@@ -161,7 +163,7 @@ namespace Microsoft.PowerShell
                 }
 
                 s_cpp = new CommandLineParameterParser(
-                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
+                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : new NullHostUserInterface(),
                     bannerText, helpText);
 
                 s_cpp.Parse(args);
@@ -194,24 +196,20 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
-                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
-                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
-                // we always have to execute this call because we do not know if it has been created yet.
-                // The JumpList does persist as long as the filepath of the executable does not change but there
-                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
-                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
+                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
                         s_cpp.ConfigurationName);
@@ -219,12 +217,14 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SSHServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
                         s_cpp.ConfigurationName);
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell
             }
 
             // Connect a disconnected command.
-            this.runningCmd = Microsoft.PowerShell.Commands.EnterPSSessionCommand.ConnectRunningPipeline(remoteRunspace);
+            this.runningCmd = EnterPSSessionCommand.ConnectRunningPipeline(remoteRunspace);
 
             // Push runspace.
             _runspaceRef.Override(remoteRunspace, hostGlobalLock, out _isRunspacePushed);
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell
 
             if (this.runningCmd != null)
             {
-                Microsoft.PowerShell.Commands.EnterPSSessionCommand.ContinueCommand(
+                EnterPSSessionCommand.ContinueCommand(
                     remoteRunspace,
                     this.runningCmd,
                     this,
@@ -863,7 +863,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentCulture
         {
             get
@@ -880,7 +879,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentUICulture
         {
             get
@@ -895,7 +893,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// </summary>
         /// <exception/>
-
         public override void SetShouldExit(int exitCode)
         {
             lock (hostGlobalLock)
@@ -1029,11 +1026,12 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
 
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+
+        private double _readyForInputTimeInMS;
+        private int _interactiveCommandCount;
 #endif
 
         private double _profileLoadTimeInMS;
-        private double _readyForInputTimeInMS;
-        private int _interactiveCommandCount;
 
         #endregion overrides
 
@@ -1324,7 +1322,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
             Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
@@ -1379,32 +1376,11 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-#if STAMODE
                 exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
-#else
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName);
-#endif
             }
             while (false);
 
             return exitCode;
-        }
-
-        /// <summary>
-        /// This method is retained to make V1 tests compatible with V2 as signature of this method
-        /// is slightly changed in v2.
-        /// </summary>
-        /// <param name="bannerText"></param>
-        /// <param name="helpText"></param>
-        /// <param name="isPrestartWarned"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private uint Run(string bannerText, string helpText, bool isPrestartWarned, string[] args)
-        {
-            s_cpp = new CommandLineParameterParser(this.UI, bannerText, helpText);
-            s_cpp.Parse(args);
-            return Run(s_cpp, isPrestartWarned);
         }
 
         /// <summary>
@@ -1458,12 +1434,12 @@ namespace Microsoft.PowerShell
 
                 _runspaceRef.Runspace.Close();
                 _runspaceRef = null;
-#if STAMODE
-                if (staMode) // don't recycle the Runspace in STA mode
+
+                if (staMode)
                 {
+                    // don't continue the session in STA mode
                     ShouldEndSession = true;
                 }
-#endif
             }
 
             return ExitCode;
@@ -1502,11 +1478,7 @@ namespace Microsoft.PowerShell
             {
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
                 Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-#if STAMODE
                 DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
-#else
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.InitialCommandArgs);
-#endif
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1516,12 +1488,32 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method is here only to make V1 tests compatible with V2. DO NOT USE THIS FUNCTION! Use DoCreateRunspace instead.
+        /// Check if a screen reviewer utility is running.
+        /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
+        /// since PSReadLine is not accessibility-firendly enough as of today.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private void InitializeRunspace(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs)
+        private bool IsScreenReaderActive()
         {
-            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, configurationName: null, initialCommandArgs: initialCommandArgs);
+            if (_screenReaderActive.HasValue)
+            {
+                return _screenReaderActive.Value;
+            }
+
+            _screenReaderActive = false;
+            if (Platform.IsWindowsDesktop)
+            {
+                // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
+                // Quoted from https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // accessibility parameter 'SPI_GETSCREENREADER':
+                // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
+                bool enabled = false;
+                if (SystemParametersInfo(SPI_GETSCREENREADER, 0, ref enabled, 0))
+                {
+                    _screenReaderActive = enabled;
+                }
+            }
+
+            return _screenReaderActive.Value;
         }
 
         private bool LoadPSReadline()
@@ -1554,6 +1546,7 @@ namespace Microsoft.PowerShell
                 bool psReadlineFailed = false;
 
                 // Load PSReadline by default unless there is no use:
+                //    - screen reader is active, such as NVDA, indicating non-visual access
                 //    - we're running a command/file and just exiting
                 //    - stdin is redirected by a parent process
                 //    - we're not interactive
@@ -1561,21 +1554,29 @@ namespace Microsoft.PowerShell
                 // It's also important to have a scenario where PSReadline is not loaded so it can be updated, e.g.
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
-                ReadOnlyCollection<Microsoft.PowerShell.Commands.ModuleSpecification> defaultImportModulesList = null;
+                ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
                 if (LoadPSReadline())
                 {
-                    // Create and open Runspace with PSReadline.
-                    defaultImportModulesList = DefaultInitialSessionState.Modules;
-                    DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
-                    consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
-                    try
+                    if (IsScreenReaderActive())
                     {
-                        OpenConsoleRunspace(consoleRunspace, staMode);
+                        s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.PSReadLineDisabledWhenScreenReaderIsActive);
+                        s_theConsoleHost.UI.WriteLine();
                     }
-                    catch (Exception)
+                    else
                     {
-                        consoleRunspace = null;
-                        psReadlineFailed = true;
+                        // Create and open Runspace with PSReadline.
+                        defaultImportModulesList = DefaultInitialSessionState.Modules;
+                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
+                        consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
+                        try
+                        {
+                            OpenConsoleRunspace(consoleRunspace, staMode);
+                        }
+                        catch (Exception)
+                        {
+                            consoleRunspace = null;
+                            psReadlineFailed = true;
+                        }
                     }
                 }
 
@@ -1616,25 +1617,21 @@ namespace Microsoft.PowerShell
                                                    PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
             }
 
+#if LEGACYTELEMETRY
             // Record how long it took from process start to runspace open for telemetry.
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
+#endif
 
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-#if STAMODE
-            // staMode will have following values:
-            // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
-            // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
-            // ThreadOptions should match on FullPS and NanoPS for corresponding ApartmentStates.
-            if (staMode)
+            if (staMode && Platform.IsWindowsDesktop)
             {
-                // we can't change ApartmentStates on CoreCLR
                 runspace.ApartmentState = ApartmentState.STA;
             }
-#endif
+
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
@@ -2537,8 +2534,10 @@ namespace Microsoft.PowerShell
                                 }
                             }
 
+#if LEGACYTELEMETRY
                             if (!inBlockMode)
                                 s_theConsoleHost._interactiveCommandCount += 1;
+#endif
                         }
                     }
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
@@ -2671,7 +2670,7 @@ namespace Microsoft.PowerShell
                 // Output any training suggestions
                 try
                 {
-                    ArrayList suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
+                    List<string> suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
 
                     if (suggestions.Count > 0)
                     {
@@ -2848,6 +2847,7 @@ namespace Microsoft.PowerShell
         private bool _setShouldExitCalled;
         private bool _isRunningPromptLoop;
         private bool _wasInitialCommandEncoded;
+        private bool? _screenReaderActive;
 
         // hostGlobalLock is used to sync public method calls (in case multiple threads call into the host) and access to
         // state that persists across method calls, like progress data. It's internal because the ui object also
@@ -2902,18 +2902,14 @@ namespace Microsoft.PowerShell
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
-#if STAMODE
             StaMode = staMode;
-#endif
             ConfigurationName = configurationName;
             InitialCommandArgs = initialCommandArgs;
         }
 
         internal string InitialCommand { get; set; }
         internal bool SkipProfiles { get; set; }
-#if STAMODE
         internal bool StaMode { get; set; }
-#endif
         internal string ConfigurationName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }

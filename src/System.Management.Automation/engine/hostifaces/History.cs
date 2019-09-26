@@ -1816,7 +1816,7 @@ namespace Microsoft.PowerShell.Commands
                     );
                 }
                 else
-                {// if id,count adn newest parameters are present
+                {// if id,count and newest parameters are present
                     // throw an exception for invalid count values
 
                     long id = _id[0];

@@ -27,6 +27,7 @@ jobs:
 - template: templates/linux.yml
   parameters:
     buildName: rpm
+    uploadDisplayName: Upload and Sign
 
 - template: templates/linux.yml
   parameters:
@@ -58,6 +59,11 @@ jobs:
   parameters:
     Architecture: fxdependent
 
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: fxdependentWinDesktop
+
+
 - template: templates/windows-component-governance.yml
 
 - template: templates/windows-package-signing.yml
@@ -68,6 +74,7 @@ jobs:
       - build_windows_arm
       - build_windows_arm64
       - build_windows_fxdependent
+      - build_windows_fxdependentWinDesktop
 
 - template: templates/mac-package-signing.yml
 
@@ -77,6 +84,7 @@ jobs:
       - build_windows_x64
       - build_windows_x86
       - build_windows_fxdependent
+      - build_windows_fxdependentWinDesktop
 
 - template: templates/nuget.yml
   parameters:
@@ -86,6 +94,15 @@ jobs:
       - upload_rpm
       - upload_alpine
       - build_macOS
+
+- template: templates/json.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
+      - MacPackageSigningJob
 
 - template: templates/testartifacts.yml
 

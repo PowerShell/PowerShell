@@ -1285,8 +1285,8 @@ namespace System.Management.Automation.Runspaces
                                                     (RemotingErrorIdStrings.RelativeUriForRunspacePathNotSupported));
             }
 
-            if (uri.OriginalString.LastIndexOf(":", StringComparison.OrdinalIgnoreCase) >
-                uri.AbsoluteUri.IndexOf("//", StringComparison.OrdinalIgnoreCase))
+            if (uri.OriginalString.LastIndexOf(':') >
+                uri.AbsoluteUri.IndexOf("//", StringComparison.Ordinal))
             {
                 UseDefaultWSManPort = false;
             }
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Runspaces
             // http://localhost , http://127.0.0.1 etc.
             string appname;
 
-            if (uri.AbsolutePath.Equals("/", StringComparison.OrdinalIgnoreCase) &&
+            if (uri.AbsolutePath.Equals("/", StringComparison.Ordinal) &&
                 string.IsNullOrEmpty(uri.Query) && string.IsNullOrEmpty(uri.Fragment))
             {
                 appname = s_defaultAppName;
@@ -1515,6 +1515,11 @@ namespace System.Management.Automation.Runspaces
         public bool RunAs32 { get; set; }
 
         /// <summary>
+        /// Gets or sets an initial working directory for the powershell background process.
+        /// </summary>
+        public string WorkingDirectory { get; set; }
+
+        /// <summary>
         /// Powershell version to execute the job in.
         /// </summary>
         public Version PSVersion { get; set; }
@@ -1590,6 +1595,7 @@ namespace System.Management.Automation.Runspaces
             NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential);
             result.AuthenticationMechanism = this.AuthenticationMechanism;
             result.InitializationScript = this.InitializationScript;
+            result.WorkingDirectory = this.WorkingDirectory;
             result.RunAs32 = this.RunAs32;
             result.PSVersion = this.PSVersion;
             result.Process = Process;
@@ -3459,16 +3465,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RunOnMTAThread(ThreadStart threadProc)
         {
-            //
-            // By default, non-OneCore PowerShell is launched with ApartmentState being STA.
-            // In this case, we need to create a separate thread, set its ApartmentState to MTA,
-            // and do the work.
-            //
-            // For OneCore PowerShell, its ApartmentState is always MTA.
-            //
-#if CORECLR
-            threadProc();
-#else
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
             {
                 threadProc();
@@ -3481,7 +3477,6 @@ namespace System.Management.Automation.Runspaces
                 executionThread.Start();
                 executionThread.Join();
             }
-#endif
         }
 
         /// <summary>

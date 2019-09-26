@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith('.'))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation
             {
                 string path = this[index];
                 if (!string.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.Ordinal))
+                    path.StartsWith('.'))
                 {
                     result.Add(index);
                 }

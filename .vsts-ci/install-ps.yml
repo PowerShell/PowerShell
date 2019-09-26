@@ -46,7 +46,7 @@ phases:
   parameters:
     scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellUbuntu
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-latest
     verification: |
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
       {
@@ -57,7 +57,7 @@ phases:
   parameters:
     scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellAmazonLinux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-latest
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
@@ -69,23 +69,29 @@ phases:
   parameters:
     scriptName: sudo ./tools/installpsh-amazonlinux.sh
     jobName: InstallPSHAmazonLinux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-latest
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
-    # ignoring this due to https://github.com/PowerShell/PowerShell/issues/9285
-    continueOnError: true
+    continueOnError: false
 
 # TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellCentOS
-    pool: Hosted Ubuntu 1604
-    container: mcr.microsoft.com/powershell:centos-7
+    pool: ubuntu-latest
+    container: mcr.microsoft.com/powershell/test-deps:centos-7
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellDebian9
+    pool: ubuntu-latest
+    container: mcr.microsoft.com/powershell/test-deps:debian-9
 
 
 # VSTS could not find pwsh in:
@@ -97,7 +103,7 @@ phases:
   parameters:
     scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellMacOS
-    pool: Hosted macOS
+    pool: macOS-latest
     verification: |
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
       {
@@ -109,4 +115,44 @@ phases:
   parameters:
     scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath
     jobName: InstallPowerShellPS1Ubuntu
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-latest
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+    jobName: InstallPowerShellPS1UbuntuDaily
+    pool: ubuntu-latest
+    verification: |
+      Write-Verbose $PSVersionTable.PSVersion -verbose
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+    jobName: InstallPowerShellMacOSDaily
+    pool: macOS-latest
+    verification: |
+      Write-Verbose $PSVersionTable.PSVersion -verbose
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+    jobName: InstallPowerShellWindowsDaily
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-daily\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }

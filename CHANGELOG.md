@@ -1,5 +1,284 @@
 # Changelog
 
+## v7.0.0-preview.4 - 09/19/2019
+
+### Engine Updates and Fixes
+
+- Add support to `ActionPreference.Break` to break into debugger when `Debug`, `Error`, `Information`, `Progress`, `Verbose` or `Warning` messages are generated (#8205) (Thanks @KirkMunro!)
+- Enable starting control panel add-ins within PowerShell Core without specifying `.CPL` extension. (#9828)
+
+### Performance
+
+- Make `ForEach-Object` faster for its commonly used scenarios (#10454) and fix `ForEach-Object -Parallel` performance problem with many runspaces (#10455)
+
+### Experimental Features
+
+- Update `PSDesiredStateConfiguration` module version to `2.0.3` and bring new tests; enable compilation to MOF on non-Windows and use of Invoke-DSCResource without LCM (#10516)
+- Add APIs for breakpoint management in runspaces and enable attach to process without `BreakAll` for PowerShell Editor Services (#10338) (Thanks @KirkMunro!)
+- Support [ternary operator](https://github.com/PowerShell/PowerShell-RFC/pull/218) in PowerShell language (#10367)
+
+### General Cmdlet Updates and Fixes
+
+- Add PowerShell Core group policy definitions (#10468)
+- Update console host to support `XTPUSHSGR`/`XTPOPSGR` VT control sequences that are used in [composability scenarios](https://github.com/microsoft/terminal/issues/1796). (#10208)
+- Add `WorkingDirectory` parameter to `Start-Job` (#10324) (Thanks @davinci26!)
+- Remove the event handler that was causing breakpoint changes to be erroneously replicated to the host runspace debugger (#10503) (Thanks @KirkMunro!)
+- Replace `api-ms-win-core-job-12-1-0.dll` with `Kernell32.dll` in `Microsoft.PowerShell.Commands.NativeMethods` P/Invoke API(#10417) (Thanks @iSazonov!)
+- Fix wrong output for `New-Service` in variable assignment and `-OutVariable` (#10444) (Thanks @kvprasoon!)
+- Fix global tool issues around exit code, command line parameters and path with spaces (#10461)
+- Fix recursion into OneDrive - change `FindFirstFileEx()` to use `SafeFindHandle` type (#10405)
+- Skip auto-loading `PSReadLine` on Windows if the [NVDA screen reader](https://www.nvaccess.org/about-nvda/) is active (#10385)
+- Increase built-with-PowerShell module versions to `7.0.0.0` (#10356)
+- Add throwing an error in `Add-Type` if a type with the same name already exists (#9609) (Thanks @iSazonov!)
+
+### Code Cleanup
+
+- Convert `ActionPreference.Suspend` enumeration value into a non-supported, reserved state, and remove restriction on using `ActionPreference.Ignore` in preference variables (#10317) (Thanks @KirkMunro!)
+- Replace `ArrayList` with `List<T>` to get more readable and reliable code without changing functionality (#10333) (Thanks @iSazonov!)
+- Make code style fixes to `TestConnectionCommand` (#10439) (Thanks @vexx32!)
+- Cleanup `AutomationEngine` and remove extra `SetSessionStateDrive` method call (#10416) (Thanks @iSazonov!)
+- Rename default `ParameterSetName` back to `Delimiter` for `ConvertTo-Csv` and `ConvertFrom-Csv` (#10425)
+
+### Tools
+
+- Update `install-powershell.ps1` to check for already installed daily build (#10489)
+
+### Tests
+
+- Add experimental check to `ForEach-Object -Parallel` tests (#10354) (Thanks @KirkMunro!)
+- Update tests for Alpine validation (#10428)
+
+### Build and Packaging Improvements
+
+- Bump `PowerShellGet` version from `2.2` to `2.2.1` (#10382)
+- Bump `PackageManagement` version from `1.4.3` to `1.4.4` (#10383)
+- Update `README.md` and `metadata.json` for `7.0.0-preview.4` (Internal 10011)
+- Upgrade `.Net Core 3.0` version from `Preview 9` to `RC1` (#10552) (Thanks @bergmeister!)
+- Fix `ExperimentalFeature` list generation (Internal 9996)
+- Bump `PSReadLine` version from `2.0.0-beta4` to `2.0.0-beta5` (#10536)
+- Fix release build script to set release tag
+- Update version of `Microsoft.PowerShell.Native` to `7.0.0-preview.2` (#10519)
+- Upgrade to `Netcoreapp3.0 preview9` (#10484) (Thanks @bergmeister!)
+- Make sure the daily coordinated build, knows it is a daily build (#10464)
+- Update the combined package build to release the daily builds (#10449)
+- Remove appveyor reference (#10445) (Thanks @RDIL!)
+- Bump `NJsonSchema` version from `10.0.22` to `10.0.23` (#10421)
+- Remove the deletion of `linux-x64` build folder because some dependencies for Alpine need it (#10407)
+
+### Documentation and Help Content
+
+- Update `README.md` and metadata for `v6.1.6` and `v6.2.3` releases (#10523)
+- Fix a typo in `README.md` (#10465) (Thanks @vedhasp!)
+- Add a reference to `PSKoans` module to Learning Resources documentation (#10369) (Thanks @vexx32!)
+- Update `README.md` and `metadata.json` for `7.0.0-preview.3` (#10393)
+
+## v7.0.0-preview.3 - 08/20/2019
+
+### Breaking Changes
+
+- Remove `kill` alias for `Stop-Process` cmdlet on Unix (#10098) (Thanks @iSazonov!)
+- Support for starting PowerShell as a login shell (`pwsh -Login` / `pwsh -l`) support (#10050)
+
+### Engine Updates and Fixes
+
+- Additional Telemetry - implementation of [`RFC0036`](https://github.com/PowerShell/PowerShell-RFC/pull/158) (#10336)
+- Implement `ForEach-Object -Parallel` as an experimental feature (#10229)
+- Skip `JumpList` on `NanoServer` and `IoT` (#10164)
+- Make `Get-DscResource` work with class based resources (#10350)
+- Fix `#requires -version` for `pwsh` 7 to include `6.1` and `6.2` in `PSCompatibleVersions` (#9943) (Thanks @bgelens!)
+- Add dispose of `_runspaceDebugCompleteEvent` event object. (#10323)
+- Fix performance regression from disabling debugger in system lockdown mode (#10269)
+- Special case the `posix` locale in `WildcardPattern` (#10186)
+- Use `Platform.IsWindowsDesktop` instead of checking both NanoServer and IoT (#10205)
+
+### General Cmdlet Updates and Fixes
+
+- Enable Experimental Features by default on Preview builds (#10228)
+- Enable `-sta` and `-mta` switches for `pwsh` (`-sta` is required for `GUIs`) (#10061)
+- Make breakpoints display better over PowerShell remoting (#10339) (Thanks @KirkMunro!)
+- Add support for `AppX` reparse points (#10331)
+- Make module name matching for `get-module -FullyQualifiedName` case insensitive (#10329)
+- Expose `PreRelease` label in `PSModuleInfo` formatter (#10316)
+- Add `-Raw` switch to `Select-String` which allows returning only the string that was matched (#9901) (Thanks @Jawz84!)
+
+- ### Performance
+
+- Reduce allocations in `MakePath()` method (#10027) (Thanks @iSazonov!)
+- Remove extra check that the system dll exists (#10244) (Thanks @iSazonov!)
+- Avoid boxing when passing value type arguments to `PSTraceSource.WriteLine` (#10052) (Thanks @iSazonov!)
+- Reduce allocations in `Escape()` and `Unescape()` (#10041) (Thanks @iSazonov!)
+
+### Code Cleanup
+
+- Add the license header to `nanoserver.tests.ps1` (#10171)
+- Mark `-parallel` and `-throttlelimit` reserved for `foreach` and `switch` statements (#10328) (Thanks @KirkMunro!)
+- Deprecate workflow debugging code (#10321) (Thanks @KirkMunro!)
+- Fix style issues in `InternalCommands.cs` (#10352) (Thanks @iSazonov!)
+- Deprecate internal `HelpCategory.Workflow` enumeration (#10319) (Thanks @KirkMunro!)
+- Update `Microsoft.PowerShell.CoreCLR.Eventing` to resolve conflict with `System.Diagnostics.EventLog` (#10305)
+- Don't collect process start time as it's not being used on `consolehost` startup (#10294)
+- .NET Core 3.0 now aborts the thread for us. Remove the `ThreadAbortException` code (#10230) (Thanks @iSazonov!)
+- Use `nameof()` in `LocationGlobber` and `PathInfo` (#10200) (Thanks @iSazonov!)
+
+### Tools
+
+- Fix Hungarian prefix `my` (#9976) (Thanks @RDIL!)
+- Fix spelling error in issue template (#10256)
+- Quote arguments in `.vscode/tasks.json` in case of spaces (#10204) (Thanks @msftrncs!)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+- Add tests for `WildcardPattern.Escape()` and `Unescape()` (#10090) (Thanks @iSazonov!)
+- Cleanup Docker release testing (#10310) (Thanks @RDIL!)
+
+### Build and Packaging Improvements
+
+- Update `Microsoft.Management.Infrastructure` version to `2.0.0-preview.2` (#10366)
+- Move to `.NET Core 3.0 preview.8` (#10351) (#10227) (Thanks @bergmeister!)
+- Bump `NJsonSchema` from `10.0.21` to `10.0.22` (#10364)
+- Add `Microsoft.PowerShell.CoreCLR.Eventing.dll` to exception list for build fix (#10337)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `3.1.0` to `3.2.1` (#10273) (#10330)
+- Revert the temporary AzDevOps artifact workaround (#10260)
+- Fix macOS build break (#10207)
+
+### Documentation and Help Content
+
+- Update docs for `7.0.0-preview.2` release (#10160) (#10176)
+- `PSSA` also includes formatting (#10172)
+- Refactor security policy documentation so that they appear in the Security policy tab of GitHub (#9905) (Thanks @bergmeister!)
+- Add tooling section to PR template (#10144)
+- Update `README.md` and `metadata.json` for next releases (#10087)
+- Update DotNet Support links (#10145)
+- Update our language on our policy applying to security issues (#10304)
+- Update dead links from `powershell.com` (#10297)
+- Create `Distribution_Request` issue template (#10253)
+- Fix: Removed dependency file with `Dependabot` (#10212) (Thanks @RDIL!)
+
+## v7.0.0-preview.2 - 07/17/2019
+
+### Breaking Changes
+
+- Cleanup workflow - remove `PSProxyJob` (#10083) (Thanks @iSazonov!)
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 9168)
+
+### Engine Updates and Fixes
+
+- Consider `DBNull.Value` and `NullString.Value` the same as `$null` when comparing with `$null` and casting to bool (#9794) (Thanks @vexx32!)
+- Allow methods to be named after keywords (#9812) (Thanks @vexx32!)
+- Create `JumpList` in `STA` thread as some `COM` `APIs` are strictly `STA` only to avoid sporadic `CLR` crashes (#9928) (#10057) (Thanks @bergmeister!)
+- Skip `JumpList` on `NanoServer` and `IoT` (#10164)
+- Display `COM` method signature with argument names (#9858) (Thanks @nbkalex!)
+- Use the original precision (prior-dotnet-core-3) for double/float-to-string conversion (#9893)
+- `Import-DscResource` should allow to overwrite DSC built-in resources. (#9879)
+- Add ability to pass `InitialSessionState` to the `ConsoleShell.Start` (#9802) (Thanks @asrosent!)
+- Have console host not enter command prompt mode when using `Read-Host -Prompt` (#9743)
+- Fix use of `Start-Process http://bing.com` (#9793)
+- Support negative numbers in `-split` operator (#8960) (Thanks @ece-jacob-scott!)
+
+### General Cmdlet Updates and Fixes
+
+- Support DSC compilation on Linux. (#9834)
+- Add alias for Service `StartType` (#9940) (Thanks @NeoBeum!)
+- Add `-SecurityDescriptorSddl` parameter to `Set-Service` (#8626) (Thanks @kvprasoon!)
+- Fix auto-download of files when enumerating files from a `OneDrive` folder (#9895)
+- Set request headers when request body is empty in Web Cmdlets (#10034) (Thanks @markekraus!)
+- Fix wrong comparison in `CertificateProvider` (#9987) (Thanks @iSazonov!)
+- Sync docs changes into the embedded help for `pwsh` (#9952)
+- Display Duration when displaying `HistoryInfo` (#9751) (Thanks @rkeithhill!)
+- Update console startup and help `url` for PowerShell docs (#9775)
+- Make `UseAbbreviationExpansion` and `TempDrive` official features (#9872)
+- Fix `Get-ChildItem -Path` with wildcard `char` (#9257) (Thanks @kwkam!)
+
+### Performance
+
+- Add another fast path to `WildcardPattern.IsMatch` for patterns that only have an asterisk in the end (#10054) (Thanks @iSazonov!)
+- Move some of the creations of `WildcardPattern` in outer loop to avoid unnecessary allocation (#10053) (Thanks @iSazonov!)
+- Make `Foreach-Object` 2 times faster by reducing unnecessary allocations and boxing (#10047)
+- Use a static cache for `PSVersionInfo.PSVersion` to avoid casting `SemanticVersion` to `Version` every time accessing that property (#10028)
+- Reduce allocations in `NavigationCmdletProvider.NormalizePath()` (#10038) (Thanks @iSazonov!)
+- Add fast path for wildcard patterns that contains no wildcard characters (#10020)
+- Avoid `Assembly.GetName()` in `ClrFacade.GetAssemblies(string)` to reduce allocations of `CultureInfo` objects (#10024) (Thanks @iSazonov!)
+- Avoid the `int[]` and `int[,]` allocation when tokenizing line comments and matching wildcard pattern (#10009)
+
+### Tools
+
+- Update change log generation tool to deal with private commits (#10096)
+- Update `Start-PSBuild -Clean` logic of `git clean` to ignore locked files from `VS2019` (#10071) (Thanks @bergmeister!)
+- Indent fix in `markdown-link.tests.ps1` (#10049) (Thanks @RDIL!)
+- `Start-PSBuild -Clean`  does not remove all untracked files (#10022) (Thanks @vexx32!)
+- Add module to support Pester tests for automating debugger commands (`stepInto`, `stepOut`, etc.), along with basic tests (#9825) (Thanks @KirkMunro!)
+- Remove `markdownlint` tests due to security issues (#10163)
+
+### Code Cleanup
+
+- Cleanup `CompiledScriptBlock.cs` (#9735) (Thanks @vexx32!)
+- Cleanup workflow code (#9638) (Thanks @iSazonov!)
+- Use `AddOrUpdate()` instead of `Remove` then `Add` to register runspace (#10007) (Thanks @iSazonov!)
+- Suppress `PossibleIncorrectUsageOfAssignmentOperator` rule violation by adding extra parenthesis (#9460) (Thanks @xtqqczze!)
+- Use `AddRange` in `GetModules()` (#9975) (Thanks @iSazonov!)
+- Code cleanup: use `IndexOf(char)` overload (#9722) (Thanks @iSazonov!)
+- Move `consts` and methods to single `CharExtensions` class (#9992) (Thanks @iSazonov!)
+- Cleanup: Use `EndsWith(char)` and `StartsWith(char)` (#9994) (Thanks @iSazonov!)
+- Remove `LCIDToLocaleName` `P/Invoke` from `GetComputerInfoCommand` (#9716) (Thanks @iSazonov!)
+- Cleanup Parser tests (#9792) (Thanks @vexx32!)
+- Remove `EtwActivity` empty constructor and make minor style fixes (#9958) (Thanks @RDIL!)
+- Fix style issues from last commits (#9937) (Thanks @iSazonov!)
+- Remove dead code about `IsTransparentProxy` (#9966)
+- Fix minor typos in code comments (#9917) (Thanks @RDIL!)
+- Style fixes for `CimAsyncOperations` (#9945) (Thanks @RDIL!)
+- Fix minor `CodeFactor` style issues in `ModuleCmdletBase` (#9915) (Thanks @RDIL!)
+- Clean up the use of `SetProfileRoot` and `StartProfile` in ConsoleHost (#9931)
+- Fix minor style issues come from last commits (#9640) (Thanks @iSazonov!)
+- Improve whitespace for Parser tests (#9806) (Thanks @vexx32!)
+- Use new `string.ConCat()` in `Process.cs` (#9720) (Thanks @iSazonov!)
+- Code Cleanup: Tidy up `scriptblock.cs` (#9732) (Thanks @vexx32!)
+
+### Tests
+
+- Mark `Set-Service` tests with password as `Pending` (#10146)
+- Fix test password generation rule to meet Windows complexity requirements (#10143)
+- Add test for `New-Item -Force` (#9971) (Thanks @robdy!)
+- Fix gulp versions (#9916) (Thanks @RDIL!)
+- Indentation fixes in `ci.psm1` (#9947) (Thanks @RDIL!)
+- Remove some `Travis-CI` references (#9919) (Thanks @RDIL!)
+- Improve release testing Docker images (#9942) (Thanks @RDIL!)
+- Use `yarn` to install global tools (#9904) (Thanks @RDIL!)
+- Attempt to work around the zip download issue in Azure DevOps Windows CI (#9911)
+- Update PowerShell SDK version for hosting tests (Internal 9185)
+
+### Build and Packaging Improvements
+
+- Update the target framework for reference assemblies to `netcoreapp3.0` (#9747)
+- Pin version of `netDumbster` to `2.0.0.4` (#9748)
+- Fix daily `CodeCoverageAndTest` build by explicitly calling `Start-PSBootStrap` (#9724)
+- Split the `fxdependent` package on Windows into two packages (#10134)
+- Bump `System.Data.SqlClient` (#10109)
+- Bump `System.Security.AccessControl` (#10100)
+- Add performance tag to change log command (Internal)
+- Upgrade .Net Core 3 SDK from `preview5` to `preview6` and related out of band `Nuget` packages from `2.1` to `3.0-preview6` (#9888) (Thanks @bergmeister!)
+- Add to `/etc/shells` on macOS (#10066)
+- Bump `Markdig.Signed` from `0.17.0` to `0.17.1` (#10062)
+- Update copyright symbol for `NuGet` packages (#9936)
+- Download latest version `(6.2.0)` of `PSDesiredStateConfiguration` `nuget` package. (#9932)
+- Add automated `RPM` signing to release build (#10013)
+- Bump `ThreadJob` from `1.1.2` to `2.0.1` in `/src/Modules` (#10003)
+- Bump `PowerShellGet` from `2.1.4` to `2.2` in /src/Modules (#9933) (#10085)
+- Bump `PackageManagement` from `1.4` to `1.4.3` in `/src/Modules` (#9820) (#9918) (#10084)
+- Update to use `TSAv2` (#9914)
+- Bump `NJsonSchema` from `9.14.1` to `10.0.21` (#9805) (#9843) (#9854) (#9862) (#9875) (#9885) (#9954) (#10017)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9786)
+- Bump `Microsoft.ApplicationInsights` from `2.9.1` to `2.10.0` (#9757)
+- Increase timeout of NuGet job to workaround build timeout (#9772)
+
+### Documentation and Help Content
+
+- Change log `6.1.4` (#9759)
+- Change log for release `6.2.1` (#9760)
+- Add quick steps for adding docs to cmdlets (#9978)
+- Update readme `gitter` badge (#9920) (Thanks @RDIL!)
+- Update `README` and `metadata.json` for `7.0.0-preview.1` release (#9767)
+
 ## v7.0.0-preview.1 - 05/30/2019
 
 ### Breaking Changes
@@ -249,6 +528,42 @@
 - Documentation Cleanup (#8851) (Thanks @RDIL!)
 - Update docs for `6.2.0-rc.1` release (#9022)
 - Update release template (#8996)
+
+## v6.2.3 - 09/12/2019
+
+### Engine Updates and Fixes
+
+- Fix debugger performance regression in system lock down mode (#10269)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9946)
+- Fix macOS build break (#10207)
+
+## v6.2.2 - 07/16/2019
+
+### Breaking Changes
+
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 8969)
+
+### Engine Updates and Fixes
+
+- Create `JumpList` in STA thread as some COM APIs are strictly STA only to avoid sporadic CLR crashes (#10057, #9928) (Thanks @bergmeister!)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9082, 9088, 9092)
+- Make `Hashtable` case insensitivity test use current culture rather than shell to set culture (Internal 8529)
+- Add automated RPM signing to release build (#10013)
+- Update copyright symbol for NuGet packages (#9936)
+- Bump `Microsoft.ApplicationInsights` from `2.9.1` to `2.10.0` (#9757)
+- Switch from BMP to PNG for graphical MSI installer assets (#9606)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9789)
+- Enable building of MSIX package (#9289, #9715)
 
 ## v6.2.1 - 05/21/2019
 
@@ -992,6 +1307,27 @@
 - Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## 6.1.6 - 2019-09-12
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9945)
+
+## 6.1.5 - 2019-07-16
+
+### Breaking changes
+
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 8968)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9087)
+- Add automated RPM signing to release build (#10013)
+- Update copyright symbol for NuGet packages (#9936)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9790)
+- Integrate building NuGet package in the coordinated build (#8947) (#9708)
+- Bump `Newtonsoft.Json` (#9662)
 
 ## 6.1.4 - 2019-05-21
 

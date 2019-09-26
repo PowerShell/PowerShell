@@ -387,7 +387,7 @@ namespace System.Management.Automation
                         }
 
                         // Handle scenarios like this: dir -path:<tab>
-                        if (completionContext.WordToComplete.EndsWith(":", StringComparison.Ordinal))
+                        if (completionContext.WordToComplete.EndsWith(':'))
                         {
                             replacementIndex = tokenAtCursor.Extent.EndScriptPosition.Offset;
                             replacementLength = 0;

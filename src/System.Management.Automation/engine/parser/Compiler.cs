@@ -4954,7 +4954,8 @@ namespace System.Management.Automation.Language
                 UpdatePosition(throwStatementAst),
                 Expression.Throw(Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_ConvertToException,
                                                  throwExpr.Convert(typeof(object)),
-                                                 Expression.Constant(throwStatementAst.Extent))));
+                                                 Expression.Constant(throwStatementAst.Extent),
+                                                 Expression.Constant(throwStatementAst.IsRethrow))));
         }
 
         #endregion Statements
@@ -4971,6 +4972,16 @@ namespace System.Management.Automation.Language
                     PSBinaryOperationBinder.Get(ExpressionType.Equal, ignoreCase, scalarCompare: true))),
                 lhs.Cast(typeof(object)),
                 rhs.Cast(typeof(object)));
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var expr = Expression.Condition(
+                Compile(ternaryExpressionAst.Condition).Convert(typeof(bool)),
+                Compile(ternaryExpressionAst.IfTrue).Convert(typeof(object)),
+                Compile(ternaryExpressionAst.IfFalse).Convert(typeof(object)));
+
+            return expr;
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)

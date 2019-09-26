@@ -390,7 +390,7 @@ namespace System.Management.Automation.Help
             // Like if you send a request to www.technet.com/powershell you will get
             // a 301/203 response with the response URI set to www.technet.com/powershell/
             //
-            if (Directory.Exists(baseUri) || baseUri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+            if (Directory.Exists(baseUri) || baseUri.EndsWith('/'))
             {
                 if (verbose)
                 {
@@ -451,14 +451,14 @@ namespace System.Management.Automation.Help
                                         _cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, uri));
                                     }
 
-                                    if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                                    if (uri.EndsWith('/'))
                                     {
                                         return uri;
                                     }
                                 }
                                 else if (response.StatusCode == HttpStatusCode.OK)
                                 {
-                                    if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                                    if (uri.EndsWith('/'))
                                     {
                                         return uri;
                                     }
@@ -1135,12 +1135,12 @@ namespace System.Management.Automation.Help
             sucessfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
 #else
             // Cabinet API doesn't handle the trailing back slash
-            if (!sourceDirectory.EndsWith("\\", StringComparison.Ordinal))
+            if (!sourceDirectory.EndsWith('\\'))
             {
                 sourceDirectory += "\\";
             }
 
-            if (!destPath.EndsWith("\\", StringComparison.Ordinal))
+            if (!destPath.EndsWith('\\'))
             {
                 destPath += "\\";
             }
@@ -1651,7 +1651,7 @@ namespace System.Management.Automation.Help
                 _cmdlet = cmdlet;
 
                 // Need to get rid of the trailing \, otherwise New-PSDrive will not work...
-                if (path.EndsWith("\\", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                if (path.EndsWith('\\') || path.EndsWith('/'))
                 {
                     path = path.Remove(path.Length - 1);
                 }

@@ -313,3 +313,113 @@ Describe 'Unicode escape sequence parsing' -Tag "CI" {
     ShouldBeParseError '"`u{123456' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 10,0
     ShouldBeParseError '"`u{1234567' TooManyDigitsInUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 10,0
 }
+
+Describe "Ternary Operator parsing" -Tags CI {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSTernaryOperator')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSTernaryOperator' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else {
+            $testCases_basic = @(
+                @{ Script = '$true?2:3'; TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$false?';   TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$:abc';     TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$env:abc';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = '$env:123';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+                @{ Script = 'a?2:2';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '1?2:3';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = 'a?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = 'a?b';       TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '1?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+                @{ Script = '?2:3';      TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            )
+
+            $testCases_incomplete = @(
+                @{ Script = '$true ?';     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = '$true ? 3';   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = '$true ? 3 :'; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
+                @{ Script = "`$true`t?";     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = "`$true`t?`t3";   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+                @{ Script = "`$true`t?`t3`t:"; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
+            )
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
+    It "Question-mark and colon parsed correctly in <Script> when not in ternary expression context" -TestCases $testCases_basic {
+        param($Script, $TokenKind)
+
+        $tks = $null
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+
+        $tks[0].Kind | Should -BeExactly $TokenKind
+        $tks[0].Text | Should -BeExactly $Script
+
+        if ($TokenKind -eq "Variable") {
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType 'System.Management.Automation.Language.VariableExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression.Extent.Text | Should -BeExactly $Script
+        } else {
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType 'System.Management.Automation.Language.StringConstantExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0].Extent.Text | Should -BeExactly $Script
+        }
+    }
+
+    It "Question-mark and colon can be used as command names" {
+        function a?b:c { 'a?b:c' }
+        function 2?3:4 { '2?3:4' }
+
+        a?b:c | Should -BeExactly 'a?b:c'
+        2?3:4 | Should -BeExactly '2?3:4'
+    }
+
+    It "Incomplete ternary expression <Script> should generate correct error" -TestCases $testCases_incomplete {
+        param($Script, $ErrorId, $AstType)
+
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$ers)
+
+        $ers.Count | Should -Be 1
+        $ers.IncompleteInput | Should -BeTrue
+        $ers.ErrorId | Should -BeExactly $ErrorId
+
+        $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType $AstType
+    }
+
+    It "Generate ternary AST when operands are missing - '`$true ? :'" {
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? :', [ref]$null, [ref]$ers)
+        $ers.Count | Should -Be 2
+
+        $ers[0].IncompleteInput | Should -BeFalse
+        $ers[0].ErrorId | Should -BeExactly 'ExpectedValueExpression'
+        $ers[1].IncompleteInput | Should -BeTrue
+        $ers[1].ErrorId | Should -BeExactly 'ExpectedValueExpression'
+
+        $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
+        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+    }
+
+    It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? : 3', [ref]$null, [ref]$ers)
+        $ers.Count | Should -Be 1
+
+        $ers.IncompleteInput | Should -BeFalse
+        $ers.ErrorId | Should -BeExactly "ExpectedValueExpression"
+        $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
+        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ConstantExpressionAst'
+    }
+}

@@ -3,7 +3,7 @@ GUID = "1DA87E53-152B-403E-98DC-74D7B4D63D59"
 Author = "PowerShell"
 CompanyName = "Microsoft Corporation"
 Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
-ModuleVersion = "6.1.0.0"
+ModuleVersion = "7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion = "3.0"
 CmdletsToExport = @(
@@ -17,7 +17,7 @@ CmdletsToExport = @(
   'Show-Markdown', 'Get-MarkdownOption', 'Set-MarkdownOption', 'Add-Member', 'Get-Member', 'Compare-Object', 'Group-Object',
   'Measure-Object', 'New-Object', 'Select-Object', 'Sort-Object', 'Tee-Object', 'Register-ObjectEvent', 'Write-Output',
   'Import-PowerShellDataFile', 'Write-Progress', 'Disable-PSBreakpoint', 'Enable-PSBreakpoint', 'Get-PSBreakpoint',
-  'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'New-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession', 'Import-PSSession', 'Get-Random',
+  'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession', 'Import-PSSession', 'Get-Random',
   'Invoke-RestMethod', 'Debug-Runspace', 'Get-Runspace', 'Disable-RunspaceDebug', 'Enable-RunspaceDebug',
   'Get-RunspaceDebug', 'ConvertFrom-SddlString', 'Start-Sleep', 'Join-String', 'Out-String', 'Select-String',
   'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan', 'Get-TraceSource', 'Set-TraceSource',
@@ -29,4 +29,14 @@ FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855960'
+PrivateData = @{
+  PSData = @{
+    ExperimentalFeatures = @(
+      @{
+        Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
+        Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
+      }
+    )
+  }
+}
 }

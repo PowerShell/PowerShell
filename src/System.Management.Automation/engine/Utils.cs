@@ -806,37 +806,44 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
-            new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
+
+        private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>
+        {
+            {nameof(ScriptExecution), @"Software\Policies\Microsoft\Windows\PowerShell"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging"},
+            {nameof(Transcription), @"Software\Policies\Microsoft\Windows\PowerShell\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp"},
+        };
+
+        private const string PolicySettingFallbackKey = "UseWindowsPowerShellPolicySetting";
+
+        private static readonly ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_cachedPoliciesFromRegistry =
+            new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
+
+        private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.Ordinal);
 
         /// <summary>
-        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// Read policy settings from a registry key into a policy object.
         /// </summary>
-        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        /// <param name="instance">Policy object that will be filled with values from registry.</param>
+        /// <param name="instanceType">Type of policy object used.</param>
+        /// <param name="gpoKey">Registry key that has policy settings.</param>
+        /// <returns>True if any property was successfully set on the policy object.</returns>
+        private static bool TrySetPolicySettingsFromRegistryKey(object instance, Type instanceType, RegistryKey gpoKey)
         {
-            Type tType = typeof(T);
-            // SystemWide scope means 'LocalMachine' root key when query from registry
-            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
+            var properties = instanceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            bool isAnyPropertySet = false;
 
-            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
-            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+            string[] valueNames = gpoKey.GetValueNames();
+            string[] subKeyNames = gpoKey.GetSubKeyNames();
+            var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
+            var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
 
-            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            // If there are any values or subkeys in the registry key - read them into the policy instance object
+            if ((valueNameSet != null) || (subKeyNameSet != null))
             {
-                // If the corresponding GPO key doesn't exist, return null
-                if (gpoKey == null) { return null; }
-
-                // The corresponding GPO key exists, then create an instance of T
-                // and populate its properties with the settings
-                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
-                var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                bool isAnyPropertySet = false;
-
-                string[] valueNames = gpoKey.GetValueNames();
-                string[] subKeyNames = gpoKey.GetSubKeyNames();
-                var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
-                var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
-
                 foreach (var property in properties)
                 {
                     string settingName = property.Name;
@@ -891,16 +898,59 @@ namespace System.Management.Automation
 
                                 break;
                             default:
-                                Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
-                                break;
+                                throw System.Management.Automation.Interpreter.Assert.Unreachable;
                         }
 
                         // Set the property if the value is not null
                         if (propertyValue != null)
                         {
-                            property.SetValue(tInstance, propertyValue);
+                            property.SetValue(instance, propertyValue);
                             isAnyPropertySet = true;
                         }
+                    }
+                }
+            }
+
+            return isAnyPropertySet;
+        }
+
+        /// <summary>
+        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// </summary>
+        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        {
+            Type tType = typeof(T);
+            // SystemWide scope means 'LocalMachine' root key when query from registry
+            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
+
+            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
+            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+
+            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            {
+                // If the corresponding GPO key doesn't exist, return null
+                if (gpoKey == null) { return null; }
+
+                // The corresponding GPO key exists, then create an instance of T
+                // and populate its properties with the settings
+                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
+                bool isAnyPropertySet = false;
+
+                // if PolicySettingFallbackKey is Not set - use PowerShell Core policy reg key
+                if ((int)gpoKey.GetValue(PolicySettingFallbackKey, 0) == 0)
+                {
+                    isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, gpoKey);
+                }
+                else
+                {
+                    // when PolicySettingFallbackKey flag is set (REG_DWORD "1") use Windows PS policy reg key
+                    WindowsPowershellGroupPolicyKeys.TryGetValue(tType.Name, out string winPowershellGpoKeyPath);
+                    Diagnostics.Assert(winPowershellGpoKeyPath != null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
+                    using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
+                    {
+                        // If the corresponding Windows PS GPO key doesn't exist, return null
+                        if (winPowershellGpoKey == null) { return null; }
+                        isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
                     }
                 }
 
@@ -915,6 +965,8 @@ namespace System.Management.Automation
         private static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             PolicyBase policy = null;
+            string policyName = typeof(T).Name;
+
             foreach (ConfigScope scope in preferenceOrder)
             {
                 if (InternalTestHooks.BypassGroupPolicyCaching)
@@ -923,13 +975,10 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    var key = Tuple.Create(scope, typeof(T).Name);
-                    if (!s_cachedPoliciesFromRegistry.TryGetValue(key, out policy))
+                    var subordinateCache = s_cachedPoliciesFromRegistry.GetOrAdd(scope, s_subCacheCreationDelegate);
+                    if (!subordinateCache.TryGetValue(policyName, out policy))
                     {
-                        lock (s_cachedPoliciesFromRegistry)
-                        {
-                            policy = s_cachedPoliciesFromRegistry.GetOrAdd(key, tuple => GetPolicySettingFromGPOImpl<T>(tuple.Item1));
-                        }
+                        policy = subordinateCache.GetOrAdd(policyName, key => GetPolicySettingFromGPOImpl<T>(scope));
                     }
                 }
 
@@ -1033,11 +1082,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // append to result
-                        foreach (PSModuleInfo temp in gmoOutPut)
-                        {
-                            result.Add(temp);
-                        }
+                        result.AddRange(gmoOutPut);
                     }
                 }
             }

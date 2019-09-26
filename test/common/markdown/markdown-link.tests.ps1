@@ -1,9 +1,8 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 Describe "Verify Markdown Links" {
     BeforeAll {
-        # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
@@ -89,6 +88,11 @@ Describe "Verify Markdown Links" {
                     it "<url> should work" -TestCases $trueFailures  {
                         param($url)
 
+                        # there could be multiple reasons why a failure is ok
+                        # check against the allowed failures
+                        # 503 = service temporarily unavailable
+                        $allowedFailures = @( 503 )
+
                         $prefix = $url.Substring(0,7)
 
                         # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
@@ -102,7 +106,9 @@ Describe "Verify Markdown Links" {
                             }
                             catch
                             {
-                                throw "retry of URL failed with error: $($_.Message)"
+                                if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
+                                    throw "retry of URL failed with error: $($_.Exception.Message)"
+                                }
                             }
                         }
                         else {

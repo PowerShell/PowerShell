@@ -344,3 +344,40 @@ function Test-CanWriteToPsHome
 
     $script:CanWriteToPsHome
 }
+
+# Creates a password meeting Windows complexity rules
+function New-ComplexPassword
+{
+    $numbers = "0123456789"
+    $lowercase = "abcdefghijklmnopqrstuvwxyz"
+    $uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    $symbols = "~!@#$%^&*_-+=``|\(){}[]:;`"'<>,.?/"
+    $password = [string]::Empty
+    # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
+    # buckets above, so we just pick one from each bucket twice.
+    # https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    1..2 | ForEach-Object {
+        $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
+            $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
+    }
+
+    $password
+}
+
+# return a specific string with regard to platform information
+function Get-PlatformInfo
+{
+    if ( $IsWindows ) {
+        return "windows"
+    }
+    if ( $IsMacOS ) {
+        return "macos"
+    }
+    if ( $IsLinux ) {
+        $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
+        if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
+            return $osrelease.ID
+        }
+        return "unknown"
+    }
+}

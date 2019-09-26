@@ -1671,9 +1671,7 @@ namespace System.Management.Automation.Runspaces
             ss.UseFullLanguageModeInDebugger = this.UseFullLanguageModeInDebugger;
             ss.ThreadOptions = this.ThreadOptions;
             ss.ThrowOnRunspaceOpenError = this.ThrowOnRunspaceOpenError;
-#if !CORECLR // No ApartmentState In CoreCLR
             ss.ApartmentState = this.ApartmentState;
-#endif
 
             foreach (ModuleSpecification modSpec in this.ModuleSpecificationsToImport)
             {
@@ -1812,13 +1810,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public bool UseFullLanguageModeInDebugger { get; set; } = false;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread used to execute commands.
         /// </summary>
         public ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
-
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is created for each invocation of a command.
@@ -2102,12 +2097,7 @@ namespace System.Management.Automation.Runspaces
 
         private object _syncObject = new Object();
 
-        internal void Bind(ExecutionContext context, bool updateOnly)
-        {
-            Bind(context, updateOnly, null, /*noClobber*/false, /*local*/ false);
-        }
-
-        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local)
+        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {
             Host = context.EngineHostInterface;
             lock (_syncObject)
@@ -2210,7 +2200,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            SetSessionStateDrive(context, setLocation: false);
+            SetSessionStateDrive(context, setLocation: setLocation);
         }
 
         private void Bind_SetVariables(SessionStateInternal ss)
@@ -4119,7 +4109,7 @@ param(
     [string]
     ${Path},
 
-    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','Workflow','DscResource','Class','Configuration')]
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','DscResource','Class','Configuration')]
     [string[]]
     ${Category},
 
@@ -4555,7 +4545,6 @@ end {
                     new SessionStateAliasEntry("mi", "Move-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("mp", "Move-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nal", "New-Alias", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("nbp", "New-PSBreakpoint", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ndr", "New-PSDrive", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ni", "New-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nv", "New-Variable", string.Empty, ReadOnly),
@@ -4616,7 +4605,9 @@ end {
                     new SessionStateAliasEntry("dir", "Get-ChildItem", string.Empty, AllScope),
                     new SessionStateAliasEntry("echo", "Write-Output", string.Empty, AllScope),
                     new SessionStateAliasEntry("fc", "Format-Custom", string.Empty, ReadOnly),
+#if !UNIX
                     new SessionStateAliasEntry("kill", "Stop-Process"),
+#endif
                     new SessionStateAliasEntry("pwd", "Get-Location"),
                     new SessionStateAliasEntry("type", "Get-Content"),
 // #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts

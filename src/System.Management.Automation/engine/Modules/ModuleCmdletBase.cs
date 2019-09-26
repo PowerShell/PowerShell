@@ -666,9 +666,9 @@ namespace Microsoft.PowerShell.Commands
                                                                 Modules.ManifestMemberNotValid,
                                                                 moduleSpecification.Name,
                                                                 "NestedModules",
-                                                                parentModule.Path,
+                                                                parentModule?.Path,
                                                                 StringUtil.Format(Modules.InvalidModuleExtension, extension, moduleSpecification.Name),
-                                                                                    ModuleIntrinsics.GetModuleName(parentModule.Path));
+                                                                                    ModuleIntrinsics.GetModuleName(parentModule?.Path));
                         invalidOperation.SetErrorId("Modules_InvalidModuleExtension");
                         throw invalidOperation;
                     }
@@ -1539,40 +1539,6 @@ namespace Microsoft.PowerShell.Commands
 
             string actualRootModule = moduleToProcess ?? rootModule;
 
-            // If the root module is a workflow module, the 'actualRootModule' is nulled out.
-            // We need to save this name so that we can assign this to the RootModule property of ModuleInfo.
-            string savedActualRootModule = actualRootModule;
-
-            if (string.Equals(System.IO.Path.GetExtension(actualRootModule),
-                StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                if (WildcardPattern.ContainsWildcardCharacters(actualRootModule))
-                {
-                    PSInvalidOperationException invalidOperation = PSTraceSource.NewInvalidOperationException(
-                        Modules.WildCardNotAllowedInModuleToProcessAndInNestedModules,
-                        moduleManifestPath);
-                    invalidOperation.SetErrorId("Modules_WildCardNotAllowedInModuleToProcessAndInNestedModules");
-                    throw invalidOperation;
-                }
-
-                if (writingErrors)
-                {
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, actualRootModule);
-                    WriteError(new ErrorRecord(
-                                   new NotSupportedException(message),
-                                   "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.InvalidOperation, null));
-                }
-
-                // Null out 'actualRootModule' so don't attempt to process the file like a non-workflow module later.
-                actualRootModule = null;
-                containedErrors = true;
-                if (bailOnFirstError)
-                {
-                    return null;
-                }
-            }
-
             // extract defaultCommandPrefix from the manifest
             string defaultCommandPrefix = null;
             if (
@@ -2013,28 +1979,7 @@ namespace Microsoft.PowerShell.Commands
                         throw invalidOperation;
                     }
 
-                    if (string.Equals(System.IO.Path.GetExtension(s.Name),
-                        StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (writingErrors)
-                        {
-                            message = StringUtil.Format(Modules.WorkflowModuleNotSupported, s.Name);
-                            WriteError(new ErrorRecord(
-                                           new NotSupportedException(message),
-                                           "Modules_WorkflowModuleNotSupported",
-                                           ErrorCategory.InvalidOperation, null));
-                        }
-
-                        containedErrors = true;
-                        if (bailOnFirstError)
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        nestedModules.Add(s);
-                    }
+                    nestedModules.Add(s);
                 }
 
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
@@ -2451,7 +2396,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        iss.Bind(Context, /*updateOnly*/ true);
+                        iss.Bind(Context, updateOnly: true, module: null, noClobber: false, local: false, setLocation: false);
                     }
                     catch (Exception e)
                     {
@@ -2593,8 +2538,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            manifestInfo.RootModule = savedActualRootModule;
-            manifestInfo.RootModuleForManifest = savedActualRootModule;
+            manifestInfo.RootModule = actualRootModule;
+            manifestInfo.RootModuleForManifest = actualRootModule;
             if (manifestGuid != null)
             {
                 manifestInfo.SetGuid((Guid)manifestGuid);
@@ -4680,7 +4625,7 @@ namespace Microsoft.PowerShell.Commands
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.IndexOf(":", StringComparison.Ordinal) >= 0);
+                filePath.Contains(':'));
         }
 
         /// <summary>
@@ -5918,15 +5863,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    found = true;
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, fileName);
-                    WriteError(new ErrorRecord(
-                                   new NotSupportedException(message),
-                                   "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.InvalidOperation, null));
-                }
                 else
                 {
                     found = true;
@@ -6829,7 +6765,7 @@ namespace Microsoft.PowerShell.Commands
                         iss.DisableFormatUpdates = true;
 
                     // Load the cmdlets and providers, bound to the new module...
-                    iss.Bind(Context, /*updateOnly*/ true, module, options.NoClobber, options.Local);
+                    iss.Bind(Context, updateOnly: true, module, options.NoClobber, options.Local, setLocation: false);
 
                     // Scan all of the types in the assembly to register JobSourceAdapters.
                     IEnumerable<Type> allTypes = new Type[] { };

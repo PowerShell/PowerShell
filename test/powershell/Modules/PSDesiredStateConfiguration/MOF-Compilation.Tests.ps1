@@ -7,13 +7,21 @@ Describe "DSC MOF Compilation" -tags "CI" {
     }
 
     BeforeAll {
-        $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
+        $IsAlpine = (Get-PlatformInfo) -eq "alpine"
+        Import-Module PSDesiredStateConfiguration
+        $dscModule = Get-Module PSDesiredStateConfiguration
+        $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
+        $testResourceSchemaPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc) schema
+
+        # Copy test resources to PSDesiredStateConfiguration module
+        Copy-Item $testResourceSchemaPath $baseSchemaPath -Recurse -Force
+
         $_modulePath = $env:PSModulePath
         $powershellexe = (get-process -pid $PID).MainModule.FileName
         $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
-    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows) {
+    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -32,7 +40,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig1\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows) {
+    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -54,7 +62,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows) {
+    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
         [Scriptblock]::Create(@"
     Configuration WordPressServer{
 
@@ -163,7 +171,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig3\CentOS.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux) {
+    It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux -or $IsAlpine) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -183,7 +191,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig4\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux) {
+    It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux -or $IsAlpine) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {

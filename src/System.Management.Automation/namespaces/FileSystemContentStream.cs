@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("blocks requested = {0}", readCount);
 
-            ArrayList blocks = new ArrayList();
+            var blocks = new List<object>();
             bool readToEnd = (readCount <= 0);
 
             if (_alreadyDetectEncoding && _reader.BaseStream.Position == 0)
@@ -367,19 +367,19 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_usingByteEncoding)
                     {
-                        if (!ReadByteEncoded(waitChanges, blocks, false))
+                        if (!ReadByteEncoded(waitChanges, blocks, readBackward: false))
                             break;
                     }
                     else
                     {
                         if (_usingDelimiter || _isRawStream)
                         {
-                            if (!ReadDelimited(waitChanges, blocks, false, _delimiter))
+                            if (!ReadDelimited(waitChanges, blocks, readBackward: false, _delimiter))
                                 break;
                         }
                         else
                         {
-                            if (!ReadByLine(waitChanges, blocks, false))
+                            if (!ReadByLine(waitChanges, blocks, readBackward: false))
                                 break;
                         }
                     }
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("blocks seek backwards = {0}", backCount);
 
-            ArrayList blocks = new ArrayList();
+            var blocks = new List<object>();
             if (_reader != null)
             {
                 // Make the reader automatically detect the encoding
@@ -463,13 +463,18 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder builder = new StringBuilder();
-            foreach (char character in _delimiter)
-            {
-                builder.Insert(0, character);
-            }
+            string actualDelimiter = string.Create(
+                _delimiter.Length,
+                _delimiter,
+                (chars, buf) =>
+                {
+                    for (int i = 0, j = buf.Length - 1; i < chars.Length; i++, j--)
+                    {
+                        chars[i] = buf[j];
+                    }
+                }
+            );
 
-            string actualDelimiter = builder.ToString();
             long currentBlock = 0;
             string lastDelimiterMatch = null;
 
@@ -488,14 +493,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_usingByteEncoding)
                     {
-                        if (!ReadByteEncoded(false, blocks, true))
+                        if (!ReadByteEncoded(waitChanges: false, blocks, readBackward: true))
                             break;
                     }
                     else
                     {
                         if (_usingDelimiter)
                         {
-                            if (!ReadDelimited(false, blocks, true, actualDelimiter))
+                            if (!ReadDelimited(waitChanges: false, blocks, readBackward: true, actualDelimiter))
                                 break;
                             // If the delimiter is at the end of the file, we need to read one more
                             // to get to the right position. For example:
@@ -508,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            if (!ReadByLine(false, blocks, true))
+                            if (!ReadByLine(waitChanges: false, blocks, readBackward: true))
                                 break;
                         }
                     }
@@ -553,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool ReadByLine(bool waitChanges, ArrayList blocks, bool readBackward)
+        private bool ReadByLine(bool waitChanges, List<object> blocks, bool readBackward)
         {
             // Reading lines as strings
             string line = readBackward ? _backReader.ReadLine() : _reader.ReadLine();
@@ -581,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
         }
 
-        private bool ReadDelimited(bool waitChanges, ArrayList blocks, bool readBackward, string actualDelimiter)
+        private bool ReadDelimited(bool waitChanges, List<object> blocks, bool readBackward, string actualDelimiter)
         {
             if (_isRawStream)
             {
@@ -705,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool ReadByteEncoded(bool waitChanges, ArrayList blocks, bool readBack)
+        private bool ReadByteEncoded(bool waitChanges, List<object> blocks, bool readBackward)
         {
             if (_isRawStream)
             {
@@ -738,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (readBack)
+            if (readBackward)
             {
                 if (_stream.Position == 0)
                 {

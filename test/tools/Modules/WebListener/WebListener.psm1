@@ -217,6 +217,7 @@ function Get-WebListenerUrl {
             'Compression',
             'Delay',
             'Delete',
+            'Dos',
             'Encoding',
             'Get',
             'Home',

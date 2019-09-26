@@ -11,10 +11,10 @@ using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -173,10 +173,8 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthMacOS = 104;
 
         internal static string[] validParameters = {
-#if STAMODE
             "sta",
             "mta",
-#endif
             "command",
             "configurationname",
             "custompipename",
@@ -185,7 +183,7 @@ namespace Microsoft.PowerShell
             "file",
             "help",
             "inputformat",
-            "loadprofile",
+            "login",
             "noexit",
             "nologo",
             "noninteractive",
@@ -573,7 +571,7 @@ namespace Microsoft.PowerShell
                 return (SwitchKey: null, ShouldBreak: false);
             }
 
-            if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
+            if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
             {
                 // then its a file
                 if (parser != null)
@@ -590,7 +588,7 @@ namespace Microsoft.PowerShell
             switchKey = switchKey.Substring(1);
 
             // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!string.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
+            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(switchKey[0]))
             {
                 switchKey = switchKey.Substring(1);
             }
@@ -644,7 +642,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-#if STAMODE
         internal bool StaMode
         {
             get
@@ -655,14 +652,10 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
-                    // return false;
-                    // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
                 }
             }
         }
-#endif
 
         /// <summary>
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
@@ -717,20 +710,22 @@ namespace Microsoft.PowerShell
                     _noExit = false;
                     break;
                 }
-                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+
+                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
                 }
+                else if (MatchSwitch(switchKey, "login", "l"))
+                {
+                    // This handles -Login on Windows only, where it does nothing.
+                    // On *nix, -Login is handled much earlier to improve startup performance.
+                }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
                     noexitSeen = true;
-                }
-                else if (MatchSwitch(switchKey, "loadprofile", "l"))
-                {
-                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -889,7 +884,7 @@ namespace Microsoft.PowerShell
                     {
                         string arg = args[i];
 
-                        if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                        if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]))
                         {
                             break;
                         }
@@ -944,10 +939,15 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if STAMODE
-                // explicit setting of the ApartmentState Not supported on NanoServer
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
+                    if (!Platform.IsWindowsDesktop)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.STANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -958,10 +958,15 @@ namespace Microsoft.PowerShell
 
                     _staMode = true;
                 }
-                // Win8: 182409 PowerShell 3.0 should run in STA mode by default..so, consequently adding the switch -mta.
-                // Not deleting -sta for backward compatability reasons
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
+                    if (!Platform.IsWindowsDesktop)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MTANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -972,7 +977,6 @@ namespace Microsoft.PowerShell
 
                     _staMode = false;
                 }
-#endif
                 else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
                 {
                     ++i;
@@ -1160,7 +1164,7 @@ namespace Microsoft.PowerShell
 
                 if (!System.IO.File.Exists(_file))
                 {
-                    if (args[i].StartsWith("-") && args[i].Length > 1)
+                    if (args[i].StartsWith('-') && args[i].Length > 1)
                     {
                         string param = args[i].Substring(1, args[i].Length - 1).ToLower();
                         StringBuilder possibleParameters = new StringBuilder();
@@ -1205,7 +1209,7 @@ namespace Microsoft.PowerShell
                         _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
                         pendingParameter = null;
                     }
-                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]) && arg.Length > 1)
+                    else if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]) && arg.Length > 1)
                     {
                         int offset = arg.IndexOf(':');
                         if (offset >= 0)
@@ -1406,15 +1410,7 @@ namespace Microsoft.PowerShell
         private bool _abortStartup;
         private bool _skipUserInit;
         private string _customPipeName;
-#if STAMODE
-        // Win8: 182409 PowerShell 3.0 should run in STA mode by default
-        // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
-        // if true, then sta is specified on the command line.
-        // if false, then mta is specified on the command line.
-        // if null, then none is specified on the command line..use default in this case
-        // default is sta.
         private bool? _staMode = null;
-#endif
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;
         private bool _noPrompt;

@@ -87,7 +87,9 @@ namespace System.Management.Automation.Remoting.Server
             catch (Exception e)
             {
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -96,7 +98,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -158,7 +162,9 @@ namespace System.Management.Automation.Remoting.Server
 
         protected void OnDataAckPacketReceived(Guid psGuid)
         {
-            throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived, RemotingErrorIdStrings.IPCUnknownElementReceived,
+            throw new PSRemotingTransportException(
+                PSRemotingErrorId.IPCUnknownElementReceived,
+                RemotingErrorIdStrings.IPCUnknownElementReceived,
                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
         }
 
@@ -301,33 +307,39 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, currentIdentity.Name, null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, currentIdentity.Name, null),
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #else
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, string.Empty, null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, string.Empty, null),
                 null);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
-            ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                _initialCommand, tm, configurationName);
+            ServerRemoteSession.CreateServerRemoteSession(
+                senderInfo,
+                _initialCommand,
+                tm,
+                configurationName,
+                workingDirectory);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string configurationName = null)
+        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
 
             try
             {
@@ -338,7 +350,7 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
                         }
                     }
 
@@ -352,8 +364,10 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM = null;
                         }
 
-                        throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
-                            RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
+                        throw new PSRemotingTransportException(
+                            PSRemotingErrorId.IPCUnknownElementReceived,
+                            RemotingErrorIdStrings.IPCUnknownElementReceived,
+                            string.Empty);
                     }
 
                     // process data in a thread pool thread..this way Runspace, Command
@@ -366,7 +380,8 @@ namespace System.Management.Automation.Remoting.Server
 #else
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
-                } while (true);
+                }
+                while (true);
             }
             catch (Exception e)
             {
@@ -468,8 +483,11 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
+        /// Starts the out-of-process powershell server instance.  
         /// </summary>
-        internal static void Run(string initialCommand)
+        /// <param name="initialCommand">Specifies the initialization script.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
+        internal static void Run(string initialCommand, string workingDirectory)
         {
             lock (SyncObject)
             {
@@ -486,7 +504,7 @@ namespace System.Management.Automation.Remoting.Server
             // Setup unhandled exception to log events
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
         }
 
         #endregion

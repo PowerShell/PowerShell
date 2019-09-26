@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Context.CurrentCommandProcessor.CommandRuntime.OutVarList != null)
             {
-                _outVarResults = new ArrayList();
+                _outVarResults = new List<PSObject>();
             }
         }
 
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ArrayList _outVarResults = null;
+        private List<PSObject> _outVarResults = null;
         private IDisposable _transcribeOnlyCookie = null;
     }
 

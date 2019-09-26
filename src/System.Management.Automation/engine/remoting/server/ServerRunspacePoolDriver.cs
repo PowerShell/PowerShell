@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -86,6 +87,9 @@ namespace System.Management.Automation
         // Results in a configured remote runspace pushed onto driver host.
         private string _configurationName;
 
+        // Optional initial location of the PowerShell session
+        private readonly string _initialLocation;
+
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
         /// </summary>
@@ -95,46 +99,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-#if CORECLR // No ApartmentState In CoreCLR
-        /// <summary>
-        /// Creates the runspace pool driver.
-        /// </summary>
-        /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
-        /// <param name="transportManager">transport manager associated with this
-        /// runspace pool driver</param>
-        /// <param name="maxRunspaces">Maximum runspaces to open.</param>
-        /// <param name="minRunspaces">Minimum runspaces to open.</param>
-        /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
-        /// <param name="hostInfo">Host information about client side host.</param>
-        /// <param name="configData">
-        /// Contains:
-        /// 1. Script to run after a RunspacePool/Runspace is created in this session.
-        /// For RunspacePool case, every newly created Runspace (in the pool) will run
-        /// this script.
-        /// 2. ThreadOptions for RunspacePool/Runspace
-        /// 3. ThreadApartment for RunspacePool/Runspace
-        /// </param>
-        /// <param name="initialSessionState">Configuration of the runspace.</param>
-        /// <param name="applicationPrivateData">Application private data.</param>
-        /// <param name="isAdministrator">True if the driver is being created by an administrator.</param>
-        /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
-        /// <param name="psClientVersion">Client PowerShell version.</param>
-        /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
-        internal ServerRunspacePoolDriver(
-            Guid clientRunspacePoolId,
-            int minRunspaces,
-            int maxRunspaces,
-            PSThreadOptions threadOptions,
-            HostInfo hostInfo,
-            InitialSessionState initialSessionState,
-            PSPrimitiveDictionary applicationPrivateData,
-            ConfigurationDataFromXML configData,
-            AbstractServerSessionTransportManager transportManager,
-            bool isAdministrator,
-            RemoteSessionCapability serverCapability,
-            Version psClientVersion,
-            string configurationName)
-#else
         /// <summary>
         /// Creates the runspace pool driver.
         /// </summary>
@@ -160,6 +124,7 @@ namespace System.Management.Automation
         /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
         /// <param name="psClientVersion">Client PowerShell version.</param>
         /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
+        /// <param name="initialLocation">Optional initial location of the powershell.</param>
         internal ServerRunspacePoolDriver(
             Guid clientRunspacePoolId,
             int minRunspaces,
@@ -174,8 +139,8 @@ namespace System.Management.Automation
             bool isAdministrator,
             RemoteSessionCapability serverCapability,
             Version psClientVersion,
-            string configurationName)
-#endif
+            string configurationName,
+            string initialLocation)
         {
             Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
@@ -183,11 +148,12 @@ namespace System.Management.Automation
             _clientPSVersion = psClientVersion;
 
             _configurationName = configurationName;
+            _initialLocation = initialLocation;
 
             // Create a new server host and associate for host call
             // integration
-            _remoteHost = new ServerDriverRemoteHost(clientRunspacePoolId,
-                Guid.Empty, hostInfo, transportManager, null);
+            _remoteHost = new ServerDriverRemoteHost(
+                clientRunspacePoolId, Guid.Empty, hostInfo, transportManager, null);
 
             _configData = configData;
             _applicationPrivateData = applicationPrivateData;
@@ -213,7 +179,6 @@ namespace System.Management.Automation
                 RunspacePool.ThreadOptions = threadOptions;
             }
 
-#if !CORECLR // No ApartmentState In CoreCLR
             // Set Thread ApartmentState for this RunspacePool
             ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
 
@@ -225,7 +190,6 @@ namespace System.Management.Automation
             {
                 RunspacePool.ApartmentState = apartmentState;
             }
-#endif
 
             // If we have a runspace pool with a single runspace then we can run nested pipelines on
             // on it in a single pipeline invoke thread.
@@ -579,9 +543,7 @@ namespace System.Management.Automation
                 Guid.Empty,
                 this.InstanceId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 args.Runspace.ApartmentState,
-#endif
                 hostInfo,
                 RemoteStreamOptions.AddInvocationInfo,
                 false,
@@ -658,6 +620,13 @@ namespace System.Management.Automation
                 // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
+            }
+
+            if (!string.IsNullOrWhiteSpace(_initialLocation))
+            {
+                var setLocationCommand = new Command("Set-Location");
+                setLocationCommand.Parameters.Add(new CommandParameter("LiteralPath", _initialLocation));
+                InvokeScript(setLocationCommand, args);
             }
 
             // Run startup scripts
@@ -749,9 +718,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle the invocation of powershell.
         /// </summary>
-        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="_">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
-        private void HandleCreateAndInvokePowerShell(object sender, RemoteDataEventArgs<RemoteDataObject<PSObject>> eventArgs)
+        private void HandleCreateAndInvokePowerShell(object _, RemoteDataEventArgs<RemoteDataObject<PSObject>> eventArgs)
         {
             RemoteDataObject<PSObject> data = eventArgs.Data;
 
@@ -760,9 +729,7 @@ namespace System.Management.Automation
             // invoked from within the driver
             HostInfo hostInfo = RemotingDecoder.GetHostInfo(data.Data);
 
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState = RemotingDecoder.GetApartmentState(data.Data);
-#endif
 
             RemoteStreamOptions streamOptions = RemotingDecoder.GetRemoteStreamOptions(data.Data);
             PowerShell powershell = RemotingDecoder.GetPowerShell(data.Data);
@@ -824,9 +791,7 @@ namespace System.Management.Automation
                         data.PowerShellId,
                         data.RunspacePoolId,
                         this,
-#if !CORECLR // No ApartmentState In CoreCLR
                         apartmentState,
-#endif
                         hostInfo,
                         streamOptions,
                         addToHistory,
@@ -883,9 +848,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             hostInfo,
                             streamOptions,
                             addToHistory,
@@ -904,9 +867,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             _remoteHost,
                             hostInfo,
                             streamOptions,
@@ -937,9 +898,7 @@ namespace System.Management.Automation
                             data.PowerShellId,
                             data.RunspacePoolId,
                             this,
-#if !CORECLR // No ApartmentState In CoreCLR
                             apartmentState,
-#endif
                             hostInfo,
                             streamOptions,
                             addToHistory,
@@ -971,9 +930,7 @@ namespace System.Management.Automation
                 data.PowerShellId,
                 data.RunspacePoolId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 apartmentState,
-#endif
                 hostInfo,
                 streamOptions,
                 addToHistory,
@@ -1085,9 +1042,7 @@ namespace System.Management.Automation
                     data.PowerShellId,
                     data.RunspacePoolId,
                     this,
-#if !CORECLR // No ApartmentState In CoreCLR
                     ApartmentState.Unknown,
-#endif
                     useRunspaceHost,
                     0 /* stream options */,
                     false /* addToHistory */,
@@ -1224,9 +1179,7 @@ namespace System.Management.Automation
                 powershellId,
                 runspacePoolId,
                 this,
-#if !CORECLR // No ApartmentState In CoreCLR
                 ApartmentState.MTA,
-#endif
                 hostInfo,
                 streamOptions,
                 addToHistory,
@@ -1255,7 +1208,8 @@ namespace System.Management.Automation
         private enum PreProcessCommandResult
         {
             /// <summary>
-            /// No debugger pre-processing.
+            /// No debugger pre-processing. "Get" commands use this so that the
+            /// data they retrieve can be sent back to the caller.
             /// </summary>
             None = 0,
 
@@ -1264,11 +1218,6 @@ namespace System.Management.Automation
             /// the debugger state was not correct.
             /// </summary>
             ValidNotProcessed,
-
-            /// <summary>
-            /// GetDebuggerStopArgs.
-            /// </summary>
-            GetDebuggerStopArgs,
 
             /// <summary>
             /// SetDebuggerAction.
@@ -1288,7 +1237,7 @@ namespace System.Management.Automation
             /// <summary>
             /// SetPreserveUnhandledBreakpointMode.
             /// </summary>
-            SetPreserveUnhandledBreakpointMode
+            SetPreserveUnhandledBreakpointMode,
         };
 
         private class DebuggerCommandArgument
@@ -1327,35 +1276,31 @@ namespace System.Management.Automation
 
             var command = commands.Commands[0];
             string commandText = command.CommandText;
-            if (commandText.Equals(DebuggerUtils.GetDebuggerStopArgsFunctionName, StringComparison.OrdinalIgnoreCase))
+            if (commandText.Equals(RemoteDebuggingCommands.GetDebuggerStopArgs, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Get-PSDebuggerStopArgs private virtual command.
                 // No input parameters.
                 // Returns DebuggerStopEventArgs object.
-                //
 
                 // Evaluate this command only if the debugger is activated.
-                if (!isDebuggerActive) { return PreProcessCommandResult.ValidNotProcessed; }
+                if (!isDebuggerActive)
+                {
+                    return PreProcessCommandResult.ValidNotProcessed;
+                }
 
-                // Translate into debugger method call.
-                ScriptBlock scriptBlock = ScriptBlock.Create("$host.Runspace.Debugger.GetDebuggerStopArgs()");
-                scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
-                commands.Clear();
-                commands.AddCommand("Invoke-Command").AddParameter("ScriptBlock", scriptBlock).AddParameter("NoNewScope", true);
-
-                result = PreProcessCommandResult.GetDebuggerStopArgs;
+                ReplaceVirtualCommandWithScript(commands, "$host.Runspace.Debugger.GetDebuggerStopArgs()");
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebuggerActionFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebuggerAction, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebuggerAction private virtual command.
                 // DebuggerResumeAction enum input parameter.
                 // Returns void.
-                //
 
                 // Evaluate this command only if the debugger is activated.
-                if (!isDebuggerActive) { return PreProcessCommandResult.ValidNotProcessed; }
+                if (!isDebuggerActive)
+                {
+                    return PreProcessCommandResult.ValidNotProcessed;
+                }
 
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                     (!command.Parameters[0].Name.Equals("ResumeAction", StringComparison.OrdinalIgnoreCase)))
@@ -1374,22 +1319,14 @@ namespace System.Management.Automation
                     catch (InvalidCastException) { }
                 }
 
-                if (resumeAction == null)
-                {
-                    throw new PSArgumentException("ResumeAction");
-                }
-
-                commandArgument.ResumeAction = resumeAction;
+                commandArgument.ResumeAction = resumeAction ?? throw new PSArgumentException("ResumeAction");
                 result = PreProcessCommandResult.SetDebuggerAction;
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebugModeFunctionName, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebugMode, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebugMode private virtual command.
                 // DebugModes enum input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                     (!command.Parameters[0].Name.Equals("Mode", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1407,22 +1344,14 @@ namespace System.Management.Automation
                     catch (InvalidCastException) { }
                 }
 
-                if (mode == null)
-                {
-                    throw new PSArgumentException("Mode");
-                }
-
-                commandArgument.Mode = mode;
+                commandArgument.Mode = mode ?? throw new PSArgumentException("Mode");
                 result = PreProcessCommandResult.SetDebugMode;
             }
-            else if (commandText.Equals(DebuggerUtils.SetDebuggerStepMode, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetDebuggerStepMode, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSDebuggerStepMode private virtual command.
                 // Boolean Enabled input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("Enabled", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1433,14 +1362,11 @@ namespace System.Management.Automation
                 commandArgument.DebuggerStepEnabled = enabled;
                 result = PreProcessCommandResult.SetDebuggerStepMode;
             }
-            else if (commandText.Equals(DebuggerUtils.SetPSUnhandledBreakpointMode, StringComparison.OrdinalIgnoreCase))
+            else if (commandText.Equals(RemoteDebuggingCommands.SetUnhandledBreakpointMode, StringComparison.OrdinalIgnoreCase))
             {
-                //
                 // __Set-PSUnhandledBreakpointMode private virtual command.
                 // UnhandledBreakpointMode input parameter.
                 // Returns void.
-                //
-
                 if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("UnhandledBreakpointMode", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1458,16 +1384,166 @@ namespace System.Management.Automation
                     catch (InvalidCastException) { }
                 }
 
-                if (mode == null)
+                commandArgument.UnhandledBreakpointMode = mode ?? throw new PSArgumentException("Mode");
+                result = PreProcessCommandResult.SetPreserveUnhandledBreakpointMode;
+            }
+            else if (commandText.Equals(RemoteDebuggingCommands.GetBreakpoint, StringComparison.OrdinalIgnoreCase))
+            {
+                // __Get-PSBreakpoint private virtual command.
+                // Input parameters:
+                // [-Id <int>]
+                // Returns Breakpoint object(s).
+                string script = null;
+
+                if (command.Parameters?.Count > 0)
                 {
-                    throw new PSArgumentException("Mode");
+                    int breakpointId = CheckBreakpointIdParameter(command);
+                    script = $"$host.Runspace.Debugger.GetBreakpoint({breakpointId})";
+                }
+                else
+                {
+                    script = $"$host.Runspace.Debugger.GetBreakpoints()";
                 }
 
-                commandArgument.UnhandledBreakpointMode = mode;
-                result = PreProcessCommandResult.SetPreserveUnhandledBreakpointMode;
+                ReplaceVirtualCommandWithScript(commands, script);
+            }
+            else if (commandText.Equals(RemoteDebuggingCommands.SetBreakpoint, StringComparison.OrdinalIgnoreCase))
+            {
+                // __Set-PSBreakpoint private virtual command.
+                // Input parameters:
+                // [-Script] <string[]> [-Line] <int[]> [[-Column] <int>] [-Action <scriptblock>]
+                // [[-Script] <string[]>] -Command <string[]> [-Action <scriptblock>]
+                // [[-Script] <string[]>] -Variable <string[]> [-Action <scriptblock>] [-Mode <VariableAccessMode>]
+                // Returns Breakpoint object.
+                if (command.Parameters == null || command.Parameters.Count == 0)
+                {
+                    throw new PSArgumentException("You must provide at least one parameter.");
+                }
+
+                string breakpointType = null;
+                foreach (var commandParameter in command.Parameters)
+                {
+                    if (!commandParameter.Name.Equals("Script", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Line", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Column", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Command", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Variable", StringComparison.OrdinalIgnoreCase) &&
+                        !commandParameter.Name.Equals("Mode", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new PSArgumentException(commandParameter.Name);
+                    }
+
+                    if (commandParameter.Name.Equals("Line", StringComparison.OrdinalIgnoreCase) ||
+                        commandParameter.Name.Equals("Column", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (breakpointType != null && breakpointType != "Line")
+                        {
+                            throw new PSArgumentException(commandParameter.Name);
+                        }
+
+                        breakpointType = "Line";
+                    }
+                    else if (commandParameter.Name.Equals("Command", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (breakpointType != null)
+                        {
+                            throw new PSArgumentException(commandParameter.Name);
+                        }
+
+                        breakpointType = "Command";
+                    }
+                    else if (commandParameter.Name.Equals("Variable", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (breakpointType != null)
+                        {
+                            throw new PSArgumentException(commandParameter.Name);
+                        }
+
+                        breakpointType = "Variable";
+                    }
+                }
+
+                commands.Clear();
+                commands.AddCommand("Set-PSBreakpoint");
+                foreach (var commandParameter in command.Parameters)
+                {
+                    var parameterValue = commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase)
+                        ? ScriptBlock.Create(commandParameter.Value as string)
+                        : commandParameter.Value;
+
+                    commands.AddParameter(commandParameter.Name, parameterValue);
+                }
+            }
+            else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
+            {
+                // __Remove-PSBreakpoint private virtual command.
+                // Input parameters:
+                // -Id <int>
+                // Returns bool.
+
+                int breakpointId = CheckBreakpointIdParameter(command);
+
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); $bp -ne $null -and $host.Runspace.Debugger.RemoveBreakpoint($bp)";
+
+                ReplaceVirtualCommandWithScript(commands, script);
+            }
+            else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
+            {
+                // __Enable-PSBreakpoint private virtual command.
+                // Input parameters:
+                // -Id <int>
+                // Returns Breakpoint.
+
+                int breakpointId = CheckBreakpointIdParameter(command);
+
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.EnableBreakpoint($bp)}}";
+
+                ReplaceVirtualCommandWithScript(commands, script);
+            }
+            else if (commandText.Equals(RemoteDebuggingCommands.DisableBreakpoint, StringComparison.OrdinalIgnoreCase))
+            {
+                // __Disable-PSBreakpoint private virtual command.
+                // Input parameters:
+                // -Id <int>
+                // Returns Breakpoint.
+
+                int breakpointId = CheckBreakpointIdParameter(command);
+
+                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.DisableBreakpoint($bp)}}";
+
+                ReplaceVirtualCommandWithScript(commands, script);
             }
 
             return result;
+        }
+
+        private static void ReplaceVirtualCommandWithScript(PSCommand commands, string script)
+        {
+            ScriptBlock scriptBlock = ScriptBlock.Create(script);
+            scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
+            commands.Clear();
+            commands.AddCommand("Invoke-Command")
+                    .AddParameter("ScriptBlock", scriptBlock)
+                    .AddParameter("NoNewScope", true);
+        }
+
+        private static int CheckBreakpointIdParameter(Command command)
+        {
+            if (command.Parameters == null ||
+                command.Parameters.Count == 0 ||
+                !command.Parameters[0].Name.Equals("Id", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new PSArgumentException("Id");
+            }
+
+            int? breakpointId = command.Parameters[0].Value as int?;
+            if (breakpointId == null)
+            {
+                throw new PSArgumentException("Id");
+            }
+
+            return breakpointId.Value;
         }
 
         #endregion
@@ -1767,27 +1843,29 @@ namespace System.Management.Automation
             get { return _inDebugMode; }
         }
 
-        /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
-        }
-
-        /// <summary>
-        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
-        /// </summary>
-        /// <param name="id">Id of the breakpoint you want.</param>
         public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.Value.GetBreakpoint(id);
 
-        /// <summary>
-        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
-        /// </summary>
         public override List<Breakpoint> GetBreakpoints() =>
             _wrappedDebugger.Value.GetBreakpoints();
+
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.Value.SetCommandBreakpoint(command, action, path);
+
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
+            _wrappedDebugger.Value.SetLineBreakpoint(path, line, column, action);
+
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.Value.SetVariableBreakpoint(variableName, accessMode, action, path);
+
+        public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.Value.RemoveBreakpoint(breakpoint);
+
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.Value.EnableBreakpoint(breakpoint);
+
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.Value.DisableBreakpoint(breakpoint);
 
         /// <summary>
         /// Exits debugger mode with the provided resume action.
@@ -1916,13 +1994,15 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided job or its child jobs.
         /// </summary>
         /// <param name="job">
-        /// Job object that is either a debuggable job or a container
-        /// of debuggable child jobs.
+        /// Job object that is either a debuggable job or a container of
+        /// debuggable child jobs.
         /// </param>
-        internal override void DebugJob(Job job)
-        {
-            _wrappedDebugger.Value.DebugJob(job);
-        }
+        /// <param name="breakAll">
+        /// If true, the debugger automatically invokes a break all when it
+        /// attaches to the job.
+        /// </param>
+        internal override void DebugJob(Job job, bool breakAll) =>
+            _wrappedDebugger.Value.DebugJob(job, breakAll);
 
         /// <summary>
         /// Removes job from debugger job list and pops its
@@ -1937,20 +2017,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        internal override void DebugRunspace(Runspace runspace)
+        /// <param name="runspace">
+        /// Runspace to debug.
+        /// </param>
+        /// <param name="breakAll">
+        /// When true, this command will invoke a BreakAll when the debugger is
+        /// first attached.
+        /// </param>
+        internal override void DebugRunspace(Runspace runspace, bool breakAll)
         {
-            _wrappedDebugger.Value.DebugRunspace(runspace);
-        }
-
-        /// <summary>
-        /// Sets up debugger to debug provided Runspace in a nested debug session.
-        /// </summary>
-        /// <param name="runspace">Runspace to debug.</param>
-        /// <param name="disableBreakAll"></param>
-        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
-        {
-            _wrappedDebugger.Value.DebugRunspace(runspace, disableBreakAll);
+            _wrappedDebugger.Value.DebugRunspace(runspace, breakAll);
         }
 
         /// <summary>
@@ -2040,6 +2116,11 @@ namespace System.Management.Automation
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             return _wrappedDebugger.Value.GetCallStack();
+        }
+
+        internal override void Break(object triggerObject = null)
+        {
+            _wrappedDebugger.Value.Break(triggerObject);
         }
 
         #endregion
@@ -2519,9 +2600,7 @@ namespace System.Management.Automation
             Guid powershellId,
             Guid runspacePoolId,
             ServerRunspacePoolDriver runspacePoolDriver,
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState,
-#endif
             ServerRemoteHost remoteHost,
             HostInfo hostInfo,
             RemoteStreamOptions streamOptions,
@@ -2557,9 +2636,7 @@ namespace System.Management.Automation
                     powershellId,
                     runspacePoolId,
                     runspacePoolDriver,
-#if !CORECLR // No ApartmentState In CoreCLR
                     apartmentState,
-#endif
                     hostInfo,
                     streamOptions,
                     addToHistory,

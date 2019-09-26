@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateSet(
-            "Alias", "Cmdlet", "Provider", "General", "FAQ", "Glossary", "HelpFile", "ScriptCommand", "Function", "Filter", "ExternalScript", "All", "DefaultHelp", "Workflow", "DscResource", "Class", "Configuration",
+            "Alias", "Cmdlet", "Provider", "General", "FAQ", "Glossary", "HelpFile", "ScriptCommand", "Function", "Filter", "ExternalScript", "All", "DefaultHelp", "DscResource", "Class", "Configuration",
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
             // categories that support -Parameter, -Role, -Functionality, -Component parameters
             HelpCategory supportedCategories =
                 HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.ExternalScript |
-                HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow;
+                HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand;
 
             if ((cat & supportedCategories) == 0)
             {
