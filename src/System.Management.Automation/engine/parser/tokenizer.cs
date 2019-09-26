@@ -4996,24 +4996,23 @@ namespace System.Management.Automation.Language
                 case '?' when InExpressionMode():
                     c1 = PeekChar();
 
-                    if (c1 == '?')
+                    if (ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"))
                     {
-                        SkipChar();
-
-                        c1 = PeekChar();
-
-                        if (c1 == '=')
+                        if (c1 == '?')
                         {
                             SkipChar();
-                            return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestionEquals);
+
+                            c1 = PeekChar();
+
+                            if (c1 == '=')
+                            {
+                                SkipChar();
+                                return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestionEquals);
+                            }
+
+                            return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestion);
                         }
-
-                        return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestion);
                     }
-
-
-
-
 
                     return this.NewToken(TokenKind.QuestionMark);
 

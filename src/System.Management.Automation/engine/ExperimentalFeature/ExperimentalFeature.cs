@@ -114,7 +114,10 @@ namespace System.Management.Automation
                     description: "New parameter set for ForEach-Object to run script blocks in parallel"),
                 new ExperimentalFeature(
                     name: "PSTernaryOperator",
-                    description: "Support the ternary operator in PowerShell language")
+                    description: "Support the ternary operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSNullCoalescingOperators",
+                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

@@ -806,17 +806,20 @@ namespace System.Management.Automation.Language
 
         private Expression GetCoalesceExpression(Expression rhs, IAssignableValue leftAssignableValue, TokenKind tokenKind)
         {
-            var exprs = new List<Expression>();
-            var temps = new List<ParameterExpression>();
-            var leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
-
-            if (tokenKind == TokenKind.QuestionQuestionEquals)
+            if (ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"))
             {
-                exprs.Add(leftAssignableValue.SetValue(this, Expression.MakeBinary(ExpressionType.Coalesce,leftExpr,rhs)));
-                return Expression.Block(temps, exprs);
-            }
+                var exprs = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
 
-            return null;
+                if (tokenKind == TokenKind.QuestionQuestionEquals)
+                {
+                    exprs.Add(leftAssignableValue.SetValue(this, Expression.MakeBinary(ExpressionType.Coalesce, leftExpr, rhs)));
+                    return Expression.Block(temps, exprs);
+                }
+            }
+            
+            return null;            
         }
 
         internal Expression GetLocal(int tupleIndex)
@@ -5247,7 +5250,7 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_SplitOperator,
                         _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
-                case TokenKind.QuestionQuestion:
+                case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSNullCoalescingOperators") :
                     if (lhs is ConstantExpression lhsConstExpr && lhsConstExpr.Value != null)
                     {
                         return lhs;

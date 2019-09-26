@@ -416,7 +416,7 @@ namespace System.Management.Automation.Language
         /// <summary>The ternary operator '?'.</summary>
         QuestionMark = 100,
 
-        /// <summary>The null conditional assignment operator '?='.</summary>
+        /// <summary>The null conditional assignment operator '??='.</summary>
         QuestionQuestionEquals = 101,
 
         /// <summary>The null coalesce operator '??'.</summary>
@@ -675,7 +675,7 @@ namespace System.Management.Automation.Language
         SpecialOperator = 0x00001000,
 
         /// <summary>
-        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '?='
+        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='
         /// </summary>
         AssignmentOperator = 0x00002000,
 
