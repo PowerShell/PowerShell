@@ -253,7 +253,7 @@ The defined template is following:
     <value>The following value is not in a valid DateTime format: {0}.</value>
   </data>
   <data name="LogInfoUnavailable" xml:space="preserve">
-    <value>Could not retrieve information about the {0} log. Error: {1}.</value>
+    <value>{1} To access the '{0}' log start PowerShell by using the "Run as Administrator" command.</value>
   </data>
   <data name="NoEventMessage" xml:space="preserve">
     <value>Cannot retrieve event message text.</value>
