@@ -123,4 +123,7 @@
   <data name="PromptForCredential_Password" xml:space="preserve">
     <value>Password for user {0}: </value>
   </data>
+  <data name="PromptForCredential_ConfirmPassword" xml:space="preserve">
+    <value>Confirm password for user {0}: </value>
+  </data>
 </root>

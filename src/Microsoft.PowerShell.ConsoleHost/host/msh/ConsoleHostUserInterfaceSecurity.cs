@@ -28,18 +28,21 @@ namespace Microsoft.PowerShell
         /// <param name="targetName">Name of the target for which creds are being collected.</param>
         /// <param name="message">Message to be displayed.</param>
         /// <param name="caption">Caption for the message.</param>
+        /// <param name="confirmPassword">Prompt to confirm the password.</param>
         /// <returns>PSCredential object.</returns>
 
         public override PSCredential PromptForCredential(
             string caption,
             string message,
             string userName,
-            string targetName)
+            string targetName,
+            bool confirmPassword)
         {
             return PromptForCredential(caption,
                                          message,
                                          userName,
                                          targetName,
+                                         confirmPassword,
                                          PSCredentialTypes.Default,
                                          PSCredentialUIOptions.Default);
         }
@@ -53,6 +56,7 @@ namespace Microsoft.PowerShell
         /// <param name="caption">Caption for the message.</param>
         /// <param name="allowedCredentialTypes">What type of creds can be supplied by the user.</param>
         /// <param name="options">Options that control the cred gathering UI behavior.</param>
+        /// <param name="confirmPassword">Prompt to confirm the password.</param>
         /// <returns>PSCredential object, or null if input was cancelled (or if reading from stdin and stdin at EOF).</returns>
 
         public override PSCredential PromptForCredential(
@@ -60,13 +64,16 @@ namespace Microsoft.PowerShell
             string message,
             string userName,
             string targetName,
+            bool confirmPassword,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
             PSCredential cred = null;
             SecureString password = null;
+            SecureString confirmedPassword = null;
             string userPrompt = null;
             string passwordPrompt = null;
+            string confirmPasswordPrompt = null;
 
             if (!string.IsNullOrEmpty(caption))
             {
@@ -103,14 +110,40 @@ namespace Microsoft.PowerShell
             passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
             );
 
+            // now, prompt for the password
+            //
+            //WriteToConsole(passwordPrompt, true);
+            //password = ReadLineAsSecureString();
+            //if (password == null)
+            //{
+            //    return null;
+            //}
+
+            //WriteLineToConsole();
+
+
             //
             // now, prompt for the password
             //
-            WriteToConsole(passwordPrompt, true);
-            password = ReadLineAsSecureString();
-            if (password == null)
+            if (confirmPassword)
             {
-                return null;
+                confirmPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ConfirmPassword, userName);
+                do
+                {
+                    WriteToConsole(passwordPrompt, true);
+                    password = ReadLineAsSecureString();
+                    WriteToConsole(confirmPasswordPrompt, true);
+                    confirmedPassword = ReadLineAsSecureString();
+                } while (password != confirmedPassword);
+            }
+            else
+            {
+                WriteToConsole(passwordPrompt, true);
+                password = ReadLineAsSecureString();
+                if (password == null)
+                {
+                    return null;
+                }
             }
 
             WriteLineToConsole();

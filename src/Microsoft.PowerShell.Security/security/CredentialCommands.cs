@@ -78,6 +78,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
+        
+        /// <summary>
+        /// Sets whether to confirm the password.
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = credentialSet)]
+        [ValidateNotNullOrEmpty]
+        public bool ConfirmPassword
+        {
+            set { _confirmPassword = value; }
+            get { return _confirmPassword; }
+        }
+
+        private bool _confirmPassword;
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
@@ -100,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty);
+                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty, _confirmPassword);
             }
             catch (ArgumentException exception)
             {

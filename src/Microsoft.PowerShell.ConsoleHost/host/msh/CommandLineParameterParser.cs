@@ -66,8 +66,9 @@ namespace Microsoft.PowerShell
         /// <param name="message"></param>
         /// <param name="userName"></param>
         /// <param name="targetName"></param>
+        /// <param name="confirmPassword"></param>
         /// <returns></returns>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, bool confirmPassword)
         {
             throw new PSNotImplementedException();
         }
@@ -79,10 +80,11 @@ namespace Microsoft.PowerShell
         /// <param name="message"></param>
         /// <param name="userName"></param>
         /// <param name="targetName"></param>
+        /// <param name="confirmPassword"></param>
         /// <param name="allowedCredentialTypes"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, bool confirmPassword, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             throw new PSNotImplementedException();
         }

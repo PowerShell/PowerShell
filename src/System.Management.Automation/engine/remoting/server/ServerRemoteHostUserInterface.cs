@@ -208,19 +208,19 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Prompt for credential.
         /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, bool confirmPassword)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential1,
-                    new object[] { caption, message, userName, targetName });
+                    new object[] { caption, message, userName, targetName, confirmPassword });
         }
 
         /// <summary>
         /// Prompt for credential.
         /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, bool confirmPassword, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential2,
-                    new object[] { caption, message, userName, targetName, allowedCredentialTypes, options });
+                    new object[] { caption, message, userName, targetName, confirmPassword, allowedCredentialTypes, options });
         }
     }
 }
