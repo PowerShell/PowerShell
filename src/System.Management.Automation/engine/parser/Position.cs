@@ -141,7 +141,6 @@ namespace System.Management.Automation.Language
 
             string sourceLine = position.StartScriptPosition.Line.TrimEnd();
 
-            string whitespaceFill = string.Empty;
             string message = string.Empty;
             if (!string.IsNullOrEmpty(sourceLine))
             {
