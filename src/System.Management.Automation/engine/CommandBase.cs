@@ -273,13 +273,13 @@ namespace System.Management.Automation
     public enum ErrorView
     {
         /// <summary>Existing all red multi-line output.</summary>
-        Normal = 0,
+        NormalView = 0,
 
         /// <summary>Only show category information.</summary>
-        Category = 1,
+        CategoryView = 1,
 
         /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
-        Concise = 2,
+        ConciseView = 2,
     }
     #endregion ErrorView
 

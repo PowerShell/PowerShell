@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne 'NativeCommandErrorMessage' -and $_.FullyQualifiedErrorId -ne 'NativeCommandError') -and $ErrorView -ne 'Category' -and $ErrorView -ne 'Concise')
+                                    if (($_.FullyQualifiedErrorId -ne 'NativeCommandErrorMessage' -and $_.FullyQualifiedErrorId -ne 'NativeCommandError') -and $ErrorView -ne 'CategoryView' -and $ErrorView -ne 'ConciseView')
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -822,7 +822,7 @@ namespace System.Management.Automation.Runspaces
                                        }
                                     }
 
-                                    function Get-ConcisePositionMessage {
+                                    function Get-ConciseViewPositionMessage {
                                         $errorColor = ''
                                         $accentColor = ''
                                         if ($Host.PrivateData -and $Host.UI.SupportsVirtualTerminal) {
@@ -893,14 +893,14 @@ namespace System.Management.Automation.Runspaces
                                         ""${errorColor}${reason}:${resetColor} ${posmsg}${resetcolor}""
                                     }
 
-                                    if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"" -or $ErrorView -eq ""Message"") {
+                                    if ($_.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $_.FullyQualifiedErrorId -eq 'NativeCommandError') {
                                         $_.Exception.Message
                                     }
                                     else
                                     {
                                         $myinv = $_.InvocationInfo
-                                        if ($myinv -and $ErrorView -eq 'Concise') {
-                                            $posmsg = Get-ConcisePositionMessage
+                                        if ($myinv -and $ErrorView -eq 'ConciseView') {
+                                            $posmsg = Get-ConciseViewPositionMessage
                                         }
                                         elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
                                             $posmsg = $myinv.PositionMessage
@@ -918,7 +918,7 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         switch($ErrorView) {
-                                            'Normal' {
+                                            'NormalView' {
                                                 $indent = 4
 
                                                 $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
@@ -955,7 +955,7 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                             }
 
-                                            'Concise' {
+                                            'ConciseView' {
                                                 $posmsg
                                             }
                                         }
