@@ -266,6 +266,23 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region ErrorView
+    /// <summary>
+    /// Defines the potential ErrorView options.
+    /// </summary>
+    public enum ErrorView
+    {
+        /// <summary>Existing all red multi-line output.</summary>
+        Normal = 0,
+
+        /// <summary>Only show category information.</summary>
+        Category = 1,
+
+        /// <summary>Analytic shows more information on the context of the error or just the message if not a script</summary>
+        Analytic = 2,
+    }
+    #endregion ErrorView
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine

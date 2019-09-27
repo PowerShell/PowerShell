@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""CategoryView"")
+                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""Category"")
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -771,6 +771,10 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                                 default
                                                 {
+                                                    if ($ErrorView -eq 'Analytic') {
+                                                        break
+                                                    }
+
                                                     if ($myinv.InvocationName -match '^[&\.]?$')
                                                     {
                                                         if ($myinv.MyCommand.Name)
@@ -794,114 +798,166 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
-                                   $newErrorView = (Get-ExperimentalFeature -Name PSErrorView).Enabled
 
-                                   $resetColor = ""`e[0m""
+                                    $resetColor = ''
+                                    if ($Host.UI.SupportsVirtualTerminal) {
+                                       $resetColor = ""`e[0m""
+                                    }
 
-                                   function Get-VT100Color([ConsoleColor] $color) {
+                                    function Get-VT100Color([ConsoleColor] $color) {
                                        switch ($color) {
-                                           [ConsoleColor]::Black { ""`e[2;30m"" }
-                                           [ConsoleColor]::DarkRed { ""`e[2;31m"" }
-                                           [ConsoleColor]::DarkGreen { ""`e[2;32m"" }
-                                           [ConsoleColor]::DarkYellow { ""`e[2;33m"" }
-                                           [ConsoleColor]::DarkBlue { ""`e[2;34m"" }
-                                           [ConsoleColor]::DarkMagenta { ""`e[2;35m"" }
-                                           [ConsoleColor]::DarkCyan { ""`e[2;36m"" }
-                                           [ConsoleColor]::Gray { ""`e[2;37m"" }
-                                           [ConsoleColor]::DarkGray { ""`e[1;30m"" }
-                                           [ConsoleColor]::Red { ""`e[1;31m"" }
-                                           [ConsoleColor]::Green { ""`e[1;32m"" }
-                                           [ConsoleColor]::Yellow { ""`e[1;33m"" }
-                                           [ConsoleColor]::Blue { ""`e[1;34m"" }
-                                           [ConsoleColor]::Magenta { ""`e[1;35m"" }
-                                           [ConsoleColor]::Cyan { ""`e[1;36m"" }
-                                           [ConsoleColor]::White { ""`e[1;37m"" }
+                                           'Black' { ""`e[2;30m"" }
+                                           'DarkRed' { ""`e[2;31m"" }
+                                           'DarkGreen' { ""`e[2;32m"" }
+                                           'DarkYellow' { ""`e[2;33m"" }
+                                           'DarkBlue' { ""`e[2;34m"" }
+                                           'DarkMagenta' { ""`e[2;35m"" }
+                                           'DarkCyan' { ""`e[2;36m"" }
+                                           'Gray' { ""`e[2;37m"" }
+                                           'DarkGray' { ""`e[1;30m"" }
+                                           'Red' { ""`e[1;31m"" }
+                                           'Green' { ""`e[1;32m"" }
+                                           'Yellow' { ""`e[1;33m"" }
+                                           'Blue' { ""`e[1;34m"" }
+                                           'Magenta' { ""`e[1;35m"" }
+                                           'Cyan' { ""`e[1;36m"" }
+                                           'White' { ""`e[1;37m"" }
                                            default { ""`e[1;31m"" }
                                        }
-                                   }
+                                    }
 
-                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
-                                        $_.Exception.Message
-                                   }
-                                   else
-                                   {
-                                        $myinv = $_.InvocationInfo
-                                        if ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
-                                            $posmsg = $myinv.PositionMessage
-                                        } else {
-                                            $posmsg = """"
+                                    function Get-AnalyticPositionMessage {
+                                        $errorColor = ''
+                                        $accentColor = ''
+                                        if ($Host.PrivateData -and $Host.UI.SupportsVirtualTerminal) {
+                                            $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
+                                            $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
                                         }
 
-                                        if ($posmsg -ne """")
+                                        $posmsg = ''
+
+                                        if ($myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                            if ($myinv.ScriptName) {
+                                                $posmsg = ""${resetColor}At $($myinv.ScriptName)`n""
+                                            }
+                                            else {
+                                                $posmsg = ""`n""
+                                            }
+
+                                            $headerWhitespace = ''
+                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($scriptLineNumberLength -gt 4) {
+                                                $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
+                                            }
+
+                                            $lineWhitespace = ''
+                                            if ($scriptLineNumberLength -lt 4) {
+                                                $lineWhitespace = ' ' * (4 - $scriptLineNumberLength)
+                                            }
+
+                                            $posmsg += ""${accentColor}${headerWhitespace}Line |`n""
+                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) | ${resetcolor}$($myinv.Line)`n""
+
+                                            $offsetWhitespace = ' ' * $myinv.OffsetInLine
+
+                                            $posmsg += ""${accentColor}${headerWhitespace}     |${offsetWhitespace}${errorColor}^ ""
+                                        }
+
+                                        if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
+                                            if ($_.CategoryInfo.Category -eq 'ParserError') {
+                                                $posmsg += $errorColor + $_.Exception.message.split(""~`n"")[1].split(""`n`n"")[0]
+                                            }
+                                            else {
+                                                $posmsg += $errorColor + $_.Exception.Message
+                                            }
+                                        }
+                                        else {
+                                            $posmsg += $errorColor + $_.ErrorDetails.Message
+                                        }
+
+                                        $reason = 'Error'
+                                        if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
+                                            $reason = 'Exception'
+                                        }
+                                        elseif ($_.CategoryInfo.Category) {
+                                            $reason = $_.CategoryInfo.Category
+                                        }
+                                        elseif ($_CategoryInfo.Reason) {
+                                            $reason = $_.CategoryInfo.Reason
+                                        }
+
+                                        $errorMsg = 'Error'
+
+                                        ""${errorColor}${reason}:${resetColor} ${posmsg}${resetcolor}""
+                                    }
+
+                                    if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"" -or $ErrorView -eq ""Message"") {
+                                        $_.Exception.Message
+                                    }
+                                    else
+                                    {
+                                        $myinv = $_.InvocationInfo
+                                        if ($myinv -and $ErrorView -eq 'Analytic') {
+                                            $posmsg = Get-AnalyticPositionMessage
+                                        }
+                                        elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
+                                            $posmsg = $myinv.PositionMessage
+                                        } else {
+                                            $posmsg = ''
+                                        }
+
+                                        if ($posmsg -ne '')
                                         {
                                             $posmsg = ""`n"" + $posmsg
                                         }
 
                                         if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
+                                            $posmsg = ' : ' +  $_.PSMessageDetails + $posmsg
                                         }
 
-                                        if ($newErrorView) {
-                                            $errorColor = """"
-                                            if ($Host.PrivateData) {
-                                                $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
-                                            }
+                                        switch($ErrorView) {
+                                            'Normal' {
+                                                $indent = 4
 
-                                            if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                                if ($_.Exception -is [System.Management.Automation.ParseException]) {
-                                                    $posmsg = $_.Exception.Message + $posmsg
+                                                $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+
+                                                if ($null -ne $errorCategoryMsg)
+                                                {
+                                                    $indentString = '+ CategoryInfo          : ' + $_.ErrorCategory_Message
                                                 }
-                                                else {
-                                                    $posmsg += $errorColor + $_.Exception.Message
+                                                else
+                                                {
+                                                    $indentString = '+ CategoryInfo          : ' + $_.CategoryInfo
+                                                }
+
+                                                $posmsg += ""`n"" + $indentString
+
+                                                $indentString = '+ FullyQualifiedErrorId : ' + $_.FullyQualifiedErrorId
+                                                $posmsg += ""`n"" + $indentString
+
+                                                $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+
+                                                if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
+                                                {
+                                                    $indentString = '+ PSComputerName        : ' + $originInfo.PSComputerName
+                                                    $posmsg += ""`n"" + $indentString
+                                                }
+
+                                                if ($ErrorView -eq 'CategoryView') {
+                                                    $_.CategoryInfo.GetMessage()
+                                                }
+                                                elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
+                                                    $_.Exception.Message + $posmsg + '`n '
+                                                } else {
+                                                    $_.ErrorDetails.Message + $posmsg
                                                 }
                                             }
-                                            else {
-                                                $posmsg += $errorColor + $_.ErrorDetails.Message
+
+                                            'Analytic' {
+                                                $posmsg
                                             }
-
-                                            $category = """"
-                                            if ($_.CategoryInfo.Category) {
-                                                $category = ""[$($_.CategoryInfo.Category)]""
-                                            }
-
-                                            return ""${errorColor}Error ${category}${resetColor}: $($_.CategoryInfo.Reason)`n${posmsg}${resetcolor}""
                                         }
-
-                                        $indent = 4
-
-                                        $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
-
-                                        if ($null -ne $errorCategoryMsg)
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
-                                        }
-                                        else
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
-                                        }
-
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
-
-                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
-                                        {
-                                            $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
-                                        }
-
-                                        if ($ErrorView -eq ""CategoryView"") {
-                                            $_.CategoryInfo.GetMessage()
-                                        }
-                                        elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            $_.Exception.Message + $posmsg + ""`n ""
-                                        } else {
-                                            $_.ErrorDetails.Message + $posmsg
-                                        }
-                                   }
+                                    }
                                 ")
                     .EndEntry()
                 .EndControl());

@@ -4326,6 +4326,8 @@ end {
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
+
+        internal const ErrorView defaultErrorView = ErrorView.Normal;
         internal const bool defaultWhatIfPreference = false;
         internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
 
@@ -4408,8 +4410,10 @@ end {
                  ),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                "NormalView",
-                RunspaceInit.ErrorViewDescription
+                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.Analytic : defaultErrorView,
+                RunspaceInit.ErrorViewDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(ErrorView))
                 ),
             new SessionStateVariableEntry(
                 SpecialVariables.NestedPromptLevel,
