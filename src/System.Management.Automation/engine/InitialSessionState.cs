@@ -4410,7 +4410,7 @@ end {
                  ),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.Analytic : defaultErrorView,
+                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.Concise : defaultErrorView,
                 RunspaceInit.ErrorViewDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ErrorView))

@@ -278,8 +278,8 @@ namespace System.Management.Automation
         /// <summary>Only show category information.</summary>
         Category = 1,
 
-        /// <summary>Analytic shows more information on the context of the error or just the message if not a script</summary>
-        Analytic = 2,
+        /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
+        Concise = 2,
     }
     #endregion ErrorView
 

@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""Category"")
+                                    if (($_.FullyQualifiedErrorId -ne 'NativeCommandErrorMessage' -and $_.FullyQualifiedErrorId -ne 'NativeCommandError') -and $ErrorView -ne 'Category' -and $ErrorView -ne 'Concise')
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -754,7 +754,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.Path)
                                                     {
-                                                        $myinv.MyCommand.Path + "" : ""
+                                                        $myinv.MyCommand.Path + ' : '
                                                     }
 
                                                     break
@@ -764,27 +764,23 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.ScriptBlock)
                                                     {
-                                                        $myinv.MyCommand.ScriptBlock.ToString() + "" : ""
+                                                        $myinv.MyCommand.ScriptBlock.ToString() + ' : '
                                                     }
 
                                                     break
                                                 }
                                                 default
                                                 {
-                                                    if ($ErrorView -eq 'Analytic') {
-                                                        break
-                                                    }
-
                                                     if ($myinv.InvocationName -match '^[&\.]?$')
                                                     {
                                                         if ($myinv.MyCommand.Name)
                                                         {
-                                                            $myinv.MyCommand.Name + "" : ""
+                                                            $myinv.MyCommand.Name + ' : '
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        $myinv.InvocationName + "" : ""
+                                                        $myinv.InvocationName + ' : '
                                                     }
 
                                                     break
@@ -793,7 +789,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         elseif ($myinv -and $myinv.InvocationName)
                                         {
-                                            $myinv.InvocationName + "" : ""
+                                            $myinv.InvocationName + ' : '
                                         }
                                     }
                                 ")
@@ -826,7 +822,7 @@ namespace System.Management.Automation.Runspaces
                                        }
                                     }
 
-                                    function Get-AnalyticPositionMessage {
+                                    function Get-ConcisePositionMessage {
                                         $errorColor = ''
                                         $accentColor = ''
                                         if ($Host.PrivateData -and $Host.UI.SupportsVirtualTerminal) {
@@ -897,8 +893,8 @@ namespace System.Management.Automation.Runspaces
                                     else
                                     {
                                         $myinv = $_.InvocationInfo
-                                        if ($myinv -and $ErrorView -eq 'Analytic') {
-                                            $posmsg = Get-AnalyticPositionMessage
+                                        if ($myinv -and $ErrorView -eq 'Concise') {
+                                            $posmsg = Get-ConcisePositionMessage
                                         }
                                         elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
                                             $posmsg = $myinv.PositionMessage
@@ -953,7 +949,7 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                             }
 
-                                            'Analytic' {
+                                            'Concise' {
                                                 $posmsg
                                             }
                                         }
