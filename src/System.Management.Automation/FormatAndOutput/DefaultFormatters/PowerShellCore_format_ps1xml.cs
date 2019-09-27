@@ -795,34 +795,35 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
 
-                                    $resetColor = ''
-                                    if ($Host.UI.SupportsVirtualTerminal) {
-                                       $resetColor = ""`e[0m""
-                                    }
-
-                                    function Get-VT100Color([ConsoleColor] $color) {
-                                       switch ($color) {
-                                           'Black' { ""`e[2;30m"" }
-                                           'DarkRed' { ""`e[2;31m"" }
-                                           'DarkGreen' { ""`e[2;32m"" }
-                                           'DarkYellow' { ""`e[2;33m"" }
-                                           'DarkBlue' { ""`e[2;34m"" }
-                                           'DarkMagenta' { ""`e[2;35m"" }
-                                           'DarkCyan' { ""`e[2;36m"" }
-                                           'Gray' { ""`e[2;37m"" }
-                                           'DarkGray' { ""`e[1;30m"" }
-                                           'Red' { ""`e[1;31m"" }
-                                           'Green' { ""`e[1;32m"" }
-                                           'Yellow' { ""`e[1;33m"" }
-                                           'Blue' { ""`e[1;34m"" }
-                                           'Magenta' { ""`e[1;35m"" }
-                                           'Cyan' { ""`e[1;36m"" }
-                                           'White' { ""`e[1;37m"" }
-                                           default { ""`e[1;31m"" }
-                                       }
-                                    }
-
                                     function Get-ConciseViewPositionMessage {
+
+                                        $resetColor = ''
+                                        if ($Host.UI.SupportsVirtualTerminal) {
+                                            $resetColor = ""`e[0m""
+                                        }
+
+                                        function Get-VT100Color([ConsoleColor] $color) {
+                                            switch ($color) {
+                                                'Black' { ""`e[2;30m"" }
+                                                'DarkRed' { ""`e[2;31m"" }
+                                                'DarkGreen' { ""`e[2;32m"" }
+                                                'DarkYellow' { ""`e[2;33m"" }
+                                                'DarkBlue' { ""`e[2;34m"" }
+                                                'DarkMagenta' { ""`e[2;35m"" }
+                                                'DarkCyan' { ""`e[2;36m"" }
+                                                'Gray' { ""`e[2;37m"" }
+                                                'DarkGray' { ""`e[1;30m"" }
+                                                'Red' { ""`e[1;31m"" }
+                                                'Green' { ""`e[1;32m"" }
+                                                'Yellow' { ""`e[1;33m"" }
+                                                'Blue' { ""`e[1;34m"" }
+                                                'Magenta' { ""`e[1;35m"" }
+                                                'Cyan' { ""`e[1;36m"" }
+                                                'White' { ""`e[1;37m"" }
+                                                default { ""`e[1;31m"" }
+                                            }
+                                        }
+
                                         $errorColor = ''
                                         $accentColor = ''
                                         if ($Host.PrivateData -and $Host.UI.SupportsVirtualTerminal) {
@@ -832,7 +833,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $posmsg = ''
 
-                                        if ($myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                        if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
                                                 $posmsg = ""${resetColor}At $($myinv.ScriptName)`n""
                                             }
@@ -899,7 +900,7 @@ namespace System.Management.Automation.Runspaces
                                     else
                                     {
                                         $myinv = $_.InvocationInfo
-                                        if ($myinv -and $ErrorView -eq 'ConciseView') {
+                                        if ($ErrorView -eq 'ConciseView') {
                                             $posmsg = Get-ConciseViewPositionMessage
                                         }
                                         elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
@@ -917,47 +918,43 @@ namespace System.Management.Automation.Runspaces
                                             $posmsg = ' : ' +  $_.PSMessageDetails + $posmsg
                                         }
 
-                                        switch($ErrorView) {
-                                            'NormalView' {
-                                                $indent = 4
+                                        if ($ErrorView -eq 'ConciseView') {
+                                            return $posmsg
+                                        }
 
-                                                $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+                                        $indent = 4
 
-                                                if ($null -ne $errorCategoryMsg)
-                                                {
-                                                    $indentString = '+ CategoryInfo          : ' + $_.ErrorCategory_Message
-                                                }
-                                                else
-                                                {
-                                                    $indentString = '+ CategoryInfo          : ' + $_.CategoryInfo
-                                                }
+                                        $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
 
-                                                $posmsg += ""`n"" + $indentString
+                                        if ($null -ne $errorCategoryMsg)
+                                        {
+                                            $indentString = '+ CategoryInfo          : ' + $_.ErrorCategory_Message
+                                        }
+                                        else
+                                        {
+                                            $indentString = '+ CategoryInfo          : ' + $_.CategoryInfo
+                                        }
 
-                                                $indentString = '+ FullyQualifiedErrorId : ' + $_.FullyQualifiedErrorId
-                                                $posmsg += ""`n"" + $indentString
+                                        $posmsg += ""`n"" + $indentString
 
-                                                $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+                                        $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
+                                        $posmsg += ""`n"" + $indentString
 
-                                                if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
-                                                {
-                                                    $indentString = '+ PSComputerName        : ' + $originInfo.PSComputerName
-                                                    $posmsg += ""`n"" + $indentString
-                                                }
+                                        $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
 
-                                                if ($ErrorView -eq 'CategoryView') {
-                                                    $_.CategoryInfo.GetMessage()
-                                                }
-                                                elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                                    $_.Exception.Message + $posmsg + '`n '
-                                                } else {
-                                                    $_.ErrorDetails.Message + $posmsg
-                                                }
-                                            }
+                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
+                                        {
+                                            $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
+                                            $posmsg += ""`n"" + $indentString
+                                        }
 
-                                            'ConciseView' {
-                                                $posmsg
-                                            }
+                                        if ($ErrorView -eq 'CategoryView') {
+                                            $_.CategoryInfo.GetMessage()
+                                        }
+                                        elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
+                                            $_.Exception.Message + $posmsg + ""`n""
+                                        } else {
+                                            $_.ErrorDetails.Message + $posmsg
                                         }
                                     }
                                 ")
