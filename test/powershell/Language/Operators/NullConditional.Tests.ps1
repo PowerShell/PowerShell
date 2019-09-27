@@ -5,20 +5,34 @@ Describe 'NullConditionalOperations' -tag 'CI' {
 
     Context "Null conditional assignment operator ??=" {
         BeforeAll {
-            $someGuid = New-Guid
 
-            $typesTests = @(
-                @{ name = 'string'; valueToSet = 'hello' }
-                @{ name = 'dotnetType'; valueToSet = $someGuid }
-                @{ name = 'byte'; valueToSet = [byte]0x94 }
-                @{ name = 'intArray'; valueToSet = 1..2 }
-                @{ name = 'stringArray'; valueToSet = 'a'..'c' }
-                @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
-            )
+            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
 
+            if ($skipTest) {
+                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+            } else {
+                $someGuid = New-Guid
+                $typesTests = @(
+                    @{ name = 'string'; valueToSet = 'hello' }
+                    @{ name = 'dotnetType'; valueToSet = $someGuid }
+                    @{ name = 'byte'; valueToSet = [byte]0x94 }
+                    @{ name = 'intArray'; valueToSet = 1..2 }
+                    @{ name = 'stringArray'; valueToSet = 'a'..'c' }
+                    @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
+                )
+            }
+        }
+
+        AfterAll {
+            if ($skipTest) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            }
         }
 
         It 'Variable doesnot exist' {
+
             Remove-Variable variableDoesNotExist -ErrorAction SilentlyContinue -Force
 
             $variableDoesNotExist ??= 1
