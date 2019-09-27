@@ -875,6 +875,12 @@ namespace System.Management.Automation.Runspaces
                                         if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
                                             $reason = 'Exception'
                                         }
+                                        elseif ($myinv.MyCommand) {
+                                            $reason = $myinv.MyCommand
+                                        }
+                                        elseif ($myinv.InvocationName) {
+                                            $reason = $myinv.InvocationName
+                                        }
                                         elseif ($_.CategoryInfo.Category) {
                                             $reason = $_.CategoryInfo.Category
                                         }
