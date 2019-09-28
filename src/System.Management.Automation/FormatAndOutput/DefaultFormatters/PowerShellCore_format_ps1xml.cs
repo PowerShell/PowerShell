@@ -841,7 +841,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetColor}In $($myinv.ScriptName)`n""
+                                                $posmsg = ""${resetColor}in $($myinv.ScriptName)`n""
                                             }
                                             else {
                                                 $posmsg = ""`n""
