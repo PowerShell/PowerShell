@@ -192,7 +192,8 @@ namespace System.Management.Automation.Remoting
                     ...
                   </InitializationParameters>
         */
-        internal static ServerRemoteSession CreateServerRemoteSession(PSSenderInfo senderInfo,
+        internal static ServerRemoteSession CreateServerRemoteSession(
+            PSSenderInfo senderInfo,
             string configurationProviderId,
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager,

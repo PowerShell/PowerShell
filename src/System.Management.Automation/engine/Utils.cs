@@ -809,11 +809,11 @@ namespace System.Management.Automation
 
         private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>
         {
-            {nameof(ScriptExecution), @"Software\Policies\Microsoft\Windows\PowerShell"},
-            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"},
-            {nameof(ModuleLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging"},
-            {nameof(Transcription), @"Software\Policies\Microsoft\Windows\PowerShell\Transcription"},
-            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp"},
+            { nameof(ScriptExecution), @"Software\Policies\Microsoft\Windows\PowerShell" },
+            { nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" },
+            { nameof(ModuleLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging" },
+            { nameof(Transcription), @"Software\Policies\Microsoft\Windows\PowerShell\Transcription" },
+            { nameof(UpdatableHelp), @"Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp" },
         };
 
         private const string PolicySettingFallbackKey = "UseWindowsPowerShellPolicySetting";
@@ -858,7 +858,10 @@ namespace System.Management.Automation
                     {
                         using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
                         {
-                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                            if (subKey != null)
+                            {
+                                rawRegistryValue = subKey.GetValueNames();
+                            }
                         }
                     }
 
@@ -874,8 +877,14 @@ namespace System.Management.Automation
                             case var _ when propertyType == typeof(bool?):
                                 if (rawRegistryValue is int rawIntValue)
                                 {
-                                    if (rawIntValue == 1) { propertyValue = true; }
-                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                    if (rawIntValue == 1)
+                                    {
+                                        propertyValue = true;
+                                    }
+                                    else if (rawIntValue == 0)
+                                    {
+                                        propertyValue = false;
+                                    }
                                 }
 
                                 break;

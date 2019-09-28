@@ -40,7 +40,7 @@ namespace System.Management.Automation.PSTasks
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
-            PSTaskDataStreamWriter dataStreamWriter) 
+            PSTaskDataStreamWriter dataStreamWriter)
             : base(
                 scriptBlock,
                 usingValuesMap,
@@ -127,7 +127,7 @@ namespace System.Management.Automation.PSTasks
                     new PSStreamObject(PSStreamObjectType.Information, item));
             }
         }
-        
+
         #endregion
 
         #region Event handlers
@@ -361,8 +361,8 @@ namespace System.Management.Automation.PSTasks
 
         #region Constructor
 
-        private PSTaskBase() 
-        { 
+        private PSTaskBase()
+        {
             _id = Interlocked.Increment(ref s_taskId);
         }
 
@@ -422,7 +422,7 @@ namespace System.Management.Automation.PSTasks
 
             // Create and open Runspace for this task to run in
             var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
+            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
                 ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
             _runspace = RunspaceFactory.CreateRunspace(iss);
             _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
@@ -475,7 +475,7 @@ namespace System.Management.Automation.PSTasks
         private readonly PSCmdlet _cmdlet;
         private readonly PSDataCollection<PSStreamObject> _dataStream;
         private readonly int _cmdletThreadId;
-        
+
         #endregion
 
         #region Properties
@@ -711,6 +711,7 @@ namespace System.Management.Automation.PSTasks
 
                         task.Start();
                     }
+
                     return true;
 
                 case Stop:
@@ -739,7 +740,7 @@ namespace System.Management.Automation.PSTasks
             // Accept no more input
             Close();
             _stopAll.Set();
-            
+
             // Stop all running tasks
             lock (_syncObject)
             {
@@ -764,7 +765,7 @@ namespace System.Management.Automation.PSTasks
         #region Private Methods
 
         private void HandleTaskStateChangedDelegate(object sender, PSInvocationStateChangedEventArgs args) => HandleTaskStateChanged(sender, args);
-        
+
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
             var task = sender as PSTaskBase;
@@ -805,10 +806,10 @@ namespace System.Management.Automation.PSTasks
                 try
                 {
                     PoolComplete.SafeInvoke(
-                        this, 
+                        this,
                         new EventArgs());
                 }
-                catch 
+                catch
                 {
                     Dbg.Assert(false, "Exceptions should not be thrown on event thread");
                 }
@@ -872,8 +873,8 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override bool HasMoreData
         {
-            get 
-            { 
+            get
+            {
                 foreach (var childJob in ChildJobs)
                 {
                     if (childJob.HasMoreData)
@@ -901,7 +902,7 @@ namespace System.Management.Automation.PSTasks
         {
             _stopSignaled = true;
             SetJobState(JobState.Stopping);
-            
+
             _taskPool.StopAll();
             SetJobState(JobState.Stopped);
         }
@@ -953,7 +954,7 @@ namespace System.Management.Automation.PSTasks
             // This thread will end once all jobs reach a finished state by either running
             // to completion, terminating with error, or stopped.
             System.Threading.ThreadPool.QueueUserWorkItem(
-                (_) => 
+                (_) =>
                 {
                     foreach (var childJob in ChildJobs)
                     {
@@ -991,7 +992,7 @@ namespace System.Management.Automation.PSTasks
 
                 SetJobState(finalState);
             }
-            catch (ObjectDisposedException) 
+            catch (ObjectDisposedException)
             { }
         }
 
