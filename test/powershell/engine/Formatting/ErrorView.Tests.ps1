@@ -36,7 +36,7 @@ Describe "Tests for `$ErrorView" -Tag CI {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath "test.ps1"
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId "UnexpectedToken" -PassThru
-            $e | Out-String | Should -Match $testScriptPath
+            $e | Out-String | Should -BeLike "*$testScriptPath*"
         }
 
         It "Remote errors show up correctly" {

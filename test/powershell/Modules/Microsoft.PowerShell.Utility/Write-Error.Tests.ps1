@@ -102,8 +102,8 @@ Describe "Write-Error Tests" -Tags "CI" {
             $longtext += $longtext
         }
         $pwsh = $pshome + "/pwsh"
-        $result = & $pwsh -c Write-Error -Message $longtext 2>&1
-        $result.Count | Should -BeExactly 4
+        $result = & $pwsh -c "`$ErrorView = 'Normal'; Write-Error -Message $longtext 2>&1"
+        $result.Count | Should -BeExactly 3
         $result[0] | Should -Match $longtext
     }
 }
