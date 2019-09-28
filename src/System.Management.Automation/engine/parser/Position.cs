@@ -231,14 +231,14 @@ namespace System.Management.Automation.Language
 
                 if (needsPrefixDots)
                 {
-                    sb.Append("\u2026 ");
+                    sb.Append("\u2026 "); // Unicode ellipsis character
                 }
 
                 sb.Append(sourceLine);
 
                 if (needsSuffixDots)
                 {
-                    sb.Append(" \u2026");
+                    sb.Append(" \u2026"); // Unicode ellipsis character
                 }
 
                 sb.Append(Environment.NewLine);

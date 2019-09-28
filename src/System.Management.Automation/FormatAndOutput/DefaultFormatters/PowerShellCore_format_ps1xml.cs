@@ -803,6 +803,10 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
+                                            if (! $Host.UI.SupportsVirtualTerminal) {
+                                                return ''
+                                            }
+
                                             switch ($color) {
                                                 'Black' { ""`e[2;30m"" }
                                                 'DarkRed' { ""`e[2;31m"" }
@@ -826,7 +830,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $errorColor = ''
                                         $accentColor = ''
-                                        if ($Host.PrivateData -and $Host.UI.SupportsVirtualTerminal) {
+                                        if ($Host.PrivateData) {
                                             $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
                                             $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
                                         }
