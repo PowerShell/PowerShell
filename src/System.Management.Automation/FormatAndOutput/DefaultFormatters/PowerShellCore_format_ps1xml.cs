@@ -798,8 +798,10 @@ namespace System.Management.Automation.Runspaces
                                     function Get-ConciseViewPositionMessage {
 
                                         $resetColor = ''
+                                        $inverseMode = ''
                                         if ($Host.UI.SupportsVirtualTerminal) {
                                             $resetColor = ""`e[0m""
+                                            $inverseMode = ""`e[7m""
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
@@ -839,7 +841,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetColor}At $($myinv.ScriptName)`n""
+                                                $posmsg = ""${resetColor}In $($myinv.ScriptName)`n""
                                             }
                                             else {
                                                 $posmsg = ""`n""
@@ -856,12 +858,16 @@ namespace System.Management.Automation.Runspaces
                                                 $lineWhitespace = ' ' * (4 - $scriptLineNumberLength)
                                             }
 
-                                            $posmsg += ""${accentColor}${headerWhitespace}Line |`n""
-                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) | ${resetcolor}$($myinv.Line)`n""
-
+                                            $verticalBar = '|'
+                                            $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}`n""
+                                            $line = $myinv.Line
+                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
+                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
+                                            $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
+                                            $line = $line.Insert($myinv.OffsetInLine - 1, $errorColor)
+                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
                                             $offsetWhitespace = ' ' * $myinv.OffsetInLine
-
-                                            $posmsg += ""${accentColor}${headerWhitespace}     |${offsetWhitespace}${errorColor}^ ""
+                                            $posmsg += ""${accentColor}${headerWhitespace}     ${verticalBar}${offsetWhitespace}${errorColor}^ ""
                                         }
 
                                         if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
