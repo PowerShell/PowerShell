@@ -37,6 +37,8 @@ Describe "Tests for `$ErrorView" -Tag CI {
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId "UnexpectedToken" -PassThru
             $e | Out-String | Should -BeLike "*$testScriptPath*"
+            # validate line number is shown
+            $e | Out-String | Should -BeLike "* 4 *"
         }
 
         It "Remote errors show up correctly" {
