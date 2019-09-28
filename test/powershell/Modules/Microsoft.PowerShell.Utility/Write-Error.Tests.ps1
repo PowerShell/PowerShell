@@ -101,8 +101,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         while ($longtext.Length -lt [console]::WindowWidth) {
             $longtext += $longtext
         }
-        $pwsh = $pshome + "/pwsh"
-        $result = & $pwsh -c "`$ErrorView = 'Normal'; Write-Error -Message $longtext 2>&1"
+        $result = pwsh -noprofile -command "`$ErrorView = 'NormalView'; Write-Error -Message '$longtext' 2>&1"
         $result.Count | Should -BeExactly 3
         $result[0] | Should -Match $longtext
     }
