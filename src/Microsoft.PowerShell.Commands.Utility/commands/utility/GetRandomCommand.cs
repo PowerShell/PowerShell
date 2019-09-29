@@ -28,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
+        private static object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
         {
@@ -275,6 +276,7 @@ namespace Microsoft.PowerShell.Commands
         /// List from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [System.Management.Automation.AllowNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] InputObject { get; set; }
 
@@ -490,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                foreach (object item in InputObject)
+                foreach (object item in InputObject ?? _nullInArray)
                 {
                     if (_numberOfProcessedListItems < Count) // (3)
                     {

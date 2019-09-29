@@ -188,4 +188,10 @@ Describe "Get-Random" -Tags "CI" {
             Get-Random -InputObject @('a','b','') | Should -BeIn 'a','b',''
         }
     }
+
+    It "Should accept `$null in collection for -InputObject" {
+        1..10 | ForEach-Object {
+            Get-Random -InputObject @('a','b',$null) | Should -BeIn 'a','b',$null
+        }
+    }
 }
