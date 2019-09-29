@@ -420,6 +420,17 @@ namespace System.Management.Automation
 
                     case TokenKind.StringExpandable:
                     case TokenKind.StringLiteral:
+                        if (lastAst.Parent is CommandExpressionAst && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst && assignmentAst.Left is VariableExpressionAst variableAst)
+                        {
+                            var value = completionContext.ExecutionContext.GetVariableValue(variableAst.VariablePath);
+                            Type type = value.GetType();
+                            if (type.IsEnum)
+                            {
+                                result = GetResultForEnum(type, completionContext);
+                                break;
+                            }
+                        }
+
                         result = GetResultForString(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
 
@@ -563,6 +574,17 @@ namespace System.Management.Automation
                             {
                                 // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
                                 return null;
+                            }
+                            else if (lastAst is AssignmentStatementAst assignmentAst2 && assignmentAst2.Left is VariableExpressionAst variableAst2)
+                            {
+                                completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                                completionContext.ReplacementLength = replacementLength = 0;
+                                var value = completionContext.ExecutionContext.GetVariableValue(variableAst2.VariablePath);
+                                Type type = value.GetType();
+                                if (type.IsEnum)
+                                {
+                                    result = GetResultForEnum(type, completionContext);
+                                }
                             }
                             else
                             {
@@ -732,6 +754,17 @@ namespace System.Management.Automation
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
                                     {
+                                        if (lastAst is AssignmentStatementAst assignmentAst && assignmentAst.Left is VariableExpressionAst variableAst)
+                                        {
+                                            var value = completionContext.ExecutionContext.GetVariableValue(variableAst.VariablePath);
+                                            Type type = value.GetType();
+                                            if (type.IsEnum)
+                                            {
+                                                result = GetResultForEnum(type, completionContext);
+                                                break;
+                                            }
+                                        }
+
                                         bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
@@ -1023,6 +1056,58 @@ namespace System.Management.Automation
             }
 
             return keyValuePairWithCursor;
+        }
+
+        private List<CompletionResult> GetResultForEnum(
+            Type type,
+            CompletionContext completionContext)
+        {
+            var stringToComplete = "";
+            if (completionContext.TokenAtCursor != null)
+            {
+                stringToComplete = completionContext.TokenAtCursor.Text;
+            }
+
+            var quote = '\'';
+            if (stringToComplete.StartsWith('"'))
+            {
+                quote = '"';
+            }
+
+            var allValues = new List<string>();
+            foreach (var value in Enum.GetValues(type))
+            {
+                allValues.Add(quote + value.ToString() + quote);
+            }
+
+//            replacementLength = completionContext.ReplacementLength = stringToComplete.Length;
+
+//            if (completionContext.TokenAtCursor is StringToken)
+//            {
+//                replacementIndex = completionContext.TokenAtCursor.Extent.StartOffset + 1;
+//            }
+//            else
+//            {
+//                replacementIndex = completionContext.CursorPosition.Offset - replacementLength;
+//            }
+
+ //           completionContext.ReplacementIndex = replacementIndex;
+            string matchString = stringToComplete + "*";
+            var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+
+            var matchedResults = allValues.Where(r => wildcardPattern.IsMatch(r));
+            if (matchedResults == null || !matchedResults.Any())
+            {
+                matchedResults = allValues;
+            }
+
+            var result = new List<CompletionResult>();
+            foreach (var value in matchedResults)
+            {
+                result.Add(new CompletionResult(value));
+            }
+
+            return result;
         }
 
         private List<CompletionResult> GetResultForEnumPropertyValueOfDSCResource(

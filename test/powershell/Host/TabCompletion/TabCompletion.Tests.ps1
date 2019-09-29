@@ -152,6 +152,37 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
+    It 'Should work for variable assignment of enums: <inputStr>' -TestCases @(
+        @{ inputStr = '$ErrorActionPreference = '; expected = {
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
+        }; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference='; expected = {
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
+        }; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference="'; expected  = {
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
+        }; doubleQuotes = $true }
+        @{ inputStr = '$ErrorActionPreference = ''s'; expected = {
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj | Where-Object { $_ -like "'s*" } }
+        }; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference = "siL'; expected = {
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj | Where-Object { $_ -like '"sil*' } }
+        }; doubleQuotes = $true }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        $quote = ''''
+        if ($doubleQuotes) {
+            $quote = '"'
+        }
+
+        $expected = [string]::Join(",",([enum]::GetValues("System.Management.Automation.ActionPreference") |
+            ForEach-Object { $quote + $_.ToString() + $quote } | & $expected | Sort-Object))
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        [string]::Join(",",($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly $expected
+    }
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
