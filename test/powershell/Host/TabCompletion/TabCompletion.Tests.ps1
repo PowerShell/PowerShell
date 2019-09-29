@@ -153,34 +153,28 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should work for variable assignment of enums: <inputStr>' -TestCases @(
-        @{ inputStr = '$ErrorActionPreference = '; expected = {
-            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
-        }; doubleQuotes = $false }
-        @{ inputStr = '$ErrorActionPreference='; expected = {
-            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
-        }; doubleQuotes = $false }
-        @{ inputStr = '$ErrorActionPreference="'; expected  = {
-            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj }
-        }; doubleQuotes = $true }
-        @{ inputStr = '$ErrorActionPreference = ''s'; expected = {
-            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj | Where-Object { $_ -like "'s*" } }
-        }; doubleQuotes = $false }
-        @{ inputStr = '$ErrorActionPreference = "siL'; expected = {
-            [cmdletbinding()] param([Parameter(ValueFromPipeline=$true)]$obj) process { $obj | Where-Object { $_ -like '"sil*' } }
-        }; doubleQuotes = $true }
+        @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference="'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '$ErrorActionPreference = ''s'; filter = '| Where-Object { $_ -like "''s*" }'; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference = "siL'; filter = '| Where-Object { $_ -like ''"sil*'' }'; doubleQuotes = $true }
     ){
-        param($inputStr, $expected, $doubleQuotes)
+        param($inputStr, $filter, $doubleQuotes)
 
         $quote = ''''
         if ($doubleQuotes) {
             $quote = '"'
         }
 
+        $sb = [scriptblock]::Create(@"
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=`$true)]`$obj) process { `$obj $filter }
+"@)
+
         $expected = [string]::Join(",",([enum]::GetValues("System.Management.Automation.ActionPreference") |
-            ForEach-Object { $quote + $_.ToString() + $quote } | & $expected | Sort-Object))
+            ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object))
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly $expected
+        [string]::Join(",",($res.CompletionMatches.completiontext)) | Should -BeExactly $expected
     }
 
     Context NativeCommand {
