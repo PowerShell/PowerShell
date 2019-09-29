@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
             Type type,
             CompletionContext completionContext)
         {
-            var stringToComplete = "";
+            var stringToComplete = string.Empty;
             if (completionContext.TokenAtCursor != null)
             {
                 stringToComplete = completionContext.TokenAtCursor.Text;
@@ -1080,18 +1080,6 @@ namespace System.Management.Automation
                 allValues.Add(quote + value.ToString() + quote);
             }
 
-//            replacementLength = completionContext.ReplacementLength = stringToComplete.Length;
-
-//            if (completionContext.TokenAtCursor is StringToken)
-//            {
-//                replacementIndex = completionContext.TokenAtCursor.Extent.StartOffset + 1;
-//            }
-//            else
-//            {
-//                replacementIndex = completionContext.CursorPosition.Offset - replacementLength;
-//            }
-
- //           completionContext.ReplacementIndex = replacementIndex;
             string matchString = stringToComplete + "*";
             var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
