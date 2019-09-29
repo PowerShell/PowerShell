@@ -1080,6 +1080,7 @@ namespace System.Management.Automation
                 allValues.Add(quote + value.ToString() + quote);
             }
 
+            allValues.Sort();
             string matchString = stringToComplete + "*";
             var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
