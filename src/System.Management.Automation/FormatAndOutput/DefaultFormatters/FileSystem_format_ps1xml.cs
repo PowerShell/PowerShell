@@ -11,12 +11,11 @@ namespace System.Management.Automation.Runspaces
         {
             var FileSystemTypes_GroupingFormat = CustomControl.Create()
                     .StartEntry()
-                        .StartFrame(leftIndent: 4)
+                        .StartFrame()
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"
                                                   $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")
                                               ")
-                            .AddNewline()
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
