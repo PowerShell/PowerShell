@@ -481,6 +481,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
+                _lo.WriteLine(string.Empty);
             }
 
             goc.GroupStart();
