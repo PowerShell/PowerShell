@@ -843,7 +843,7 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         # returns a string cut to last whitespace
-                                        function Get-TruncatedString($string, $length) {
+                                        function Get-TruncatedString($string, [int]$length) {
                                             if ($string.Length -le $length) {
                                                 return $string
                                             }
@@ -929,7 +929,7 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $sb.Append([Environment]::Newline)
                                                 while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
                                                     $subMessage = $prefix + $remainingMessage.Substring(0, [Console]::WindowWidth - $prefixLength)
-                                                    $substring = Get-TruncatedString -string $subMessage -length [Console]::WindowWidth
+                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth)
                                                     $null = $sb.Append($substring)
                                                     $null = $sb.Append([Environment]::Newline)
                                                     $remainingMessage = $remainingMessage.Substring($remainingMessage.Length - $substring.Length)
