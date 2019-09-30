@@ -51,8 +51,10 @@ Describe 'Get-WinEvent' -Tags "CI" {
             $results = get-winevent -logname $providerForTests.LogLinks.LogName -MaxEvents 10
             $results | Should -Not -BeNullOrEmpty
         }
-        It 'Throw if count of lognames exceeds Windows API limit' -Skip:([System.Environment]::OSVersion.Version.Major -lt 10) {
-            { get-winevent -logname * } | Should -Throw -ErrorId "LogCountLimitExceeded,Microsoft.PowerShell.Commands.GetWinEventCommand"
+        It 'Throw if count of lognames exceeds Windows API limit' {
+            if ([System.Environment]::OSVersion.Version.Major -ge 10) {
+                { get-winevent -logname * } | Should -Throw -ErrorId "LogCountLimitExceeded,Microsoft.PowerShell.Commands.GetWinEventCommand"
+            }
         }
         It 'Get-WinEvent can use the simplest of filters' {
             $filter = @{ ProviderName = $providerForTests.Name }
