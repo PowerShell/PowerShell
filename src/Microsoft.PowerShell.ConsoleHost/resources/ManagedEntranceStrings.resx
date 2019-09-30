@@ -127,6 +127,15 @@ Type 'help' to get help.</value>
   <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
   </data>
+  <data name="PreviewUpdateNotificationMsg1" xml:space="preserve">
+    <value>A new PowerShell preview release is available: v{0}</value>
+  </data>
+  <data name="OfficialUpdateNotificationMsg1" xml:space="preserve">
+    <value>A new PowerShell release is available: v{0}</value>
+  </data>
+  <data name="UpdateNotificationMsg2" xml:space="preserve">
+    <value>Upgrade now, or check out the release page at:</value>
+  </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
