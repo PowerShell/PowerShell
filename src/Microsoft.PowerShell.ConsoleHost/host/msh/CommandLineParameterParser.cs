@@ -198,7 +198,10 @@ namespace Microsoft.PowerShell
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
-            if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
+            if (hostUI == null)
+            {
+                throw new PSArgumentNullException(nameof(hostUI));
+            }
 
             _hostUI = hostUI;
 

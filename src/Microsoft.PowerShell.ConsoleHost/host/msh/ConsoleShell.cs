@@ -12,8 +12,7 @@ namespace Microsoft.PowerShell
     /// to transfer control to Msh console host implementation.
     /// </summary>
 
-    public static
-    class ConsoleShell
+    public static class ConsoleShell
     {
         /// <summary>Entry point in to ConsoleShell. This method is called by main of minishell.</summary>
         /// <param name="bannerText">Banner text to be displayed by ConsoleHost.</param>
