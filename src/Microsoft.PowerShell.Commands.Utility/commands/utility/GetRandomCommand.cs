@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
-        private static object[] _nullInArray = new object[] { null };
+        private readonly static object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
         {
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                foreach (object item in InputObject ?? _nullInArray)
+                foreach (object item in InputObject ?? _nullInArray) // this allows for $null to be in an array passed to InputObject
                 {
                     if (_numberOfProcessedListItems < Count) // (3)
                     {
