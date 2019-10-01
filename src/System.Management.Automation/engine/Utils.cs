@@ -25,6 +25,7 @@ using System.Security;
 using System.Security.Principal;
 #endif
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
@@ -1255,11 +1256,25 @@ namespace System.Management.Automation
             return false;
         }
 
+        private static readonly Regex _specialDriveRegex = new Regex(@"^\\\\\w+\$");
+
+
         internal static bool PathIsUnc(string path)
         {
 #if UNIX
             return false;
 #else
+            if (!path.StartsWith('\\'))
+            {
+                return false;
+            }
+
+            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (_specialDriveRegex.IsMatch(path))
+            {
+                return true;
+            }
+
             Uri uri;
             return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
 #endif
