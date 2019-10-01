@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -9,10 +10,8 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -1351,42 +1350,34 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="patternString">The string to find the pattern for.</param>
         /// <param name="options">The options used to create the regex.</param>
-        /// <returns>New cached Regex.</returns>
+        /// <returns>New or cached Regex.</returns>
         internal static Regex NewRegex(string patternString, RegexOptions options)
         {
-            var cache = options.HasFlag(RegexOptions.IgnoreCase) ? s_regexIgnoreCaseCache : s_regexCache;
-
-            return GetOrAddRegexCache(cache, patternString, options);
-        }
-
-        private static Regex GetOrAddRegexCache(Dictionary<string, Regex> cache, string patternString, RegexOptions options)
-        {
-            lock (cache)
+            var subordinateRegexCache = s_regexCache.GetOrAdd(options, s_subordinateRegexCacheCreationDelegate);
+            if (subordinateRegexCache.TryGetValue(patternString, out Regex result))
             {
-                if (cache.TryGetValue(patternString, out Regex result))
+                return result;
+            }
+            else
+            {
+                return subordinateRegexCache.GetOrAdd(patternString, key =>
                 {
-                    return result;
-                }
-                else
-                {
-                    if (cache.Count > MaxRegexCache)
-                    {
-                        // TODO: it would be usefull to get a notice (in telemetry?) if the cache is full.
-                        cache.Clear();
-                    }
+                        if (subordinateRegexCache.Count > MaxRegexCache)
+                        {
+                            // TODO: it would be usefull to get a notice (in telemetry?) if the cache is full.
+                            subordinateRegexCache.Clear();
+                        }
 
-                    Regex re = new Regex(patternString, options);
-                    cache.Add(patternString, re);
-                    return re;
-                }
+                        Regex re = new Regex(patternString, options);
+                        return re;
+                });
             }
         }
 
-        // The 's_regexIgnoreCaseCache' cache will work poorly with 'StringComparer.Ordinal' for a scenario with IgnoreCase
-        // if there are many equal patterns in different cases but it is very edge case:
-        // 'abc','abC','aBc','Abc' | ? { $text -match $_ }
-        private static readonly Dictionary<string, Regex> s_regexIgnoreCaseCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
-        private static readonly Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
+        private static readonly ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>> s_regexCache =
+            new ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>>();
+        private static readonly Func<RegexOptions, ConcurrentDictionary<string, Regex>> s_subordinateRegexCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
         private const int MaxRegexCache = 1000;
 
         /// <summary>
