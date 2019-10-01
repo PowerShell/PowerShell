@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// Gets or sets the delimiter.
         /// </summary>
