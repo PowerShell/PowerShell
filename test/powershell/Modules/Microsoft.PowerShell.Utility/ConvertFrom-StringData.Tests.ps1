@@ -66,7 +66,7 @@ bazz = 2
     }
 }
 
-Describe "Delimiter parameter tests" {
+Describe "Delimiter parameter tests" -Tags "CI" {
 
     $sampleData = @"
 
