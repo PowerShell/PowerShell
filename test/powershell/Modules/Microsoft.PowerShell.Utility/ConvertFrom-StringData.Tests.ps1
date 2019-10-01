@@ -91,11 +91,19 @@ a:b
     {$sampleData | ConvertFrom-StringData -Delimiter ':' }| Should -Not -Throw
     }
 
-    It "Should handle multiple delimiter types"{
-        {"A:B" | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
-        {"A-B" | ConvertFrom-StringData -Delimiter "-" } | Should -Not -Throw
-        {"A,B" | ConvertFrom-StringData -Delimiter "," } | Should -Not -Throw
+
+    $TestCases = @( @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } },
+                    @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } },
+                    @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
+    )
+
+    It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
+        param($Delimiter, $StringData, $ExpectedResult)
+
+        $(ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter).Values | Should -Be $ExpectedResult.Values
+
     }
+
 
 }
 
