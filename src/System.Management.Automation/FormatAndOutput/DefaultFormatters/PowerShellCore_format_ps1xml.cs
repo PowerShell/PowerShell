@@ -939,7 +939,7 @@ namespace System.Management.Automation.Runspaces
                                             }
                                         }
 
-                                        $posmsg += $message
+                                        $posmsg += ""${errorColor}"" + $message
 
                                         $reason = 'Error'
                                         if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
