@@ -900,7 +900,7 @@ namespace System.Management.Automation.Runspaces
                                             $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
                                             $line = $line.Insert($myinv.OffsetInLine - 1, $errorColor)
                                             $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
-                                            $offsetWhitespace = ' ' * $myinv.OffsetInLine
+                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
                                             $message = ""${prefix}${offsetWhitespace}^ ""
                                         }
@@ -929,7 +929,7 @@ namespace System.Management.Automation.Runspaces
                                                 $sb = [Text.StringBuilder]::new()
                                                 $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
-                                                $remainingMessage = $message.Substring($substring.Length)
+                                                $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append([Environment]::Newline)
                                                 while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
                                                     $subMessage = $prefix + $remainingMessage.Substring(0, [Console]::WindowWidth - $prefixLength)
