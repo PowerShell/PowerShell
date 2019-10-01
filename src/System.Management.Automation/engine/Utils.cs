@@ -1258,7 +1258,6 @@ namespace System.Management.Automation
 
         private static readonly Regex _specialDriveRegex = new Regex(@"^\\\\\w+\$");
 
-
         internal static bool PathIsUnc(string path)
         {
 #if UNIX
