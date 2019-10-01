@@ -873,13 +873,14 @@ namespace System.Management.Automation.Runspaces
                                         $offsetWhitespace = ''
                                         $message = ''
                                         $prefix = ''
+                                        $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetColor}in $($myinv.ScriptName)`n""
+                                                $posmsg = ""${resetColor}error in $($myinv.ScriptName)${newline}""
                                             }
                                             else {
-                                                $posmsg = ""`n""
+                                                $posmsg = ""${newline}""
                                             }
 
                                             $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
@@ -893,7 +894,7 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             $verticalBar = '|'
-                                            $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}`n""
+                                            $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
                                             $line = $myinv.Line
                                             $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
                                             $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
@@ -906,8 +907,10 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            if ($_.CategoryInfo.Category -eq 'ParserError') {
-                                                $message += $_.Exception.message.split(""~`n"")[1].split(""`n`n"")[0]
+                                            # we use `n instead of $newline here because that's what is in the message
+                                            if ($_.CategoryInfo.Category -eq 'ParserError' -and $_.Exception.Message.Contains(""~`n"")) {
+                                                # need to parse out the relevant part of the pre-rendered positionmessage
+                                                $message += $_.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
                                             }
                                             else {
                                                 $message += $_.Exception.Message
@@ -923,22 +926,21 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace([Environment]::Newline, ' ')
-
+                                            $message = $message.Replace($newline, ' ')
                                             if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
                                                 $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
-                                                $null = $sb.Append([Environment]::Newline)
+                                                $null = $sb.Append($newline)
                                                 while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
                                                     $subMessage = $prefix + $remainingMessage.Substring(0, [Console]::WindowWidth - $prefixLength)
                                                     $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth)
                                                     $null = $sb.Append($substring)
-                                                    $null = $sb.Append([Environment]::Newline)
-                                                    $remainingMessage = $remainingMessage.Substring($remainingMessage.Length - $substring.Length)
+                                                    $null = $sb.Append($newline)
+                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length)
                                                 }
-                                                $null = $sb.Append($prefix + $remainingMessage)
+                                                $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
                                             }
                                         }
