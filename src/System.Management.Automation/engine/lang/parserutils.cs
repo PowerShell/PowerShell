@@ -1347,35 +1347,47 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Cache regular expressions...
+        /// Cache regular expressions.
         /// </summary>
         /// <param name="patternString">The string to find the pattern for.</param>
-        /// <param name="options">The options used to create the regex...</param>
-        /// <returns>A case-insensitive Regex...</returns>
+        /// <param name="options">The options used to create the regex.</param>
+        /// <returns>New cached Regex.</returns>
         internal static Regex NewRegex(string patternString, RegexOptions options)
         {
-            if (options != RegexOptions.IgnoreCase)
-                return new Regex(patternString, options);
 
-            lock (s_regexCache)
+            var cache = options.HasFlag(RegexOptions.IgnoreCase) ? s_regexIgnoreCaseCache : s_regexCache;
+
+            return GetOrAddRegexCache(cache, patternString, options);
+        }
+
+        private static Regex GetOrAddRegexCache(Dictionary<string, Regex> cache, string patternString, RegexOptions options)
+        {
+            lock (cache)
             {
-                Regex result;
-                if (s_regexCache.TryGetValue(patternString, out result))
+                if (cache.TryGetValue(patternString, out Regex result))
                 {
                     return result;
                 }
                 else
                 {
-                    if (s_regexCache.Count > MaxRegexCache)
-                        s_regexCache.Clear();
-                    Regex re = new Regex(patternString, RegexOptions.IgnoreCase);
-                    s_regexCache.Add(patternString, re);
+                    if (cache.Count > MaxRegexCache)
+                    {
+                        // TODO: it would be usefull to get a notice (in telemetry?) if the cache is full.
+                        cache.Clear();
+                    }
+
+                    Regex re = new Regex(patternString, options);
+                    cache.Add(patternString, re);
                     return re;
                 }
             }
         }
 
-        private static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>();
+        // The 's_regexIgnoreCaseCache' cache will work poorly with 'StringComparer.Ordinal' for a scenario with IgnoreCase
+        /// if there are many equal patterns in different cases but it is very edge case:
+        /// 'abc','abC','aBc','Abc' | ? { $text -match $_ }
+        private readonly static Dictionary<string, Regex> s_regexIgnoreCaseCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
+        private readonly static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
         private const int MaxRegexCache = 1000;
 
         /// <summary>
