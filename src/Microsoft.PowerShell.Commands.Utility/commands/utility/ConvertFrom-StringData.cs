@@ -37,19 +37,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _Delimiter;
 
         /// <summary>
-        /// The delimiter to index from to create the object
+        /// Gets or sets the delimiter.
         /// </summary>
-        /// <value></value>
         [Parameter(Position = 1)]
-        public string Delimiter
-        {
-
-            get{}
-            set{}
-        }
+        public char Delimiter { get; set; } = '=';
 
         /// <summary>
         /// </summary>
