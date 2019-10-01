@@ -1354,7 +1354,6 @@ namespace System.Management.Automation
         /// <returns>New cached Regex.</returns>
         internal static Regex NewRegex(string patternString, RegexOptions options)
         {
-
             var cache = options.HasFlag(RegexOptions.IgnoreCase) ? s_regexIgnoreCaseCache : s_regexCache;
 
             return GetOrAddRegexCache(cache, patternString, options);
@@ -1384,10 +1383,10 @@ namespace System.Management.Automation
         }
 
         // The 's_regexIgnoreCaseCache' cache will work poorly with 'StringComparer.Ordinal' for a scenario with IgnoreCase
-        /// if there are many equal patterns in different cases but it is very edge case:
-        /// 'abc','abC','aBc','Abc' | ? { $text -match $_ }
-        private readonly static Dictionary<string, Regex> s_regexIgnoreCaseCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
-        private readonly static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
+        // if there are many equal patterns in different cases but it is very edge case:
+        // 'abc','abC','aBc','Abc' | ? { $text -match $_ }
+        private static readonly Dictionary<string, Regex> s_regexIgnoreCaseCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
+        private static readonly Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>(StringComparer.Ordinal);
         private const int MaxRegexCache = 1000;
 
         /// <summary>
