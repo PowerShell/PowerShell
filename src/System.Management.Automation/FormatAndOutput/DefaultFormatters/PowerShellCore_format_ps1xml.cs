@@ -921,6 +921,10 @@ namespace System.Management.Automation.Runspaces
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             $prefixLength = Get-RawStringLength -string $prefix
                                             $prefixVtLength = $prefix.Length - $prefixLength
+
+                                            # replace newlines in message so it lines up correct
+                                            $message = $message.Replace([Environment]::Newline, ' ')
+
                                             if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
                                                 $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
