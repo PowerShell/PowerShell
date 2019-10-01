@@ -221,6 +221,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
+        internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), staticFlags);
 
@@ -814,7 +816,11 @@ namespace System.Management.Automation.Language
 
                 if (tokenKind == TokenKind.QuestionQuestionEquals)
                 {
-                    exprs.Add(leftAssignableValue.SetValue(this, Expression.MakeBinary(ExpressionType.Coalesce, leftExpr, rhs)));
+                    exprs.Add(
+                        Expression.Condition(
+                            Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, leftExpr),
+                                leftAssignableValue.SetValue(this, rhs),
+                                leftExpr.Convert(typeof(object))));
                     return Expression.Block(temps, exprs);
                 }
             }
@@ -5257,7 +5263,10 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        return Expression.Coalesce(lhs, rhs);
+                        return Expression.Condition(
+                                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
+                                rhs.Convert(typeof(object)),
+                                lhs.Convert(typeof(object)));
                     }
             }
 

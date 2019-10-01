@@ -1,36 +1,35 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'NullConditionalOperations' -tag 'CI' {
+Describe 'NullConditionalOperations' -Tags 'CI' {
+    BeforeAll {
+
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
+
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        } else {
+            $someGuid = New-Guid
+            $typesTests = @(
+                @{ name = 'string'; valueToSet = 'hello' }
+                @{ name = 'dotnetType'; valueToSet = $someGuid }
+                @{ name = 'byte'; valueToSet = [byte]0x94 }
+                @{ name = 'intArray'; valueToSet = 1..2 }
+                @{ name = 'stringArray'; valueToSet = 'a'..'c' }
+                @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
+            )
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
 
     Context "Null conditional assignment operator ??=" {
-        BeforeAll {
-
-            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
-
-            if ($skipTest) {
-                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
-                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues["it:skip"] = $true
-            } else {
-                $someGuid = New-Guid
-                $typesTests = @(
-                    @{ name = 'string'; valueToSet = 'hello' }
-                    @{ name = 'dotnetType'; valueToSet = $someGuid }
-                    @{ name = 'byte'; valueToSet = [byte]0x94 }
-                    @{ name = 'intArray'; valueToSet = 1..2 }
-                    @{ name = 'stringArray'; valueToSet = 'a'..'c' }
-                    @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
-                )
-            }
-        }
-
-        AfterAll {
-            if ($skipTest) {
-                $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            }
-        }
-
         It 'Variable doesnot exist' {
 
             Remove-Variable variableDoesNotExist -ErrorAction SilentlyContinue -Force
@@ -69,6 +68,29 @@ Describe 'NullConditionalOperations' -tag 'CI' {
             $x | Should -Be 100
         }
 
+        It 'Rhs is a cmdlet' {
+            $x ??= (Get-Alias -Name 'where')
+            $x.Definition | Should -BeExactly 'Where-Object'
+        }
+
+        It 'Lhs is DBNull' {
+            $x = [System.DBNull]::Value
+            $x ??= 200
+            $x | Should -Be 200
+        }
+
+        It 'Lhs is AutomationNull' {
+            $x = [System.Management.Automation.Internal.AutomationNull]::Value
+            $x ??= 200
+            $x | Should -Be 200
+        }
+
+        It 'Lhs is NullString' {
+            $x = [NullString]::Value
+            $x ??= 200
+            $x | Should -Be 200
+        }
+
         It 'Error case' {
             $e = $null
             $null = [System.Management.Automation.Language.Parser]::ParseInput('1 ??= 100', [ref] $null, [ref] $e)
@@ -86,7 +108,6 @@ Describe 'NullConditionalOperations' -tag 'CI' {
         }
 
         It 'Variable exists but is null' {
-            $x = $null
             $x ?? 100 | Should -Be 100
         }
 
@@ -112,16 +133,66 @@ Describe 'NullConditionalOperations' -tag 'CI' {
             100 ?? $x ?? 200 | Should -Be 100
             $null ?? 100 ?? $null ?? 200 | Should -Be 100
         }
+
+        It 'Rhs is a cmdlet' {
+            $result = $x ?? (Get-Alias -Name 'where')
+            $result.Definition | Should -BeExactly 'Where-Object'
+        }
+
+        It 'Lhs is DBNull' {
+            $x = [System.DBNull]::Value
+            $x ?? 200 | Should -Be 200
+        }
+
+        It 'Lhs is AutomationNull' {
+            $x = [System.Management.Automation.Internal.AutomationNull]::Value
+            $x ??  200 | Should -Be 200
+        }
+
+        It 'Lhs is NullString' {
+            $x = [NullString]::Value
+            $x ?? 200 | Should -Be 200
+        }
+
+        It 'Rhs is a get variable expression' {
+            $x = [System.DBNull]::Value
+            $y = 2
+            $x ?? $y | Should -Be 2
+        }
+
+        It 'Lhs is a constant' {
+            [System.DBNull]::Value ?? 2 | Should -Be 2
+        }
+
+        It 'Both are null constants' {
+            [System.DBNull]::Value ?? [NullString]::Value | Should -Be ([NullString]::Value)
+        }
     }
 
     Context 'Combined usage of null conditional operators' {
 
+        BeforeAll {
+            function GetNull {
+                return $null
+            }
+
+            function GetHello {
+                return "Hello"
+            }
+        }
+
+        BeforeEach {
+            $x = $null
+        }
+
         It '?? and ??= used together' {
             $x ??= 100 ?? 200
             $x | Should -Be 100
+        }
 
-            $y ??= 100 ?? 200
-            $y | Should -Be 100
+        It '?? and ??= chaining' {
+            $x ??= $x ?? (GetNull) ?? (GetHello)
+            $x | Should -BeExactly 'Hello'
         }
     }
 }

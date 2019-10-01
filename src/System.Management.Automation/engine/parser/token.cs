@@ -879,7 +879,7 @@ namespace System.Management.Automation.Language
             /*     Reserved slot 19 */ TokenFlags.None,
             /*     Reserved slot 20 */ TokenFlags.None,
 
-            #endregion Flags for operators5
+            #endregion Flags for operators
 
             #region Flags for keywords
 

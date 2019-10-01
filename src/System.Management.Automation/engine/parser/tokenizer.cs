@@ -5001,7 +5001,6 @@ namespace System.Management.Automation.Language
                         if (c1 == '?')
                         {
                             SkipChar();
-
                             c1 = PeekChar();
 
                             if (c1 == '=')
