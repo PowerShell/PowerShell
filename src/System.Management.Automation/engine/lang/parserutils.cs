@@ -1376,8 +1376,10 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>> s_regexCache =
             new ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>>();
+
         private static readonly Func<RegexOptions, ConcurrentDictionary<string, Regex>> s_subordinateRegexCacheCreationDelegate =
             key => new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
+
         private const int MaxRegexCache = 1000;
 
         /// <summary>
