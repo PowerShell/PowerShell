@@ -2,8 +2,10 @@
 # Licensed under the MIT License.
 
 Describe "Select-String" -Tags "CI" {
-    $nl = [Environment]::NewLine
-    $currentDirectory = $pwd.Path
+    BeforeAll {
+        $nl = [Environment]::NewLine
+        $currentDirectory = $pwd.Path
+    }
 
     Context "String actions" {
         $testinputone = "hello","Hello","goodbye"
@@ -13,10 +15,10 @@ Describe "Select-String" -Tags "CI" {
             { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
         }
 
-            it "Should return an array data type when multiple matches are found" {
-                $result = $testinputtwo | Select-String -Pattern "hello"
+        it "Should return an array data type when multiple matches are found" {
+            $result = $testinputtwo | Select-String -Pattern "hello"
             ,$result | Should -BeOfType "System.Array"
-            }
+        }
 
         it "Should return an object type when one match is found" {
             $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
@@ -245,5 +247,8 @@ Describe "Select-String" -Tags "CI" {
             Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
         }
     }
-    Push-Location $currentDirectory
+
+    AfterAll {
+        Push-Location $currentDirectory
+    }
 }
