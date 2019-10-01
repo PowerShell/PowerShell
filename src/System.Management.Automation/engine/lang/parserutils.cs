@@ -1364,7 +1364,7 @@ namespace System.Management.Automation
                 {
                         if (subordinateRegexCache.Count > MaxRegexCache)
                         {
-                            // TODO: it would be usefull to get a notice (in telemetry?) if the cache is full.
+                            // TODO: it would be useful to get a notice (in telemetry?) if the cache is full.
                             subordinateRegexCache.Clear();
                         }
 
