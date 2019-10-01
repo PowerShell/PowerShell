@@ -65,3 +65,38 @@ bazz = 2
 	$(ConvertFrom-StringData -StringData $sampleData).Values | Should -BeIn @("0","1","2")
     }
 }
+
+Describe "Delimiter parameter tests" {
+
+    $sampleData = @"
+
+a:b
+
+"@
+
+
+    It "Should return the data on the left side in the key" {
+        $actualValue = ConvertFrom-StringData -StringData 'a:b' -Delimiter ':'
+
+        $actualValue.Keys | Should -BeExactly "a"
+    }
+
+    It "Should return the data on the right side in the value" {
+        $actualValue = ConvertFrom-StringData -StringData 'a=b'
+
+        $actualValue.Values | Should -BeExactly "b"
+    }
+
+    It "Should not throw on given delimiter" {
+    {$sampleData | ConvertFrom-StringData -Delimiter ':' }| Should -Not -Throw
+    }
+
+    It "Should handle multiple delimiter types"{
+        {"A:B" | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
+        {"A-B" | ConvertFrom-StringData -Delimiter "-" } | Should -Not -Throw
+        {"A,B" | ConvertFrom-StringData -Delimiter "," } | Should -Not -Throw
+    }
+
+}
+
+
