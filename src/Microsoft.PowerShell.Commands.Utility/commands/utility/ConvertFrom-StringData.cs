@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections;
+using System.Management.Automation;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
@@ -30,10 +30,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _stringData;
             }
+
             set
             {
                 _stringData = value;
             }
+        }
+
+        private string _Delimiter;
+
+        /// <summary>
+        /// The delimiter to index from to create the object
+        /// </summary>
+        /// <value></value>
+        [Parameter(Position = 1)]
+        public string Delimiter
+        {
+
+            get{}
+            set{}
         }
 
         /// <summary>
@@ -42,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-            if (String.IsNullOrEmpty(_stringData))
+            if (string.IsNullOrEmpty(_stringData))
             {
                 WriteObject(result);
                 return;
@@ -54,10 +69,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 string s = line.Trim();
 
-                if (String.IsNullOrEmpty(s) || s[0] == '#')
+                if (string.IsNullOrEmpty(s) || s[0] == '#')
                     continue;
 
-                int index = s.IndexOf('=');
+                int index = s.IndexOf(Delimiter);
                 if (index <= 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
