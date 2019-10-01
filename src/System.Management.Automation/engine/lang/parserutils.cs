@@ -1368,8 +1368,7 @@ namespace System.Management.Automation
                             subordinateRegexCache.Clear();
                         }
 
-                        Regex re = new Regex(patternString, options);
-                        return re;
+                        return new Regex(patternString, options);
                 });
             }
         }
