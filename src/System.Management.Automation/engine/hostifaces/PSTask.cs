@@ -437,7 +437,6 @@ namespace System.Management.Automation.PSTasks
             _runspace = RunspaceFactory.CreateRunspace(iss);
             _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
             _runspace.Open();
-            Runspace.DefaultRunspace = _runspace;
 
             // Set current working directory on the runspace to be the same as the calling script.
             // Temporarily set the newly created runspace as the thread default runspace for any needed module loading.
