@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
                             this));
                 }
             }
-
+            
             if (AsJob)
             {
                 // Set up for returning a job object.
@@ -486,10 +486,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception ex)
                         {
-                            // Close the _taskCollection on an unexpected exception so the pool closes and
-                            // lets any running tasks complete.
                             _taskCollection.Complete();
                             _taskCollectionException = ex;
+                            _taskDataStreamWriter.Close();
+                            
                             break;
                         }
 
@@ -528,7 +528,8 @@ namespace Microsoft.PowerShell.Commands
                 var taskChildJob = new PSTaskChildJob(
                     Parallel,
                     _usingValuesMap,
-                    InputObject);
+                    InputObject,
+                    SessionState.Internal.CurrentLocation);
 
                 _taskJob.AddJob(taskChildJob);
 
@@ -550,6 +551,7 @@ namespace Microsoft.PowerShell.Commands
                             Parallel,
                             _usingValuesMap,
                             InputObject,
+                            SessionState.Internal.CurrentLocation,
                             _taskDataStreamWriter));
                 }
                 catch (InvalidOperationException)

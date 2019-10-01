@@ -35,16 +35,19 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run in task.</param>
         /// <param name="usingValuesMap">Using values passed into script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocation">Current working directory.</param>
         /// <param name="dataStreamWriter">Cmdlet data stream writer.</param>
         public PSTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
+            PathInfo currentLocation,
             PSTaskDataStreamWriter dataStreamWriter)
             : base(
                 scriptBlock,
                 usingValuesMap,
-                dollarUnderbar)
+                dollarUnderbar,
+                currentLocation)
         {
             _dataStreamWriter = dataStreamWriter;
         }
@@ -176,15 +179,18 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value for script block.</param>
+        /// <param name="currentLocation">Current working directory.</param>
         /// <param name="job">Job object associated with task.</param>
         public PSJobTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
+            PathInfo currentLocation,
             Job job) : base(
                 scriptBlock,
                 usingValuesMap,
-                dollarUnderbar)
+                dollarUnderbar,
+                currentLocation)
         {
             _job = job;
         }
@@ -309,6 +315,7 @@ namespace System.Management.Automation.PSTasks
         private readonly Dictionary<string, object> _usingValuesMap;
         private readonly object _dollarUnderbar;
         private readonly int _id;
+        private readonly PathInfo _currentLocation;
         private Runspace _runspace;
         protected PowerShell _powershell;
         protected PSDataCollection<PSObject> _output;
@@ -372,14 +379,17 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocation">Current working directory.</param>
         protected PSTaskBase(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
-            object dollarUnderbar) : this()
+            object dollarUnderbar,
+            PathInfo currentLocation) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
             _dollarUnderbar = dollarUnderbar;
+            _currentLocation = currentLocation;
         }
 
         #endregion
@@ -427,6 +437,20 @@ namespace System.Management.Automation.PSTasks
             _runspace = RunspaceFactory.CreateRunspace(iss);
             _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
             _runspace.Open();
+            Runspace.DefaultRunspace = _runspace;
+
+            // Set current working directory on the runspace to be the same as the calling script.
+            // Temporarily set the newly created runspace as the thread default runspace for any needed module loading.
+            var oldDefaultRunspace = Runspace.DefaultRunspace;
+            try
+            {
+                Runspace.DefaultRunspace = _runspace;
+                _runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocation.Path);
+            }
+            finally
+            {
+                Runspace.DefaultRunspace = oldDefaultRunspace;
+            }
 
             // Create the PowerShell command pipeline for the provided script block
             // The script will run on the provided Runspace in a new thread by default
@@ -1216,15 +1240,17 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocation">Current working directory.</param>
         public PSTaskChildJob(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
-            object dollarUnderbar)
+            object dollarUnderbar,
+            PathInfo currentLocation)
             : base(scriptBlock.ToString(), string.Empty)
 
         {
             PSJobTypeName = nameof(PSTaskChildJob);
-            _task = new PSJobTask(scriptBlock, usingValuesMap, dollarUnderbar, this);
+            _task = new PSJobTask(scriptBlock, usingValuesMap, dollarUnderbar, currentLocation, this);
             _task.StateChanged += (sender, args) => HandleTaskStateChange(sender, args);
         }
 
