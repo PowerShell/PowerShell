@@ -23,4 +23,4 @@ assignees: ''
 - [ ] Docker image published
 - [ ] Distribution tested
 - [ ] Lifecycle updated
-- [ ] Documentation Updated 
+- [ ] Documentation Updated
