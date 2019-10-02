@@ -2,19 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Net.NetworkInformation;
+using System.Text;
 
 namespace Microsoft.PowerShell
 {
@@ -24,9 +22,8 @@ namespace Microsoft.PowerShell
     internal static class UpdatesNotification
     {
         private const string UpdateCheckOptOutEnvVar = "POWERSHELL_UPDATECHECK_OPTOUT";
-        private const string Last4ReleasesUri = "https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=3";
+        private const string Last3ReleasesUri = "https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=3";
         private const string LatestReleaseUri = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest";
-        private const string ReleasePageUri = "https://github.com/PowerShell/PowerShell/releases/tag/v{0}";
 
         private const string SentinelFileName = "_sentinel_";
         private const string DoneFileNameTemplate = "sentinel-{0}-{1}-{2}.done";
@@ -34,14 +31,16 @@ namespace Microsoft.PowerShell
         private const string UpdateFileNameTemplate = "update_{0}_{1}";
         private const string UpdateFileNamePattern = "update_v*.*.*_????-??-??";
 
-        private readonly static EnumerationOptions s_enumOptions = new EnumerationOptions();
-        private readonly static string s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
+        private static readonly EnumerationOptions s_enumOptions = new EnumerationOptions();
+        private static readonly string s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
 
-        // A few things to think about:
-        //   - it might look better if we write out notification with yellow background color and black foreground color,
-        //     but padding is expensive and not reliable (console width may change)
-        //   - maybe we shouldn't do update check and show notification when it's from a mini-shell, meaning when
-        //     'ConsoleShell.Start' is not called by 'ManagedEntrance.Start'
+        /// <summary>
+        /// Gets a value indicating whether update notification should be done.
+        /// </summary>
+        internal static readonly bool CanNotifyUpdates = !Utils.GetOptOutEnvVariableAsBool(UpdateCheckOptOutEnvVar, defaultValue: false);
+
+        // Maybe we shouldn't do update check and show notification when it's from a mini-shell, meaning when
+        // 'ConsoleShell.Start' is not called by 'ManagedEntrance.Start'.
 
         internal static void ShowUpdateNotification(PSHostUserInterface hostUI)
         {
@@ -51,59 +50,18 @@ namespace Microsoft.PowerShell
             }
 
             if (TryParseUpdateFile(
-                    out bool noFileFound,
-                    updateFilePath: out _,
-                    out SemanticVersion lastUpdateVersion,
-                    lastUpdateDate: out _) && !noFileFound)
+                out bool fileFound,
+                updateFilePath: out _,
+                out SemanticVersion lastUpdateVersion,
+                lastUpdateDate: out _) && fileFound)
             {
                 string releaseTag = lastUpdateVersion.ToString();
-                string releaseUri = string.Format(CultureInfo.InvariantCulture, ReleasePageUri, releaseTag);
-
                 string notificationMsgTemplate = string.IsNullOrEmpty(lastUpdateVersion.PreReleaseLabel)
-                    ? ManagedEntranceStrings.OfficialUpdateNotificationMsg1
-                    : ManagedEntranceStrings.PreviewUpdateNotificationMsg1;
-                string notificationMsg1 = string.Format(CultureInfo.InvariantCulture, notificationMsgTemplate, releaseTag);
-                string notificationMsg2 = ManagedEntranceStrings.UpdateNotificationMsg2;
+                    ? ManagedEntranceStrings.StableUpdateNotificationMessage
+                    : ManagedEntranceStrings.PreviewUpdateNotificationMessage;
 
-                int maxLength = GetMaxLength(notificationMsg1, notificationMsg2, releaseUri);
-                notificationMsg1 = Padding(notificationMsg1, maxLength);
-                notificationMsg2 = Padding(notificationMsg2, maxLength);
-                releaseUri = Padding(releaseUri, maxLength);
-
-                hostUI.WriteLine(ConsoleColor.Black, ConsoleColor.Yellow, notificationMsg1);
-                hostUI.WriteLine(ConsoleColor.Black, ConsoleColor.Yellow, notificationMsg2);
-                hostUI.WriteLine(ConsoleColor.Black, ConsoleColor.Yellow, releaseUri);
-                hostUI.WriteLine();
-            }
-
-            int GetMaxLength(string a, string b, string c)
-            {
-                int maxLength = a.Length;
-
-                if (maxLength < b.Length)
-                {
-                    maxLength = b.Length;
-                }
-
-                if (maxLength < c.Length)
-                {
-                    maxLength = c.Length;
-                }
-
-                return maxLength;
-            }
-
-            string Padding(string str, int length)
-            {
-                if (str.Length == length)
-                {
-                    return str;
-                }
-
-                Span<char> buffer = stackalloc char[length];
-                buffer.Fill(' ');
-                str.AsSpan().CopyTo(buffer);
-                return buffer.ToString();
+                string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag);
+                hostUI.WriteLine(notificationMsg);
             }
         }
 
@@ -120,8 +78,8 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // If the update check is opt out, then skip the rest of the check.
-            if (Utils.GetOptOutEnvVariableAsBool(UpdateCheckOptOutEnvVar, defaultValue: false))
+            // If the host is not connect to a network, skip the rest of the check.
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return;
             }
@@ -132,20 +90,18 @@ namespace Microsoft.PowerShell
                 Directory.CreateDirectory(s_cacheDirectory);
             }
 
-            DateTime today = DateTime.UtcNow;
+            bool parseSuccess = TryParseUpdateFile(
+                out bool fileFound,
+                out string updateFilePath,
+                out SemanticVersion lastUpdateVersion,
+                out DateTime lastUpdateDate);
 
-            if (TryParseUpdateFile(
-                    out bool noFileFound,
-                    updateFilePath: out _,
-                    lastUpdateVersion: out _,
-                    out DateTime lastUpdateDate))
+            DateTime today = DateTime.UtcNow;
+            if (parseSuccess && fileFound && (today - lastUpdateDate).TotalDays < 7)
             {
-                if (!noFileFound && (today - lastUpdateDate).TotalDays < 7)
-                {
-                    // There is an existing update file, and the last update was release less than a week.
-                    // It's unlikely a new version is release within a week, so we can skip this check.
-                    return;
-                }
+                // There is an existing update file, and the last update was less than 1 week ago.
+                // It's unlikely a new version is released within 1 week, so we can skip this check.
+                return;
             }
 
             // Construct the sentinel file paths for today's check.
@@ -169,7 +125,7 @@ namespace Microsoft.PowerShell
             try
             {
                 // Use 'sentinelFilePath' as the file lock.
-                // The update check tasks started by every 'pwsh' process will compete on holding this file.
+                // The update-check tasks started by every 'pwsh' process of the same version will compete on holding this file.
                 using (FileStream s = new FileStream(sentinelFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     if (File.Exists(todayDoneFilePath))
@@ -179,18 +135,14 @@ namespace Microsoft.PowerShell
                         return;
                     }
 
-                    // Now it's guaranteed that I'm the only process that reaches here.
+                    // Now it's guaranteed that this is the only process that reaches here.
                     // Clean up the old '.done' file, there should be only one of it.
                     foreach (string oldFile in Directory.EnumerateFiles(s_cacheDirectory, DoneFileNamePattern, s_enumOptions))
                     {
                         File.Delete(oldFile);
                     }
 
-                    if (!TryParseUpdateFile(
-                            noFileFound: out _,
-                            out string updateFilePath,
-                            out SemanticVersion lastUpdateVersion,
-                            lastUpdateDate: out _))
+                    if (!parseSuccess)
                     {
                         // The update file is corrupted, either because more than one update files were found unexpectedly,
                         // or because the update file name is not in the valid format.
@@ -207,7 +159,7 @@ namespace Microsoft.PowerShell
                     //  - If there is a valid new release that should be reported to the user,
                     //    create the file `update_<tag>_<publish-date>` when no `update` file exists,
                     //    or rename the existing file to `update_<new-version>_<new-publish-date>`.
-                    SemanticVersion baselineVersion = lastUpdateVersion ?? PSVersionInfo.PSV6Version;
+                    SemanticVersion baselineVersion = lastUpdateVersion ?? PSVersionInfo.PSCurrentVersion;
                     Release release = await QueryNewReleaseAsync(baselineVersion);
 
                     if (release != null)
@@ -236,18 +188,21 @@ namespace Microsoft.PowerShell
             }
             catch (Exception)
             {
-                // An update check initiated from another `pwsh` process is in progress.
-                // It's OK to just return and let that update check to finish the work.
+                // There are 2 possible reason for the exception:
+                // 1. An update check initiated from another `pwsh` process is in progress.
+                //    It's OK to just return and let that update check to finish the work.
+                // 2. The update check failed (ex. internet connectivity issue, GitHub service failure).
+                //    It's OK to just return and let another `pwsh` do the check at later time.
             }
         }
 
         private static bool TryParseUpdateFile(
-            out bool noFileFound,
+            out bool fileFound,
             out string updateFilePath,
             out SemanticVersion lastUpdateVersion,
             out DateTime lastUpdateDate)
         {
-            noFileFound = false;
+            fileFound = true;
             updateFilePath = null;
             lastUpdateVersion = null;
             lastUpdateDate = DateTime.MinValue;
@@ -259,7 +214,7 @@ namespace Microsoft.PowerShell
             {
                 // No file was found that matches the pattern, but it's OK that an update file doesn't exist.
                 // This could happen when there is no new updates yet.
-                noFileFound = true;
+                fileFound = false;
                 return true;
             }
 
@@ -280,7 +235,7 @@ namespace Microsoft.PowerShell
             bool success = DateTime.TryParse(
                 updateFileName.AsSpan().Slice(dateStartIndex),
                 CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
+                DateTimeStyles.AssumeLocal,
                 out lastUpdateDate);
 
             if (success)
@@ -303,8 +258,8 @@ namespace Microsoft.PowerShell
 
         private static async Task<Release> QueryNewReleaseAsync(SemanticVersion baselineVersion)
         {
-            bool noPreRelease = string.IsNullOrEmpty(PSVersionInfo.PSV6Version.PreReleaseLabel);
-            string queryUri = noPreRelease ? LatestReleaseUri : Last4ReleasesUri;
+            bool notPreRelease = string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel);
+            string queryUri = notPreRelease ? LatestReleaseUri : Last3ReleasesUri;
 
             using (HttpClient client = new HttpClient())
             {
@@ -323,7 +278,7 @@ namespace Microsoft.PowerShell
                     var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
                     var serializer = JsonSerializer.Create(settings);
 
-                    if (noPreRelease)
+                    if (notPreRelease)
                     {
                         var release = serializer.Deserialize<JObject>(jsonReader);
                         var tagName = release["tag_name"].ToString();

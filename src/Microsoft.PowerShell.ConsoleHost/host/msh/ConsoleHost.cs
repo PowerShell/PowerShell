@@ -234,9 +234,13 @@ namespace Microsoft.PowerShell
 
                     if (s_theConsoleHost.LoadPSReadline())
                     {
-                        // Start a task in the background to check for the update release.
-                        _ = UpdatesNotification.CheckForUpdates();
                         ProfileOptimization.StartProfile("StartupProfileData-Interactive");
+
+                        if (UpdatesNotification.CanNotifyUpdates)
+                        {
+                            // Start a task in the background to check for the update release.
+                            _ = UpdatesNotification.CheckForUpdates();
+                        }
                     }
                     else
                     {
