@@ -8596,14 +8596,14 @@ namespace System.Management.Automation.Internal
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-            [DllImport(PinvokeDllNames.FindFirstStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern SafeFindHandle FindFirstStreamW(
                 string lpFileName, StreamInfoLevels InfoLevel,
                 [In, Out, MarshalAs(UnmanagedType.LPStruct)]
                 AlternateStreamNativeData lpFindStreamData, uint dwFlags);
 
-            [DllImport(PinvokeDllNames.FindNextStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern bool FindNextStreamW(
