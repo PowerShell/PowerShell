@@ -96,6 +96,13 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
             $null = [System.Management.Automation.Language.Parser]::ParseInput('1 ??= 100', [ref] $null, [ref] $e)
             $e[0].ErrorId | Should -BeExactly 'InvalidLeftHandSide'
         }
+
+        It 'Variable is non-null' {
+            $num = 10
+            $num ??= 20
+
+            $num | Should -Be 10
+        }
     }
 
     Context 'Null coalesce operator ??' {
@@ -193,6 +200,11 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
         It '?? and ??= chaining' {
             $x ??= $x ?? (GetNull) ?? (GetHello)
             $x | Should -BeExactly 'Hello'
+        }
+
+        It 'First two are null' {
+            $z ??= $null ?? 100
+            $z | Should -Be 100
         }
     }
 }
