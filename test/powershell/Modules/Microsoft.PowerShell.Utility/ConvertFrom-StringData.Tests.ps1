@@ -67,36 +67,26 @@ bazz = 2
 }
 
 Describe "Delimiter parameter tests" -Tags "CI" {
-
-    $sampleData = @"
-
-a:b
-
-"@
-
-
-    It "Should return the data on the left side in the key" {
-        $actualValue = ConvertFrom-StringData -StringData 'a:b' -Delimiter ':'
-
-        $actualValue.Keys | Should -BeExactly "a"
+    BeforeAll  {
+        $TestCases = @(
+            @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } }
+            @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } }
+            @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
+        )
     }
-
-    It "Should return the data on the right side in the value" {
+    It "Default delimiter '=' works" {
         $actualValue = ConvertFrom-StringData -StringData 'a=b'
 
         $actualValue.Values | Should -BeExactly "b"
+        $actualValue.Keys | Should -BeExactly "a"
     }
 
     It "Should not throw on given delimiter" {
-    {$sampleData | ConvertFrom-StringData -Delimiter ':' }| Should -Not -Throw
+        $sampleData = @"
+a:b
+"@
+    { $sampleData | ConvertFrom-StringData -Delimiter ':' }| Should -Not -Throw
     }
-
-
-    $TestCases = @(
-        @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } }
-        @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } }
-        @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
-    )
 
     It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
         param($Delimiter, $StringData, $ExpectedResult)
@@ -108,7 +98,4 @@ a:b
 
     }
 
-
 }
-
-
