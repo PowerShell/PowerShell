@@ -265,7 +265,6 @@ Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '@{} ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '1..2 ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '[int] ??= 1' InvalidLeftHandSide 0
-    ShouldBeParseError '(Get-Variable x) ??= 1' InvalidLeftHandSide 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {
