@@ -50,10 +50,9 @@ namespace Microsoft.PowerShell
             }
 
             if (TryParseUpdateFile(
-                out bool fileFound,
                 updateFilePath: out _,
                 out SemanticVersion lastUpdateVersion,
-                lastUpdateDate: out _) && fileFound)
+                lastUpdateDate: out _) && lastUpdateVersion != null)
             {
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = string.IsNullOrEmpty(lastUpdateVersion.PreReleaseLabel)
@@ -91,13 +90,12 @@ namespace Microsoft.PowerShell
             }
 
             bool parseSuccess = TryParseUpdateFile(
-                out bool fileFound,
                 out string updateFilePath,
                 out SemanticVersion lastUpdateVersion,
                 out DateTime lastUpdateDate);
 
             DateTime today = DateTime.UtcNow;
-            if (parseSuccess && fileFound && (today - lastUpdateDate).TotalDays < 7)
+            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 7)
             {
                 // There is an existing update file, and the last update was less than 1 week ago.
                 // It's unlikely a new version is released within 1 week, so we can skip this check.
@@ -126,7 +124,7 @@ namespace Microsoft.PowerShell
             {
                 // Use 'sentinelFilePath' as the file lock.
                 // The update-check tasks started by every 'pwsh' process of the same version will compete on holding this file.
-                using (FileStream s = new FileStream(sentinelFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (FileStream s = new FileStream(sentinelFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize: 1, FileOptions.DeleteOnClose))
                 {
                     if (File.Exists(todayDoneFilePath))
                     {
@@ -197,15 +195,13 @@ namespace Microsoft.PowerShell
         }
 
         private static bool TryParseUpdateFile(
-            out bool fileFound,
             out string updateFilePath,
             out SemanticVersion lastUpdateVersion,
             out DateTime lastUpdateDate)
         {
-            fileFound = true;
             updateFilePath = null;
             lastUpdateVersion = null;
-            lastUpdateDate = DateTime.MinValue;
+            lastUpdateDate = default;
 
             var files = Directory.EnumerateFiles(s_cacheDirectory, UpdateFileNamePattern, s_enumOptions);
             var enumerator = files.GetEnumerator();
@@ -214,14 +210,13 @@ namespace Microsoft.PowerShell
             {
                 // No file was found that matches the pattern, but it's OK that an update file doesn't exist.
                 // This could happen when there is no new updates yet.
-                fileFound = false;
                 return true;
             }
 
             updateFilePath = enumerator.Current;
             if (enumerator.MoveNext())
             {
-                // More than 1 files were found that match the pattern. This is a corrupted state. 
+                // More than 1 files were found that match the pattern. This is a corrupted state.
                 // Theoretically, there should be only one update file at any point of time.
                 updateFilePath = null;
                 return false;
@@ -250,7 +245,7 @@ namespace Microsoft.PowerShell
             {
                 updateFilePath = null;
                 lastUpdateVersion = null;
-                lastUpdateDate = DateTime.MinValue;
+                lastUpdateDate = default;
             }
 
             return success;
