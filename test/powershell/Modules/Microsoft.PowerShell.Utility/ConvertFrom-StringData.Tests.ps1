@@ -92,15 +92,19 @@ a:b
     }
 
 
-    $TestCases = @( @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } },
-                    @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } },
-                    @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
+    $TestCases = @(
+        @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } }
+        @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } }
+        @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
     )
 
     It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
         param($Delimiter, $StringData, $ExpectedResult)
 
-        $(ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter).Values | Should -Be $ExpectedResult.Values
+        $Result = ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter
+        foreach ($Name in $ExpectedResult.Keys) {
+            $Result.$Name | Should -Be $ExpectedResult.$Name
+        }
 
     }
 
