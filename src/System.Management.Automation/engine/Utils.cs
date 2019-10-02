@@ -1256,8 +1256,6 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static readonly Regex _specialDriveRegex = new Regex(@"^\\\\\w+\$");
-
         internal static bool PathIsUnc(string path)
         {
 #if UNIX
@@ -1269,7 +1267,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (_specialDriveRegex.IsMatch(path))
+            if (path.StartsWith(@"\\wsl$"))
             {
                 return true;
             }
