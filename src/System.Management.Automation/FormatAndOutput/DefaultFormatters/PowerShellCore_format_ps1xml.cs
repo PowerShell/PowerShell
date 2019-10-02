@@ -877,7 +877,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetColor}error in $($myinv.ScriptName)${newline}""
+                                                $posmsg = ""error in${resetcolor} $($myinv.ScriptName)${newline}""
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
@@ -934,11 +934,11 @@ namespace System.Management.Automation.Runspaces
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
                                                 while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
-                                                    $subMessage = $prefix + $remainingMessage.Substring(0, [Console]::WindowWidth - $prefixLength)
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth)
+                                                    $subMessage = $prefix + $remainingMessage
+                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
                                                     $null = $sb.Append($substring)
                                                     $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length)
+                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $errorMsg = 'Error'
 
-                                        ""${errorColor}${reason}:${resetColor} ${posmsg}${resetcolor}""
+                                        ""${errorColor}${reason}: ${posmsg}${resetcolor}""
                                     }
 
                                     if ($_.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $_.FullyQualifiedErrorId -eq 'NativeCommandError') {
