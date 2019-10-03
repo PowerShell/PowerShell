@@ -3,6 +3,8 @@
 
 #pragma warning disable 1634, 1691
 
+#nullable enable
+
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -112,6 +114,9 @@ namespace System.Management.Automation
 
             Pattern = pattern;
             Options = options;
+
+            // Formally initialize to null - Init() method always assign the delegate before using.
+            _isMatch = default!;
         }
 
         private static readonly WildcardPattern s_matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
@@ -137,7 +142,7 @@ namespace System.Management.Automation
         /// Instantiate internal regex member if not already done.
         /// </summary>
         /// <returns>True on success, false otherwise.</returns>
-        private void Init()
+        private Predicate<string> Init()
         {
             StringComparison GetStringComparison()
             {
@@ -164,33 +169,30 @@ namespace System.Management.Automation
 
             if (_isMatch != null)
             {
-                return;
+                return _isMatch;
             }
 
             if (Pattern.Length == 1 && Pattern[0] == '*')
             {
-                _isMatch = s_matchAll;
-                return;
+                return s_matchAll;
             }
 
             int index = Pattern.IndexOfAny(s_specialChars);
             if (index == -1)
             {
                 // No special characters present in the pattern, so we can just do a string comparison.
-                _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
-                return;
+                return str => string.Equals(str, Pattern, GetStringComparison());
             }
 
             if (index == Pattern.Length - 1 && Pattern[index] == '*')
             {
                 // No special characters present in the pattern before last position and last character is asterisk.
                 var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
-                _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
-                return;
+                return str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
             }
 
             var matcher = new WildcardPatternMatcher(this);
-            _isMatch = matcher.IsMatch;
+            return matcher.IsMatch;
         }
 
         /// <summary>
@@ -201,7 +203,7 @@ namespace System.Management.Automation
         /// <returns>True if the wildcard pattern finds a match; otherwise, false.</returns>
         public bool IsMatch(string input)
         {
-            Init();
+            _isMatch = Init();
             return input != null && _isMatch(input);
         }
 
@@ -248,7 +250,7 @@ namespace System.Management.Automation
                 temp[tempIndex++] = ch;
             }
 
-            string s = null;
+            string s;
 
             if (tempIndex == pattern.Length)
             {
@@ -384,7 +386,7 @@ namespace System.Management.Automation
                 prevCharWasEscapeChar = false;
             }
 
-            string s = null;
+            string s;
 
             if (tempIndex == pattern.Length)
             {
@@ -456,7 +458,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ErrorRecord _errorRecord;
+        private ErrorRecord? _errorRecord;
 
         /// <summary>
         /// Constructs an instance of the WildcardPatternException object.
@@ -639,8 +641,8 @@ namespace System.Management.Automation
             bool previousCharacterIsAnEscape = false;
             bool previousCharacterStartedBracketExpression = false;
             bool insideCharacterRange = false;
-            StringBuilder characterRangeContents = null;
-            StringBuilder characterRangeOperators = null;
+            StringBuilder? characterRangeContents = null;
+            StringBuilder? characterRangeOperators = null;
             foreach (char c in pattern.Pattern)
             {
                 if (insideCharacterRange)
@@ -652,16 +654,15 @@ namespace System.Management.Automation
                         // This is different than the POSIX spec
                         // (at https://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
                         // but we are keeping this behavior for back-compatibility.
-
                         insideCharacterRange = false;
-                        parser.AppendBracketExpression(characterRangeContents.ToString(), characterRangeOperators.ToString(), pattern.Pattern);
+                        parser.AppendBracketExpression(characterRangeContents!.ToString(), characterRangeOperators!.ToString(), pattern.Pattern);
                         characterRangeContents = null;
                         characterRangeOperators = null;
                     }
                     else if (c != '`' || previousCharacterIsAnEscape)
                     {
-                        characterRangeContents.Append(c);
-                        characterRangeOperators.Append((c == '-') && !previousCharacterIsAnEscape ? '-' : ' ');
+                        characterRangeContents!.Append(c);
+                        characterRangeOperators!.Append((c == '-') && !previousCharacterIsAnEscape ? '-' : ' ');
                     }
 
                     previousCharacterStartedBracketExpression = false;
@@ -748,7 +749,7 @@ namespace System.Management.Automation
     /// </remarks>
     internal class WildcardPatternToRegexParser : WildcardPatternParser
     {
-        private StringBuilder _regexPattern;
+        private StringBuilder _regexPattern = default!;
         private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
@@ -1153,7 +1154,10 @@ namespace System.Management.Automation
 
             public BracketExpressionElement(Regex regex)
             {
-                Dbg.Assert(regex != null, "Caller should verify regex != null");
+                if (regex == null)
+                {
+                    throw PSTraceSource.NewArgumentNullException(nameof(regex));
+                }
                 _regex = regex;
             }
 
@@ -1201,7 +1205,7 @@ namespace System.Management.Automation
             private readonly List<PatternElement> _patternElements = new List<PatternElement>();
             private CharacterNormalizer _characterNormalizer;
             private RegexOptions _regexOptions;
-            private StringBuilder _bracketExpressionBuilder;
+            private StringBuilder _bracketExpressionBuilder = default!;
 
             public static PatternElement[] Parse(
                             WildcardPattern pattern,
@@ -1280,7 +1284,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Don't bother saving the culture if we won't use it
-                    _cultureInfo = null;
+                    _cultureInfo = CultureInfo.CurrentCulture;
                 }
             }
 
