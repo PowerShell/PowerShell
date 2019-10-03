@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                var hostUi = s_theConsoleHost?.UI ?? new NullHostUserInterface();
+                PSHostUserInterface hostUi = s_theConsoleHost?.UI ?? new NullHostUserInterface();
                 s_cpp = new CommandLineParameterParser(hostUi, bannerText, helpText);
                 s_cpp.Parse(args);
 
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell
                     }
 
                     s_theConsoleHost.BindBreakHandler();
-                    IsStdOutputRedirected = Console.IsOutputRedirected;
+                    PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");

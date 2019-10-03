@@ -4,15 +4,14 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
 
 namespace Microsoft.PowerShell
 {
@@ -41,6 +40,8 @@ namespace Microsoft.PowerShell
 
         // Maybe we shouldn't do update check and show notification when it's from a mini-shell, meaning when
         // 'ConsoleShell.Start' is not called by 'ManagedEntrance.Start'.
+        // But it seems so unusual that it's probably not worth bothering. Also, a mini-shell probably should
+        // just disable the update notification feature by setting the opt-out environment variable.
 
         internal static void ShowUpdateNotification(PSHostUserInterface hostUI)
         {
@@ -50,9 +51,10 @@ namespace Microsoft.PowerShell
             }
 
             if (TryParseUpdateFile(
-                updateFilePath: out _,
-                out SemanticVersion lastUpdateVersion,
-                lastUpdateDate: out _) && lastUpdateVersion != null)
+                    updateFilePath: out _,
+                    out SemanticVersion lastUpdateVersion,
+                    lastUpdateDate: out _)
+               && lastUpdateVersion != null)
             {
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = string.IsNullOrEmpty(lastUpdateVersion.PreReleaseLabel)
@@ -83,7 +85,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // Create the update cache directory if it hasn't exists
+            // Create the update cache directory if it doesn't exists
             if (!Directory.Exists(s_cacheDirectory))
             {
                 Directory.CreateDirectory(s_cacheDirectory);
@@ -124,7 +126,7 @@ namespace Microsoft.PowerShell
             {
                 // Use 'sentinelFilePath' as the file lock.
                 // The update-check tasks started by every 'pwsh' process of the same version will compete on holding this file.
-                using (FileStream s = new FileStream(sentinelFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize: 1, FileOptions.DeleteOnClose))
+                using (new FileStream(sentinelFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize: 1, FileOptions.DeleteOnClose))
                 {
                     if (File.Exists(todayDoneFilePath))
                     {
@@ -144,7 +146,7 @@ namespace Microsoft.PowerShell
                     {
                         // The update file is corrupted, either because more than one update files were found unexpectedly,
                         // or because the update file name is not in the valid format.
-                        // This is **very unlikely** to happen unless the file is altered manually accidentally.
+                        // This is **very unlikely** to happen unless the file is accidentally altered manually.
                         // We try to recover here by cleaning up all update files.
                         foreach (string file in Directory.EnumerateFiles(s_cacheDirectory, UpdateFileNamePattern, s_enumOptions))
                         {
@@ -253,61 +255,61 @@ namespace Microsoft.PowerShell
 
         private static async Task<Release> QueryNewReleaseAsync(SemanticVersion baselineVersion)
         {
-            bool notPreRelease = string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel);
-            string queryUri = notPreRelease ? LatestReleaseUri : Last3ReleasesUri;
+            bool isStableRelease = string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel);
+            string queryUri = isStableRelease ? LatestReleaseUri : Last3ReleasesUri;
 
-            using (HttpClient client = new HttpClient())
+            using var client = new HttpClient();
+
+            string userAgent = string.Format(CultureInfo.InvariantCulture, "PowerShell {0}", PSVersionInfo.GitCommitId);
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Query the GitHub Rest API and throw if the query fails.
+            HttpResponseMessage response = await client.GetAsync(queryUri);
+            response.EnsureSuccessStatusCode();
+
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var reader = new StreamReader(stream);
+            using var jsonReader = new JsonTextReader(reader);
+
+            Release releaseToReturn = null;
+            var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
+            var serializer = JsonSerializer.Create(settings);
+
+            if (isStableRelease)
             {
-                string userAgent = string.Format(CultureInfo.InvariantCulture, "PowerShell {0}", PSVersionInfo.GitCommitId);
-                client.DefaultRequestHeaders.Add("User-Agent", userAgent);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                JObject release = serializer.Deserialize<JObject>(jsonReader);
+                var tagName = release["tag_name"].ToString();
+                var version = SemanticVersion.Parse(tagName.Substring(1));
 
-                var response = await client.GetAsync(queryUri);
-                response.EnsureSuccessStatusCode();
-
-                using (var stream = await response.Content.ReadAsStreamAsync())
-                using (var reader = new StreamReader(stream))
-                using (JsonReader jsonReader = new JsonTextReader(reader))
+                if (version > baselineVersion)
                 {
-                    Release releaseToReturn = null;
-                    var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
-                    var serializer = JsonSerializer.Create(settings);
+                    var publishAt = release["published_at"].ToString();
+                    releaseToReturn = new Release(publishAt, tagName);
+                }
 
-                    if (notPreRelease)
-                    {
-                        var release = serializer.Deserialize<JObject>(jsonReader);
-                        var tagName = release["tag_name"].ToString();
-                        var version = SemanticVersion.Parse(tagName.Substring(1));
+                return releaseToReturn;
+            }
 
-                        if (version > baselineVersion)
-                        {
-                            var publishAt = release["published_at"].ToString();
-                            releaseToReturn = new Release(publishAt, tagName);
-                        }
-                    }
-                    else
-                    {
-                        var last4Releases = serializer.Deserialize<JArray>(jsonReader);
-                        var highestVersion = baselineVersion;
+            // The current 'pwsh' is a preview release.
+            JArray last3Releases = serializer.Deserialize<JArray>(jsonReader);
+            SemanticVersion highestVersion = baselineVersion;
 
-                        for (int i=0; i < last4Releases.Count; i++)
-                        {
-                            var release = last4Releases[i];
-                            var tagName = release["tag_name"].ToString();
-                            var version = SemanticVersion.Parse(tagName.Substring(1));
+            for (int i = 0; i < last3Releases.Count; i++)
+            {
+                JToken release = last3Releases[i];
+                var tagName = release["tag_name"].ToString();
+                var version = SemanticVersion.Parse(tagName.Substring(1));
 
-                            if (version > highestVersion)
-                            {
-                                highestVersion = version;
-                                var publishAt = release["published_at"].ToString();
-                                releaseToReturn = new Release(publishAt, tagName);
-                            }
-                        }
-                    }
-
-                    return releaseToReturn;
+                if (version > highestVersion)
+                {
+                    highestVersion = version;
+                    var publishAt = release["published_at"].ToString();
+                    releaseToReturn = new Release(publishAt, tagName);
                 }
             }
+
+            return releaseToReturn;
         }
 
         private class Release
@@ -318,8 +320,14 @@ namespace Microsoft.PowerShell
                 TagName = tagName;
             }
 
-            // The datetime stamp is in UTC: 2019-03-28T18:42:02Z
+            /// <summary>
+            /// The datetime stamp is in UTC. For example: 2019-03-28T18:42:02Z.
+            /// </summary>
             internal string PublishAt { get; }
+
+            /// <summary>
+            /// The release tag name.
+            /// </summary>
             internal string TagName { get; }
         }
     }

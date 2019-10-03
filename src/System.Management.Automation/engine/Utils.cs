@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Utility method to interpret the value of an opt-out environment variable.
-        /// e.g. POWERSHELL_TELEMETRY_OPTOUT and POWERSHELL_UPDATECHECK_OPTOUT
+        /// e.g. POWERSHELL_TELEMETRY_OPTOUT and POWERSHELL_UPDATECHECK_OPTOUT.
         /// </summary>
         /// <param name="name">The name of the environment variable.</param>
         /// <param name="defaultValue">If the environment variable is not set, use this as the default value.</param>
