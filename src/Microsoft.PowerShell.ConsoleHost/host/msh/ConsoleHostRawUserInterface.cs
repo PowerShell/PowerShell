@@ -17,6 +17,8 @@ using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using WORD = System.UInt16;
 using DWORD = System.UInt32;
 
+#nullable enable
+
 namespace Microsoft.PowerShell
 {
     /// <summary>
@@ -370,7 +372,7 @@ namespace Microsoft.PowerShell
                 }
                 catch (HostException e)
                 {
-                    Win32Exception win32exception = e.InnerException as Win32Exception;
+                    Win32Exception? win32exception = e.InnerException as Win32Exception;
                     if (win32exception != null &&
                         win32exception.NativeErrorCode == 0x57)
                     {
@@ -1321,7 +1323,7 @@ namespace Microsoft.PowerShell
 
         private ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private ConsoleHostUserInterface parent;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 

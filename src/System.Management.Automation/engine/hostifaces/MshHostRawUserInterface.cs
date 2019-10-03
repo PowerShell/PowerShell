@@ -5,6 +5,8 @@ using System.Globalization;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
+#nullable enable
+
 namespace System.Management.Automation.Host
 {
     #region Ancillary types.
@@ -89,7 +91,7 @@ namespace System.Management.Automation.Host
 
         public override
         bool
-        Equals(object obj)
+        Equals(object? obj)
         {
             bool result = false;
 
@@ -281,7 +283,7 @@ namespace System.Management.Automation.Host
 
         public override
         bool
-        Equals(object obj)
+        Equals(object? obj)
         {
             bool result = false;
 
@@ -615,7 +617,7 @@ namespace System.Management.Automation.Host
 
         public override
         bool
-        Equals(object obj)
+        Equals(object? obj)
         {
             bool result = false;
 
@@ -858,7 +860,7 @@ namespace System.Management.Automation.Host
 
         public override
         bool
-        Equals(object obj)
+        Equals(object? obj)
         {
             bool result = false;
 
@@ -1097,7 +1099,7 @@ namespace System.Management.Automation.Host
 
         public override
         bool
-        Equals(object obj)
+        Equals(object? obj)
         {
             bool result = false;
 

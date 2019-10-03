@@ -4,8 +4,11 @@
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation.Diagnostics;
+
 // Stops compiler from warning about unknown warnings
 #pragma warning disable 1634, 1691
+
+#nullable enable
 
 namespace System.Management.Automation.Remoting
 {
@@ -40,7 +43,11 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteHostRawUserInterface(ServerRemoteHostUserInterface remoteHostUserInterface)
         {
-            Dbg.Assert(remoteHostUserInterface != null, "Expected remoteHostUserInterface != null");
+            if (remoteHostUserInterface == null)
+            {
+                throw new ArgumentNullException(nameof(remoteHostUserInterface));
+            }
+
             _remoteHostUserInterface = remoteHostUserInterface;
             Dbg.Assert(!remoteHostUserInterface.ServerRemoteHost.HostInfo.IsHostRawUINull, "Expected !remoteHostUserInterface.ServerRemoteHost.HostInfo.IsHostRawUINull");
 

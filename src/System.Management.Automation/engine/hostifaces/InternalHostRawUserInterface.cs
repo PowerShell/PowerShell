@@ -1,10 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 
 using Dbg = System.Management.Automation.Diagnostics;
+
+#nullable enable
 
 namespace System.Management.Automation.Internal.Host
 {
@@ -19,6 +22,7 @@ namespace System.Management.Automation.Internal.Host
             _parentHost = parentHost;
         }
 
+        [DoesNotReturn]
         internal
         void
         ThrowNotInteractive()
