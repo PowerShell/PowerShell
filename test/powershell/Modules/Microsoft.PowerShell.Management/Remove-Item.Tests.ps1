@@ -12,13 +12,13 @@ Describe "Remove-Item" -Tags "CI" {
 
 	}
 
-	It "Should be able to be called on a regular file without error using the Path switch" {
+	It "Should be able to be called on a regular file without error using the Path parameter" {
 	    { Remove-Item -Path $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	It "Should be able to be called on a file without the Path switch" {
+	It "Should be able to be called on a file without the Path parameter" {
 	    { Remove-Item $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
@@ -65,7 +65,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	It "Should be able to remove all files matching a regular expression with the include switch" {
+	It "Should be able to remove all files matching a regular expression with the include parameter" {
 	    # Create multiple files with specific string
 	    New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
 	    New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
@@ -86,7 +86,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath  | Should -BeFalse
 	}
 
-	It "Should be able to not remove any files matching a regular expression with the exclude switch" {
+	It "Should be able to not remove any files matching a regular expression with the exclude parameter" {
 	    # Create multiple files with specific string
 	    New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
 	    New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
