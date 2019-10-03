@@ -4626,11 +4626,12 @@ namespace System.Management.Automation.Language
                     {
                         if (c1 == '@')
                         {
-                            var c2 = PeekChar();
+                            var c2 = GetChar();
                             if (c2 == '{')
                             {
-                                return NewToken(TokenKind.AtAt);
+                                return NewToken(TokenKind.AtAtCurly);
                             }
+                            UngetChar();
                         }
                     }
 
