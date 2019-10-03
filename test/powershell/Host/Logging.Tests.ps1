@@ -130,7 +130,7 @@ function Get-RegEx
     $regex = $regex -replace '\-', '\-'
     $regex = $regex -replace '\$', '\$'
     $regex = $regex -replace '\^', '\^'
-    $regex = $regex -replace "\`u{23CE}", "[`u{23CE}\?]"
+    #$regex = $regex -replace "\`u{23CE}", "[`u{23CE}\?]"
     return $regex
 }
 
@@ -158,7 +158,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
             }
             [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
             $scriptBlockCreatedRegExTemplate = @"
-Creating Scriptblock text \(1 of 1\):#012{0}(`u{23CE}|\?|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
+Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
 "@
 
         }
@@ -212,7 +212,7 @@ $pid
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"`u{23CE}")))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
@@ -241,7 +241,7 @@ $pid
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"`u{23CE}")))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
