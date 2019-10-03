@@ -3,7 +3,7 @@
 
 Describe "Verify Markdown Spelling" {
     BeforeAll {
-        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue)) {
+        if (!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue)) {
             Start-NativeExecution {
                 sudo yarn global add markdown-spellcheck@0.11.0
             }
