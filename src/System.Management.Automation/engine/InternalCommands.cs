@@ -399,7 +399,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
             }
-            catch (PSInvalidOperationException) { }
+            catch (PSInvalidOperationException) 
+            {
+            }
 
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
