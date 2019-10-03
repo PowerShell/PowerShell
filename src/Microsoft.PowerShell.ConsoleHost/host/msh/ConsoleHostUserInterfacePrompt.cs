@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell
                         null,   // message already written
                         null,
                         string.Empty,
-                        false);
+                        confirmPassword: false);
                 convertedObj = credential;
                 cancelInput = (convertedObj == null);
                 if ((credential != null) && (credential.Password.Length == 0) && listInput)
