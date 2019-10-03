@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty, _confirmPassword);
+                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty, ConfirmPassword);
             }
             catch (ArgumentException exception)
             {

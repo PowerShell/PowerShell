@@ -71,10 +71,10 @@ namespace Microsoft.PowerShell
         {
             PSCredential cred = null;
             SecureString password = null;
-            SecureString confirmedPassword = null;
+            SecureString retypedPassword = null;
             string userPrompt = null;
             string passwordPrompt = null;
-            string confirmPasswordPrompt = null;
+            string retypePasswordPrompt = null;
 
             if (!string.IsNullOrEmpty(caption))
             {
@@ -115,63 +115,16 @@ namespace Microsoft.PowerShell
             //
             if (confirmPassword)
             {
-                confirmPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ConfirmPassword, userName);
+                retypePasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ConfirmPassword, userName);
                 bool passwordsMatch;
                 do
                 {
                     WriteToConsole(passwordPrompt, true);
                     password = ReadLineAsSecureString();
-                    WriteToConsole(confirmPasswordPrompt, true);
-                    confirmedPassword = ReadLineAsSecureString();
-                    
-                    IntPtr passwordBstr = IntPtr.Zero;
-                    IntPtr confirmPasswordBstr = IntPtr.Zero;
-                    int match = 0;
-                    try
-                    {
-                        passwordBstr = Marshal.SecureStringToBSTR(password);
-                        confirmPasswordBstr = Marshal.SecureStringToBSTR(confirmedPassword);
-                        int passwordLength = Marshal.ReadInt32(passwordBstr, -4);
-                        int confirmPasswordLength = Marshal.ReadInt32(confirmPasswordBstr, -4);
-                        if (passwordLength == confirmPasswordLength)
-                        {
-                            for (int x = 0; x < passwordLength; ++x)
-                            {
-                                byte b1 = Marshal.ReadByte(passwordBstr, x);
-                                byte b2 = Marshal.ReadByte(confirmPasswordBstr, x);
-                                if (b1 != b2)
-                                {
-                                    // byte mismatch
-                                    match++;
-                                }
-                            }   
-                        }
-                        else
-                        {
-                            // length mismatch
-                            match++;
-                        }
+                    WriteToConsole(retypePasswordPrompt, true);
+                    retypedPassword = ReadLineAsSecureString();
 
-                        if (match == 0)
-                        {
-                            // passwords match
-                            passwordsMatch = true;
-                        }
-                        else
-                        {
-                            // passwords don't match
-                            WriteToConsole(StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch), true);
-                            WriteLineToConsole();
-                            passwordsMatch = false;
-                        }
-                    }
-                    finally
-                    {
-                        if (confirmPasswordBstr != IntPtr.Zero)
-                            Marshal.ZeroFreeBSTR(confirmPasswordBstr);
-                        if (passwordBstr != IntPtr.Zero)
-                            Marshal.ZeroFreeBSTR(passwordBstr);
-                    }
+                    passwordsMatch = ComparePasswords(password, retypedPassword);
                 } while (!passwordsMatch);
             }
             else
@@ -189,6 +142,59 @@ namespace Microsoft.PowerShell
             cred = new PSCredential(userName, password);
 
             return cred;
+        }
+
+        private bool ComparePasswords(SecureString password, SecureString retypedPassword)
+        {
+            IntPtr passwordBstr = IntPtr.Zero;
+            IntPtr retypedPasswordBstr = IntPtr.Zero;
+            int match = 0;
+            try
+            {
+                passwordBstr = Marshal.SecureStringToBSTR(password);
+                retypedPasswordBstr = Marshal.SecureStringToBSTR(retypedPassword);
+                int passwordLength = Marshal.ReadInt32(passwordBstr, -4);
+                int confirmPasswordLength = Marshal.ReadInt32(retypedPasswordBstr, -4);
+                if (passwordLength == confirmPasswordLength)
+                {
+                    for (int x = 0; x < passwordLength; ++x)
+                    {
+                        byte b1 = Marshal.ReadByte(passwordBstr, x);
+                        byte b2 = Marshal.ReadByte(retypedPasswordBstr, x);
+                        if (b1 != b2)
+                        {
+                            // byte mismatch
+                            match++;
+                        }
+                    }
+                }
+                else
+                {
+                    // length mismatch
+                    match++;
+                }                
+            }
+            finally
+            {
+                if (retypedPasswordBstr != IntPtr.Zero)
+                    Marshal.ZeroFreeBSTR(retypedPasswordBstr);
+                if (passwordBstr != IntPtr.Zero)
+                    Marshal.ZeroFreeBSTR(passwordBstr);
+            }
+
+            if (match == 0)
+            {
+                // passwords match
+                return true;
+            }
+            else
+            {
+                // passwords don't match
+                WriteToConsole(StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch), true);
+                WriteLineToConsole();
+                return false;
+            }
+
         }
     }
 }
