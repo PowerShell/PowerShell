@@ -399,6 +399,7 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
 
 
 Entry selected by property
+
 Name
 ----
 testing
@@ -425,6 +426,7 @@ testing
 
 
 Entry selected by ScriptBlock
+
 Name
 ----
 SelectScriptBlock

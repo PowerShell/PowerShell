@@ -6621,14 +6621,16 @@ namespace System.Management.Automation.Language
                     if (expr == null)
                     {
                         // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
-
                         IScriptExtent extent = After(token);
+
                         // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                         // when a case insensitive operator is used.
-                        ReportIncompleteInput(extent,
+                        ReportIncompleteInput(
+                            extent,
                             nameof(ParserStrings.ExpectedValueExpression),
                             ParserStrings.ExpectedValueExpression,
                             token.Text);
+
                         expr = new ErrorExpressionAst(extent);
                     }
 
@@ -6652,7 +6654,9 @@ namespace System.Management.Automation.Language
                         Token op = operatorStack.Pop();
                         operandStack.Push(new BinaryExpressionAst(ExtentOf(lhs, rhs), lhs, op.Kind, rhs, op.Extent));
                         if (operatorStack.Count == 0)
+                        {
                             break;
+                        }
                         precedence = operatorStack.Peek().Kind.GetBinaryPrecedence();
                     }
 
@@ -6710,7 +6714,6 @@ namespace System.Management.Automation.Language
             // G  array-literal-expression:
             // G      unary-expression
             // G      unary-expression   ','    new-lines:opt   array-literal-expression
-
             ExpressionAst lastExpr = UnaryExpressionRule(endNumberOnTernaryOpChars);
             if (lastExpr == null)
             {
@@ -6737,7 +6740,6 @@ namespace System.Management.Automation.Language
                 if (lastExpr == null)
                 {
                     // ErrorRecovery: create an error expression for the ast and break.
-
                     ReportIncompleteInput(After(commaToken),
                         nameof(ParserStrings.MissingExpressionAfterToken),
                         ParserStrings.MissingExpressionAfterToken,
@@ -6851,13 +6853,15 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: don't bother constructing a unary expression, but we know we must have
                     // some sort of expression, so return an error expression.
-
+                    //
                     // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                     // when a case insensitive operator is used.
-                    ReportIncompleteInput(After(token),
+                    ReportIncompleteInput(
+                        After(token),
                         nameof(ParserStrings.MissingExpressionAfterOperator),
                         ParserStrings.MissingExpressionAfterOperator,
                         token.Text);
+
                     return new ErrorExpressionAst(token.Extent);
                 }
             }
@@ -6881,11 +6885,12 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: We have a list of attributes, and we know it's not before a param statement,
                         // so we know we must have some sort of expression.  Return an error expression then.
-
-                        ReportIncompleteInput(lastAttribute.Extent,
+                        ReportIncompleteInput(
+                            lastAttribute.Extent,
                             nameof(ParserStrings.UnexpectedAttribute),
                             ParserStrings.UnexpectedAttribute,
                             lastAttribute.TypeName.FullName);
+
                         return new ErrorExpressionAst(ExtentOf(token, lastAttribute));
                     }
 
@@ -6893,16 +6898,18 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    Diagnostics.Assert(_ungotToken == null || ErrorList.Count > 0,
-                                        "Unexpected lookahead from AttributeListRule.");
+                    Diagnostics.Assert(
+                        _ungotToken == null || ErrorList.Count > 0,
+                        "Unexpected lookahead from AttributeListRule.");
+
                     // If we've looked ahead, don't go looking for a member access token, we've already issued an error,
                     // just assume we're not trying to access a member.
                     var memberAccessToken = _ungotToken != null ? null : NextMemberAccessToken(false);
                     if (memberAccessToken != null)
                     {
-                        expr = CheckPostPrimaryExpressionOperators(memberAccessToken,
-                                                                   new TypeExpressionAst(lastAttribute.Extent,
-                                                                                         lastAttribute.TypeName));
+                        expr = CheckPostPrimaryExpressionOperators(
+                            memberAccessToken,
+                            new TypeExpressionAst(lastAttribute.Extent, lastAttribute.TypeName));
                     }
                     else
                     {
@@ -6913,8 +6920,9 @@ namespace System.Management.Automation.Language
                             child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
                             if (child != null)
                             {
-                                expr = new ConvertExpressionAst(ExtentOf(lastAttribute, child),
-                                                                (TypeConstraintAst)lastAttribute, child);
+                                expr = new ConvertExpressionAst(
+                                    ExtentOf(lastAttribute, child),
+                                    (TypeConstraintAst)lastAttribute, child);
                             }
                         }
                     }

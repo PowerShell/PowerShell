@@ -386,7 +386,9 @@ namespace System.Management.Automation.Remoting.Server
             catch (Exception e)
             {
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -395,7 +397,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -483,7 +487,7 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
-        /// Starts the out-of-process powershell server instance.  
+        /// Starts the out-of-process powershell server instance.
         /// </summary>
         /// <param name="initialCommand">Specifies the initialization script.</param>
         /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>

@@ -7104,7 +7104,7 @@ namespace System.Management.Automation.Language
     public class TernaryExpressionAst : ExpressionAst
     {
         /// <summary>
-        /// Construct a binary expression.
+        /// Initializes a new instance of the a ternary expression.
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="condition">The condition operand.</param>
@@ -7123,23 +7123,26 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The ast for the condition of the ternary expression. The property is never null.
+        /// Gets the ast for the condition of the ternary expression. The property is never null.
         /// </summary>
         public ExpressionAst Condition { get; }
 
         /// <summary>
-        /// The ast for the if-operand of the ternary expression. The property is never null.
+        /// Gets the ast for the if-operand of the ternary expression. The property is never null.
         /// </summary>
         public ExpressionAst IfTrue { get; }
 
         /// <summary>
-        /// The ast for the else-operand of the ternary expression. The property is never null.
+        /// Gets the ast for the else-operand of the ternary expression. The property is never null.
         /// </summary>
         public ExpressionAst IfFalse { get; }
 
         /// <summary>
         /// Copy the TernaryExpressionAst instance.
         /// </summary>
+        /// <return>
+        /// Retirns a copy of the ast.
+        /// </return>
         public override Ast Copy()
         {
             ExpressionAst newCondition = CopyElement(this.Condition);
@@ -7199,7 +7202,7 @@ namespace System.Management.Automation.Language
     public class BinaryExpressionAst : ExpressionAst
     {
         /// <summary>
-        /// Construct a binary expression.
+        /// Initializes a new instance of the binary expression.
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="left">The left hand operand.</param>

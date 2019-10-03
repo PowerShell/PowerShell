@@ -3062,8 +3062,8 @@
       <Component Id="cmpF6FDA6202E9D4CEF9F21A23D32571BFC" Guid="{e0776aa4-b3aa-4a15-a497-697b510fba8c}">
         <File Id="fil9120D0A4381F4B34B80AB37D2EFBCF7D" KeyPath="yes" Source="$(env.ProductSourcePath)\InstallPSCorePolicyDefinitions.ps1" />
       </Component>
-      <Component Id="cmp954401F9FFBE447490CFAB5B129A996B" Guid="{2837e9f6-cd1d-4f2d-b1a8-4fb273801f73}">
-        <File Id="fil3177366E77E849449693A2F4E079E08F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.45506.dll" />
+      <Component Id="cmp916D506512B2490299EDA831FF6729CD" Guid="{614c1c6e-163a-4d82-accd-1f894ccac384}">
+        <File Id="fil5AF5BABB352B44428947D79DEBDD547A" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.46205.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3905,7 +3905,7 @@
       <ComponentRef Id="cmpECBD8DFB18AD451AB3D81803DECC13BF" />
       <ComponentRef Id="cmp01B3850D6E55468AA84B758FDE8CA59E" />
       <ComponentRef Id="cmpF6FDA6202E9D4CEF9F21A23D32571BFC" />
-      <ComponentRef Id="cmp954401F9FFBE447490CFAB5B129A996B" />
+      <ComponentRef Id="cmp916D506512B2490299EDA831FF6729CD" />
     </ComponentGroup>
   </Fragment>
 </Wix>
