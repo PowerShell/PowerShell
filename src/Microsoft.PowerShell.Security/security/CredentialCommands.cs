@@ -80,14 +80,14 @@ namespace Microsoft.PowerShell.Commands
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
         
         /// <summary>
-        /// Sets whether to confirm the password.
+        /// Gets and sets whether to confirm the password.
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = credentialSet)]
+        [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
-        public bool ConfirmPassword
+        public SwitchParameter ConfirmPassword
         {
-            set { _confirmPassword = value; }
             get { return _confirmPassword; }
+            set { _confirmPassword = value; }
         }
 
         private bool _confirmPassword;

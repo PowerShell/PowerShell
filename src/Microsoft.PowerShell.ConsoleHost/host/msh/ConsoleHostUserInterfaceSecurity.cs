@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
 using System.Security;
 
 using Microsoft.Win32;
@@ -107,20 +108,7 @@ namespace Microsoft.PowerShell
                 while (userName.Length == 0);
             }
 
-            passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
-            );
-
-            // now, prompt for the password
-            //
-            //WriteToConsole(passwordPrompt, true);
-            //password = ReadLineAsSecureString();
-            //if (password == null)
-            //{
-            //    return null;
-            //}
-
-            //WriteLineToConsole();
-
+            passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName);
 
             //
             // now, prompt for the password
@@ -128,13 +116,63 @@ namespace Microsoft.PowerShell
             if (confirmPassword)
             {
                 confirmPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ConfirmPassword, userName);
+                bool passwordsMatch;
                 do
                 {
                     WriteToConsole(passwordPrompt, true);
                     password = ReadLineAsSecureString();
                     WriteToConsole(confirmPasswordPrompt, true);
                     confirmedPassword = ReadLineAsSecureString();
-                } while (password != confirmedPassword);
+                    
+                    IntPtr passwordBstr = IntPtr.Zero;
+                    IntPtr confirmPasswordBstr = IntPtr.Zero;
+                    int match = 0;
+                    try
+                    {
+                        passwordBstr = Marshal.SecureStringToBSTR(password);
+                        confirmPasswordBstr = Marshal.SecureStringToBSTR(confirmedPassword);
+                        int passwordLength = Marshal.ReadInt32(passwordBstr, -4);
+                        int confirmPasswordLength = Marshal.ReadInt32(confirmPasswordBstr, -4);
+                        if (passwordLength == confirmPasswordLength)
+                        {
+                            for (int x = 0; x < passwordLength; ++x)
+                            {
+                                byte b1 = Marshal.ReadByte(passwordBstr, x);
+                                byte b2 = Marshal.ReadByte(confirmPasswordBstr, x);
+                                if (b1 != b2)
+                                {
+                                    // byte mismatch
+                                    match++;
+                                }
+                            }   
+                        }
+                        else
+                        {
+                            // length mismatch
+                            match++;
+                        }
+
+                        if (match == 0)
+                        {
+                            // passwords match
+                            passwordsMatch = true;
+                        }
+                        else
+                        {
+                            // passwords don't match
+                            WriteToConsole(StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch), true);
+                            WriteLineToConsole();
+                            passwordsMatch = false;
+                        }
+                    }
+                    finally
+                    {
+                        if (confirmPasswordBstr != IntPtr.Zero)
+                            Marshal.ZeroFreeBSTR(confirmPasswordBstr);
+                        if (passwordBstr != IntPtr.Zero)
+                            Marshal.ZeroFreeBSTR(passwordBstr);
+                    }
+                } while (!passwordsMatch);
             }
             else
             {
