@@ -177,9 +177,14 @@ namespace Microsoft.PowerShell
             finally
             {
                 if (retypedPasswordBstr != IntPtr.Zero)
+                {
                     Marshal.ZeroFreeBSTR(retypedPasswordBstr);
+                }
+                    
                 if (passwordBstr != IntPtr.Zero)
+                {
                     Marshal.ZeroFreeBSTR(passwordBstr);
+                }                 
             }
 
             if (match == 0)
