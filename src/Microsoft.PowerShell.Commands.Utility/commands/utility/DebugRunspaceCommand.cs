@@ -101,19 +101,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The optional breakpoint objects to use for debugging.
+        /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
-        [Parameter(Position = 1,
-                   ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.RunspaceParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.IdParameterSet)]
-        [Parameter(ParameterSetName = DebugRunspaceCommand.NameParameterSet)]
-        public Breakpoint[] Breakpoint
-        {
-            get;
-            set;
-        }
+        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter BreakAll { get; set; }
 
         #endregion
 
@@ -275,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
 
                 // Set up host script debugger to debug the runspace.
-                _debugger.DebugRunspace(_runspace, disableBreakAll: Breakpoint?.Length > 0);
+                _debugger.DebugRunspace(_runspace, breakAll: BreakAll);
 
                 while (_debugging)
                 {
@@ -532,10 +524,6 @@ namespace Microsoft.PowerShell.Commands
         {
             SetLocalMode(runspace.Debugger, true);
             EnableHostDebugger(runspace, false);
-            if (Breakpoint?.Length > 0)
-            {
-                runspace.Debugger?.SetBreakpoints(Breakpoint);
-            }
         }
 
         private void RestoreRunspace(Runspace runspace)

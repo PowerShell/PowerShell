@@ -18,7 +18,7 @@ CmdletsToExport = @(
   'Set-MarkdownOption', 'Add-Member', 'Get-Member', 'Compare-Object', 'Group-Object', 'Measure-Object',
   'New-Object', 'Select-Object', 'Sort-Object', 'Tee-Object', 'Register-ObjectEvent', 'Write-Output',
   'Import-PowerShellDataFile', 'Write-Progress', 'Disable-PSBreakpoint', 'Enable-PSBreakpoint',
-  'Get-PSBreakpoint', 'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'New-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession',
+  'Get-PSBreakpoint', 'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession',
   'Import-PSSession', 'Get-Random', 'Invoke-RestMethod', 'Debug-Runspace', 'Get-Runspace',
   'Disable-RunspaceDebug', 'Enable-RunspaceDebug', 'Get-RunspaceDebug', 'Start-Sleep', 'Join-String',
   'Out-String', 'Select-String', 'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan',
@@ -35,8 +35,8 @@ PrivateData = @{
   PSData = @{
     ExperimentalFeatures = @(
       @{
-        Name = 'Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints'
-        Description = "Enables the New-PSBreakpoint cmdlet and the -Breakpoint parameter on Debug-Runspace to set breakpoints in another Runspace upfront."
+        Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
+        Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
       }
     )
   }

@@ -17,22 +17,21 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingSet,
+    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingStatus), ParameterSetName = new[] { DefaultPingSet })]
-    [OutputType(typeof(PingReply), ParameterSetName = new[] { RepeatPingSet, MtuSizeDetectSet })]
-    [OutputType(typeof(bool), ParameterSetName = new[] { DefaultPingSet, RepeatPingSet, TcpPortSet })]
-    [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
-    [OutputType(typeof(TraceStatus), ParameterSetName = new[] { TraceRouteSet })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new string[] { DefaultPingParameterSet })]
+    [OutputType(typeof(PingReply), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
+    [OutputType(typeof(bool), ParameterSetName = new string[] { DefaultPingParameterSet, RepeatPingParameterSet, TcpPortParameterSet })]
+    [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
+    [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
-        #region ParameterSetName Constants
-
-        private const string DefaultPingSet = "DefaultPing";
-        private const string RepeatPingSet = "RepeatPing";
-        private const string TraceRouteSet = "TraceRoute";
-        private const string TcpPortSet = "TcpPort";
-        private const string MtuSizeDetectSet = "MtuSizeDetect";
+        #region Parameter Set Names
+        private const string DefaultPingParameterSet = "DefaultPing";
+        private const string RepeatPingParameterSet = "RepeatPing";
+        private const string TraceRouteParameterSet = "TraceRoute";
+        private const string TcpPortParameterSet = "TcpPort";
+        private const string MtuSizeDetectParameterSet = "MtuSizeDetect";
 
         #endregion
 
@@ -53,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[] s_DefaultSendBuffer = null;
 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         private readonly Ping _sender = new Ping();
 
@@ -69,26 +68,38 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to do ping test.
         /// Default is true.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether to force use of IPv4 protocol.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
         /// Gets or sets whether to force use of IPv6 protocol.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
         /// Gets or sets whether to do reverse DNS lookup to get names for IP addresses.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -96,10 +107,10 @@ namespace Microsoft.PowerShell.Commands
         /// The default is localhost.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        [Parameter(ParameterSetName = TraceRouteSet)]
-        [Parameter(ParameterSetName = TcpPortSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
@@ -108,9 +119,9 @@ namespace Microsoft.PowerShell.Commands
         /// value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
-        [Parameter(ParameterSetName = TraceRouteSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [ValidateRange(0, sMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
@@ -121,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the number of ping attempts.
         /// The default (from Windows) is 4 times.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Count { get; set; } = 4;
 
@@ -129,8 +140,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the delay between ping attempts.
         /// The default (from Windows) is 1 second.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Delay { get; set; } = 1;
 
@@ -139,8 +150,8 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 32 bytes.
         /// Max value is 65500 (limitation imposed by Windows API).
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Alias("Size", "Bytes", "BS")]
         [ValidateRange(0, 65500)]
         public int BufferSize { get; set; } = DefaultSendBufferSize;
@@ -149,14 +160,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to prevent fragmentation of the ICMP packets.
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
-        [Parameter(ParameterSetName = DefaultPingSet)]
-        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = RepeatPingParameterSet)]
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
         /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = RepeatPingSet)]
+        [Parameter(Mandatory = true, ParameterSetName = RepeatPingParameterSet)]
         [Alias("Continues", "Continuous")]
         public SwitchParameter Repeat { get; set; }
 
@@ -194,21 +205,21 @@ namespace Microsoft.PowerShell.Commands
         /// When selected, only a single ping result is returned, indicating the maximum buffer size
         /// the route to the destination can support without fragmenting the ICMP packets.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
+        [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectParameterSet)]
         [Alias("MtuSizeDetect")]
         public SwitchParameter MtuSize { get; set; }
 
         /// <summary>
         /// Gets or sets whether to perform a traceroute test.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = TraceRouteSet)]
+        [Parameter(Mandatory = true, ParameterSetName = TraceRouteParameterSet)]
         public SwitchParameter Traceroute { get; set; }
 
         /// <summary>
         /// Gets or sets whether to perform a TCP connection test.
         /// </summary>
         [ValidateRange(0, 65535)]
-        [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
+        [Parameter(Mandatory = true, ParameterSetName = TcpPortParameterSet)]
         public int TcpPort { get; set; }
 
         #endregion Parameters
@@ -223,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
 
             switch (ParameterSetName)
             {
-                case RepeatPingSet:
+                case RepeatPingParameterSet:
                     Count = int.MaxValue;
                     break;
             }
@@ -238,17 +249,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 switch (ParameterSetName)
                 {
-                    case DefaultPingSet:
-                    case RepeatPingSet:
+                    case DefaultPingParameterSet:
+                    case RepeatPingParameterSet:
                         ProcessPing(targetName);
                         break;
-                    case MtuSizeDetectSet:
+                    case MtuSizeDetectParameterSet:
                         ProcessMTUSize(targetName);
                         break;
-                    case TraceRouteSet:
+                    case TraceRouteParameterSet:
                         ProcessTraceroute(targetName);
                         break;
-                    case TcpPortSet:
+                    case TcpPortParameterSet:
                         ProcessConnectionByTCPPort(targetName);
                         break;
                 }
@@ -273,8 +284,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteVerboseConnectionTestHeader(resolvedTargetName, targetAddress.ToString());
-
             TcpClient client = new TcpClient();
 
             try
@@ -284,8 +293,6 @@ namespace Microsoft.PowerShell.Commands
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
-                    WriteVerboseConnectionTest(targetNameOrAddress, targetString, i);
-
                     Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
                     Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
 
@@ -314,24 +321,6 @@ namespace Microsoft.PowerShell.Commands
 
             WriteObject(false);
         }
-
-        private void WriteVerboseConnectionTestHeader(string resolvedTargetName, string targetAddress)
-        {
-            WriteVerbose(StringUtil.Format(
-                TestConnectionResources.ConnectionTestStart,
-                resolvedTargetName,
-                targetAddress));
-        }
-
-        private void WriteVerboseConnectionTest(string targetNameOrAddress, string targetAddress, int timeout)
-        {
-            WriteVerbose(StringUtil.Format(
-                TestConnectionResources.ConnectionTestDescription,
-                targetNameOrAddress,
-                targetAddress,
-                timeout));
-        }
-
         #endregion ConnectionTest
 
         #region TracerouteTest
@@ -343,12 +332,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-
-            WriteVerbose(StringUtil.Format(
-                TestConnectionResources.TraceRouteStart,
-                resolvedTargetName,
-                targetAddress.ToString(),
-                MaxHops));
 
             int currentHop = 1;
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
@@ -362,8 +345,6 @@ namespace Microsoft.PowerShell.Commands
                 string routerName = null;
                 pingOptions.Ttl = currentHop;
                 currentHop++;
-
-                var hopReplies = new List<TraceStatus>(DefaultTraceRoutePingCount);
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -401,7 +382,9 @@ namespace Microsoft.PowerShell.Commands
                             routerName,
                             reply,
                             pingOptions,
-                            latency: reply.Status == IPStatus.Success ? reply.RoundtripTime : timer.ElapsedMilliseconds,
+                            latency: reply.Status == IPStatus.Success
+                                ? reply.RoundtripTime
+                                : timer.ElapsedMilliseconds,
                             buffer.Length,
                             pingNum: i);
                         hopResult = new TraceStatus(currentHop, status, Source, resolvedTargetName, targetAddress);
@@ -430,54 +413,17 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    hopReplies.Add(hopResult);
-
-                    // We use a short delay because it is impossible to DoS with traceroute.
+                    // We use short delay because it is impossible DoS with trace route.
                     Thread.Sleep(50);
                 }
-
-                WriteVerboseTraceHop(hopReplies);
-
             } while (reply != null
                 && currentHop <= sMaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
-
-            WriteVerbose(TestConnectionResources.TraceRouteComplete);
 
             if (Quiet.IsPresent)
             {
                 WriteObject(currentHop <= sMaxHops);
             }
-        }
-
-        private void WriteVerboseTraceHop(IList<TraceStatus> traceRouteReplies)
-        {
-            string msg;
-            if (traceRouteReplies[2].Status == IPStatus.Success)
-            {
-                var routerAddress = traceRouteReplies[2].HopAddress.ToString();
-                var routerName = traceRouteReplies[2].Hostname ?? routerAddress;
-                var roundtripTime0 = traceRouteReplies[0].Status == IPStatus.TimedOut
-                    ? "*"
-                    : traceRouteReplies[0].Latency.ToString();
-                var roundtripTime1 = traceRouteReplies[1].Status == IPStatus.TimedOut
-                    ? "*"
-                    : traceRouteReplies[1].Latency.ToString();
-                msg = StringUtil.Format(
-                    TestConnectionResources.TraceRouteReply,
-                    traceRouteReplies[0].Hop,
-                    roundtripTime0,
-                    roundtripTime1,
-                    traceRouteReplies[2].Latency.ToString(),
-                    routerName,
-                    routerAddress);
-            }
-            else
-            {
-                msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceRouteReplies[0].Hop);
-            }
-
-            WriteVerbose(msg);
         }
 
         #endregion TracerouteTest
@@ -511,11 +457,6 @@ namespace Microsoft.PowerShell.Commands
                 while (LowMTUSize < (HighMTUSize - 1))
                 {
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
-
-                    WriteVerbose(StringUtil.Format(
-                        TestConnectionResources.MTUSizeDetectDescription,
-                        CurrentMTUSize,
-                        retry));
 
                     WriteDebug(StringUtil.Format(
                         "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
@@ -601,15 +542,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!Repeat.IsPresent)
-            {
-                WriteVerbose(StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress.ToString(),
-                BufferSize));
-            }
-
             bool quietResult = true;
             byte[] buffer = GetSendBuffer(BufferSize);
 
@@ -643,19 +575,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(reply);
                 }
+                else if (Quiet.IsPresent)
+                {
+                    // Return 'true' only if all pings have completed successfully.
+                    quietResult &= reply.Status == IPStatus.Success;
+                }
                 else
                 {
-                    if (Quiet.IsPresent)
-                    {
-                        // Return 'true' only if all pings have completed successfully.
-                        quietResult &= reply.Status == IPStatus.Success;
-                    }
-                    else
-                    {
-                        WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
-                    }
-
-                    WriteVerbosePing(reply);
+                    WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
                 }
 
                 // Delay between pings, but not after last ping.
@@ -665,31 +592,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (!Repeat.IsPresent)
-            {
-                WriteVerbose(TestConnectionResources.PingComplete);
-            }
-
             if (Quiet.IsPresent)
             {
                 WriteObject(quietResult);
-            }
-        }
-
-        private void WriteVerbosePing(PingReply reply)
-        {
-            if (reply.Status != IPStatus.Success)
-            {
-                WriteVerbose(TestConnectionResources.PingTimeOut);
-            }
-            else
-            {
-                WriteVerbose(StringUtil.Format(
-                    TestConnectionResources.PingReply,
-                    reply.Address.ToString(),
-                    reply.Buffer.Length,
-                    reply.RoundtripTime,
-                    reply.Options?.Ttl));
             }
         }
 
@@ -815,7 +720,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
@@ -823,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
                     _pingComplete?.Dispose();
                 }
 
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -841,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
             timer?.Stop();
 
             // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
-            Thread.Sleep(1);
+            Thread.Sleep(2);
 
             if (_pingCompleteArgs.Cancelled)
             {
@@ -1085,7 +990,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer for IDisposable class.
+        /// Finalizes an instance of the <see cref="TestConnectionCommand"/> class.
         /// </summary>
         ~TestConnectionCommand()
         {

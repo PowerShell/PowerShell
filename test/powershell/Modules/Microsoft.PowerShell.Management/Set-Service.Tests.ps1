@@ -214,6 +214,9 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             }
             $service = New-Service @parameters
             $service | Should -Not -BeNullOrEmpty
+            $service.displayname | Should -Be $(if($displayname){$displayname}else{$name})
+            $service.startType | Should -Be $startupType
+
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
             $service | Should -Not -BeNullOrEmpty
             $service.Name | Should -Be $name
