@@ -117,7 +117,10 @@ namespace System.Management.Automation
                     description: "Support the ternary operator in PowerShell language"),
                 new ExperimentalFeature(
                     name: "PSErrorView",
-                    description: "New formatting for ErrorRecord")
+                    description: "New formatting for ErrorRecord"),
+                new ExperimentalFeature(
+                    name: "PSUpdatesNotification",
+                    description: "Print notification message when new releases are available")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
