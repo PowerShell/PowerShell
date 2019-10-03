@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets and sets whether to confirm the password.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public SwitchParameter ConfirmPassword
         {
