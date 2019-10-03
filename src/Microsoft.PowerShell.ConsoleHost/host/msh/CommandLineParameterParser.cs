@@ -1019,13 +1019,10 @@ namespace Microsoft.PowerShell
             {
                 DisplayBanner();
 
-                var sw = Stopwatch.StartNew();
                 if (UpdatesNotification.CanNotifyUpdates)
                 {
                     UpdatesNotification.ShowUpdateNotification(_hostUI);
                 }
-                sw.Stop();
-                Console.WriteLine("Time-to-print: {0}", sw.ElapsedMilliseconds);
             }
 
             Dbg.Assert(
