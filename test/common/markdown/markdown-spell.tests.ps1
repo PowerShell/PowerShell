@@ -56,7 +56,7 @@ Describe "Verify Markdown Spelling" {
                     @{ Spell = $Failure }
                 }
 
-                if($trueFailures) {
+                if ($trueFailures) {
                     It "<spell>!" -TestCases $trueFailures {
                         param($spell)
                         throw "Tool reported spelling as wrong.`n$spell"
