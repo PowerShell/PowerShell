@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 
 using Dbg = System.Management.Automation;
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -270,7 +272,11 @@ namespace System.Management.Automation
 
             Drive = contextToCopyFrom.Drive;
             _force = contextToCopyFrom.Force;
-            this.CopyFilters(contextToCopyFrom);
+
+            Include = contextToCopyFrom.Include;
+            Exclude = contextToCopyFrom.Exclude;
+            Filter = contextToCopyFrom.Filter;
+
             SuppressWildcardExpansion = contextToCopyFrom.SuppressWildcardExpansion;
             DynamicParameters = contextToCopyFrom.DynamicParameters;
             Origin = contextToCopyFrom.Origin;
@@ -295,7 +301,7 @@ namespace System.Management.Automation
         /// If the constructor that takes a context to copy is
         /// called, this will be set to the context being copied.
         /// </summary>
-        private CmdletProviderContext _copiedContext;
+        private CmdletProviderContext? _copiedContext;
 
         /// <summary>
         /// The credentials under which the operation should run.
@@ -313,7 +319,7 @@ namespace System.Management.Automation
         /// made visible to anyone and should only be set through the
         /// constructor.
         /// </summary>
-        private Cmdlet _command;
+        private Cmdlet? _command;
 
         /// <summary>
         /// This makes the origin of the provider request visible to the internals.
@@ -345,7 +351,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of the provider that is currently executing in this context.
         /// </summary>
-        private System.Management.Automation.Provider.CmdletProvider _providerInstance;
+        private System.Management.Automation.Provider.CmdletProvider? _providerInstance;
 
         #endregion private properties
 
@@ -360,7 +366,7 @@ namespace System.Management.Automation
         /// Gets or sets the provider instance for the current
         /// execution context.
         /// </summary>
-        internal System.Management.Automation.Provider.CmdletProvider ProviderInstance
+        internal System.Management.Automation.Provider.CmdletProvider? ProviderInstance
         {
             get
             {
@@ -371,24 +377,6 @@ namespace System.Management.Automation
             {
                 _providerInstance = value;
             }
-        }
-
-        /// <summary>
-        /// Copies the include, exclude, and provider filters from
-        /// the specified context to this context.
-        /// </summary>
-        /// <param name="context">
-        /// The context to copy the filters from.
-        /// </param>
-        private void CopyFilters(CmdletProviderContext context)
-        {
-            Dbg.Diagnostics.Assert(
-                context != null,
-                "The caller should have verified the context");
-
-            Include = context.Include;
-            Exclude = context.Exclude;
-            Filter = context.Filter;
         }
 
         internal void RemoveStopReferral()
@@ -405,12 +393,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the dynamic parameters for the context.
         /// </summary>
-        internal object DynamicParameters { get; set; }
+        internal object? DynamicParameters { get; set; }
 
         /// <summary>
         /// Returns MyInvocation from the underlying cmdlet.
         /// </summary>
-        internal InvocationInfo MyInvocation
+        internal InvocationInfo? MyInvocation
         {
             get
             {
@@ -437,7 +425,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="value"/> is null on set.
         /// </exception>
-        internal PSDriveInfo Drive { get; set; }
+        internal PSDriveInfo? Drive { get; set; }
 
         /// <summary>
         /// Gets the user name under which the operation should run.
@@ -470,7 +458,7 @@ namespace System.Management.Automation
             {
                 if ((_command != null) && (_command.CommandRuntime != null))
                 {
-                    MshCommandRuntime mshRuntime = _command.CommandRuntime as MshCommandRuntime;
+                    MshCommandRuntime? mshRuntime = _command.CommandRuntime as MshCommandRuntime;
 
                     if (mshRuntime != null)
                     {
@@ -499,7 +487,7 @@ namespace System.Management.Automation
         /// Gets an object that surfaces the current PowerShell transaction.
         /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
-        public PSTransactionContext CurrentPSTransaction
+        public PSTransactionContext? CurrentPSTransaction
         {
             get
             {
@@ -527,19 +515,18 @@ namespace System.Management.Automation
         /// The provider specific filter that should be used when determining
         /// which items an action should take place on.
         /// </summary>
-        internal string Filter { get; set; }
+        internal string? Filter { get; set; }
 
         /// <summary>
         /// A glob string that signifies which items should be included when determining
         /// which items the action should occur on.
         /// </summary>
-        internal Collection<string> Include { get; private set; }
-
+        internal Collection<string>? Include { get; private set; }
         /// <summary>
         /// A glob string that signifies which items should be excluded when determining
         /// which items the action should occur on.
         /// </summary>
-        internal Collection<string> Exclude { get; private set; }
+        internal Collection<string>? Exclude { get; private set; }
 
         /// <summary>
         /// Gets or sets the property that tells providers (that
@@ -855,7 +842,7 @@ namespace System.Management.Automation
         /// <param name="filter">
         /// The provider specific filter for the operation.
         /// </param>
-        internal void SetFilters(Collection<string> include, Collection<string> exclude, string filter)
+        internal void SetFilters(Collection<string> include, Collection<string> exclude, string? filter)
         {
             Include = include;
             Exclude = exclude;
@@ -943,7 +930,7 @@ namespace System.Management.Automation
 
                     if (wrapExceptionInProviderException)
                     {
-                        ProviderInfo providerInfo = null;
+                        ProviderInfo? providerInfo = null;
                         if (this.ProviderInstance != null)
                         {
                             providerInfo = this.ProviderInstance.ProviderInfo;
@@ -1127,7 +1114,7 @@ namespace System.Management.Automation
                     errorRecord.ErrorDetails.TextLookupError = null;
                     MshLog.LogProviderHealthEvent(
                         this.ExecutionContext,
-                        this.ProviderInstance.ProviderInfo.Name,
+                        this.ProviderInstance?.ProviderInfo.Name,
                         textLookupError,
                         Severity.Warning);
                 }

@@ -4698,7 +4698,7 @@ namespace System.Management.Automation
                 // Trace the filter
                 s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? string.Empty);
 
-                if (context.Include != null)
+                if (context.Include != null && context.Include.Count > 0)
                 {
                     // Trace the include filters
                     StringBuilder includeString = new StringBuilder();
@@ -4710,7 +4710,7 @@ namespace System.Management.Automation
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
-                if (context.Exclude != null)
+                if (context.Exclude != null && context.Exclude.Count > 0)
                 {
                     // Trace the exclude filters
                     StringBuilder excludeString = new StringBuilder();
