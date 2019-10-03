@@ -4912,8 +4912,6 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         {
             string enableRemotingScript = string.Format(CultureInfo.InvariantCulture,
                 enableRemotingSbFormat, PSSessionConfigurationCommandUtilities.GetWinrmPluginShellName(),
-                // Workflow endpoint configuration will be done through Register-PSSessionConfiguration
-                // when the new features are available.
                 PSSessionConfigurationCommandBase.RemoteManagementUsersSID, PSSessionConfigurationCommandBase.InteractiveUsersSID,
                 RemotingConstants.MaxIdleTimeoutMS, RemotingConstants.PSPluginDLLName);
 
