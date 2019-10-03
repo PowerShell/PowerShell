@@ -6,7 +6,7 @@ Describe "Verify Markdown Links" {
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
-            start-nativeExecution { sudo yarn global add markdown-link-check@3.7.2 }
+            Start-NativeExecution { sudo yarn global add markdown-link-check@3.7.2 }
         }
 
         # Cleanup jobs for reliability
