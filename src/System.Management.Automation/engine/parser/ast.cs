@@ -9702,7 +9702,7 @@ namespace System.Management.Automation.Language
         internal bool IsSchemaElement { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether inline splatting syntax (@@) was used, false otherwise.
+        /// Gets or sets a value indicating whether inline splatting syntax (using @) was used, false otherwise.
         /// </summary>
         public bool Splatted { get; }
 
