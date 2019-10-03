@@ -18,22 +18,8 @@ namespace System.Management.Automation.Runspaces
                     .EndEntry()
                 .EndControl();
 
-            var ByteCollection_GroupHeader = CustomControl.Create()
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"
-                      $header = ""                       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
-                      if($_.Path) { $header = ""                       "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
-
-                      $header
-                    ")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl();
-
             var sharedControls = new CustomControl[] {
-                AvailableModules_GroupingFormat,
-                ByteCollection_GroupHeader
+                AvailableModules_GroupingFormat
             };
 
             yield return new ExtendedTypeDefinition(
@@ -166,10 +152,6 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.InformationRecord",
                 ViewsOf_System_Management_Automation_InformationRecord());
-
-            yield return new ExtendedTypeDefinition(
-                "Microsoft.PowerShell.Commands.ByteCollection",
-                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(sharedControls));
 
             yield return new ExtendedTypeDefinition(
                 "System.Exception",
@@ -888,19 +870,6 @@ namespace System.Management.Automation.Runspaces
                 .EndControl());
         }
 
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(CustomControl[] sharedControls)
-        {
-            yield return new FormatViewDefinition("ByteCollection",
-                CustomControl.Create()
-                    .GroupByScriptBlock("if($_.Path) { $_.Path } else { $_.GetHashCode() }", customControl: sharedControls[1])
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"$_.ToString()")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl());
-        }
-
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Exception()
         {
             yield return new FormatViewDefinition("Exception",
@@ -1447,7 +1416,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.ByteCollection",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, label: "Offset", width: 16)
-                    .AddHeader(Alignment.Center, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
+                    .AddHeader(Alignment.Left, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
                     .AddHeader(Alignment.Left, label: "Ascii", width: 16)
                     .StartRowDefinition()
                         .AddPropertyColumn("HexOffset")
