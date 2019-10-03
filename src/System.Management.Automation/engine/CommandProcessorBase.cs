@@ -4,9 +4,8 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
 
-using Dbg = System.Management.Automation.Diagnostics;
+#nullable enable
 
 namespace System.Management.Automation
 {
@@ -17,13 +16,6 @@ namespace System.Management.Automation
     internal abstract class CommandProcessorBase : IDisposable
     {
         #region ctor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        internal CommandProcessorBase()
-        {
-        }
 
         /// <summary>
         /// Initializes the base command processor class with the command metadata.
@@ -63,7 +55,7 @@ namespace System.Management.Automation
 
         #region properties
 
-        private InternalCommand _command;
+        private InternalCommand _command = default!;
 
         // Marker of whether BeginProcessing() has already run,
         // also used by CommandProcessor.
@@ -125,17 +117,24 @@ namespace System.Management.Automation
 
             set
             {
+                // TODO: remove the check after we enable null reference types for all code base.
                 // The command runtime needs to be set up...
-                if (value != null)
+                if (value == null)
                 {
-                    value.commandRuntime = this.commandRuntime;
-                    if (_command != null)
-                        value.CommandInfo = _command.CommandInfo;
+                    throw PSTraceSource.NewArgumentNullException(nameof(Command));
+                }
 
-                    // Set the execution context for the command it's currently
-                    // null and our context has already been set up.
-                    if (value.Context == null && _context != null)
-                        value.Context = _context;
+                value.commandRuntime = this.commandRuntime;
+                if (_command != null)
+                {
+                    value.CommandInfo = _command.CommandInfo;
+                }
+
+                // Set the execution context for the command it's currently
+                // null and our context has already been set up.
+                if (value.Context == null && _context != null)
+                {
+                    value.Context = _context;
                 }
 
                 _command = value;
@@ -145,7 +144,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the ObsoleteAttribute of the current command.
         /// </summary>
-        internal virtual ObsoleteAttribute ObsoleteAttribute
+        internal virtual ObsoleteAttribute? ObsoleteAttribute
         {
             get { return null; }
         }
@@ -155,7 +154,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command runtime used for this instance of a command processor.
         /// </summary>
-        protected MshCommandRuntime commandRuntime;
+        protected MshCommandRuntime commandRuntime = default!;
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
@@ -229,7 +228,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The execution context used by the system.
         /// </summary>
-        protected ExecutionContext _context;
+        protected ExecutionContext _context = default!;
         internal ExecutionContext Context
         {
             get { return _context; }
@@ -255,7 +254,7 @@ namespace System.Management.Automation
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
-        internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
+        internal virtual bool IsHelpRequested(out string? helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all
             // (we want to do the checks only for cmdlets - this method is overridden in CommandProcessor)
@@ -315,12 +314,12 @@ namespace System.Management.Automation
         /// If you want this command to execute in other than the default session
         /// state, use this API to get and set that session state instance...
         /// </summary>
-        internal SessionStateInternal CommandSessionState { get; set; }
+        internal SessionStateInternal CommandSessionState { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the session state scope for this command processor object.
         /// </summary>
-        protected internal SessionStateScope CommandScope { get; protected set; }
+        protected internal SessionStateScope CommandScope { get; protected set; } = default!;
 
         protected virtual void OnSetCurrentScope()
         {
@@ -374,8 +373,8 @@ namespace System.Management.Automation
             }
         }
 
-        private SessionStateScope _previousScope;
-        private SessionStateInternal _previousCommandSessionState;
+        private SessionStateScope? _previousScope;
+        private SessionStateInternal? _previousCommandSessionState;
 
         /// <summary>
         /// A collection of arguments that have been added by the parser or
@@ -393,7 +392,7 @@ namespace System.Management.Automation
         internal void AddParameter(CommandParameterInternal parameter)
         {
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
-            arguments.Add(parameter);
+            arguments.Add(parameter!);
         }
 
         /// <summary>
@@ -771,8 +770,7 @@ namespace System.Management.Automation
                 {
                     do // false loop
                     {
-                        ProviderInvocationException pie = e as ProviderInvocationException;
-                        if (pie != null)
+                        if (e is ProviderInvocationException pie)
                         {
                             // If a ProviderInvocationException occurred,
                             // discard the ProviderInvocationException and
@@ -799,8 +797,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        RuntimeException rte = e as RuntimeException;
-                        if (rte != null && rte.WasThrownFromThrowStatement)
+                        if (e is RuntimeException rte && rte.WasThrownFromThrowStatement)
                         {
                             // do not rewrap a script based throw
                             break;
@@ -822,7 +819,7 @@ namespace System.Management.Automation
                         // The "transaction timed out" exception is
                         // exceedingly obtuse. We clarify things here.
                         bool isTimeoutException = false;
-                        Exception tempException = e;
+                        Exception? tempException = e;
                         while (tempException != null)
                         {
                             if (tempException is System.TimeoutException)
@@ -944,8 +941,7 @@ namespace System.Management.Automation
                 // 2004/03/05-JonN Look into using metadata to check
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
-                IDisposable id = Command as IDisposable;
-                if (id != null)
+                if (Command is IDisposable id)
                 {
                     id.Dispose();
                 }
