@@ -22,7 +22,7 @@ Describe "Verify Markdown Spelling" {
 
     $jobs = @{}
     # Start all spelling verification in parallel
-    Foreach($group in $groups)
+    foreach ($group in $groups)
     {
         $job = Start-ThreadJob {
             param([object[]] $group)
