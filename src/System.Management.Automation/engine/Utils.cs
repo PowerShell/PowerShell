@@ -1267,7 +1267,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(@"\\wsl$"))
+            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
