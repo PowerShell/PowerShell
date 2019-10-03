@@ -157,9 +157,9 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 $IsSupportedEnvironment = $false
             }
             [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
-            $scriptBlockCreatedRegExTemplate = @'
-Creating Scriptblock text \(1 of 1\):#012{0}(#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
-'@
+            $scriptBlockCreatedRegExTemplate = @"
+Creating Scriptblock text \(1 of 1\):#012{0}(`u{23CE}|\?|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
+"@
 
         }
     }

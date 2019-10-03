@@ -1555,8 +1555,6 @@ namespace System.Management.Automation
 
         private static string FormatLogString(string textToLog)
         {
-            // characters we are translating from
-
             const char NullControlChar = '\u0000';
 
             // The null symbol - `␀`
@@ -1584,7 +1582,7 @@ namespace System.Management.Automation
                 logBuilder.Replace(NullControlChar, NullSymbolChar);
 
                 // Syslog (only used on Linux) encodes CR and NL to their octal values.
-                // We will replace them with a unicode charater for easier viewing
+                // We will replace them with a unicode  'RETURN SYMBOL' (U+23CE) charater for easier viewing
                 logBuilder.Replace(LinefeedControlChar, ReturnSymbolChar);
                 logBuilder.Replace(CarriageReturnControlChar, ReturnSymbolChar);
 
@@ -1595,7 +1593,7 @@ namespace System.Management.Automation
                 return textToLog.Replace(NullControlChar, NullSymbolChar);
             }
 #else
-                return textToLog.Replace(NullControlChar, NullSymbolChar);
+            return textToLog.Replace(NullControlChar, NullSymbolChar);
 #endif
         }
 
