@@ -125,6 +125,11 @@ namespace Microsoft.PowerShell
                     retypedPassword = ReadLineAsSecureString();
 
                     passwordsMatch = ComparePasswords(password, retypedPassword);
+                    if (!passwordsMatch)
+                    {
+                        WriteToConsole(StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch), true);
+                        WriteLineToConsole();
+                    }
                 } while (!passwordsMatch);
             }
             else
@@ -144,7 +149,7 @@ namespace Microsoft.PowerShell
             return cred;
         }
 
-        private bool ComparePasswords(SecureString password, SecureString retypedPassword)
+        private static bool ComparePasswords(SecureString password, SecureString retypedPassword)
         {
             IntPtr passwordBstr = IntPtr.Zero;
             IntPtr retypedPasswordBstr = IntPtr.Zero;
@@ -195,8 +200,6 @@ namespace Microsoft.PowerShell
             else
             {
                 // passwords don't match
-                WriteToConsole(StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch), true);
-                WriteLineToConsole();
                 return false;
             }
 
