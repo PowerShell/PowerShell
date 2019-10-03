@@ -61,11 +61,6 @@ Describe "Get-Item" -Tags "CI" {
         $result.Exists | Should -BeTrue
     }
 
-    It "Should return correct result for ToString() on root of drive" {
-        $root = $IsWindows ? "${env:SystemDrive}\" : "/"
-        (Get-Item -Path $root).ToString() | Should -BeExactly $root
-    }
-
     Context "Test for Include, Exclude, and Filter" {
         BeforeAll {
             ${testBaseDir} = "${TESTDRIVE}/IncludeExclude"
