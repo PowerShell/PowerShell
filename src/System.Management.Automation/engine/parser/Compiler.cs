@@ -6174,6 +6174,12 @@ namespace System.Management.Automation.Language
             }
 
             var target = CompileExpressionOperand(memberExpressionAst.Expression);
+
+            if(memberExpressionAst is NullConditionalMemberExpressionAst nullCheckMemberExpressionAst)
+            {
+                target = nullCheckMemberExpressionAst.NullConditionalAccess ? NullConditionalExpression(target) : target;
+            }
+
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
             if (memberNameAst != null)
             {
@@ -6183,6 +6189,16 @@ namespace System.Management.Automation.Language
 
             var memberNameExpr = Compile(memberExpressionAst.Member);
             return DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, memberNameExpr);
+        }
+
+        private static Expression NullConditionalExpression(Expression target)
+        {
+            Expression targetObj = target.Cast(typeof(object));
+
+            return Expression.Condition(
+                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetObj),
+                ExpressionCache.NullConstant,
+                target);
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(InvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6219,13 +6235,15 @@ namespace System.Management.Automation.Language
             Expression target,
             IEnumerable<Expression> args,
             bool @static,
-            bool propertySet)
+            bool propertySet,
+            bool nullConditional = false)
         {
             var callInfo = new CallInfo(args.Count());
             var classScope = _memberFunctionType != null ? _memberFunctionType.Type : null;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
-                : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
+                : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope, nullConditional);
+
             return DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
         }
 
@@ -6258,7 +6276,22 @@ namespace System.Management.Automation.Language
             var memberNameAst = invokeMemberExpressionAst.Member as StringConstantExpressionAst;
             if (memberNameAst != null)
             {
-                return InvokeMember(memberNameAst.Value, constraints, target, args, invokeMemberExpressionAst.Static, false);
+                bool isNullConditional = false;
+
+                if(invokeMemberExpressionAst is NullConditionalInvokeMemberExpressionAst nullCondExpr && nullCondExpr.NullConditionalAccess)
+                {
+                    isNullConditional = true;
+                }
+
+                return InvokeMember(
+                    memberNameAst.Value,
+                    constraints,
+                    target,
+                    args,
+                    invokeMemberExpressionAst.Static,
+                    propertySet: false,
+                    isNullConditional
+                    );
             }
 
             var memberNameExpr = Compile(invokeMemberExpressionAst.Member);

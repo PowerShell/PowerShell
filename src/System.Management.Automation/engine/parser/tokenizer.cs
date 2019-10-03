@@ -4217,6 +4217,21 @@ namespace System.Management.Automation.Language
                 return NewToken(TokenKind.LBracket);
             }
 
+            if (c == '?')
+            {
+                _tokenStart = _currentIndex;
+                SkipChar();
+                c = PeekChar();
+                if (c == '.')
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionDot);
+                }
+
+                UngetChar();
+                return null;
+            }
+
             return null;
         }
 
@@ -5010,6 +5025,12 @@ namespace System.Management.Automation.Language
                             }
 
                             return this.NewToken(TokenKind.QuestionQuestion);
+                        }
+
+                        if (c1 == '.')
+                        {
+                            SkipChar();
+                            return this.NewToken(TokenKind.QuestionDot);
                         }
                     }
 

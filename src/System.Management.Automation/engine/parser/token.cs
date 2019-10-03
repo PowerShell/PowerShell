@@ -422,6 +422,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 102,
 
+        /// <summary>The null conditional member access operator '?.'./// </summary>
+        QuestionDot = 103,
+
         #endregion Operators
 
         #region Keywords
@@ -867,7 +870,7 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
-            /*     Reserved slot 5  */ TokenFlags.None,
+            /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 6  */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
@@ -1065,7 +1068,7 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ "?",
           /* QuestionQuestionEquals */ "??=",
             /*     QuestionQuestion */ "??",
-            /*    Reserved slot 5   */ string.Empty,
+            /*          QuestionDot */ "?.",
             /*    Reserved slot 6   */ string.Empty,
             /*    Reserved slot 7   */ string.Empty,
             /*    Reserved slot 8   */ string.Empty,
