@@ -375,6 +375,7 @@ namespace Microsoft.PowerShell.Commands
         private PSTaskJob _taskJob;
         private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
         private Exception _taskCollectionException;
+        private string _currentLocationPath;
 
         private void InitParallelParameterSet()
         {
@@ -392,6 +393,13 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.NotImplemented,
                             this));
             }
+
+            // Get the current working directory location, if available.
+            try
+            {
+                _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
+            }
+            catch (PSInvalidOperationException) { }
 
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
@@ -529,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
                     Parallel,
                     _usingValuesMap,
                     InputObject,
-                    SessionState.Internal.CurrentLocation);
+                    _currentLocationPath);
 
                 _taskJob.AddJob(taskChildJob);
 
@@ -551,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
                             Parallel,
                             _usingValuesMap,
                             InputObject,
-                            SessionState.Internal.CurrentLocation,
+                            _currentLocationPath,
                             _taskDataStreamWriter));
                 }
                 catch (InvalidOperationException)
