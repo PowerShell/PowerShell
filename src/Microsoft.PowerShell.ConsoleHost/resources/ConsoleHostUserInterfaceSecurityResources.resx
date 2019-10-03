@@ -127,6 +127,6 @@
     <value>Confirm password for user {0}: </value>
   </data>
     <data name="PasswordMismatch" xml:space="preserve">
-    <value>Passwords do not match. Enter your credentials. </value>
+    <value>Passwords do not match. Enter your credentials.</value>
   </data>
 </root>
