@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 
-using Dbg = System.Management.Automation;
+#nullable enable
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -126,9 +126,9 @@ namespace System.Management.Automation
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        internal SessionStateScope GetScopeByID(int scopeID)
+        internal SessionStateScope? GetScopeByID(int scopeID)
         {
-            SessionStateScope processingScope = _currentScope;
+            SessionStateScope processingScope = CurrentScope;
             int originalID = scopeID;
 
             while (scopeID > 0 && processingScope != null)
@@ -175,15 +175,17 @@ namespace System.Management.Automation
 
             set
             {
-                Diagnostics.Assert(
-                    value != null,
-                    "A null scope should never be set");
+                if (value == null)
+                {
+                     throw PSTraceSource.NewArgumentException(nameof(CurrentScope));
+                }
+
 #if DEBUG
                 // This code is ifdef'd for DEBUG because it may pose a significant
                 // performance hit and is only really required to validate our internal
                 // code. There is no way anyone outside the Monad codebase can cause
                 // these error conditions to be hit.
-
+                //
                 // Need to make sure the new scope is in the global scope lineage
 
                 SessionStateScope scope = value;
