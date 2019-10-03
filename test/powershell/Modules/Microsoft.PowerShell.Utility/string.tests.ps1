@@ -75,5 +75,12 @@ Describe "String cmdlets" -Tags "CI" {
             $match.RelativePath($pshome.ToLower()) | Should -Be $file
             $match.RelativePath($pshome.ToUpper()) | Should -Be $file
         }
+
+        It "only matching string and not full MatchInfo object" {
+            $Match = "abc123","def456" | Select-String "abc" -OnlyMatching
+
+            $Match | Should -BeOfType [String]
+            $Match | Should -Be "abc"
+        }
     }
 }
