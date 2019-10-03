@@ -2744,28 +2744,42 @@ namespace System.Management.Automation.Language
 
                 while (true)
                 {
-                    ExpressionAst clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
-                    if (clauseCondition == null)
-                    {
-                        // ErrorRecovery: if we don't have anything that looks like a condition, we won't
-                        // find a body (because a body is just a script block, which works as a condition.)
-                        // So don't look for a body, hope we find the '}' next.
+                    Token token = PeekToken();
+                    var isDefaultClause = token.Kind == TokenKind.Default;
+                    ExpressionAst clauseCondition = null;
 
-                        isError = true;
-                        ReportIncompleteInput(After(endErrorStatement),
-                            nameof(ParserStrings.MissingSwitchConditionExpression),
-                            ParserStrings.MissingSwitchConditionExpression);
-                        // Consume a closing curly, if there is one, to avoid an extra error
-                        if (PeekToken().Kind == TokenKind.RCurly)
+                    if (isDefaultClause)
+                    {
+                        // Consume the 'default' token.
+                        SkipToken();
+                        endErrorStatement = token.Extent;
+                    }
+                    else
+                    {
+                        clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
+                        if (clauseCondition == null)
                         {
-                            SkipToken();
+                            // ErrorRecovery: if we don't have anything that looks like a condition, we won't
+                            // find a body (because a body is just a script block, which works as a condition.)
+                            // So don't look for a body, hope we find the '}' next.
+                            isError = true;
+                            ReportIncompleteInput(After(endErrorStatement),
+                                nameof(ParserStrings.MissingSwitchConditionExpression),
+                                ParserStrings.MissingSwitchConditionExpression);
+
+                            // Consume a closing curly, if there is one, to avoid an extra error
+                            if (PeekToken().Kind == TokenKind.RCurly)
+                            {
+                                SkipToken();
+                            }
+
+                            break;
                         }
 
-                        break;
+                        errorAsts.Add(clauseCondition);
+                        endErrorStatement = clauseCondition.Extent;
                     }
 
-                    errorAsts.Add(clauseCondition);
-                    endErrorStatement = clauseCondition.Extent;
                     StatementBlockAst clauseBody = StatementBlockRule();
                     if (clauseBody == null)
                     {
@@ -2781,18 +2795,14 @@ namespace System.Management.Automation.Language
                         errorAsts.Add(clauseBody);
                         endErrorStatement = clauseBody.Extent;
 
-                        var clauseConditionString = clauseCondition as StringConstantExpressionAst;
-
-                        if (clauseConditionString != null &&
-                            clauseConditionString.StringConstantType == StringConstantType.BareWord &&
-                            clauseConditionString.Value.Equals("default", StringComparison.OrdinalIgnoreCase))
+                        if (isDefaultClause)
                         {
                             if (@default != null)
                             {
                                 // ErrorRecovery: just report the error and continue, forget the previous default clause.
 
                                 isError = true;
-                                ReportError(clauseCondition.Extent,
+                                ReportError(token.Extent,
                                     nameof(ParserStrings.MultipleSwitchDefaultClauses),
                                     ParserStrings.MultipleSwitchDefaultClauses);
                             }
@@ -2807,7 +2817,7 @@ namespace System.Management.Automation.Language
 
                     SkipNewlinesAndSemicolons();
 
-                    Token token = PeekToken();
+                    token = PeekToken();
                     if (token.Kind == TokenKind.RCurly)
                     {
                         rCurly = token;
