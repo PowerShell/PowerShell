@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
             set { _confirmPassword = value; }
         }
 
-        private bool _confirmPassword;
+        public SwitchParameter ConfirmPassword { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
