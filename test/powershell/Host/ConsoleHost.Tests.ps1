@@ -91,6 +91,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         $Error.Clear()
     }
 
+    It "Clear-Host does not injects data into PowerShell output stream" {
+        & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
+    }
+
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
             { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
