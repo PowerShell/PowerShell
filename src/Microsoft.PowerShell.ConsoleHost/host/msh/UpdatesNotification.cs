@@ -229,28 +229,28 @@ namespace Microsoft.PowerShell
             string updateFileName = Path.GetFileName(updateFilePath);
             int dateStartIndex = updateFileName.LastIndexOf('_') + 1;
 
-            bool success = DateTime.TryParse(
-                updateFileName.AsSpan().Slice(dateStartIndex),
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.AssumeLocal,
-                out lastUpdateDate);
-
-            if (success)
-            {
-                int versionStartIndex = updateFileName.IndexOf('_') + 2;
-                int versionLength = dateStartIndex - versionStartIndex - 1;
-                string versionString = updateFileName.Substring(versionStartIndex, versionLength);
-                success = SemanticVersion.TryParse(versionString, out lastUpdateVersion);
-            }
-
-            if (!success)
+            if (!DateTime.TryParse(
+                    updateFileName.AsSpan().Slice(dateStartIndex),
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out lastUpdateDate))
             {
                 updateFilePath = null;
-                lastUpdateVersion = null;
-                lastUpdateDate = default;
+                return false;
             }
 
-            return success;
+            int versionStartIndex = updateFileName.IndexOf('_') + 2;
+            int versionLength = dateStartIndex - versionStartIndex - 1;
+            string versionString = updateFileName.Substring(versionStartIndex, versionLength);
+
+            if (SemanticVersion.TryParse(versionString, out lastUpdateVersion))
+            {
+                return true;
+            }
+
+            updateFilePath = null;
+            lastUpdateDate = default;
+            return false;
         }
 
         private static async Task<Release> QueryNewReleaseAsync(SemanticVersion baselineVersion)
