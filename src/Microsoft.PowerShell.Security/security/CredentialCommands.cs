@@ -83,12 +83,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets whether to confirm the password.
         /// </summary>
         [Parameter]
-        public SwitchParameter ConfirmPassword
-        {
-            get { return _confirmPassword; }
-            set { _confirmPassword = value; }
-        }
-
         public SwitchParameter ConfirmPassword { get; set; }
 
         /// <summary>
