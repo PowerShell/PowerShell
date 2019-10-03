@@ -1385,15 +1385,22 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating if only string values containing just the matched text should be returned.
+        /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
+        /// </summary>
+        [Parameter]
+        public SwitchParameter OnlyMatching { get; set; }
+
         private int[] _context;
 
         private int _preContext = 0;
 
         private int _postContext = 0;
 
-        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))
-            ? _noContextTracker
+        // When we are in Raw mode or OnlyMatching mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
+        private IContextTracker GetContextTracker() => (OnlyMatching || Raw || (_preContext == 0 && _postContext == 0)) 
+            ? _noContextTracker 
             : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
@@ -1679,6 +1686,13 @@ namespace Microsoft.PowerShell.Commands
                 foreach (MatchInfo match in contextTracker.EmitQueue)
                 {
                     WriteObject(match.Line);
+                }
+            }
+            else if (OnlyMatching)
+            {
+                foreach (MatchInfo match in contextTracker.EmitQueue)
+                {
+                    WriteObject(match.Matches[0].Value);
                 }
             }
             else if (Quiet && !List)
