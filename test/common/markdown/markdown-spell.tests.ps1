@@ -39,7 +39,7 @@ Describe "Verify Markdown Spelling" {
     }
 
     # Get the results and verify
-    foreach($key in $jobs.GetEnumerator().Name)
+    foreach ($key in $jobs.GetEnumerator().Name)
     {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
