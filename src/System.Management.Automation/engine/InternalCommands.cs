@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
             }
-            catch (PSInvalidOperationException)
+            catch (PSInvalidOperationException) 
             {
             }
 
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             _taskCollection.Complete();
                             _taskCollectionException = ex;
                             _taskDataStreamWriter.Close();
-
+                            
                             break;
                         }
 
