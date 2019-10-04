@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne 'NativeCommandErrorMessage' -and $_.FullyQualifiedErrorId -ne 'NativeCommandError') -and $ErrorView -ne 'CategoryView' -and $ErrorView -ne 'ConciseView')
+                                    if (@('NativeCommandErrorMessage'.'NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -802,30 +802,31 @@ namespace System.Management.Automation.Runspaces
                                             $resetColor = ""`e[0m""
                                         }
 
-                                        function Get-VT100Color([ConsoleColor] $color) {
+                                        function Get-VT100Color([string] $color) {
                                             if (! $Host.UI.SupportsVirtualTerminal) {
                                                 return ''
                                             }
 
-                                            switch ($color) {
-                                                'Black' { ""`e[2;30m"" }
-                                                'DarkRed' { ""`e[2;31m"" }
-                                                'DarkGreen' { ""`e[2;32m"" }
-                                                'DarkYellow' { ""`e[2;33m"" }
-                                                'DarkBlue' { ""`e[2;34m"" }
-                                                'DarkMagenta' { ""`e[2;35m"" }
-                                                'DarkCyan' { ""`e[2;36m"" }
-                                                'Gray' { ""`e[2;37m"" }
-                                                'DarkGray' { ""`e[1;30m"" }
-                                                'Red' { ""`e[1;31m"" }
-                                                'Green' { ""`e[1;32m"" }
-                                                'Yellow' { ""`e[1;33m"" }
-                                                'Blue' { ""`e[1;34m"" }
-                                                'Magenta' { ""`e[1;35m"" }
-                                                'Cyan' { ""`e[1;36m"" }
-                                                'White' { ""`e[1;37m"" }
-                                                default { ""`e[1;31m"" }
+                                            $colors = @{
+                                                'Black' = ""`e[2;30m""
+                                                'DarkRed' = ""`e[2;31m""
+                                                'DarkGreen' = ""`e[2;32m""
+                                                'DarkYellow' = ""`e[2;33m""
+                                                'DarkBlue' = ""`e[2;34m""
+                                                'DarkMagenta' = ""`e[2;35m""
+                                                'DarkCyan' = ""`e[2;36m""
+                                                'Gray' = ""`e[2;37m""
+                                                'DarkGray' = ""`e[1;30m""
+                                                'Red' = ""`e[1;31m""
+                                                'Green' = ""`e[1;32m""
+                                                'Yellow' = ""`e[1;33m""
+                                                'Blue' = ""`e[1;34m""
+                                                'Magenta' = ""`e[1;35m""
+                                                'Cyan' = ""`e[1;36m""
+                                                'White' = ""`e[1;37m""
                                             }
+
+                                            return $colors[$color]
                                         }
 
                                         # return length of string sans VT100 codes
@@ -844,21 +845,24 @@ namespace System.Management.Automation.Runspaces
 
                                         # returns a string cut to last whitespace
                                         function Get-TruncatedString($string, [int]$length) {
+
                                             if ($string.Length -le $length) {
                                                 return $string
                                             }
 
-                                            if (-not $string.Contains(' ')) {
-                                                return $string.Substring(0, $length)
-                                            }
+                                            return ($string.Substring(0,$length) -split '\s',-2)[0]
 
-                                            $split = $string.Substring(0, $length).Split(' ')
-                                            if ($split.Count -gt 1) {
-                                                return [string]::Join(' ', $split, 0, $split.Count - 1)
-                                            }
-                                            else {
-                                                return $split[0]
-                                            }
+                                            #if (-not $string.Contains(' ')) {
+                                            #    return $string.Substring(0, $length)
+                                            #}
+
+                                            #$split = $string.Substring(0, $length).Split(' ')
+                                            #if ($split.Count -gt 1) {
+                                            #    return [string]::Join(' ', $split, 0, $split.Count - 1)
+                                            #}
+                                            #else {
+                                            #    return $split[0]
+                                            #}
                                         }
 
                                         $errorColor = ''
@@ -926,7 +930,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ')
+                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
                                             if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
                                                 $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
@@ -943,6 +947,8 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
                                             }
+
+                                            $message += $newline
                                         }
 
                                         $posmsg += ""${errorColor}"" + $message
