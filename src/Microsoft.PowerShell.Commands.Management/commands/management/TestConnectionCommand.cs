@@ -343,11 +343,12 @@ namespace Microsoft.PowerShell.Commands
                 reply = null;
                 pingOptions.Ttl = currentHop;
 
-                // Get intermediate hop target. This needs to be done first, so that we can target it properly and
-                // get useful responses.
+                // Get intermediate hop target. This needs to be done first, so that we can target it properly
+                // and get useful responses.
                 do
                 {
                     reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+                    Thread.Sleep(50);
                 }
                 while (reply.Address.ToString() == "0.0.0.0");
 
