@@ -152,7 +152,7 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
-    It 'Should work for variable assignment of enums: <inputStr>' -TestCases @(
+    It 'Should work for variable assignment of `$ErrorActionPreference: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference="'; filter = ''; doubleQuotes = $true }
@@ -174,7 +174,52 @@ Describe "TabCompletion" -Tags CI {
             ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object))
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",($res.CompletionMatches.completiontext)) | Should -BeExactly $expected
+        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
+    }
+
+    It 'Should work for variable assignment of custom enum: <inputStr>' -TestCases @(
+        @{ inputStr = '$animal = "g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '$animal='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+    ){
+        param($inputStr, $expected)
+
+        enum Animal { Duck; Goose; Horse; Giraffe }
+        [Animal]$animal = 'Duck'
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        [ValidateSet('a','aa','aab','b')][string]$test = 'b'
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
+    }
+
+    It 'Should work for assignment of variable with validateset of int: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = 2,3,11,112 }
+        @{ inputStr = '$test = 1'; expected = 11,112 }
+        @{ inputStr = '$test =11'; expected = 11,112 }
+    ){
+        param($inputStr, $expected)
+
+        [ValidateSet(2,3,11,112)][int]$test = 2
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
     }
 
     Context NativeCommand {
