@@ -335,6 +335,7 @@ namespace Microsoft.PowerShell.Commands
             PingReply reply;
             PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
+            Stopwatch timer = new Stopwatch();
 
             IPAddress hopAddress;
             do
@@ -378,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions);
+                        reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
                         {
@@ -387,7 +388,9 @@ namespace Microsoft.PowerShell.Commands
                                 routerName,
                                 reply,
                                 pingOptions,
-                                reply.RoundtripTime,
+                                reply.Status == IPStatus.Success
+                                    ? reply.RoundtripTime
+                                    : timer.ElapsedMilliseconds,
                                 buffer.Length,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
@@ -417,6 +420,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // We use short delay because it is impossible DoS with trace route.
                     Thread.Sleep(50);
+                    timer.Reset();
                 }
 
                 currentHop++;
@@ -581,7 +585,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
+                    // We must re-insert the pingOptions as pinging "localhost" will get back
+                    // a PingReply with a null value for its Options property.
+                    WriteObject(new PingStatus(
+                        Source,
+                        resolvedTargetName,
+                        reply,
+                        pingOptions,
+                        reply.RoundtripTime,
+                        reply.Buffer.Length,
+                        pingNum: i));
                 }
 
                 // Delay between pings, but not after last ping.
@@ -736,15 +749,18 @@ namespace Microsoft.PowerShell.Commands
             IPAddress targetAddress,
             int timeout,
             byte[] buffer,
-            PingOptions pingOptions)
+            PingOptions pingOptions,
+            Stopwatch timer = null)
         {
             try
             {
                 _sender = new Ping();
                 _sender.PingCompleted += OnPingComplete;
 
+                timer?.Start();
                 _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
                 _pingComplete.Wait();
+                timer?.Stop();
                 _pingComplete.Reset();
 
                 if (_pingCompleteArgs.Cancelled)
