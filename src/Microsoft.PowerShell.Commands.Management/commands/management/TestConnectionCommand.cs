@@ -332,65 +332,70 @@ namespace Microsoft.PowerShell.Commands
 
             int currentHop = 1;
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
-            PingReply reply = null;
+            PingReply reply;
             int timeout = TimeoutSeconds * 1000;
-            var timer = new Stopwatch();
 
+            IPAddress hopAddress;
             do
             {
                 // Clear the stored router name for every hop
                 string routerName = null;
+                reply = null;
                 pingOptions.Ttl = currentHop;
+
+                // Get intermediate hop target. This needs to be done first, so that we can target it properly and
+                // get useful responses.
+                do
+                {
+                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+                }
+                while (reply.Address.ToString() == "0.0.0.0");
+
+                hopAddress = reply.Address;
+
+                if (ResolveDestination.IsPresent)
+                {
+                    try
+                    {
+                        routerName = reply.Status == IPStatus.Success
+                            ? Dns.GetHostEntry(reply.Address).HostName
+                            : reply.Address?.ToString();
+                    }
+                    catch
+                    {
+                        // Swallow hostname resolution errors and continue with trace
+                    }
+                }
+                else
+                {
+                    routerName = reply.Address?.ToString();
+                }
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
-                    TraceStatus hopResult;
                     try
                     {
-                        reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions, timer);
-
-                        // Only get router name if we haven't already retrieved it
-                        if (routerName == null)
-                        {
-                            if (ResolveDestination.IsPresent)
-                            {
-                                try
-                                {
-                                    routerName = reply.Status == IPStatus.Success
-                                        ? Dns.GetHostEntry(reply.Address).HostName
-                                        : reply.Address?.ToString();
-                                }
-                                catch
-                                {
-                                    // Swallow hostname resolution errors and continue with trace
-                                }
-                            }
-                            else
-                            {
-                                routerName = reply.Address?.ToString();
-                            }
-                        }
-
-                        var status = new PingStatus(
-                            Source,
-                            routerName,
-                            reply,
-                            pingOptions,
-                            latency: reply.Status == IPStatus.Success
-                                ? reply.RoundtripTime
-                                : timer.ElapsedMilliseconds,
-                            buffer.Length,
-                            pingNum: i);
-                        hopResult = new TraceStatus(currentHop, status, Source, resolvedTargetName, targetAddress);
+                        reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions);
 
                         if (!Quiet.IsPresent)
                         {
-                            WriteObject(hopResult);
+                            var status = new PingStatus(
+                                Source,
+                                routerName,
+                                reply,
+                                pingOptions,
+                                reply.RoundtripTime,
+                                buffer.Length,
+                                pingNum: i);
+                            WriteObject(new TraceStatus(
+                                currentHop,
+                                status,
+                                Source,
+                                resolvedTargetName,
+                                targetAddress));
                         }
-
-                        timer.Reset();
                     }
                     catch (PingException ex)
                     {
@@ -416,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
                 currentHop++;
             } while (reply != null
                 && currentHop <= sMaxHops
-                && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
+                && (hopAddress.ToString() != targetAddress.ToString()));
 
             if (Quiet.IsPresent)
             {
@@ -729,18 +734,16 @@ namespace Microsoft.PowerShell.Commands
             IPAddress targetAddress,
             int timeout,
             byte[] buffer,
-            PingOptions pingOptions,
-            Stopwatch timer = null)
+            PingOptions pingOptions)
         {
             try
             {
                 _sender = new Ping();
                 _sender.PingCompleted += OnPingComplete;
 
-                timer?.Start();
                 _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
                 _pingComplete.Wait();
-                timer?.Stop();
+                _pingComplete.Reset();
 
                 if (_pingCompleteArgs.Cancelled)
                 {
@@ -953,15 +956,8 @@ namespace Microsoft.PowerShell.Commands
 
             /// <summary>
             /// Gets the status of the traceroute hop.
-            /// It is considered successful if the individual ping reports either Success or TtlExpired;
-            /// TtlExpired is the expected response from an intermediate traceroute hop.
             /// </summary>
-            public IPStatus Status
-            {
-                get => _status.Status == IPStatus.TtlExpired
-                    ? IPStatus.Success
-                    : _status.Status;
-            }
+            public IPStatus Status { get => _status.Status; }
 
             /// <summary>
             /// Gets the source address of the traceroute command.
