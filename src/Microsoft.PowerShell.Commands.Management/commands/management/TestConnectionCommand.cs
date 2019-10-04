@@ -333,6 +333,7 @@ namespace Microsoft.PowerShell.Commands
             int currentHop = 1;
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
             PingReply reply;
+            PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
 
             IPAddress hopAddress;
@@ -340,27 +341,26 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Clear the stored router name for every hop
                 string routerName = null;
-                reply = null;
                 pingOptions.Ttl = currentHop;
 
                 // Get intermediate hop target. This needs to be done first, so that we can target it properly
                 // and get useful responses.
                 do
                 {
-                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+                    discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
                     Thread.Sleep(50);
                 }
-                while (reply.Address.ToString() == "0.0.0.0");
+                while (discoveryReply.Address.ToString() == "0.0.0.0");
 
-                hopAddress = reply.Address;
+                hopAddress = discoveryReply.Address;
 
                 if (ResolveDestination.IsPresent)
                 {
                     try
                     {
-                        routerName = reply.Status == IPStatus.Success
-                            ? Dns.GetHostEntry(reply.Address).HostName
-                            : reply.Address?.ToString();
+                        routerName = discoveryReply.Status == IPStatus.Success
+                            ? Dns.GetHostEntry(discoveryReply.Address).HostName
+                            : discoveryReply.Address?.ToString();
                     }
                     catch
                     {
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    routerName = reply.Address?.ToString();
+                    routerName = discoveryReply.Address?.ToString();
                 }
 
                 // In traceroutes we don't use 'Count' parameter.
@@ -420,9 +420,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 currentHop++;
-            } while (reply != null
+            } while (discoveryReply != null
                 && currentHop <= sMaxHops
-                && (hopAddress != targetAddress));
+                && (discoveryReply.Status == IPStatus.TtlExpired
+                    || discoveryReply.Status == IPStatus.TimedOut));
 
             if (Quiet.IsPresent)
             {

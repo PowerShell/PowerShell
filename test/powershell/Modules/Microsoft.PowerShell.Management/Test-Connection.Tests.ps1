@@ -27,18 +27,22 @@ Describe "Test-Connection" -tags "CI" {
 
     Context "Ping" {
         It "Default parameter set is 'Ping'" {
-            $result = Test-Connection $targetName
+            $pingResults = Test-Connection $targetName
+            $pingResults.Count | Should -Be 4
 
-            $result.Count | Should -Be 4
-            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus"
-            $result[0].Ping | Should -Be 1
-            $result[0].Source | Should -BeExactly $hostName
-            $result[0].Destination | Should -BeExactly $targetName
-            $result[0].Address | Should -BeExactly $targetAddressIPv6
-            $result[0].Status | Should -BeExactly "Success"
-            $result[0].Latency | Should -BeOfType "long"
-            $result[0].Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
-            $result[0].Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
+            $result = $pingResults |
+                Where-Object Status -eq 'Success' |
+                Select-Object -First 1
+
+            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus"
+            $result.Ping | Should -Be 1
+            $result.Source | Should -BeExactly $hostName
+            $result.Destination | Should -BeExactly $targetName
+            $result.Address | Should -BeExactly $targetAddressIPv6
+            $result.Status | Should -BeExactly "Success"
+            $result.Latency | Should -BeOfType "long"
+            $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
+            $result.Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
             # TODO: Here and below we skip the check on Unix because .Net Core issue
             if ($isWindows) {
                 $replies[0].BufferSize | Should -Be 32
@@ -194,22 +198,22 @@ Describe "Test-Connection" -tags "CI" {
         It "Repeat works" {
             # By default we do 4 ping so for '-Repeat' we expect to get >4 results.
             # Also we should wait >4 seconds before check results but previous tests already did the pause.
-            $result = Receive-Job $jobContinues
+            $pingResults = Receive-Job $jobContinues
             Remove-Job $jobContinues -Force
 
-            $result.Count | Should -BeGreaterThan 4
-            $result[0].Address | Should -BeExactly $targetAddress
-            $result[0].Status | Should -BeExactly "Success"
+            $pingResults.Count | Should -BeGreaterThan 4
+            $pingResults.Address[0] | Should -BeExactly $targetAddress
+            $pingResults.Status | Should -Contain "Success"
             if ($isWindows) {
-                $result[0].BufferSize | Should -Be 32
+                $pingResults.Where{ $_.Status -eq 'Success', 'Default', 1 }.BufferSize | Should -Be 32
             }
         }
     }
 
-    # TODO: We skip the MTUSizeDetect tests on Unix because we expect 'PacketTooBig' but get 'TimeOut' internally from .Net Core
+    # TODO: We skip the MTUSize tests on Unix because we expect 'PacketTooBig' but get 'TimeOut' internally from .Net Core
     Context "MTUSizeDetect" {
         It "MTUSizeDetect works" -pending:($IsMacOS) {
-            $result = Test-Connection $hostName -DetectMtuSize
+            $result = Test-Connection $hostName -MtuSize
 
             $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
             $result.Destination | Should -BeExactly $hostName
@@ -218,7 +222,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Quiet works" -pending:($IsMacOS) {
-            $result = Test-Connection $hostName -DetectMtuSize -Quiet
+            $result = Test-Connection $hostName -MtuSize -Quiet
 
             $result | Should -BeOfType "Int32"
             $result | Should -BeGreaterThan 0
