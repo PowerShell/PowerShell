@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                 currentHop++;
             } while (reply != null
                 && currentHop <= sMaxHops
-                && (hopAddress.ToString() != targetAddress.ToString()));
+                && (hopAddress != targetAddress));
 
             if (Quiet.IsPresent)
             {
