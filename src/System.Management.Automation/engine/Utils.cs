@@ -25,7 +25,6 @@ using System.Security;
 using System.Security.Principal;
 #endif
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
