@@ -341,7 +341,6 @@ namespace Microsoft.PowerShell.Commands
                 // Clear the stored router name for every hop
                 string routerName = null;
                 pingOptions.Ttl = currentHop;
-                currentHop++;
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -413,6 +412,8 @@ namespace Microsoft.PowerShell.Commands
                     // We use short delay because it is impossible DoS with trace route.
                     Thread.Sleep(50);
                 }
+
+                currentHop++;
             } while (reply != null
                 && currentHop <= sMaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
