@@ -1036,6 +1036,13 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object IsOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right)
         {
+            if (right is null)
+            {
+                return left is null
+                    ? _TrueObject
+                    : _FalseObject;
+            }
+
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 
@@ -1077,6 +1084,13 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object IsNotOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right)
         {
+            if (right is null)
+            {
+                return left is null
+                    ? _FalseObject
+                    : _TrueObject;
+            }
+
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 

@@ -2145,6 +2145,11 @@ namespace System.Management.Automation
 
         internal static bool IsInstance(object left, object right)
         {
+            if (right is null)
+            {
+                return left is null;
+            }
+
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 

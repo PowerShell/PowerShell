@@ -82,6 +82,22 @@ Describe "ComparisonOperator" -tag "CI" {
         param($lhs, $operator, $rhs)
         Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
+
+    It 'Should succeed in comparing null: <lhs> <operator> $null' -TestCases @(
+        @{lhs = '([Array]$null)'; operator = '-is'; rhs = '$null' }
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-isnot'; rhs = '$null' }
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should -BeTrue
+    }
+
+    It 'Should fail in comparing null: <lhs> <operator> $null' -TestCases @(
+        @{lhs = '([Array]$null)'; operator = '-isnot'; rhs = '$null' }
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '$null' }
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
+    }
 }
 
 Describe "Bytewise Operator" -tag "CI" {

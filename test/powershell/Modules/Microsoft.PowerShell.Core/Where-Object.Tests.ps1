@@ -10,17 +10,20 @@ Describe "Where-Object" -Tags "CI" {
                 IPAddress = "192.168.0.1"
                 NumberOfCores = 1
                 Drives = 'C','D'
+                NICCards = @('Broadcom')
             },
             [PSCustomObject]@{
                 ComputerName = "BGP-5678"
                 IPAddress = ""
                 NumberOfCores = 2
                 Drives = 'C','D','E'
+                NICCards = $null
             },
             [PSCustomObject]@{
                 ComputerName = "MGC-9101"
                 NumberOfCores = 3
                 Drives = 'C'
+                NICCards = $null
             }
         )
     }
@@ -142,4 +145,15 @@ Describe "Where-Object" -Tags "CI" {
         $Result[0] | Should -Be $dynObj
         $Result[1] | Should -Be $dynObj
     }
+
+    It 'Where-Object Prop -Is $null' {
+        $Result = $Computers | Where-Object NICCards -Is $null
+        $Result | Should -HaveCount 2
+    }
+
+    It 'Where-Object Prop -IsNot $null' {
+        $Result = $Computers | Where-Object NICCards -IsNot $null
+        $Result | Should -HaveCount 1
+    }
+
 }
