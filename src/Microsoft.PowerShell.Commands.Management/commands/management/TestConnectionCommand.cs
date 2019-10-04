@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _disposed = false;
 
-        private readonly Ping _sender = new Ping();
+        private Ping _sender;
 
         private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
 
@@ -229,9 +229,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Add the event handler to the PingCompleted event, to inform the cmdlet when pings are completed.
-            _sender.PingCompleted += OnPingComplete;
-
             switch (ParameterSetName)
             {
                 case RepeatPingParameterSet:
@@ -724,7 +721,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (disposing)
                 {
-                    _sender.Dispose();
+                    _sender?.Dispose();
                     _pingComplete?.Dispose();
                 }
 
@@ -740,26 +737,34 @@ namespace Microsoft.PowerShell.Commands
             PingOptions pingOptions,
             Stopwatch timer = null)
         {
-            timer?.Start();
-            _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
-            _pingComplete.Wait();
-            timer?.Stop();
-
-            // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
-            Thread.Sleep(2);
-
-            if (_pingCompleteArgs.Cancelled)
+            try
             {
-                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
-                throw new PipelineStoppedException();
-            }
+                _sender = new Ping();
+                _sender.PingCompleted += OnPingComplete;
 
-            if (_pingCompleteArgs.Error != null)
+                timer?.Start();
+                _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
+                _pingComplete.Wait();
+                timer?.Stop();
+
+                if (_pingCompleteArgs.Cancelled)
+                {
+                    // The only cancellation we have implemented is on pipeline stops via StopProcessing().
+                    throw new PipelineStoppedException();
+                }
+
+                if (_pingCompleteArgs.Error != null)
+                {
+                    throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
+                }
+
+                return _pingCompleteArgs.Reply;
+            }
+            finally
             {
-                throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
+                _sender.Dispose();
+                _sender = null;
             }
-
-            return _pingCompleteArgs.Reply;
         }
 
         // This event is triggered when the ping is completed, and passes along the eventargs so that we know
