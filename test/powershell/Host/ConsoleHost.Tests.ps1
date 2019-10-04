@@ -393,7 +393,7 @@ export $envVarName='$guid'
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("`$ErrorView='NormalView';throw 'boom'"))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
