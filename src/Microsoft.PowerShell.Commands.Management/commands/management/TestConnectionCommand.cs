@@ -435,12 +435,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteVerbose(StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress.ToString(),
-                BufferSize));
-
             // Caution! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
