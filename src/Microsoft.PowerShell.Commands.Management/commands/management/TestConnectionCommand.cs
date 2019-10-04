@@ -574,11 +574,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Repeat.IsPresent)
-                {
-                    WriteObject(reply);
-                }
-                else if (Quiet.IsPresent)
+                if (Quiet.IsPresent)
                 {
                     // Return 'true' only if all pings have completed successfully.
                     quietResult &= reply.Status == IPStatus.Success;
