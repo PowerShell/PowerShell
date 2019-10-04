@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(new PingMtuStatus(Source, targetAddress.ToString(), replyResult));
+                WriteObject(new PingMtuStatus(Source, resolvedTargetName, replyResult));
             }
         }
 

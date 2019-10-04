@@ -45,7 +45,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
             # TODO: Here and below we skip the check on Unix because .Net Core issue
             if ($isWindows) {
-                $replies[0].BufferSize | Should -Be 32
+                $pingResults[0].BufferSize | Should -Be 32
             }
         }
 
@@ -202,7 +202,7 @@ Describe "Test-Connection" -tags "CI" {
             Remove-Job $jobContinues -Force
 
             $pingResults.Count | Should -BeGreaterThan 4
-            $pingResults.Address[0] | Should -BeExactly $targetAddress
+            $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
             if ($isWindows) {
                 $pingResults.Where{ $_.Status -eq 'Success', 'Default', 1 }.BufferSize | Should -Be 32
