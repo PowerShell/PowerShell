@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Interpreter;
 using System.Management.Automation.Runspaces;
+using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -662,6 +663,8 @@ namespace System.Management.Automation.Language
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length + SpecialVariables.PreferenceVariableTypes.Length,
                                         StringComparer.OrdinalIgnoreCase);
 
+        private static bool? IsNullCoalescingFeatureEnabled;
+
         static Compiler()
         {
             _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
@@ -808,24 +811,28 @@ namespace System.Management.Automation.Language
 
         private Expression GetCoalesceExpression(Expression rhs, IAssignableValue leftAssignableValue, TokenKind tokenKind)
         {
-            if (ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"))
-            {
-                var exprs = new List<Expression>();
-                var temps = new List<ParameterExpression>();
-                var leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
+            IsNullCoalescingFeatureEnabled ??= ExperimentalFeature.IsEnabled("PSNullCoalescingOperators");
 
-                if (tokenKind == TokenKind.QuestionQuestionEquals)
-                {
-                    exprs.Add(
-                        Expression.Condition(
-                            Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, leftExpr),
-                                leftAssignableValue.SetValue(this, rhs),
-                                leftExpr.Convert(typeof(object))));
-                    return Expression.Block(temps, exprs);
-                }
+            if (IsNullCoalescingFeatureEnabled.Value == false)
+            {
+                return null;
             }
-            
-            return null;            
+
+            var exprs = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            Expression leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
+
+            if (tokenKind == TokenKind.QuestionQuestionEquals)
+            {
+                exprs.Add(
+                    Expression.Condition(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, leftExpr),
+                            leftAssignableValue.SetValue(this, rhs),
+                            leftExpr.Convert(typeof(object))));
+                return Expression.Block(temps, exprs);
+            }
+
+            return null;
         }
 
         internal Expression GetLocal(int tupleIndex)

@@ -91,6 +91,12 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
             $x | Should -Be 200
         }
 
+        It 'Lhs is empty string' {
+            $x = ''
+            $x ??= 20
+            $x | Should -BeExactly ''
+        }
+
         It 'Error case' {
             $e = $null
             $null = [System.Management.Automation.Language.Parser]::ParseInput('1 ??= 100', [ref] $null, [ref] $e)
@@ -103,6 +109,11 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
 
             $num | Should -Be 10
         }
+
+        It 'Lhs is $?' {
+            { $???=$false}
+            $? | Should -BeTrue
+        }
     }
 
     Context 'Null coalesce operator ??' {
@@ -111,6 +122,7 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
         }
 
         It 'Variable does not exist' {
+            Remove-Variable variableDoesNotExist -ErrorAction SilentlyContinue -Force
             $variableDoesNotExist ?? 100 | Should -Be 100
         }
 
@@ -173,6 +185,10 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
 
         It 'Both are null constants' {
             [System.DBNull]::Value ?? [NullString]::Value | Should -Be ([NullString]::Value)
+        }
+
+        It 'Lhs is $?' {
+            {$???$false} | Should -BeTrue
         }
     }
 

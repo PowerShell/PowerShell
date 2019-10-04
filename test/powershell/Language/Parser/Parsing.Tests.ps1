@@ -265,6 +265,15 @@ Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '@{} ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '1..2 ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '[int] ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '$cricket ?= $soccer' ExpectedValueExpression 0
+}
+
+Describe 'null coalescing statement parsing' -Tag "CI" {
+    ShouldBeParseError '$x??y' UnexpectedToken 0
+    ShouldBeParseError '$x??=' ExpectedValueExpression 0
+    ShouldBeParseError '$x ??Get-Thing' ExpectedValueExpression 0
+    ShouldBeParseError '$??=$false' ExpectedValueExpression 0
+    ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {

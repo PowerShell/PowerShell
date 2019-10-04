@@ -4994,10 +4994,10 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
-                    c1 = PeekChar();
-
                     if (ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"))
                     {
+                        c1 = PeekChar();
+
                         if (c1 == '?')
                         {
                             SkipChar();
