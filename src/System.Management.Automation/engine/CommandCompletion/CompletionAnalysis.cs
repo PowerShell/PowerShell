@@ -1139,6 +1139,7 @@ namespace System.Management.Automation
             out List<CompletionResult> completions)
         {
             completions = null;
+
             // Try to get the variable from the assignment, plus any type constraint on it
             Type typeConstraint = null;
             ValidateSetAttribute setConstraint = null;
@@ -1198,11 +1199,11 @@ namespace System.Management.Automation
 
         private List<CompletionResult> GetResultForSet(
             Type type,
-            IList<string> ValidValues,
+            IList<string> validValues,
             CompletionContext completionContext)
         {
             var allValues = new List<string>();
-            foreach (string value in ValidValues)
+            foreach (string value in validValues)
             {
                 if (type == typeof(string) || type.IsEnum)
                 {
