@@ -472,8 +472,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         chars[i] = buf[j];
                     }
-                }
-            );
+                });
 
             long currentBlock = 0;
             string lastDelimiterMatch = null;
@@ -572,18 +571,25 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
                         line = _reader.ReadLine();
-                    } while ((line == null) && (!_provider.Stopping));
+                    }
+                    while ((line == null) && (!_provider.Stopping));
                 }
             }
 
             if (line != null)
+            {
                 blocks.Add(line);
+            }
 
             int peekResult = readBackward ? _backReader.Peek() : _reader.Peek();
             if (peekResult == -1)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
 
         private bool ReadDelimited(bool waitChanges, List<object> blocks, bool readBackward, string actualDelimiter)
@@ -636,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                             // We only wait for changes when read forwards, so here we don't need to check if 'readBackward' is
                             // true or false, we only use 'reader'. The member 'reader' will be updated by WaitForChanges.
                             WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
-                            numRead += _reader.Read(readBuffer.Slice(0, (currentOffset - numRead)));
+                            numRead += _reader.Read(readBuffer.Slice(0, currentOffset - numRead));
                         }
                     }
                 }
@@ -679,7 +685,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-            } while (delimiterNotFound && (numRead != 0));
+            }
+            while (delimiterNotFound && (numRead != 0));
 
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
@@ -692,13 +699,14 @@ namespace Microsoft.PowerShell.Commands
                 blocks.Add(
                     !readBackward && !delimiterNotFound
                         ? _currentLineContent.ToString(0, _currentLineContent.Length - actualDelimiter.Length)
-                        : _currentLineContent.ToString()
-                );
+                        : _currentLineContent.ToString());
             }
 
             int peekResult = readBackward ? _backReader.Peek() : _reader.Peek();
             if (peekResult != -1)
+            {
                 return true;
+            }
             else
             {
                 if (readBackward && _currentLineContent.Length > 0)
@@ -726,7 +734,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // Break when the end of the file is reached.
                     if (n == 0)
+                    {
                         break;
+                    }
 
                     numBytesRead += n;
                     numBytesToRead -= n;
@@ -778,7 +788,9 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         private void CreateStreams(string filePath, string streamName, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)

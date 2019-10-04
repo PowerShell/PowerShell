@@ -27,6 +27,29 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
             $testservice2 | Should -Not -BeNullOrEmpty
         }
+
+        Function CheckSecurityDescriptorSddl {
+            Param(
+                [Parameter(Mandatory)]
+                $SecurityDescriptorSddl,
+
+                [Parameter(Mandatory)]
+                $ServiceName
+            )
+            $Counter      = 0
+            $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
+
+            # Selecting the first item in the output array as below command gives plain text output from the native sc.exe.
+            $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $ServiceName)[1]
+
+            $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
+            $UpdatedSDDL.Group | Should -Be $ExpectedSDDL.Group
+            $UpdatedSDDL.DiscretionaryAcl.Count | Should -Be $ExpectedSDDL.DiscretionaryAcl.Count
+            $UpdatedSDDL.DiscretionaryAcl | ForEach-Object -Process {
+                $_ | Should -Be $ExpectedSDDL.DiscretionaryAcl[$Counter]
+                $Counter++
+            }
+        }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
@@ -87,20 +110,8 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
 
 
     It "Sets securitydescriptor of service using Set-Service " {
-        Set-Service -Name $TestServiceName1 -SecurityDescriptor $SecurityDescriptorSddl
-        $Counter      = 0
-        $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
-
-        # Selecting the first item in the output array as below command gives plain text output from the native sc.exe.
-        $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $TestServiceName1)[1]
-
-        $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
-        $UpdatedSDDL.Group | Should -Be $ExpectedSDDL.Group
-        $UpdatedSDDL.DiscretionaryAcl.Count | Should -Be $ExpectedSDDL.DiscretionaryAcl.Count
-        $UpdatedSDDL.DiscretionaryAcl | ForEach-Object -Process {
-            $_ | Should -Be $ExpectedSDDL.DiscretionaryAcl[$Counter]
-            $Counter++
-        }
+        Set-Service -Name $TestServiceName1 -SecurityDescriptorSddl $SecurityDescriptorSddl
+        CheckSecurityDescriptorSddl -SecurityDescriptor $SecurityDescriptorSddl -ServiceName $TestServiceName1
     }
 
     It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
@@ -142,14 +153,15 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "NewServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
-        @{parameter = "Name"           ; value = "bar"},
-        @{parameter = "BinaryPathName" ; value = "hello"},
-        @{parameter = "DisplayName"    ; value = "hello world"},
-        @{parameter = "Description"    ; value = "this is a test"},
-        @{parameter = "StartupType"    ; value = "Automatic"},
-        @{parameter = "StartupType"    ; value = "Disabled"},
-        @{parameter = "StartupType"    ; value = "Manual"},
-        @{parameter = "Credential"     ; value = (
+        @{parameter = "Name"                   ; value = "bar"},
+        @{parameter = "BinaryPathName"         ; value = "hello"},
+        @{parameter = "DisplayName"            ; value = "hello world"},
+        @{parameter = "Description"            ; value = "this is a test"},
+        @{parameter = "StartupType"            ; value = "Automatic"},
+        @{parameter = "StartupType"            ; value = "Disabled"},
+        @{parameter = "StartupType"            ; value = "Manual"},
+        @{parameter = "SecurityDescriptorSddl" ; value = $SecurityDescriptorSddl},
+        @{parameter = "Credential"             ; value = (
                 [System.Management.Automation.PSCredential]::new("username",
                     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
                     (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
@@ -195,11 +207,12 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "New-Service can create a new service called '<name>'" -TestCases @(
-        @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one"},
-        @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two"},
-        @{name = "testdisabled" ; startupType = "Disabled" ; description = $null ; displayname = $null}
+        @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one" ; securityDescriptorSddl = $null},
+        @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two" ; securityDescriptorSddl = $SecurityDescriptorSddl},
+        @{name = "testdisabled" ; startupType = "Disabled" ; description = $null ; displayname = $null ; securityDescriptorSddl = $null},
+        @{name = "testsddl"     ; startupType = "Disabled" ; description = "foo" ; displayname = $null ; securityDescriptorSddl = $SecurityDescriptorSddl}
     ) {
-        param($name, $startupType, $description, $displayname)
+        param($name, $startupType, $description, $displayname, $securityDescriptorSddl)
         try {
             $parameters = @{
                 Name           = $name;
@@ -212,6 +225,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             if ($displayname) {
                 $parameters += @{displayname = $displayname}
             }
+            if ($securityDescriptorSddl) {
+                $parameters += @{SecurityDescriptorSddl = $securityDescriptorSddl}
+            }
+
             $service = New-Service @parameters
             $service | Should -Not -BeNullOrEmpty
             $service.displayname | Should -Be $(if($displayname){$displayname}else{$name})
@@ -235,6 +252,9 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             }
             else {
                 $service.DisplayName | Should -Be $displayname
+            }
+            if ($securityDescriptorSddl) {
+                CheckSecurityDescriptorSddl -SecurityDescriptorSddl $SecurityDescriptorSddl -ServiceName $name
             }
         }
         finally {

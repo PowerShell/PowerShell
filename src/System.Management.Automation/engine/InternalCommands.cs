@@ -375,6 +375,7 @@ namespace Microsoft.PowerShell.Commands
         private PSTaskJob _taskJob;
         private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
         private Exception _taskCollectionException;
+        private string _currentLocationPath;
 
         private void InitParallelParameterSet()
         {
@@ -391,6 +392,15 @@ namespace Microsoft.PowerShell.Commands
                             "ParallelCommonParametersNotSupported",
                             ErrorCategory.NotImplemented,
                             this));
+            }
+
+            // Get the current working directory location, if available.
+            try
+            {
+                _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
+            }
+            catch (PSInvalidOperationException) 
+            {
             }
 
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
@@ -486,10 +496,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception ex)
                         {
-                            // Close the _taskCollection on an unexpected exception so the pool closes and
-                            // lets any running tasks complete.
                             _taskCollection.Complete();
                             _taskCollectionException = ex;
+                            _taskDataStreamWriter.Close();
+                            
                             break;
                         }
 
@@ -509,7 +519,8 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessParallelParameterSet()
         {
             // Validate piped InputObject
-            if (_inputObject.BaseObject is ScriptBlock)
+            if (_inputObject != null && 
+                _inputObject.BaseObject is ScriptBlock)
             {
                 WriteError(
                     new ErrorRecord(
@@ -527,7 +538,8 @@ namespace Microsoft.PowerShell.Commands
                 var taskChildJob = new PSTaskChildJob(
                     Parallel,
                     _usingValuesMap,
-                    InputObject);
+                    InputObject,
+                    _currentLocationPath);
 
                 _taskJob.AddJob(taskChildJob);
 
@@ -549,6 +561,7 @@ namespace Microsoft.PowerShell.Commands
                             Parallel,
                             _usingValuesMap,
                             InputObject,
+                            _currentLocationPath,
                             _taskDataStreamWriter));
                 }
                 catch (InvalidOperationException)
