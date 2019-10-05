@@ -159,7 +159,7 @@ Describe "Test-Connection" -tags "CI" {
                 Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
-        It "BufferSize works" -Pending:(!$IsWindows) {
+        It "BufferSize works" {
             $result = Test-Connection $targetName -Count 1 -BufferSize 2
 
             if ($isWindows) {
@@ -211,7 +211,7 @@ Describe "Test-Connection" -tags "CI" {
 
     # TODO: We skip the MTUSize tests on Unix because we expect 'PacketTooBig' but get 'TimeOut' internally from .Net Core
     Context "MTUSizeDetect" {
-        It "MTUSizeDetect works" -pending:($IsMacOS) {
+        It "MTUSizeDetect works" {
             $result = Test-Connection $hostName -MtuSize
 
             $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
@@ -220,7 +220,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        It "Quiet works" -pending:($IsMacOS) {
+        It "Quiet works" {
             $result = Test-Connection $hostName -MtuSize -Quiet
 
             $result | Should -BeOfType "Int32"

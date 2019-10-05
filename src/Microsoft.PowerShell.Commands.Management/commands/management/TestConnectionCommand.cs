@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(new PingMtuStatus(Source, resolvedTargetName, replyResult));
+                WriteObject(new PingMtuStatus(Source, resolvedTargetName, replyResult, CurrentMTUSize));
             }
         }
 
@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                         reply,
                         pingOptions,
                         reply.RoundtripTime,
-                        reply.Buffer.Length,
+                        buffer.Length,
                         pingNum: i));
                 }
 
@@ -835,9 +835,12 @@ namespace Microsoft.PowerShell.Commands
                 Destination = destination ?? reply.Address.ToString();
             }
 
-            // These values should only be set if this PingStatus was created as part of a traceroute.
+            // These values can be set manually to skirt issues with the Ping API on Unix platforms
+            // so that we can return meaningful known data that is discarded by the API.
             private readonly int _bufferSize = -1;
+
             private readonly PingOptions _options;
+
             private readonly long _latency = -1;
 
             /// <summary>
@@ -897,15 +900,17 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
             /// <param name="reply">The response from the ping attempt.</param>
-            internal PingMtuStatus(string source, string destination, PingReply reply)
+            /// <param name="bufferSize">The buffer size from the successful ping attempt.</param>
+            internal PingMtuStatus(string source, string destination, PingReply reply, int bufferSize)
                 : base(source, destination, reply, 1)
             {
+                MtuSize = bufferSize;
             }
 
             /// <summary>
             /// Gets the maximum transmission unit size on the network path between the source and destination.
             /// </summary>
-            public int MtuSize { get => BufferSize; }
+            public int MtuSize { get; }
         }
 
         /// <summary>
