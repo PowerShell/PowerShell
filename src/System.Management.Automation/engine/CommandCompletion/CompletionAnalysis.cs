@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
         }
 
         // Gets any type constraints or validateset constraints on a given variable
-        private bool TryGetTypeConstraintOnVariable(
+        private static bool TryGetTypeConstraintOnVariable(
             CompletionContext completionContext,
             string variableName,
             out Type typeConstraint,
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation
             return GetMatchedResults(allValues, completionContext);
         }
 
-        private List<CompletionResult> GetMatchedResults(
+        private static List<CompletionResult> GetMatchedResults(
             List<string> allValues,
             CompletionContext completionContext)
         {
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private string GetQuotedString(
+        private static string GetQuotedString(
             string value,
             CompletionContext completionContext)
         {
