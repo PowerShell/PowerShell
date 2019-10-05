@@ -344,16 +344,20 @@ namespace Microsoft.PowerShell.Commands
                 string routerName = null;
                 pingOptions.Ttl = currentHop;
 
+#if !UNIX
                 // Get intermediate hop target. This needs to be done first, so that we can target it properly
                 // and get useful responses.
+                var discoveryAttempts = 0;
                 do
                 {
                     discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
-                    Thread.Sleep(50);
+                    discoveryAttempts++;
                 }
-                while (discoveryReply.Address.ToString() == "0.0.0.0");
+                while (discoveryReply.Address.ToString() == "0.0.0.0" && discoveryAttempts <= 3);
 
-                hopAddress = discoveryReply.Address;
+                hopAddress = discoveryReply.Address.ToString() != "0.0.0.0"
+                    ? discoveryReply.Address
+                    : targetAddress;
 
                 if (ResolveDestination.IsPresent)
                 {
@@ -372,6 +376,18 @@ namespace Microsoft.PowerShell.Commands
                 {
                     routerName = discoveryReply.Address?.ToString();
                 }
+#endif
+
+#if UNIX
+                // Unix Ping API returns nonsense "TimedOut" for ALL intermediate hops. No way around this
+                // issue for traceroutes as we rely on information (intermediate addresses, etc.) that is
+                // simply not returned to us by the API.
+                // The only supported states on Unix seem to be Success and TimedOut. Workaround is to
+                // keep targeting the final address; at the very least we will be able to tell the user
+                // the required number of hops to reach the destination.
+                hopAddress = targetAddress;
+                discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+#endif
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -424,8 +440,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 currentHop++;
-            } while (discoveryReply != null
-                && currentHop <= sMaxHops
+            } while (currentHop <= sMaxHops
                 && (discoveryReply.Status == IPStatus.TtlExpired
                     || discoveryReply.Status == IPStatus.TimedOut));
 
