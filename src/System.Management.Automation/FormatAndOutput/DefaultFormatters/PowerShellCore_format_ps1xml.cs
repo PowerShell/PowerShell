@@ -1480,7 +1480,14 @@ namespace System.Management.Automation.Runspaces
                                 $_.Latency
                             }
                         ")
-                        .AddPropertyColumn("BufferSize")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.BufferSize
+                            }
+                        ")
                         .AddPropertyColumn("Status")
                     .EndRowDefinition()
                     .GroupByProperty("Destination")
