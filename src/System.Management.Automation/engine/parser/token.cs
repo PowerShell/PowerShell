@@ -417,6 +417,12 @@ namespace System.Management.Automation.Language
         /// <summary>The ternary operator '?'.</summary>
         QuestionMark = 100,
 
+        /// <summary>
+        /// The unary operator used for generalized splatting expressions.
+        /// This excludes the legacy token <see cref="TokenKind.SplattedVariable"/>.
+        /// </summary>
+        At = 101,
+
         #endregion Operators
 
         #region Keywords
@@ -573,9 +579,6 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'base' keyword</summary>
         Base = 168,
-
-        /// <summary>The opening token of a generalized splat expression '@@{'.</summary>
-        AtAtCurly = 169,
 
         #endregion Keywords
     }
@@ -858,7 +861,7 @@ namespace System.Management.Automation.Language
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 3  */ TokenFlags.None,
+            /*                   At */ TokenFlags.None,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
@@ -931,7 +934,6 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
-            /*            AtAtCurly */ TokenFlags.None,
 
             #endregion Flags for keywords
         };
@@ -1057,7 +1059,7 @@ namespace System.Management.Automation.Language
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
             /*    Reserved slot 2   */ string.Empty,
-            /*    Reserved slot 3   */ string.Empty,
+            /*                   At */ "@",
             /*    Reserved slot 4   */ string.Empty,
             /*    Reserved slot 5   */ string.Empty,
             /*    Reserved slot 6   */ string.Empty,
@@ -1130,7 +1132,6 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
-            /*            AtAtCurly */ "@@{",
 
             #endregion Text for keywords
         };

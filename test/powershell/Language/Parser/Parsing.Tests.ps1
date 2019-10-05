@@ -435,11 +435,11 @@ Describe "Generalized Splatting - Parsing" -Tags CI {
         else {
             $testCases_basic = @(
                 @{  Script        = 'Verb-Noun @@{ "ParameterName"="ParameterValue" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAtCurly;
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
                     TokenPosition = 1
                 }
                 @{  Script        = 'Verb-Noun @@{ "ParameterName1"="ParameterValue1"; "ParameterName2"="ParameterValue2" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::AtAtCurly;
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
                     TokenPosition = 1
                 }
             )
@@ -472,7 +472,7 @@ Describe "Generalized Splatting - Parsing" -Tags CI {
         $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tokens, [ref]$errors)
 
         $tokens[$TokenPosition].Kind | Should -BeExactly $TokenKind
-        $tokens[$TokenPosition].Text | Should -BeExactly '@@{'
+        $tokens[$TokenPosition].Text | Should -BeExactly '@'
 
         $result.EndBlock.Statements.PipelineElements[0].CommandElements[1] | Should -BeOfType 'System.Management.Automation.Language.HashtableAst'
         $result.EndBlock.Statements.PipelineElements[0].CommandElements[1].Extent.Text.StartsWith('@@{') |
@@ -489,7 +489,7 @@ Describe "Generalized Splatting - Parsing" -Tags CI {
         a@@b | Should -BeExactly 'a@@b'
     }
 
-    It "Using generlized splatting expression <Script> not as argument to command should generate correct error" -TestCases $testCases_incomplete {
+    It "Using generalized splatting expression <Script> not as argument to command should generate correct error" -TestCases $testCases_incomplete {
         param($Script, $ErrorId, $AstType)
 
         $errors = $null
