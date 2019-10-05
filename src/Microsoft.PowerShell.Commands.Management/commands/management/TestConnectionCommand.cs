@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
 
                     reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
-                    if (reply.Status == IPStatus.PacketTooBig)
+                    if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
                     {
                         HighMTUSize = CurrentMTUSize;
                         retry = 1;
