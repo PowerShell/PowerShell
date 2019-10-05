@@ -96,6 +96,15 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
 }
 
 Describe "File redirection should have 'DoComplete' called on the underlying pipeline processor" -Tags CI {
+    BeforeAll {
+        $originalErrorView = $ErrorView
+        $ErrorView = "NormalView"
+    }
+
+    AfterAll {
+        $ErrorView = $originalErrorView
+    }
+
     It "File redirection should result in the same file as Out-File" {
         $object = [pscustomobject] @{ one = 1 }
         $redirectFile = Join-Path $TestDrive fileRedirect.txt

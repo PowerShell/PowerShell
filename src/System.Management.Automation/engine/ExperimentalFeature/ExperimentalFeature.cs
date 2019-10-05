@@ -116,8 +116,11 @@ namespace System.Management.Automation
                     name: "PSTernaryOperator",
                     description: "Support the ternary operator in PowerShell language"),
                 new ExperimentalFeature(
+                    name: "PSErrorView",
+                    description: "New formatting for ErrorRecord"),
+                new ExperimentalFeature(
                     name: "PSGeneralizedSplatting",
-                    description: "Preliminary support for generalized splatting, currently only inline splatting."),
+                    description: "Preliminary support for generalized splatting, currently only inline splatting"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
