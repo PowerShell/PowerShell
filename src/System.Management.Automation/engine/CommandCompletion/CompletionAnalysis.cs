@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
 
             PSVariable variable = completionContext.ExecutionContext.EngineSessionState.GetVariable(variableName);
 
-            if (variable?.Attributes == null || variable.Attributes.Count == 0)
+            if (variable.Attributes.Count == 0)
             {
                 return false;
             }
@@ -1256,18 +1256,8 @@ namespace System.Management.Automation
                 stringToComplete = completionContext.TokenAtCursor.Text;
             }
 
-            var quote = "'";
-            if (stringToComplete.StartsWith('"'))
-            {
-                quote = "\"";
-            }
-
-            if (quote != string.Empty)
-            {
-                return quote + value + quote;
-            }
-
-            return value;
+            var quote = stringToComplete.StartsWith('"') ? "\"" : "'";
+            return quote + value + quote;
         }
 
         private List<CompletionResult> GetResultForEnum(
