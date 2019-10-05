@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
             return typeConstraint != null || setConstraint != null;
         }
 
-        private bool TryGetCompletionsForVariableAssignment(
+        private static bool TryGetCompletionsForVariableAssignment(
             CompletionContext completionContext,
             AssignmentStatementAst assignmentAst,
             out List<CompletionResult> completions)
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation
             }
         }
 
-        private List<CompletionResult> GetResultForSet(
+        private static List<CompletionResult> GetResultForSet(
             Type type,
             IList<string> validValues,
             CompletionContext completionContext)
@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
             return quote + value + quote;
         }
 
-        private List<CompletionResult> GetResultForEnum(
+        private static List<CompletionResult> GetResultForEnum(
             Type type,
             CompletionContext completionContext)
         {
