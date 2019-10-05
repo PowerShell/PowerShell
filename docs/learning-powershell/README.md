@@ -103,6 +103,7 @@ Note that all bash commands should continue working on PowerShell session.
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
 - [Interactive learning with PSKoans](https://aka.ms/pskoans)
+- [Windows PowerShell Cookbook: The Complete Guide to Scripting Microsoft's Command Shell ] (https://www.amazon.com/Windows-PowerShell-Cookbook-Scripting-Microsofts-ebook/dp/B00ARN9MEK)
 
 ### Commercial Resources
 
