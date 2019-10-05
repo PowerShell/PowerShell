@@ -204,7 +204,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
             if ($isWindows) {
-                $pingResults.Where{ $_.Status -eq 'Success', 'Default', 1 }[0].BufferSize | Should -Be 32
+                $pingResults.Where( { $_.Status -eq 'Success' }, 'Default', 1 ).BufferSize | Should -Be 32
             }
         }
     }
