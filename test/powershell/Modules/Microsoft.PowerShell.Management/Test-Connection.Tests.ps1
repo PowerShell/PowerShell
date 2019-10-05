@@ -100,16 +100,15 @@ Describe "Test-Connection" -tags "CI" {
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
             $result1[0].Address | Should -BeExactly $realAddress
-            # .Net Core (.Net Framework) returns Options based on default PingOptions() constructor (Ttl=128, DontFragment = false).
-            # After .Net Core fix we should have 'DontFragment | Should -Be $true' here.
             $result1[0].Options.Ttl | Should -BeLessOrEqual 128
+
             if (!$isWindows) {
-                $result1[0].Options.DontFragment | Should -BeNullOrEmpty
+                $result1[0].Options.DontFragment | Should -BeTrue
                 # Depending on the network configuration any of the following should be returned
                 $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
             }
             else {
-                $result1[0].Options.DontFragment | Should -BeFalse
+                $result1[0].Options.DontFragment | Should -BeTrue
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
                 $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", $null
@@ -205,7 +204,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
             if ($isWindows) {
-                $pingResults.Where{ $_.Status -eq 'Success', 'Default', 1 }.BufferSize | Should -Be 32
+                $pingResults.Where{ $_.Status -eq 'Success', 'Default', 1 }[0].BufferSize | Should -Be 32
             }
         }
     }
