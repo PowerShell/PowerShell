@@ -656,6 +656,10 @@ namespace Microsoft.PowerShell.Commands
 
                     resolvedTargetName = hostEntry.HostName;
                 }
+                else
+                {
+                    resolvedTargetName = targetAddress.ToString();
+                }
             }
             else
             {
