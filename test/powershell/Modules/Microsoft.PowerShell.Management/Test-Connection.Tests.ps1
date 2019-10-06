@@ -250,6 +250,15 @@ Describe "Test-Connection" -tags "CI" {
 
             $result | Should -BeTrue
         }
+
+        It 'writes an error if MaxHops is exceeded during -Traceroute' {
+            { Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -ErrorAction Stop } |
+                Should -Throw -ErrorId 'TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand'
+        }
+
+        It 'returns false without error if MaxHops is exceeded during -Traceroute -Quiet' {
+            Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -Quiet | Should -BeFalse
+        }
     }
 }
 

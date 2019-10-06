@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress targetAddress))
             {
                 return;
             }
@@ -437,13 +437,26 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 currentHop++;
-            } while (currentHop <= sMaxHops
+            } while (currentHop <= MaxHops
                 && (discoveryReply.Status == IPStatus.TtlExpired
                     || discoveryReply.Status == IPStatus.TimedOut));
 
             if (Quiet.IsPresent)
             {
-                WriteObject(currentHop <= sMaxHops);
+                WriteObject(currentHop <= MaxHops);
+            }
+            else if (currentHop > MaxHops)
+            {
+                var message = StringUtil.Format(
+                    TestConnectionResources.MaxHopsExceeded,
+                    resolvedTargetName,
+                    MaxHops);
+                var pingException = new PingException(message);
+                WriteError(new ErrorRecord(
+                    pingException,
+                    TestConnectionExceptionId,
+                    ErrorCategory.ConnectionError,
+                    targetAddress));
             }
         }
 
