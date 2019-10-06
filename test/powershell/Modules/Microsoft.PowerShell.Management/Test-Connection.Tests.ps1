@@ -34,7 +34,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.Ping | Should -Be 1
             $result.Source | Should -BeExactly $hostName
             $result.Destination | Should -BeExactly $targetName
-            $result.Address | Should -BeExactly $targetAddressIPv6
+            $result.Address | Should -BeIn @($targetAddress, $targetAddressIPv6)
             $result.Status | Should -BeExactly "Success"
             $result.Latency | Should -BeOfType "long"
             $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
@@ -109,19 +109,27 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Allows us to Force IPv6" {
-            $result = Test-Connection $targetName -Count 1 -IPv6
+            $result = Test-Connection $targetName -IPv6 -Count 4 |
+                Where-Object Status -eq Success |
+                Select-Object -First 1
 
             $result.Address | Should -BeExactly $targetAddressIPv6
             $result.Options | Should -Not -BeNullOrEmpty
         }
 
-        It 'can convert IPv6 addresses to IPv4 when required' {
-            $result = Test-Connection $targetAddressIPv6 -IPv4 -Count 1
+        It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' {
+            $result = Test-Connection '2001:4860:4860::8888' -IPv4 -Count 4 |
+                Where-Object Status -eq Success |
+                Select-Object -First 1
+            $result.Address.IPAddressToString | Should -BeExactly '8.8.8.8'
             $result.Address.AddressFamily | Should -BeExactly 'InterNetwork'
         }
 
-        It 'can convert IPv4 addresses to IPv6 with -IPv6' {
-            $result = Test-Connection $targetAddress -IPv6 -Count 1
+        It 'can convert IPv4 addresses to IPv6 with -IPv6 parameter' {
+            $result = Test-Connection '8.8.8.8' -IPv6 -Count 4 |
+                Where-Object Status -eq Success |
+                Select-Object -First 1
+            $result.Address.IPAddressToString | Should -BeExactly '2001:4860:4860::8888'
             $result.Address.AddressFamily | Should -BeExactly 'InterNetworkV6'
         }
 
