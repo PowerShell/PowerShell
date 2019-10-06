@@ -82,5 +82,12 @@ Describe "String cmdlets" -Tags "CI" {
             $Match | Should -BeOfType [String]
             $Match | Should -Be "abc"
         }
+
+        It "-OnlyMatching and -AllMatches returns all strings in a matching line" {
+            $Match = "abc123abc" | Select-String "abc" -OnlyMatching -AllMatches
+
+            $Match | Should -HaveCount 2
+            $Match | Should -Be "abc","abc"
+        }
     }
 }

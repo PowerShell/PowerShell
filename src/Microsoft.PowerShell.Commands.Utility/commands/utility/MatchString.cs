@@ -1693,7 +1693,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (MatchInfo match in contextTracker.EmitQueue)
                 {
-                    WriteObject(match.Matches[0].Value);
+                    if (AllMatches)
+                    {
+                        foreach (Match individual in match.Matches)
+                        {
+                            WriteObject(individual.Value);
+                        }
+                    }
+                    else
+                    {
+                        WriteObject(match.Matches[0].Value);
+                    }
                 }
             }
             else if (Quiet && !List)
