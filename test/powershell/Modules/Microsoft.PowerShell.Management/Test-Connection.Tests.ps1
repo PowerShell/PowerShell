@@ -8,11 +8,7 @@ Describe "Test-Connection" -tags "CI" {
         $hostName = [System.Net.Dns]::GetHostName()
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
-        # TODO:
-        # CI Travis don't support IPv6
-        # so we use the workaround.
-        # $targetAddressIPv6 = "::1"
-        $targetAddressIPv6 = [System.Net.Dns]::GetHostEntry($targetName).AddressList[0].IPAddressToString
+        $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
         # this resolves to an actual IP rather than 127.0.0.1
         # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
@@ -112,12 +108,21 @@ Describe "Test-Connection" -tags "CI" {
             }
         }
 
-        It "Force IPv6" -Pending {
+        It "Allows us to Force IPv6" {
             $result = Test-Connection $targetName -Count 1 -IPv6
 
-            $result[0].Address | Should -BeExactly $targetAddressIPv6
-            # We should check Null not Empty!
-            $result[0].Options | Should -Be $null
+            $result.Address | Should -BeExactly $targetAddressIPv6
+            $result.Options | Should -Not -BeNullOrEmpty
+        }
+
+        It 'can convert IPv6 addresses to IPv4 when required' {
+            $result = Test-Connection $targetAddressIPv6 -IPv4 -Count 1
+            $result.Address.AddressFamily | Should -BeExactly 'InterNetwork'
+        }
+
+        It 'can convert IPv4 addresses to IPv6 with -IPv6' {
+            $result = Test-Connection $targetAddress -IPv6 -Count 1
+            $result.Address.AddressFamily | Should -BeExactly 'InterNetworkV6'
         }
 
         It "MaxHops Should -Be greater 0" {
