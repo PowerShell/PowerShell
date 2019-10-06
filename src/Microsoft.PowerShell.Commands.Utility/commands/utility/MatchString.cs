@@ -1390,6 +1390,7 @@ namespace Microsoft.PowerShell.Commands
         /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
         /// </summary>
         [Parameter]
+        [Alias("o")]
         public SwitchParameter OnlyMatching { get; set; }
 
         private int[] _context;
