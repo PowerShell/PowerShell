@@ -43,10 +43,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.Latency | Should -BeOfType "long"
             $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
             $result.Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
-            # TODO: Here and below we skip the check on Unix because .Net Core issue
-            if ($isWindows) {
-                $pingResults[0].BufferSize | Should -Be 32
-            }
+            $result.BufferSize | Should -Be 32
         }
 
         It "Count parameter" {
