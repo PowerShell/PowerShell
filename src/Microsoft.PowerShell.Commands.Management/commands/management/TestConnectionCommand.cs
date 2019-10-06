@@ -637,12 +637,23 @@ namespace Microsoft.PowerShell.Commands
         {
             resolvedTargetName = targetNameOrAddress;
 
-            IPHostEntry hostEntry;
+            IPHostEntry hostEntry = null;
             if (IPAddress.TryParse(targetNameOrAddress, out targetAddress))
             {
+                if ((IPv4 && targetAddress.AddressFamily != AddressFamily.InterNetwork)
+                    || (IPv6 && targetAddress.AddressFamily != AddressFamily.InterNetworkV6))
+                {
+                    hostEntry = Dns.GetHostEntry(targetAddress);
+                    targetAddress = GetHostAddress(hostEntry);
+                }
+
                 if (ResolveDestination)
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    if (hostEntry == null)
+                    {
+                        hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    }
+
                     resolvedTargetName = hostEntry.HostName;
                 }
             }
@@ -676,16 +687,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (IPv6 || IPv4)
                 {
-                    AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
-
-                    foreach (var address in hostEntry.AddressList)
-                    {
-                        if (address.AddressFamily == addressFamily)
-                        {
-                            targetAddress = address;
-                            break;
-                        }
-                    }
+                    targetAddress = GetHostAddress(hostEntry);
 
                     if (targetAddress == null)
                     {
@@ -710,6 +712,21 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
+        }
+
+        private IPAddress GetHostAddress(IPHostEntry hostEntry)
+        {
+            AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
+
+            foreach (var address in hostEntry.AddressList)
+            {
+                if (address.AddressFamily == addressFamily)
+                {
+                    return address;
+                }
+            }
+
+            return null;
         }
 
         // Users most often use the default buffer size so we cache the buffer.
