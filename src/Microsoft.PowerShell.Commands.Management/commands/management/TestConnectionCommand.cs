@@ -358,24 +358,6 @@ namespace Microsoft.PowerShell.Commands
                 hopAddress = discoveryReply.Address.ToString() != "0.0.0.0"
                     ? discoveryReply.Address
                     : targetAddress;
-
-                if (ResolveDestination.IsPresent)
-                {
-                    try
-                    {
-                        routerName = discoveryReply.Status == IPStatus.Success
-                            ? Dns.GetHostEntry(discoveryReply.Address).HostName
-                            : discoveryReply.Address?.ToString();
-                    }
-                    catch
-                    {
-                        // Swallow hostname resolution errors and continue with trace
-                    }
-                }
-                else
-                {
-                    routerName = discoveryReply.Address?.ToString();
-                }
 #endif
 
 #if UNIX
@@ -395,6 +377,19 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
+#if !UNIX
+                        if (ResolveDestination.IsPresent && routerName == null)
+                        {
+                            try
+                            {
+                                InitProcessPing(discoveryReply.Address.ToString(), out routerName, out _);
+                            }
+                            catch
+                            {
+                                // Swallow host resolve exceptions and just use the IP address.
+                            }
+                        }
+#endif
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
