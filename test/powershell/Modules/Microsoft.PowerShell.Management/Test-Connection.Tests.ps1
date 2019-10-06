@@ -121,7 +121,8 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection '2001:4860:4860::8888' -IPv4 -Count 4 |
                 Where-Object Status -eq Success |
                 Select-Object -First 1
-            $result.Address.IPAddressToString | Should -BeExactly '8.8.8.8'
+            # Google's DNS can resolve to either address.
+            $result.Address.IPAddressToString | Should -BeIn @('8.8.8.8', '8.8.4.4')
             $result.Address.AddressFamily | Should -BeExactly 'InterNetwork'
         }
 
@@ -129,7 +130,8 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection '8.8.8.8' -IPv6 -Count 4 |
                 Where-Object Status -eq Success |
                 Select-Object -First 1
-            $result.Address.IPAddressToString | Should -BeExactly '2001:4860:4860::8888'
+            # Google's DNS can resolve to either address.
+            $result.Address.IPAddressToString | Should -BeIn @('2001:4860:4860::8888', '2001:4860:4860::8844')
             $result.Address.AddressFamily | Should -BeExactly 'InterNetworkV6'
         }
 
