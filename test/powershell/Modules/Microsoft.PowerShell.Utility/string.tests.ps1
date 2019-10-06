@@ -76,7 +76,7 @@ Describe "String cmdlets" -Tags "CI" {
             $match.RelativePath($pshome.ToUpper()) | Should -Be $file
         }
 
-        It "only matching string and not full MatchInfo object" {
+        It "-OnlyMatching outputs strings instead of full MatchInfo objects" {
             $Match = "abc123","def456" | Select-String "abc" -OnlyMatching
 
             $Match | Should -BeOfType [String]
