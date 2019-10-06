@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
-        [ValidateRange(0, sMaxHops)]
+        [ValidateRange(1, sMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
 
