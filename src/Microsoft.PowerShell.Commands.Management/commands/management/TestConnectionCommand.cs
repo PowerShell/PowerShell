@@ -348,16 +348,18 @@ namespace Microsoft.PowerShell.Commands
                 // Get intermediate hop target. This needs to be done first, so that we can target it properly
                 // and get useful responses.
                 var discoveryAttempts = 0;
+                bool addressIsValid = false;
                 do
                 {
                     discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
                     discoveryAttempts++;
+                    addressIsValid = !(discoveryReply.Address.Equals(IPAddress.Any)
+                        || discoveryReply.Address.Equals(IPAddress.IPv6Any));
                 }
-                while (discoveryReply.Address.ToString() == "0.0.0.0" && discoveryAttempts <= 3);
+                while (discoveryAttempts <= 3 && addressIsValid);
 
-                hopAddress = discoveryReply.Address.ToString() != "0.0.0.0"
-                    ? discoveryReply.Address
-                    : targetAddress;
+                // If we aren't able to get a valid address, just re-target the final destination of the trace.
+                hopAddress = addressIsValid ? discoveryReply.Address : targetAddress;
 #endif
 
 #if UNIX
@@ -963,9 +965,10 @@ namespace Microsoft.PowerShell.Commands
             /// <value></value>
             public string Hostname
             {
-                get => _status.Destination != "0.0.0.0"
-                    ? _status.Destination
-                    : null;
+                get => _status.Destination != IPAddress.Any.ToString()
+                    && _status.Destination != IPAddress.IPv6Any.ToString()
+                        ? _status.Destination
+                        : null;
             }
 
             /// <summary>
