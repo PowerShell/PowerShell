@@ -193,11 +193,14 @@ try
             BeforeAll {
                 if ($skipTest) { return }
                 $module = Import-PSSession -Session $session -Name Get-Variable -Prefix My -AllowClobber
+                $oldErrorView = $ErrorView
+                $ErrorView = "NormalView"
             }
 
             AfterAll {
                 if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                $ErrorView = $oldErrorView
             }
 
             It "Test non-terminating error" {

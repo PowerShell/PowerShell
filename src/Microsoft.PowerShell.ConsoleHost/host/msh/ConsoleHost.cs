@@ -732,6 +732,17 @@ namespace Microsoft.PowerShell
                 _ui = ui;
             }
 
+            public ConsoleColor ErrorAccentColor
+            {
+                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                get
+                { return _ui.ErrorAccentColor; }
+
+                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                set
+                { _ui.ErrorAccentColor = value; }
+            }
+
             public ConsoleColor ErrorForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

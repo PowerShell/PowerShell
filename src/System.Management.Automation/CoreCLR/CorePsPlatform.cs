@@ -140,22 +140,15 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// Gets the location for the various caches.
-        /// </summary>
-        internal static string CacheDirectory
-        {
-            get
-            {
 #if UNIX
-                return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+        internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
-                return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-#endif
-            }
-        }
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
+        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
 
-#if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
@@ -355,7 +348,6 @@ namespace System.Management.Automation
 
                         return xdgCacheDefault;
                     }
-
                     else
                     {
                         if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))

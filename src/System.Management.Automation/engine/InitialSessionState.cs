@@ -2711,14 +2711,7 @@ namespace System.Management.Automation.Runspaces
                 // Or for virtual accounts
                 // WinDir\System32\Microsoft\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
-#if UNIX
-                string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
-#else
-                string userDrivePath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    @"Microsoft\PowerShell\DriveRoots",
-                    directoryName);
-#endif
+                string userDrivePath = Path.Combine(Platform.CacheDirectory, "DriveRoots", directoryName);
 
                 // Create directory if it doesn't exist.
                 if (!System.IO.Directory.Exists(userDrivePath))
@@ -4328,6 +4321,8 @@ end {
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
+
+        internal const ErrorView defaultErrorView = ErrorView.NormalView;
         internal const bool defaultWhatIfPreference = false;
         internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
 
@@ -4410,8 +4405,10 @@ end {
                  ),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                "NormalView",
-                RunspaceInit.ErrorViewDescription
+                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : defaultErrorView,
+                RunspaceInit.ErrorViewDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(ErrorView))
                 ),
             new SessionStateVariableEntry(
                 SpecialVariables.NestedPromptLevel,
