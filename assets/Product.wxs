@@ -75,7 +75,7 @@
     <SetProperty Id="DisableTelemetry"
                  Before="DisableTelemetry"
                  Sequence="execute"
-                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', [System.EnvironmentVariableTarget]::Machine)&quot;" />
+                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Environment[\]]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1',  [\[]System.EnvironmentVariableTarget[\]]::Machine)&quot;" />
     <CustomAction Id="DisableTelemetry"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
