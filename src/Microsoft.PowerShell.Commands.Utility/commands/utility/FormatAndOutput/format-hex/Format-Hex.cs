@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
-        private List<byte> _totalInputBytes;
+        private List<byte> _totalInputBytes = new List<byte>();
 
         /// <summary>
         /// If the input is determined to be heterogenous piped input or each input object turns out to be a complete
@@ -122,8 +122,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_totalInputBytes != null)
             {
-                int offset = Math.Min(_totalInputBytes.Count, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
-                int count = Math.Min(_totalInputBytes.Count - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
+                int offset = Math.Min(_totalInputBytes.Count, Offset < int.MaxValue
+                    ? (int)Offset
+                    : int.MaxValue);
+                int count = Math.Min(_totalInputBytes.Count - offset, Count < int.MaxValue
+                    ? (int)Count
+                    : int.MaxValue);
                 if (offset != 0 || count != _totalInputBytes.Count)
                 {
                     WriteHexadecimal(_totalInputBytes.GetRange(offset, count).ToArray(), null, 0);
@@ -278,7 +282,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (obj is System.IO.FileSystemInfo fsi)
             {
-                _isHeterogenousPipedInput = true;
                 string[] path = { fsi.FullName };
                 List<string> pathsToProcess = ResolvePaths(path, true);
                 ProcessPath(pathsToProcess);
@@ -290,28 +293,35 @@ namespace Microsoft.PowerShell.Commands
             if (_isHeterogenousPipedInput)
             {
                 // Output any previously stored bytes as individual units for consistency of output
-                if (_totalInputBytes != null)
+                if (_totalInputBytes.Count > 0)
                 {
-                    foreach (byte b in inputBytes)
+                    int offset = Math.Min(
+                        _totalInputBytes.Count,
+                        Offset < int.MaxValue
+                            ? (int)Offset
+                            : int.MaxValue);
+                    int count = Math.Min(
+                        _totalInputBytes.Count - offset,
+                        Count < int.MaxValue
+                        ? (int)Count
+                        : int.MaxValue);
+                    if (offset != 0 || count != _totalInputBytes.Count)
                     {
-                        WriteHexadecimal(new[] { b }, null, 0);
+                        WriteHexadecimal(_totalInputBytes.GetRange(offset, count).ToArray(), null, 0);
+                    }
+                    else
+                    {
+                        WriteHexadecimal(_totalInputBytes.ToArray(), null, 0);
                     }
 
-                    _totalInputBytes = null;
+                    _totalInputBytes.Clear();
+                    // Reset flag so we can continue grouping similar types that come in
+                    _isHeterogenousPipedInput = false;
                 }
 
                 if (inputBytes != null)
                 {
-                    int offset = Math.Min(inputBytes.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
-                    int count = Math.Min(inputBytes.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
-                    if (offset != 0 || count != inputBytes.Length)
-                    {
-                        WriteHexadecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
-                    }
-                    else
-                    {
-                        WriteHexadecimal(inputBytes, null, 0);
-                    }
+                    _totalInputBytes.AddRange(inputBytes);
                 }
                 else
                 {
@@ -328,14 +338,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (inputBytes != null)
                 {
-                    if (_totalInputBytes == null)
-                    {
-                        _totalInputBytes = new List<byte>(inputBytes);
-                    }
-                    else
-                    {
-                        _totalInputBytes.AddRange(inputBytes);
-                    }
+                    _totalInputBytes.AddRange(inputBytes);
                 }
                 else
                 {
@@ -361,7 +364,6 @@ namespace Microsoft.PowerShell.Commands
             if (inputObject is string str)
             {
                 _isHeterogenousPipedInput = true;
-                _lastInputType = typeof(string);
                 return Encoding.GetBytes(str);
             }
 
