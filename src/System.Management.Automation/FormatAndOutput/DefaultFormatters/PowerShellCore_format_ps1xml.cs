@@ -747,6 +747,8 @@ namespace System.Management.Automation.Runspaces
                     .GroupByProperty("PSErrorIdentifier", label: "ErrorIdentifier")
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
+                            $maxDepth = 10
+                            $ellipsis = ""`u{2026}""
                             $resetColor = ''
                             if ($Host.UI.SupportsVirtualTerminal) {
                                 $resetColor = ""`e[0m""
@@ -779,7 +781,7 @@ namespace System.Management.Automation.Runspaces
                                 return $colors[$color]
                             }
 
-                            function Show-ErrorRecord($obj, [int]$indent = 0) {
+                            function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
                                 $newline = [Environment]::Newline
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
@@ -793,8 +795,10 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 }
 
+                                $addedProperty = $false
                                 foreach ($prop in $obj.PSObject.Properties) {
                                     if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIdentifier') {
+                                        $addedProperty = $true
                                         $null = $output.Append($prefix)
                                         $null = $output.Append($accentColor)
                                         $null = $output.Append($prop.Name)
@@ -813,29 +817,44 @@ namespace System.Management.Automation.Runspaces
                                         if ($prop.Value -is [Exception] -or $prop.TypeNameOfValue -eq 'System.Management.Automation.InvocationInfo' -or
                                             $prop.Value -is [System.Management.Automation.ErrorRecord]) {
 
-                                            $null = $output.Append($newline)
-                                            $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent))
+                                            if ($depth -eq $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent ($depth + 1)))
+                                            }
                                         }
                                         elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
-                                            $targetSite = [pscustomobject]@{
-                                                Name = $prop.Value.Name
-                                                DeclaringType = $prop.Value.DeclaringType
-                                                MemberType = $prop.Value.MemberType
-                                                Module = $prop.Value.Module
+                                            if ($depth -eq $maxDepth) {
+                                                $null = $output.Append($ellipsis)
                                             }
+                                            else {
+                                                $targetSite = [pscustomobject]@{
+                                                    Name = $prop.Value.Name
+                                                    DeclaringType = $prop.Value.DeclaringType
+                                                    MemberType = $prop.Value.MemberType
+                                                    Module = $prop.Value.Module
+                                                }
 
-                                            $null = $output.Append($newline)
-                                            $null = $output.Append((Show-ErrorRecord $targetSite $newIndent))
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
+                                            }
                                         }
                                         else {
                                             $value = $prop.Value.ToString().Trim()
 
+                                            $isFirstLine = $true
                                             if ($value.Contains(""`n"")) {
                                                 # the 3 is to account for ' : '
                                                 $valueIndent = ' ' * ($propLength + 3)
                                                 # need to trim any extra whitespace already in the text
                                                 foreach ($line in $value.Split(""`n"")) {
-                                                    $null = $output.Append(""${newline}${prefix}${valueIndent}$($line.Trim())"")
+                                                    if (!$isFirstLine) {
+                                                        $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                                    }
+                                                    $null = $output.Append($line.Trim())
+                                                    $isFirstLine = $false
                                                 }
                                             }
                                             else {
@@ -845,6 +864,11 @@ namespace System.Management.Automation.Runspaces
 
                                         $null = $output.Append($newline)
                                     }
+                                }
+
+                                # if we had added nested properties, we need to remove the last newline
+                                if ($addedProperty) {
+                                    $null = $output.Remove($output.Length - $newline.Length, $newline.Length)
                                 }
 
                                 $output.ToString()
