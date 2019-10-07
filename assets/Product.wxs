@@ -72,6 +72,16 @@
                   Execute="deferred"
                   Return="ignore"
                   Impersonate="no" />
+    <SetProperty Id="DisableTelemetry"
+                 Before="DisableTelemetry"
+                 Sequence="execute"
+                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', [System.EnvironmentVariableTarget]::Machine)&quot;" />
+    <CustomAction Id="DisableTelemetry"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
     <InstallExecuteSequence>
       <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
       <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
@@ -80,6 +90,9 @@
       </Custom>
       <Custom Action="EnablePSRemoting" After="InstallFiles">
         <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
+      </Custom>
+      <Custom Action="DisableTelemetry" After="InstallFiles">
+        <![CDATA[NOT Installed AND (DISABLE_TELEMETRY=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -269,7 +282,8 @@
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>
