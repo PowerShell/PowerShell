@@ -453,21 +453,25 @@ namespace Microsoft.PowerShell.Commands
         #region Output
 
         /// <summary>
-        /// Outputs the hexadecimial representation of the input data.
+        /// Outputs the hexadecimal representation of the input data.
         /// </summary>
-        /// <param name="inputBytes">Bytes for the hexadecimial representation.</param>
+        /// <param name="inputBytes">Bytes for the hexadecimal representation.</param>
         /// <param name="path">File path.</param>
         /// <param name="offset">Offset in the file.</param>
         private void WriteHexadecimal(Span<byte> inputBytes, string path, long offset)
         {
-            ByteCollection byteCollectionObject = new ByteCollection((ulong)offset, inputBytes.ToArray(), path);
-            WriteObject(byteCollectionObject);
-        }
-
-        private void WriteHexadecimal(byte[] inputBytes, string path, long offset)
-        {
-            ByteCollection byteCollectionObject = new ByteCollection((ulong)offset, inputBytes, path);
-            WriteObject(byteCollectionObject);
+            var bytesPerObject = 16;
+            for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
+            {
+                var count = inputBytes.Length - index < bytesPerObject
+                    ? inputBytes.Length - index
+                    : bytesPerObject;
+                var bytes = inputBytes.Slice(index, count);
+                WriteObject(new ByteCollection(
+                    (ulong)index + (ulong)offset,
+                    bytes.ToArray(),
+                    path));
+            }
         }
 
         #endregion
