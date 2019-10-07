@@ -9,7 +9,7 @@ Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
         # if the telemetry file exists, move it out of the way
         # the member is internal, but we can retrieve it via reflection
-        $cacheDir = [System.Management.Automation.Platform].GetMember("CacheDirectory","NonPublic,Static").GetMethod.Invoke($null, $null)
+        $cacheDir = [System.Management.Automation.Platform].GetField("CacheDirectory","NonPublic,Static").GetValue($null)
         $uuidPath = Join-Path -Path $cacheDir -ChildPath telemetry.uuid
         $uuidFileExists = Test-Path -Path $uuidPath
         if ( $uuidFileExists ) {

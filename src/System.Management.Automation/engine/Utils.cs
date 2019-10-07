@@ -458,20 +458,6 @@ namespace System.Management.Automation
 
         private static string[] s_productFolderDirectories;
 
-        /// <summary>
-        /// Specifies the per-user configuration settings directory in a platform agnostic manner.
-        /// </summary>
-        /// <returns>The current user's configuration settings directory.</returns>
-        internal static string GetUserConfigurationDirectory()
-        {
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
-#else
-            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            return IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
-#endif
-        }
-
         private static string[] GetProductFolderDirectories()
         {
             if (s_productFolderDirectories == null)
