@@ -10,6 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Resolve-ErrorRecord implementation.
     /// </summary>
+    [Experimental("Microsoft.PowerShell.Utility.PSResolveErrorRecord", ExperimentAction.Show)]
     [Cmdlet(VerbsDiagnostic.Resolve, "ErrorRecord", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=", DefaultParameterSetName = NewestParameterSetName)]
     public sealed class ResolveErrorRecordCommand : PSCmdlet
     {
