@@ -152,6 +152,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.ErrorRecord#ResolvedErrorRecord",
+                ViewsOf_System_Management_Automation_ResolvedErrorRecord());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
 
@@ -732,6 +736,123 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"$_")
+                    .EndEntry()
+                .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ResolvedErrorRecord()
+        {
+            yield return new FormatViewDefinition("ResolvedErrorInstance",
+                CustomControl.Create()
+                    .GroupByProperty("PSErrorIdentifier", label: "ErrorIdentifier")
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"
+                            $resetColor = ''
+                            if ($Host.UI.SupportsVirtualTerminal) {
+                                $resetColor = ""`e[0m""
+                            }
+
+                            function Get-VT100Color([string] $color) {
+                                if (! $Host.UI.SupportsVirtualTerminal) {
+                                    return ''
+                                }
+
+                                $colors = @{
+                                    'Black' = ""`e[2;30m""
+                                    'DarkRed' = ""`e[2;31m""
+                                    'DarkGreen' = ""`e[2;32m""
+                                    'DarkYellow' = ""`e[2;33m""
+                                    'DarkBlue' = ""`e[2;34m""
+                                    'DarkMagenta' = ""`e[2;35m""
+                                    'DarkCyan' = ""`e[2;36m""
+                                    'Gray' = ""`e[2;37m""
+                                    'DarkGray' = ""`e[1;30m""
+                                    'Red' = ""`e[1;31m""
+                                    'Green' = ""`e[1;32m""
+                                    'Yellow' = ""`e[1;33m""
+                                    'Blue' = ""`e[1;34m""
+                                    'Magenta' = ""`e[1;35m""
+                                    'Cyan' = ""`e[1;36m""
+                                    'White' = ""`e[1;37m""
+                                }
+
+                                return $colors[$color]
+                            }
+
+                            function Show-ErrorRecord($obj, [int]$indent = 0) {
+                                $newline = [Environment]::Newline
+                                $output = [System.Text.StringBuilder]::new()
+                                $prefix = ' ' * $indent
+                                $accentColor = Get-VT100Color $Host.PrivateData.VerboseForegroundColor
+
+                                # first find the longest property so we can indent properly
+                                $propLength = 0
+                                foreach ($prop in $obj.PSObject.Properties) {
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Name.Length -gt $propLength) {
+                                        $propLength = $prop.Name.Length
+                                    }
+                                }
+
+                                foreach ($prop in $obj.PSObject.Properties) {
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIdentifier') {
+                                        $null = $output.Append($prefix)
+                                        $null = $output.Append($accentColor)
+                                        $null = $output.Append($prop.Name)
+                                        $propNameIndent = ' ' * ($propLength - $prop.Name.Length)
+                                        $null = $output.Append($propNameIndent)
+                                        $null = $output.Append(' : ')
+                                        $null = $output.Append($resetColor)
+
+                                        if ($prop.Value -is [Exception] -or $prop.TypeNameOfValue -eq 'System.Management.Automation.InvocationInfo' -or
+                                            $prop.Value -is [System.Management.Automation.ErrorRecord]) {
+
+                                            if ([Console]::WindowWidth -le 120) {
+                                                $newIndent = $indent + 4
+                                            }
+                                            else {
+                                                $newIndent = $propLength + $indent + 3
+                                            }
+
+                                            $null = $output.Append($newline)
+                                            $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent))
+                                        }
+                                        elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
+                                            $targetSite = [pscustomobject]@{
+                                                Name = $prop.Value.Name
+                                                DeclaringType = $prop.Value.DeclaringType
+                                                MemberType = $prop.Value.MemberType
+                                                Module = $prop.Value.Module
+                                            }
+
+                                            $newIndent = $propLength + $indent + 3
+                                            $null = $output.Append($newline)
+                                            $null = $output.Append((Show-ErrorRecord $targetSite $newIndent))
+                                        }
+                                        else {
+                                            $value = $prop.Value.ToString().Trim()
+
+                                            if ($value.Contains(""`n"")) {
+                                                # the 3 is to account for ' : '
+                                                $valueIndent = ' ' * ($propLength + 3)
+                                                # need to trim any extra whitespace already in the text
+                                                foreach ($line in $value.Split(""`n"")) {
+                                                    $null = $output.Append(""${newline}${prefix}${valueIndent}$($line.Trim())"")
+                                                }
+                                            }
+                                            else {
+                                                $null = $output.Append($value)
+                                            }
+                                        }
+
+                                        $null = $output.Append($newline)
+                                    }
+                                }
+
+                                $output.ToString()
+                            }
+
+                            Show-ErrorRecord $_
+                        ")
                     .EndEntry()
                 .EndControl());
         }
