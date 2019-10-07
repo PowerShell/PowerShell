@@ -3013,7 +3013,6 @@ namespace System.Management.Automation
 
                     _runningJobs.Add(jobArgs.Job.InstanceId, jobArgs);
                     jobArgs.Debugger.DebuggerStop += HandleMonitorRunningJobsDebuggerStop;
-                    jobArgs.Debugger.BreakpointUpdated += HandleBreakpointUpdated;
 
                     newJob = true;
                 }
@@ -3090,7 +3089,6 @@ namespace System.Management.Automation
                 if (_runningJobs.TryGetValue(job.InstanceId, out jobArgs))
                 {
                     jobArgs.Debugger.DebuggerStop -= HandleMonitorRunningJobsDebuggerStop;
-                    jobArgs.Debugger.BreakpointUpdated -= HandleBreakpointUpdated;
                     _runningJobs.Remove(job.InstanceId);
                 }
             }
@@ -3308,28 +3306,6 @@ namespace System.Management.Automation
                     (((DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript) && !IsLocalSession));
         }
 
-        private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
-        {
-            switch (e.UpdateType)
-            {
-                case BreakpointUpdateType.Set:
-                    AddNewBreakpoint(e.Breakpoint);
-                    break;
-
-                case BreakpointUpdateType.Removed:
-                    RemoveBreakpoint(e.Breakpoint);
-                    break;
-
-                case BreakpointUpdateType.Enabled:
-                    EnableBreakpoint(e.Breakpoint);
-                    break;
-
-                case BreakpointUpdateType.Disabled:
-                    DisableBreakpoint(e.Breakpoint);
-                    break;
-            }
-        }
-
         private bool IsRunningWFJobsDebugger(Debugger debugger)
         {
             lock (_syncObject)
@@ -3528,7 +3504,6 @@ namespace System.Management.Automation
             if (nestedDebugger != null)
             {
                 nestedDebugger.DebuggerStop -= HandleMonitorRunningRSDebuggerStop;
-                nestedDebugger.BreakpointUpdated -= HandleBreakpointUpdated;
                 nestedDebugger.Dispose();
 
                 // If current active debugger, then pop.
@@ -3698,7 +3673,6 @@ namespace System.Management.Automation
                     runspaceInfo.NestedDebugger = nestedDebugger;
 
                     nestedDebugger.DebuggerStop += HandleMonitorRunningRSDebuggerStop;
-                    nestedDebugger.BreakpointUpdated += HandleBreakpointUpdated;
 
                     if (((_lastActiveDebuggerAction == DebuggerResumeAction.StepInto) || (_currentDebuggerAction == DebuggerResumeAction.StepInto)) &&
                         !nestedDebugger.IsActive)

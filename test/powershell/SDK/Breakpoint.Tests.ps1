@@ -77,13 +77,6 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
     Context 'Managing breakpoints in a remote runspace via the SDK' {
 
-        AfterAll {
-            # Get rid of any breakpoints that were created in the default runspace.
-            # This is necessary due to a known bug that causes breakpoints with the
-            # same id to be created or updated in the default runspace.
-            Get-PSBreakpoint | Remove-PSBreakpoint
-        }
-
         It 'Can set command breakpoints' {
             $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
         }
@@ -113,6 +106,14 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
                 $bp = $jobRunspace.Debugger.EnableBreakpoint($bp)                
                 $bp.Enabled | Should -BeTrue
             }
+        }
+
+        It 'Doesn''t manipulate any breakpoints in the default runspace' {
+            # Issue https://github.com/PowerShell/PowerShell/issues/10167 fix:
+            # Ensure that breakpoints were not created in the default runspace.
+            # Prior to this issue being fixed, breakpoints with the same id
+            # would be created or updated in the default runspace.
+            $host.Runspace.Debugger.GetBreakpoints() | Should -BeNullOrEmpty
         }
 
         It 'Can remove breakpoints' {

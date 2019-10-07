@@ -266,6 +266,23 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region ErrorView
+    /// <summary>
+    /// Defines the potential ErrorView options.
+    /// </summary>
+    public enum ErrorView
+    {
+        /// <summary>Existing all red multi-line output.</summary>
+        NormalView = 0,
+
+        /// <summary>Only show category information.</summary>
+        CategoryView = 1,
+
+        /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
+        ConciseView = 2,
+    }
+    #endregion ErrorView
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine
@@ -291,7 +308,7 @@ namespace System.Management.Automation
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
         Ignore = 4,
 
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
+        /// <summary>Reserved for future use.</summary>
         Suspend = 5,
 
         /// <summary>Enter the debugger.</summary>

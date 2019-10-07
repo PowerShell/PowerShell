@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand);
+                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
@@ -730,6 +730,17 @@ namespace Microsoft.PowerShell
             {
                 if (ui == null) throw new ArgumentNullException("ui");
                 _ui = ui;
+            }
+
+            public ConsoleColor ErrorAccentColor
+            {
+                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                get
+                { return _ui.ErrorAccentColor; }
+
+                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                set
+                { _ui.ErrorAccentColor = value; }
             }
 
             public ConsoleColor ErrorForegroundColor

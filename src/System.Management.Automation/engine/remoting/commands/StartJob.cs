@@ -481,6 +481,13 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _initScript;
 
         /// <summary>
+        /// Gets or sets an initial working directory for the powershell background job.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string WorkingDirectory { get; set; }
+
+        /// <summary>
         /// Launches the background job as a 32-bit process. This can be used on
         /// 64-bit systems to launch a 32-bit wow process for the background job.
         /// </summary>
@@ -589,6 +596,18 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
+            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            {
+                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
+                    var errorRecord = new ErrorRecord(
+                        new DirectoryNotFoundException(message),
+                        "DirectoryNotFoundException",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null);
+
+                    ThrowTerminatingError(errorRecord);
+            }
+
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);
 
             if (ParameterSetName == DefinitionNameParameterSet)
@@ -628,6 +647,7 @@ namespace Microsoft.PowerShell.Commands
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
+            connectionInfo.WorkingDirectory = this.WorkingDirectory;
 
             RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());

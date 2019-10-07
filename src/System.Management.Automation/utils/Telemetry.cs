@@ -104,12 +104,14 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 s_telemetryClient = new TelemetryClient();
                 TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
+
                 // Set this to true to reduce latency during development
                 TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
                 s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
-                s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
                         "Microsoft.PowerShell.Archive",
                         "Microsoft.PowerShell.Host",
                         "Microsoft.PowerShell.Management",
@@ -122,6 +124,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "PSReadLine",
                         "ThreadJob",
                     };
+
                 s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
             }
         }
@@ -193,7 +196,6 @@ namespace Microsoft.PowerShell.Telemetry
                 // do nothing, telemetry can't be sent
                 // don't send the panic telemetry as if we have failed above, it will likely fail here.
             }
-
         }
 
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
@@ -233,7 +235,9 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 return;
             }
+
             var properties = new Dictionary<string, string>();
+
             // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
             // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
             // which has limited usefulness
@@ -354,7 +358,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// <returns>A guid which represents the unique identifier.</returns>
         private static Guid GetUniqueIdentifier()
         {
-            // Try to get the unique id. If this returns false, we'll 
+            // Try to get the unique id. If this returns false, we'll
             // create/recreate the telemetry.uuid file to persist for next startup.
             Guid id = Guid.Empty;
             string uuidPath = Path.Join(Platform.CacheDirectory, "telemetry.uuid");
@@ -363,7 +367,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return id;
             }
 
-            // Multiple processes may start simultaneously so we need a system wide 
+            // Multiple processes may start simultaneously so we need a system wide
             // way to control access to the file in the case (although remote) when we have
             // simulataneous shell starts without the persisted file which attempt to create the file.
             using (var m = new Mutex(true, "CreateUniqueUserId"))

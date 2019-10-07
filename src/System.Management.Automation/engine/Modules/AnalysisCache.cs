@@ -1121,11 +1121,7 @@ namespace System.Management.Automation
                 cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
             }
 
-#if UNIX
-            s_cacheStoreLocation = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), cacheFileName);
-#else
-            s_cacheStoreLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell", cacheFileName);
-#endif
+            s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);
         }
     }
 

@@ -123,8 +123,8 @@ function Install-PluginEndpoint {
     # Install the plugin #
     #                    #
     ######################
-
-    if ($PowerShellHome -ne $null)
+    
+    if (-not [String]::IsNullOrEmpty($PowerShellHome))
     {
         $targetPsHome = $PowerShellHome
         $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'

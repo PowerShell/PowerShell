@@ -91,6 +91,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         $Error.Clear()
     }
 
+    It "Clear-Host does not injects data into PowerShell output stream" {
+        & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
+    }
+
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
             { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
@@ -393,7 +397,7 @@ export $envVarName='$guid'
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("throw 'boom'"))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
