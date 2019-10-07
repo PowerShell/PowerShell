@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[] s_DefaultSendBuffer = null;
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         private Ping _sender;
 

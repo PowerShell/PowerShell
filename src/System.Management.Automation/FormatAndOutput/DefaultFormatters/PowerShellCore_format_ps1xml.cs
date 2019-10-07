@@ -1694,7 +1694,14 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "MtuSize(B)", width: 7)
                     .StartRowDefinition()
                         .AddPropertyColumn("Source")
-                        .AddPropertyColumn("Address")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Address) {
+                                $_.Address
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
                         .AddScriptBlockColumn(@"
                             if ($_.Status -eq 'TimedOut') {
                                 '*'
