@@ -83,16 +83,11 @@ namespace System.Management.Automation.Configuration
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
             // Sets the per-user configuration directory
-            // Note: This directory may or may not exist depending upon the execution scenario.
-            // Writes will attempt to create the directory if it does not already exist.
+            // Note: This directory may or may not exist depending upon the
+            // execution scenario. Writes will attempt to create the directory
+            // if it does not already exist.
             perUserConfigDirectory = Platform.ConfigDirectory;
-            perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
-
-            emptyConfig = new JObject();
-            configRoots = new JObject[2];
-            serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
-
-            fileLock = new ReaderWriterLockSlim();
+            perUserConfigFile = Path.Combine(perUserConfigDirectory, configFileName);
         }
 
         private string GetConfigFilePath(ConfigScope scope)
