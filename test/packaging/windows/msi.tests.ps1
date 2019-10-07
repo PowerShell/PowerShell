@@ -157,5 +157,6 @@ Describe -Name "Windows MSI" -Fixture {
                     } | Should -Not -Throw
                 }
             }
+        }
     }
 }
