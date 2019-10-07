@@ -880,7 +880,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
-                                                $posmsg = ""error in${resetcolor} $($myinv.ScriptName)${newline}""
+                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
@@ -901,8 +901,13 @@ namespace System.Management.Automation.Runspaces
                                             $line = $myinv.Line
                                             $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
                                             $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
-                                            $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
-                                            $line = $line.Insert($myinv.OffsetInLine - 1, $errorColor)
+
+                                            # don't color the whole line red
+                                            if ($offsetLength -lt $line.Length - 1) {
+                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
+                                                $line = $line.Insert($myinv.OffsetInLine - 1, $errorColor)
+                                            }
+
                                             $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
                                             $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
