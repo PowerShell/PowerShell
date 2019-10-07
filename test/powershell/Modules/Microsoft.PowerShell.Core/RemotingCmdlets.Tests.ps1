@@ -13,7 +13,17 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
     }
 
     It "Invoke-Command HostName parameter set should throw error for invalid key path" {
-        { Invoke-Command -HostName localhost -UserName User -KeyFilePath NoKeyFile -ScriptBlock {1} } |
+        { Invoke-Command -HostName localhost -UserName User -KeyFilePath NoKeyFile -ScriptBlock { 1 } } |
             Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.InvokeCommandCommand"
+    }
+
+    It "Invoke-Command should support positional parameter ScriptBlock when using HostName" {
+        { Invoke-Command -HostName localhost { "test" } } |
+            Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
+    }
+
+    It "Invoke-Command should support poisitonal parameter ScriptBlock when using SSHConnection" {
+        { Invoke-Command -SSHConnection @{ HostName = "localhost" } { "test" } } |
+            Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
     }
 }
