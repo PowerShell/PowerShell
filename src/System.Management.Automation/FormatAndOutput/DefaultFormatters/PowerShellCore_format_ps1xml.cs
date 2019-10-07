@@ -785,7 +785,7 @@ namespace System.Management.Automation.Runspaces
                                 $newline = [Environment]::Newline
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
-                                $accentColor = Get-VT100Color $Host.PrivateData.DebugForegroundColor
+                                $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
 
                                 # first find the longest property so we can indent properly
                                 $propLength = 0
