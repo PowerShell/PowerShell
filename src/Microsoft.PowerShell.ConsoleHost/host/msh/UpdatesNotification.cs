@@ -113,9 +113,7 @@ namespace Microsoft.PowerShell
                 today.Month.ToString(),
                 today.Day.ToString());
 
-            string sentinelFilePath = Path.Combine(s_cacheDirectory, SentinelFileName);
             string todayDoneFilePath = Path.Combine(s_cacheDirectory, todayDoneFileName);
-
             if (File.Exists(todayDoneFilePath))
             {
                 // A successful update check has been done today.
@@ -127,6 +125,7 @@ namespace Microsoft.PowerShell
             {
                 // Use 'sentinelFilePath' as the file lock.
                 // The update-check tasks started by every 'pwsh' process of the same version will compete on holding this file.
+                string sentinelFilePath = Path.Combine(s_cacheDirectory, SentinelFileName);
                 using (new FileStream(sentinelFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize: 1, FileOptions.DeleteOnClose))
                 {
                     if (File.Exists(todayDoneFilePath))
@@ -146,7 +145,7 @@ namespace Microsoft.PowerShell
                     if (!parseSuccess)
                     {
                         // The update file is corrupted, either because more than one update files were found unexpectedly,
-                        // or because the update file name is not in the valid format.
+                        // or because the update file name failed to be parsed into a release version and a publish date.
                         // This is **very unlikely** to happen unless the file is accidentally altered manually.
                         // We try to recover here by cleaning up all update files.
                         foreach (string file in Directory.EnumerateFiles(s_cacheDirectory, UpdateFileNamePattern, s_enumOptions))
@@ -165,11 +164,13 @@ namespace Microsoft.PowerShell
 
                     if (release != null)
                     {
+                        // The date part of the string is 'YYYY-MM-DD'.
+                        const int dateLength = 10;
                         string newUpdateFileName = string.Format(
                             CultureInfo.InvariantCulture,
                             UpdateFileNameTemplate,
                             release.TagName,
-                            release.PublishAt.Substring(0, 10));
+                            release.PublishAt.Substring(0, dateLength));
 
                         string newUpdateFilePath = Path.Combine(s_cacheDirectory, newUpdateFileName);
 
@@ -197,6 +198,20 @@ namespace Microsoft.PowerShell
             }
         }
 
+        /// <summary>
+        /// Check for the existence of the update file and parse the file name if it exists.
+        /// </summary>
+        /// <param name="updateFilePath">Get the exact update file path.</param>
+        /// <param name="lastUpdateVersion">Get the version of the new release.</param>
+        /// <param name="lastUpdateDate">Get the publish date of the new release.</param>
+        /// <returns>
+        /// False, when
+        ///   1. found more than one update files that matched the pattern; OR
+        ///   2. found only one update file, but failed to parse its name for version and publish date.
+        /// True, when
+        ///   1. no update file was found, namely no new updates yet;
+        ///   2. found only one update file, and succeeded to parse its name for version and publish date.
+        /// </returns>
         private static bool TryParseUpdateFile(
             out string updateFilePath,
             out SemanticVersion lastUpdateVersion,
@@ -211,8 +226,7 @@ namespace Microsoft.PowerShell
 
             if (!enumerator.MoveNext())
             {
-                // No file was found that matches the pattern, but it's OK that an update file doesn't exist.
-                // This could happen when there is no new updates yet.
+                // It's OK that an update file doesn't exist. This could happen when there is no new updates yet.
                 return true;
             }
 
