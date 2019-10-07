@@ -803,15 +803,15 @@ namespace System.Management.Automation.Runspaces
                                         $null = $output.Append(' : ')
                                         $null = $output.Append($resetColor)
 
+                                        if ([Console]::WindowWidth -le 120) {
+                                            $newIndent = $indent + 4
+                                        }
+                                        else {
+                                            $newIndent = $propLength + $indent + 3
+                                        }
+
                                         if ($prop.Value -is [Exception] -or $prop.TypeNameOfValue -eq 'System.Management.Automation.InvocationInfo' -or
                                             $prop.Value -is [System.Management.Automation.ErrorRecord]) {
-
-                                            if ([Console]::WindowWidth -le 120) {
-                                                $newIndent = $indent + 4
-                                            }
-                                            else {
-                                                $newIndent = $propLength + $indent + 3
-                                            }
 
                                             $null = $output.Append($newline)
                                             $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent))
@@ -824,7 +824,6 @@ namespace System.Management.Automation.Runspaces
                                                 Module = $prop.Value.Module
                                             }
 
-                                            $newIndent = $propLength + $indent + 3
                                             $null = $output.Append($newline)
                                             $null = $output.Append((Show-ErrorRecord $targetSite $newIndent))
                                         }
