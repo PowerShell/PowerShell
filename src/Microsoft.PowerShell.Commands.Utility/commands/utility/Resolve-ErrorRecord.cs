@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -18,10 +19,10 @@ namespace Microsoft.PowerShell.Commands
         internal const string NewestParameterSetName = "Newest";
 
         /// <summary>
-        /// The ErrorRecord object to resolve.
+        /// The error object to resolve.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = ErrorRecordParameterSetName)]
-        public ErrorRecord ErrorRecord { set; get; }
+        public PSObject InputObject { set; get; }
 
         /// <summary>
         /// The number of ErrorRecords to resolve starting with newest first.
@@ -35,12 +36,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            var errorRecords = new List<ErrorRecord>();
+            var errorRecords = new List<object>();
             var index = 0;
 
-            if (ErrorRecord != null)
+            if (InputObject != null)
             {
-                errorRecords.Add(ErrorRecord);
+                if (InputObject.BaseObject is Exception || InputObject.BaseObject is ErrorRecord)
+                errorRecords.Add(InputObject);
             }
             else
             {
@@ -54,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
                 while (count > 0)
                 {
-                    errorRecords.Add((ErrorRecord)errors[index]);
+                    errorRecords.Add(errors[index]);
                     index++;
                     count--;
                 }
@@ -63,17 +65,20 @@ namespace Microsoft.PowerShell.Commands
             index = 0;
             bool addErrorIdentifier = errorRecords.Count > 1 ? true : false;
 
-            foreach (ErrorRecord errorRecord in errorRecords)
+            foreach (object errorRecord in errorRecords)
             {
-                var psObj = new PSObject(errorRecord);
-                psObj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#ResolvedErrorRecord");
-                psObj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
+                PSObject obj = PSObject.AsPSObject(errorRecord);
+                obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#ResolvedErrorRecord");
+                // Remove some types so they don't get rendered by those formats
+                obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
+                obj.TypeNames.Remove("System.Exception");
+
                 if (addErrorIdentifier)
                 {
-                    psObj.Properties.Add(new PSNoteProperty("PSErrorIdentifier", index++));
+                    obj.Properties.Add(new PSNoteProperty("PSErrorIdentifier", index++));
                 }
 
-                WriteObject(errorRecord);
+                WriteObject(obj);
             }
         }
     }

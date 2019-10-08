@@ -841,6 +841,22 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
                                             }
                                         }
+                                        elseif ($prop.Value.GetType().IsArray) {
+                                            if ($depth -eq $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $isFirstElement = $true
+                                                foreach ($value in $prop.Value) {
+                                                    $null = $output.Append($newline)
+                                                    if (!$isFirstElement) {
+                                                        $null = $output.Append($newline)
+                                                    }
+                                                    $null = $output.Append((Show-ErrorRecord $value $newIndent ($depth + 1)))
+                                                    $isFirstElement = $false
+                                                }
+                                            }
+                                        }
                                         else {
                                             $value = $prop.Value.ToString().Trim()
 
@@ -995,18 +1011,6 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             return ($string.Substring(0,$length) -split '\s',-2)[0]
-
-                                            #if (-not $string.Contains(' ')) {
-                                            #    return $string.Substring(0, $length)
-                                            #}
-
-                                            #$split = $string.Substring(0, $length).Split(' ')
-                                            #if ($split.Count -gt 1) {
-                                            #    return [string]::Join(' ', $split, 0, $split.Count - 1)
-                                            #}
-                                            #else {
-                                            #    return $split[0]
-                                            #}
                                         }
 
                                         $errorColor = ''

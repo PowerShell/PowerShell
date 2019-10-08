@@ -55,4 +55,16 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         $out = $error[0] | Resolve-ErrorRecord | Out-String
         $out | Should -BeLikeExactly '*-2146233087*'
     }
+
+    It 'Resolve-ErrorRecord will handle Exceptions' {
+        try {
+            Invoke-Expression '1/d'
+        }
+        catch {
+        }
+
+        $out = Resolve-ErrorRecord | Out-String
+        $out | Should -BeLikeExactly '*ExpectedValueExpression*'
+        $out | Should -BeLikeExactly '*UnexpectedToken*'
+    }
 }
