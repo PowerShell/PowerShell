@@ -19,20 +19,20 @@ namespace Microsoft.PowerShell.Commands
         internal const string NewestParameterSetName = "Newest";
 
         /// <summary>
-        /// The error object to resolve.
+        /// Gets or sets the error object to resolve.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = ErrorRecordParameterSetName)]
-        public PSObject InputObject { set; get; }
+        public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// The number of ErrorRecords to resolve starting with newest first.
+        /// Gets or sets the number of error objects to resolve starting with newest first.
         /// </summary>
         [Parameter(ParameterSetName = NewestParameterSetName)]
         [ValidateRange(0, int.MaxValue)]
-        public int Newest { set; get; } = 1;
+        public int Newest { get; set; } = 1;
 
         /// <summary>
-        /// Process the ErrorRecord.
+        /// Process the error object.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -42,7 +42,9 @@ namespace Microsoft.PowerShell.Commands
             if (InputObject != null)
             {
                 if (InputObject.BaseObject is Exception || InputObject.BaseObject is ErrorRecord)
-                errorRecords.Add(InputObject);
+                {
+                    errorRecords.Add(InputObject);
+                }
             }
             else
             {
@@ -69,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSObject obj = PSObject.AsPSObject(errorRecord);
                 obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#ResolvedErrorRecord");
+
                 // Remove some types so they don't get rendered by those formats
                 obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
                 obj.TypeNames.Remove("System.Exception");

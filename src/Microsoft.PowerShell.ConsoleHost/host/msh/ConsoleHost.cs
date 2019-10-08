@@ -739,132 +739,180 @@ namespace Microsoft.PowerShell
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.FormatAccentColor; }
+                {
+                    return _ui.FormatAccentColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.FormatAccentColor = value; }
+                {
+                    _ui.FormatAccentColor = value;
+                }
             }
 
             public ConsoleColor ErrorAccentColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.ErrorAccentColor; }
+                {
+                    return _ui.ErrorAccentColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.ErrorAccentColor = value; }
+                {
+                    _ui.ErrorAccentColor = value;
+                }
             }
 
             public ConsoleColor ErrorForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.ErrorForegroundColor; }
+                {
+                    return _ui.ErrorForegroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.ErrorForegroundColor = value; }
+                {
+                    _ui.ErrorForegroundColor = value;
+                }
             }
 
             public ConsoleColor ErrorBackgroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.ErrorBackgroundColor; }
+                {
+                    return _ui.ErrorBackgroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.ErrorBackgroundColor = value; }
+                {
+                    _ui.ErrorBackgroundColor = value;
+                }
             }
 
             public ConsoleColor WarningForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.WarningForegroundColor; }
+                {
+                    return _ui.WarningForegroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.WarningForegroundColor = value; }
+                {
+                    _ui.WarningForegroundColor = value;
+                }
             }
 
             public ConsoleColor WarningBackgroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.WarningBackgroundColor; }
+                {
+                    return _ui.WarningBackgroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.WarningBackgroundColor = value; }
+                {
+                    _ui.WarningBackgroundColor = value;
+                }
             }
 
             public ConsoleColor DebugForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.DebugForegroundColor; }
+                {
+                    return _ui.DebugForegroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.DebugForegroundColor = value; }
+                {
+                    _ui.DebugForegroundColor = value;
+                }
             }
 
             public ConsoleColor DebugBackgroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.DebugBackgroundColor; }
+                {
+                    return _ui.DebugBackgroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.DebugBackgroundColor = value; }
+                {
+                    _ui.DebugBackgroundColor = value;
+                }
             }
 
             public ConsoleColor VerboseForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.VerboseForegroundColor; }
+                {
+                    return _ui.VerboseForegroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.VerboseForegroundColor = value; }
+                {
+                    _ui.VerboseForegroundColor = value;
+                }
             }
 
             public ConsoleColor VerboseBackgroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.VerboseBackgroundColor; }
+                {
+                    return _ui.VerboseBackgroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.VerboseBackgroundColor = value; }
+                {
+                    _ui.VerboseBackgroundColor = value;
+                }
             }
 
             public ConsoleColor ProgressForegroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.ProgressForegroundColor; }
+                {
+                    return _ui.ProgressForegroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.ProgressForegroundColor = value; }
+                {
+                    _ui.ProgressForegroundColor = value;
+                }
             }
 
             public ConsoleColor ProgressBackgroundColor
             {
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
-                { return _ui.ProgressBackgroundColor; }
+                {
+                    return _ui.ProgressBackgroundColor;
+                }
 
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
-                { _ui.ProgressBackgroundColor = value; }
+                {
+                    _ui.ProgressBackgroundColor = value;
+                }
             }
         }
 
