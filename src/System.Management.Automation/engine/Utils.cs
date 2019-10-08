@@ -1246,8 +1246,19 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
+            if (string.IsNullOrEmpty(path) || !path.StartsWith('\\'))
+            {
+                return false;
+            }
+
+            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             Uri uri;
-            return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+            return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
 #endif
         }
 
