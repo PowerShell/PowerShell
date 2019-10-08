@@ -376,7 +376,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("MatchInfo",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_.ToString(((get-location).path))")
+                        .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
                     .EndEntry()
                 .EndControl());
         }
