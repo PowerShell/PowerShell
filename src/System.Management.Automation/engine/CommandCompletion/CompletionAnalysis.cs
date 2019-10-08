@@ -424,6 +424,7 @@ namespace System.Management.Automation
                         if (lastAst.Parent is CommandExpressionAst
                             && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst)
                         {
+                            // Handle scenarios like '$ErrorActionPreference = '<tab>'
                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out List<CompletionResult> completions))
                             {
                                 return completions;
@@ -518,6 +519,7 @@ namespace System.Management.Automation
                         else if (lastAst.Parent is CommandExpressionAst
                             && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst2)
                         {
+                            // Handle scenarios like '[ValidateSet(1,2)][int]$i = 2; $i = <tab>'
                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
                             {
                                 result = completions;
@@ -586,6 +588,8 @@ namespace System.Management.Automation
                             {
                                 completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
                                 completionContext.ReplacementLength = replacementLength = 0;
+
+                                // Handle scenarios like '$ErrorActionPreference =<tab>'
                                 if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
                                 {
                                     return completions;
@@ -761,6 +765,7 @@ namespace System.Management.Automation
                                     {
                                         if (lastAst is AssignmentStatementAst assignmentAst && assignmentAst.Left is VariableExpressionAst variableAst)
                                         {
+                                            // Handle scenarios like '$ErrorActionPreference = <tab>'
                                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out result))
                                             {
                                                 break;
