@@ -1611,7 +1611,18 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("HexBytes")
                         .AddPropertyColumn("AsciiBytes")
                     .EndRowDefinition()
-                    .GroupByProperty("SourceType")
+                    .GroupByScriptBlock(@"
+                        if ($_.SourceType) {
+                            $_.SourceType
+                        }
+                        else if ($_.Path)
+                        {
+                            $_.Path
+                        }
+                        else {
+                            $_.GetHashCode()
+                        }
+                    ")
                 .EndTable());
         }
     }

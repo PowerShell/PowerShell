@@ -217,7 +217,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string HexOffset { get => string.Format(CultureInfo.CurrentCulture, "{0:X16}", Offset64); }
 
-
         /// <summary>
         /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.
         /// </summary>
