@@ -279,7 +279,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Get-Help",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-History",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Host",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Get-HotFix",                       "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Get-HotFix",                       "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Cmdlet",       "Get-Item",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ItemProperty",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ItemPropertyValue",            "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"

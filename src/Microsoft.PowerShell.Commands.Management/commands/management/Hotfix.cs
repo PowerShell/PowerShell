@@ -2,29 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel; // Win32Exception
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics; // Process class
-using System.Globalization;
-using System.IO;
 using System.Management;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Net;
-using System.Runtime.Serialization;
-using System.Security;
-using System.Security.AccessControl;
-using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -90,7 +73,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool foundRecord = false;
                 StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = ComputerWMIHelper.GetConnectionOptions(AuthenticationLevel.Packet, ImpersonationLevel.Impersonate, this.Credential);
+                ConnectionOptions conOptions = new ConnectionOptions();
+                conOptions.Authentication = AuthenticationLevel.Packet;
+                conOptions.Impersonation = ImpersonationLevel.Impersonate;
+                if (Credential != null)
+                {
+                    conOptions.Username = Credential.UserName;
+                    conOptions.SecurePassword = Credential.Password;
+                }
+
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
                 if (Id != null)
@@ -142,15 +133,6 @@ namespace Microsoft.PowerShell.Commands
                         catch (SystemException) // thrown by SecurityIdentifier.constr
                         {
                         }
-                        // catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
-                        // { catch not needed - this is already caught as SystemException
-                        // }
-                        // catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
-                        // { catch not needed - this is already caught as SystemException
-                        // }
-                        // catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
-                        // { catch not needed - this is already caught as SystemException
-                        // }
                     }
 
                     WriteObject(obj);
