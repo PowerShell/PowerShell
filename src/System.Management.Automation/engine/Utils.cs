@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            if (!path.StartsWith('\\'))
+            if (string.IsNullOrEmpty(path) || !path.StartsWith('\\'))
             {
                 return false;
             }
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
             }
 
             Uri uri;
-            return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+            return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
 #endif
         }
 
