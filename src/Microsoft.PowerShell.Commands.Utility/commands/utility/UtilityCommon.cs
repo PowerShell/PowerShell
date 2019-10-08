@@ -224,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const int BytesPerLine = 16;
 
+        private string _hexBytes;
         /// <summary>
         /// Gets a space-delimited string of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>
         /// in hexadecimal format.
@@ -232,17 +233,23 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                StringBuilder line = new StringBuilder(BytesPerLine * 3);
-
-                foreach (var currentByte in Bytes)
+                if (_hexBytes == null)
                 {
-                    line.AppendFormat(CultureInfo.CurrentCulture, "{0:X2} ", currentByte);
+                    StringBuilder line = new StringBuilder(BytesPerLine * 3);
+
+                    foreach (var currentByte in Bytes)
+                    {
+                        line.AppendFormat(CultureInfo.CurrentCulture, "{0:X2} ", currentByte);
+                    }
+
+                    _hexBytes = line.ToString().Trim();
                 }
 
-                return line.ToString().Trim();
+                return _hexBytes;
             }
         }
 
+        private string _asciiBytes;
         /// <summary>
         /// Gets the ASCII string representation of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>.
         /// </summary>
@@ -251,26 +258,31 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                StringBuilder ascii = new StringBuilder(BytesPerLine);
-
-                foreach (var currentByte in Bytes)
+                if (_asciiBytes == null)
                 {
-                    var currentChar = (char)currentByte;
-                    if (char.IsControl(currentChar))
+                    StringBuilder ascii = new StringBuilder(BytesPerLine);
+
+                    foreach (var currentByte in Bytes)
                     {
-                        ascii.Append((char)0xFFFD);
+                        var currentChar = (char)currentByte;
+                        if (char.IsControl(currentChar))
+                        {
+                            ascii.Append((char)0xFFFD);
+                        }
+                        else if (currentChar == 0x0)
+                        {
+                            ascii.Append(' ');
+                        }
+                        else
+                        {
+                            ascii.Append(currentChar);
+                        }
                     }
-                    else if (currentChar == 0x0)
-                    {
-                        ascii.Append(' ');
-                    }
-                    else
-                    {
-                        ascii.Append(currentChar);
-                    }
+
+                    _asciiBytes = ascii.ToString();
                 }
 
-                return ascii.ToString();
+                return _asciiBytes;
             }
         }
 
