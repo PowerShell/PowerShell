@@ -149,7 +149,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "rsnp",                             "Remove-PSSnapin",                  $($FullCLR                               ),     "",                     "",                     ""
 "Alias",        "rujb",                             "Resume-Job",                       $($FullCLR                               ),     "",                     "",                     ""
 "Alias",        "rv",                               "Remove-Variable",                  $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "rve",                              "Resolve-ErrorRecord",              $(         -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
+"Alias",        "rve",                              "Resolve-ErrorRecord",              $(             $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "rvpa",                             "Resolve-Path",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "rwmi",                             "Remove-WMIObject",                 $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "sajb",                             "Start-Job",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
