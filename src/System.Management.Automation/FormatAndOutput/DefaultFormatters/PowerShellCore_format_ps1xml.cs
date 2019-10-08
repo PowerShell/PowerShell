@@ -1613,14 +1613,14 @@ namespace System.Management.Automation.Runspaces
                     .EndRowDefinition()
                     .GroupByScriptBlock(@"
                         if ($_.SourceType) {
-                            $_.SourceType
+                            'TypeName: {0}' -f $_.SourceType.FullName
                         }
                         else if ($_.Path)
                         {
-                            $_.Path
+                            'Path: {0}' -f $_.Path
                         }
                         else {
-                            $_.GetHashCode()
+                            'String: {0}' -f $_.AsciiBytes
                         }
                     ")
                 .EndTable());
