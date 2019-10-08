@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
-        public ByteCollection(UInt64 offset, byte[] value, string path)
+        public ByteCollection(ulong offset, byte[] value, string path)
         {
             if (value == null)
             {
@@ -132,7 +132,17 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, byte[] value)
+        public ByteCollection(uint offset, byte[] value)
+            : this((ulong)offset, value)
+        {
+        }
+
+        /// <summary>
+        /// ByteCollection constructor.
+        /// </summary>
+        /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
+        /// <param name="value">Underlying bytes stored in the collection.</param>
+        public ByteCollection(ulong offset, byte[] value)
         {
             if (value == null)
             {
@@ -148,15 +158,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(UInt64 offset, byte[] value)
+        /// <param name="sourceType">Original object type of the converted input.</param>
+        public ByteCollection(ulong offset, byte[] value, Type sourceType)
+            : this(offset, value)
         {
-            if (value == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("value");
-            }
-
-            Offset64 = offset;
-            Bytes = value;
+            SourceType = sourceType;
         }
 
         /// <summary>
@@ -210,6 +216,12 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
         /// </summary>
         public string HexOffset { get => string.Format(CultureInfo.CurrentCulture, "{0:X16}", Offset64); }
+
+
+        /// <summary>
+        /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.
+        /// </summary>
+        public Type SourceType { get; private set; }
 
         private const int BytesPerLine = 16;
 
