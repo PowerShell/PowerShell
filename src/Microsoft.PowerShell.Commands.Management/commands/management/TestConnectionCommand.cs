@@ -318,9 +318,11 @@ namespace Microsoft.PowerShell.Commands
 
             WriteObject(false);
         }
+
         #endregion ConnectionTest
 
         #region TracerouteTest
+
         private void ProcessTraceroute(string targetNameOrAddress)
         {
             byte[] buffer = GetSendBuffer(BufferSize);
@@ -360,9 +362,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If we aren't able to get a valid address, just re-target the final destination of the trace.
                 hopAddress = addressIsValid ? discoveryReply.Address : targetAddress;
-#endif
-
-#if UNIX
+#else
                 // Unix Ping API returns nonsense "TimedOut" for ALL intermediate hops. No way around this
                 // issue for traceroutes as we rely on information (intermediate addresses, etc.) that is
                 // simply not returned to us by the API.
