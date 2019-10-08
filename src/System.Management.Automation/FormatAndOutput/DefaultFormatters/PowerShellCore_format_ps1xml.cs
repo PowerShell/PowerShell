@@ -1611,6 +1611,7 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("HexBytes")
                         .AddPropertyColumn("AsciiBytes")
                     .EndRowDefinition()
+                    .GroupByProperty("SourceType")
                 .EndTable());
         }
     }
