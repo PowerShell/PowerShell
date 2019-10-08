@@ -1733,9 +1733,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution {
-                    Invoke-Expression "$PackageManager install $Deps"
-                } -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
