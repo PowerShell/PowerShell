@@ -905,8 +905,7 @@ namespace System.Management.Automation.Runspaces
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
-                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
-                                                $line = $line.Insert($myinv.OffsetInLine - 1, $accentColor)
+                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor).Insert($myinv.OffsetInLine - 1, $accentColor)
                                             }
 
                                             $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
