@@ -74,6 +74,7 @@ Describe "Delimiter parameter tests" -Tags "CI" {
             @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
         )
     }
+
     It "Default delimiter '=' works" {
         $actualValue = ConvertFrom-StringData -StringData 'a=b'
 
@@ -85,17 +86,18 @@ Describe "Delimiter parameter tests" -Tags "CI" {
         $sampleData = @"
 a:b
 "@
-    { $sampleData | ConvertFrom-StringData -Delimiter ':' }| Should -Not -Throw
+    { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
     }
 
     It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
         param($Delimiter, $StringData, $ExpectedResult)
 
         $Result = ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter
-        foreach ($Name in $ExpectedResult.Keys) {
-            $Result.$Name | Should -Be $ExpectedResult.$Name
-        }
 
+        foreach ($Key in $ExpectedResult.Keys) {
+            $Key | Should -BeIn $ExpectedResult.Keys
+            $Result.$Key | Should -Be $ExpectedResult.$Key
+        }
     }
 
 }
