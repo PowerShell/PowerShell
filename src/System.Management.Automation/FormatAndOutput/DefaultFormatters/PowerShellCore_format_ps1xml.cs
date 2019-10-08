@@ -742,7 +742,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (@('NativeCommandErrorMessage'.'NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -795,6 +795,7 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockExpressionBinding(@"
 
                                     function Get-ConciseViewPositionMessage {
+                                        Set-StrictMode -Off
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal) {
@@ -970,7 +971,7 @@ namespace System.Management.Automation.Runspaces
                                         elseif ($_.CategoryInfo.Category) {
                                             $reason = $_.CategoryInfo.Category
                                         }
-                                        elseif ($_CategoryInfo.Reason) {
+                                        elseif ($_.CategoryInfo.Reason) {
                                             $reason = $_.CategoryInfo.Reason
                                         }
 
