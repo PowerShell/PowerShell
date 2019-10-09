@@ -17,13 +17,11 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
             Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.InvokeCommandCommand"
     }
 
-    It "Invoke-Command should support positional parameter ScriptBlock when using HostName" {
-        { Invoke-Command -HostName localhost { "test" } } |
-            Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
-    }
-
-    It "Invoke-Command should support positional parameter ScriptBlock when using SSHConnection" {
-        { Invoke-Command -SSHConnection @{ HostName = "localhost" } { "test" } } |
-            Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
+    It "Invoke-Command should support positional parameter ScriptBlock when using parameter set '<ParameterSetName>'" -TestCases @{ParameterSetName = 'SSHHost' }, @{ParameterSetName = 'SSHHostHashParam' } {
+        param ([string]$ParameterSetName)
+        $commandInfo = Get-Command -Name Invoke-Command
+        $sshParameterSet = $commandInfo.ParameterSets | Where-Object { $_.Name -eq $ParameterSetName }
+        $scriptBlockPosition = $sshParameterSet.Parameters | Where-Object { $_.Name -eq 'ScriptBlock' } | Select-Object -ExpandProperty Position
+        $scriptBlockPosition | Should -Be 1
     }
 }
