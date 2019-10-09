@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
-        private List<byte> _totalInputBytes = new List<byte>();
+        private List<byte> _inputBuffer = new List<byte>();
 
         /// <summary>
         /// If the input is determined to be heterogenous piped input or each input object turns out to be a complete
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
             {
-                ProcessObjectContent(InputObject);
+                ProcessInputObjects(InputObject);
             }
             else
             {
@@ -120,21 +120,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_totalInputBytes != null)
+            if (_inputBuffer.Count > 0)
             {
-                int offset = Math.Min(_totalInputBytes.Count, Offset < int.MaxValue
+                int offset = Math.Min(_inputBuffer.Count, Offset < int.MaxValue
                     ? (int)Offset
                     : int.MaxValue);
-                int count = Math.Min(_totalInputBytes.Count - offset, Count < int.MaxValue
+                int count = Math.Min(_inputBuffer.Count - offset, Count < int.MaxValue
                     ? (int)Count
                     : int.MaxValue);
-                if (offset != 0 || count != _totalInputBytes.Count)
+                if (offset != 0 || count != _inputBuffer.Count)
                 {
-                    WriteHexadecimal(_totalInputBytes.GetRange(offset, count).ToArray(), 0, _lastInputType);
+                    WriteHexadecimal(_inputBuffer.GetRange(offset, count).ToArray(), 0, GetGroupLabel(_lastInputType));
                 }
                 else
                 {
-                    WriteHexadecimal(_totalInputBytes.ToArray(), 0, _lastInputType);
+                    WriteHexadecimal(_inputBuffer.ToArray(), 0, GetGroupLabel(_lastInputType));
                 }
             }
         }
@@ -271,22 +271,84 @@ namespace Microsoft.PowerShell.Commands
 
         #region InputObjects
 
+        private void ProcessString(string originalString)
+        {
+            Span<byte> bytes = Encoding.GetBytes(originalString);
+
+            int offset = Math.Min(bytes.Length, Offset < int.MaxValue ? (int)Offset : int.MaxValue);
+            int count = Math.Min(bytes.Length - offset, Count < int.MaxValue ? (int)Count : int.MaxValue);
+
+            if (offset != 0 || count != bytes.Length)
+            {
+                WriteHexadecimal(bytes.Slice(offset, count), offset: 0, GetGroupLabel(typeof(string)));
+            }
+            else
+            {
+                WriteHexadecimal(bytes, offset: 0, label: GetGroupLabel(typeof(string)));
+            }
+        }
+
+        private static readonly Random _idGenerator = new Random();
+        private string GetGroupLabel(Type inputType)
+        {
+            return string.Format("{0} ({1}) <{2:X}>", inputType.Name, inputType.FullName, _idGenerator.Next());
+        }
+
+        private void FlushInputBuffer()
+        {
+            if (_inputBuffer.Count == 0)
+            {
+                return;
+            }
+
+            int offset = Math.Min(_inputBuffer.Count, Offset < int.MaxValue ? (int)Offset : int.MaxValue);
+            int count = Math.Min(_inputBuffer.Count - offset, Count < int.MaxValue ? (int)Count : int.MaxValue);
+
+            if (offset != 0 || count != _inputBuffer.Count)
+            {
+                WriteHexadecimal(
+                    _inputBuffer.GetRange(offset, count).ToArray(),
+                    label: GetGroupLabel(_lastInputType),
+                    offset: 0);
+            }
+            else
+            {
+                WriteHexadecimal(
+                    _inputBuffer.ToArray(),
+                    label: GetGroupLabel(_lastInputType),
+                    offset: 0);
+            }
+
+            // Reset flags so we can go back to filling up the buffer when needed.
+            _lastInputType = null;
+            _isHeterogenousPipedInput = false;
+            _inputBuffer.Clear();
+        }
+
         /// <summary>
         /// Creates a byte array from the object passed to the cmdlet (based on type) and passes
         /// that array on to the WriteHexadecimal method to output.
         /// </summary>
         /// <param name="inputObject">The pipeline input object being processed.</param>
-        private void ProcessObjectContent(PSObject inputObject)
+        private void ProcessInputObjects(PSObject inputObject)
         {
             object obj = inputObject.BaseObject;
 
             if (obj is FileSystemInfo fsi)
             {
-                // Clear last input type to prevent anything mistakenly grouping around files
-                _lastInputType = null;
+                // Output already processed objects first, then process the file input.
+                FlushInputBuffer();
                 string[] path = { fsi.FullName };
                 List<string> pathsToProcess = ResolvePaths(path, true);
                 ProcessPath(pathsToProcess);
+                return;
+            }
+
+            if (obj is string str)
+            {
+                // Output already processed objects first, then process the string input.
+                FlushInputBuffer();
+                ProcessString(str);
                 return;
             }
 
@@ -294,36 +356,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (_isHeterogenousPipedInput)
             {
-                // Output any previously stored bytes as individual units for consistency of output
-                if (_totalInputBytes.Count > 0)
-                {
-                    int offset = Math.Min(
-                        _totalInputBytes.Count,
-                        Offset < int.MaxValue
-                            ? (int)Offset
-                            : int.MaxValue);
-                    int count = Math.Min(
-                        _totalInputBytes.Count - offset,
-                        Count < int.MaxValue
-                            ? (int)Count
-                            : int.MaxValue);
-                    if (offset != 0 || count != _totalInputBytes.Count)
-                    {
-                        WriteHexadecimal(_totalInputBytes.GetRange(offset, count).ToArray(), 0, _lastInputType);
-                    }
-                    else
-                    {
-                        WriteHexadecimal(_totalInputBytes.ToArray(), 0, _lastInputType);
-                    }
-
-                    _totalInputBytes.Clear();
-                    // Reset flags so we can properly grouping later objects
-                    _isHeterogenousPipedInput = false;
-                }
+                FlushInputBuffer();
 
                 if (inputBytes != null)
                 {
-                    _totalInputBytes.AddRange(inputBytes);
+                    _inputBuffer.AddRange(inputBytes);
                 }
                 else
                 {
@@ -340,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (inputBytes != null)
                 {
-                    _totalInputBytes.AddRange(inputBytes);
+                    _inputBuffer.AddRange(inputBytes);
                 }
                 else
                 {
@@ -363,14 +400,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Returns a byte array of the input values, or null if there is no available conversion path.</returns>
         private byte[] ConvertToByteArray(object inputObject)
         {
-            if (inputObject is string str)
-            {
-                // Clear last input type to prevent anything mistakenly grouping with strings
-                _lastInputType = null;
-                _isHeterogenousPipedInput = true;
-                return Encoding.GetBytes(str);
-            }
-
             Type baseType = inputObject.GetType();
             byte[] result = null;
             int elements = 1;
@@ -380,6 +409,7 @@ namespace Microsoft.PowerShell.Commands
             if (baseType.IsArray)
             {
                 _isHeterogenousPipedInput = true;
+                _lastInputType = baseType;
                 baseType = baseType.GetElementType();
                 dynamic dynamicObject = inputObject;
                 elements = (int)dynamicObject.Length;
@@ -485,8 +515,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputBytes">Bytes for the hexadecimal representation.</param>
         /// <param name="offset">Offset in the file.</param>
-        /// <param name="sourceType">The type of the original input objects.</param>
-        private void WriteHexadecimal(Span<byte> inputBytes, long offset, Type sourceType)
+        /// <param name="label">
+        /// The label for the byte group. This may be a file path, a string value, or a
+        /// formatted identifying string for the group.
+        /// </param>
+        private void WriteHexadecimal(Span<byte> inputBytes, long offset, string label)
         {
             var bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
@@ -498,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(new ByteCollection(
                     (ulong)index + (ulong)offset,
                     bytes.ToArray(),
-                    sourceType));
+                    label));
             }
         }
 
