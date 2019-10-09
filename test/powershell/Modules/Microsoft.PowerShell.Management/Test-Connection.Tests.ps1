@@ -179,9 +179,7 @@ Describe "Test-Connection" -tags "CI" {
         It "BufferSize works" {
             $result = Test-Connection $targetName -Count 1 -BufferSize 2
 
-            if ($isWindows) {
-                $result.BufferSize | Should -Be 2
-            }
+            $result.BufferSize | Should -Be 2
         }
 
         It "ResolveDestination for address" {
@@ -226,9 +224,10 @@ Describe "Test-Connection" -tags "CI" {
         }
     }
 
-    # TODO: We skip the MTUSize tests on Unix because we expect 'PacketTooBig' but get 'TimeOut' internally from .Net Core
     Context "MTUSizeDetect" {
-        It "MTUSizeDetect works" {
+        # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
+        # instead of returning a PacketTooBig response cleanly.
+        It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize
 
             $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
@@ -237,7 +236,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        It "Quiet works" {
+        It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize -Quiet
 
             $result | Should -BeOfType "Int32"
