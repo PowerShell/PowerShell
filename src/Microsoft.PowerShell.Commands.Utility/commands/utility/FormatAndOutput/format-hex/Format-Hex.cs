@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// Displays the hexadecimal equivalent of the input data.
     /// </summary>
     [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
-    [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
+    [OutputType(typeof(ByteCollection))]
     [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet
     {
@@ -27,13 +27,14 @@ namespace Microsoft.PowerShell.Commands
         /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
-        private List<byte> _inputBuffer = new List<byte>();
+        private readonly List<byte> _inputBuffer = new List<byte>();
 
         /// <summary>
-        /// If the input is determined to be heterogenous piped input or each input object turns out to be a complete
-        /// array of items, we output each item as we receive it to avoid squashing output together in strange ways.
+        /// Expect to group <see cref="InputObject"/>s by default. When receiving input that should not be grouped,
+        /// e.g., arrays, strings, FileInfo objects, this flag will be disabled until the next groupable
+        /// <see cref="InputObject"/> is received over the pipeline.
         /// </summary>
-        private bool _isHeterogenousPipedInput;
+        private bool _groupInput = true;
 
         /// <summary>
         /// Keep track of prior input types to determine if we're given a heterogenous collection.
@@ -102,14 +103,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (string.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
             {
                 ProcessInputObjects(InputObject);
             }
             else
             {
-                List<string> pathsToProcess = string.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
-                                              ResolvePaths(LiteralPath, true) : ResolvePaths(Path, false);
+                List<string> pathsToProcess = string.Equals(ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase)
+                    ? ResolvePaths(LiteralPath, true)
+                    : ResolvePaths(Path, false);
 
                 ProcessPath(pathsToProcess);
             }
@@ -122,12 +124,9 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_inputBuffer.Count > 0)
             {
-                int offset = Math.Min(_inputBuffer.Count, Offset < int.MaxValue
-                    ? (int)Offset
-                    : int.MaxValue);
-                int count = Math.Min(_inputBuffer.Count - offset, Count < int.MaxValue
-                    ? (int)Count
-                    : int.MaxValue);
+                int offset = Math.Min(_inputBuffer.Count, Offset < int.MaxValue ? (int)Offset : int.MaxValue);
+                int count = Math.Min(_inputBuffer.Count - offset, Count < int.MaxValue ? (int)Count : int.MaxValue);
+
                 if (offset != 0 || count != _inputBuffer.Count)
                 {
                     WriteHexadecimal(_inputBuffer.GetRange(offset, count).ToArray(), 0, GetGroupLabel(_lastInputType));
@@ -155,7 +154,6 @@ namespace Microsoft.PowerShell.Commands
         {
             List<string> pathsToProcess = new List<string>();
             ProviderInfo provider = null;
-            PSDriveInfo drive = null;
 
             foreach (string currentPath in path)
             {
@@ -163,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (literalPath)
                 {
-                    newPaths.Add(Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(currentPath, out provider, out drive));
+                    newPaths.Add(Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(currentPath, out provider, out _));
                 }
                 else
                 {
@@ -224,28 +222,26 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                using var reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
+                long offset = Offset;
+                int bytesRead = 0;
+                long count = 0;
+
+                reader.BaseStream.Position = Offset;
+
+                while ((bytesRead = reader.Read(buffer)) > 0)
                 {
-                    long offset = Offset;
-                    int bytesRead = 0;
-                    long count = 0;
-
-                    reader.BaseStream.Position = Offset;
-
-                    while ((bytesRead = reader.Read(buffer)) > 0)
+                    count += bytesRead;
+                    if (count > Count)
                     {
-                        count += bytesRead;
-                        if (count > Count)
-                        {
-                            bytesRead -= (int)(count - Count);
-                            WriteHexadecimal(buffer.Slice(0, bytesRead), path, offset);
-                            break;
-                        }
-
+                        bytesRead -= (int)(count - Count);
                         WriteHexadecimal(buffer.Slice(0, bytesRead), path, offset);
-
-                        offset += bytesRead;
+                        break;
                     }
+
+                    WriteHexadecimal(buffer.Slice(0, bytesRead), path, offset);
+
+                    offset += bytesRead;
                 }
             }
             catch (IOException fileException)
@@ -259,11 +255,19 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (NotSupportedException notSupportedException)
             {
-                WriteError(new ErrorRecord(notSupportedException, "FormatHexPathRefersToANonFileDevice", ErrorCategory.InvalidArgument, path));
+                WriteError(new ErrorRecord(
+                    notSupportedException,
+                    "FormatHexPathRefersToANonFileDevice",
+                    ErrorCategory.InvalidArgument,
+                    path));
             }
             catch (SecurityException securityException)
             {
-                WriteError(new ErrorRecord(securityException, "FormatHexUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                WriteError(new ErrorRecord(
+                    securityException,
+                    "FormatHexUnauthorizedAccessError",
+                    ErrorCategory.PermissionDenied,
+                    path));
             }
         }
 
@@ -321,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Reset flags so we can go back to filling up the buffer when needed.
             _lastInputType = null;
-            _isHeterogenousPipedInput = false;
+            _groupInput = true;
             _inputBuffer.Clear();
         }
 
@@ -352,43 +356,26 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            byte[] inputBytes = ConvertToByteArray(obj);
+            byte[] inputBytes = ConvertToBytes(obj);
 
-            if (_isHeterogenousPipedInput)
+            if (!_groupInput)
             {
                 FlushInputBuffer();
+            }
 
-                if (inputBytes != null)
-                {
-                    _inputBuffer.AddRange(inputBytes);
-                }
-                else
-                {
-                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        new ArgumentException(errorMessage),
-                        "FormatHexTypeNotSupported",
-                        ErrorCategory.InvalidArgument,
-                        obj.GetType());
-                    WriteError(errorRecord);
-                }
+            if (inputBytes != null)
+            {
+                _inputBuffer.AddRange(inputBytes);
             }
             else
             {
-                if (inputBytes != null)
-                {
-                    _inputBuffer.AddRange(inputBytes);
-                }
-                else
-                {
-                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        new ArgumentException(errorMessage),
-                        "FormatHexTypeNotSupported",
-                        ErrorCategory.InvalidArgument,
-                        obj.GetType());
-                    WriteError(errorRecord);
-                }
+                string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new ArgumentException(errorMessage),
+                    "FormatHexTypeNotSupported",
+                    ErrorCategory.InvalidArgument,
+                    obj.GetType());
+                WriteError(errorRecord);
             }
         }
 
@@ -398,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputObject">The object to convert.</param>
         /// <returns>Returns a byte array of the input values, or null if there is no available conversion path.</returns>
-        private byte[] ConvertToByteArray(object inputObject)
+        private byte[] ConvertToBytes(object inputObject)
         {
             Type baseType = inputObject.GetType();
             byte[] result = null;
@@ -410,8 +397,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 FlushInputBuffer();
                 _lastInputType = baseType;
+                _groupInput = false;
+
                 baseType = baseType.GetElementType();
-                _isHeterogenousPipedInput = true;
                 dynamic dynamicObject = inputObject;
                 elements = (int)dynamicObject.Length;
                 isArray = true;
@@ -425,11 +413,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (baseType.IsPrimitive && elements > 0)
             {
-                if (!_isHeterogenousPipedInput)
+                if (_groupInput)
                 {
                     if (_lastInputType != null && baseType != _lastInputType)
                     {
-                        _isHeterogenousPipedInput = true;
+                        _groupInput = false;
                     }
 
                     _lastInputType = baseType;
@@ -504,10 +492,7 @@ namespace Microsoft.PowerShell.Commands
                     ? inputBytes.Length - index
                     : bytesPerObject;
                 var bytes = inputBytes.Slice(index, count);
-                WriteObject(new ByteCollection(
-                    (ulong)index + (ulong)offset,
-                    bytes.ToArray(),
-                    path));
+                WriteObject(new ByteCollection((ulong)index + (ulong)offset, bytes.ToArray(), path));
             }
         }
 
@@ -529,10 +514,7 @@ namespace Microsoft.PowerShell.Commands
                     ? inputBytes.Length - index
                     : bytesPerObject;
                 var bytes = inputBytes.Slice(index, count);
-                WriteObject(new ByteCollection(
-                    (ulong)index + (ulong)offset,
-                    bytes.ToArray(),
-                    label));
+                WriteObject(new ByteCollection((ulong)index + (ulong)offset, bytes.ToArray(), label));
             }
         }
 
