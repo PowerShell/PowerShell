@@ -408,9 +408,10 @@ namespace Microsoft.PowerShell.Commands
             bool isEnum = false;
             if (baseType.IsArray)
             {
-                _isHeterogenousPipedInput = true;
+                FlushInputBuffer();
                 _lastInputType = baseType;
                 baseType = baseType.GetElementType();
+                _isHeterogenousPipedInput = true;
                 dynamic dynamicObject = inputObject;
                 elements = (int)dynamicObject.Length;
                 isArray = true;
