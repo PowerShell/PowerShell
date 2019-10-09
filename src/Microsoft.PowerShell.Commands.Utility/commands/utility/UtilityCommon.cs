@@ -297,9 +297,9 @@ namespace Microsoft.PowerShell.Commands
             const int BytesPerLine = 16;
             const string LineFormat = "{0:X16}   ";
 
-            // '20 + 3' comes from format "{0:X20}   ".
-            // '20' comes from '[Uint64]::MaxValue.ToString().Length'.
-            StringBuilder nextLine = new StringBuilder(20 + 3 + (BytesPerLine * 3));
+            // '16 + 3' comes from format "{0:X16}   ".
+            // '16' comes from '[Uint64]::MaxValue.ToString("X").Length'.
+            StringBuilder nextLine = new StringBuilder(16 + 3 + (BytesPerLine * 3));
             StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
@@ -307,10 +307,8 @@ namespace Microsoft.PowerShell.Commands
 
             if (Bytes.Length > 0)
             {
-                Int64 charCounter = 0;
+                long charCounter = 0;
 
-                // ToString() in invoked thrice by the F&O for the same content.
-                // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
                 var currentOffset = Offset64;
 
                 nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
@@ -349,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
                         nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
 
                         // Adding a newline to support long inputs strings flowing through InputObject parameterset.
-                        if ((charCounter <= Bytes.Length) && string.IsNullOrEmpty(this.Path))
+                        if ((charCounter <= Bytes.Length) && string.IsNullOrEmpty(Path))
                         {
                             result.AppendLine();
                         }
