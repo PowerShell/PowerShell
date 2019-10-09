@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#if !UNIX
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management;
@@ -226,3 +228,5 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion
 }
+
+#endif
