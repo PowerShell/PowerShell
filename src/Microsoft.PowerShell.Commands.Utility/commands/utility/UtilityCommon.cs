@@ -101,11 +101,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, byte[] value, string path)
+        public ByteCollection(uint offset, byte[] value, string path)
+            : this((ulong)offset, value, path)
         {
-            Offset64 = offset;
-            Bytes = value;
-            Path = path;
         }
 
         /// <summary>
@@ -124,6 +122,7 @@ namespace Microsoft.PowerShell.Commands
             Offset64 = offset;
             Bytes = value;
             Path = path;
+            Label = path;
         }
 
         /// <summary>
@@ -158,11 +157,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        /// <param name="sourceType">Original object type of the converted input.</param>
-        public ByteCollection(ulong offset, byte[] value, Type sourceType)
+        /// <param name="label">
+        /// The label for the byte group. This may be a file path, a string value, or a
+        /// formatted identifying string for the group.
+        /// </param>
+        public ByteCollection(ulong offset, string label, byte[] value)
             : this(offset, value)
         {
-            SourceType = sourceType;
+            Label = label;
         }
 
         /// <summary>
@@ -220,11 +222,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.
         /// </summary>
-        public Type SourceType { get; private set; }
+        public string Label { get; private set; }
 
         private const int BytesPerLine = 16;
 
-        private string _hexBytes;
+        private string _hexBytes = string.Empty;
         /// <summary>
         /// Gets a space-delimited string of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>
         /// in hexadecimal format.
@@ -233,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_hexBytes == null)
+                if (_hexBytes == string.Empty)
                 {
                     StringBuilder line = new StringBuilder(BytesPerLine * 3);
 
@@ -249,29 +251,29 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _asciiBytes;
+        private string _ascii = string.Empty;
         /// <summary>
         /// Gets the ASCII string representation of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>.
         /// </summary>
         /// <value></value>
-        public string AsciiBytes
+        public string Ascii
         {
             get
             {
-                if (_asciiBytes == null)
+                if (_ascii == string.Empty)
                 {
                     StringBuilder ascii = new StringBuilder(BytesPerLine);
 
                     foreach (var currentByte in Bytes)
                     {
                         var currentChar = (char)currentByte;
-                        if (char.IsControl(currentChar))
-                        {
-                            ascii.Append((char)0xFFFD);
-                        }
-                        else if (currentChar == 0x0)
+                        if (currentChar == 0x0)
                         {
                             ascii.Append(' ');
+                        }
+                        else if (char.IsControl(currentChar))
+                        {
+                            ascii.Append((char)0xFFFD);
                         }
                         else
                         {
@@ -279,10 +281,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    _asciiBytes = ascii.ToString();
+                    _ascii = ascii.ToString();
                 }
 
-                return _asciiBytes;
+                return _ascii;
             }
         }
 
