@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
         public override string ToString()
         {
             const int BytesPerLine = 16;
-            const string LineFormat = "{0:X20}   ";
+            const string LineFormat = "{0:X16}   ";
 
             // '20 + 3' comes from format "{0:X20}   ".
             // '20' comes from '[Uint64]::MaxValue.ToString().Length'.
@@ -322,13 +322,18 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the character is printable, add its ascii representation to
                     // the right-hand side.  Otherwise, add a dot to the right hand side.
-                    if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                    var currentChar = (char)currentByte;
+                    if (currentChar == 0x0)
                     {
-                        asciiEnd.Append((char)currentByte);
+                        asciiEnd.Append(' ');
+                    }
+                    else if (char.IsControl(currentChar))
+                    {
+                        asciiEnd.Append((char)0xFFFD);
                     }
                     else
                     {
-                        asciiEnd.Append('.');
+                        asciiEnd.Append(currentChar);
                     }
 
                     charCounter++;
