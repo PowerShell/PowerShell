@@ -841,6 +841,11 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
                                             }
                                         }
+                                        elseif ($prop.Name -eq 'StackTrace') {
+                                            # for a stacktrace which is usually quite wide with info, we left justify it
+                                            $null = $output.Append($newline)
+                                            $null = $output.Append($prop.Value)
+                                        }
                                         elseif ($prop.Value.GetType().IsArray) {
                                             if ($depth -eq $maxDepth) {
                                                 $null = $output.Append($ellipsis)
