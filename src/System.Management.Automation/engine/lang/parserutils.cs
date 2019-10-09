@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
         {
             if (right is null)
             {
-                return left is null
+                return LanguagePrimitives.IsNullLike(left)
                     ? _TrueObject
                     : _FalseObject;
             }
@@ -1086,9 +1086,9 @@ namespace System.Management.Automation
         {
             if (right is null)
             {
-                return left is null
-                    ? _FalseObject
-                    : _TrueObject;
+                return !LanguagePrimitives.IsNullLike(left)
+                    ? _TrueObject
+                    : _FalseObject;
             }
 
             object lval = PSObject.Base(left);

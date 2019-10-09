@@ -2147,7 +2147,7 @@ namespace System.Management.Automation
         {
             if (right is null)
             {
-                return left is null;
+                return LanguagePrimitives.IsNullLike(left);
             }
 
             object lval = PSObject.Base(left);
