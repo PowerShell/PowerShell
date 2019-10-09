@@ -10,4 +10,6 @@
     Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
     Description = 'Security tests helper functions'
     FunctionsToExport = @()
+    AliasesToExport = @()
+    CmdletsToExport = @("Invoke-LanguageModeTestingSupportCmdlet")
 }

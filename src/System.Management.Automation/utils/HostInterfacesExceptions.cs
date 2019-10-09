@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
 
 namespace System.Management.Automation.Host
 {
@@ -17,7 +17,7 @@ namespace System.Management.Automation.Host
     {
         #region ctors
         /// <summary>
-        /// Initializes a new instance of the HostException class
+        /// Initializes a new instance of the HostException class.
         /// </summary>
 
         public
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Initializes a new instance of the HostException class and defines the error message
+        /// Initializes a new instance of the HostException class and defines the error message.
         /// </summary>
         /// <param name="message">
         /// The error message that explains the reason for the exception.
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Host
     {
         #region ctors
         /// <summary>
-        /// Initializes a new instance of the PromptingException class
+        /// Initializes a new instance of the PromptingException class.
         /// </summary>
 
         public
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Initializes a new instance of the PromptingException class and defines the error message
+        /// Initializes a new instance of the PromptingException class and defines the error message.
         /// </summary>
         /// <param name="message">
         /// The error message that explains the reason for the exception.

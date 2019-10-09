@@ -3,11 +3,13 @@
 
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Linq.Expressions;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Management.Automation.Internal;
+
 using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -70,7 +72,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="useLocalScope"></param>
         /// <param name="sessionState"></param>
-        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input)</param>
+        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input).</param>
         internal CommandProcessor(IScriptCommandInfo scriptCommandInfo, ExecutionContext context, bool useLocalScope, bool fromScriptFile, SessionStateInternal sessionState)
             : base(scriptCommandInfo as CommandInfo)
         {
@@ -86,7 +88,7 @@ namespace System.Management.Automation
         #region internal members
 
         /// <summary>
-        /// Returns a CmdletParameterBinderController for the specified command
+        /// Returns a CmdletParameterBinderController for the specified command.
         /// </summary>
         /// <param name="command">
         /// The cmdlet to bind parameters to.
@@ -129,22 +131,25 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _cmdletParameterBinderController;
             }
         }
+
         private CmdletParameterBinderController _cmdletParameterBinderController;
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal override ObsoleteAttribute ObsoleteAttribute
         {
             get { return _obsoleteAttribute; }
         }
+
         private ObsoleteAttribute _obsoleteAttribute;
 
         /// <summary>
-        /// Binds the specified command-line parameters to the target
+        /// Binds the specified command-line parameters to the target.
         /// </summary>
         /// <returns>
         /// true if encode succeeds otherwise false.
@@ -271,7 +276,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Execute BeginProcessing part of command
+        /// Execute BeginProcessing part of command.
         /// </summary>
         internal override void DoBegin()
         {
@@ -391,6 +396,7 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
+
                     exceptionToThrow = rte;
                 }
                 catch (LoopFlowException)
@@ -409,6 +415,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 }
+
                 if (exceptionToThrow != null)
                 {
                     // This cmdlet threw an exception, so
@@ -423,12 +430,12 @@ namespace System.Management.Automation
         #region helper_methods
 
         /// <summary>
-        /// Tells whether it is the first call to Read
+        /// Tells whether it is the first call to Read.
         /// </summary>
         private bool _firstCallToRead = true;
 
         /// <summary>
-        /// Tells whether to bail out in the next call to Read
+        /// Tells whether to bail out in the next call to Read.
         /// </summary>
         private bool _bailInNextCall;
 
@@ -627,7 +634,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads an object from an input pipeline and attempts to bind the parameters
+        /// Reads an object from an input pipeline and attempts to bind the parameters.
         /// </summary>
         /// <param name="inputObject">
         /// The pipeline input object to be processed.
@@ -653,6 +660,7 @@ namespace System.Management.Automation
             {
                 inputToOperateOn = PSObject.AsPSObject(inputObject);
             }
+
             Command.CurrentPipelineObject = inputToOperateOn;
 
             return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
@@ -674,7 +682,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes the command's request object
+        /// Initializes the command's request object.
         /// </summary>
         /// <param name="cmdletInformation">
         /// The information about the cmdlet.
@@ -732,6 +740,7 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
+
             if (initError != null)
             {
                 // Log a command health event
@@ -813,9 +822,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (this.arguments != null)

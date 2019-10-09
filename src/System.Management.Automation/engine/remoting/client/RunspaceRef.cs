@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -136,7 +137,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates the PSCommand when the runspace is not overridden
+        /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
         private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
@@ -273,11 +274,11 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Override inside a safe lock
+        /// Override inside a safe lock.
         /// </summary>
-        /// <param name="remoteRunspace">runspace to override</param>
-        /// <param name="syncObject">object to use in synchronization</param>
-        /// <param name="isRunspacePushed">set is runspace pushed</param>
+        /// <param name="remoteRunspace">Runspace to override.</param>
+        /// <param name="syncObject">Object to use in synchronization.</param>
+        /// <param name="isRunspacePushed">Set is runspace pushed.</param>
         internal void Override(RemoteRunspace remoteRunspace, object syncObject, out bool isRunspacePushed)
         {
             lock (_localSyncObject)

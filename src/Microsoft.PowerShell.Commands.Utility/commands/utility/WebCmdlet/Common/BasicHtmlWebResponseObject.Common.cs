@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                 // fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                if (String.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
+                if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
                 {
                     characterSet = Encoding.UTF8.HeaderName;
                 }
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_imageRegex == null)
             {
-                s_imageRegex = new Regex(@"<img\s+[^>]*>",
+                s_imageRegex = new Regex(@"<img\s+[^\s>]*>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
         }

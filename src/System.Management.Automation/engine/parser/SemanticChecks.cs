@@ -6,9 +6,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
@@ -94,6 +95,7 @@ namespace System.Management.Automation.Language
                     {
                         parametersSet.Add(parameterName);
                     }
+
                     var voidConstraint =
                         parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
 
@@ -286,6 +288,7 @@ namespace System.Management.Automation.Language
                     propertyNames.Add(fieldInfo.Name);
                 }
             }
+
             return string.Join(", ", propertyNames);
         }
 
@@ -315,6 +318,7 @@ namespace System.Management.Automation.Language
                                     nameof(ParserStrings.MultipleTypeConstraintsOnMethodParam),
                                     ParserStrings.MultipleTypeConstraintsOnMethodParam);
                             }
+
                             isParamTypeDefined = true;
                         }
                     }
@@ -351,6 +355,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.ScriptTooComplicated);
                     break;
                 }
+
                 if (type is ArrayTypeName)
                 {
                     type = ((ArrayTypeName)type).ElementType;
@@ -374,6 +379,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
             }
+
             if (dscResourceAttributeAst != null)
             {
                 DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttributeAst);
@@ -452,13 +458,12 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((switchStatementAst.Flags & SwitchFlags.Parallel) == SwitchFlags.Parallel)
             {
-                bool reportError = !switchStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(switchStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(
+                    switchStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "switch",
+                    "parallel");
             }
 
             return AstVisitAction.Continue;
@@ -488,20 +493,30 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((forEachStatementAst.Flags & ForEachFlags.Parallel) == ForEachFlags.Parallel)
             {
-                bool reportError = !forEachStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(forEachStatementAst.Extent,
-                        nameof(ParserStrings.ParallelNotSupported),
-                        ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "parallel");
+            }
+
+            if (forEachStatementAst.ThrottleLimit != null)
+            {
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "throttlelimit");
             }
 
             // Throttle limit must be combined with Parallel flag
             if ((forEachStatementAst.ThrottleLimit != null) &&
                 ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
             {
-                _parser.ReportError(forEachStatementAst.Extent,
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
                     nameof(ParserStrings.ThrottleLimitRequiresParallelFlag),
                     ParserStrings.ThrottleLimitRequiresParallelFlag);
             }
@@ -563,11 +578,11 @@ namespace System.Management.Automation.Language
         /// Check that label exists inside the method.
         /// Only call it, when label is present and can be calculated in compile time.
         /// </summary>
-        /// <param name="ast">BreakStatementAst or ContinueStatementAst</param>
-        /// <param name="label">label name. Can be null</param>
+        /// <param name="ast">BreakStatementAst or ContinueStatementAst.</param>
+        /// <param name="label">Label name. Can be null.</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 return;
             }
@@ -584,6 +599,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.LabelNotFound,
                             label);
                     }
+
                     break;
                 }
 
@@ -678,6 +694,7 @@ namespace System.Management.Automation.Language
             {
                 return;
             }
+
             if (ast.Pipeline != null)
             {
                 if (functionMemberAst.IsReturnTypeVoid())
@@ -709,7 +726,7 @@ namespace System.Management.Automation.Language
         /// Check if the ast is a valid target for assignment.  If not, the action reportError is called.
         /// </summary>
         /// <param name="ast">The target of an assignment.</param>
-        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.)</param>
+        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.).</param>
         /// <param name="reportError">The action called to report any errors.</param>
         private void CheckAssignmentTarget(ExpressionAst ast, bool simpleAssignment, Action<Ast> reportError)
         {
@@ -770,6 +787,7 @@ namespace System.Management.Automation.Language
                                     ParserStrings.VoidTypeConstraintNotAllowed);
                             }
                         }
+
                         expr = ((AttributedExpressionAst)expr).Child;
                     }
 
@@ -801,16 +819,20 @@ namespace System.Management.Automation.Language
                                                 varPath.UnqualifiedPath,
                                                 expectedType);
                                         }
+
                                         break;
                                     }
+
                                     specialIndex += 1;
                                 }
                             }
                         }
+
                         CheckAssignmentTarget(expr, simpleAssignment, reportError);
                     }
                 }
             }
+
             if (errorAst != null)
             {
                 reportError(errorAst);
@@ -904,6 +926,7 @@ namespace System.Management.Automation.Language
                                                 nameof(ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence),
                                                 ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence);
                         }
+
                         child = childAttrExpr.Child;
                         continue;
                     }
@@ -935,12 +958,15 @@ namespace System.Management.Automation.Language
                                 skipError = statementAst.Left.Find(ast1 => ast1 == convertExpressionAst, searchNestedScriptBlocks: true) != null;
                                 break;
                             }
+
                             if (ast is CommandExpressionAst)
                             {
                                 break;
                             }
+
                             ast = ast.Parent;
                         }
+
                         if (!skipError)
                         {
                             _parser.ReportError(convertExpressionAst.Type.Extent,
@@ -948,6 +974,7 @@ namespace System.Management.Automation.Language
                                                 ParserStrings.ReferenceNeedsToBeLastTypeInTypeConversion);
                         }
                     }
+
                     parent = parent.Child as AttributedExpressionAst;
                 }
             }
@@ -1000,6 +1027,7 @@ namespace System.Management.Automation.Language
                 {
                     return indexExpr.Index;
                 }
+
                 return CheckUsingExpression(indexExpr.Target);
             }
 
@@ -1179,6 +1207,7 @@ namespace System.Management.Automation.Language
             {
                 _memberScopeStack.Push(null);
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1242,13 +1271,16 @@ namespace System.Management.Automation.Language
                                 }
                             }
                         }
+
                         break;
                     }
+
                     statementAst = ast as PipelineAst;
                     ancestorNodeLevel++;
                     ast = ast.Parent;
                 }
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1315,6 +1347,7 @@ namespace System.Management.Automation.Language
                         e.ToString());
                 }
             }
+
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
             HashtableAst hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
             if (hashtable != null)
@@ -1342,7 +1375,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            String.Join("', '", tableKeys));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }
@@ -1392,6 +1425,7 @@ namespace System.Management.Automation.Language
                         propertyMemberAst.PropertyType.TypeName.FullName);
                 }
             }
+
             _memberScopeStack.Push(propertyMemberAst);
             return AstVisitAction.Continue;
         }
@@ -1405,6 +1439,7 @@ namespace System.Management.Automation.Language
                 {
                     _memberScopeStack.Pop();
                 }
+
                 _scopeStack.Pop();
                 scriptBlockAst.PostParseChecksPerformed = true;
                 // at this moment, we could use different parser for the initial syntax check
@@ -1422,7 +1457,7 @@ namespace System.Management.Automation.Language
     internal static class DscResourceChecker
     {
         /// <summary>
-        /// Check if it is a qualified DSC resource type
+        /// Check if it is a qualified DSC resource type.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst"></param>
@@ -1515,14 +1550,14 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Look up all the way up until find all the required members
+        /// Look up all the way up until find all the required members.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type</param>
-        /// <param name="hasSet">flag to indicate if the class contains Set method.</param>
-        /// <param name="hasGet">flag to indicate if the class contains Get method.</param>
-        /// <param name="hasTest">flag to indicate if the class contains Test method.</param>
-        /// <param name="hasKey">flag to indicate if the class contains Key property.</param>
+        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
+        /// <param name="hasSet">Flag to indicate if the class contains Set method.</param>
+        /// <param name="hasGet">Flag to indicate if the class contains Get method.</param>
+        /// <param name="hasTest">Flag to indicate if the class contains Test method.</param>
+        /// <param name="hasKey">Flag to indicate if the class contains Key property.</param>
         private static void LookupRequiredMembers(Parser parser, TypeDefinitionAst typeDefinitionAst, ref bool hasSet, ref bool hasGet, ref bool hasTest, ref bool hasKey)
         {
             if (typeDefinitionAst == null)
@@ -1564,6 +1599,7 @@ namespace System.Management.Automation.Language
                         CheckKey(parser, propertyMemberAst, ref hasKey);
                     }
                 }
+
                 if (baseTypeDefinitionAst.BaseTypes != null && (!hasSet || !hasGet || !hasTest || !hasKey))
                 {
                     LookupRequiredMembers(parser, baseTypeDefinitionAst, ref hasSet, ref hasGet, ref hasTest, ref hasKey);
@@ -1571,24 +1607,25 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Check if it is a Get method with correct return type and signature
+        /// Check if it is a Get method with correct return type and signature.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false. </param>
+        /// <param name="functionMemberAst">The function member AST.</param>
+        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false.</param>
         private static void CheckGet(Parser parser, FunctionMemberAst functionMemberAst, ref bool hasGet)
         {
             if (hasGet)
             {
                 return;
             }
+
             if (functionMemberAst.Name.Equals("Get", StringComparison.OrdinalIgnoreCase) &&
                 functionMemberAst.Parameters.Count == 0)
             {
                 if (functionMemberAst.ReturnType != null)
                 {
                     // Return type is of the class we're defined in
-                    //it must return the class type, or array of the class type.
+                    // it must return the class type, or array of the class type.
                     var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
                     var typeName =
                         (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
@@ -1608,16 +1645,16 @@ namespace System.Management.Automation.Language
                         ParserStrings.DscResourceInvalidGetMethod,
                         ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                 }
-                //Set hasGet to true to stop look up; it may have invalid get
+                // Set hasGet to true to stop look up; it may have invalid get
                 hasGet = true;
                 return;
             }
         }
 
         /// <summary>
-        /// Check if it is a Test method with correct return type and signature
+        /// Check if it is a Test method with correct return type and signature.
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
@@ -1628,9 +1665,9 @@ namespace System.Management.Automation.Language
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
         }
         /// <summary>
-        /// Check if it is a Set method with correct return type and signature
+        /// Check if it is a Set method with correct return type and signature.
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
@@ -1644,7 +1681,7 @@ namespace System.Management.Automation.Language
         /// True if it is a key property.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="propertyMemberAst">The property member AST</param>
+        /// <param name="propertyMemberAst">The property member AST.</param>
         /// <param name="hasKey">True if it is a key property; otherwise, false.</param>
         private static void CheckKey(Parser parser, PropertyMemberAst propertyMemberAst, ref bool hasKey)
         {
@@ -1684,12 +1721,14 @@ namespace System.Management.Automation.Language
                                         }
                                     }
                                 }
+
                                 if (!keyPropertyTypeAllowed)
                                 {
                                     parser.ReportError(propertyMemberAst.Extent,
                                         nameof(ParserStrings.DscResourceInvalidKeyProperty),
                                         ParserStrings.DscResourceInvalidKeyProperty);
                                 }
+
                                 return;
                             }
                         }
@@ -2066,6 +2105,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.CmdletNotInAllowedListForDataSection,
                         commandAst.Extent.Text);
                 }
+
                 return AstVisitAction.Continue;
             }
 
@@ -2294,7 +2334,7 @@ namespace System.Management.Automation.Language
         {
             // REVIEW: it should be OK to allow these, since the ast now would visit the nested expressions and catch the errors.
             // Not allowed since most variables are not allowed
-            //ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
+            // ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }

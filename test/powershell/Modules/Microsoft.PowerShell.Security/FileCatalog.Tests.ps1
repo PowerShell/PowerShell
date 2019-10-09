@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
+# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell.
 
 try {
     #skip all tests on non-windows platform
@@ -408,6 +408,12 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "*.psd1","UserConfigProviderModVersion2.psm1","*ModVersion1.schema.mof"
             $result | Should -Be "Valid"
+        }
+
+        It "New-FileCatalog -WhatIf does not create file" {
+            $catalogPath = Join-Path "TestDrive:" "TestCatalogWhatIfForNewFileCatalog.cat"
+            New-FileCatalog -CatalogFilePath $catalogPath -WhatIf
+            $catalogPath | Should -Not -Exist
         }
     }
 }

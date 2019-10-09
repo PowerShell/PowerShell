@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading;
-    using System.Reflection;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     internal class OutWindowProxy : IDisposable
     {
         private const string OutGridViewWindowClassName = "Microsoft.Management.UI.Internal.OutGridViewWindow";
@@ -60,10 +61,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("propertyNames");
             }
+
             if (displayNames == null)
             {
                 throw new ArgumentNullException("displayNames");
             }
+
             if (types == null)
             {
                 throw new ArgumentNullException("types");
@@ -237,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)

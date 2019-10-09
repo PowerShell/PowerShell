@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-
     internal abstract class ColumnInfo
     {
         protected string displayName;
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
             return this.displayName;
         }
 
-        internal abstract Object GetValue(PSObject liveObject);
+        internal abstract object GetValue(PSObject liveObject);
 
         internal Type GetValueType(PSObject liveObject, out object columnValue)
         {
@@ -37,14 +37,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 return columnValue.GetType();
             }
+
             return typeof(string); // Use the String type as default.
         }
 
         /// <summary>
         /// Auxiliar used in GetValue methods since the list does not deal well with unlimited sized lines.
         /// </summary>
-        /// <param name="src">source string</param>
-        /// <returns>the source string limited in the number of lines</returns>
+        /// <param name="src">Source string.</param>
+        /// <returns>The source string limited in the number of lines.</returns>
         internal static object LimitString(object src)
         {
             string srcString = src as string;

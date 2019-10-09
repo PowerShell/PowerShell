@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
@@ -31,7 +33,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
-        if ($systemConfigExists) {
+        if ($systemConfigExists -and (Test-CanWriteToPsHome)) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
 
@@ -43,7 +45,10 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterEach {
-        Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        }
+
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
     }
 
@@ -113,7 +118,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     Context "User config takes precedence over system config" {
-        It "Feature is enabled in user config only" {
+        It "Feature is enabled in user config only" -Skip:(!(Test-CanWriteToPsHome)) {
             '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $userConfigPath
             '{"ExperimentalFeatures":["ExpTest.FeatureTwo"]}' > $systemConfigPath
 
@@ -121,6 +126,54 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
             $feature.Enabled | Should -BeTrue -Because "FeatureOne is enabled in user config"
             $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureTwo
             $feature.Enabled | Should -BeFalse -Because "System config is not read when user config exists"
+        }
+    }
+}
+
+Describe "Default enablement of Experimental Features" -Tags CI {
+    BeforeAll {
+        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+
+        Function BeEnabled {
+            [CmdletBinding()]
+            Param(
+                $ActualValue,
+                $Name,
+                [switch]$Negate
+            )
+
+            $failure = if ($Negate) {
+                "Expected: Feature $Name to not be Enabled"
+            }
+            else {
+                "Expected: Feature $Name to be Enabled"
+            }
+
+            return [PSCustomObject]@{
+                Succeeded = if ($Negate) {
+                    $ActualValue -eq $false
+                }
+                else {
+                    $ActualValue -eq $true
+                }
+                FailureMessage = $failure
+            }
+        }
+
+        Add-AssertionOperator -Name 'BeEnabled' -Test $Function:BeEnabled
+    }
+
+    It "On stable builds, Experimental Features are not enabled" -Skip:($isPreview) {
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+        }
+    }
+
+    It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+        (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
+
+        foreach ($expFeature in Get-ExperimentalFeature) {
+            $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
         }
     }
 }

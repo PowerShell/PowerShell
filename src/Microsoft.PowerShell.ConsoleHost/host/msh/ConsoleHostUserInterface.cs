@@ -2,16 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
-using System.Management.Automation.Runspaces;
-using System.Text;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+using System.Runtime.CompilerServices;
 using System.Security;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 #if !UNIX
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
@@ -22,13 +24,13 @@ namespace Microsoft.PowerShell
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
-    /// ConsoleHostUserInterface implements console-mode user interface for powershell
+    /// ConsoleHostUserInterface implements console-mode user interface for powershell.
     /// </summary>
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal partial class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
         /// <summary>
-        /// Command completion implementation object
+        /// Command completion implementation object.
         /// </summary>
         private PowerShell _commandCompletionPowerShell;
 
@@ -38,12 +40,12 @@ namespace Microsoft.PowerShell
         private static PSHostUserInterface s_h = null;
 
         /// <summary>
-        /// Return true if the console supports a VT100 like virtual terminal
+        /// Return true if the console supports a VT100 like virtual terminal.
         /// </summary>
         public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
-        /// Constructs an instance
+        /// Constructs an instance.
         /// </summary>
         /// <param name="parent"></param>
         /// <exception/>
@@ -106,10 +108,10 @@ namespace Microsoft.PowerShell
         ///// <value></value>
         ///// <exception/>
 
-        //internal
-        //PSHost
-        //Parent
-        //{
+        // internal
+        // PSHost
+        // Parent
+        // {
         //    get
         //    {
         //        using (tracer.TraceProperty())
@@ -119,10 +121,10 @@ namespace Microsoft.PowerShell
         //            return parent;
         //        }
         //    }
-        //}
+        // }
 
         /// <summary>
-        /// true if command completion is currently running
+        /// True if command completion is currently running.
         /// </summary>
 
         internal bool IsCommandCompletionRunning
@@ -135,13 +137,13 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// true if the Read* functions should read from the stdin stream instead of from the win32 console.
+        /// True if the Read* functions should read from the stdin stream instead of from the win32 console.
         /// </summary>
 
         internal bool ReadFromStdin { get; set; }
 
         /// <summary>
-        /// true if the host shouldn't write out prompts.
+        /// True if the host shouldn't write out prompts.
         /// </summary>
 
         internal bool NoPrompt { get; set; }
@@ -149,7 +151,7 @@ namespace Microsoft.PowerShell
         #region Line-oriented interaction
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -173,7 +175,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -200,6 +202,7 @@ namespace Microsoft.PowerShell
             {
                 result = ReadLineSafe(true, printToken);
             }
+
             SecureString secureResult = result as SecureString;
             System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
 
@@ -267,7 +270,7 @@ namespace Microsoft.PowerShell
 #else
                 // Ensure that we're in the proper line-input mode.
 
-                ConsoleControl.ConsoleModes desiredMode =
+                const ConsoleControl.ConsoleModes DesiredMode =
                     ConsoleControl.ConsoleModes.Extended |
                     ConsoleControl.ConsoleModes.QuickEdit;
 
@@ -277,19 +280,20 @@ namespace Microsoft.PowerShell
                 bool shouldUnsetMouseInput = shouldUnsetMode(ConsoleControl.ConsoleModes.MouseInput, ref m);
                 bool shouldUnsetProcessInput = shouldUnsetMode(ConsoleControl.ConsoleModes.ProcessedInput, ref m);
 
-                if ((m & desiredMode) != desiredMode ||
+                if ((m & DesiredMode) != DesiredMode ||
                     shouldUnsetMouseInput ||
                     shouldUnsetEchoInput ||
                     shouldUnsetLineInput ||
                     shouldUnsetProcessInput)
                 {
-                    m |= desiredMode;
+                    m |= DesiredMode;
                     ConsoleControl.SetMode(handle, m);
                 }
                 else
                 {
                     isModeChanged = false;
                 }
+
                 _rawui.ClearKeyCache();
 #endif
 
@@ -305,8 +309,9 @@ namespace Microsoft.PowerShell
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    uint unused = 0;
-                    string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
+                    const int CharactersToRead = 1;
+                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
 #if UNIX
@@ -351,7 +356,7 @@ namespace Microsoft.PowerShell
                         }
                     }
 #if UNIX
-                    else if (Char.IsControl(keyInfo.KeyChar))
+                    else if (char.IsControl(keyInfo.KeyChar))
                     {
                         // blacklist control characters
                         continue;
@@ -378,6 +383,7 @@ namespace Microsoft.PowerShell
                             result.Append(key);
 #endif
                         }
+
                         if (!string.IsNullOrEmpty(printTokenString))
                         {
                             WritePrintToken(printTokenString, ref originalCursorPos);
@@ -404,6 +410,7 @@ namespace Microsoft.PowerShell
                 }
 #endif
             }
+
             WriteLineToConsole();
             PostRead(result.ToString());
             if (isSecureString)
@@ -417,7 +424,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Handle writing print token with proper cursor adjustment for ReadLineSafe
+        /// Handle writing print token with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="printToken">
         /// token output for each char input. It must be a one-char string
@@ -452,11 +459,12 @@ namespace Microsoft.PowerShell
                     originalCursorPosition.Y--;
                 }
             }
+
             WriteToConsole(printToken, false);
         }
 
         /// <summary>
-        /// Handle backspace with proper cursor adjustment for ReadLineSafe
+        /// Handle backspace with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="originalCursorPosition">
         /// it is the cursor position where ReadLineSafe begins
@@ -498,7 +506,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
         /// </summary>
-        /// <param name="cursorPosition">Position to blank out</param>
+        /// <param name="cursorPosition">Position to blank out.</param>
         private void BlankAtCursor(Coordinates cursorPosition)
         {
             _rawui.CursorPosition = cursorPosition;
@@ -509,7 +517,7 @@ namespace Microsoft.PowerShell
 #if !UNIX
         /// <summary>
         /// If <paramref name="m"/> is set on <paramref name="flagToUnset"/>, unset it and return true;
-        /// otherwise return false
+        /// otherwise return false.
         /// </summary>
         /// <param name="flagToUnset">
         /// a flag in ConsoleControl.ConsoleModes to be unset in <paramref name="m"/>
@@ -529,29 +537,42 @@ namespace Microsoft.PowerShell
                 m &= ~flagToUnset;
                 return true;
             }
+
             return false;
         }
 #endif
 
         #region WriteToConsole
 
-        internal void WriteToConsole(string value, bool transcribeResult)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteToConsole(char c, bool transcribeResult)
+        {
+            ReadOnlySpan<char> value = stackalloc char[1] { c };
+            WriteToConsole(value, transcribeResult);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: false);
+        }
+
+        private void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult, bool newLine)
         {
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
             // attempt to set the mode from multiple threads at once.
-
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
-                    ConsoleControl.ConsoleModes.ProcessedOutput
+            const ConsoleControl.ConsoleModes DesiredMode =
+                ConsoleControl.ConsoleModes.ProcessedOutput
                 | ConsoleControl.ConsoleModes.WrapEndOfLine;
 
-            if ((m & desiredMode) != desiredMode)
+            if ((m & DesiredMode) != DesiredMode)
             {
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
@@ -559,21 +580,20 @@ namespace Microsoft.PowerShell
             PreWrite();
 
             // This is atomic, so we don't lock here...
-
 #if !UNIX
-            ConsoleControl.WriteConsole(handle, value);
+            ConsoleControl.WriteConsole(handle, value, newLine);
 #else
-            Console.Out.Write(value);
+            ConsoleOutWriteHelper(value, newLine);
 #endif
 
             if (_isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
-                Console.Out.Write(value);
+                ConsoleOutWriteHelper(value, newLine);
             }
 
             if (transcribeResult)
             {
-                PostWrite(value);
+                PostWrite(value, newLine);
             }
             else
             {
@@ -581,34 +601,64 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
         {
-            ConsoleColor fg = RawUI.ForegroundColor;
-            ConsoleColor bg = RawUI.BackgroundColor;
-
-            RawUI.ForegroundColor = foregroundColor;
-            RawUI.BackgroundColor = backgroundColor;
-
-            try
+            // Sync access so that we don't race on color settings if called from multiple threads.
+            lock (_instanceLock)
             {
-                WriteToConsole(text, true);
-            }
-            finally
-            {
-                RawUI.ForegroundColor = fg;
-                RawUI.BackgroundColor = bg;
+                ConsoleColor fg = RawUI.ForegroundColor;
+                ConsoleColor bg = RawUI.BackgroundColor;
+
+                RawUI.ForegroundColor = foregroundColor;
+                RawUI.BackgroundColor = backgroundColor;
+
+                try
+                {
+                    WriteToConsole(text, transcribeResult: true, newLine);
+                }
+                finally
+                {
+                    RawUI.ForegroundColor = fg;
+                    RawUI.BackgroundColor = bg;
+                }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        {
+            if (newLine)
+            {
+                Console.Out.WriteLine(value);
+            }
+            else
+            {
+                Console.Out.Write(value);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        {
+            WriteToConsole(foregroundColor, backgroundColor, text, newLine: true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole(string text)
         {
-            WriteToConsole(text, true);
-            WriteToConsole(Crlf, true);
+            WriteLineToConsole(text, transcribeResult: true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole()
         {
-            WriteToConsole(Crlf, true);
+            WriteToConsole(Environment.NewLine, transcribeResult: true, newLine: false);
         }
 
         #endregion WriteToConsole
@@ -629,15 +679,28 @@ namespace Microsoft.PowerShell
 
         public override void Write(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                // do nothing
+            WriteImpl(value, newLine: false);
+        }
 
+        private void WriteImpl(string value, bool newLine)
+        {
+            if (string.IsNullOrEmpty(value) && !newLine)
+            {
                 return;
             }
 
             // If the test hook is set, write to it and continue.
-            if (s_h != null) s_h.Write(value);
+            if (s_h != null)
+            {
+                if (newLine)
+                {
+                    s_h.WriteLine(value);
+                }
+                else
+                {
+                    s_h.Write(value);
+                }
+            }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
 
@@ -646,15 +709,27 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
                 _parent.OutputSerializer.Serialize(value);
+
+                if (newLine)
+                {
+                    _parent.OutputSerializer.Serialize(Environment.NewLine);
+                }
             }
             else
             {
-                writer.Write(value);
+                if (newLine)
+                {
+                    writer.WriteLine(value);
+                }
+                else
+                {
+                    writer.Write(value);
+                }
             }
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="foregroundColor"></param>
         /// <param name="backgroundColor"></param>
@@ -675,8 +750,36 @@ namespace Microsoft.PowerShell
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            Write(foregroundColor, backgroundColor, value, newLine: false);
+        }
 
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
+        /// <param name="value"></param>
+        /// <exception cref="HostException">
+        /// If obtaining information about the buffer failed
+        ///    OR
+        ///    Win32's SetConsoleTextAttribute
+        ///    OR
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        /// </exception>
+        public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
+        {
+            Write(foregroundColor, backgroundColor, value, newLine: true);
+        }
+
+        private void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value, bool newLine)
+        {
+            // Sync access so that we don't race on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -687,7 +790,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    this.Write(value);
+                    this.WriteImpl(value, newLine);
                 }
                 finally
                 {
@@ -698,7 +801,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="HostException">
@@ -710,16 +813,26 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void WriteLine(string value)
         {
-            // lock here so that the newline is written atomically with the value
+            this.WriteImpl(value, newLine: true);
+        }
 
-            lock (_instanceLock)
-            {
-                this.Write(value);
-                this.Write(Crlf);
-            }
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        /// <exception cref="HostException">
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        /// </exception>
+        public override void WriteLine()
+        {
+            this.WriteImpl(Environment.NewLine, newLine: false);
         }
 
         #region Word Wrapping
@@ -774,6 +887,7 @@ namespace Microsoft.PowerShell
                         Dbg.Assert(RawUI.LengthInBufferCells(l) <= maxWidthInBufferCells, "line is too long");
                         result.Add(l);
                     }
+
                     break;
                 }
 
@@ -835,7 +949,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Struct used by WrapText
+        /// Struct used by WrapText.
         /// </summary>
 
         [Flags]
@@ -877,7 +991,7 @@ namespace Microsoft.PowerShell
         {
             List<Word> result = new List<Word>();
 
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return result;
             }
@@ -931,6 +1045,7 @@ namespace Microsoft.PowerShell
                         AddWord(text, startIndex, wordEnd, maxWidthInBufferCells, inWs, ref result);
                         startIndex = wordEnd;
                     }
+
                     inWs = true;
                 }
                 else
@@ -942,6 +1057,7 @@ namespace Microsoft.PowerShell
                         AddWord(text, startIndex, wordEnd, maxWidthInBufferCells, inWs, ref result);
                         startIndex = wordEnd;
                     }
+
                     inWs = false;
                 }
 
@@ -952,6 +1068,7 @@ namespace Microsoft.PowerShell
             {
                 AddWord(text, startIndex, text.Length, maxWidthInBufferCells, inWs, ref result);
             }
+
             return result;
         }
 
@@ -1035,17 +1152,17 @@ namespace Microsoft.PowerShell
                 sb.Append(s);
                 if (++count != lines.Count)
                 {
-                    sb.Append(Crlf);
+                    sb.Append(Environment.NewLine);
                 }
             }
 
             return sb.ToString();
         }
 
-#endregion Word Wrapping
+        #endregion Word Wrapping
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
@@ -1067,7 +1184,7 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
-            //We should write debug to error stream only if debug is redirected.)
+            // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 _parent.ErrorSerializer.Serialize(message, "debug");
@@ -1083,12 +1200,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="record"></param>
         public override void WriteInformation(InformationRecord record)
         {
-            //We should write information to error stream only if redirected.)
+            // We should write information to error stream only if redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 _parent.ErrorSerializer.Serialize(record, "information");
@@ -1100,7 +1217,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
@@ -1138,7 +1255,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
@@ -1216,8 +1333,6 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(value))
             {
-                // do nothing
-
                 return;
             }
 
@@ -1229,18 +1344,19 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(writer == _parent.ErrorSerializer.textWriter, "writers should be the same");
 
-                _parent.ErrorSerializer.Serialize(value + Crlf);
+                _parent.ErrorSerializer.Serialize(value + Environment.NewLine);
             }
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
                     WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
                 else
-                    Console.Error.Write(value + Crlf);
+                    Console.Error.WriteLine(value);
             }
         }
 
         // Error colors
+        public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
         public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
@@ -1277,7 +1393,7 @@ namespace Microsoft.PowerShell
             endedOnBreak = 3
         }
 
-        private const int maxInputLineLength = 8192;
+        private const int MaxInputLineLength = 1024;
 
         /// <summary>
         /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In
@@ -1375,6 +1491,7 @@ namespace Microsoft.PowerShell
                         if (!NoPrompt) Console.Out.Write('\n');
                         consoleIn.Read();
                     }
+
                     break;
                 }
 
@@ -1407,15 +1524,15 @@ namespace Microsoft.PowerShell
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
+            const ConsoleControl.ConsoleModes DesiredMode =
                 ConsoleControl.ConsoleModes.LineInput
                 | ConsoleControl.ConsoleModes.EchoInput
                 | ConsoleControl.ConsoleModes.ProcessedInput;
 
-            if ((m & desiredMode) != desiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
+            if ((m & DesiredMode) != DesiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
             {
                 m &= ~ConsoleControl.ConsoleModes.MouseInput;
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
@@ -1457,13 +1574,19 @@ namespace Microsoft.PowerShell
             _rawui.ClearKeyCache();
             uint keyState = 0;
             string s = string.Empty;
+            Span<char> inputBuffer = stackalloc char[MaxInputLineLength + 1];
+            if (initialContent.Length > 0)
+            {
+                initialContent.AsSpan().CopyTo(inputBuffer);
+            }
+
 #endif
-                do
-                {
+            do
+            {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
 #else
-                s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
+                s += ConsoleControl.ReadConsole(handle, initialContent.Length, inputBuffer, MaxInputLineLength, endOnTab, out keyState);
                 Dbg.Assert(s != null, "s should never be null");
 #endif
 
@@ -1473,34 +1596,35 @@ namespace Microsoft.PowerShell
 #else
                 if (s.Length == 0)
 #endif
+                {
+                    result = ReadLineResult.endedOnBreak;
+                    s = null;
+
+                    if (calledFromPipeline)
                     {
-                        result = ReadLineResult.endedOnBreak;
-                        s = null;
+                        // make sure that the pipeline that called us is stopped
 
-                        if (calledFromPipeline)
-                        {
-                            // make sure that the pipeline that called us is stopped
-
-                            throw new PipelineStoppedException();
-                        }
-                        break;
+                        throw new PipelineStoppedException();
                     }
+
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                if (s.EndsWith(Crlf, StringComparison.Ordinal))
+                if (s.EndsWith(Environment.NewLine, StringComparison.Ordinal))
 #endif
-                    {
-                        result = ReadLineResult.endedOnEnter;
+                {
+                    result = ReadLineResult.endedOnEnter;
 #if UNIX
                         // We're intercepting characters, so we need to echo the newline
                         Console.Out.WriteLine();
 #else
-                    s = s.Remove(s.Length - Crlf.Length);
+                    s = s.Remove(s.Length - Environment.NewLine.Length);
 #endif
-                        break;
-                    }
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Tab)
@@ -1572,6 +1696,7 @@ namespace Microsoft.PowerShell
                             Console.Out.Write(s.PadRight(length));
                             Console.CursorLeft = cursorCurrent - 1;
                         }
+
                         continue;
                     }
 
@@ -1587,6 +1712,7 @@ namespace Microsoft.PowerShell
                             Console.Out.Write(s.PadRight(length));
                             Console.CursorLeft = cursorCurrent;
                         }
+
                         continue;
                     }
 
@@ -1598,6 +1724,7 @@ namespace Microsoft.PowerShell
                             Console.CursorLeft--;
                             index--;
                         }
+
                         continue;
                     }
 
@@ -1609,6 +1736,7 @@ namespace Microsoft.PowerShell
                             Console.CursorLeft++;
                             index++;
                         }
+
                         continue;
                     }
 
@@ -1652,7 +1780,7 @@ namespace Microsoft.PowerShell
                         continue;
                     }
 
-                    if (Char.IsControl(keyInfo.KeyChar))
+                    if (char.IsControl(keyInfo.KeyChar))
                     {
                         // blacklist control characters
                         continue;
@@ -1679,15 +1807,15 @@ namespace Microsoft.PowerShell
                     Console.Out.Write(s);
                     Console.CursorLeft = cursorCurrent + 1;
 #endif
-                }
-                while (true);
+            }
+            while (true);
 
-                Dbg.Assert(
-                           (s == null && result == ReadLineResult.endedOnBreak)
-                           || (s != null && result != ReadLineResult.endedOnBreak),
-                           "s should only be null if input ended with a break");
+            Dbg.Assert(
+                       (s == null && result == ReadLineResult.endedOnBreak)
+                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       "s should only be null if input ended with a break");
 
-                return s;
+            return s;
 #if UNIX
             }
             finally
@@ -1701,7 +1829,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
-        /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
+        /// <param name="cursorPosition">The cursor position where 'tab' is hit.</param>
         /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
@@ -1730,7 +1858,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Strip nulls from a string...
         /// </summary>
-        /// <param name="input">The string to process</param>
+        /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
         private string RemoveNulls(string input)
         {
@@ -1742,6 +1870,7 @@ namespace Microsoft.PowerShell
                 if (c != '\0')
                     sb.Append(c);
             }
+
             return sb.ToString();
         }
 
@@ -1819,6 +1948,7 @@ namespace Microsoft.PowerShell
                         input = input.Remove(input.Length - 1);
                         restOfLine = input.Substring(tabIndex + 1);
                     }
+
                     input = input.Remove(tabIndex);
 
                     if (input != lastCompletion || commandCompletion == null)
@@ -1843,9 +1973,9 @@ namespace Microsoft.PowerShell
                         completedInput += restOfLine;
                     }
 
-                    if (completedInput.Length > (maxInputLineLength - 2))
+                    if (completedInput.Length > (MaxInputLineLength - 2))
                     {
-                        completedInput = completedInput.Substring(0, maxInputLineLength - 2);
+                        completedInput = completedInput.Substring(0, MaxInputLineLength - 2);
                     }
 
                     // Remove any nulls from the string...
@@ -1916,7 +2046,7 @@ namespace Microsoft.PowerShell
             {
                 // Reads always terminate with the enter key, so add that.
 
-                _parent.WriteToTranscript(input + Crlf);
+                _parent.WriteLineToTranscript(input);
             }
 
             return input;
@@ -2040,8 +2170,8 @@ namespace Microsoft.PowerShell
 
         private object _instanceLock = new object();
 
-        //If this is true, class throws on read or prompt method which require
-        //access to console.
+        // If this is true, class throws on read or prompt method which require
+        // access to console.
         internal bool ThrowOnReadAndPrompt
         {
             set
@@ -2049,6 +2179,7 @@ namespace Microsoft.PowerShell
                 _throwOnReadAndPrompt = value;
             }
         }
+
         private bool _throwOnReadAndPrompt;
 
         internal void HandleThrowOnReadAndPrompt()

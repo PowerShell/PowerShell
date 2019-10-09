@@ -2,11 +2,10 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
@@ -102,6 +101,7 @@ namespace System.Management.Automation.Language
             {
                 visitor.VisitParameters(ast.Parameters);
             }
+
             localsAllocated = visitor._variables.Where(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed).Count();
             return visitor._variables;
         }
@@ -175,6 +175,7 @@ namespace System.Management.Automation.Language
                         // comparisons with $null and don't try to convert the $null value to the
                         // valuetype because the parameter has no value yet.  For example:
                         //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
+
                         object unused;
                         if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
                         {
@@ -186,6 +187,25 @@ namespace System.Management.Automation.Language
                         NoteVariable(variableName, VariableAnalysis.Unanalyzed, t.StaticType);
                     }
                 }
+            }
+        }
+
+        // Add a variable to the variable dictionary
+        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
+        {
+            if (!_variables.ContainsKey(variableName))
+            {
+                var details = new VariableAnalysisDetails
+                {
+                    BitIndex = _variables.Count,
+                    LocalTupleIndex = index,
+                    Name = variableName,
+                    Type = type,
+                    Automatic = automatic,
+                    PreferenceVariable = preferenceVariable,
+                    Assigned = false,
+                };
+                _variables.Add(variableName, details);
             }
         }
 
@@ -223,6 +243,7 @@ namespace System.Management.Automation.Language
                     // TODO: force just this variable to be dynamic, not all variables.
                     _disableOptimizations = true;
                 }
+
                 NoteVariable(VariableAnalysis.GetUnaliasedVariableName(varPath), VariableAnalysis.Unanalyzed, null);
             }
 
@@ -239,6 +260,7 @@ namespace System.Management.Automation.Language
             {
                 usingExpressionAst.RuntimeUsingIndex = _runtimeUsingIndex;
             }
+
             Diagnostics.Assert(usingExpressionAst.RuntimeUsingIndex == _runtimeUsingIndex, "Logic error in visiting using expressions.");
             _runtimeUsingIndex += 1;
 
@@ -289,28 +311,9 @@ namespace System.Management.Automation.Language
             // We don't want to discover any variables in traps - they get their own scope.
             return AstVisitAction.SkipChildren;
         }
-
-        // Add a variable to the variable dictionary
-        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
-        {
-            if (!_variables.ContainsKey(variableName))
-            {
-                var details = new VariableAnalysisDetails
-                {
-                    BitIndex = _variables.Count,
-                    LocalTupleIndex = index,
-                    Name = variableName,
-                    Type = type,
-                    Automatic = automatic,
-                    PreferenceVariable = preferenceVariable,
-                    Assigned = false,
-                };
-                _variables.Add(variableName, details);
-            }
-        }
     }
 
-    internal class VariableAnalysis : ICustomAstVisitor
+    internal class VariableAnalysis : ICustomAstVisitor2
     {
         // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we haven't
         // analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
@@ -333,8 +336,11 @@ namespace System.Management.Automation.Language
                 this.BreakTarget = breakTarget;
                 this.ContinueTarget = continueTarget;
             }
+
             internal string Label { get; private set; }
+
             internal Block BreakTarget { get; private set; }
+
             internal Block ContinueTarget { get; private set; }
         }
 
@@ -379,6 +385,7 @@ namespace System.Management.Automation.Language
                     {
                         next._unreachable = false;
                     }
+
                     _successors.Add(next);
                     next._predecessors.Add(this);
                 }
@@ -451,6 +458,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "This code is unreachable.");
                 return null;
             }
+
             internal override AstVisitAction InternalVisit(AstVisitor visitor)
             {
                 Diagnostics.Assert(false, "This code is unreachable.");
@@ -665,6 +673,7 @@ namespace System.Management.Automation.Language
                         bitArray.And((BitArray)pred._visitData);
                     }
                 }
+
                 Diagnostics.Assert(predCount != 0, "If we didn't and anything, there is a flaw in the logic and incorrect code may be generated.");
 
                 AnalyzeBlock(bitArray, block);
@@ -790,6 +799,7 @@ namespace System.Management.Automation.Language
                                                                    : VariableAnalysis.ForceDynamic;
                         }
                     }
+
                     continue;
                 }
 
@@ -804,6 +814,7 @@ namespace System.Management.Automation.Language
                     {
                         CheckLHSAssignVar(assignmentTarget._variableName, assignedBitArray, assignmentTarget._type);
                     }
+
                     continue;
                 }
 
@@ -932,10 +943,12 @@ namespace System.Management.Automation.Language
             {
                 scriptBlockAst.BeginBlock.Accept(this);
             }
+
             if (scriptBlockAst.ProcessBlock != null)
             {
                 scriptBlockAst.ProcessBlock.Accept(this);
             }
+
             if (scriptBlockAst.EndBlock != null)
             {
                 scriptBlockAst.EndBlock.Accept(this);
@@ -1046,6 +1059,28 @@ namespace System.Management.Automation.Language
             return null;
         }
 
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var ifTrue = new Block();
+            var ifFalse = new Block();
+            var after = new Block();
+
+            ternaryExpressionAst.Condition.Accept(this);
+            _currentBlock.FlowsTo(ifTrue);
+            _currentBlock.FlowsTo(ifFalse);
+            _currentBlock = ifTrue;
+
+            ternaryExpressionAst.IfTrue.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = ifFalse;
+
+            ternaryExpressionAst.IfFalse.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = after;
+
+            return null;
+        }
+
         public object VisitTrap(TrapStatementAst trapStatementAst)
         {
             trapStatementAst.Body.Accept(this);
@@ -1119,6 +1154,7 @@ namespace System.Management.Automation.Language
             {
                 _currentBlock.AddAst(dataStatementAst);
             }
+
             return null;
         }
 
@@ -1166,6 +1202,7 @@ namespace System.Management.Automation.Language
             var breakBlock = new Block();
 
             // Condition can be null from an uncommon for loop: for() {}
+
             if (generateCondition != null)
             {
                 generateCondition();
@@ -1424,6 +1461,7 @@ namespace System.Management.Automation.Language
             {
                 pipelineAst.Accept(this);
             }
+
             _currentBlock.FlowsTo(_exitBlock);
             var lastBlockInStatement = _currentBlock;
 
@@ -1497,6 +1535,7 @@ namespace System.Management.Automation.Language
                     {
                         anyAttributes = true;
                     }
+
                     leftAst = ((AttributedExpressionAst)leftAst).Child;
                 }
 
@@ -1531,6 +1570,7 @@ namespace System.Management.Automation.Language
                     assignTarget.Accept(this);
                 }
             }
+
             return null;
         }
 
@@ -1544,6 +1584,7 @@ namespace System.Management.Automation.Language
                 {
                     invokesCommand = true;
                 }
+
                 foreach (var redir in command.Redirections)
                 {
                     redir.Accept(this);
@@ -1578,6 +1619,7 @@ namespace System.Management.Automation.Language
             {
                 element.Accept(this);
             }
+
             return null;
         }
 
@@ -1593,6 +1635,7 @@ namespace System.Management.Automation.Language
             {
                 commandParameterAst.Argument.Accept(this);
             }
+
             return null;
         }
 
@@ -1617,7 +1660,7 @@ namespace System.Management.Automation.Language
 
                 // The right operand is conditionally evaluated.  We aren't generating any code here, just
                 // modeling the flow graph, so we just visit the right operand in a new block, and have
-                // both the current and new blocks both flow to a post-expression block.
+                // both the current and new blocks flow to a post-expression block.
                 var targetBlock = new Block();
                 var nextBlock = new Block();
                 _currentBlock.FlowsTo(targetBlock);
@@ -1728,6 +1771,7 @@ namespace System.Management.Automation.Language
                     arg.Accept(this);
                 }
             }
+
             return null;
         }
 
@@ -1743,6 +1787,7 @@ namespace System.Management.Automation.Language
             {
                 element.Accept(this);
             }
+
             return null;
         }
 
@@ -1753,6 +1798,7 @@ namespace System.Management.Automation.Language
                 pair.Item1.Accept(this);
                 pair.Item2.Accept(this);
             }
+
             return null;
         }
 
@@ -1776,6 +1822,7 @@ namespace System.Management.Automation.Language
             {
                 expr.Accept(this);
             }
+
             return null;
         }
 
@@ -1797,5 +1844,19 @@ namespace System.Management.Automation.Language
             blockStatementAst.Body.Accept(this);
             return null;
         }
+
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => null;
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) => null;
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) => null;
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => null;
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) => null;
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => null;
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) => null;
     }
 }

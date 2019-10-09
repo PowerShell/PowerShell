@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Security;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
 
@@ -63,7 +64,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Prompt for choice. User can select multiple choices
+        /// Prompt for choice. User can select multiple choices.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>

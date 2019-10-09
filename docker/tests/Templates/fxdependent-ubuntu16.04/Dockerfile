@@ -13,14 +13,16 @@ RUN apt-get update \
         ca-certificates \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Install dotnet-runtime
 ADD https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb .
 RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        dotnet-runtime-2.1
+        dotnet-runtime-2.1 \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -29,8 +31,8 @@ RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
 ADD $PACKAGELOCATION/$PACKAGENAME .
-RUN mkdir -p /opt/microsoft/powershell
-RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
+RUN mkdir -p /opt/microsoft/powershell \
+    && tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 
 # Download and run tests
 RUN $TESTDOWNLOADCOMMAND

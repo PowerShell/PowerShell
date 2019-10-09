@@ -22,9 +22,33 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newTestFile = "NewTestFile.txt"
             $testContent = "Some Content"
             $testContent2 = "More Content"
-            $reservedNames = "CON", "PRN", "AUX", "CLOCK$", "NUL",
-                             "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-                             "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+            $reservedNamesTests = @(
+                @{ deviceName = 'CON' }
+                @{ deviceName = 'PRN' }
+                @{ deviceName = 'AUX' }
+                @{ deviceName = 'CLOCK$' }
+                @{ deviceName = 'NUL' }
+                @{ deviceName = 'COM0' }
+                @{ deviceName = 'COM1' }
+                @{ deviceName = 'COM2' }
+                @{ deviceName = 'COM3' }
+                @{ deviceName = 'COM4' }
+                @{ deviceName = 'COM5' }
+                @{ deviceName = 'COM6' }
+                @{ deviceName = 'COM7' }
+                @{ deviceName = 'COM8' }
+                @{ deviceName = 'COM9' }
+                @{ deviceName = 'LPT0' }
+                @{ deviceName = 'LPT1' }
+                @{ deviceName = 'LPT2' }
+                @{ deviceName = 'LPT3' }
+                @{ deviceName = 'LPT4' }
+                @{ deviceName = 'LPT5' }
+                @{ deviceName = 'LPT6' }
+                @{ deviceName = 'LPT7' }
+                @{ deviceName = 'LPT8' }
+                @{ deviceName = 'LPT9' }
+            )
         }
 
         BeforeEach {
@@ -99,7 +123,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Move-Item for directory" {
             $destDir = "DestinationDirectory"
-            New-Item -Path $destDir -ItemType Directory -ErrorAction Stop >$null
+            New-Item -Path $destDir -ItemType Directory -ErrorAction Stop > $null
             Move-Item -Path $testFile -Destination $testDir
             Move-Item -Path $testDir -Destination $destDir
             $testDir | Should -Not -Exist
@@ -154,51 +178,39 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $contentAfter.Count | Should -Be 0
         }
 
-         It "Copy-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-             }
+         It "Copy-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
          }
 
-         It "Move-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
-             }
+         It "Move-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
          }
 
-         It "Rename-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
-             }
+         It "Rename-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+             param($deviceName)
+            { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
          }
 
-         It "Copy-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-             }
+         It "Copy-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
          }
 
-         It "Move-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Move-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
-         It "Rename-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Rename-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
          It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(
@@ -247,10 +259,11 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
+                $shouldSkip = -not (Test-Path $protectedPath)
             }
         }
 
-        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
             # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
             # The following test does not consistently work on windows
             # @{cmdline = "Get-Item $protectedPath2 -ErrorAction Stop"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
@@ -425,7 +438,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         {
             $item = Get-Item $TestPath
             $dirName = $item.BaseName
-            $item = Get-Item $item.PSParentPath
+            $item = Get-Item $item.PSParentPath -Force
             if ($item.LinkType -eq "SymbolicLink")
             {
                 $TestPath = Join-Path $item.Target $dirName
@@ -444,63 +457,62 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         $dirSymLinkToDir = Join-Path $TestPath "symd-link-to-dir"
         $junctionToDir = Join-Path $TestPath "junction-to-dir"
 
-        New-Item -ItemType File -Path $realFile -Value $fileContent >$null
-        New-Item -ItemType Directory -Path $realDir >$null
+        New-Item -ItemType File -Path $realFile -Value $fileContent > $null
+        New-Item -ItemType Directory -Path $realDir > $null
     }
 
     Context "New-Item and hard/symbolic links" {
         It "New-Item can create a hard link to a file" {
-            New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile
+            New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile > $null
             Test-Path $hardLinkToFile | Should -BeTrue
             $link = Get-Item -Path $hardLinkToFile
             $link.LinkType | Should -BeExactly "HardLink"
             Get-Content -Path $hardLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create symbolic link to file" {
-            New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile
+            New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile > $null
             Test-Path $symLinkToFile | Should -BeTrue
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target | Should -BeExactly $real.ToString()
             Get-Content -Path $symLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create a symbolic link to nothing" {
-            New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile
+            New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile > $null
             Test-Path $symLinkToNothing | Should -BeTrue
             $link = Get-Item -Path $symLinkToNothing
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $nonFile
+            $link.Target | Should -Be $nonFile.ToString()
         }
         It "New-Item emits an error when path to symbolic link already exists." {
             { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | Should -Throw -ErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
         }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
-            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
-            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link | Should -BeOfType System.IO.DirectoryInfo
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -BeExactly $real.FullName
+            $link.Target | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
-            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
         }
     }
 
     Context "Get-ChildItem and symbolic links" {
         BeforeAll {
-            $TestDrive = "TestDrive:"
             $alphaDir = Join-Path $TestDrive "sub-alpha"
             $alphaLink = Join-Path $TestDrive "link-alpha"
             $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
@@ -608,7 +620,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
                     [string]$Target
                 )
 
-                Remove-Item -Path $Link -ErrorAction SilentlyContinue >$null
+                Remove-Item -Path $Link -ErrorAction SilentlyContinue > $null
                 Test-Path -Path $Link | Should -BeFalse
                 Test-Path -Path $Target | Should -BeTrue
             }
@@ -648,9 +660,9 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $folder = Join-Path $TestDrive "folder"
             $file = Join-Path $TestDrive "folder" "file"
             $link = Join-Path $TestDrive "sym-to-folder"
-            New-Item -ItemType Directory -Path $folder >$null
-            New-Item -ItemType File -Path $file -Value "some content" >$null
-            New-Item -ItemType SymbolicLink -Path $link -value $folder >$null
+            New-Item -ItemType Directory -Path $folder > $null
+            New-Item -ItemType File -Path $file -Value "some content" > $null
+            New-Item -ItemType SymbolicLink -Path $link -value $folder > $null
             $childA = Get-Childitem $folder
             Remove-Item -Path $link -Recurse
             $childB = Get-ChildItem $folder
@@ -671,7 +683,6 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         # attempt is made to copy an item onto itself.
         $selfCopyKey = "SelfCopy"
 
-        $TestDrive = "TestDrive:"
         $subDir = "$TestDrive/sub"
         $otherSubDir = "$TestDrive/other-sub"
         $fileName = "file.txt"
@@ -686,20 +697,20 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         $symdToOther = "$subDir/symd-to-other"
         $junctionToOther = "$subDir/junction-to-other"
 
-        New-Item -ItemType File $filePath -Value "stuff" >$null
-        New-Item -ItemType Directory $subDir >$null
-        New-Item -ItemType Directory $otherSubDir >$null
-        New-Item -ItemType File $otherFile -Value "some text" >$null
-        New-Item -ItemType SymbolicLink $symToOther -Value $otherSubDir >$null
-        New-Item -ItemType SymbolicLink $secondSymToOther -Value $otherSubDir >$null
-        New-Item -ItemType SymbolicLink $symToSym -Value $symToOther >$null
-        New-Item -ItemType SymbolicLink $symToOtherFile -Value $otherFile >$null
-        New-Item -ItemType HardLink $hardToOtherFile -Value $otherFile >$null
+        New-Item -ItemType File $filePath -Value "stuff" > $null
+        New-Item -ItemType Directory $subDir > $null
+        New-Item -ItemType Directory $otherSubDir > $null
+        New-Item -ItemType File $otherFile -Value "some text" > $null
+        New-Item -ItemType SymbolicLink $symToOther -Value $otherSubDir > $null
+        New-Item -ItemType SymbolicLink $secondSymToOther -Value $otherSubDir > $null
+        New-Item -ItemType SymbolicLink $symToSym -Value $symToOther > $null
+        New-Item -ItemType SymbolicLink $symToOtherFile -Value $otherFile > $null
+        New-Item -ItemType HardLink $hardToOtherFile -Value $otherFile > $null
 
         if ($IsWindows)
         {
-            New-Item -ItemType Junction $junctionToOther -Value $otherSubDir >$null
-            New-Item -ItemType SymbolicLink $symdToOther -Value $otherSubDir >$null
+            New-Item -ItemType Junction $junctionToOther -Value $otherSubDir > $null
+            New-Item -ItemType SymbolicLink $symdToOther -Value $otherSubDir > $null
         }
     }
 
@@ -1393,7 +1404,7 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
         Set-Acl $protectedPath $acl
 
         runas.exe /trustlevel:0x20000 "$cmdline"
-        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10
+        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10 | Should -BeTrue
         Get-Content $errorFile | Should -BeExactly 'RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand'
     }
 }

@@ -2,42 +2,43 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Flags
+    /// Flags.
     /// </summary>
     [Flags]
     internal enum ParameterBindingFlags
     {
         /// <summary>
-        /// No flags specified
+        /// No flags specified.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Set when the argument should be converted to the parameter type
+        /// Set when the argument should be converted to the parameter type.
         /// </summary>
         ShouldCoerceType = 0x01,
 
         /// <summary>
-        /// Set when the argument should not be validated or recorded in BoundParameters
+        /// Set when the argument should not be validated or recorded in BoundParameters.
         /// </summary>
         IsDefaultValue = 0x02,
 
         /// <summary>
-        /// Set when script blocks can be bound as a script block parameter instead of a normal argument
+        /// Set when script blocks can be bound as a script block parameter instead of a normal argument.
         /// </summary>
         DelayBindScriptBlock = 0x04,
 
@@ -173,8 +174,10 @@ namespace System.Management.Automation
         {
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
+
             get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
+
         private CommandLineParameters _commandLineParameters;
 
         /// <summary>
@@ -183,7 +186,7 @@ namespace System.Management.Automation
         internal bool RecordBoundParameters = true;
 
         /// <summary>
-        /// Full Qualified ID for the obsolete parameter warning
+        /// Full Qualified ID for the obsolete parameter warning.
         /// </summary>
         internal const string FQIDParameterObsolete = "ParameterObsolete";
 
@@ -191,7 +194,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Derived classes must override this method to get the default parameter
-        /// value so that it can be restored between pipeline input
+        /// value so that it can be restored between pipeline input.
         /// </summary>
         /// <param name="name">
         /// The name of the parameter to get the default value of.
@@ -525,6 +528,7 @@ namespace System.Management.Automation
                                             e.Message);
                                     throw bindingException;
                                 }
+
                                 s_tracer.WriteLine("Validation attribute on {0} returned {1}.", parameterMetadata.Name, result);
                             }
                         }
@@ -548,7 +552,7 @@ namespace System.Management.Automation
                         (!isDefaultValue) &&
                         spb != null && !usesCmdletBinding)
                     {
-                        string obsoleteWarning = String.Format(
+                        string obsoleteWarning = string.Format(
                             CultureInfo.InvariantCulture,
                             ParameterBinderStrings.UseOfDeprecatedParameterWarning,
                             parameterMetadata.Name,
@@ -641,6 +645,7 @@ namespace System.Management.Automation
                                         break;
                                     }
                                 }
+
                                 stringToPrint = sb.ToString();
                             }
                             else if (parameterValue != null)
@@ -651,6 +656,7 @@ namespace System.Management.Automation
                         catch (Exception) // Catch-all OK, 3rd party callout
                         {
                         }
+
                         if (stringToPrint != null)
                         {
                             cmdRuntime.PipelineProcessor.LogExecutionParameterBinding(this.InvocationInfo, parameter.ParameterName, stringToPrint);
@@ -706,6 +712,7 @@ namespace System.Management.Automation
                             "ParameterArgumentValidationErrorNullNotAllowed");
                     throw bindingException;
                 }
+
                 return;
             }
 
@@ -734,6 +741,7 @@ namespace System.Management.Automation
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
                 }
+
                 return;
             }
 
@@ -770,7 +778,8 @@ namespace System.Management.Automation
             // because a value-type value cannot be null.
             if (!isEmpty && !isElementValueType)
             {
-                do {
+                do
+                {
                     object element = ParserOps.Current(null, ienum);
                     ValidateNullOrEmptyArgument(
                         parameter,
@@ -843,7 +852,7 @@ namespace System.Management.Automation
             }
 
             var psobj = parameterValue as PSObject;
-            if (psobj != null && !psobj.immediateBaseObjectIsEmpty)
+            if (psobj != null && !psobj.ImmediateBaseObjectIsEmpty)
             {
                 // See if the base object is of the same type or
                 // as subclass of the parameter
@@ -881,6 +890,7 @@ namespace System.Management.Automation
                     // type for the parameter.
                     return false;
                 }
+
                 parameterValue = encodedValue;
                 return true;
             }
@@ -891,7 +901,7 @@ namespace System.Management.Automation
         #endregion Parameter binding
 
         /// <summary>
-        /// The invocation information for the code that is being bound
+        /// The invocation information for the code that is being bound.
         /// </summary>
         private InvocationInfo _invocationInfo;
         internal InvocationInfo InvocationInfo
@@ -903,7 +913,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The context of the currently running engine
+        /// The context of the currently running engine.
         /// </summary>
         private ExecutionContext _context;
         internal ExecutionContext Context
@@ -1049,7 +1059,7 @@ namespace System.Management.Automation
                         // If we have an PSObject with null base and we are trying to
                         // convert to a string, then we need to use null instead of
                         // calling LanguagePrimitives.ConvertTo as that will return
-                        // String.Empty.
+                        // string.Empty.
 
                         if (toType == typeof(string) &&
                             argumentType == typeof(PSObject))
@@ -1072,7 +1082,7 @@ namespace System.Management.Automation
                         // Anything else passed should be reported as an error
 
                         if (toType == typeof(bool) || toType == typeof(SwitchParameter) ||
-                            toType == typeof(Nullable<bool>))
+                            toType == typeof(bool?))
                         {
                             Type boType = null;
                             if (argumentType == typeof(PSObject))
@@ -1100,10 +1110,10 @@ namespace System.Management.Automation
                                 else
                                     result = new SwitchParameter((bool)currentValue);
                             }
-                            else if (boType == typeof(Int32))
+                            else if (boType == typeof(int))
                             {
-                                if ((Int32)LanguagePrimitives.ConvertTo(currentValue,
-                                            typeof(Int32), CultureInfo.InvariantCulture) != 0)
+                                if ((int)LanguagePrimitives.ConvertTo(currentValue,
+                                            typeof(int), CultureInfo.InvariantCulture) != 0)
                                 {
                                     if (LanguagePrimitives.IsBooleanType(toType))
                                         result = ParserOps.BoolToObject(true);
@@ -1143,7 +1153,7 @@ namespace System.Management.Automation
                                 // Invalid types which cannot be associated with a bool
                                 // Since there is a catch block which appropriately
                                 // handles this situation we just throw an exception here
-                                //throw new PSInvalidCastException();
+                                // throw new PSInvalidCastException();
                                 ParameterBindingException pbe =
                                     new ParameterBindingException(
                                         ErrorCategory.InvalidArgument,
@@ -1159,6 +1169,7 @@ namespace System.Management.Automation
 
                                 throw pbe;
                             }
+
                             break;
                         }
 
@@ -1327,6 +1338,7 @@ namespace System.Management.Automation
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -1574,6 +1586,7 @@ namespace System.Management.Automation
                                     "ArgumentException matching Add(T) for type {0}: {1}", toType.FullName, e.Message);
                                 getMethodError = e;
                             }
+
                             if (addMethod == null)
                             {
                                 ParameterBindingException bindingException =
@@ -1904,7 +1917,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1914,7 +1927,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1970,6 +1983,7 @@ namespace System.Management.Automation
         private static readonly IDictionary s_emptyUsingParameters = new ReadOnlyDictionary<object, object>(new Dictionary<object, object>());
 
         public List<string> BoundPositionally { get; private set; }
+
         internal IDictionary ImplicitUsingParameters { get; set; }
     }
 

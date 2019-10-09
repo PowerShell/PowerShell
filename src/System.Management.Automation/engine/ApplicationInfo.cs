@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ApplicationInfo(string name, string path, ExecutionContext context) : base(name, CommandTypes.Application)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -51,18 +51,19 @@ namespace System.Management.Automation
             Extension = System.IO.Path.GetExtension(path);
             _context = context;
         }
+
         private ExecutionContext _context;
         #endregion ctor
 
         /// <summary>
         /// Gets the path for the application file.
         /// </summary>
-        public string Path { get; } = String.Empty;
+        public string Path { get; } = string.Empty;
 
         /// <summary>
         /// Gets the extension of the application file.
         /// </summary>
-        public string Extension { get; } = String.Empty;
+        public string Extension { get; } = string.Empty;
 
         /// <summary>
         /// Gets the path of the application file.
@@ -76,7 +77,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source of this command
+        /// Gets the source of this command.
         /// </summary>
         public override string Source
         {
@@ -84,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source version
+        /// Gets the source version.
         /// </summary>
         public override Version Version
         {
@@ -111,6 +112,7 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
+
             set { throw PSTraceSource.NewNotImplementedException(); }
         }
 
@@ -127,9 +129,11 @@ namespace System.Management.Automation
                     l.Add(new PSTypeName(typeof(string)));
                     _outputType = new ReadOnlyCollection<PSTypeName>(l);
                 }
+
                 return _outputType;
             }
         }
+
         private ReadOnlyCollection<PSTypeName> _outputType = null;
     }
 }

@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public RemoveCimSessionCommand()
             : base(parameters, parameterSets)
@@ -55,12 +55,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimsession;}
+
             set
             {
                 cimsession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimsession;
 
         /// <summary>
@@ -77,16 +79,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = ComputerNameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
-        private String[] computername;
+
+        private string[] computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Id".
@@ -101,12 +105,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32[] Id
         {
             get { return id;}
+
             set
             {
                 id = value;
                 base.SetParameter(value, nameId);
             }
         }
+
         private UInt32[] id;
 
         /// <summary>
@@ -122,12 +128,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Guid[] InstanceId
         {
             get { return instanceid;}
+
             set
             {
                 instanceid = value;
                 base.SetParameter(value, nameInstanceId);
             }
         }
+
         private Guid[] instanceid;
 
         /// <summary>
@@ -140,16 +148,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = NameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name
+        public string[] Name
         {
             get { return name;}
+
             set
             {
                 name = value;
                 base.SetParameter(value, nameName);
             }
         }
-        private String[] name;
+
+        private string[] name;
 
         #endregion
 
@@ -160,7 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.cimRemoveSession = new CimRemoveSession();
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -169,12 +179,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             base.CheckParameterSet();
             this.cimRemoveSession.RemoveCimSession(this);
-        }//End ProcessRecord()
+        }
 
         #region private members
         /// <summary>
         /// <see cref="CimRemoveSession"/> object used to remove the session from
-        /// session cache
+        /// session cache.
         /// </summary>
         private CimRemoveSession cimRemoveSession;
 
@@ -187,7 +197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -219,7 +229,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -230,5 +240,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.NameSet, new ParameterSetEntry(1)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -18,4 +18,7 @@ Description = 'Simple console host for console IO tests.'
 
 FunctionsToExport = 'New-TestHost'
 
+AliasesToExport = @()
+
+CmdletsToExport = @()
 }

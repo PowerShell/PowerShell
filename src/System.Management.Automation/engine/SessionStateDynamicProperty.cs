@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -11,7 +12,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -20,7 +21,7 @@ namespace System.Management.Automation
         #region NewProperty
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the item(s) on which the new property should be created.
@@ -91,7 +92,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the item(s) on which the new property should be created.
@@ -334,6 +335,7 @@ namespace System.Management.Automation
 
                 return NewPropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, type, value, newContext);
             }
+
             return null;
         }
 
@@ -422,6 +424,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -698,6 +701,7 @@ namespace System.Management.Automation
 
                 return RemovePropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, newContext);
             }
+
             return null;
         }
 
@@ -778,6 +782,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -993,7 +998,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies the property
+        /// Copies the property.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider to use.
@@ -1167,6 +1172,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -1260,6 +1266,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1477,7 +1484,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves the property from one item to another
+        /// Moves the property from one item to another.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -1651,6 +1658,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -1745,6 +1753,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -2065,6 +2074,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -2153,13 +2163,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion RenameProperty
 
         #endregion IDynamicPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

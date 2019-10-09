@@ -6,7 +6,7 @@ Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="1.0.0"
 PowerShellVersion="5.0"
 CmdletsToExport=@()
-FunctionsToExport=@('Start-PSPackage','New-PSSignedBuildZip', 'New-UnifiedNugetPackage', 'New-MSIPatch', 'Expand-PSSignedBuild', 'Publish-NugetToMyGet')
+FunctionsToExport=@('Start-PSPackage','New-PSSignedBuildZip', 'New-MSIPatch', 'Expand-PSSignedBuild', 'Publish-NugetToMyGet', 'New-DotnetSdkContainerFxdPackage', 'New-GlobalToolNupkg', 'New-ILNugetPackage')
 RootModule="packaging.psm1"
 RequiredModules = @("build")
 }

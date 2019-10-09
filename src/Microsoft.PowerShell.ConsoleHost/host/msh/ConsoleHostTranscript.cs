@@ -10,15 +10,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
-    internal sealed partial
-    class ConsoleHost
-        :
-        PSHost,
-        IDisposable
+    internal sealed partial class ConsoleHost : PSHost, IDisposable
     {
-        internal
-        bool
-        IsTranscribing
+        internal bool IsTranscribing
         {
             get
             {
@@ -26,11 +20,13 @@ namespace Microsoft.PowerShell
 
                 return _isTranscribing;
             }
+
             set
             {
                 _isTranscribing = value;
             }
         }
+
         private bool _isTranscribing;
 
         /*
@@ -65,11 +61,9 @@ namespace Microsoft.PowerShell
             }
         }
         */
-        private string _transcriptFileName = String.Empty;
+        private string _transcriptFileName = string.Empty;
 
-        internal
-        string
-        StopTranscribing()
+        internal string StopTranscribing()
         {
             lock (_transcriptionStateLock)
             {
@@ -104,15 +98,30 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal
-        void
-        WriteToTranscript(string text)
+        internal void WriteToTranscript(ReadOnlySpan<char> text)
+        {
+            WriteToTranscript(text, newLine: false);
+        }
+
+        internal void WriteLineToTranscript(ReadOnlySpan<char> text)
+        {
+            WriteToTranscript(text, newLine: true);
+        }
+
+        internal void WriteToTranscript(ReadOnlySpan<char> text, bool newLine)
         {
             lock (_transcriptionStateLock)
             {
                 if (_isTranscribing && _transcriptionWriter != null)
                 {
-                    _transcriptionWriter.Write(text);
+                    if (newLine)
+                    {
+                        _transcriptionWriter.WriteLine(text);
+                    }
+                    else
+                    {
+                        _transcriptionWriter.Write(text);
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -13,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class CompleteTransactionCommand : PSCmdlet
     {
         /// <summary>
-        /// Commits the current transaction
+        /// Commits the current transaction.
         /// </summary>
         protected override void EndProcessing()
         {

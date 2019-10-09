@@ -41,7 +41,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the enumerator to before the first scope
+        /// Sets the enumerator to before the first scope.
         /// </summary>
         public void Reset()
         {
@@ -49,7 +49,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current lookup scope
+        /// Gets the current lookup scope.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// The enumerator is positioned before the first element of the
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the IEnumerator for this class
+        /// Gets the IEnumerator for this class.
         /// </summary>
         /// <returns>
         /// The IEnumerator interface for this class.

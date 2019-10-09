@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsPrintable(char c)
         {
-            return (Char.IsLetterOrDigit(c) || Char.IsPunctuation(c) || Char.IsSeparator(c) || Char.IsSymbol(c) || Char.IsWhiteSpace(c));
+            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
         }
 
         /// <summary>
@@ -201,6 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }
+
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
             }

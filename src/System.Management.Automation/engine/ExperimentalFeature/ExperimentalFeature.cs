@@ -9,6 +9,7 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.CompilerServices;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -46,14 +47,29 @@ namespace System.Management.Automation
         public bool Enabled { get; private set; }
 
         /// <summary>
-        /// Constructor for ExperimentalFeature.
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
         /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
+        /// <param name="source">The source where the experimental feature is defined.</param>
+        /// <param name="isEnabled">Indicate whether the experimental feature is enabled.</param>
         internal ExperimentalFeature(string name, string description, string source, bool isEnabled)
         {
             Name = name;
             Description = description;
             Source = source;
             Enabled = isEnabled;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
+        /// This is a private constructor only for declaring new experimental features within this type.
+        /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
+        private ExperimentalFeature(string name, string description)
+            : this(name, description, source: EngineSource, isEnabled: false)
+        {
         }
 
         #endregion
@@ -83,15 +99,28 @@ namespace System.Management.Automation
             // Initialize the readonly collection 'EngineExperimentalFeatures'.
             var engineFeatures = new ExperimentalFeature[] {
                 /* Register engine experimental features here. Follow the same pattern as the example:
-                new ExperimentalFeature(name: "PSFileSystemProviderV2",
-                                        description: "Replace the old FileSystemProvider with cleaner design and faster code",
-                                        source: EngineSource,
-                                        isEnabled: false),
+                new ExperimentalFeature(
+                    name: "PSFileSystemProviderV2",
+                    description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
-                new ExperimentalFeature(name: "PSImplicitRemotingBatching",
-                                        description: "Batch implicit remoting proxy commands to improve performance",
-                                        source: EngineSource,
-                                        isEnabled: false)
+                new ExperimentalFeature(
+                    name: "PSImplicitRemotingBatching",
+                    description: "Batch implicit remoting proxy commands to improve performance"),
+                new ExperimentalFeature(
+                    name: "PSCommandNotFoundSuggestion",
+                    description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+                new ExperimentalFeature(
+                    name: "PSForEachObjectParallel",
+                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                new ExperimentalFeature(
+                    name: "PSTernaryOperator",
+                    description: "Support the ternary operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSErrorView",
+                    description: "New formatting for ErrorRecord"),
+                new ExperimentalFeature(
+                    name: "PSUpdatesNotification",
+                    description: "Print notification message when new releases are available")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -106,7 +135,7 @@ namespace System.Management.Automation
             //   3. We don't need to decide where/when to read the config file for the enabled experimental features,
             //      instead, it will be done when the type is used for the first time, which is always earlier than
             //      any experimental features take effect.
-            string[] enabledFeatures = Utils.EmptyArray<string>();
+            string[] enabledFeatures = Array.Empty<string>();
             try
             {
                 enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures();
@@ -131,6 +160,7 @@ namespace System.Management.Automation
                 if (IsModuleFeatureName(name))
                 {
                     list.Add(name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalModuleFeatureActivation, name);
                 }
                 else if (IsEngineFeatureName(name))
                 {
@@ -138,6 +168,7 @@ namespace System.Management.Automation
                     {
                         feature.Enabled = true;
                         list.Add(name);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureActivation, name);
                     }
                     else
                     {
@@ -151,6 +182,7 @@ namespace System.Management.Automation
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
                 }
             }
+
             return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -228,6 +260,7 @@ namespace System.Management.Automation
             {
                 action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
             }
+
             return action;
         }
 
@@ -293,7 +326,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initialize an instance that represents the none-value.
         /// </summary>
-        private ExperimentalAttribute() {}
+        private ExperimentalAttribute() { }
 
         /// <summary>
         /// An instance that represents the none-value.
@@ -334,9 +367,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = ExperimentAction.None;
     }
 }

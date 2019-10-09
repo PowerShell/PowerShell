@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Tracing;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 
@@ -16,7 +17,7 @@ namespace System.Management.Automation.Runspaces
     public static class RunspaceFactory
     {
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static RunspaceFactory()
         {
@@ -93,7 +94,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.
@@ -127,7 +128,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.

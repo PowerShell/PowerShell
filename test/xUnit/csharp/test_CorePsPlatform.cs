@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
+using Xunit;
 
 namespace PSTests.Parallel
 {
@@ -35,8 +36,7 @@ namespace PSTests.Parallel
 
                 // The process should return an exit code of 0 on success
                 Assert.Equal(0, process.ExitCode);
-                // It should be the same as what our platform code returns
-                Assert.Equal(username, Platform.Unix.UserName());
+                Assert.Equal(username, Environment.UserName);
             }
         }
 

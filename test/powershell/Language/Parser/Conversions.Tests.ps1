@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe 'conversion syntax' -Tags "CI" {
     # these test suite covers ([<type>]<expression>).<method>() syntax.
     # it mixes two purposes: casting and super-class method calls.
@@ -485,5 +486,61 @@ Describe 'method conversion' -Tags 'CI' {
     It "Test fail-to-convert code path" {
         $n = [N]::new()
         { [System.Management.Automation.LanguagePrimitives]::ConvertTo($n.GetC, [Func[[int], [object]]]) } | Should -Throw -ErrorId "PSInvalidCastException"
+    }
+
+    $TestCases = @(
+        @{ Number = "100y"; Value = "100"; Type = [int] }
+        @{ Number = "100uy"; Value = "100"; Type = [double] }
+        @{ Number = "1200u"; Value = "1200"; Type = [short] }
+        @{ Number = "1200L"; Value = "1200"; Type = [int] }
+        @{ Number = "127ul"; Value = "127"; Type = [ulong] }
+        @{ Number = "127d"; Value = "127"; Type = [byte] }
+        @{ Number = "127s"; Value = "127"; Type = [sbyte] }
+        @{ Number = "127y"; Value = "127"; Type = [uint] }
+    )
+    It "Correctly casts <Number> to value <Value> as type <Type>" -TestCases $TestCases {
+        param($Number, $Value, $Type)
+
+        $Result = $Number -as $Type
+        $Result | Should -Be $Value
+        $Result | Should -BeOfType $Type
+    }
+
+    $TestCases = @(
+        @{ Number = "200y" }
+        @{ Number = "300uy" }
+        @{ Number = "70000us" }
+        @{ Number = "40000s" }
+    )
+    It "Fails to cast invalid PowerShell-Style suffixed numeral <Number>" -TestCases $TestCases {
+        param($Number)
+
+        $Result = $Number -as [int]
+        $Result | Should -BeNullOrEmpty
+    }
+}
+
+Describe 'float/double precision when converting to string' -Tags "CI" {
+    It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format>" -TestCases @(
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 3 }; StringConversionResult = "3.3"; ToStringResult = "3.3000000000000003" }
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 6 }; StringConversionResult = "6.6"; ToStringResult = "6.6000000000000005" }
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::E }; StringConversionResult = [System.Math]::E.ToString("G15"); ToStringResult = [System.Math]::E.ToString() }
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::PI }; StringConversionResult = [System.Math]::PI.ToString("G15"); ToStringResult = [System.Math]::PI.ToString() }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 3).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "3.3"; ToStringResult = "3.3000002" }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 6).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "6.6"; ToStringResult = "6.6000004" }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MaxValue }; StringConversionResult = [float]::MaxValue.ToString("G7"); ToStringResult = [float]::MaxValue.ToString() }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MinValue }; StringConversionResult = [float]::MinValue.ToString("G7"); ToStringResult = [float]::MinValue.ToString() }
+    ) {
+        param($SourceType, $ValueScript, $StringConversionResult, $ToStringResult)
+
+        $value = & $ValueScript
+        $value | Should -BeOfType $SourceType
+        $value.ToString() | Should -BeExactly $ToStringResult
+
+        $value -as [string] | Should -BeExactly $StringConversionResult
+        [string]$value | Should -BeExactly $StringConversionResult
+        [System.Management.Automation.LanguagePrimitives]::ConvertTo($value, [string]) | Should -BeExactly $StringConversionResult
+        "$value" | Should -BeExactly $StringConversionResult
+        $value | Out-String | ForEach-Object -MemberName Trim | Should -BeExactly $StringConversionResult
     }
 }

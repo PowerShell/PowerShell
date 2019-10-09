@@ -2,14 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of an extrinsic CIM method
+    /// Job wrapping invocation of an extrinsic CIM method.
     /// </summary>
     internal class InstanceMethodInvocationJob : ExtrinsicMethodInvocationJob
     {

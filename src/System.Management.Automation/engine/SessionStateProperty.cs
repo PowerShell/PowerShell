@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -11,7 +12,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -288,6 +289,7 @@ namespace System.Management.Automation
 
                 return GetPropertyDynamicParameters(providerInstance, providerPaths[0], providerSpecificPickList, newContext);
             }
+
             return null;
         }
 
@@ -368,6 +370,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -658,6 +661,7 @@ namespace System.Management.Automation
 
                 return SetPropertyDynamicParameters(providerInstance, providerPaths[0], propertyValue, newContext);
             }
+
             return null;
         }
 
@@ -738,6 +742,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1018,6 +1023,7 @@ namespace System.Management.Automation
 
                 return ClearPropertyDynamicParameters(providerInstance, providerPaths[0], propertyToClear, newContext);
             }
+
             return null;
         }
 
@@ -1099,13 +1105,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion ClearProperty
 
         #endregion IPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

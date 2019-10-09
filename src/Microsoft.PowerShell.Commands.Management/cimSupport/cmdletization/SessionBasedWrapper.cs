@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private bool _disposed;
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         public void Dispose()
         {
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
@@ -60,6 +60,7 @@ namespace Microsoft.PowerShell.Cmdletization
                         _parentJob = null;
                     }
                 }
+
                 _disposed = true;
             }
         }
@@ -69,12 +70,13 @@ namespace Microsoft.PowerShell.Cmdletization
         #region Common parameters (AsJob, ThrottleLimit, Session)
 
         /// <summary>
-        /// Session to operate on
+        /// Session to operate on.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
         {
             get { return _session ?? (_session = new TSession[] { this.DefaultSession }); }
+
             set
             {
                 if (value == null)
@@ -86,18 +88,21 @@ namespace Microsoft.PowerShell.Cmdletization
                 _sessionWasSpecified = true;
             }
         }
+
         private TSession[] _session;
         private bool _sessionWasSpecified;
 
         /// <summary>
-        /// Whether to wrap and emit the whole operation as a background job
+        /// Whether to wrap and emit the whole operation as a background job.
         /// </summary>
         [Parameter]
         public SwitchParameter AsJob
         {
             get { return _asJob; }
+
             set { _asJob = value; }
         }
+
         private bool _asJob;
 
         /// <summary>
@@ -113,8 +118,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to query</param>
-        /// <param name="query">Query parameters</param>
+        /// <param name="session">Remote session to query.</param>
+        /// <param name="query">Query parameters.</param>
         /// <remarks>
         /// <para>
         /// This method shouldn't do any processing or interact with the remote session.
@@ -162,10 +167,10 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes an instance method in the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to invoke the method in</param>
-        /// <param name="objectInstance">The object on which to invoke the method</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on</param>
+        /// <param name="session">Remote session to invoke the method in.</param>
+        /// <param name="objectInstance">The object on which to invoke the method.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <remarks>
         /// <para>
         /// This method shouldn't do any processing or interact with the remote session.
@@ -199,8 +204,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes a static method in the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to invoke the method in</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
+        /// <param name="session">Remote session to invoke the method in.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
         /// <remarks>
         /// <para>
         /// This method shouldn't do any processing or interact with the remote session.
@@ -283,7 +288,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Returns default sessions to use when the user doesn't specify the -Session cmdlet parameter.
         /// </summary>
-        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter</returns>
+        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter.</returns>
         protected abstract TSession DefaultSession { get; }
 
         /// <summary>
@@ -319,6 +324,7 @@ namespace Microsoft.PowerShell.Cmdletization
             NonPipelineResults = Output | Error | Warning | Verbose | Debug | Progress,
             PipelineResults = Results,
         }
+
         private static void DiscardJobOutputs(Job job, JobOutputs jobOutputsToDiscard)
         {
             if (JobOutputs.Output == (jobOutputsToDiscard & JobOutputs.Output))
@@ -366,8 +372,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Queries for object instances in the object model.
         /// </summary>
-        /// <param name="query">Query parameters</param>
-        /// <returns>A lazy evaluated collection of object instances</returns>
+        /// <param name="query">Query parameters.</param>
+        /// <returns>A lazy evaluated collection of object instances.</returns>
         public override void ProcessRecord(QueryBuilder query)
         {
             _parentJob.DisableFlowControlForPendingCmdletActionsQueue();
@@ -389,11 +395,11 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Queries for instance and invokes an instance method
+        /// Queries for instance and invokes an instance method.
         /// </summary>
-        /// <param name="query">Query parameters</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the object instance being operated on</param>
+        /// <param name="query">Query parameters.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the object instance being operated on.</param>
         public override void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             _parentJob.DisableFlowControlForPendingJobsQueue();
@@ -523,6 +529,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     associatedSessions.Add(associatedSession);
                 }
             }
+
             if (associatedSessions.Count == 1)
             {
                 return associatedSessions;
@@ -569,9 +576,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Invokes an instance method in the object model.
         /// </summary>
-        /// <param name="objectInstance">The object on which to invoke the method</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on</param>
+        /// <param name="objectInstance">The object on which to invoke the method.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             if (objectInstance == null) throw new ArgumentNullException("objectInstance");
@@ -597,7 +604,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Invokes a static method in the object model.
         /// </summary>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
         public override void ProcessRecord(MethodInvocationInfo methodInvocationInfo)
         {
             if (methodInvocationInfo == null) throw new ArgumentNullException("methodInvocationInfo");
@@ -636,6 +643,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 {
                     conflictingParameter = "Confirm";
                 }
+
                 if (conflictingParameter != null)
                 {
                     string errorMessage = string.Format(

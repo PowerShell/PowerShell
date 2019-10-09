@@ -1,20 +1,27 @@
 parameters:
-  pool: 'Hosted Ubuntu 1604'
+  pool: 'ubuntu-latest'
   jobName: 'none'
   scriptName: ''
+  container: ''
+  verification: ''
+  continueOnError: false
 
 jobs:
+
 - job: ${{ parameters.jobName }}
   variables:
     scriptName: ${{ parameters.scriptName }}
 
+  ${{ if ne(parameters.container, '') }}:
+    container: ${{ parameters.container }}
+
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 
   steps:
-  - powershell: |
+  - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
     condition: succeededOrFailed()
@@ -27,3 +34,9 @@ jobs:
       $(scriptName)
     displayName: Run Script - $(scriptName)
     condition: succeededOrFailed()
+    continueOnError: ${{ parameters.continueOnError }}
+
+  - ${{ if ne(parameters.verification, '') }}:
+    - pwsh: ${{ parameters.verification }}
+      displayName: Verification
+      continueOnError: ${{ parameters.continueOnError }}

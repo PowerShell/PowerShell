@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Globalization;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -57,6 +58,7 @@ namespace Microsoft.PowerShell.Commands
         public string Culture
         {
             get { return _cultureInfo != null ? _cultureInfo.ToString() : null; }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -83,9 +85,11 @@ namespace Microsoft.PowerShell.Commands
                     _cultureInfo = new CultureInfo(cultureNumber);
                     return;
                 }
+
                 _cultureInfo = new CultureInfo(value);
             }
         }
+
         internal CultureInfo _cultureInfo = null;
 
         /// <summary>
@@ -95,8 +99,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CaseSensitive
         {
             get { return _caseSensitive; }
+
             set { _caseSensitive = value; }
         }
+
         private bool _caseSensitive;
         #endregion Parameters
     }
@@ -136,8 +142,10 @@ namespace Microsoft.PowerShell.Commands
         internal SwitchParameter DescendingOrder
         {
             get { return !_ascending; }
+
             set { _ascending = !value; }
         }
+
         private bool _ascending = true;
 
         internal List<PSObject> InputObjects { get; } = new List<PSObject>();
@@ -213,6 +221,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 expr = GetDefaultKeyPropertySet(inputObjects[0]);
             }
+
             if (expr != null)
             {
                 List<MshParameter> unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
@@ -348,12 +357,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             PSPropertySet defaultKeys = standardNames.Members["DefaultKeyPropertySet"] as PSPropertySet;
 
             if (defaultKeys == null)
             {
                 return null;
             }
+
             string[] props = new string[defaultKeys.ReferencedPropertyNames.Count];
             defaultKeys.ReferencedPropertyNames.CopyTo(props, 0);
             return props;
@@ -381,10 +392,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     cmdlet.WriteError(err);
                 }
+
                 foreach (string debugMsg in propertyNotFoundMsgs)
                 {
                     cmdlet.WriteDebug(debugMsg);
                 }
+
                 orderMatrixToCreate.Add(result);
             }
 
@@ -407,10 +420,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
-            Nullable<bool>[] ascendingOverrides = null;
+
+            bool?[] ascendingOverrides = null;
             if (mshParameterList != null && mshParameterList.Count != 0)
             {
-                ascendingOverrides = new Nullable<bool>[mshParameterList.Count];
+                ascendingOverrides = new bool?[mshParameterList.Count];
                 for (int k = 0; k < ascendingOverrides.Length; k++)
                 {
                     object ascendingVal = mshParameterList[k].GetEntry(
@@ -441,6 +455,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             OrderByPropertyComparer comparer =
                 OrderByPropertyComparer.CreateComparer(orderMatrix, ascending,
                 ascendingOverrides, cultureInfo, caseSensitive);
@@ -476,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Utility function used to create OrderByPropertyEntry for the supplied input object.
         /// </summary>
-        /// <param name="cmdlet">PSCmdlet</param>
+        /// <param name="cmdlet">PSCmdlet.</param>
         /// <param name="inputObject">Input Object.</param>
         /// <param name="isCaseSensitive">Indicates if the Property value comparisons need to be case sensitive or not.</param>
         /// <param name="cultureInfo">Culture Info that needs to be used for comparison.</param>
@@ -502,6 +517,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 cmdlet.WriteError(err);
             }
+
             foreach (string debugMsg in propertyNotFoundMsgs)
             {
                 cmdlet.WriteDebug(debugMsg);
@@ -577,6 +593,7 @@ namespace Microsoft.PowerShell.Commands
                 propertyNotFoundMsg = StringUtil.Format(SortObjectStrings.PropertyNotFound, ex.ToString());
                 return;
             }
+
             propertyNotFoundMsg = null;
             // we obtained some results, enter them into the list
             foreach (PSPropertyExpressionResult r in expressionResults)
@@ -595,6 +612,7 @@ namespace Microsoft.PowerShell.Commands
                     errors.Add(errorRecord);
                     orderValues.Add(ObjectCommandPropertyValue.ExistingNullProperty);
                 }
+
                 comparable = true;
             }
         }
@@ -645,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
             return order;
         }
 
-        internal static OrderByPropertyComparer CreateComparer(List<OrderByPropertyEntry> orderMatrix, bool ascendingFlag, Nullable<bool>[] ascendingOverrides, CultureInfo cultureInfo, bool caseSensitive)
+        internal static OrderByPropertyComparer CreateComparer(List<OrderByPropertyEntry> orderMatrix, bool ascendingFlag, bool?[] ascendingOverrides, CultureInfo cultureInfo, bool caseSensitive)
         {
             if (orderMatrix.Count == 0)
                 return null;
@@ -658,6 +676,7 @@ namespace Microsoft.PowerShell.Commands
                 if (entry.orderValues.Count > maxEntries)
                     maxEntries = entry.orderValues.Count;
             }
+
             if (maxEntries == 0)
                 return null;
 
@@ -696,6 +715,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return lhs.comparable.CompareTo(rhs.comparable) * -1;
             }
+
             int result = _orderByPropertyComparer.Compare(lhs, rhs);
             // When items are identical according to the internal comparison, compare by index
             // to preserve the original order

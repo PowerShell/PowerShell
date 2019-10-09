@@ -54,8 +54,10 @@ namespace Microsoft.PowerShell.Commands
         public System.DateTime AccountExpires
         {
             get { return this.accountexpires;}
+
             set { this.accountexpires = value; }
         }
+
         private System.DateTime accountexpires;
 
         /// <summary>
@@ -66,8 +68,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
             get { return this.accountneverexpires;}
+
             set { this.accountneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter accountneverexpires;
 
         /// <summary>
@@ -79,8 +83,10 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get { return this.description;}
+
             set { this.description = value; }
         }
+
         private string description;
 
         /// <summary>
@@ -93,8 +99,10 @@ namespace Microsoft.PowerShell.Commands
         public string FullName
         {
             get { return this.fullname;}
+
             set { this.fullname = value; }
         }
+
         private string fullname;
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -110,8 +118,10 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalUser InputObject
         {
             get { return this.inputobject;}
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalUser inputobject;
 
         /// <summary>
@@ -127,8 +137,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
 
         /// <summary>
@@ -140,8 +152,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.SecureString Password
         {
             get { return this.password;}
+
             set { this.password = value; }
         }
+
         private System.Security.SecureString password;
 
         /// <summary>
@@ -149,12 +163,14 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies that the password will not expire.
         /// </summary>
         [Parameter]
-        public System.Boolean PasswordNeverExpires
+        public bool PasswordNeverExpires
         {
             get { return this.passwordneverexpires; }
+
             set { this.passwordneverexpires = value; }
         }
-        private System.Boolean passwordneverexpires;
+
+        private bool passwordneverexpires;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -169,8 +185,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier sid;
 
         /// <summary>
@@ -179,12 +197,14 @@ namespace Microsoft.PowerShell.Commands
         /// account. The default value is True.
         /// </summary>
         [Parameter]
-        public System.Boolean UserMayChangePassword
+        public bool UserMayChangePassword
         {
             get { return this.usermaychangepassword;}
+
             set { this.usermaychangepassword = value; }
         }
-        private System.Boolean usermaychangepassword;
+
+        private bool usermaychangepassword;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -198,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
             }
+
             sam = new Sam();
         }
 
@@ -296,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionSetUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

@@ -11,7 +11,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
     It "A warning should be emitted if both -AsByteStream and -Encoding are used together" {
         $testfile = "${TESTDRIVE}\bfile.txt"
         "test" | Set-Content $testfile
-        $result = Get-Content -AsByteStream -Encoding Unicode -Path $testfile -WarningVariable contentWarning *>$null
+        $result = Get-Content -AsByteStream -Encoding Unicode -Path $testfile -WarningVariable contentWarning *> $null
         $contentWarning.Message | Should -Match "-AsByteStream"
     }
 

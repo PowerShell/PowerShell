@@ -1,19 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Xunit;
 
-namespace PSTests.Parallel
+namespace PSTests.Sequential
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
-
     public class RunspaceTests
     {
         private static int count = 1;
-        private static string script = String.Format($"get-command get-command");
+        private static string script = string.Format($"get-command get-command");
 
         [Fact]
         public void TestRunspaceWithPipeline()
@@ -30,6 +31,7 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
                 }
 
@@ -56,6 +58,7 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
                 }
 

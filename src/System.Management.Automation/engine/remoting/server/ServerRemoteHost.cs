@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
-using System.Globalization;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -42,7 +43,7 @@ namespace System.Management.Automation.Remoting
         protected AbstractServerTransportManager _transportManager;
 
         /// <summary>
-        /// ServerDriverRemoteHost
+        /// ServerDriverRemoteHost.
         /// </summary>
         private ServerDriverRemoteHost _serverDriverRemoteHost;
 
@@ -157,6 +158,7 @@ namespace System.Management.Automation.Remoting
         internal virtual bool AllowPushRunspace
         {
             get { return (_serverDriverRemoteHost != null) ? _serverDriverRemoteHost.AllowPushRunspace : false; }
+
             set { if (_serverDriverRemoteHost != null) { _serverDriverRemoteHost.AllowPushRunspace = value; } }
         }
 
@@ -310,7 +312,7 @@ namespace System.Management.Automation.Remoting
         #region Overrides
 
         /// <summary>
-        /// True if runspace is pushed
+        /// True if runspace is pushed.
         /// </summary>
         public override bool IsRunspacePushed
         {
@@ -321,9 +323,9 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Push runspace to use for remote command execution
+        /// Push runspace to use for remote command execution.
         /// </summary>
-        /// <param name="runspace">RemoteRunspace</param>
+        /// <param name="runspace">RemoteRunspace.</param>
         public override void PushRunspace(Runspace runspace)
         {
             // Double session hop is currently allowed only for WSMan (non-OutOfProc) sessions, where
@@ -368,7 +370,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Pop runspace
+        /// Pop runspace.
         /// </summary>
         public override void PopRunspace()
         {
@@ -388,6 +390,7 @@ namespace System.Management.Automation.Remoting
                 {
                     _pushedRunspace.Close();
                 }
+
                 _pushedRunspace = null;
             }
         }
@@ -397,16 +400,17 @@ namespace System.Management.Automation.Remoting
         #region Properties
 
         /// <summary>
-        /// Server Debugger
+        /// Server Debugger.
         /// </summary>
         internal Debugger ServerDebugger
         {
             get { return _debugger; }
+
             set { _debugger = value as ServerRemoteDebugger; }
         }
 
         /// <summary>
-        /// Pushed runspace or null
+        /// Pushed runspace or null.
         /// </summary>
         internal Runspace PushedRunspace
         {

@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Write a line to the output device.
         /// </summary>
-        /// <param name="s">line to write</param>
+        /// <param name="s">Line to write.</param>
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Constructor for the class.
         /// </summary>
-        /// <param name="printerName">name of printer, if null use default printer</param>
+        /// <param name="printerName">Name of printer, if null use default printer.</param>
         internal PrinterLineOutput(string printerName)
         {
             _printerName = printerName;
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Callback to be called when IConsole.WriteLine() is called by WriteLineHelper.
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">String to write.</param>
         private void OnWriteLine(string s)
         {
             _lines.Enqueue(s);
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This is called when the WriteLineHelper needs to write a line whose length
         /// is the same as the width of the screen buffer.
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">String to write.</param>
         private void OnWrite(string s)
         {
             _lines.Enqueue(s);
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// If the font object exists, it does nothing.
         /// Else, the a new object is created and verified.
         /// </summary>
-        /// <param name="g">GDI+ graphics object needed for verification</param>
+        /// <param name="g">GDI+ graphics object needed for verification.</param>
         private void CreateFont(Graphics g)
         {
             if (_printFont != null)
@@ -176,10 +176,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper to verify that the font is fixed pitch. If the test fails,
+        /// Internal helper to verify that the font is fixed pitch. If the test fails,
         /// it reverts to the default font.
         /// </summary>
-        /// <param name="g">GDI+ graphics object needed for verification</param>
+        /// <param name="g">GDI+ graphics object needed for verification.</param>
         private void VerifyFont(Graphics g)
         {
             // check if the font is fixed pitch
@@ -206,8 +206,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Event fired for each page to print.
         /// </summary>
-        /// <param name="sender">sender, not used</param>
-        /// <param name="ev">print page event</param>
+        /// <param name="sender">Sender, not used.</param>
+        /// <param name="ev">Print page event.</param>
         private void pd_PrintPage(object sender, PrintPageEventArgs ev)
         {
             float yPos = 0; // GDI+ coordinate down the page
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             while ((linesPrinted < linesPerPage) && (_lines.Count > 0))
             {
                 // get the string to be printed
-                String line = _lines.Dequeue();
+                string line = _lines.Dequeue();
 
                 // compute the Y position where to draw
                 yPos = topMargin + (linesPrinted * lineHeight);
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 linesPrinted++;
             }
 
-            //If we have more lines then print another page
+            // If we have more lines then print another page
             ev.HasMorePages = _lines.Count > 0;
         }
 

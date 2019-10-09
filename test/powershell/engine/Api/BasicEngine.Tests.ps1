@@ -6,6 +6,19 @@ Describe 'Basic engine APIs' -Tags "CI" {
             [powershell]::Create() | Should -Not -BeNullOrEmpty
         }
 
+        It 'can create instance with runspace' {
+            $rs = [runspacefactory]::CreateRunspace()
+            $ps = [powershell]::Create($rs)
+            $ps | Should -Not -BeNullOrEmpty
+            $ps.Runspace | Should -Be $rs
+            $ps.Dispose()
+            $rs.Dispose()
+        }
+
+        It 'cannot create instance with null runspace' {
+            { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
+        }
+
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
             $ps = [powershell]::Create()
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null
@@ -32,19 +45,21 @@ $rs.Open()
 $ps = [powershell]::Create()
 $ps.RunspacePool = $rs
 $null = $ps.AddScript(1).Invoke()
-write-host should_not_stop_responding_at_exit
+"should_not_stop_responding_at_exit"
 exit
 '@
-        $process = Start-Process pwsh -ArgumentList $command -PassThru
-        Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 > $null
+        $outputFile = New-Item -Path $TestDrive\output.txt -ItemType File
+        $process = Start-Process pwsh -ArgumentList $command -PassThru -RedirectStandardOutput $outputFile
+        Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
+        $hasExited = $process.HasExited
 
-        $expect = "powershell process exits in 5 seconds"
-        if (-not $process.HasExited) {
-            Stop-Process -InputObject $process -Force -ErrorAction SilentlyContinue
-            "powershell process doesn't exit in 5 seconds" | Should -Be $expect
-        } else {
-            $expect | Should -Be $expect
+        $verboseMessage = Get-Content $outputFile
+
+        if (-not $hasExited) {
+            Stop-Process $process -Force
         }
+
+        $hasExited | Should -BeTrue -Because "Process did not exit in 5 seconds as: $verboseMessage"
     }
 }
 

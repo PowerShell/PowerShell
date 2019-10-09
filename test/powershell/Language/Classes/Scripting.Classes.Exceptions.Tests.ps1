@@ -231,7 +231,7 @@ Describe "Exception error position" -Tags "CI" {
         static f1() { [MSFT_3090412]::bar = 42 }
         static f2() { throw "an error in f2" }
         static f3() { "".Substring(0, 10) }
-        static f4() { dir nosuchfile -ErrorAction Stop }
+        static f4() { Get-ChildItem nosuchfile -ErrorAction Stop }
     }
 
     It "Setting a property that doesn't exist" {
@@ -251,7 +251,7 @@ Describe "Exception error position" -Tags "CI" {
 
     It "Terminating error" {
         $e = { [MSFT_3090412]::f4() } | Should -Throw -PassThru -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
-        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('dir nosuchfile -ErrorAction Stop'))
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('Get-ChildItem nosuchfile -ErrorAction Stop'))
     }
 }
 

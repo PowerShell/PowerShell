@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 # Test Settings:
-# This is the list of PowerShell Core modules for which we test update-help
+# This is the list of PowerShell modules for which we test update-help
 $powershellCoreModules = @(
     "CimCmdlets"
     <#
@@ -41,7 +43,7 @@ else
     $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
 }
 
-# This is the list of test cases -- each test case represents a PowerShell Core module.
+# This is the list of test cases -- each test case represents a PowerShell module.
 $testCases = @{
 
     "CimCmdlets" = @{
@@ -197,7 +199,7 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" {
+            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
                 if($userscope)
                 {
@@ -327,14 +329,16 @@ function ValidateSaveHelp
 
     $compressedFile = GetFiles -fileType "*$extension" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedCompressedFile = $testCases[$moduleName].CompressedFiles
-    $expectedCompressedFile | Should -Be $compressedFile
+    $expectedCompressedFile | Should -Not -BeNullOrEmpty -Because "Test data (expectedCompressedFile) should never be null"
+    $compressedFile | Should -Be $expectedCompressedFile -Because "Save-Help for $module should download '$expectedCompressedFile'"
 
     $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedHelpInfoFile = $testCases[$moduleName].HelpInfoFiles
-    $expectedHelpInfoFile | Should -Be $helpInfoFile
+    $expectedHelpInfoFile | Should -Not -BeNullOrEmpty -Because "Test data (expectedHelpInfoFile) should never be null"
+    $helpInfoFile | Should -Be $expectedHelpInfoFile -Because "Save-Help for $module should download '$expectedHelpInfoFile'"
 }
 
-Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help from the Web for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -346,7 +350,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module." -Ta
     RunUpdateHelpTests -tag "CI" -Scope 'AllUsers'
 }
 
-Describe "Validate Update-Help from the Web for one PowerShell Core module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help from the Web for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -358,7 +362,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module for u
     RunUpdateHelpTests -tag "CI" -Scope 'CurrentUser'
 }
 
-Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -370,7 +374,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules." -T
     RunUpdateHelpTests -tag "Feature" -Scope 'AllUsers'
 }
 
-Describe "Validate Update-Help from the Web for all PowerShell Core modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help from the Web for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -382,7 +386,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules for 
     RunUpdateHelpTests -tag "Feature" -Scope 'CurrentUser'
 }
 
-Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -394,7 +398,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tag
     RunUpdateHelpTests -tag "CI" -useSourcePath -Scope 'AllUsers'
 }
 
-Describe "Validate Update-Help -SourcePath for one PowerShell Core module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help -SourcePath for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -406,7 +410,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module for us
     RunUpdateHelpTests -tag "CI" -useSourcePath -Scope 'CurrentUser'
 }
 
-Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -418,7 +422,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Ta
     RunUpdateHelpTests -tag "Feature" -useSourcePath -Scope 'AllUsers'
 }
 
-Describe "Validate Update-Help -SourcePath for all PowerShell Core modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Validate Update-Help -SourcePath for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -430,7 +434,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules for u
     RunUpdateHelpTests -tag "Feature" -useSourcePath -Scope 'CurrentUser'
 }
 
-Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules." -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate 'Save-Help -DestinationPath for one PowerShell modules." -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -441,7 +445,7 @@ Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules."
     RunSaveHelpTests -tag "CI"
 }
 
-Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate 'Save-Help -DestinationPath for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"

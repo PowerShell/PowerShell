@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-using System.Runtime.InteropServices;
-using System.Globalization;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -27,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
         protected SecureString SecureStringData
         {
             get { return _ss; }
+
             set { _ss = value; }
         }
 
@@ -116,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ConvertFromSecureStringCommand : ConvertFromToSecureStringCommandBase
     {
         /// <summary>
-        /// Initializes a new instance of the ExportSecureStringCommand class
+        /// Initializes a new instance of the ExportSecureStringCommand class.
         /// </summary>
         public ConvertFromSecureStringCommand() : base("ConvertFrom-SecureString") { }
 
@@ -172,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // The formatted string is Algorithm Version,
                 // Initialization Vector, Encrypted Data
-                string dataPackage = String.Format(
+                string dataPackage = string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
                     "{0}|{1}|{2}",
                     2,
@@ -232,6 +234,7 @@ namespace Microsoft.PowerShell.Commands
                 _s = value;
             }
         }
+
         private string _s;
 
         /// <summary>
@@ -251,6 +254,7 @@ namespace Microsoft.PowerShell.Commands
                 _asPlainText = value;
             }
         }
+
         private bool _asPlainText;
 
         /// <summary>
@@ -270,6 +274,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>

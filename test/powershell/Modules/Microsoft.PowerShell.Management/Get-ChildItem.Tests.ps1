@@ -32,6 +32,12 @@ Describe "Get-ChildItem" -Tags "CI" {
                 @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
                 @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
             )
+
+            $SkipAppExeCLinks = $true
+            if ($IsWindows -and (Get-ChildItem -Path ~\AppData\Local\Microsoft\WindowsApps\*.exe -ErrorAction Ignore) -ne $null)
+            {
+                $SkipAppExeCLinks = $false
+            }
         }
 
         It "Should list the contents of the current folder" {
@@ -169,6 +175,38 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
+
+        It "-Filter *. finds extension-less files" {
+            $null = New-Item -Path TestDrive:/noextension -ItemType File
+            (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
+        }
+
+        It "Understand APPEXECLINKs" -Skip:($SkipAppExeCLinks) {
+            $app = Get-ChildItem -Path ~\appdata\local\microsoft\windowsapps\*.exe | Select-Object -First 1
+            $app.Target | Should -Not -Be $app.FullName
+            $app.LinkType | Should -BeExactly 'AppExeCLink'
+        }
+
+        It "Wildcard matching behavior is the same between -Path and -Include parameters when using escape characters" {
+            $oldLocation = Get-Location
+
+            try {
+                Set-Location $TestDrive
+
+                $expectedPath = 'a`[b]'
+                $escapedPath = 'a```[b`]'
+                New-Item -Type File $expectedPath -ErrorAction SilentlyContinue > $null
+
+                $WithInclude = Get-ChildItem * -Include $escapedPath
+                $WithPath = Get-ChildItem -Path $escapedPath
+
+                $WithInclude.Name | Should -BeExactly $expectedPath
+                $WithPath.Name | Should -BeExactly $expectedPath
+
+            } finally {
+                Set-Location $oldLocation
+            }
+        }
     }
 
     Context 'Env: Provider' {
@@ -181,12 +219,76 @@ Describe "Get-ChildItem" -Tags "CI" {
 
                 $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | measure).Count | Should -Be $count
+                ($foobar | Measure-Object).Count | Should -Be $count
             }
             catch
             {
                 Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
+    }
+}
+
+Describe "Get-ChildItem with special path" -Tags "CI" {
+
+    BeforeAll {
+        $bracketDirName = "Test[Dir]"
+        $bracketDir = "Test``[Dir``]"
+        $bracketPath = Join-Path $TestDrive $bracketDir
+        $null = New-Item -Path $TestDrive -Name $bracketDirName -ItemType Directory -Force
+    }
+
+    It "Should list files in directory with name containing bracket char" {
+        $null = New-Item -Path $bracketPath -Name file1.txt -ItemType File
+        $null = New-Item -Path $bracketPath -Name file2.txt -ItemType File
+        Get-ChildItem -Path $bracketPath | Should -HaveCount 2
+    }
+}
+
+Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
+
+    BeforeAll {
+        $modeTestDir = New-Item -Path "$TestDrive/testmodedirectory" -ItemType Directory -Force
+        $targetFile1 = New-Item -Path "$TestDrive/targetFile1" -ItemType File -Force
+        $targetFile2 = New-Item -Path "$TestDrive/targetFile2" -ItemType File -Force
+        $targetDir1 = New-Item -Path "$TestDrive/targetDir1" -ItemType Directory -Force
+        $targetDir2 = New-Item -Path "$TestDrive/targetDir2" -ItemType Directory -Force
+
+        $testcases = @(
+            @{ expectedMode = "d----"; expectedModeWithoutHardlink = "d----"; itemType = "Directory"; itemName = "Directory"; fileAttributes = [System.IO.FileAttributes] "Directory"; target = $null }
+            @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "SymbolicLink"; itemName = "SymbolicLink-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir2.FullName }
+        )
+
+        if ($IsWindows)
+        {
+            $testcases += @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir1.FullName }
+            $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }
+        }
+    }
+
+    It 'Validate Mode property - <itemName>' -TestCases $testcases {
+
+        param($expectedMode, $expectedModeWithoutHardlink, $itemType, $itemName, $fileAttributes, $target)
+
+        $item = if ($target)
+        {
+            New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType -Target $target
+        }
+        else
+        {
+            New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType
+        }
+
+        $item | Should -BeOfType "System.IO.FileSystemInfo"
+
+        $actualMode = [Microsoft.PowerShell.Commands.FileSystemProvider]::Mode($item)
+        $actualMode | Should -BeExactly $expectedMode
+
+        $actualModeWithoutHardlink = [Microsoft.PowerShell.Commands.FileSystemProvider]::ModeWithoutHardlink($item)
+        $actualModeWithoutHardlink | Should -BeExactly $expectedModeWithoutHardlink
+
+        $item.Attributes | Should -Be $fileAttributes
     }
 }

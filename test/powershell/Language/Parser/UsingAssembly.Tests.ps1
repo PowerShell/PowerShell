@@ -5,7 +5,7 @@ Describe "Using assembly" -Tags "CI" {
 
     try
     {
-        pushd $PSScriptRoot
+        Push-Location $PSScriptRoot
         $guid = [Guid]::NewGuid()
 
         Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$guid.dll -TypeDefinition @"
@@ -102,6 +102,6 @@ public class ABC {}
     finally
     {
         Remove-Item .\UsingAssemblyTest$guid.dll
-        popd
+        Pop-Location
     }
 }

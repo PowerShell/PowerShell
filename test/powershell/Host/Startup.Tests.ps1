@@ -26,10 +26,8 @@ Describe "Validate start of console host" -Tag CI {
             'System.Diagnostics.Debug.dll'
             'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
-            'System.Diagnostics.Tools.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
-            'System.Globalization.dll'
             'System.IO.FileSystem.AccessControl.dll'
             'System.IO.FileSystem.dll'
             'System.IO.FileSystem.DriveInfo.dll'
@@ -45,11 +43,8 @@ Describe "Validate start of console host" -Tag CI {
             'System.Private.CoreLib.dll'
             'System.Private.Uri.dll'
             'System.Private.Xml.dll'
-            'System.Private.Xml.Linq.dll'
-            'System.Reflection.dll'
             'System.Reflection.Emit.ILGeneration.dll'
             'System.Reflection.Emit.Lightweight.dll'
-            'System.Reflection.Extensions.dll'
             'System.Reflection.Primitives.dll'
             'System.Resources.ResourceManager.dll'
             'System.Runtime.dll'
@@ -62,9 +57,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.Encoding.dll'
-            'System.Security.Cryptography.Primitives.dll'
             'System.Security.Cryptography.X509Certificates.dll'
-            'System.Security.Principal.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
@@ -72,9 +65,8 @@ Describe "Validate start of console host" -Tag CI {
             'System.Threading.Tasks.dll'
             'System.Threading.Tasks.Parallel.dll'
             'System.Threading.Thread.dll'
-            'System.Threading.Timer.dll'
+            'System.Threading.ThreadPool.dll'
             'System.Xml.ReaderWriter.dll'
-            'System.Xml.XDocument.dll'
         )
 
         if ($IsWindows) {
@@ -83,6 +75,8 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
+                'System.Security.Cryptography.Primitives.dll'
+                'System.Security.Principal.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
@@ -109,6 +103,11 @@ Describe "Validate start of console host" -Tag CI {
     }
 
     It "No new assemblies are loaded" {
+        if ( (Get-PlatformInfo) -eq "alpine" ) {
+            Set-ItResult -Pending -Because "Missing MI library causes list to be different"
+            return
+        }
+
         $diffs = Compare-Object -ReferenceObject $allowedAssemblies -DifferenceObject $loadedAssemblies
 
         if ($null -ne $diffs) {

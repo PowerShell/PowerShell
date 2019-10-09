@@ -14,7 +14,8 @@ RUN apt-get update \
         curl \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -23,6 +24,6 @@ RUN locale-gen $LANG && update-locale
 
 RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
 RUN dpkg -i $PACKAGENAME || :
-RUN apt-get install -y -f
+RUN apt-get install -y -f --no-install-recommends
 RUN $TESTDOWNLOADCOMMAND
 RUN pwsh$PREVIEWSUFFIX -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';\$null=New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"

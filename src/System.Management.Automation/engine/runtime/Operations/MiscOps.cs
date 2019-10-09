@@ -16,6 +16,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -60,6 +61,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
                         "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
                 }
+
                 commandSessionState = mi.SessionState.Internal;
                 commandIndex += 1;
             }
@@ -106,10 +108,13 @@ namespace System.Management.Automation
 
                     if (string.IsNullOrEmpty(commandName))
                     {
-                        throw InterpreterError.NewInterpreterException(command, typeof(RuntimeException),
-                                                                       commandExtent, "BadExpression",
-                                                                       ParserStrings.BadExpression,
-                                                                       dotSource ? "." : "&");
+                        throw InterpreterError.NewInterpreterException(
+                            command,
+                            typeof(RuntimeException),
+                            commandExtent,
+                            "BadExpression",
+                            ParserStrings.BadExpression,
+                            dotSource ? "." : "&");
                     }
 
                     try
@@ -145,6 +150,7 @@ namespace System.Management.Automation
                             { InvocationName = invocationName };
                             rte.ErrorRecord.SetInvocationInfo(invocationInfo);
                         }
+
                         throw;
                     }
                 }
@@ -249,21 +255,25 @@ namespace System.Management.Automation
                     commandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter = context.ExternalErrorOutput;
                 }
             }
+
             if (!redirectedWarning && (context.ExpressionWarningOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.WarningOutputPipe = context.ExpressionWarningOutputPipe;
                 redirectedWarning = true;
             }
+
             if (!redirectedVerbose && (context.ExpressionVerboseOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.VerboseOutputPipe = context.ExpressionVerboseOutputPipe;
                 redirectedVerbose = true;
             }
+
             if (!redirectedDebug && (context.ExpressionDebugOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.DebugOutputPipe = context.ExpressionDebugOutputPipe;
                 redirectedDebug = true;
             }
+
             if (!redirectedInformation && (context.ExpressionInformationOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.InformationOutputPipe = context.ExpressionInformationOutputPipe;
@@ -322,7 +332,11 @@ namespace System.Management.Automation
                     object parameterValue = de.Value;
                     string parameterText = GetParameterText(parameterName);
 
-                    if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
+                    if (markUntrustedData)
+                    {
+                        ExecutionContext.MarkObjectAsUntrusted(parameterValue);
+                    }
+
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
                         splatAst, parameterValue, false);
@@ -335,7 +349,11 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
-                        if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
+                        if (markUntrustedData)
+                        {
+                            ExecutionContext.MarkObjectAsUntrusted(obj);
+                        }
+
                         yield return SplatEnumerableElement(obj, splatAst);
                     }
                 }
@@ -386,6 +404,7 @@ namespace System.Management.Automation
                 string whitespaces = parameterName.Substring(endPosition);
                 parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
             }
+
             return parameterText;
         }
 
@@ -447,7 +466,7 @@ namespace System.Management.Automation
                     {
                         pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
                         commandProcessor = nextToLastCommand;
-                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe { NullPipe = true };
                     }
                 }
 
@@ -515,14 +534,14 @@ namespace System.Management.Automation
                 // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
-                    var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                    var vName = ((VariableExpressionAst)v).VariablePath.UserPath;
                     // Skip variables that don't exist
                     if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
                         continue;
                     // Skip PowerShell magic variables
                     if (Regex.Match(vName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false
                     )
                     {
                         updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
@@ -532,6 +551,7 @@ namespace System.Management.Automation
                         position = v.Extent.EndOffset - pipelineOffset;
                     }
                 }
+
                 updatedScriptblock.Append(scriptblockBodyString.Substring(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
@@ -578,6 +598,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             var objAsArray = obj as object[];
             return objAsArray != null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
         }
@@ -648,7 +669,7 @@ namespace System.Management.Automation
                 // GetSteppablePipeline() is called on an arbitrary script block with the intention
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
-                bool isTrusted = (scriptBlock.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {
@@ -759,6 +780,7 @@ namespace System.Management.Automation
             {
                 return AutomationNull.Value;
             }
+
             var result = resultCount == 1 ? resultList[0] : resultList.ToArray();
             // Clear the array list so that we don't write the results of the pipe when flushing the pipe.
             resultList.Clear();
@@ -813,7 +835,7 @@ namespace System.Management.Automation
         internal static void Nop() { }
     }
 
-#region Redirections
+    #region Redirections
 
     internal abstract class CommandRedirection
     {
@@ -823,6 +845,7 @@ namespace System.Management.Automation
         }
 
         internal RedirectionStream FromStream { get; private set; }
+
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
         internal void UnbindForExpression(FunctionContext funcContext, Pipe[] pipes)
@@ -879,7 +902,7 @@ namespace System.Management.Automation
                                                ParserStrings.RedirectionStreamCanOnlyMergeToOutputStream);
             }
 
-            //this.ToStream = to;
+            // this.ToStream = to;
         }
 
         public override string ToString()
@@ -889,7 +912,7 @@ namespace System.Management.Automation
                        : string.Format(CultureInfo.InvariantCulture, "{0}>&1", (int)FromStream);
         }
 
-        //private RedirectionStream ToStream { get; set; }
+        // private RedirectionStream ToStream { get; set; }
 
         // Handle merging redirections for commands, like:
         //   dir 2>&1
@@ -1003,7 +1026,9 @@ namespace System.Management.Automation
         }
 
         internal string File { get; private set; }
+
         internal bool Appending { get; private set; }
+
         private PipelineProcessor PipelineProcessor { get; set; }
 
         // Handle binding file redirection for commands, like:
@@ -1021,8 +1046,7 @@ namespace System.Management.Automation
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
@@ -1036,8 +1060,7 @@ namespace System.Management.Automation
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
@@ -1116,12 +1139,13 @@ namespace System.Management.Automation
                     context.ExpressionInformationOutputPipe = pipe;
                     break;
             }
+
             return oldPipes;
         }
 
         internal Pipe GetRedirectionPipe(ExecutionContext context, PipelineProcessor parentPipelineProcessor)
         {
-            if (String.IsNullOrWhiteSpace(File))
+            if (string.IsNullOrWhiteSpace(File))
             {
                 return new Pipe { NullPipe = true };
             }
@@ -1174,6 +1198,7 @@ namespace System.Management.Automation
                 // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
                 parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
             }
+
             return new Pipe(context, PipelineProcessor);
         }
 
@@ -1219,7 +1244,7 @@ namespace System.Management.Automation
         }
     }
 
-#endregion Redirections
+    #endregion Redirections
 
     internal static class FunctionOps
     {
@@ -1319,15 +1344,15 @@ namespace System.Management.Automation
             }
 
             // Add key and values from left hand side...
-            foreach (object myKey in lvalDict.Keys)
+            foreach (object key in lvalDict.Keys)
             {
-                newDictionary.Add(myKey, lvalDict[myKey]);
+                newDictionary.Add(key, lvalDict[key]);
             }
 
             // and the right-hand side
-            foreach (object myKey in rvalDict.Keys)
+            foreach (object key in rvalDict.Keys)
             {
-                newDictionary.Add(myKey, rvalDict[myKey]);
+                newDictionary.Add(key, rvalDict[key]);
             }
 
             return newDictionary;
@@ -1339,7 +1364,7 @@ namespace System.Management.Automation
         internal class CatchAll { }
 
         /// <summary>
-        /// Represent a handler search result
+        /// Represent a handler search result.
         /// </summary>
         private class HandlerSearchResult
         {
@@ -1433,7 +1458,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the matching handler for the caught exception
+        /// Find the matching handler for the caught exception.
         /// </summary>
         internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
         {
@@ -1441,7 +1466,8 @@ namespace System.Management.Automation
             int[] ranks = RankExceptionTypes(types);
             var current = new HandlerSearchResult();
 
-            do {
+            do
+            {
                 // Always assume no need to repeat the search for another interation
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
@@ -1499,11 +1525,12 @@ namespace System.Management.Automation
                 var errorRecord = new ErrorRecord(current.ErrorRecordToPass, current.ExceptionToPass);
                 tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
             }
+
             return current.Handler;
         }
 
         /// <summary>
-        /// Find the matching handler by the exception type
+        /// Find the matching handler by the exception type.
         /// </summary>
         private static int FindMatchingHandlerByType(Type exceptionType, Type[] types)
         {
@@ -1577,25 +1604,38 @@ namespace System.Management.Automation
             // set $? to false indicating an error
             context.QuestionMarkVariableValue = false;
 
-            bool anyTrapHandlers = funcContext._traps.Any() && funcContext._traps.Last().Item2 != null;
+            ActionPreference preference = GetErrorActionPreference(context);
 
-            if (!anyTrapHandlers && !ExceptionHandlingOps.NeedToQueryForActionPreference(rte, context))
+            // If the exception was not rethrown and we are not currently
+            // handling an exception, then the exception is new, and we
+            // can break on it if requested.
+            if (!rte.WasRethrown &&
+                context.CurrentExceptionBeingHandled == null &&
+                preference == ActionPreference.Break)
+            {
+                context.Debugger?.Break(rte);
+            }
+
+            // Item2 in the trap tuples is the action (script) for the trap.
+            // A null action script is only used to indicate when exceptions
+            // should be thrown up to a higher level, and doesn't count as an
+            // actual trap handler in the function context.
+            bool anyTrapHandlers = funcContext._traps.Count > 0 && funcContext._traps[funcContext._traps.Count - 1].Item2 != null;
+
+            if (anyTrapHandlers)
+            {
+                // update the action preference according to how the exception is
+                // handled in the trap statement(s).
+                preference = ProcessTraps(funcContext, rte);
+            }
+            else if (ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
                 throw rte;
             }
-
-            ActionPreference preference;
-            if (anyTrapHandlers)
+            else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
             {
-                preference = ProcessTraps(funcContext, rte);
+                preference = InquireForActionPreference(rte.Message, context);
             }
-            else
-            {
-                preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
-            }
-
-            // set the value of $? here in case it is reset in trap handling.
-            context.QuestionMarkVariableValue = false;
 
             if ((preference == ActionPreference.SilentlyContinue) ||
                 (preference == ActionPreference.Ignore))
@@ -1619,12 +1659,7 @@ namespace System.Management.Automation
                 throw rte;
             }
 
-            bool b = ExceptionHandlingOps.ReportErrorRecord(extent, rte, context);
-
-            // set the value of $? here in case it is reset in error reporting
-            context.QuestionMarkVariableValue = false;
-
-            if (!b)
+            if (!ReportErrorRecord(extent, rte, context))
             {
                 throw rte;
             }
@@ -1662,10 +1697,12 @@ namespace System.Management.Automation
             if (handler != -1)
             {
                 Diagnostics.Assert(exception != null, "Exception object can't be null.");
+
+                var context = funcContext._executionContext;
+
                 try
                 {
                     ErrorRecord err = rte.ErrorRecord;
-                    var context = funcContext._executionContext;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
                     if (context.CurrentCommandProcessor != null)
@@ -1687,6 +1724,7 @@ namespace System.Management.Automation
                         {
                             locals.SetValue(i, funcContext._localsTuple.GetValue(i));
                         }
+
                         var newScope = context.EngineSessionState.NewScope(false);
                         context.EngineSessionState.CurrentScope = newScope;
                         newScope.LocalsTuple = locals;
@@ -1728,18 +1766,42 @@ namespace System.Management.Automation
                     // Terminate this block of statements.
                     return ActionPreference.Stop;
                 }
+                finally
+                {
+                    // The questionmark variable will always be false when we process a trap, so
+                    // set it to false to ensure it didn't change as a result of anything done
+                    // inside the trap
+                    context.QuestionMarkVariableValue = false;
+                }
             }
 
             return ActionPreference.Stop;
         }
 
         /// <summary>
-        /// Determine if we should continue or not after and error or exception....
+        /// Gets the current error action preference value.
         /// </summary>
-        /// <param name="rte">The RuntimeException which was reported</param>
-        /// <param name="message">The message to display</param>
-        /// <param name="context">The execution context</param>
-        /// <returns>The preference the user selected</returns>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The preference the user selected.</returns>
+        /// <remarks>
+        /// Error action is decided by error action preference. If preference is inquire, we will
+        /// prompt user for their preference.
+        /// </remarks>
+        internal static ActionPreference GetErrorActionPreference(ExecutionContext context)
+        {
+            return context.GetEnumPreference(
+                SpecialVariables.ErrorActionPreferenceVarPath,
+                ActionPreference.Continue,
+                out _);
+        }
+
+        /// <summary>
+        /// Determine if we should continue or not after an error or exception.
+        /// </summary>
+        /// <param name="rte">The RuntimeException which was reported.</param>
+        /// <param name="message">The message to display.</param>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The preference the user selected.</returns>
         /// <remarks>
         /// Error action is decided by error action preference. If preference is inquire, we will
         /// prompt user for their preference.
@@ -1747,10 +1809,11 @@ namespace System.Management.Automation
         internal static ActionPreference QueryForAction(RuntimeException rte, string message, ExecutionContext context)
         {
             // 906264 "$ErrorActionPreference="Inquire" prevents original non-terminating error from being reported to $error"
-            bool defaultUsed;
             ActionPreference preference =
-                context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath,
-                                          ActionPreference.Continue, out defaultUsed);
+                context.GetEnumPreference(
+                    SpecialVariables.ErrorActionPreferenceVarPath,
+                    ActionPreference.Continue,
+                    out _);
 
             if (preference != ActionPreference.Inquire || rte.SuppressPromptInInterpreter)
                 return preference;
@@ -1762,7 +1825,7 @@ namespace System.Management.Automation
         /// This is a helper function for prompting for user preference.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="context">The execution context</param>
+        /// <param name="context">The execution context.</param>
         /// <returns></returns>
         /// <remarks>
         /// This method will allow user to enter suspend mode.
@@ -1789,11 +1852,15 @@ namespace System.Management.Automation
 
             string caption = ParserStrings.ExceptionActionPromptCaption;
 
+            bool oldQuestionMarkVariableValue = context.QuestionMarkVariableValue;
+
             int choice;
             while ((choice = ui.PromptForChoice(caption, message, choices, 0)) == 3)
             {
                 context.EngineHostInterface.EnterNestedPrompt();
             }
+
+            context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
             if (choice == 0)
                 return ActionPreference.Continue;
@@ -1805,12 +1872,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set error variables like $error and $stacktrace
+        /// Set error variables like $error and $stacktrace.
         /// </summary>
         /// <param name="extent"></param>
         /// <param name="rte"></param>
-        /// <param name="context">The execution context</param>
-        /// <param name="outputPipe">the output pipe of the statement</param>
+        /// <param name="context">The execution context.</param>
+        /// <param name="outputPipe">The output pipe of the statement.</param>
         internal static void SetErrorVariables(IScriptExtent extent, RuntimeException rte, ExecutionContext context, Pipe outputPipe)
         {
             string stack = null;
@@ -1819,7 +1886,7 @@ namespace System.Management.Automation
             int i = 0;
             while (e != null && i++ < 10)
             {
-                if (!String.IsNullOrEmpty(e.StackTrace))
+                if (!string.IsNullOrEmpty(e.StackTrace))
                 {
                     stack = e.StackTrace;
                 }
@@ -1844,22 +1911,22 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool NeedToQueryForActionPreference(RuntimeException rte, ExecutionContext context)
+        internal static bool ExceptionCannotBeStoppedContinuedOrIgnored(RuntimeException rte, ExecutionContext context)
         {
-            return !context.PropagateExceptionsToEnclosingStatementBlock
-                   && context.ShellFunctionErrorOutputPipe != null
-                   && !context.CurrentPipelineStopping
-                   && !rte.SuppressPromptInInterpreter
-                   && !(rte is PipelineStoppedException);
+            return context.PropagateExceptionsToEnclosingStatementBlock
+                   || context.ShellFunctionErrorOutputPipe == null
+                   || context.CurrentPipelineStopping
+                   || rte.SuppressPromptInInterpreter
+                   || rte is PipelineStoppedException;
         }
 
         /// <summary>
         /// Report error into error pipe.
         /// </summary>
         /// <param name="extent"></param>
-        /// <param name="rte">The runtime error to report</param>
-        /// <param name="context">The execution context</param>
-        /// <returns>True if it was able to report the error</returns>
+        /// <param name="rte">The runtime error to report.</param>
+        /// <param name="context">The execution context.</param>
+        /// <returns>True if it was able to report the error.</returns>
         internal static bool ReportErrorRecord(IScriptExtent extent, RuntimeException rte, ExecutionContext context)
         {
             if (context.ShellFunctionErrorOutputPipe == null)
@@ -1871,8 +1938,7 @@ namespace System.Management.Automation
                 rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, extent, context));
             PSObject errorWrap = PSObject.AsPSObject(new ErrorRecord(rte.ErrorRecord, rte));
 
-            PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
-            errorWrap.Properties.Add(note);
+            errorWrap.WriteStream = WriteStreamType.Error;
 
             // If this is an error pipe for a hosting application (i.e.: no downstream cmdlet),
             // and we are logging, then create a temporary PowerShell to log the error.
@@ -1883,10 +1949,13 @@ namespace System.Management.Automation
 
             context.ShellFunctionErrorOutputPipe.Add(errorWrap);
 
+            // set the value of $? here in case it is reset in error reporting.
+            context.QuestionMarkVariableValue = false;
+
             return true;
         }
 
-        internal static RuntimeException ConvertToException(object result, IScriptExtent extent)
+        internal static RuntimeException ConvertToException(object result, IScriptExtent extent, bool rethrow)
         {
             result = PSObject.Base(result);
 
@@ -1895,13 +1964,14 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 runtimeException.WasThrownFromThrowStatement = true;
+                runtimeException.WasRethrown = rethrow;
                 return runtimeException;
             }
 
             ErrorRecord er = result as ErrorRecord;
             if (er != null)
             {
-                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 
                 return runtimeException;
@@ -1911,7 +1981,7 @@ namespace System.Management.Automation
             if (exception != null)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
-                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 return runtimeException;
             }
@@ -1922,7 +1992,7 @@ namespace System.Management.Automation
             exception = new RuntimeException(message, null);
 
             er = new ErrorRecord(exception, message, ErrorCategory.OperationStopped, null);
-            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true };
+            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
             runtimeException.SetTargetObject(result);
             InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 
@@ -2350,7 +2420,7 @@ namespace System.Management.Automation
                 FileInfo file = obj as FileInfo;
                 string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
 
-                if (String.IsNullOrEmpty(filePath))
+                if (string.IsNullOrEmpty(filePath))
                 {
                     throw InterpreterError.NewInterpreterException(filePath,
                         typeof(RuntimeException), errorExtent, "InvalidFilenameOption", ParserStrings.InvalidFilenameOption);
@@ -2404,7 +2474,7 @@ namespace System.Management.Automation
     public enum WhereOperatorSelectionMode
     {
         /// <summary>
-        /// Return all matches
+        /// Return all matches.
         /// </summary>
         Default = 0,
         /// <summary>
@@ -2412,15 +2482,15 @@ namespace System.Management.Automation
         /// </summary>
         First = 1,
         /// <summary>
-        /// Return the last matching element
+        /// Return the last matching element.
         /// </summary>
         Last = 2,       // return last match
         /// <summary>
-        /// Skip until the condition is true, then return the rest
+        /// Skip until the condition is true, then return the rest.
         /// </summary>
         SkipUntil = 3,
         /// <summary>
-        /// Return elements until the condition is true then skip the rest
+        /// Return elements until the condition is true then skip the rest.
         /// </summary>
         Until = 4,
         /// <summary>
@@ -2432,9 +2502,9 @@ namespace System.Management.Automation
     internal static class EnumerableOps
     {
         /// <summary>
-        /// Implements the Where(expression) operation on collections
+        /// Implements the Where(expression) operation on collections.
         /// </summary>
-        /// <param name="enumerator">The enumerator over the collection to search</param>
+        /// <param name="enumerator">The enumerator over the collection to search.</param>
         /// <param name="expressionSB">
         /// A ScriptBlock where its result is treated as a boolean, or null to
         /// return all collection objects with WhereOperatorSelectionMode.
@@ -2443,7 +2513,7 @@ namespace System.Management.Automation
         /// Sets the WhereOperatorSelectionMode for operator, defaults to All.
         /// This is of type object to allow either enum values or strings to be passed.
         /// </param>
-        /// <param name="numberToReturn">The number of elements to return</param>
+        /// <param name="numberToReturn">The number of elements to return.</param>
         /// <returns></returns>
         internal static object Where(IEnumerator enumerator, ScriptBlock expressionSB, WhereOperatorSelectionMode selectionMode, int numberToReturn)
         {
@@ -2467,7 +2537,7 @@ namespace System.Management.Automation
                 }
 
                 var rest = new List<object>();
-                Object current = null;
+                object current = null;
 
                 int index = 0;
                 if (numberToReturn == 0)
@@ -2505,14 +2575,16 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (numberToReturn == 1)
                     {
-                        return new Object[] { current };
+                        return new object[] { current };
                     }
+
                     return rest.ToArray();
                 }
 
-                System.Object[] first = new System.Object[numberToReturn];
+                object[] first = new System.Object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);
@@ -2540,7 +2612,8 @@ namespace System.Management.Automation
                         var e = Current(enumerator);
                         rest.Add(e);
                     }
-                    return new System.Object[] { first, rest.ToArray() };
+
+                    return new object[] { first, rest.ToArray() };
                 }
 
                 return first;
@@ -2552,6 +2625,7 @@ namespace System.Management.Automation
             {
                 notMatched = new Collection<PSObject>();
             }
+
             var resultCollection = new List<object>();
             Pipe outputPipe = new Pipe(resultCollection);
             bool returnTheRest = false;
@@ -2659,7 +2733,8 @@ namespace System.Management.Automation
                     var ie = Current(enumerator);
                     notMatched.Add(ie == null ? null : PSObject.AsPSObject(ie));
                 }
-                return new System.Object[] { matches, notMatched };
+
+                return new object[] { matches, notMatched };
             }
 
             return matches;
@@ -2668,7 +2743,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Implements the ForEach() operator.
         /// </summary>
-        /// <param name="enumerator">The collection to operate over</param>
+        /// <param name="enumerator">The collection to operate over.</param>
         /// <param name="expression"></param>
         /// <param name="arguments">
         /// </param>
@@ -2705,6 +2780,7 @@ namespace System.Management.Automation
                             object current = Current(enumerator);
                             list.Add(current);
                         }
+
                         return LanguagePrimitives.ConvertTo(list, targetType, CultureInfo.InvariantCulture);
                     }
 
@@ -2717,6 +2793,7 @@ namespace System.Management.Automation
                             throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                                 null, "ForEachBadGenericConversionTypeSpecified", ParserStrings.ForEachBadGenericConversionTypeSpecified, ParserOps.ConvertTo<string>(targetType, null));
                         }
+
                         resultCollection = PSObject.AsPSObject(Activator.CreateInstance(targetType));
                         while (MoveNext(context, enumerator))
                         {
@@ -2834,6 +2911,7 @@ namespace System.Management.Automation
                                     ExtendedTypeSystem.MethodInvocationException,
                                     name, arguments.Length, nullRefException.Message);
                             }
+
                             continue;
                         }
 
@@ -2936,6 +3014,7 @@ namespace System.Management.Automation
                     result.Add(value);
                 }
             }
+
             return result.ToArray();
         }
 
@@ -3005,6 +3084,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "PropertyNotFoundStrict", ParserStrings.PropertyNotFoundStrict, binder.Name);
                 }
+
                 return null;
             }
 
@@ -3239,12 +3319,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A routine used to advance an enumerator and catch errors that might occur
-        /// performing the operation
+        /// performing the operation.
         /// </summary>
-        /// <param name="context">The execution context used to see if the pipeline is stopping</param>
+        /// <param name="context">The execution context used to see if the pipeline is stopping.</param>
         /// <param name="enumerator">THe enumerator to advance.</param>
-        /// <exception cref="RuntimeException">An error occurred moving to the next element in the enumeration</exception>
-        /// <returns>True if the move succeeded</returns>
+        /// <exception cref="RuntimeException">An error occurred moving to the next element in the enumeration.</exception>
+        /// <returns>True if the move succeeded.</returns>
         internal static bool MoveNext(ExecutionContext context, IEnumerator enumerator)
         {
             try
@@ -3277,7 +3357,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrapper caller for enumerator.Current - handles and republishes errors...
         /// </summary>
-        /// <param name="enumerator">The enumerator to read from</param>
+        /// <param name="enumerator">The enumerator to read from.</param>
         /// <returns></returns>
         internal static object Current(IEnumerator enumerator)
         {
@@ -3407,6 +3487,7 @@ namespace System.Management.Automation
             {
                 result.Add(Current(enumerator));
             }
+
             return result.ToArray();
         }
 
@@ -3421,6 +3502,7 @@ namespace System.Management.Automation
             {
                 result[j++] = list[i++];
             }
+
             return result;
         }
     }

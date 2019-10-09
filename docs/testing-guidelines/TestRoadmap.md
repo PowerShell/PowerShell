@@ -44,7 +44,6 @@ Running code coverage more often on full PowerShell is something that we should 
 We currently run only those tests which are tagged `CI` excluding the tag `SLOW` as part of our continuous integration systems.
 This means roughly 1/3rd of our github tests are not being run on any regular schedule.
 In order to provide us with higher confidence in our code, we should be running *ALL* of our tests on a regular basis.
-We have recently added to `AppVeyor` running all of our tests on a daily basis, but are not yet running these tests on Linux/Mac via `Travis`, which should be done.
 However, running the tests is only the first step, we need an easy way to be notified of test failures, and to track progress of those runs over time.
 Tracking this over time affords us the ability to see how our test count increases, implying an improvement in coverage.
 It also provides us mechanism whereby we can see trends in instability.
@@ -80,7 +79,7 @@ We need to be sure that we can easily enable remoting for the non-Windows platfo
 * Our current multi-machine tests do not test the connection code, they simply execute test code remotely and retrieve results and assume a good connection.
 The infrastructure used for these tests is STEX which is not an open environment.
 We will need to create automation to create and configure the test systems in the test matrix and then invoke tests on them.
-It is not clear that our current CI systems can accommodate our needs here as neither AppVeyor or Travis can supply us with all of the OS images needed.
+It is not clear that our current CI systems can accommodate our needs here as Azure DevOps can supply us with all of the OS images needed.
 We may need to create our own heterogeneous environment in Azure, or look to other teams (MS Build Lab/Jenkins) for assistance.
 
 We need to investigate whether there are solutions available, and if not, design/implement an environment to meet our needs.
@@ -88,9 +87,6 @@ We need to investigate whether there are solutions available, and if not, design
 # Reporting
 Currently, we report against the simplest of KPI:
 * is the CI build error free (which is part of the PR/Merge process - and reported on our landing page)
-
-We are also collecting data for a daily build, but not yet report on the following KPI
-* is the daily build error free (we are running this on AppVeyor, we still need to do this for Travis-CI)
 
 There are a number of KPIs which we could report on:
 * Code KPIs

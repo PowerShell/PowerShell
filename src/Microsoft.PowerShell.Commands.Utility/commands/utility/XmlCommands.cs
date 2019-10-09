@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -52,12 +51,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -77,11 +78,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -95,11 +98,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -149,6 +154,7 @@ namespace Microsoft.PowerShell.Commands
                 _serializer.Done();
                 _serializer = null;
             }
+
             CleanUp();
         }
 
@@ -233,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
                     _xw.Dispose();
                     _xw = null;
                 }
+
                 _fs.Dispose();
                 _fs = null;
             }
@@ -258,6 +265,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -276,26 +284,27 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath", "LP")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         #endregion Command Line Parameters
@@ -317,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                     _helper.Dispose();
                     _helper = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -354,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(XmlDocument), typeof(String))]
+    [OutputType(typeof(XmlDocument), typeof(string))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -383,11 +393,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _notypeinformation;
             }
+
             set
             {
                 _notypeinformation = value;
             }
         }
+
         private bool _notypeinformation;
 
         /// <summary>
@@ -435,13 +447,13 @@ namespace Microsoft.PowerShell.Commands
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new StreamReader(_ms);
                 string data = read.ReadToEnd();
                 WriteObject(data);
 
-                //Cleanup
+                // Cleanup
                 CleanUp();
             }
             else
@@ -467,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
@@ -484,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //Cleaning up
+            // Cleaning up
             CleanUp();
         }
 
@@ -561,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream
+        ///Cleaning up the MemoryStream.
         /// </summary>
         private void CleanUp()
         {
@@ -598,6 +610,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -696,6 +709,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
             GC.SuppressFinalize(this);
         }
@@ -790,33 +804,33 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
-        # region parameters
+        #region parameters
         /// <summary>
         /// Specifies the path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 1, Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get { return Path; }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -826,8 +840,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true,
                    ParameterSetName = "Xml")]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         [Alias("Node")]
         public System.Xml.XmlNode[] Xml { get; set; }
 
@@ -835,7 +847,6 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter in string format.
         /// Specifies the string format of a fully qualified xml.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = "Content")]
         [ValidateNotNullOrEmpty]
@@ -855,12 +866,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Namespace { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
-        # region private
+        #region private
 
         private void WriteResults(XmlNodeList foundXmlNodes, string filePath)
         {
@@ -891,14 +901,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 xList = xmlNode.SelectNodes(XPath);
             }
+
             this.WriteResults(xList, filePath);
         }
 
         private void ProcessXmlFile(string filePath)
         {
-            //Cannot use ImportXMLHelper because it will throw terminating error which will
-            //not be inline with Select-String
-            //So doing self processing of the file.
+            // Cannot use ImportXMLHelper because it will throw terminating error which will
+            // not be inline with Select-String
+            // So doing self processing of the file.
             try
             {
                 XmlDocument xmlDocument = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -987,7 +998,7 @@ namespace Microsoft.PowerShell.Commands
             return xmlns;
         }
 
-        # endregion private
+        #endregion private
 
         #region override
 
@@ -1007,7 +1018,7 @@ namespace Microsoft.PowerShell.Commands
                 (ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
                 (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
             {
-                //If any file not resolved, execution stops. this is to make consistent with select-string.
+                // If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
                 foreach (string fpath in Path)
                 {
@@ -1022,16 +1033,18 @@ namespace Microsoft.PowerShell.Commands
                         Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out provider);
                         if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                         {
-                            //Cannot open File error
+                            // Cannot open File error
                             string message = StringUtil.Format(UtilityCommonStrings.FileOpenError, provider.FullName);
                             InvalidOperationException e = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);
                             WriteError(er);
                             continue;
                         }
+
                         fullresolvedPaths.AddRange(resolvedPaths);
                     }
                 }
+
                 foreach (string file in fullresolvedPaths)
                 {
                     ProcessXmlFile(file);
@@ -1078,7 +1091,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The XmlNode that matches search.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public XmlNode Node { get; set; }
 
         /// <summary>
@@ -1090,9 +1102,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     _path = inputStream;
                 }
@@ -1102,6 +1115,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _path;
 
         /// <summary>
@@ -1136,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string GetNodeText()
         {
-            string nodeText = String.Empty;
+            string nodeText = string.Empty;
             if (Node != null)
             {
                 if (Node.Value != null)
@@ -1148,6 +1162,7 @@ namespace Microsoft.PowerShell.Commands
                     nodeText = Node.InnerXml.Trim();
                 }
             }
+
             return nodeText;
         }
 
@@ -1177,6 +1192,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return relPath;
         }
 

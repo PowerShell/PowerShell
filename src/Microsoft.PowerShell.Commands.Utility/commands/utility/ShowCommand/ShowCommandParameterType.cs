@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Management.Automation;
+
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
-    using System;
-    using System.Collections;
-    using System.Management.Automation;
-
     /// <summary>
     /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart.
     /// </summary>
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.String", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.String", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.SwitchParameter", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.SwitchParameter", StringComparison.OrdinalIgnoreCase);
             }
         }
 

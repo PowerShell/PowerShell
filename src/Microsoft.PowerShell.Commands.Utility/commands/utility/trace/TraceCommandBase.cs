@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -63,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool matchFound = false;
 
-                if (String.IsNullOrEmpty(patternToMatch))
+                if (string.IsNullOrEmpty(patternToMatch))
                 {
                     notMatched.Add(patternToMatch);
                     continue;

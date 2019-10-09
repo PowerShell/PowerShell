@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration.Install;
-using System.Reflection;
-using Microsoft.Win32;
 using System.IO;
 using System.Management.Automation;
+using System.Reflection;
+
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell
 {
@@ -18,7 +19,7 @@ namespace Microsoft.PowerShell
     /// MshSecurityMshSnapin (or MshSecurityMshSnapinInstaller) is a class for facilitating registry
     /// of necessary information for monad security mshsnapin.
     ///
-    /// This class will be built with monad security dll
+    /// This class will be built with monad security dll.
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSSecurityPSSnapIn : PSSnapIn

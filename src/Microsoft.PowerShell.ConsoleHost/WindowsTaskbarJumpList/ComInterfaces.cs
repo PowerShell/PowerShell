@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell
         }
 
         [DllImport("ole32.Dll")]
-        static internal extern HResult CoCreateInstance(ref Guid clsid,
+        internal static extern HResult CoCreateInstance(ref Guid clsid,
            [MarshalAs(UnmanagedType.IUnknown)] object inner,
            uint context,
            ref Guid uuid,

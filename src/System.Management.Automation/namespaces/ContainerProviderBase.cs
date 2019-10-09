@@ -892,7 +892,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Removes (deletes) the item at the specified path
+        /// Removes (deletes) the item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to remove.

@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
 {
@@ -128,7 +128,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a variable with the given name, value, options, and attributes
+        /// Constructs a variable with the given name, value, options, and attributes.
         /// </summary>
         /// <param name="name">
         /// The name of the variable.
@@ -157,7 +157,7 @@ namespace System.Management.Automation
             ScopedItemOptions options,
             Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the variable.
         /// </summary>
-        public string Name { get; } = String.Empty;
+        public string Name { get; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the description of the variable.
@@ -213,12 +213,14 @@ namespace System.Management.Automation
             {
                 return _description;
             }
+
             set
             {
                 _description = value;
             }
         }
-        private string _description = String.Empty;
+
+        private string _description = string.Empty;
 
         internal void DebuggerCheckVariableRead()
         {
@@ -243,7 +245,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the value of the variable
+        /// Gets or sets the value of the variable.
         /// </summary>
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant upon call to set.
@@ -265,6 +267,7 @@ namespace System.Management.Automation
                 SetValue(value);
             }
         }
+
         private object _value;
 
         /// <summary>
@@ -372,6 +375,7 @@ namespace System.Management.Automation
 
             _options = newOptions;
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -385,6 +389,7 @@ namespace System.Management.Automation
         {
             get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
+
         private PSVariableAttributeCollection _attributes;
 
         /// <summary>
@@ -417,11 +422,12 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return true;
         }
 
         /// <summary>
-        /// Determines if the value is valid for the specified attribute
+        /// Determines if the value is valid for the specified attribute.
         /// </summary>
         /// <param name="value">
         /// The variable value to validate.
@@ -458,6 +464,7 @@ namespace System.Management.Automation
                     result = false;
                 }
             }
+
             return result;
         }
 
@@ -502,6 +509,7 @@ namespace System.Management.Automation
                     result = transformationAttribute.TransformInternal(engine, result);
                 }
             }
+
             return result;
         }
 
@@ -510,7 +518,7 @@ namespace System.Management.Automation
         /// attributes, so repeating that process is slow and wrong.  This function
         /// applies the attributes without repeating the checks.
         /// </summary>
-        /// <param name="attributes">The list of attributes to add</param>
+        /// <param name="attributes">The list of attributes to add.</param>
         internal void AddParameterAttributesNoChecks(Collection<Attribute> attributes)
         {
             foreach (Attribute attribute in attributes)
@@ -581,6 +589,7 @@ namespace System.Management.Automation
             {
                 return _wasRemoved;
             }
+
             set
             {
                 _wasRemoved = value;
@@ -594,6 +603,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _wasRemoved;
 
         internal SessionStateInternal SessionState { get; set; }
@@ -601,7 +611,7 @@ namespace System.Management.Automation
         #endregion internal members
 
         /// <summary>
-        /// Verifies the constraints and attributes before setting the value
+        /// Verifies the constraints and attributes before setting the value.
         /// </summary>
         /// <param name="value">
         /// The value to be set.
@@ -667,6 +677,7 @@ namespace System.Management.Automation
             {
                 newValue = CopyMutableValues(newValue);
             }
+
             _value = newValue;
         }
 
@@ -748,6 +759,7 @@ namespace System.Management.Automation
         public override ScopedItemOptions Options
         {
             get { return base.Options; }
+
             set
             {
                 // Throw, but only if someone is actually changing the options.
@@ -772,6 +784,7 @@ namespace System.Management.Automation
                 DebuggerCheckVariableRead();
                 return _tuple.GetValue(_tupleSlot);
             }
+
             set
             {
                 _tuple.SetValue(_tupleSlot, value);
@@ -785,6 +798,7 @@ namespace System.Management.Automation
             {
                 newValue = CopyMutableValues(newValue);
             }
+
             this.Value = newValue;
         }
     }
@@ -826,8 +840,10 @@ namespace System.Management.Automation
         public override string Description
         {
             get { return _description ?? (_description = SessionStateStrings.DollarNullDescription); }
+
             set { /* Do nothing */ }
         }
+
         private string _description;
 
         /// <summary>
@@ -836,6 +852,7 @@ namespace System.Management.Automation
         public override ScopedItemOptions Options
         {
             get { return ScopedItemOptions.None; }
+
             set { /* Do nothing */ }
         }
     }
@@ -875,7 +892,7 @@ namespace System.Management.Automation
         AllScope = 0x8,
 
         /// <summary>
-        /// The option is not specified by the user
+        /// The option is not specified by the user.
         /// </summary>
         Unspecified = 0x10
     }

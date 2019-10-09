@@ -48,6 +48,14 @@ try {
             [System.Object]::ReferenceEquals($element, $drives) | Should -BeFalse
             $element | Should -Be $drives.Item($element.DriveLetter)
         }
+
+        It "ToString() should return method paramter names" {
+            $shell = New-Object -ComObject "Shell.Application"
+            $fullSignature = $shell.AddToRecent.ToString()
+
+            $fullSignature | Should -BeExactly "void AddToRecent (Variant varFile, string bstrCategory)"
+        }
+
     }
 
     Describe 'GetMember/SetMember/InvokeMember binders should have more restricted rule for COM object' -Tags "CI" {

@@ -13,6 +13,8 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -37,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
+        private const string PipeNameParameterSet = "PipeNameParameterSet";
         private const string PSHostProcessInfoParameterSet = "PSHostProcessInfoParameterSet";
 
         private const string NamedPipeRunspaceName = "PSAttachRunspace";
@@ -92,6 +95,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with `pwsh -CustomPipeName`.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
+        public string CustomPipeName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Optional name of AppDomain in process to enter.  If not specified then the default AppDomain is used.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = EnterPSHostProcessCommand.ProcessParameterSet)]
@@ -110,10 +123,23 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End Processing
+        /// End Processing.
         /// </summary>
         protected override void EndProcessing()
         {
+            // Check if system is in locked down mode, in which case this cmdlet is disabled.
+            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new PSSecurityException(RemotingErrorIdStrings.EnterPSHostProcessCmdletDisabled),
+                        "EnterPSHostProcessCmdletDisabled",
+                        ErrorCategory.SecurityError,
+                        null));
+
+                return;
+            }
+
             // Check for host that supports interactive remote sessions.
             _interactiveHost = this.Host as IHostSupportsInteractiveSession;
             if (_interactiveHost == null)
@@ -129,24 +155,34 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check selected process for existence, and whether it hosts PowerShell.
+            Runspace namedPipeRunspace = null;
             switch (ParameterSetName)
             {
                 case ProcessIdParameterSet:
                     Process = GetProcessById(Id);
+                    VerifyProcess(Process);
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
                     break;
 
                 case ProcessNameParameterSet:
                     Process = GetProcessByName(Name);
+                    VerifyProcess(Process);
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
                     break;
 
                 case PSHostProcessInfoParameterSet:
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
+                    VerifyProcess(Process);
+
+                    // Create named pipe runspace for selected process and open.
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
+                    break;
+
+                case PipeNameParameterSet:
+                    VerifyPipeName(CustomPipeName);
+                    namedPipeRunspace = CreateNamedPipeRunspace(CustomPipeName);
                     break;
             }
-            VerifyProcess(Process);
-
-            // Create named pipe runspace for selected process and open.
-            Runspace namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
 
             // Set runspace prompt.  The runspace is closed on pop so we don't
             // have to reverse this change.
@@ -171,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Stop Processing
+        /// Stop Processing.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -186,9 +222,20 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
+        private Runspace CreateNamedPipeRunspace(string customPipeName)
+        {
+            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(customPipeName);
+            return CreateNamedPipeRunspace(connectionInfo);
+        }
+
         private Runspace CreateNamedPipeRunspace(int procId, string appDomainName)
         {
             NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(procId, appDomainName);
+            return CreateNamedPipeRunspace(connectionInfo);
+        }
+
+        private Runspace CreateNamedPipeRunspace(NamedPipeConnectionInfo connectionInfo)
+        {
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
             RemoteRunspace remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable) as RemoteRunspace;
             remoteRunspace.Name = NamedPipeRunspaceName;
@@ -202,20 +249,40 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (RuntimeException e)
             {
-                string msgAppDomainName = (!string.IsNullOrEmpty(appDomainName)) ? appDomainName : NamedPipeUtils.DefaultAppDomainName;
-
                 // Unwrap inner exception for original error message, if any.
                 string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new RuntimeException(
-                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
-                                              msgAppDomainName, procId, errorMessage),
-                            e.InnerException),
-                        "EnterPSHostProcessCannotConnectToProcess",
-                        ErrorCategory.OperationTimeout,
-                        this));
+                if (connectionInfo.CustomPipeName != null)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToPipe,
+                                    connectionInfo.CustomPipeName,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToPipe",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
+                else
+                {
+                    string msgAppDomainName = connectionInfo.AppDomainName ?? NamedPipeUtils.DefaultAppDomainName;
+
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
+                                    msgAppDomainName,
+                                    connectionInfo.ProcessId,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToProcess",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
             }
             finally
             {
@@ -344,6 +411,33 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private void VerifyPipeName(string customPipeName)
+        {
+            // Named Pipes are represented differently on Windows vs macOS & Linux
+            var sb = new StringBuilder(customPipeName.Length);
+            if (Platform.IsWindows)
+            {
+                sb.Append(@"\\.\pipe\");
+            }
+            else
+            {
+                sb.Append(Path.GetTempPath()).Append("CoreFxPipe_");
+            }
+
+            sb.Append(customPipeName);
+
+            string pipePath = sb.ToString();
+            if (!File.Exists(pipePath))
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoNamedPipeFound, customPipeName)),
+                        "EnterPSHostProcessNoNamedPipeFound",
+                        ErrorCategory.InvalidArgument,
+                        this));
+            }
+        }
+
         #endregion
     }
 
@@ -357,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -408,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Name of Process
+        /// Name of Process.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = GetPSHostProcessInfoCommand.ProcessNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -420,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process
+        /// Process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -432,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -448,7 +542,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End bock processing
+        /// End bock processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -523,10 +617,10 @@ namespace Microsoft.PowerShell.Commands
         /// Returns all named pipe AppDomain names for given process Ids or all PowerShell
         /// processes if procIds parameter is null.
         /// PowerShell pipe name example:
-        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
+        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell.
         /// </summary>
-        /// <param name="procIds">Process Ids or null</param>
-        /// <returns>Collection of process AppDomain info</returns>
+        /// <param name="procIds">Process Ids or null.</param>
+        /// <returns>Collection of process AppDomain info.</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
             var procAppDomainInfo = new List<PSHostProcessInfo>();
@@ -645,7 +739,7 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Name of process
+        /// Name of process.
         /// </summary>
         public string ProcessName
         {
@@ -654,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         public int ProcessId
         {
@@ -663,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of PowerShell AppDomain in process
+        /// Name of PowerShell AppDomain in process.
         /// </summary>
         public string AppDomainName
         {
@@ -673,7 +767,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !CORECLR
         /// <summary>
-        /// Main window title of the process
+        /// Main window title of the process.
         /// </summary>
         public string MainWindowTitle
         {
@@ -689,18 +783,19 @@ namespace Microsoft.PowerShell.Commands
         private PSHostProcessInfo() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="processName">Name of process</param>
-        /// <param name="processId">Id of process</param>
-        /// <param name="appDomainName">Name of process AppDomain</param>
+        /// <param name="processName">Name of process.</param>
+        /// <param name="processId">Id of process.</param>
+        /// <param name="appDomainName">Name of process AppDomain.</param>
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR
-            MainWindowTitle = String.Empty;
+            MainWindowTitle = string.Empty;
             try
             {
                 var proc = Process.GetProcessById(processId);

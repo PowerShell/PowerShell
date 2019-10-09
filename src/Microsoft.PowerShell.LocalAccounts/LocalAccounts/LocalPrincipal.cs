@@ -6,12 +6,12 @@ using System.Security.Principal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Defines the source of a Principal
+    /// Defines the source of a Principal.
     /// </summary>
     public enum PrincipalSource
     {
         /// <summary>
-        /// The principal source is unknown or could not be determined
+        /// The principal source is unknown or could not be determined.
         /// </summary>
         Unknown = 0,
 

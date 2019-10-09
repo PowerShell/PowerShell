@@ -52,6 +52,7 @@ namespace System.Management.Automation.ComInterop
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(method, args, callInfo, isByRef, temps, initTemps);
             }
+
             return null;
         }
 

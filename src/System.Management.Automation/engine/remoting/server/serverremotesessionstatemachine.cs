@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -49,7 +50,7 @@ namespace System.Management.Automation.Remoting
         private RemoteSessionState _state;
 
         /// <summary>
-        /// timer used for key exchange
+        /// Timer used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
@@ -121,7 +122,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySendFailed] += DoKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySent] += DoKeyExchange;
 
-            //with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
+            // with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
@@ -167,7 +168,7 @@ namespace System.Management.Automation.Remoting
             if (arg.StateEvent == RemoteSessionEvent.MessageReceived)
             {
                 if (_state == RemoteSessionState.Established ||
-                    _state == RemoteSessionState.EstablishedAndKeySent || //server session will never be in this state.. TODO- remove this
+                    _state == RemoteSessionState.EstablishedAndKeySent || // server session will never be in this state.. TODO- remove this
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||
                     _state == RemoteSessionState.EstablishedAndKeyExchanged)
                 {
@@ -201,6 +202,7 @@ namespace System.Management.Automation.Remoting
                 {
                     return;
                 }
+
                 _eventsInProcess = true;
             }
 
@@ -208,15 +210,15 @@ namespace System.Management.Automation.Remoting
 
             // currently server state machine doesn't raise events
             // this will allow server state machine to raise events.
-            //RaiseStateMachineEvents();
+            // RaiseStateMachineEvents();
         }
 
         /// <summary>
-        /// processes events in the queue. If there are no
+        /// Processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -231,6 +233,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -495,7 +498,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(_state == RemoteSessionState.Established ||
                            _state == RemoteSessionState.EstablishedAndKeyExchanged ||
                            _state == RemoteSessionState.EstablishedAndKeyReceived ||
-                           _state == RemoteSessionState.EstablishedAndKeySent,  //server session will never be in this state.. TODO- remove this
+                           _state == RemoteSessionState.EstablishedAndKeySent,  // server session will never be in this state.. TODO- remove this
                            "State must be Established or EstablishedAndKeySent or EstablishedAndKeyReceived or EstablishedAndKeyExchanged");
 
                 RemotingTargetInterface targetInterface = fsmEventArg.RemoteData.TargetInterface;
@@ -503,7 +506,7 @@ namespace System.Management.Automation.Remoting
 
                 Guid clientRunspacePoolId;
                 ServerRunspacePoolDriver runspacePoolDriver;
-                //string errorMessage = null;
+                // string errorMessage = null;
 
                 RemoteDataEventArgs remoteDataForSessionArg = null;
 
@@ -524,6 +527,7 @@ namespace System.Management.Automation.Remoting
                                     break;
                             }
                         }
+
                         break;
 
                     case RemotingTargetInterface.RunspacePool:
@@ -641,7 +645,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Handle connect event - this is raised when a new client tries to connect to an existing session
-        /// No changes to state. Calls into the session to handle any post connect operations
+        /// No changes to state. Calls into the session to handle any post connect operations.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg"></param>
@@ -685,7 +689,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Connecting:
                     case RemoteSessionState.Connected:
                     case RemoteSessionState.Established:
-                    case RemoteSessionState.EstablishedAndKeySent:  //server session will never be in this state.. TODO- remove this
+                    case RemoteSessionState.EstablishedAndKeySent:  // server session will never be in this state.. TODO- remove this
                     case RemoteSessionState.EstablishedAndKeyReceived:
                     case RemoteSessionState.EstablishedAndKeyExchanged:
                     case RemoteSessionState.NegotiationReceived:
@@ -890,15 +894,15 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This method contains all the logic for handling the state machine
-        /// for key exchange. All the different scenarios are covered in this
+        /// for key exchange. All the different scenarios are covered in this.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-            //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
-            //***TODO*** Deal with this on the client side. Key exchange packets should have additional information
-            //that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
+            // There are corner cases with disconnect that can result in client receiving outdated key exchange packets
+            // ***TODO*** Deal with this on the client side. Key exchange packets should have additional information
+            // that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
             Dbg.Assert(_state >= RemoteSessionState.Established,
                 "Key Receiving can only be raised after reaching the Established state");
 
@@ -906,7 +910,7 @@ namespace System.Management.Automation.Remoting
             {
                 case RemoteSessionEvent.KeyReceived:
                     {
-                        //does the server ever start key exchange process??? This may not be required
+                        // does the server ever start key exchange process??? This may not be required
                         if (_state == RemoteSessionState.EstablishedAndKeyRequested)
                         {
                             // reset the timer
@@ -924,6 +928,7 @@ namespace System.Management.Automation.Remoting
                         // you need to send an encrypted session key to the client
                         _session.SendEncryptedSessionKey();
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -934,6 +939,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyExchanged, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -947,6 +953,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ServerDefaultKeepAliveTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceiveFailed:
@@ -958,20 +965,22 @@ namespace System.Management.Automation.Remoting
 
                         DoClose(this, eventArgs);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySendFailed:
                     {
                         DoClose(this, eventArgs);
                     }
+
                     break;
             }
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");

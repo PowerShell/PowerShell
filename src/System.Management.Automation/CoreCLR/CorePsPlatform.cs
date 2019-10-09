@@ -2,16 +2,17 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
-using System.IO;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// These are platform abstractions and platform specific implementations
+    /// These are platform abstractions and platform specific implementations.
     /// </summary>
     public static class Platform
     {
@@ -139,7 +140,15 @@ namespace System.Management.Automation
             }
         }
 
-#if !UNIX
+#if UNIX
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+        internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+#else
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
+        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
@@ -163,7 +172,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Some common environment variables used in PS have different
-        /// names in different OS platforms
+        /// names in different OS platforms.
         /// </summary>
         internal static class CommonEnvVariableNames
         {
@@ -175,7 +184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the temporary directory created for the current process
+        /// Remove the temporary directory created for the current process.
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
@@ -192,11 +201,12 @@ namespace System.Management.Automation
             {
                 // ignore if there is a failure
             }
+
             _tempDirectory = null;
         }
 
         /// <summary>
-        /// Get a temporary directory to use for the current process
+        /// Get a temporary directory to use for the current process.
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
@@ -230,11 +240,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// function for choosing directory location of PowerShell for profile loading
+        /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
         public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
-            //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
+            // TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
@@ -244,6 +254,7 @@ namespace System.Management.Automation
             {
                 envHome = GetTemporaryDirectory();
             }
+
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
@@ -252,10 +263,10 @@ namespace System.Management.Automation
             switch (dirpath)
             {
                 case Platform.XDG_Type.CONFIG:
-                    //the user has set XDG_CONFIG_HOME corresponding to profile path
-                    if (String.IsNullOrEmpty(xdgconfighome))
+                    // the user has set XDG_CONFIG_HOME corresponding to profile path
+                    if (string.IsNullOrEmpty(xdgconfighome))
                     {
-                        //xdg values have not been set
+                        // xdg values have not been set
                         return xdgConfigHomeDefault;
                     }
 
@@ -265,8 +276,8 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DATA:
-                    //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    // the user has set XDG_DATA_HOME corresponding to module path
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
@@ -277,10 +288,11 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgDataHomeDefault;
                     }
                     else
@@ -289,11 +301,11 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.USER_MODULES:
-                    //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    // the user has set XDG_DATA_HOME corresponding to module path
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgModuleDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -301,10 +313,11 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgModuleDefault;
                     }
                     else
@@ -316,11 +329,11 @@ namespace System.Management.Automation
                     return "/usr/local/share/powershell/Modules";
 
                 case Platform.XDG_Type.CACHE:
-                    //the user has set XDG_CACHE_HOME
-                    if (String.IsNullOrEmpty(xdgcachehome))
+                    // the user has set XDG_CACHE_HOME
+                    if (string.IsNullOrEmpty(xdgcachehome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgCacheDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -328,14 +341,13 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
 
                         return xdgCacheDefault;
                     }
-
                     else
                     {
                         if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
@@ -346,7 +358,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -355,12 +367,12 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DEFAULT:
-                    //default for profile location
+                    // default for profile location
                     return xdgConfigHomeDefault;
 
                 default:
-                    //xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
-                    //This folder is the default in the event of all other failures for data storage
+                    // xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
+                    // This folder is the default in the event of all other failures for data storage
                     if (!Directory.Exists(xdgConfigHomeDefault))
                     {
                         try
@@ -403,20 +415,24 @@ namespace System.Management.Automation
             {
                 envHome = Platform.GetTemporaryDirectory();
             }
+
             switch (folder)
             {
                 case System.Environment.SpecialFolder.ProgramFiles:
                     folderPath = "/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.ProgramFilesX86:
                     folderPath = "/usr/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.System:
                 case System.Environment.SpecialFolder.SystemX86:
                     folderPath = "/sbin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.Personal:
                     folderPath = envHome;
@@ -432,9 +448,10 @@ namespace System.Management.Automation
                         catch (UnauthorizedAccessException)
                         {
                             // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
-                            folderPath = String.Empty;
+                            folderPath = string.Empty;
                         }
                     }
+
                     break;
                 default:
                     throw new NotSupportedException();
@@ -465,11 +482,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
-        {
-            return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
-        }
-
         internal static string NonWindowsInternalGetTarget(string path)
         {
             return Unix.NativeMethods.FollowSymLink(path);
@@ -482,7 +494,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (NonWindowsIsSymLink(fileInfo))
+            if (fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint))
             {
                 return "SymbolicLink";
             }
@@ -510,12 +522,6 @@ namespace System.Management.Automation
         {
             Unix.NativeMethods.UnixTm tm = Unix.NativeMethods.DateTimeToUnixTm(dateToUse);
             return Unix.NativeMethods.SetDate(&tm) == 0;
-        }
-
-        // Hostname in this context seems to be the FQDN
-        internal static string NonWindowsGetHostName()
-        {
-            return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
         }
 
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
@@ -563,38 +569,6 @@ namespace System.Management.Automation
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
             }
 
-            private static string s_userName;
-            public static string UserName
-            {
-                get
-                {
-                    if (string.IsNullOrEmpty(s_userName))
-                    {
-                        s_userName = NativeMethods.GetUserName();
-                    }
-                    return s_userName ?? string.Empty;
-                }
-            }
-
-            public static string TemporaryDirectory
-            {
-                get
-                {
-                    // POSIX temporary directory environment variables
-                    string[] environmentVariables = { "TMPDIR", "TMP", "TEMP", "TEMPDIR" };
-                    string dir = string.Empty;
-                    foreach (string s in environmentVariables)
-                    {
-                        dir = System.Environment.GetEnvironmentVariable(s);
-                        if (!string.IsNullOrEmpty(dir))
-                        {
-                            return dir;
-                        }
-                    }
-                    return "/tmp";
-                }
-            }
-
             public static bool IsHardLink(ref IntPtr handle)
             {
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
@@ -637,6 +611,7 @@ namespace System.Management.Automation
                     {
                         return invalidPid;
                     }
+
                     return Int32.Parse(parts[3]);
                 }
                 catch (Exception)
@@ -656,10 +631,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern int GetErrorCategory(int errno);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserName();
-
                 [DllImport(psLib)]
                 internal static extern int GetPPid(int pid);
 
@@ -668,18 +639,10 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetFullyQualifiedName();
 
                 // This is a struct tm from <time.h>
                 [StructLayout(LayoutKind.Sequential)]

@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -30,8 +30,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsString
         {
             get { return _asString; }
+
             set { _asString = value; }
         }
+
         private bool _asString;
 
         /// <summary>
@@ -43,8 +45,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter OnType
         {
             get { return _onType; }
+
             set { _onType = value; }
         }
+
         private bool _onType = false;
         #endregion Parameters
 
@@ -72,7 +76,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _lastObjectAsString = _lastObject.ToString();
                 }
-                if (0 == String.Compare(
+
+                if (0 == string.Compare(
                     inputString,
                     _lastObjectAsString,
                     StringComparison.CurrentCulture))
@@ -93,6 +98,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.CurrentCulture,
                         true); // case-sensitive
                 }
+
                 isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
             }
 

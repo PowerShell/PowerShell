@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     ErrorRecord errorRecord = new ErrorRecord(
-                        new ArgumentException(String.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
+                        new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
                         "INVALID_SOURCE_IDENTIFIER",
                         ErrorCategory.InvalidArgument,
                         null);

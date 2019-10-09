@@ -3,12 +3,13 @@
 
 using System;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The valid values for the -PathType parameter for test-path
+    /// The valid values for the -PathType parameter for test-path.
     /// </summary>
     public enum TestPathType
     {
@@ -29,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// A command to determine if an item exists at a specified path
+    /// A command to determine if an item exists at a specified path.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113418")]
     [OutputType(typeof(bool))]
@@ -38,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -48,11 +49,12 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return _paths; }
+
             set { _paths = value; }
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -63,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return _paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -71,44 +74,47 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 
         /// <summary>
-        /// Gets or sets the isContainer property
+        /// Gets or sets the isContainer property.
         /// </summary>
         [Parameter]
         [Alias("Type")]
         public TestPathType PathType { get; set; } = TestPathType.Any;
 
         /// <summary>
-        /// Gets or sets the IsValid parameter
+        /// Gets or sets the IsValid parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter IsValid { get; set; } = new SwitchParameter();
@@ -149,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameter data
 
         /// <summary>
-        /// The path to the item to ping
+        /// The path to the item to ping.
         /// </summary>
         private string[] _paths;
 

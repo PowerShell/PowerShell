@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
-  <Import Project="../Test.Common.props"/>
+  <Import Project="../Test.Common.props" />
 
   <PropertyGroup>
     <Description>PowerShell xUnit Tests</Description>
@@ -16,15 +16,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
-    <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>
-    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>
+    <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
+    <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
+    <ProjectReference Include="../../src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.3.12" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <PackageReference Include="XunitXml.TestLogger" Version="2.0.0" />
+    <PackageReference Include="XunitXml.TestLogger" Version="2.1.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>

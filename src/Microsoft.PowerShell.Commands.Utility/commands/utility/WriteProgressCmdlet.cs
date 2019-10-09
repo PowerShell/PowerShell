@@ -78,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _completed;
             }
+
             set
             {
                 _completed = value;

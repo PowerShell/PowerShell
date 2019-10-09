@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
-using System.Management.Automation.Language;
 using System.Diagnostics;
 using System.Management.Automation.Host;
-using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Management.Automation.Internal.Host;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
 {
@@ -84,11 +85,12 @@ namespace System.Management.Automation.Internal
         internal PSObject currentObjectInPipeline = AutomationNull.Value;
 
         /// <summary>
-        /// Gets or sets the current pipeline object under consideration
+        /// Gets or sets the current pipeline object under consideration.
         /// </summary>
         internal PSObject CurrentPipelineObject
         {
             get { return currentObjectInPipeline; }
+
             set
             {
                 currentObjectInPipeline = value;
@@ -102,15 +104,17 @@ namespace System.Management.Automation.Internal
         {
             get { return _CBhost; }
         }
+
         private PSHost _CBhost;
 
         /// <summary>
-        /// Internal helper to get to SessionState
+        /// Internal helper to get to SessionState.
         /// </summary>
         internal SessionState InternalState
         {
             get { return _state; }
         }
+
         private SessionState _state;
 
         /// <summary>
@@ -135,6 +139,7 @@ namespace System.Management.Automation.Internal
         internal CommandInfo CommandInfo
         {
             get { return _commandInfo; }
+
             set { _commandInfo = value; }
         }
 
@@ -151,12 +156,14 @@ namespace System.Management.Automation.Internal
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Context");
                 }
+
                 _context = value;
                 Diagnostics.Assert(_context.EngineHostInterface is InternalHost, "context.EngineHostInterface is not an InternalHost");
                 _CBhost = (InternalHost)_context.EngineHostInterface;
@@ -166,6 +173,7 @@ namespace System.Management.Automation.Internal
                 _state = new SessionState(_context.EngineSessionState);
             }
         }
+
         private ExecutionContext _context;
 
         /// <summary>
@@ -176,6 +184,7 @@ namespace System.Management.Automation.Internal
         {
             get { return CommandOriginInternal; }
         }
+
         internal CommandOrigin CommandOriginInternal = CommandOrigin.Internal;
 
         #endregion public_properties
@@ -221,7 +230,7 @@ namespace System.Management.Automation.Internal
         #endregion Override
 
         /// <summary>
-        /// throws if the pipeline is stopping
+        /// Throws if the pipeline is stopping.
         /// </summary>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         internal void ThrowIfStopping()
@@ -234,7 +243,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// IDisposable implementation
-        /// When the command is complete, release the associated members
+        /// When the command is complete, release the associated members.
         /// </summary>
         /// <remarks>
         /// Using InternalDispose instead of Dispose pattern because this
@@ -257,6 +266,23 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region ErrorView
+    /// <summary>
+    /// Defines the potential ErrorView options.
+    /// </summary>
+    public enum ErrorView
+    {
+        /// <summary>Existing all red multi-line output.</summary>
+        NormalView = 0,
+
+        /// <summary>Only show category information.</summary>
+        CategoryView = 1,
+
+        /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
+        ConciseView = 2,
+    }
+    #endregion ErrorView
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine
@@ -268,18 +294,26 @@ namespace System.Management.Automation
     public enum ActionPreference
     {
         /// <summary>Ignore this event and continue</summary>
-        SilentlyContinue,
+        SilentlyContinue = 0,
+
         /// <summary>Stop the command</summary>
-        Stop,
+        Stop = 1,
+
         /// <summary>Handle this event as normal and continue</summary>
-        Continue,
+        Continue = 2,
+
         /// <summary>Ask whether to stop or continue</summary>
-        Inquire,
+        Inquire = 3,
+
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
-        Ignore,
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
-        Suspend,
-    }
+        Ignore = 4,
+
+        /// <summary>Reserved for future use.</summary>
+        Suspend = 5,
+
+        /// <summary>Enter the debugger.</summary>
+        Break = 6,
+    } // enum ActionPreference
     #endregion ActionPreference
 
     #region ConfirmImpact
@@ -389,7 +423,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Repository for jobs
+        /// Repository for jobs.
         /// </summary>
         public JobRepository JobRepository
         {
@@ -417,7 +451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Repository for runspaces
+        /// Repository for runspaces.
         /// </summary>
         internal RunspaceRepository RunspaceRepository
         {

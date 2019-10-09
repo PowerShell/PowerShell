@@ -17,8 +17,8 @@ function Wait-UntilTrue
         if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
-        # Sleep for the specified interval
-        Start-Sleep -Milliseconds $intervalInMilliseconds
+        # Wait
+        Start-Sleep -Milliseconds $intervalInMilliseconds > $null
     }
     return $true
 }
@@ -32,7 +32,7 @@ function Wait-FileToBePresent
         [int]$IntervalInMilliseconds = 100
     )
 
-    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
+    return Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds
 }
 
 function Test-IsElevated
@@ -233,11 +233,8 @@ function Send-VstsLogFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    if($env:BUILD_REASON -ne 'PullRequest')
-    {
-        Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-        Write-Verbose "Log file captured as $name" -Verbose
-    }
+    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
+    Write-Verbose "Log file captured as $name" -Verbose
 }
 
 # Tests if the Linux or macOS user is root
@@ -323,3 +320,64 @@ function New-RandomHexString
     return ((1..$Length).ForEach{ '{0:x}' -f $random.Next(0xf) }) -join ''
 }
 
+$script:CanWriteToPsHome = $null
+function Test-CanWriteToPsHome
+{
+    if ($null -ne $script:CanWriteToPsHome) {
+        return $script:CanWriteToPsHome
+    }
+
+    $script:CanWriteToPsHome = $true
+
+    try {
+        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+    }
+    catch [System.UnauthorizedAccessException] {
+        $script:CanWriteToPsHome = $false
+    }
+    finally {
+        if ($script:CanWriteToPsHome) {
+            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
+        }
+    }
+
+    $script:CanWriteToPsHome
+}
+
+# Creates a password meeting Windows complexity rules
+function New-ComplexPassword
+{
+    $numbers = "0123456789"
+    $lowercase = "abcdefghijklmnopqrstuvwxyz"
+    $uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    $symbols = "~!@#$%^&*_-+=``|\(){}[]:;`"'<>,.?/"
+    $password = [string]::Empty
+    # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
+    # buckets above, so we just pick one from each bucket twice.
+    # https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    1..2 | ForEach-Object {
+        $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
+            $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
+    }
+
+    $password
+}
+
+# return a specific string with regard to platform information
+function Get-PlatformInfo
+{
+    if ( $IsWindows ) {
+        return "windows"
+    }
+    if ( $IsMacOS ) {
+        return "macos"
+    }
+    if ( $IsLinux ) {
+        $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
+        if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
+            return $osrelease.ID
+        }
+        return "unknown"
+    }
+}

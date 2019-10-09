@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections.ObjectModel;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,14 +24,14 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = FileParameterSet)]
         [Alias("PSPath", "Path")]
         [ValidateNotNull]
-        public string[] AppendPath { set; get; } = Utils.EmptyArray<string>();
+        public string[] AppendPath { set; get; } = Array.Empty<string>();
 
         /// <summary>
         /// Files to prepend to the existing set.
         /// </summary>
         [Parameter(ParameterSetName = FileParameterSet)]
         [ValidateNotNull]
-        public string[] PrependPath { set; get; } = Utils.EmptyArray<string>();
+        public string[] PrependPath { set; get; } = Array.Empty<string>();
 
         private static void ReportWrongExtension(string file, string errorId, PSCmdlet cmdlet)
         {
@@ -75,11 +75,13 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.WriteError(new ErrorRecord(e, errorId, ErrorCategory.InvalidOperation, file));
                     continue;
                 }
+
                 if (!provider.NameEquals(cmdlet.Context.ProviderNames.FileSystem))
                 {
                     ReportWrongProviderType(provider.FullName, errorId, cmdlet);
                     continue;
                 }
+
                 foreach (string providerPath in providerPaths)
                 {
                     if (!providerPath.EndsWith(".ps1xml", StringComparison.OrdinalIgnoreCase))
@@ -87,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
                         ReportWrongExtension(providerPath, "WrongExtension", cmdlet);
                         continue;
                     }
+
                     retValue.Add(providerPath);
                 }
             }

@@ -2,28 +2,29 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.ComponentModel;
-using System.Reflection;
-using System.Globalization;
-using System.Management.Automation.Runspaces;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Security;
 using System.Security.Principal;
-using System.Resources;
+using System.Text;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
-using Microsoft.PowerShell.Commands.GetCounter;
+using System.Xml;
+
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using Microsoft.PowerShell.Commands.GetCounter;
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -52,8 +53,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] ListSet
         {
             get { return _listSet; }
+
             set { _listSet = value; }
         }
+
         private string[] _listSet = { "*" };
 
         //
@@ -73,12 +76,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] Counter
         {
             get { return _counter; }
+
             set
             {
                 _counter = value;
                 _defaultCounters = false;
             }
         }
+
         private string[] _counter = {@"\network interface(*)\bytes total/sec",
                                  @"\processor(_total)\% processor time",
                                  @"\memory\% committed bytes in use",
@@ -102,8 +107,10 @@ namespace Microsoft.PowerShell.Commands
         public int SampleInterval
         {
             get { return _sampleInterval; }
+
             set { _sampleInterval = value; }
         }
+
         private int _sampleInterval = 1;
 
         //
@@ -119,12 +126,14 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaxSamples
         {
             get { return _maxSamples; }
+
             set
             {
                 _maxSamples = value;
                 _maxSamplesSpecified = true;
             }
         }
+
         private Int64 _maxSamples = 1;
         private bool _maxSamplesSpecified = false;
 
@@ -135,8 +144,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Continuous
         {
             get { return _continuous; }
+
             set { _continuous = value; }
         }
+
         private bool _continuous = false;
 
         //
@@ -157,9 +168,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName
         {
             get { return _computerName; }
+
             set { _computerName = value; }
         }
-        private string[] _computerName = new string[0];
+
+        private string[] _computerName = Array.Empty<string>();
 
         private ResourceManager _resourceMgr = null;
 
@@ -205,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell Core requires at least Windows 7,
+            // PowerShell 7 requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
 #else
@@ -313,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
             if (res != 0)
             {
-                //add an error message
+                // add an error message
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoCounterSetsOnComputer"), machine, res);
                 Exception exc = new Exception(msg);
                 WriteError(new ErrorRecord(exc, "NoCounterSetsOnComputer", ErrorCategory.InvalidResult, machine));
@@ -395,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         categoryType = PerformanceCounterCategoryType.MultiInstance;
                     }
-                    else //if (counterSetInstances.Count == 1) //???
+                    else // if (counterSetInstances.Count == 1) //???
                     {
                         categoryType = PerformanceCounterCategoryType.SingleInstance;
                     }
@@ -482,9 +495,11 @@ namespace Microsoft.PowerShell.Commands
 
                         continue;
                     }
+
                     allExpandedPaths.Add(expandedPath);
                 }
             }
+
             if (allExpandedPaths.Count == 0)
             {
                 return;
@@ -495,6 +510,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ReportPdhError(res, false);
             }
+
             res = _pdhHelper.AddCounters(ref allExpandedPaths, true);
             if (res != 0)
             {
@@ -520,14 +536,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (res == 0)
                 {
-                    //Display valid data
+                    // Display valid data
                     if (!bSkip)
                     {
                         WriteSampleSetObject(nextSet);
                         sampleReads++;
                     }
 
-                    //Don't need to skip anymore
+                    // Don't need to skip anymore
                     bSkip = false;
                 }
                 else if (res == PdhResults.PDH_NO_DATA || res == PdhResults.PDH_INVALID_DATA)
@@ -575,6 +591,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {
@@ -603,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _accumulatedCounters)
             {
-                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) //NOTE: can we do anything smarter here?
+                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) // NOTE: can we do anything smarter here?
                 {
                     retColl.Add(path);
                 }
@@ -643,6 +660,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             WriteObject(set);
         }
 

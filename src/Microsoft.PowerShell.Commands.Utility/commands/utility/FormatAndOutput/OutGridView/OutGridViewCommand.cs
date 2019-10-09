@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using System.Management.Automation.Runspaces;
-
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     /// <summary>
     /// Enum for SelectionMode parameter.
     /// </summary>
@@ -97,6 +97,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
+
             get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
         }
 
@@ -226,6 +227,7 @@ namespace Microsoft.PowerShell.Commands
                         liveObject)
                     );
             }
+
             return smartToString;
         }
 
@@ -236,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute formatting on a single object.
         /// </summary>
-        /// <param name="input">object to process</param>
+        /// <param name="input">Object to process.</param>
         private void ProcessObject(PSObject input)
         {
             // Make sure the OGV window is not closed.
@@ -249,10 +251,11 @@ namespace Microsoft.PowerShell.Commands
                     // Stop the pipeline cleanly.
                     pipeline.StopAsync();
                 }
+
                 return;
             }
 
-            Object baseObject = input.BaseObject;
+            object baseObject = input.BaseObject;
 
             // Throw a terminating error for types that are not supported.
             if (baseObject is ScriptBlock ||
@@ -313,6 +316,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return new ScalarTypeHeader(parentCmd, input);
                 }
+
                 return new NonscalarTypeHeader(parentCmd, input);
             }
 
@@ -381,6 +385,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         _appliesTo.AddAppliesToType(typeName);
                         index++;
                     }
@@ -465,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)

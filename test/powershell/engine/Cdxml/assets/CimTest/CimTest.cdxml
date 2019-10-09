@@ -50,7 +50,7 @@
 
     <!-- Set-CimTest -->
       <Cmdlet>
-        <CmdletMetadata Verb="Set" ConfirmImpact="Medium" HelpUri="http://go.microsoft.com/fwlink/?LinkID=241963" Aliases="scimt"/>
+        <CmdletMetadata Verb="Set" ConfirmImpact="Medium" Aliases="scimt"/>
         <Method MethodName="cim:ModifyInstance">
           <Parameters>
             <Parameter ParameterName="field1">

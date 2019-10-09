@@ -3,11 +3,11 @@
 Describe "Get-Location" -Tags "CI" {
     $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
     BeforeEach {
-	pushd $currentDirectory
+	Push-Location $currentDirectory
     }
 
     AfterEach {
-	popd
+	Pop-location
     }
 
     It "Should list the output of the current working directory" {

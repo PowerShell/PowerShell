@@ -19,7 +19,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// PSParser class
+    /// PSParser class.
     /// </summary>
     /// <remarks>
     /// This is a class providing the interface for parsing a script into a collection of
@@ -63,7 +63,7 @@ namespace System.Management.Automation
     public sealed class PSParser
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <remarks>
         /// This constructor is made private intentionally. The only way to create an instance
@@ -133,9 +133,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse a script into a collection of tokens.
         /// </summary>
-        /// <param name="script">script to parse</param>
-        /// <param name="errors">errors happened during parsing</param>
-        /// <returns>collection of tokens generated during parsing</returns>
+        /// <param name="script">Script to parse.</param>
+        /// <param name="errors">Errors happened during parsing.</param>
+        /// <returns>Collection of tokens generated during parsing.</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors
         /// collection, there are some scenarios where resource limits will result
@@ -160,9 +160,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse a script into a collection of tokens.
         /// </summary>
-        /// <param name="script">script to parse, as an array of lines</param>
-        /// <param name="errors">errors happened during parsing</param>
-        /// <returns>collection of tokens generated during parsing</returns>
+        /// <param name="script">Script to parse, as an array of lines.</param>
+        /// <param name="errors">Errors happened during parsing.</param>
+        /// <returns>Collection of tokens generated during parsing.</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors
         /// collection, there are some scenarios where resource limits will result
@@ -184,6 +184,7 @@ namespace System.Management.Automation
                     sb.AppendLine(obj.ToString());
                 }
             }
+
             return Tokenize(sb.ToString(), out errors);
         }
 

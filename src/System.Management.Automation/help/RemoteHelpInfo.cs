@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -32,6 +33,7 @@ namespace System.Management.Automation
                 {
                     powerShell.AddParameter("Category", remoteHelpCategory);
                 }
+
                 powerShell.Runspace = remoteRunspace;
 
                 Collection<PSObject> helpResults;
@@ -57,6 +59,7 @@ namespace System.Management.Automation
                 {
                     nameInfo.Value = localCommandName;
                 }
+
                 PSObject commandDetails = this.Details;
                 if (commandDetails != null)
                 {

@@ -35,31 +35,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// The current output context, as determined by the
-        /// sequence of formatting messages in the object stream
+        /// sequence of formatting messages in the object stream.
         /// </summary>
         internal abstract class OutputContext
         {
             /// <summary>
             /// </summary>
-            /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
+            /// <param name="parentContextInStack">Parent context in the stack, it can be null.</param>
             internal OutputContext(OutputContext parentContextInStack)
             {
                 ParentContext = parentContextInStack;
             }
 
             /// <summary>
-            /// the outer context: the context object pushed onto the
+            /// The outer context: the context object pushed onto the
             /// stack before the current one. For the first object pushed onto
-            /// the stack it will be null
+            /// the stack it will be null.
             /// </summary>
             internal OutputContext ParentContext { get; }
         }
 
         /// <summary>
-        /// process an object from an input stream. It manages the context stack and
-        /// calls back on the specified event delegates
+        /// Process an object from an input stream. It manages the context stack and
+        /// calls back on the specified event delegates.
         /// </summary>
-        /// <param name="o">object to process</param>
+        /// <param name="o">Object to process.</param>
         internal void Process(object o)
         {
             PacketInfoData formatData = o as PacketInfoData;
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else if (formatDataIsGroupStartData)
                     {
-                        //GroupStartData gsd = (GroupStartData) formatData;
+                        // GroupStartData gsd = (GroupStartData) formatData;
                         // notify for Gs
                         this.gs(oc);
                     }
@@ -117,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.ge(ged, oc);
                         }
+
                         _stack.Pop();
                     }
                 }
@@ -124,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// access the active context (top of the stack). It can be null.
+        /// Access the active context (top of the stack). It can be null.
         /// </summary>
         internal OutputContext ActiveOutputContext
         {
@@ -132,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        ///  internal stack to manage context
+        /// Internal stack to manage context.
         /// </summary>
         private Stack<OutputContext> _stack = new Stack<OutputContext>();
     }

@@ -9,6 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -25,35 +26,39 @@ namespace Microsoft.PowerShell.Commands
     public sealed class RemoveModuleCommand : ModuleCmdletBase
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "name", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
-        private string[] _name = Utils.EmptyArray<string>();
+
+        private string[] _name = Array.Empty<string>();
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "FullyQualifiedName", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public ModuleSpecification[] FullyQualifiedName { get; set; }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ModuleInfo", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public PSModuleInfo[] ModuleInfo
         {
             set { _moduleInfo = value; }
+
             get { return _moduleInfo; }
         }
-        private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
+
+        private PSModuleInfo[] _moduleInfo = Array.Empty<PSModuleInfo>();
 
         /// <summary>
         /// If provided, this parameter will allow readonly modules to be removed.
@@ -62,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return BaseForce; }
+
             set { BaseForce = value; }
         }
 
@@ -175,6 +181,7 @@ namespace Microsoft.PowerShell.Commands
                                                              ErrorCategory.PermissionDenied, module);
                             WriteError(er);
                         }
+
                         continue;
                     }
 
@@ -194,6 +201,7 @@ namespace Microsoft.PowerShell.Commands
                                 string message = StringUtil.Format(Modules.CoreModuleCannotBeRemoved, module.Name);
                                 this.WriteWarning(message);
                             }
+
                             continue;
                         }
                         // Specify the overall module name if there is only one.
@@ -211,6 +219,7 @@ namespace Microsoft.PowerShell.Commands
                     // Add module to remove list.
                     moduleList.Add(module);
                 }
+
                 actualModulesToRemove[entry.Key] = moduleList;
             }
 
@@ -304,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns a map from a module to the list of modules that require it
+        /// Returns a map from a module to the list of modules that require it.
         /// </summary>
         private Dictionary<PSModuleInfo, List<PSModuleInfo>> GetRequiredDependencies()
         {
@@ -348,6 +357,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         isEngineModule = false;
                     }
+
                     if (!WildcardPattern.ContainsWildcardCharacters(n))
                         hasWildcards = false;
                 }

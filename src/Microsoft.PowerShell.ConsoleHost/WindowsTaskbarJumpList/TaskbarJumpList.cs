@@ -1,16 +1,52 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
 using System.Diagnostics;
+using System.Management.Automation;
 using System.Reflection;
+using System.Threading;
+
 using static Microsoft.PowerShell.ComInterfaces;
 
 namespace Microsoft.PowerShell
 {
     internal static class TaskbarJumpList
     {
-        internal static void CreateElevatedEntry(string title)
+        // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
+        // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
+        // we always have to execute this call because we do not know if it has been created yet.
+        // The JumpList does persist as long as the filepath of the executable does not change but there
+        // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
+        // not over-optimize this and always create the JumpList as a non-blocking background STA thread instead.
+        internal static void CreateRunAsAdministratorJumpList()
+        {
+            // The STA apartment state is not supported on NanoServer and Windows IoT.
+            // Plus, there is not need to create jump list in those environment anyways.
+            if (!Platform.IsWindowsDesktop)
+            {
+                return;
+            }
+
+            // Some COM APIs are implicitly STA only, therefore the executing thread must run in STA.
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                }
+                catch (Exception exception)
+                {
+                    // Due to COM threading complexity there might still be sporadic failures but they can be
+                    // ignored as creating the JumpList is not critical and persists after its first creation.
+                    Debug.Fail($"Creating 'Run as Administrator' JumpList failed. {exception}");
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
+        private static void CreateElevatedEntry(string title)
         {
             // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
             // This check is fast (less than 1ms) and allows for quick-exit
@@ -31,6 +67,7 @@ namespace Microsoft.PowerShell
                     Debug.Fail($"Creating ICustomDestinationList failed with HResult '{hResult}'.");
                     return;
                 }
+
                 var pCustDestList = (ICustomDestinationList)pCustDestListobj;
                 hResult = pCustDestList.BeginList(out uint uMaxSlots, new Guid(@"92CA9DCD-5622-4BBA-A805-5E9F541BD8C9"), out object pRemovedItems);
                 if (hResult < 0)
@@ -59,6 +96,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult}'.");
                         return;
                     }
+
                     hResult = nativePropertyStore.Commit();
                     if (hResult < 0)
                     {
@@ -79,6 +117,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"Creating IObjectCollection failed with HResult '{hResult}'.");
                         return;
                     }
+
                     var pShortCutCollection = (IObjectCollection)instance;
                     pShortCutCollection.AddObject((IShellLinkW)nativePropertyStore);
 
@@ -90,6 +129,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult}'.");
                         return;
                     }
+
                     pCustDestList.CommitList();
                 }
             }

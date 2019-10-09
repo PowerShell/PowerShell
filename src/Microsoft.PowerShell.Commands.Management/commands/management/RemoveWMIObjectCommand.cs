@@ -8,7 +8,7 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to Remove WMI Object
+    /// A command to Remove WMI Object.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "WmiObject", DefaultParameterSetName = "class", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113381", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -16,30 +16,33 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// The WMI Object to use
+        /// The WMI Object to use.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
             get { return _inputObject; }
+
             set { _inputObject = value; }
         }
         /// <summary>
-        /// The WMI Path to use
+        /// The WMI Path to use.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "path")]
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
         /// <summary>
-        /// The WMI class to use
+        /// The WMI class to use.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class
         {
             get { return _className; }
+
             set { _className = value; }
         }
 
@@ -62,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 RunAsJob("Remove-WMIObject");
                 return;
             }
+
             if (_inputObject != null)
             {
                 try
@@ -70,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return;
                     }
+
                     _inputObject.Delete();
                 }
                 catch (ManagementException e)
@@ -82,6 +87,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "RemoveWMICOMException", ErrorCategory.InvalidOperation, null);
                     WriteError(errorRecord);
                 }
+
                 return;
             }
             else
@@ -92,13 +98,13 @@ namespace Microsoft.PowerShell.Commands
                 if (_path != null)
                 {
                     mPath = new ManagementPath(_path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = this.Namespace;
                     }
                     else if (namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -108,19 +114,21 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",
                             ErrorCategory.InvalidOperation,
                             this.ComputerName));
                     }
+
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
                         string[] serverName = new string[] { mPath.Server };
                         ComputerName = serverName;
                     }
                 }
+
                 foreach (string name in ComputerName)
                 {
                     try
@@ -138,6 +146,7 @@ namespace Microsoft.PowerShell.Commands
                                 ManagementObject mInstance = new ManagementObject(mPath);
                                 mObject = mInstance;
                             }
+
                             ManagementScope mScope = new ManagementScope(mPath, options);
                             mObject.Scope = mScope;
                         }
@@ -148,10 +157,12 @@ namespace Microsoft.PowerShell.Commands
                             mObject = mClass;
                             mObject.Scope = scope;
                         }
+
                         if (!ShouldProcess(mObject["__PATH"].ToString()))
                         {
                             continue;
                         }
+
                         mObject.Delete();
                     }
                     catch (ManagementException e)

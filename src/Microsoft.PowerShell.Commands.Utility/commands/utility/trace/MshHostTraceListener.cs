@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Security.Permissions;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
+using System.Security.Permissions;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
                 // We don't want tracing to bring down the process.
             }
         }
+
         private StringBuilder _cachedWrite = new StringBuilder();
 
         /// <summary>
@@ -103,6 +104,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 _cachedWrite.Append(output);
+                _cachedWrite.Insert(0, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff "));
 
                 _ui.WriteDebugLine(_cachedWrite.ToString());
                 _cachedWrite.Remove(0, _cachedWrite.Length);

@@ -7,6 +7,7 @@
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -37,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 

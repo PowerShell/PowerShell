@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Security;
-using System.Management.Automation.Internal;
-using System.IO;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell
 {
@@ -48,7 +49,7 @@ namespace Microsoft.PowerShell
     ///    internet, Monad provides a warning prompt to alert the user.  To
     ///    suppress this warning message, right-click on the file in File Explorer,
     ///    select "Properties," and then "Unblock."  Requires Shell.
-    /// Bypass - No files must be signed, and internet origin is not verified
+    /// Bypass - No files must be signed, and internet origin is not verified.
     /// </summary>
     public sealed class PSAuthorizationManager : AuthorizationManager
     {
@@ -66,7 +67,7 @@ namespace Microsoft.PowerShell
         // execution policy that dictates what can run in msh
         private ExecutionPolicy _executionPolicy;
 
-        //shellId supplied by runspace configuration
+        // shellId supplied by runspace configuration
         private string _shellId;
 
         /// <summary>
@@ -84,6 +85,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("shellId");
             }
+
             _shellId = shellId;
         }
 
@@ -193,7 +195,7 @@ namespace Microsoft.PowerShell
                 if (!IsLocalFile(fi.FullName))
                 {
                     // Get the signature of the file.
-                    if (String.IsNullOrEmpty(script.ScriptContents))
+                    if (string.IsNullOrEmpty(script.ScriptContents))
                     {
                         reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                         reason = new UnauthorizedAccessException(reasonMessage);
@@ -264,7 +266,7 @@ namespace Microsoft.PowerShell
                 // make it so.
 
                 // Get the signature of the file.
-                if (String.IsNullOrEmpty(script.ScriptContents))
+                if (string.IsNullOrEmpty(script.ScriptContents))
                 {
                     reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                     reason = new UnauthorizedAccessException(reasonMessage);
@@ -319,7 +321,7 @@ namespace Microsoft.PowerShell
                 // But accept mshxml files from publishers that we
                 // trust, or files in the system protected directories
                 bool reasonSet = false;
-                if (String.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
                     string[] trustedDirectories = new string[]
                         { Platform.GetFolderPath(Environment.SpecialFolder.System),
@@ -431,7 +433,7 @@ namespace Microsoft.PowerShell
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
-                if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                     if (!IsUntrustedPublisher(signature, file)) return true;
             }
 
@@ -450,7 +452,7 @@ namespace Microsoft.PowerShell
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
-                if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
 
@@ -458,7 +460,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Trust a publisher by adding it to the "Trusted Publishers" store
+        /// Trust a publisher by adding it to the "Trusted Publishers" store.
         /// </summary>
         /// <param name="signature"></param>
         private void TrustPublisher(Signature signature)
@@ -620,6 +622,7 @@ namespace Microsoft.PowerShell
                         allowRun = CheckPolicy(si, host, out reason);
                         if (etwEnabled) ParserEventSource.Log.CheckSecurityStop(si.Path);
                     }
+
                     break;
 
                 case CommandTypes.Application:

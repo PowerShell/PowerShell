@@ -13,6 +13,7 @@ using System.Management.Automation.Runspaces;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation
@@ -70,7 +71,11 @@ namespace System.Management.Automation
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
                 }
-                else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = AnalyzeDllModule(modulePath, context, lastWriteTime);
+                }
+                else if (extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeDllModule(modulePath, context, lastWriteTime);
                 }
@@ -207,7 +212,15 @@ namespace System.Management.Automation
                 return !hadFunctions || !hadAliases;
             }
 
-            if (modulePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            if (modulePath.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                // A dll just exports cmdlets, so if the manifest doesn't explicitly export any cmdlets,
+                // more analysis is required. If the module exports aliases, we can't discover that analyzing
+                // the binary, so aliases are always required to be explicit (no wildcards) in the manifest.
+                return !hadCmdlets;
+            }
+
+            if (modulePath.EndsWith(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // A dll just exports cmdlets, so if the manifest doesn't explicitly export any cmdlets,
                 // more analysis is required. If the module exports aliases, we can't discover that analyzing
@@ -278,8 +291,10 @@ namespace System.Management.Automation
                 {
                     commandTypes = commandTypeToAdd;
                 }
+
                 result[command] = commandTypes;
             }
+
             return true;
         }
 
@@ -443,7 +458,7 @@ namespace System.Management.Automation
         /// Also re-cache the module if the cached item is stale.
         /// </summary>
         /// <param name="modulePath">Path to the module to get exported types from.</param>
-        /// <param name="context">Current Context</param>
+        /// <param name="context">Current Context.</param>
         /// <returns></returns>
         internal static ConcurrentDictionary<string, TypeAttributes> GetExportedClasses(string modulePath, ExecutionContext context)
         {
@@ -705,6 +720,7 @@ namespace System.Management.Automation
             fixed (byte* b = bytes) *((int*)b) = val;
             stream.Write(bytes, 0, 4);
         }
+
         private static unsafe void Write(long val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
@@ -1011,6 +1027,7 @@ namespace System.Management.Automation
                 {
                     Task.Delay(10000).ContinueWith(_ => result.Cleanup());
                 }
+
                 return result;
             }
         }
@@ -1040,6 +1057,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 retryCount -= 1;
                 Thread.Sleep(25); // Sleep a bit to give time for another process to finish writing the cache
             } while (retryCount > 0);
@@ -1103,11 +1121,7 @@ namespace System.Management.Automation
                 cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
             }
 
-#if UNIX
-            s_cacheStoreLocation = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), cacheFileName);
-#else
-            s_cacheStoreLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell", cacheFileName);
-#endif
+            s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);
         }
     }
 

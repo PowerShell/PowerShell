@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Transactions;
 using System.Text;
+using System.Transactions;
 
 namespace Microsoft.PowerShell.Commands.Management
 {
@@ -63,6 +63,7 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             enlistment.Done();
         }
+
         void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
         {
             preparingEnlistment.Prepared();

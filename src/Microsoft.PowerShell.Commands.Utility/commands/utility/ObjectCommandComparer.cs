@@ -5,8 +5,8 @@
 
 using System;
 using System.Collections;
-using System.Management.Automation;
 using System.Globalization;
+using System.Management.Automation;
 
 #endregion
 
@@ -96,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             if (baseObject != null && inComingbaseObjectPropertyValue != null)
             {
                 return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
@@ -112,12 +113,17 @@ namespace Microsoft.PowerShell.Commands
         public override int GetHashCode()
         {
             if (PropertyValue == null)
+            {
                 return 0;
+            }
 
             object baseObject = PSObject.Base(PropertyValue);
-            IComparable baseObjectComparable = baseObject as IComparable;
+            if (baseObject == null)
+            {
+                return 0;
+            }
 
-            if (baseObjectComparable != null)
+            if (baseObject is IComparable)
             {
                 return baseObject.GetHashCode();
             }
@@ -169,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return 1;
             }
-            //both are nonexisting
+            // both are nonexisting
             return 0;
         }
 

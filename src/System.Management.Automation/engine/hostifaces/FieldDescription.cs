@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //using System.Runtime.Serialization;
@@ -40,7 +41,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is the name.
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name", DescriptionsStrings.NullOrEmptyErrorTemplate, "name");
             }
@@ -102,7 +103,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeName))
+                if (string.IsNullOrEmpty(parameterTypeName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -129,7 +130,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeFullName))
+                if (string.IsNullOrEmpty(parameterTypeFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -141,7 +142,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets the full name of the assembly containing the type identified by ParameterTypeFullName or ParameterTypeName
+        /// Gets the full name of the assembly containing the type identified by ParameterTypeFullName or ParameterTypeName.
         /// </summary>
         /// <remarks>
         /// If the assembly is not currently loaded in the hosting application's AppDomain, the hosting application needs
@@ -157,7 +158,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterAssemblyFullName))
+                if (string.IsNullOrEmpty(parameterAssemblyFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -199,6 +200,7 @@ namespace System.Management.Automation.Host
 
                 return label;
             }
+
             set
             {
                 if (value == null)
@@ -231,6 +233,7 @@ namespace System.Management.Automation.Host
 
                 return helpMessage;
             }
+
             set
             {
                 if (value == null)
@@ -243,7 +246,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets and sets whether a value must be supplied for this field
+        /// Gets and sets whether a value must be supplied for this field.
         /// </summary>
 
         public
@@ -254,6 +257,7 @@ namespace System.Management.Automation.Host
             {
                 return isMandatory;
             }
+
             set
             {
                 isMandatory = value;
@@ -313,7 +317,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterTypeName(string nameOfType)
         {
-            if (String.IsNullOrEmpty(nameOfType))
+            if (string.IsNullOrEmpty(nameOfType))
             {
                 throw PSTraceSource.NewArgumentException("nameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "nameOfType");
             }
@@ -333,7 +337,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterTypeFullName(string fullNameOfType)
         {
-            if (String.IsNullOrEmpty(fullNameOfType))
+            if (string.IsNullOrEmpty(fullNameOfType))
             {
                 throw PSTraceSource.NewArgumentException("fullNameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfType");
             }
@@ -353,7 +357,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterAssemblyFullName(string fullNameOfAssembly)
         {
-            if (String.IsNullOrEmpty(fullNameOfAssembly))
+            if (string.IsNullOrEmpty(fullNameOfAssembly))
             {
                 throw PSTraceSource.NewArgumentException("fullNameOfAssembly", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfAssembly");
             }
@@ -363,7 +367,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Indicates if this field description was
-        /// modified by the remoting protocol layer
+        /// modified by the remoting protocol layer.
         /// </summary>
         /// <remarks>Used by the console host to
         /// determine if this field description was
@@ -375,6 +379,7 @@ namespace System.Management.Automation.Host
             {
                 return modifiedByRemotingProtocol;
             }
+
             set
             {
                 modifiedByRemotingProtocol = value;
@@ -383,7 +388,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Indicates if this field description
-        /// is coming from a remote host
+        /// is coming from a remote host.
         /// </summary>
         /// <remarks>Used by the console host to
         /// not cast strings to an arbitrary type,
@@ -395,6 +400,7 @@ namespace System.Management.Automation.Host
             {
                 return isFromRemoteHost;
             }
+
             set
             {
                 isFromRemoteHost = value;

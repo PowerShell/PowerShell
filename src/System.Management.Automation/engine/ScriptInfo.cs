@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH scripts that are directly executable by MSH
+    /// The command information for MSH scripts that are directly executable by MSH.
     /// </summary>
     public class ScriptInfo : CommandInfo, IScriptCommandInfo
     {
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -121,6 +121,7 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
     }
 }

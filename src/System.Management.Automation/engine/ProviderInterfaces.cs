@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -17,7 +18,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private CmdletProviderManagementIntrinsics()
         {
@@ -27,7 +28,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The facade for managing providers
+        /// The facade for managing providers.
         /// </summary>
         /// <param name="sessionState">
         /// The session to which this is a facade.
@@ -124,7 +125,7 @@ namespace System.Management.Automation
         #region Internal methods
 
         /// <summary>
-        /// Determines if the specified provider has the specified capability
+        /// Determines if the specified provider has the specified capability.
         /// </summary>
         /// <param name="capability">
         /// The capability to check the provider for.
@@ -145,7 +146,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the count of the number of providers that are loaded
+        /// Gets the count of the number of providers that are loaded.
         /// </summary>
         internal int Count
         {

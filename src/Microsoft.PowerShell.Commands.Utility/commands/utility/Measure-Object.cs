@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
@@ -175,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             /// the key with a new value created via the value type's
             /// default constructor.
             /// </summary>
-            /// <param name="key">The key to look up</param>
+            /// <param name="key">The key to look up.</param>
             /// <returns>
             /// The existing value, or a newly-created value.
             /// </returns>
@@ -256,6 +257,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureStandardDeviation;
             }
+
             set
             {
                 _measureStandardDeviation = value;
@@ -275,11 +277,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureSum;
             }
+
             set
             {
                 _measureSum = value;
             }
         }
+
         private bool _measureSum;
 
         /// <summary>
@@ -313,11 +317,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureAverage;
             }
+
             set
             {
                 _measureAverage = value;
             }
         }
+
         private bool _measureAverage;
 
         /// <summary>
@@ -331,11 +337,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMax;
             }
+
             set
             {
                 _measureMax = value;
             }
         }
+
         private bool _measureMax;
 
         /// <summary>
@@ -349,11 +357,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMin;
             }
+
             set
             {
                 _measureMin = value;
             }
         }
+
         private bool _measureMin;
 
         #region TextMeasure ParameterSet
@@ -367,11 +377,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureLines;
             }
+
             set
             {
                 _measureLines = value;
             }
         }
+
         private bool _measureLines = false;
 
         /// <summary>
@@ -384,11 +396,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureWords;
             }
+
             set
             {
                 _measureWords = value;
             }
         }
+
         private bool _measureWords = false;
 
         /// <summary>
@@ -401,11 +415,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureCharacters;
             }
+
             set
             {
                 _measureCharacters = value;
             }
         }
+
         private bool _measureCharacters = false;
 
         /// <summary>
@@ -418,11 +434,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _ignoreWhiteSpace;
             }
+
             set
             {
                 _ignoreWhiteSpace = value;
             }
         }
+
         private bool _ignoreWhiteSpace;
 
         #endregion TextMeasure ParameterSet
@@ -435,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
+                return string.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
         }
 
@@ -633,19 +651,21 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count chars in inStr.
             /// </summary>
-            /// <param name="inStr">string whose chars are counted</param>
-            /// <param name="ignoreWhiteSpace">true to discount white space</param>
-            /// <returns>number of chars in inStr</returns>
+            /// <param name="inStr">String whose chars are counted.</param>
+            /// <param name="ignoreWhiteSpace">True to discount white space.</param>
+            /// <returns>Number of chars in inStr.</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 if (!ignoreWhiteSpace)
                 {
                     return inStr.Length;
                 }
+
                 int len = 0;
                 foreach (char c in inStr)
                 {
@@ -654,20 +674,22 @@ namespace Microsoft.PowerShell.Commands
                         len++;
                     }
                 }
+
                 return len;
             }
 
             /// <summary>
             /// Count words in inStr.
             /// </summary>
-            /// <param name="inStr">string whose words are counted</param>
-            /// <returns>number of words in inStr</returns>
+            /// <param name="inStr">String whose words are counted.</param>
+            /// <returns>Number of words in inStr.</returns>
             internal static int CountWord(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 int wordCount = 0;
                 bool wasAWhiteSpace = true;
                 foreach (char c in inStr)
@@ -682,23 +704,26 @@ namespace Microsoft.PowerShell.Commands
                         {
                             wordCount++;
                         }
+
                         wasAWhiteSpace = false;
                     }
                 }
+
                 return wordCount;
             }
 
             /// <summary>
             /// Count lines in inStr.
             /// </summary>
-            /// <param name="inStr">string whose lines are counted</param>
-            /// <returns>number of lines in inStr</returns>
+            /// <param name="inStr">String whose lines are counted.</param>
+            /// <returns>Number of lines in inStr.</returns>
             internal static int CountLine(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 int numberOfLines = 0;
                 foreach (char c in inStr)
                 {
@@ -713,6 +738,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     numberOfLines++;
                 }
+
                 return numberOfLines;
             }
         }
@@ -744,6 +770,7 @@ namespace Microsoft.PowerShell.Commands
                 stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
             }
+
             if (_measureStandardDeviation && stat.count > 1)
             {
                 // Based off of iterative method of calculating variance on
@@ -889,6 +916,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     gmi.Maximum = (double)max;
                 }
+
                 if (min != null)
                 {
                     gmi.Minimum = (double)min;

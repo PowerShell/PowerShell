@@ -26,8 +26,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobOptions InputObject
         {
             get { return _jobOptions; }
+
             set { _jobOptions = value; }
         }
+
         private ScheduledJobOptions _jobOptions;
 
         /// <summary>
@@ -37,8 +39,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
+
         private SwitchParameter _passThru;
 
         #endregion

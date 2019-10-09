@@ -182,7 +182,7 @@ Describe "Measure-Object" -Tags "CI" {
             $result.Sum      | Should -Be 55
             $result.Minimum  | Should -Be 1
             $result.Maximum  | Should -Be 10
-            ($result.StandardDeviation).ToString()  | Should -Be '3.02765035409749'
+            ($result.StandardDeviation).ToString()  | Should -Be '3.0276503540974917'
         }
     }
 
@@ -411,7 +411,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {
-        $result = (1..10).foreach{@{value = $_}} | Test-PSPropertyExpression val*
+        $result = (1..10).ForEach{@{value = $_}} | Test-PSPropertyExpression val*
         $result | Should -Be 55
     }
 
@@ -484,7 +484,7 @@ Describe "Directly test the PSPropertyExpression type" -Tags "CI" {
     }
 
     It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {
-        $result = (1..10).foreach{@{value = $_}} | Test-PSPropertyExpression val*
+        $result = (1..10).ForEach{@{value = $_}} | Test-PSPropertyExpression val*
         $result | Should -Be 55
     }
 
@@ -558,7 +558,7 @@ Describe "Directly test the PSPropertyExpression type" -Tags "CI" {
     }
 
     It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {
-        $result = (1..10).foreach{@{value = $_}} | Test-PSPropertyExpression val*
+        $result = (1..10).ForEach{@{value = $_}} | Test-PSPropertyExpression val*
         $result | Should -Be 55
     }
 
@@ -631,7 +631,7 @@ Describe "Directly test the PSPropertyExpression type" -Tags "CI" {
     }
 
     It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {
-        $result = (1..10).foreach{@{value = $_}} | Test-PSPropertyExpression val*
+        $result = (1..10).ForEach{@{value = $_}} | Test-PSPropertyExpression val*
         $result | Should -Be 55
     }
 

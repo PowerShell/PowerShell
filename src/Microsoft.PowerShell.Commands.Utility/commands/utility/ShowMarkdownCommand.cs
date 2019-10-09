@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands
@@ -50,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return Path; }
+
             set { Path = value; }
         }
 

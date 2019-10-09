@@ -254,21 +254,70 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
     }
+
+    It "New-Item -ItemType SymbolicLink should be able to create a relative link" -Skip:(!$IsWindows) {
+        try {
+            Push-Location $TestDrive
+            $relativeFilePath = Join-Path -Path . -ChildPath "relativefile.txt"
+            $file = New-Item -ItemType File -Path $relativeFilePath
+            $link = New-Item -ItemType SymbolicLink -Path ./link -Target $relativeFilePath
+            $link.Target | Should -BeExactly $relativeFilePath
+        } finally {
+            Pop-Location
+        }
+    }
 }
 
-Describe "New-Item with links fails for non elevated user." -Tags "CI" {
+Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
-        $tmpDirectory         = $TestDrive
         $testfile             = "testfile.txt"
-        $testfolder           = "newDirectory"
         $testlink             = "testlink"
-        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
+        $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
+        $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
+        $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
+        $developerMode = $developerModeEnabled -and $minBuildRequired
     }
 
-    It "Should error correctly when failing to create a symbolic link" -Skip:(Test-IsRoot) {
-        # This test expects that /sbin exists but is not writable by the user
-        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
+    AfterEach {
+        Remove-Item -Path $testFilePath -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Should error correctly when failing to create a symbolic link and not in developer mode" -Skip:(!$IsWindows -or $developerMode -or (Test-IsElevated)) {
+        { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } |
         Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
+        $TestFilePath | Should -Not -Exist
+    }
+
+    It "Should succeed to create a symbolic link without elevation and in developer mode" -Skip:(!$IsWindows -or !$developerMode -or (Test-IsElevated)) {
+        { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
+        $TestFilePath | Should -Exist
     }
 }
+
+Describe "New-Item -Force allows to create an item even if the directories in the path don't exist" -Tags "CI" {
+    BeforeAll {
+        $testFile             = 'testfile.txt'
+        $testFolder           = 'testfolder'
+        $FullyQualifiedFolder = Join-Path -Path $TestDrive -ChildPath $testFolder
+        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testFolder -AdditionalChildPath $testFile
+    }
+
+    BeforeEach {
+        # Explicitly removing folder and the file before tests
+        Remove-Item $FullyQualifiedFolder -ErrorAction SilentlyContinue
+        Remove-Item $FullyQualifiedFile   -ErrorAction SilentlyContinue
+        Test-Path -Path $FullyQualifiedFolder | Should -BeFalse
+        Test-Path -Path $FullyQualifiedFile   | Should -BeFalse
+    }
+
+    It "Should error correctly when -Force is not used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -ErrorAction Stop } | Should -Throw -ErrorId 'NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand'
+        $FullyQualifiedFile | Should -Not -Exist
+    }
+    It "Should create new file correctly when -Force is used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -Force -ErrorAction Stop } | Should -Not -Throw
+        $FullyQualifiedFile | Should -Exist
+    }
+}
+

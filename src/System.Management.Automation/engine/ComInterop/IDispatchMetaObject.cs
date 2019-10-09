@@ -150,14 +150,14 @@ namespace System.Management.Automation.ComInterop
             {
                 if (method.ParamCount == 0)
                 {
-                    return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Utils.EmptyArray<bool>(), null, null);
+                    return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Array.Empty<bool>(), null, null);
                 }
             }
 
             // ComGetMemberBinder does not expect callables. Try to call always.
             if (!canReturnCallables)
             {
-                return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Utils.EmptyArray<bool>(), null, null);
+                return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Array.Empty<bool>(), null, null);
             }
 
             return new DynamicMetaObject(

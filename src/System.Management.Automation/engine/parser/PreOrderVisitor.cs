@@ -41,6 +41,7 @@ namespace System.Management.Automation.Language
             {
                 postActionHandler.PostVisit(ast);
             }
+
             return action;
         }
 
@@ -161,7 +162,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// AstVisitor for new Ast node types
+    /// AstVisitor for new Ast node types.
     /// </summary>
     public abstract class AstVisitor2 : AstVisitor
     {
@@ -185,6 +186,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         public virtual AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.Continue; }
     }
 
     /// <summary>

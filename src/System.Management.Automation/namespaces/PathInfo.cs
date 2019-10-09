@@ -76,6 +76,7 @@ namespace System.Management.Automation
                 return _providerPath;
             }
         }
+
         private string _providerPath;
         private SessionState _sessionState;
 
@@ -92,7 +93,7 @@ namespace System.Management.Automation
 
         private PSDriveInfo _drive;
         private ProviderInfo _provider;
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Gets a string representing the MSH path.
@@ -144,17 +145,17 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _drive = drive;

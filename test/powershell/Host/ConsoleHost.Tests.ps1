@@ -91,6 +91,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         $Error.Clear()
     }
 
+    It "Clear-Host does not injects data into PowerShell output stream" {
+        & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
+    }
+
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
             { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
@@ -119,6 +123,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
+
     Context "CommandLine" {
         It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should -Be "hello world"
@@ -216,7 +221,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolValue
         }
 
-        It "-File '<filename>' should return exit code from script"  -TestCases @(
+        It "-File '<filename>' should return exit code from script" -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -224,6 +229,96 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
+        }
+
+        It "A single dash should be passed as an arg" {
+            $testScript = @'
+    [CmdletBinding()]param(
+        [string]$p1,
+        [string]$p2,
+        [Parameter(ValueFromPipeline)][string]$InputObject
+    )
+    process{
+        $input.replace($p1, $p2)
+    }
+'@
+            $testFilePath = Join-Path $TestDrive "test.ps1"
+            Set-Content -Path $testFilePath -Value $testScript
+            $observed = echo hello | pwsh -noprofile $testFilePath e -
+            $observed | Should -BeExactly "h-llo"
+        }
+    }
+
+    Context "-Login pwsh switch" {
+        BeforeAll {
+            $profilePath = "~/.profile"
+            $backupProfilePath = "profile.bak"
+            if (Test-Path $profilePath) {
+                Move-Item -Path $profilePath -Destination $backupProfilePath -Force
+            }
+
+            $envVarName = 'PSTEST_PROFILE_LOAD'
+
+            $guid = New-Guid
+
+            Set-Content -Force -Path $profilePath -Value @"
+export $envVarName='$guid'
+"@
+        }
+
+        AfterAll {
+            if (Test-Path $backupProfilePath) {
+                Move-Item -Path $backupProfilePath -Destination $profilePath -Force
+            }
+        }
+
+        It "Doesn't run the login profile when -Login not used" {
+            $result = & $powershell -Command "`$env:$envVarName"
+            $result | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
+            $result = & $powershell -nop -c 'Write-Output "-login"'
+            $result | Should -BeExactly '-login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Doesn't falsely recognise -Login when used after -Command" {
+            $result = & $powershell -nop -c 'Write-Output' -Login
+            $result | Should -BeExactly '-Login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Accepts the <LoginSwitch> switch for -Login and behaves correctly" -TestCases @(
+            @{ LoginSwitch = '-l' }
+            @{ LoginSwitch = '-L' }
+            @{ LoginSwitch = '-login' }
+            @{ LoginSwitch = '-Login' }
+            @{ LoginSwitch = '-LOGIN' }
+            @{ LoginSwitch = '-log' }
+        ) {
+            param($LoginSwitch)
+
+            $result = & $powershell $LoginSwitch -NoProfile -Command "`$env:$envVarName"
+
+            if ($IsWindows) {
+                $result | Should -BeNullOrEmpty
+                $LASTEXITCODE | Should -Be 0
+                return
+            }
+
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Starts as a login shell with '-' prepended to name" -Skip:(-not (Get-Command -Name /bin/bash -ErrorAction Ignore)) {
+            $quoteEscapedPwsh = $powershell.Replace("'", "\'")
+            $pwshCommand = "`$env:$envVarName"
+            $bashCommand = "exec -a '-pwsh' '$quoteEscapedPwsh' -NoProfile -Command '`$env:$envVarName' ''"
+            $result = /bin/bash -c $bashCommand
+            $result | Should -BeExactly $guid
+            $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
         }
     }
 
@@ -302,7 +397,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("throw 'boom'"))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
@@ -479,14 +574,44 @@ foo
     }
 
     Context "Exception handling" {
-        It "Should handle a CallDepthOverflow" {
-            # Infinite recursion
-            function recurse
-            {
-                recurse $args
+        BeforeAll {
+            # the default stack size in PowerShell is 10000000, set the stack
+            # to something much smaller which will produce the error much faster
+            # I saw a reduction from 65 seconds to 79 milliseconds.
+            $classDefinition = @'
+using System;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Threading;
+namespace StackTest {
+    public class StackDepthTest {
+        public static PowerShell ps;
+        public static int size = 512 * 1024;
+        public static void CauseError() {
+            Thread t = new Thread(RunPS, size);
+            t.Start();
+            t.Join();
+        }
+        public static void RunPS() {
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            iss.ThreadOptions = PSThreadOptions.UseCurrentThread;
+            ps = PowerShell.Create(iss);
+            ps.AddScript("function recurse { recurse }; recurse").Invoke();
+        }
+        public static void GetPSError() {
+            if ( ps.Streams.Error.Count > 0) {
+                throw ps.Streams.Error[0].Exception.InnerException;
             }
+        }
+    }
+}
+'@
+            $TestType = Add-Type -PassThru -TypeDefinition $classDefinition
+        }
 
-            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
+        It "Should handle a CallDepthOverflow" {
+            $TestType::CauseError()
+            { $TestType::GetPSError() } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 
@@ -611,6 +736,80 @@ foo
             }
         }
     }
+
+    Context "CustomPipeName startup tests" {
+
+        It "Should create pipe file if CustomPipeName is specified" {
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = Get-PipePath $pipeName
+
+            # The pipePath should be created by the time the -Command is executed.
+            & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
+        }
+
+        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
+            # Generate a string that is larger than the max pipe name length.
+            $longPipeName = [string]::new("A", 200)
+
+            "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+        }
+    }
+
+    Context "ApartmentState WPF tests" -Tag Slow {
+
+        It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            add-type -AssemblyName presentationframework
+
+            $xaml = [xml]@"
+            <Window
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
+                Width = "400" Height = "300" ShowInTaskbar = "True">
+            </Window>
+"@
+
+            $reader = [System.Xml.XmlNodeReader]::new($xaml)
+            $Window = [System.Windows.Markup.XamlReader]::Load($reader)
+            # This will throw an exception if MTA
+            { $Window.Show() } | Should -Not -Throw
+            $Window.Close()
+        }
+
+    }
+
+    Context "ApartmentState tests" {
+
+        It "Default apartment state for main thread is STA" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            [System.Threading.Thread]::CurrentThread.GetApartmentState() | Should -BeExactly "STA"
+        }
+
+        It "Default apartment state for new runspace is MTA" -Skip:(!$IsWindows) {
+            $ps = [powershell]::Create()
+            $ps.AddScript({[System.Threading.Thread]::CurrentThread.GetApartmentState()})
+            $ps.Invoke() | Should -BeExactly "MTA"
+        }
+
+        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
+            @{ apartment = "STA"; switch = "-sta" }
+            @{ apartment = "MTA"; switch = "-mta" }
+        ) {
+            param ($apartment, $switch)
+
+            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
+        }
+
+        It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows -and ![System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
+            @{ switch = "-sta" }
+            @{ switch = "-mta" }
+        ) {
+            param ($switch)
+
+            & $powershell $switch -noprofile -command exit
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
@@ -668,16 +867,20 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
-        $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
-        $startTime = Get-Date
-        $showCmd = "Unknown"
-        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
-        {
-            Start-Sleep -Milliseconds 100
-            $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+
+        try {
+            $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+            $startTime = Get-Date
+            $showCmd = "Unknown"
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle) {
+                Start-Sleep -Milliseconds 100
+                $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+            }
+
+            $showCmd | Should -BeExactly $WindowStyle
+        } finally {
+            $ps | Stop-Process -Force
         }
-        $showCmd | Should -BeExactly $WindowStyle
-        $ps | Stop-Process -Force
     }
 
     It "Invalid -WindowStyle returns error" {
@@ -687,8 +890,9 @@ public enum ShowWindowCommands : int
 }
 
 Describe "Console host api tests" -Tag CI {
-    Context "String escape sequences" {
+    Context "String escape and control sequences" {
         $esc = [char]0x1b
+        $csi = [char]0x9b
         $testCases =
             @{InputObject = "abc"; Length = 3; Name = "No escapes"},
             @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
@@ -699,11 +903,29 @@ Describe "Console host api tests" -Tag CI {
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
+            @{InputObject = "${csi}31mabc"; Length = 3; Name = "C1 CSI at start"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 3; Name = "C1 CSI at start and end"}
+            @{InputObject = "abc${csi}m"; Length = 3; Name = "C1 CSI, no params"}
+            @{InputObject = "abc${csi}#{"; Length = 3; Name = "C1 CSI, XTPUSHSGR"}
+            @{InputObject = "abc${csi}#}"; Length = 3; Name = "C1 CSI, XTPOPSGR"}
+            @{InputObject = "abc${csi}#p"; Length = 3; Name = "C1 CSI, XTPUSHSGR (alias)"}
+            @{InputObject = "abc${csi}#q"; Length = 3; Name = "C1 CSI, XTPOPSGR (alias)"}
+            @{InputObject = "abc${esc}[0#p"; Length = 3; Name = "XTPUSHSGR, with param"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 3; Name = "XTPOPSGR, with multiple params"}
         }
         else
         {
             @{InputObject = "$esc[31mabc"; Length = 8; Name = "Escape at start - no virtual term support"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 12; Name = "Escape at start and end - no virtual term support"}
+            @{InputObject = "${csi}31mabc"; Length = 7; Name = "C1 CSI at start - no virtual term support"}
+            @{InputObject = "${csi}31mabc${csi}0m"; Length = 10; Name = "C1 CSI at start and end - no virtual term support"}
+            @{InputObject = "abc${csi}m"; Length = 5; Name = "C1 CSI, no params - no virtual term support"}
+            @{InputObject = "abc${csi}#{"; Length = 6; Name = "C1 CSI, XTPUSHSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#}"; Length = 6; Name = "C1 CSI, XTPOPSGR - no virtual term support"}
+            @{InputObject = "abc${csi}#p"; Length = 6; Name = "C1 CSI, XTPUSHSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${csi}#q"; Length = 6; Name = "C1 CSI, XTPOPSGR (alias) - no virtual term support"}
+            @{InputObject = "abc${esc}[0#p"; Length = 8; Name = "XTPUSHSGR, with param - no virtual term support"}
+            @{InputObject = "${esc}[0;1#qabc"; Length = 10; Name = "XTPOPSGR, with multiple params - no virtual term support"}
         }
 
         It "Should properly calculate buffer cell width of '<Name>'" -TestCases $testCases {
@@ -716,9 +938,14 @@ Describe "Console host api tests" -Tag CI {
 Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
-        $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
-        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
-        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
+        $pwsh.VersionInfo.FileVersion | Should -Match $PSVersionTable.PSVersion.ToString().Split("-")[0]
+        $productVersion = $pwsh.VersionInfo.ProductVersion.Replace("-dirty","").Replace(" Commits: ","-").Replace(" SHA: ","-g")
+        if ($PSVersionTable.GitCommitId.Contains("-g")) {
+            $productVersion | Should -BeExactly $PSVersionTable.GitCommitId
+        } else {
+            $productVersion | Should -Match $PSVersionTable.GitCommitId
+        }
+        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
@@ -742,7 +969,7 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         param ( $dirname )
         try {
             Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
-            $result = & $powershell -c '(Get-Item .).Name'
+            $result = & $powershell -noprofile -c '(Get-Item .).Name'
             $result | Should -BeExactly $dirname
         }
         finally {

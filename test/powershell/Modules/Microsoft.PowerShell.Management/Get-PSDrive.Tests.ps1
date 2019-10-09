@@ -57,3 +57,11 @@ Describe "Get-PSDrive" -Tags "CI" {
         $dInfo.Used -ge 0 | Should -BeTrue
     }
 }
+
+Describe "Temp: drive" -Tag Feature {
+    It "TEMP: drive exists" {
+        $res = Get-PSDrive Temp
+        $res.Name | Should -BeExactly "Temp"
+        $res.Root | Should -BeExactly ([System.IO.Path]::GetTempPath())
+    }
+}

@@ -1,0 +1,51 @@
+parameters:
+  pool: 'Hosted VS2017'
+  parentJobs: []
+  purpose: ''
+  tagSet: 'CI'
+
+jobs:
+- job: win_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: ${{ parameters.pool }}
+
+  displayName: Windows Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+
+  steps:
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        build/**/*
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture artifacts directory'
+    continueOnError: true
+
+  # must be run frow Windows PowerShell
+  - powershell: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall
+    displayName: Bootstrap
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+      $options = (Get-PSOptions)
+      $path = split-path -path $options.Output
+      $rootPath = split-Path -path $path
+      Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+      Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
+    displayName: Test
+    condition: succeeded()

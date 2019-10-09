@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return _isLiteralPath ? Path : null; }
+
             set { _isLiteralPath = true; Path = value; }
         }
 

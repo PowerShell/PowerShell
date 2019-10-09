@@ -2,17 +2,18 @@
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.PowerShell.Commands.Internal.Format;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -106,8 +107,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -153,7 +154,7 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// A class that keeps the information from format.ps1xml files in a cache table
+    /// A class that keeps the information from format.ps1xml files in a cache table.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public sealed class FormatTable
@@ -167,7 +168,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructor
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         internal FormatTable()
         {
@@ -297,7 +298,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Returns a format table instance with all default
-        /// format files loaded
+        /// format files loaded.
         /// </summary>
         /// <returns></returns>
         public static FormatTable LoadDefaultFormatFiles()

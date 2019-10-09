@@ -138,4 +138,7 @@
   <data name="CouldNotUseCertificate" xml:space="preserve">
     <value>ERROR: Could not find or use certificate: {0}</value>
   </data>
+  <data name="CannotEncryptSecureString" xml:space="preserve">
+    <value>Session key not available to encrypt secure string.</value>
+  </data>
 </root>

@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Send-MailMessage command.
     /// </summary>
+    [Obsolete("This cmdlet does not guarantee secure connections to SMTP servers. While there is no immediate replacement available in PowerShell, we recommend you do not use Send-MailMessage at this time. See https://aka.ms/SendMailMessage for more information.")]
     [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
     public sealed class SendMailMessage : PSCmdlet
     {
@@ -109,11 +110,16 @@ namespace Microsoft.PowerShell.Commands
         public MailPriority Priority { get; set; }
 
         /// <summary>
+        /// Gets or sets the Reply-To field for this e-mail message.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public string[] ReplyTo { get; set; }
+
+        /// <summary>
         /// Gets or sets the subject of the email message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = false, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("sub")]
-        [ValidateNotNullOrEmpty]
         public string Subject { get; set; }
 
         /// <summary>
@@ -187,6 +193,11 @@ namespace Microsoft.PowerShell.Commands
                                 _mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
+                        case "replyTo":
+                            {
+                                _mMailMessage.ReplyToList.Add(new MailAddress(strEmailAddress));
+                                break;
+                            }
                     }
                 }
                 catch (FormatException e)
@@ -231,6 +242,12 @@ namespace Microsoft.PowerShell.Commands
             if (Cc != null)
             {
                 AddAddressesToMailMessage(Cc, "cc");
+            }
+
+            // Set the Reply-To address of the mail message
+            if (ReplyTo != null)
+            {
+                AddAddressesToMailMessage(ReplyTo, "replyTo");
             }
 
             // Set the delivery notification

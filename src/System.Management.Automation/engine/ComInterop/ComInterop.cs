@@ -55,7 +55,7 @@ namespace System.Management.Automation.ComInterop
     }
 
     /// <summary>
-    /// Layout of the IDispatch vtable
+    /// Layout of the IDispatch vtable.
     /// </summary>
     internal enum IDispatchMethodIndices
     {

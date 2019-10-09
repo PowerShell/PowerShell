@@ -13,7 +13,6 @@ namespace System.Management.Automation.Host
     public sealed
     class ChoiceDescription
     {
-
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell compatibility with Windows PowerShell
 
         private readonly string label = null;
@@ -36,7 +35,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is label.
 
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
                 throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
@@ -66,7 +65,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is label.
 
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
                 throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
@@ -127,6 +126,7 @@ namespace System.Management.Automation.Host
 
                 return this.helpMessage;
             }
+
             set
             {
                 if (value == null)

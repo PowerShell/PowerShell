@@ -66,16 +66,102 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.object[]'
     }
 
+    It "Infers type from array expression with a single statement" {
+        $res = [AstTypeInference]::InferTypeOf( { @('test') }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from array expression with multiple statements" {
+        $res = [AstTypeInference]::InferTypeOf( { @('test'; 'second test') }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from array expression with mixed types" {
+        $res = [AstTypeInference]::InferTypeOf( { @('test'; 1) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Object[]'
+    }
+
+    It "Infers type from array expression with nested arrays" {
+        $res = [AstTypeInference]::InferTypeOf( { @(@('test'); @('test2')) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from array expression with a non-generic dictionary enumerator" {
+        $res = [AstTypeInference]::InferTypeOf( { @(@{}.GetEnumerator()) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Collections.DictionaryEntry[]'
+    }
+
+    It "Infers type from array expression with a generic dictionary enumerator" {
+        $res = [AstTypeInference]::InferTypeOf( { @([Dictionary[int, string]]::new().GetEnumerator()) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be ([KeyValuePair[int, string][]].FullName)
+    }
+
+    It "Infers type from array expression with nested non-array collections" {
+        $res = [AstTypeInference]::InferTypeOf( {
+            $list = [List[string]]::new()
+            $list2 = [List[string]]::new()
+            @($list; $list2)
+        }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
     It "Infers type from Array literal" {
         $res = [AstTypeInference]::InferTypeOf( { , 1 }.Ast)
         $res.Count | Should -Be 1
-        $res.Name | Should -Be 'System.object[]'
+        $res.Name | Should -Be 'System.Int32[]'
+    }
+
+    It "Infers type from Array literal with multiple elements" {
+        $res = [AstTypeInference]::InferTypeOf( { 0, 1 }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32[]'
+    }
+
+    It "Infers type from Array literal with mixed types" {
+        $res = [AstTypeInference]::InferTypeOf( { 'test', 1 }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Object[]'
+    }
+
+    It "Infers type from Array literal with nested arrays" {
+        $res = [AstTypeInference]::InferTypeOf( { @('test'), @('test2') }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from array expression with a non-generic dictionary enumerator" {
+        $res = [AstTypeInference]::InferTypeOf( { , @{}.GetEnumerator() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Collections.DictionaryEntry[]'
+    }
+
+    It "Infers type from array expression with a generic dictionary enumerator" {
+        $res = [AstTypeInference]::InferTypeOf( { , [Dictionary[int, string]]::new().GetEnumerator() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be ([KeyValuePair[int, string][]].FullName)
+    }
+
+    It "Infers type from Array literal with nested non-array collections" {
+        $res = [AstTypeInference]::InferTypeOf( {
+            $list = [List[string]]::new()
+            $list2 = [List[string]]::new()
+            $list, $list2
+        }.Ast.EndBlock.Statements[2].PipelineElements[0].Expression)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
     }
 
     It "Infers type from array IndexExpresssion" {
         $res = [AstTypeInference]::InferTypeOf( { (1, 2, 3)[0] }.Ast)
         $res.Count | Should -Be 1
-        $res.Name | Should -Be 'System.object'
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It "Infers type from generic container IndexExpression" {
@@ -418,7 +504,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target:VersionInfo"
+        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkType:Mode:ModeWithoutHardLink:Name:NameString:Target:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue
@@ -564,6 +650,51 @@ Describe "Type inference Tests" -tags "CI" {
         foreach ($r in $res) {
             $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
+    }
+
+    It 'Infers type of a Foreach statement current value variable' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            foreach ($intValue in 1, 2, 3) {
+                $intValue
+            }
+        }.Ast.EndBlock.Statements[0].Body.Statements[0].PipelineElements[0].Expression)
+
+        $res.Count | Should -Be 1
+        $res.Name | Should -BeExactly 'System.Int32'
+    }
+
+    It 'Infers type of a Foreach statement current value variable with hashtable enumerator' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            foreach ($dictionaryEntry in @{}.GetEnumerator()) {
+                $dictionaryEntry
+            }
+        }.Ast.EndBlock.Statements[0].Body.Statements[0].PipelineElements[0].Expression)
+
+        $res.Count | Should -Be 2
+        $res.Name | Should -Be 'System.Collections.DictionaryEntry', 'System.Object'
+    }
+
+    It 'Infers type of a Foreach statement current value variable with dictionary enumerator' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            foreach ($keyValuePair in [Dictionary[int, string]]::new().GetEnumerator()) {
+                $keyValuePair
+            }
+        }.Ast.EndBlock.Statements[0].Body.Statements[0].PipelineElements[0].Expression)
+
+        $res.Count | Should -Be 3
+        $res.Name | Should -Be ([KeyValuePair[int, string]].FullName), 'System.Object', 'System.Collections.DictionaryEntry'
+    }
+
+    It 'Infers type of a Foreach statement current value variable with generic IEnumerable' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            $debugger = [Debugger]$Host.Runspace.Debugger
+            foreach ($subscriber in $debugger.GetCallStack()) {
+                $subscriber
+            }
+        }.Ast.EndBlock.Statements[1].Body.Statements[0].PipelineElements[0].Expression)
+
+        $res.Count | Should -Be 1
+        $res.Name | Should -BeExactly 'System.Management.Automation.CallStackFrame'
     }
 
     It 'Infers type from While statement' {

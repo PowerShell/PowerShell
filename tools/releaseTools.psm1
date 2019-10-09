@@ -1,7 +1,7 @@
 #requires -Version 6.0
-
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 class CommitNode {
     [string] $Hash
     [string[]] $Parents
@@ -30,9 +30,12 @@ class CommitNode {
 }
 
 # These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
-# We have their names in this array so that we don't need to query Github to find out if they are powershell team members.
+# We have their names in this array so that we don't need to query GitHub to find out if they are powershell team members.
 $Script:powershell_team = @(
     "Robert Holt"
+    "Travis Plunk"
+    "dependabot-preview[bot]"
+    "Joey Aiello"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -43,6 +46,7 @@ $Script:community_login_map = @{
     "info@powercode-consulting.se" = "powercode"
 }
 
+# Ignore dependency bumping bot (Dependabot):
 $Script:attribution_ignore_list = @(
     'dependabot[bot]@users.noreply.github.com'
 )
@@ -149,7 +153,10 @@ function Get-ChangeLog
 
     # Find the merge commit that merged the release branch to master.
     $child_merge_commit = Get-ChildMergeCommit -CommitHash $tag_hash
-    $commit_hash, $parent_hashes = $child_merge_commit.Split("||")
+    if($child_merge_commit)
+    {
+        $commit_hash, $parent_hashes = $child_merge_commit.Split("||")
+    }
     # Find the other parent of the merge commit, which represents the original head of master right before merging.
     $other_parent_hash = ($parent_hashes -replace $tag_hash).Trim()
 
@@ -158,7 +165,7 @@ function Get-ChangeLog
         ## and eventually merge the release branch back to the master branch. This will result in different commit nodes
         ## in master branch that actually represent same set of changes.
         ##
-        ## In this case, we cannot simply use the revision range "$tag_hash..HEAD" becuase it will include the original
+        ## In this case, we cannot simply use the revision range "$tag_hash..HEAD" because it will include the original
         ## commits in the master branch that were cherry-picked to the release branch -- they are reachable from 'HEAD'
         ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
         ## and only include the commits that are not in the last release into the change log.
@@ -168,7 +175,11 @@ function Get-ChangeLog
         # Find the commits that were only in the release branch, excluding those that were cherry-picked from master branch.
         $new_commits_from_last_release = git --no-pager log --first-parent --cherry-pick --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
         # Find the commits that are actually duplicate but having different patch-ids due to resolving conflicts during the cherry-pick.
-        $duplicate_commits = Compare-Object $new_commits_from_last_release $new_commits_from_other_parent -Property PullRequest -ExcludeDifferent -IncludeEqual -PassThru
+        $duplicate_commits = $null
+        if($new_commits_from_last_release -and $new_commits_from_other_parent)
+        {
+            $duplicate_commits = Compare-Object $new_commits_from_last_release $new_commits_from_other_parent -Property PullRequest -ExcludeDifferent -IncludeEqual -PassThru
+        }
         if ($duplicate_commits) {
             $duplicate_pr_numbers = @($duplicate_commits | ForEach-Object -MemberName PullRequest)
             $new_commits_from_other_parent = $new_commits_from_other_parent | Where-Object PullRequest -NotIn $duplicate_pr_numbers
@@ -199,42 +210,51 @@ function Get-ChangeLog
     # Array of PRs with multiple labels. The label "CL-BreakingChange" is allowed with some other "CL-*" label.
     $multipleLabelsPRs = @()
 
-    # Array of Breaking Change PRs.
+    # Array of PRs tagged with 'CL-BreakingChange' label.
     $clBreakingChange = @()
 
-    # Array of PRs with build and packaging changes.
+    # Array of PRs tagged with 'CL-BuildPackaging' label.
     $clBuildPackage = @()
 
-    # Array of PRs with code cleanup changes.
+    # Array of PRs tagged with 'CL-CodeCleanup' label.
     $clCodeCleanup = @()
 
-    # Array of PRs with documentation changes.
+    # Array of PRs tagged with 'CL-Docs' label.
     $clDocs = @()
 
-    # Array of PRs with engine changes.
+    # Array of PRs tagged with 'CL-Engine' label.
     $clEngine = @()
 
     # Array of PRs with general cmdlet changes.
     $clGeneral = @()
 
-    # Array of PRs with test changes.
+    # Array of PRs tagged with 'CL-Performance' label.
+    $clPerformance = @()
+
+    # Array of PRs tagged with 'CL-Test' label.
     $clTest = @()
 
-    # Array of PRs with tool changes.
+    # Array of PRs tagged with 'CL-Tools' label.
     $clTools = @()
 
     # Array of PRs tagged with 'CL-Untagged' label.
     $clUntagged = @()
 
+    # Array of PRs tagged with 'CL-Experimental' label.
+    $clExperimental = @()
+
     foreach ($commit in $new_commits) {
+        Write-Verbose "authorname: $($commit.AuthorName)"
         if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
-            $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
+            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commit.Subject)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
                 $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
-                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction SilentlyContinue
+                try{
+                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore
+                } catch{}
                 if($response)
                 {
                     $content = ConvertFrom-Json -InputObject $response.Content
@@ -242,7 +262,7 @@ function Get-ChangeLog
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
-            $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
         }
 
         if ($commit.IsBreakingChange) {
@@ -255,18 +275,25 @@ function Get-ChangeLog
         }
         catch {
             if ($_.Exception.Response.StatusCode -eq '404') {
-                Write-Warning -Message "Ignoring commit $($commit.Hash) by $($commit.AuthorName), as it does not have a PR."
-                continue
+                $pr = $null
+                #continue
             }
         }
 
-        $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
+        if($pr)
+        {
+            $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
+        }
+        else {
+            Write-Warning -Message "Tagging $($commit.Hash) by $($commit.AuthorName), as CL-BuildPackaging as it does not have a PR."
+            $clLabel = [PSCustomObject]@{Name ='CL-BuildPackaging'}
+        }
 
         if ($clLabel.count -gt 1 -and $clLabel.Name -notcontains 'CL-BreakingChange') {
-            $multipleLabelsPRs = $pr
+            $multipleLabelsPRs += $pr
         }
         elseif ($clLabel.count -eq 0) {
-            $unlabeledPRs = $pr
+            $unlabeledPRs += $pr
         }
         else {
             switch ($clLabel.Name) {
@@ -275,7 +302,9 @@ function Get-ChangeLog
                 "CL-CodeCleanup" { $clCodeCleanup += $commit }
                 "CL-Docs" { $clDocs += $commit }
                 "CL-Engine" { $clEngine += $commit }
+                "CL-Experimental" { $clExperimental += $commit }
                 "CL-General" { $clGeneral += $commit }
+                "CL-Performance" { $clPerformance += $commit }
                 "CL-Test" { $clTest += $commit }
                 "CL-Tools" { $clTools += $commit }
                 "CL-Untagged" { $clUntagged += $commit }
@@ -302,8 +331,10 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
+    PrintChangeLog -clSection $clExperimental -sectionTitle 'Experimental Features'
     PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
     PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
+    PrintChangeLog -clSection $clPerformance -sectionTitle 'Performance'
     PrintChangeLog -clSection $clTools -sectionTitle 'Tools'
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
@@ -315,6 +346,24 @@ function PrintChangeLog($clSection, $sectionTitle) {
         "### $sectionTitle"
         $clSection | ForEach-Object -MemberName ChangeLogMessage
         ""
+    }
+}
+
+function Get-ChangeLogMessage
+{
+    param($OriginalMessage)
+
+    switch -regEx ($OriginalMessage)
+    {
+        '^Merged PR (\d*): ' {
+            return $OriginalMessage.replace($Matches.0,'') + " (Internal $($Matches.1))"
+        }
+        '^Build\(deps\): ' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
+        default {
+            return $OriginalMessage
+        }
     }
 }
 

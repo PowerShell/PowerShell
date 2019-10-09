@@ -76,7 +76,7 @@ Describe "Using Namespace" -Tags "CI" {
         }
 
         foo | Should -Be OK
-        $cmdInfo = gcm foo
+        $cmdInfo = Get-Commmand foo
         $cmdInfo.ScriptBlock.Attributes[0] | Should -Be System.Diagnostics.DebuggerStepThroughAttribute
         $cmdInfo.Parameters['a'].Attributes[1] | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
         $cmdInfo.Parameters['b'].Attributes[1] | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute

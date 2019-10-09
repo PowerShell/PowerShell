@@ -47,12 +47,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Wildcard expansion should be allowed.
         /// </para>
         /// </summary>
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
+
             set { className = value; }
         }
-        private String className;
+
+        private string className;
 
         /// <summary>
         /// <para>
@@ -61,11 +63,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal String MethodName
+        internal string MethodName
         {
             get { return methodName; }
         }
-        private String methodName;
+
+        private string methodName;
 
         /// <summary>
         /// <para>
@@ -74,11 +77,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given property name.
         /// </para>
         /// </summary>
-        internal String PropertyName
+        internal string PropertyName
         {
             get { return propertyName; }
         }
-        private String propertyName;
+
+        private string propertyName;
 
         /// <summary>
         /// <para>
@@ -87,11 +91,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal String QualifierName
+        internal string QualifierName
         {
             get { return qualifierName; }
         }
-        private String qualifierName;
+
+        private string qualifierName;
     }
 
     /// <summary>
@@ -116,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve <see cref="CimClass"/>
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
         {
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();
@@ -140,6 +145,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxys.Add(proxy);
                         }
                     }
+
                     break;
                 case CimBaseCommand.SessionSetName:
                     {
@@ -150,6 +156,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxys.Add(proxy);
                         }
                     }
+
                     break;
                 default:
                     return;
@@ -208,7 +215,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
@@ -225,5 +232,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #endregion
 
-    }//End Class
-}//End namespace
+    }
+}

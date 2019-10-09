@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path", Mandatory = true)]
         public string[] Path
@@ -33,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -53,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The name of the property to create on the item
+        /// The name of the property to create on the item.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         public object Value { get; set; }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -91,6 +92,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
@@ -115,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType, Value, context);
             }
+
             return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType, Value, context);
         }
 
@@ -127,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Creates the property on the item
+        /// Creates the property on the item.
         /// </summary>
         protected override void ProcessRecord()
         {

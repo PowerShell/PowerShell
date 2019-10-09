@@ -24,7 +24,7 @@ namespace System.Management.Automation.ComInterop
 
             if (type.IsValueType || type.IsArray) return true;
 
-            if (type == typeof(String) ||
+            if (type == typeof(string) ||
                 type == typeof(DBNull) ||
                 holdsNull ||
                 type == typeof(System.Reflection.Missing) ||
@@ -130,9 +130,10 @@ namespace System.Management.Automation.ComInterop
         {
             if (obj.Value == null && obj.HasValue)
             {
-                //If the meta object holds a null value, create an instance restriction for checking null
+                // If the meta object holds a null value, create an instance restriction for checking null
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, null);
             }
+
             return BindingRestrictions.GetTypeRestriction(obj.Expression, obj.LimitType);
         }
     }

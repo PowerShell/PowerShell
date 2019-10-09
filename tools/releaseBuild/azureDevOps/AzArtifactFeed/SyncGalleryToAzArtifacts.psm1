@@ -14,6 +14,7 @@ Path to the folder where the packages should be stored for uploading to Azure De
 #>
 function SyncGalleryToAzArtifacts {
     param(
+        [Parameter(Mandatory = $true)] [string] $AzDevOpsFeedUserName,
         [Parameter(Mandatory = $true)] [string] $AzDevOpsPAT,
         [Parameter(Mandatory = $true)] [string] $Destination
     )
@@ -28,7 +29,7 @@ function SyncGalleryToAzArtifacts {
     $galleryUrl = 'https://www.powershellgallery.com/api/v2/'
     $azArtifactsUrl = 'https://mscodehub.pkgs.visualstudio.com/_packaging/pscore-release/nuget/v2'
 
-    $azDevOpsCreds = [pscredential]::new($env:AzDevOpsUserName, (ConvertTo-SecureString -String $AzDevOpsPAT -AsPlainText -Force))
+    $azDevOpsCreds = [pscredential]::new($AzDevOpsFeedUserName, (ConvertTo-SecureString -String $AzDevOpsPAT -AsPlainText -Force))
 
     foreach ($package in $packages) {
         try {
@@ -78,13 +79,14 @@ function SyncGalleryToAzArtifacts {
     "Gallery Packages:`n"
     $galleryPackages
 
-    "Az Artifacts Packages:`n"
+    "`nAz Artifacts Packages:`n"
     $azArtifactsPackages
 
-    "Modules to update:`n"
+    "`nModules to update:`n"
     $modulesToUpdate
 
     foreach ($package in $modulesToUpdate) {
+        Write-Verbose -Verbose "Saving package $($package.Name) - $($package.Version)"
         Save-Package -Provider NuGet -Source $galleryUrl -Name $package.Name -RequiredVersion $package.Version -Path $Destination
     }
 
@@ -94,21 +96,44 @@ function SyncGalleryToAzArtifacts {
         $packageNamesToKeep = @()
         $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
 
+        Write-Verbose -Verbose "Saved packages:"
+        $savedPackages | Out-String | Write-Verbose -Verbose
+
         foreach($package in $savedPackages) {
-            $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $package.Name -and $_.Version -eq $package.Version }
+
+            $pkgVersion = NormalizeVersion -version $package.Version
+            $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $package.Name -and (NormalizeVersion -version $_.Version) -eq $pkgVersion }
 
             if(-not $foundMatch) {
-                Write-Verbose "Keeping package $($package.PackageFileName)"
-                $packageNamesToKeep += $package.PackageFilename
+                Write-Verbose "Keeping package $($package.PackageFileName)" -Verbose
+                $packageNamesToKeep += "{0}*.nupkg" -f $package.Name
             }
         }
 
-        Remove-Item -Path $Destination -Exclude $packageNamesToKeep -Recurse -Force
+        Remove-Item -Path $Destination -Exclude $packageNamesToKeep -Recurse -Force -Verbose
+
+        Write-Verbose -Verbose "Packages kept for upload"
+        Get-ChildItem $Destination | Out-String | Write-Verbose -Verbose
     }
     finally {
         Unregister-PackageSource -Name local -Force -ErrorAction SilentlyContinue
     }
 
+}
+
+function NormalizeVersion {
+    param ([Version] $version)
+
+    $sVer = if ($version -match "(\d+.\d+.\d+).0") {
+        $matches[1]
+    } elseif ($version -match "^\d+.\d+$") {
+        # Two digit versions are stored as three digit versions
+        "$version.0"
+    } else {
+        $version
+    }
+
+    $sVer
 }
 
 Export-ModuleMember -Function 'SyncGalleryToAzArtifacts'

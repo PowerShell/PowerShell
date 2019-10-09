@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands.GetCounter
 {
@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _oldestRecord;
             }
         }
+
         private DateTime _oldestRecord = DateTime.MinValue;
 
         public DateTime NewestRecord
@@ -39,6 +40,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _newestRecord;
             }
         }
+
         private DateTime _newestRecord = DateTime.MaxValue;
 
         public UInt32 SampleCount
@@ -48,6 +50,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _sampleCount;
             }
         }
+
         private UInt32 _sampleCount = 0;
     }
 }

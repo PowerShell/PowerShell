@@ -3,7 +3,7 @@
   <Import Project="..\..\Test.Common.props" />
 
   <ItemGroup>
-    <PackageReference Include="SelfSignedCertificate" Version="0.0.2" />
+    <PackageReference Include="SelfSignedCertificate" Version="0.0.4" />
   </ItemGroup>
 
 </Project>

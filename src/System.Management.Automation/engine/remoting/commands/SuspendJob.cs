@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// suspended
+        /// suspended.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -41,16 +41,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {
@@ -74,11 +76,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force = false;
 
         /// <summary>
@@ -90,11 +94,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _wait;
             }
+
             set
             {
                 _wait = value;
             }
         }
+
         private bool _wait = false;
 
         #endregion Parameters
@@ -106,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to suspend
+            // List of jobs to suspend
             List<Job> jobsToSuspend = null;
 
             switch (ParameterSetName)
@@ -115,36 +121,42 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobsToSuspend = FindJobsMatchingByName(true, false, true, false);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByInstanceId(true, false, true, false);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingBySessionId(true, false, true, false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         jobsToSuspend = CopyJobsToList(_jobs, false, false);
                     }
+
                     break;
             }
 
@@ -262,6 +274,7 @@ namespace Microsoft.PowerShell.Commands
                     // so if job doesn't present in the _pendingJobs then just return
                     return;
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -353,6 +366,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.SuspendJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose

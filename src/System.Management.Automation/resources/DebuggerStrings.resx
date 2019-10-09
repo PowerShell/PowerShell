@@ -210,9 +210,6 @@ The current session does not support debugging; operation will continue.
   <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
     <value>The debugger cannot set a resume action because the debugger in the remote session is not in a Stopped state.</value>
   </data>
-  <data name="WorkflowDebuggingNotSupported" xml:space="preserve">
-    <value>Workflow debugging is available, but is not supported by the current host. Use the Windows PowerShell console or Windows PowerShell ISE to debug workflows.</value>
-  </data>
   <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
     <value>The job cannot be debugged because the debugger is currently busy.</value>
   </data>
@@ -239,6 +236,9 @@ The current session does not support debugging; operation will continue.
   </data>
   <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
     <value>Cannot push a debugger object onto itself.</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>The {0} command is not supported for remote use in the version of PowerShell that is running in the remote runspace.</value>
   </data>
   <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
     <value>Process</value>

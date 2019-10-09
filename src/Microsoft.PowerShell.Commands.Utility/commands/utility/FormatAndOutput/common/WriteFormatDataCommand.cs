@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _typeDefinition;
             }
+
             set
             {
                 _typeDefinition = value;
@@ -40,12 +41,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByPath", Mandatory = true)]
         [Alias("FilePath")]
-        public String Path
+        public string Path
         {
             get
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
@@ -57,18 +59,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
         [Alias("PSPath", "LP")]
-        public String LiteralPath
+        public string LiteralPath
         {
             get
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
@@ -85,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
@@ -102,11 +107,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -119,11 +126,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _includescriptblock;
             }
+
             set
             {
                 _includescriptblock = value;
             }
         }
+
         private bool _includescriptblock;
 
         /// <summary>
@@ -138,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// writes out the formatting directives from the
-        /// collection to the specified XML file
+        /// Writes out the formatting directives from the
+        /// collection to the specified XML file.
         /// </summary>
         protected override void EndProcessing()
         {

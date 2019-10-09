@@ -5,12 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -19,7 +20,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState function entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateFunctionEntry entry)
         {
             ScriptBlock sb = entry.ScriptBlock.Clone();
@@ -61,7 +62,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the function table for a given scope
+        /// Gets an IEnumerable for the function table for a given scope.
         /// </summary>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
@@ -106,16 +107,17 @@ namespace System.Management.Automation
         internal bool UseExportList { get; set; } = false;
 
         /// <summary>
-        /// Set to true when module functions are being explicitly exported using Export-ModuleMember
+        /// Set to true when module functions are being explicitly exported using Export-ModuleMember.
         /// </summary>
         internal bool FunctionsExported { get; set; }
 
         /// <summary>
-        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard
+        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard.
         /// </summary>
         internal bool FunctionsExportedWithWildcard
         {
             get { return _functionsExportedWithWildcard; }
+
             set
             {
                 Dbg.Assert((value == true), "This property should never be set/reset to false");
@@ -125,6 +127,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _functionsExportedWithWildcard;
 
         /// <summary>
@@ -149,7 +152,7 @@ namespace System.Management.Automation
         /// </exception>
         internal FunctionInfo GetFunction(string name, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -171,7 +174,7 @@ namespace System.Management.Automation
 
         private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
         {
-            // Ensure the returned function item is not exposed across language boundaries when in 
+            // Ensure the returned function item is not exposed across language boundaries when in
             // a debugger breakpoint or nested prompt.
             // A debugger breakpoint/nested prompt has access to all current scoped functions.
             // This includes both running commands from the prompt or via a debugger Action scriptblock.
@@ -264,7 +267,7 @@ namespace System.Management.Automation
             ScriptBlock function,
             CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -279,7 +282,7 @@ namespace System.Management.Automation
             FunctionLookupPath path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 SessionStateException exception =
                     new SessionStateException(
@@ -499,7 +502,7 @@ namespace System.Management.Automation
             string helpFile,
             bool isPreValidated)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -514,7 +517,7 @@ namespace System.Management.Automation
             FunctionLookupPath path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 SessionStateException exception =
                     new SessionStateException(
@@ -578,7 +581,7 @@ namespace System.Management.Automation
             bool force,
             CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -593,7 +596,7 @@ namespace System.Management.Automation
             FunctionLookupPath path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 SessionStateException exception =
                     new SessionStateException(
@@ -650,6 +653,7 @@ namespace System.Management.Automation
                     result = scope.SetFunction(name, function, force, origin, ExecutionContext);
                 }
             }
+
             return result;
         }
 
@@ -705,7 +709,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveFunction(string name, bool force, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -726,6 +730,7 @@ namespace System.Management.Automation
             {
                 scope = searcher.CurrentLookupScope;
             }
+
             scope.RemoveFunction(name, force);
         }
 

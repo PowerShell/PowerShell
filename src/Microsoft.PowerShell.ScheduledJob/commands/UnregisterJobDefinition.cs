@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -32,8 +32,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32[] Id
         {
             get { return _definitionIds; }
+
             set { _definitionIds = value; }
         }
+
         private Int32[] _definitionIds;
 
         /// <summary>
@@ -46,8 +48,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string[] Name
         {
             get { return _names; }
+
             set { _names = value; }
         }
+
         private string[] _names;
 
         /// <summary>
@@ -60,8 +64,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition[] InputObject
         {
             get { return _definitions; }
+
             set { _definitions = value; }
         }
+
         private ScheduledJobDefinition[] _definitions;
 
         /// <summary>
@@ -74,8 +80,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private SwitchParameter _force;
 
         #endregion

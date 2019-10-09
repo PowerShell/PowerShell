@@ -2,20 +2,21 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The base class for the */property commands that also take
-    /// a passthrough parameter
+    /// a passthrough parameter.
     /// </summary>
     public class PassThroughItemPropertyCommandBase : ItemPropertyCommandBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the passthrough parameter to the command
+        /// Gets or sets the passthrough parameter to the command.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -50,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
@@ -71,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess

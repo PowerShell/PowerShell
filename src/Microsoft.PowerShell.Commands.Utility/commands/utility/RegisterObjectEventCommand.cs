@@ -25,11 +25,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _inputObject;
             }
+
             set
             {
                 _inputObject = value;
             }
         }
+
         private PSObject _inputObject = null;
 
         /// <summary>
@@ -42,11 +44,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventName;
             }
+
             set
             {
                 _eventName = value;
             }
         }
+
         private string _eventName = null;
 
         #endregion parameters
@@ -54,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the object that generates events to be monitored.
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             return _inputObject;
         }
@@ -62,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the event name to be monitored on the input object.
         /// </summary>
-        protected override String GetSourceObjectEventName()
+        protected override string GetSourceObjectEventName()
         {
             return _eventName;
         }

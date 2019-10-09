@@ -1,0 +1,44 @@
+parameters:
+  pool: 'Hosted VS2017'
+  jobName: 'win_build'
+  displayName: Windows Build
+
+jobs:
+- job: ${{ parameters.jobName }}
+  pool:
+    name: ${{ parameters.pool }}
+
+  displayName: ${{ parameters.displayName }}
+
+  steps:
+  - powershell: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    displayName: Set Build Name for Non-PR
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - powershell: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeededOrFailed()
+
+  - powershell: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIBuild
+    displayName: Build
+    condition: succeeded()
+
+  - powershell: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions
+      Invoke-CIxUnit -SkipFailing
+    displayName: xUnit Tests
+    condition: succeeded()
+    continueOnError: true

@@ -3,13 +3,14 @@
 
 using System;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The get-childitem command class.
-    /// This command lists the contents of a container
+    /// This command lists the contents of a container.
     /// </summary>
     /// <remarks>
     /// </remarks>
@@ -30,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         /// <summary>
-        /// Gets or sets the path for the operation
+        /// Gets or sets the path for the operation.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = childrenSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
@@ -47,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = literalChildrenSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -67,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter(Position = 1)]
         public override string Filter
@@ -76,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Filter;
             }
+
             set
             {
                 base.Filter = value;
@@ -83,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -100,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -117,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the recurse switch
+        /// Gets or sets the recurse switch.
         /// </summary>
         [Parameter]
         [Alias("s")]
@@ -127,6 +130,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _recurse;
             }
+
             set
             {
                 _recurse = value;
@@ -146,6 +150,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _depth;
             }
+
             set
             {
                 _depth = value;
@@ -154,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -172,6 +177,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
@@ -179,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the names switch
+        /// Gets or sets the names switch.
         /// </summary>
         [Parameter]
         public SwitchParameter Name
@@ -188,6 +194,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _childNames;
             }
+
             set
             {
                 _childNames = value;
@@ -209,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;
-            string path = String.Empty;
+            string path = string.Empty;
 
             if (_paths != null && _paths.Length > 0)
             {
@@ -232,12 +239,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = InvokeProvider.ChildItem.GetChildItemsDynamicParameters(path, Recurse, context);
                     }
+
                     break;
 
                 default:
                     result = InvokeProvider.ChildItem.GetChildItemsDynamicParameters(path, Recurse, context);
                     break;
             }
+
             return result;
         }
 
@@ -264,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
         private uint _depth = uint.MaxValue;
 
         /// <summary>
-        /// The flag that specifies whether to retrieve the child names or the child items
+        /// The flag that specifies whether to retrieve the child names or the child items.
         /// </summary>
         private bool _childNames = false;
 
@@ -281,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_paths == null || _paths.Length == 0)
             {
-                _paths = new string[] { String.Empty };
+                _paths = new string[] { string.Empty };
             }
 
             foreach (string path in _paths)

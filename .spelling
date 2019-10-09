@@ -49,6 +49,7 @@ arm64
 asp.net
 assemblyloadcontext
 authenticodesignature
+azdevops
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -65,6 +66,7 @@ beta.7
 beta.8
 beta.9
 beta2
+bgelens
 Bhaal22
 bjh7242
 bool
@@ -109,6 +111,7 @@ codepage
 commanddiscovery
 commandsearch
 comobject
+composability
 config
 connect-pssession
 consolehost
@@ -139,6 +142,7 @@ cron
 crontab
 crossgen
 crossgen'ing
+crossplatform
 csharp
 csmacnz
 csphysicallyinstalledmemory
@@ -151,6 +155,7 @@ dchristian3188
 ddwr
 debughandler
 dee-see
+deps
 deserialization
 deserialize
 dest
@@ -170,6 +175,7 @@ disconnect-pssession
 displaydataquery
 distro
 distros
+dll
 dlls
 dlwyatt
 dockerbasedbuild
@@ -275,9 +281,11 @@ gitcommitid
 github
 githug
 gitter
+glachancecmaisonneuve
 globbing
 GoogleTest
 gzip
+hackathons
 hashtable
 helloworld.ps1
 helpproviderwithcache
@@ -294,6 +302,7 @@ httpbin's
 https
 hubuk
 i.e.
+idera
 ifdef'ed
 iisresetme
 ilya
@@ -312,6 +321,7 @@ interactivetesting
 interop
 interoperation
 invoke-cimmethod
+Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
 iot
@@ -322,6 +332,7 @@ isnot
 itemtype
 itpro
 jameswtruher
+Jawz84
 jazzdelightsme
 jeffbi
 jen
@@ -335,6 +346,7 @@ json
 jsonconfigfileaccessor
 judgement
 jumplist
+jwmoss
 kanjibates
 kasper3
 katacoda
@@ -358,6 +370,7 @@ lee303
 libpsl
 libpsl-native
 libunwind8
+linux
 locationglobber
 loopback
 lossless
@@ -369,6 +382,7 @@ macos
 maertendmsft
 mahawar
 markekraus
+marktiedemann
 mcbobke
 md
 meir017
@@ -378,6 +392,7 @@ metadata
 miaromero
 microsoft
 microsoft.com
+microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
 microsoft.powershell.archive
 microsoft.powershell.commands.diagnostics
@@ -390,6 +405,7 @@ microsoft.powershell.coreclr.eventing
 microsoft.powershell.diagnostics
 microsoft.powershell.localaccounts
 microsoft.powershell.management
+microsoft.powershell.markdownrender
 microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.powershell.utility
@@ -400,6 +416,7 @@ mkdir
 mklement0
 move-itemproperty
 msbuild
+msftrncs
 mshsnapinloadunload
 msi
 ms-psrp
@@ -443,6 +460,7 @@ non-r2
 noresume
 notcontains
 nuget
+nugetfeed
 nuget.exe
 numberbytes
 nupkg
@@ -451,6 +469,7 @@ offthewoll
 oising
 omi
 omnisharp
+OneDrive
 oneget.org
 opencover
 opencover.zip
@@ -476,6 +495,7 @@ plaintext
 pluggable
 pluralsight
 poshcode
+pougetat
 powerbi
 powercode
 powershell
@@ -505,12 +525,15 @@ preview.2
 preview.3
 preview.4
 preview1-24530-04
+preview7
 productversion
 program.cs
+prototyyppi
 providername
 proxycommand
 ps1
 ps1xml
+pscore
 pscredential
 psd1
 psdrive
@@ -576,6 +599,7 @@ remove-wsmaninstance
 rename-itemproperty
 rename-localgroup
 rename-localuser
+reparse
 repo
 reportgenerator
 resgen
@@ -590,6 +614,7 @@ robo210
 ronn
 rpalo
 runspace
+runspaces
 runspaceinit
 runtime
 runtimes
@@ -600,6 +625,7 @@ savehelp
 sazonov
 schvartzman
 schwartzmeyer
+scriptblock
 securestring
 seemethere
 select-xml
@@ -652,6 +678,7 @@ sudo
 superproject
 swarfegagit
 sxs
+sydneyhsmith
 symlink
 symlinks
 syscall
@@ -683,6 +710,8 @@ timcurwick
 timestamp
 timothywlewis
 -title
+tobias
+tokenizing
 tomconte
 toolchain
 toolset
@@ -694,16 +723,20 @@ typecataloggen
 typeconversion
 typegen
 typematch
+ubuntu
+unicode
 unregister-event
 unregister-packagesource
 unregister-psrepository
 unregister-pssessionconfiguration
+untracked
 un-versioned
 update-formatdata
 update-modulemanifest
 update-scriptfileinfo
 update-typedata
 uri
+urls
 userdata
 uservoice
 utf8
@@ -731,6 +764,9 @@ v6.0.5
 v6.1.0
 v6.1.1
 v6.2.0
+v6.2.1
+v6.2.2
+v6.2.3
 validatenotnullorempty
 versioned
 versioning
@@ -743,6 +779,7 @@ walkthrough
 webcmdlets
 weblistener
 webrequest
+weltner
 wesholton84
 wget
 whitespace
@@ -768,7 +805,9 @@ www.github.com
 x64
 x86
 xpath
+xtqqczze
 xunit
+yaml
 youtube
 zackjknight
 vexx32
@@ -786,8 +825,31 @@ lockdown
 lukexjeremy
 deserializing
 kiazhi
+v6.1.2
+Menagarishvili
+anmenaga
+fxdependent
+sba923
+replicaJunction
+lupino3
+hvitved
+unvalidated
+Geweldig
+mjanko5
+v7.0.0
+renehernandez
+ece-jacob-scott
+st0le
+MohiTheFish
+CodeFormatter
+StyleCop
+SytzeAndr
+yashrajbharti
+Leonhardt
+tylerleonhardt
  - CHANGELOG.md
 aavdberg
+asrosent
 azkarmoulana
 chucklu
 Claustn
@@ -800,8 +862,11 @@ jeis2497052
 Jocapear
 lassehastrup
 markwragg
+nbkalex
+NeoBeum
 nycjan
 paalbra
+robdy
 SeeminglyScience
 StingyJack
 ThreeFive-O
@@ -810,8 +875,15 @@ uninstallation
 vongrippen
 yurko7
 zhenggu
+davinci26
+vedhasp
+analytics
  - docs/debugging/README.md
 corehost
+ - docs/learning-powershell/README.md
+PSKoans
+ - docs/testing-guidelines/CodeCoverageAnalysis.md
+de5f69c
  - docs/testing-guidelines/TestRoadmap.md
 _no_
  - docs/testing-guidelines/WritingPesterTests.md

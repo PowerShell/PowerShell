@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -15,7 +16,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ProviderIntrinsics()
         {
@@ -25,7 +26,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
@@ -49,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the cmdlet.
@@ -73,27 +74,27 @@ namespace System.Management.Automation
         #region Public members
 
         /// <summary>
-        /// Gets the object that exposes the verbs for the item noun for Cmdlet Providers
+        /// Gets the object that exposes the verbs for the item noun for Cmdlet Providers.
         /// </summary>
         public ItemCmdletProviderIntrinsics Item { get; }
 
         /// <summary>
-        /// Gets the object that exposes the verbs for the childItem noun for Cmdlet Providers
+        /// Gets the object that exposes the verbs for the childItem noun for Cmdlet Providers.
         /// </summary>
         public ChildItemCmdletProviderIntrinsics ChildItem { get; }
 
         /// <summary>
-        /// Gets the object that exposes the verbs for the content noun for Cmdlet Providers
+        /// Gets the object that exposes the verbs for the content noun for Cmdlet Providers.
         /// </summary>
         public ContentCmdletProviderIntrinsics Content { get; }
 
         /// <summary>
-        /// Gets the object that exposes the verbs for the property noun for Cmdlet Providers
+        /// Gets the object that exposes the verbs for the property noun for Cmdlet Providers.
         /// </summary>
         public PropertyCmdletProviderIntrinsics Property { get; }
 
         /// <summary>
-        /// Gets the object that exposes the verbs for the SecurityDescriptor noun for Cmdlet Providers
+        /// Gets the object that exposes the verbs for the SecurityDescriptor noun for Cmdlet Providers.
         /// </summary>
         public SecurityDescriptorCmdletProviderIntrinsics SecurityDescriptor { get; }
 

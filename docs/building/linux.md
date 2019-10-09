@@ -5,7 +5,7 @@ We'll start by showing how to set up your environment from scratch.
 
 ## Environment
 
-These instructions are written assuming the Ubuntu 14.04 LTS, since that's the distro the team uses.
+These instructions are written assuming the Ubuntu 16.04 LTS, since that's the distro the team uses.
 The build module works on a best-effort basis for other distributions.
 
 ### Git Setup
@@ -24,7 +24,7 @@ and [CMake][] to build the native components.
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell.
 Of course, this requires a self-hosted copy of PowerShell on Linux.
 
-Fortunately, this is as easy as [downloading and installing the package](../installation/linux.md).
+Fortunately, this is as easy as [downloading and installing the package](https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6#binary-archives).
 The `./tools/install-powershell.sh` script will also install the PowerShell package.
 
 In Bash:
@@ -71,7 +71,7 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell-unix/bin/Debug/netcoreapp2.1/linux-x64/publish/pwsh`.
+`./src/powershell-unix/bin/Debug/netcoreapp3.0/linux-x64/publish/pwsh`.
 
 You should now be running the PowerShell Core that you just built, if your run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.

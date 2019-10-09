@@ -59,7 +59,7 @@ namespace System.Management.Automation.Interpreter
         public override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = frame.Data[_index];
-            //frame.Push(frame.Data[_index]);
+            // frame.Push(frame.Data[_index]);
             return +1;
         }
 
@@ -132,6 +132,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -154,10 +155,11 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int Run(InterpretedFrame frame)
         {
             frame.Data[_index] = frame.Data[--frame.StackIndex];
-            //frame.Data[_index] = frame.Pop();
+            // frame.Data[_index] = frame.Pop();
             return +1;
         }
 
@@ -175,6 +177,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -193,6 +196,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame)
@@ -211,6 +215,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -340,6 +345,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return InstructionList.ParameterBox(index);
                 }
+
                 return null;
             }
 
@@ -422,6 +428,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return _count; } }
 
         public override int Run(InterpretedFrame frame)
@@ -431,6 +438,7 @@ namespace System.Management.Automation.Interpreter
             {
                 ret[i] = (IStrongBox)frame.Pop();
             }
+
             frame.Push(RuntimeVariables.Create(ret));
             return +1;
         }

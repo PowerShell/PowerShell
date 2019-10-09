@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Management.Automation.Language;
 using System.Text;
 
 namespace System.Management.Automation
@@ -151,6 +152,7 @@ namespace System.Management.Automation
                     _aliasedParameters.Add(aliasName, mergedParameter);
                 }
             }
+
             return result;
         }
 
@@ -173,7 +175,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a bit-field representing all valid parameter sets
+        /// Gets a bit-field representing all valid parameter sets.
         /// </summary>
         internal uint AllParameterSetFlags
         {
@@ -192,7 +194,7 @@ namespace System.Management.Automation
         private IList<string> _parameterSetMap = new List<string>();
 
         /// <summary>
-        /// The name of the default parameter set
+        /// The name of the default parameter set.
         /// </summary>
         private string _defaultParameterSetName;
 
@@ -219,7 +221,7 @@ namespace System.Management.Automation
         private int AddParameterSetToMap(string parameterSetName)
         {
             int index = -1;
-            if (!String.IsNullOrEmpty(parameterSetName))
+            if (!string.IsNullOrEmpty(parameterSetName))
             {
                 index = _parameterSetMap.IndexOf(parameterSetName);
 
@@ -248,6 +250,7 @@ namespace System.Management.Automation
                     _nextAvailableParameterSetIndex++;
                 }
             }
+
             return index;
         }
 
@@ -273,7 +276,7 @@ namespace System.Management.Automation
 
             uint defaultParameterSetFlag = 0;
 
-            if (!String.IsNullOrEmpty(defaultParameterSetName))
+            if (!string.IsNullOrEmpty(defaultParameterSetName))
             {
                 _defaultParameterSetName = defaultParameterSetName;
 
@@ -295,7 +298,7 @@ namespace System.Management.Automation
                 {
                     var parameterSetName = keyValuePair.Key;
                     var parameterSetData = keyValuePair.Value;
-                    if (String.Equals(parameterSetName, ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(parameterSetName, ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
                     {
                         // Don't add the parameter set name but assign the bit field zero and then mark the bool
                         parameterSetData.ParameterSetFlag = 0;
@@ -326,6 +329,7 @@ namespace System.Management.Automation
                 // Set the bit field in the parameter
                 parameter.Parameter.ParameterSetFlags = parameterSetBitField;
             }
+
             return defaultParameterSetFlag;
         }
 
@@ -342,7 +346,7 @@ namespace System.Management.Automation
         {
             string result = _defaultParameterSetName;
 
-            if (String.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
             {
                 result = ParameterAttribute.AllParameterSets;
             }
@@ -359,7 +363,7 @@ namespace System.Management.Automation
                 }
 
                 // Now check to see if there are any remaining sets passed this bit.
-                // If so return String.Empty
+                // If so return string.Empty
 
                 if (((parameterSet >> (index + 1)) & 0x1) == 0)
                 {
@@ -370,14 +374,15 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        result = String.Empty;
+                        result = string.Empty;
                     }
                 }
                 else
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                 }
             }
+
             return result;
         }
 
@@ -398,11 +403,12 @@ namespace System.Management.Automation
                 CompiledCommandParameter compiledParam = mergedParam.Parameter;
                 if (compiledParam != null)
                 {
-                    if (!String.IsNullOrEmpty(compiledParam.Name))
+                    if (!string.IsNullOrEmpty(compiledParam.Name))
                         return compiledParam.Name;
                 }
             }
-            return String.Empty;
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -444,7 +450,7 @@ namespace System.Management.Automation
                 new Collection<MergedCompiledCommandParameter>();
 
             // Skip the leading '-' if present
-            if (name.Length > 0 && SpecialCharacters.IsDash(name[0]))
+            if (name.Length > 0 && CharExtensions.IsDash(name[0]))
             {
                 name = name.Substring(1);
             }
@@ -458,7 +464,7 @@ namespace System.Management.Automation
                     // If it is an exact match then only return the exact match
                     // as the result
 
-                    if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
+                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
                         return _bindableParameters[parameterName];
                     }
@@ -478,7 +484,7 @@ namespace System.Management.Automation
                     // If it is an exact match then only return the exact match
                     // as the result
 
-                    if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
+                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
                         return _aliasedParameters[parameterName];
                     }
@@ -560,11 +566,12 @@ namespace System.Management.Automation
             {
                 result = matchingParameters[0];
             }
+
             return result;
         }
 
         /// <summary>
-        /// Gets a collection of all the parameters that are allowed in the parameter set
+        /// Gets a collection of all the parameters that are allowed in the parameter set.
         /// </summary>
         /// <param name="parameterSetFlag">
         /// The bit representing the parameter set from which the parameters should be retrieved.
@@ -585,6 +592,7 @@ namespace System.Management.Automation
                     result.Add(parameter);
                 }
             }
+
             return result;
         }
 
@@ -594,6 +602,7 @@ namespace System.Management.Automation
         /// the values are the compiled parameter metadata.
         /// </summary>
         internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return _bindableParameters; } }
+
         private IDictionary<string, MergedCompiledCommandParameter> _bindableParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
@@ -602,6 +611,7 @@ namespace System.Management.Automation
         /// the alias name and the value is the MergedCompiledCommandParameter metadata.
         /// </summary>
         internal IDictionary<string, MergedCompiledCommandParameter> AliasedParameters { get { return _aliasedParameters; } }
+
         private IDictionary<string, MergedCompiledCommandParameter> _aliasedParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
@@ -645,7 +655,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the compiled command parameter for the association
+        /// Gets the compiled command parameter for the association.
         /// </summary>
         internal CompiledCommandParameter Parameter { get; private set; }
 

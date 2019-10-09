@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
     /// Microsoft.PowerShell.GraphicalHost.dll contains:
     ///    1) out-gridview window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
     ///    2) show-command window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
-    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified
+    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified.
     /// </summary>
     internal class GraphicalHostReflectionWrapper
     {
@@ -26,17 +26,17 @@ namespace System.Management.Automation.Internal
         private Assembly _graphicalHostAssembly;
 
         /// <summary>
-        /// A type in Microsoft.PowerShell.GraphicalHost.dll we want to invoke members on
+        /// A type in Microsoft.PowerShell.GraphicalHost.dll we want to invoke members on.
         /// </summary>
         private Type _graphicalHostHelperType;
 
         /// <summary>
-        /// An object in Microsoft.PowerShell.GraphicalHost.dll of type graphicalHostHelperType
+        /// An object in Microsoft.PowerShell.GraphicalHost.dll of type graphicalHostHelperType.
         /// </summary>
         private object _graphicalHostHelperObject;
 
         /// <summary>
-        /// Prevents a default instance of the GraphicalHostReflectionWrapper class from being created
+        /// Prevents a default instance of the GraphicalHostReflectionWrapper class from being created.
         /// </summary>
         private GraphicalHostReflectionWrapper()
         {
@@ -44,15 +44,15 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Retrieves a wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </summary>
-        /// <param name="parentCmdlet">the cmdlet requesting the wrapper (used to throw terminating errors)</param>
-        /// <param name="graphicalHostHelperTypeName">the type name we want to invoke members from</param>
+        /// <param name="parentCmdlet">The cmdlet requesting the wrapper (used to throw terminating errors).</param>
+        /// <param name="graphicalHostHelperTypeName">The type name we want to invoke members from.</param>
         /// <returns>
         /// wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
         /// in Microsoft.PowerShell.GraphicalHost.dll
         /// </returns>
-        /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly</exception>
+        /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly.</exception>
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName)
         {
             return GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(parentCmdlet, graphicalHostHelperTypeName, parentCmdlet.CommandInfo.Name);
@@ -60,16 +60,16 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Retrieves a wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </summary>
-        /// <param name="parentCmdlet">the cmdlet requesting the wrapper (used to throw terminating errors)</param>
-        /// <param name="graphicalHostHelperTypeName">the type name we want to invoke members from</param>
-        /// <param name="featureName">used for error messages</param>
+        /// <param name="parentCmdlet">The cmdlet requesting the wrapper (used to throw terminating errors).</param>
+        /// <param name="graphicalHostHelperTypeName">The type name we want to invoke members from.</param>
+        /// <param name="featureName">Used for error messages.</param>
         /// <returns>
         /// wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
         /// in Microsoft.PowerShell.GraphicalHost.dll
         /// </returns>
-        /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly</exception>
+        /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly.</exception>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Assembly.Load has been found to throw unadvertised exceptions")]
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName, string featureName)
         {
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Internal
             AssemblyName graphicalHostAssemblyName = new AssemblyName();
             graphicalHostAssemblyName.Name = "Microsoft.PowerShell.GraphicalHost";
             graphicalHostAssemblyName.Version = new Version(3, 0, 0, 0);
-            graphicalHostAssemblyName.CultureInfo = new CultureInfo(String.Empty); // Neutral culture
+            graphicalHostAssemblyName.CultureInfo = new CultureInfo(string.Empty); // Neutral culture
             graphicalHostAssemblyName.SetPublicKeyToken(new byte[] { 0x31, 0xbf, 0x38, 0x56, 0xad, 0x36, 0x4e, 0x35 });
 
             try
@@ -141,10 +141,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Used to escape characters that are not friendly to WPF binding
+        /// Used to escape characters that are not friendly to WPF binding.
         /// </summary>
-        /// <param name="propertyName">property name to be used in binding</param>
-        /// <returns>string with escaped characters</returns>
+        /// <param name="propertyName">Property name to be used in binding.</param>
+        /// <returns>String with escaped characters.</returns>
         internal static string EscapeBinding(string propertyName)
         {
             return propertyName.Replace("/", " ").Replace(".", " ");
@@ -153,9 +153,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Calls an instance method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>
         /// </summary>
-        /// <param name="methodName">name of the method to call</param>
-        /// <param name="arguments">arguments to call the method with</param>
-        /// <returns>The method return value</returns>
+        /// <param name="methodName">Name of the method to call.</param>
+        /// <param name="arguments">Arguments to call the method with.</param>
+        /// <returns>The method return value.</returns>
         internal object CallMethod(string methodName, params object[] arguments)
         {
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to call an instance method");
@@ -167,9 +167,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Calls a static method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>
         /// </summary>
-        /// <param name="methodName">name of the method to call</param>
-        /// <param name="arguments">arguments to call the method with</param>
-        /// <returns>The method return value</returns>
+        /// <param name="methodName">Name of the method to call.</param>
+        /// <param name="arguments">Arguments to call the method with.</param>
+        /// <returns>The method return value.</returns>
         internal object CallStaticMethod(string methodName, params object[] arguments)
         {
             MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
@@ -180,8 +180,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the value of an instance property with name <paramref name="propertyName"/>
         /// </summary>
-        /// <param name="propertyName">name of the instance property to get the value from</param>
-        /// <returns>the value of an instance property with name <paramref name="propertyName"/></returns>
+        /// <param name="propertyName">Name of the instance property to get the value from.</param>
+        /// <returns>The value of an instance property with name <paramref name="propertyName"/></returns>
         internal object GetPropertyValue(string propertyName)
         {
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
@@ -193,8 +193,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the value of a static property with name <paramref name="propertyName"/>
         /// </summary>
-        /// <param name="propertyName">name of the static property to get the value from</param>
-        /// <returns>the value of a static property with name <paramref name="propertyName"/></returns>
+        /// <param name="propertyName">Name of the static property to get the value from.</param>
+        /// <returns>The value of a static property with name <paramref name="propertyName"/></returns>
         internal object GetStaticPropertyValue(string propertyName)
         {
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
@@ -203,10 +203,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Returns true if the <paramref name="parentCmdlet"/> is being run remotely
+        /// Returns true if the <paramref name="parentCmdlet"/> is being run remotely.
         /// </summary>
-        /// <param name="parentCmdlet">cmdlet we want to see if is running remotely</param>
-        /// <returns>true if the <paramref name="parentCmdlet"/> is being run remotely</returns>
+        /// <param name="parentCmdlet">Cmdlet we want to see if is running remotely.</param>
+        /// <returns>True if the <paramref name="parentCmdlet"/> is being run remotely.</returns>
         private static bool IsInputFromRemoting(PSCmdlet parentCmdlet)
         {
             Diagnostics.Assert(parentCmdlet.SessionState != null, "SessionState should always be available.");

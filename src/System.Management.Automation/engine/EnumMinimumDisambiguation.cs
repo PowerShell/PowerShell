@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -30,9 +31,9 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Perform disambiguation on enum names
+        /// Perform disambiguation on enum names.
         /// </summary>
-        /// <returns>complete enum name after disambiguation</returns>
+        /// <returns>Complete enum name after disambiguation.</returns>
         internal static string EnumDisambiguate(string text, Type enumType)
         {
             // Get all enum names in the given enum type
@@ -80,8 +81,8 @@ namespace System.Management.Automation
                         {
                             return tName;
                         }
-                    }//foreach
-                }//if
+                    }
+                }
                 // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 string separator = ", ";
@@ -90,6 +91,7 @@ namespace System.Management.Automation
                     matchListSB.Append(separator);
                     matchListSB.Append(namesWithMatchingPrefix[i]);
                 }
+
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                     null, "MultipleEnumNameMatch", EnumExpressionEvaluatorStrings.MultipleEnumNameMatch,
                     text, matchListSB.ToString());
@@ -113,8 +115,10 @@ namespace System.Management.Automation
                     returnValue.Append(names[i]);
                     returnValue.Append(separator);
                 }
+
                 returnValue.Remove(returnValue.Length - separator.Length, separator.Length);
             }
+
             return returnValue.ToString();
         }
 

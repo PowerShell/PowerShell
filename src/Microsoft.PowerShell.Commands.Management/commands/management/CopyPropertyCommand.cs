@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -16,18 +17,19 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get { return paths; }
+
             set { paths = value; }
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -35,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -43,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The name of the property to create on the item
+        /// The name of the property to create on the item.
         /// </summary>
         [Parameter(Position = 2, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
@@ -78,6 +81,7 @@ namespace Microsoft.PowerShell.Commands
                     Name,
                     context);
             }
+
             return InvokeProvider.Property.CopyPropertyDynamicParameters(
                 ".",
                 Name,
@@ -95,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Copies the property from one item to another
+        /// Copies the property from one item to another.
         /// </summary>
         protected override void ProcessRecord()
         {

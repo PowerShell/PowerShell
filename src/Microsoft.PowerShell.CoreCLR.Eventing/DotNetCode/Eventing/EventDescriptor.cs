@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Diagnostics.CodeAnalysis;
 
 namespace System.Diagnostics.Eventing
 {
@@ -89,6 +89,7 @@ namespace System.Diagnostics.Eventing
                 return _channel;
             }
         }
+
         public byte Level
         {
             get

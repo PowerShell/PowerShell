@@ -10,7 +10,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "new-alias" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
+    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
     [OutputType(typeof(AliasInfo))]
     public class NewAliasCommand : WriteAliasCommandBase
     {
@@ -26,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 AliasInfo existingAlias = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(Name);
                 }
@@ -84,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         result = SessionState.Internal.SetAliasItem(newAlias, Force, MyInvocation.CommandOrigin);
                     }

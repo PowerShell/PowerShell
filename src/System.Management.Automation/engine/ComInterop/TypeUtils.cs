@@ -14,23 +14,24 @@ namespace System.Management.Automation.ComInterop
         private const BindingFlags AnyStatic = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         internal const MethodAttributes PublicStatic = MethodAttributes.Public | MethodAttributes.Static;
 
-        //CONFORMING
+        // CONFORMING
         internal static Type GetNonNullableType(Type type)
         {
             if (IsNullableType(type))
             {
                 return type.GetGenericArguments()[0];
             }
+
             return type;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool IsNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool AreReferenceAssignable(Type dest, Type src)
         {
             // WARNING: This actually implements "Is this identity assignable and/or reference assignable?"
@@ -38,27 +39,32 @@ namespace System.Management.Automation.ComInterop
             {
                 return true;
             }
+
             if (!dest.IsValueType && !src.IsValueType && AreAssignable(dest, src))
             {
                 return true;
             }
+
             return false;
         }
-        //CONFORMING
+        // CONFORMING
         internal static bool AreAssignable(Type dest, Type src)
         {
             if (dest == src)
             {
                 return true;
             }
+
             if (dest.IsAssignableFrom(src))
             {
                 return true;
             }
+
             if (dest.IsArray && src.IsArray && dest.GetArrayRank() == src.GetArrayRank() && AreReferenceAssignable(dest.GetElementType(), src.GetElementType()))
             {
                 return true;
             }
+
             if (src.IsArray && dest.IsGenericType &&
                 (dest.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>)
                 || dest.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IList<>)
@@ -67,10 +73,11 @@ namespace System.Management.Automation.ComInterop
             {
                 return true;
             }
+
             return false;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool IsImplicitlyConvertible(Type source, Type destination)
         {
             return IsIdentityConversion(source, destination) ||
@@ -85,7 +92,7 @@ namespace System.Management.Automation.ComInterop
                 (considerUserDefined && GetUserDefinedCoercionMethod(source, destination, true) != null);
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static MethodInfo GetUserDefinedCoercionMethod(Type convertFrom, Type convertToType, bool implicitOnly)
         {
             // check for implicit coercions first
@@ -98,6 +105,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return method;
             }
+
             MethodInfo[] cMethods = nnConvType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             method = FindConversionOperator(cMethods, convertFrom, convertToType, implicitOnly);
             if (method != null)
@@ -114,10 +122,11 @@ namespace System.Management.Automation.ComInterop
                     return method;
                 }
             }
+
             return null;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static MethodInfo FindConversionOperator(MethodInfo[] methods, Type typeFrom, Type typeTo, bool implicitOnly)
         {
             foreach (MethodInfo mi in methods)
@@ -131,16 +140,17 @@ namespace System.Management.Automation.ComInterop
                     continue;
                 return mi;
             }
+
             return null;
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsIdentityConversion(Type source, Type destination)
         {
             return source == destination;
         }
 
-        //CONFORMING
+        // CONFORMING
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private static bool IsImplicitNumericConversion(Type source, Type destination)
         {
@@ -160,6 +170,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Byte:
                     switch (tcDest)
@@ -175,6 +186,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int16:
                     switch (tcDest)
@@ -186,6 +198,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.UInt16:
                     switch (tcDest)
@@ -199,6 +212,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int32:
                     switch (tcDest)
@@ -209,6 +223,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.UInt32:
                     switch (tcDest)
@@ -220,6 +235,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
@@ -230,6 +246,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Char:
                     switch (tcDest)
@@ -244,20 +261,22 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Single:
                     return (tcDest == TypeCode.Double);
             }
+
             return false;
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsImplicitReferenceConversion(Type source, Type destination)
         {
             return AreAssignable(destination, source);
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsImplicitBoxingConversion(Type source, Type destination)
         {
             if (source.IsValueType && (destination == typeof(object) || destination == typeof(System.ValueType)))

@@ -4,11 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation.Internal;
 using System.Text;
 using System.Threading;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {
@@ -67,7 +68,7 @@ namespace System.Management.Automation.Configuration
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
-            perUserConfigDirectory = Utils.GetUserConfigurationDirectory();
+            perUserConfigDirectory = Platform.ConfigDirectory;
             perUserConfigFile = Path.Combine(perUserConfigDirectory, configFileName);
         }
 
@@ -90,6 +91,7 @@ namespace System.Management.Automation.Configuration
             {
                 throw new FileNotFoundException(value);
             }
+
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
@@ -109,6 +111,7 @@ namespace System.Management.Automation.Configuration
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
             }
+
             return modulePath;
         }
 
@@ -124,7 +127,7 @@ namespace System.Management.Automation.Configuration
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
-        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
+        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell".</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
@@ -133,10 +136,11 @@ namespace System.Management.Automation.Configuration
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             string rawExecPolicy = ReadValueFromFile<string>(scope, valueName);
 
-            if (!String.IsNullOrEmpty(rawExecPolicy))
+            if (!string.IsNullOrEmpty(rawExecPolicy))
             {
                 execPolicy = rawExecPolicy;
             }
+
             return execPolicy;
         }
 
@@ -234,7 +238,7 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Corresponding settings of the original Group Policies
+        /// Corresponding settings of the original Group Policies.
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
         {
@@ -257,6 +261,7 @@ namespace System.Management.Automation.Configuration
             {
                 identity = "powershell";
             }
+
             return identity;
         }
 
@@ -277,6 +282,7 @@ namespace System.Management.Automation.Configuration
             {
                 level = PSLevel.Informational;
             }
+
             return level;
         }
 
@@ -441,7 +447,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
-        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
+        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
         private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
         {
             string fileName = GetConfigFilePath(scope);
@@ -454,7 +460,7 @@ namespace System.Management.Automation.Configuration
                 // prevents other processes from reading or writing the file while
                 // the update is in progress. It also locks out readers during write
                 // operations.
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream fs = WaitForFile(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     JObject jsonObject = null;
 
@@ -470,7 +476,7 @@ namespace System.Management.Automation.Configuration
                         if (isReadSuccess)
                         {
                             // Read the stream into a root JObject for manipulation
-                            jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                            jsonObject = (JObject)JToken.ReadFrom(jsonReader);
                             JProperty propertyToModify = jsonObject.Property(key);
 
                             if (propertyToModify == null)
@@ -638,7 +644,7 @@ namespace System.Management.Automation.Configuration
     internal abstract class PolicyBase { }
 
     /// <summary>
-    /// Setting about ScriptExecution
+    /// Setting about ScriptExecution.
     /// </summary>
     internal sealed class ScriptExecution : PolicyBase
     {
@@ -647,7 +653,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ScriptBlockLogging
+    /// Setting about ScriptBlockLogging.
     /// </summary>
     internal sealed class ScriptBlockLogging : PolicyBase
     {
@@ -656,7 +662,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ModuleLogging
+    /// Setting about ModuleLogging.
     /// </summary>
     internal sealed class ModuleLogging : PolicyBase
     {
@@ -665,7 +671,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about Transcription
+    /// Setting about Transcription.
     /// </summary>
     internal sealed class Transcription : PolicyBase
     {
@@ -675,7 +681,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about UpdatableHelp
+    /// Setting about UpdatableHelp.
     /// </summary>
     internal sealed class UpdatableHelp : PolicyBase
     {
@@ -684,7 +690,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ConsoleSessionConfiguration
+    /// Setting about ConsoleSessionConfiguration.
     /// </summary>
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
@@ -693,7 +699,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ProtectedEventLogging
+    /// Setting about ProtectedEventLogging.
     /// </summary>
     internal sealed class ProtectedEventLogging : PolicyBase
     {

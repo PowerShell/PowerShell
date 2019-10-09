@@ -11,7 +11,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the filter.
@@ -30,7 +30,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the filter.
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the filter.
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the filter.

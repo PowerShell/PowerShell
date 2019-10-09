@@ -1,19 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.ShowCommandExtension;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using System.Threading;
-    using System.Collections.ObjectModel;
-    using Microsoft.PowerShell.Commands.ShowCommandExtension;
-
     /// <summary>
     /// Help show-command create WPF object and invoke WPF windows with the
-    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll
+    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll.
     /// </summary>
     internal class ShowCommandProxy
     {

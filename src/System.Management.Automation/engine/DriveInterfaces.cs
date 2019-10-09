@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -15,7 +16,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private DriveManagementIntrinsics()
         {
@@ -25,7 +26,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a Drive management facade
+        /// Constructs a Drive management facade.
         /// </summary>
         /// <param name="sessionState">
         /// The instance of session state that facade wraps.
@@ -69,7 +70,7 @@ namespace System.Management.Automation
         #region New
 
         /// <summary>
-        /// Creates a new MSH drive in session state
+        /// Creates a new MSH drive in session state.
         /// </summary>
         /// <param name="drive">
         /// The drive to be created.
@@ -112,7 +113,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new MSH drive in session state
+        /// Creates a new MSH drive in session state.
         /// </summary>
         /// <param name="drive">
         /// The drive to be created.
@@ -324,7 +325,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Retrieves all the drives in the specified scope
+        /// Retrieves all the drives in the specified scope.
         /// </summary>
         public Collection<PSDriveInfo> GetAll()
         {
@@ -336,7 +337,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Retrieves all the drives in the specified scope
+        /// Retrieves all the drives in the specified scope.
         /// </summary>
         /// <param name="scope">
         /// The scope to retrieve the drives from. If null, the
@@ -360,7 +361,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets all the drives for the specified provider
+        /// Gets all the drives for the specified provider.
         /// </summary>
         /// <param name="providerName">
         /// The name of the provider to get the drives for.

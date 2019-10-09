@@ -2,20 +2,21 @@
 // Licensed under the MIT License.
 
 using System;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Diagnostics.CodeAnalysis;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Defines the implementation of the get-pfxcertificate cmdlet
+    /// Defines the implementation of the get-pfxcertificate cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113323")]
     [OutputType(typeof(X509Certificate2))]
@@ -38,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -60,6 +62,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -77,11 +80,11 @@ namespace Microsoft.PowerShell.Commands
         //
         // list of files that were not found
         //
-        private ArrayList _filesNotFound = new ArrayList();
+        private List<string> _filesNotFound = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the GetPfxCertificateCommand
-        /// class
+        /// class.
         /// </summary>
         public GetPfxCertificateCommand() : base()
         {
@@ -138,22 +141,22 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (Password == null && !NoPromptForPassword.IsPresent) 
+                        if (Password == null && !NoPromptForPassword.IsPresent)
                         {
-                            try 
+                            try
                             {
                                 cert = GetCertFromPfxFile(resolvedProviderPath, null);
                                 WriteObject(cert);
                                 continue;
-                            } 
-                            catch (CryptographicException) 
+                            }
+                            catch (CryptographicException)
                             {
                                 Password = SecurityUtils.PromptForSecureString(
                                     Host.UI,
                                     CertificateCommands.GetPfxCertPasswordPrompt);
-                            }                            
+                            }
                         }
-                        
+
                         try
                         {
                             cert = GetCertFromPfxFile(resolvedProviderPath, Password);

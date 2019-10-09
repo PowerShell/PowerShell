@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Xml;
+
+using Dbg = System.Management.Automation.Diagnostics;
+
 namespace System.Management.Automation
 {
-    using System;
-    using System.Collections;
-    using System.Reflection;
-    using System.Xml;
-    using System.Management.Automation.Internal;
-    using System.Collections.Generic;
-    using Dbg = System.Management.Automation.Diagnostics;
-
     /// <summary>
     /// This class provides functionality for serializing a PSObject.
     /// </summary>
@@ -56,10 +57,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("writer");
             }
+
             if (depth < 1)
             {
                 throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
             }
+
             _depth = depth;
             _writer = writer;
             _notypeinformation = notypeinformation;
@@ -99,7 +102,7 @@ namespace System.Management.Automation
         /// </param>
         internal void Serialize(object source)
         {
-            //Write the root element tag before writing first object.
+            // Write the root element tag before writing first object.
             if (_firstCall)
             {
                 _firstCall = false;
@@ -152,6 +155,7 @@ namespace System.Management.Automation
                 _firstCall = false;
                 Start();
             }
+
             _writer.WriteEndElement();
             _writer.Flush();
         }
@@ -283,16 +287,16 @@ namespace System.Management.Automation
                 return;
             }
 
-            //Note: We donot use containers in depth calculation. i.e even if the
-            //current depth is zero, we serialize the container. All contained items will
-            //get serialized with depth zero.
+            // Note: We donot use containers in depth calculation. i.e even if the
+            // current depth is zero, we serialize the container. All contained items will
+            // get serialized with depth zero.
             if (HandleKnownContainerTypes(source, property, depth))
             {
                 return;
             }
 
             PSObject mshSource = PSObject.AsPSObject(source);
-            //If depth is zero, complex type should be serialized as string.
+            // If depth is zero, complex type should be serialized as string.
             if (depth == 0 || SerializeAsString(mshSource))
             {
                 HandlePSObjectAsString(mshSource, property, depth);
@@ -313,13 +317,14 @@ namespace System.Management.Automation
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
-            //Check if source is of primitive known type
+            // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(source.GetType());
             if (pktInfo != null)
             {
                 WriteOnePrimitiveKnownType(_writer, property, source, pktInfo);
                 return true;
             }
+
             return false;
         }
 
@@ -338,9 +343,9 @@ namespace System.Management.Automation
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
-                //Check if baseObject is primitive known type
+                // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
                 TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(baseObject.GetType());
                 if (pktInfo != null)
@@ -349,6 +354,7 @@ namespace System.Management.Automation
                     sourceHandled = true;
                 }
             }
+
             return sourceHandled;
         }
 
@@ -361,13 +367,13 @@ namespace System.Management.Automation
             IEnumerable enumerable = null;
             IDictionary dictionary = null;
 
-            //If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.immediateBaseObjectIsEmpty)
+            // If passed in object is PSObject with no baseobject, return false.
+            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
 
-            //Check if source (or baseobject in mshSource) is known container type
+            // Check if source (or baseobject in mshSource) is known container type
             GetKnownContainerTypeInfo(mshSource != null ? mshSource.ImmediateBaseObject : source, out ct,
                                       out dictionary, out enumerable);
 
@@ -381,6 +387,7 @@ namespace System.Management.Automation
                     {
                         WriteDictionary(dictionary, depth);
                     }
+
                     break;
                 case ContainerType.Stack:
                 case ContainerType.Queue:
@@ -389,31 +396,33 @@ namespace System.Management.Automation
                     {
                         WriteEnumerable(enumerable, depth);
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "All containers should be handled in the switch");
                     }
+
                     break;
             }
 
-            //An object which is original enumerable becomes an PSObject
-            //with arraylist on deserialization. So on roundtrip it will show up
-            //as List.
-            //We serialize properties of enumerable and on deserialization mark the object
-            //as Deserialized. So if object is marked deserialized, we should write properties.
-            //Note: we do not serialize the properties of IEnumerable if depth is zero.
-            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized)))
+            // An object which is original enumerable becomes an PSObject
+            // with arraylist on deserialization. So on roundtrip it will show up
+            // as List.
+            // We serialize properties of enumerable and on deserialization mark the object
+            // as Deserialized. So if object is marked deserialized, we should write properties.
+            // Note: we do not serialize the properties of IEnumerable if depth is zero.
+            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized)))
             {
-                //Note:Depth is the depth for serialization of baseObject.
-                //Depth for serialization of each property is one less.
+                // Note:Depth is the depth for serialization of baseObject.
+                // Depth for serialization of each property is one less.
                 WritePSObjectProperties(PSObject.AsPSObject(source), depth);
             }
 
-            //If source is PSObject, serialize notes
+            // If source is PSObject, serialize notes
             if (mshSource != null)
             {
-                //Serialize instanceMembers
+                // Serialize instanceMembers
                 PSMemberInfoCollection<PSMemberInfo> instanceMembers = mshSource.InstanceMembers;
                 if (instanceMembers != null)
                 {
@@ -493,7 +502,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Check if type is IEnumerable
+            // Check if type is IEnumerable
             if (ct == ContainerType.None)
             {
                 enumerable = LanguagePrimitives.GetEnumerable(source);
@@ -523,8 +532,10 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 derived = derived.GetTypeInfo().BaseType;
             }
+
             return false;
         }
 
@@ -556,8 +567,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
-            //Write start of PSObject. Since baseobject is primitive known
-            //type, we do not need TypeName information.
+            // Write start of PSObject. Since baseobject is primitive known
+            // type, we do not need TypeName information.
             WriteStartOfPSObject(source, property, source.ToStringFromDeserialization != null);
 
             if (pktInfo != null)
@@ -565,7 +576,7 @@ namespace System.Management.Automation
                 WriteOnePrimitiveKnownType(_writer, null, primitive, pktInfo);
             }
 
-            //Serialize instanceMembers
+            // Serialize instanceMembers
             PSMemberInfoCollection<PSMemberInfo> instanceMembers = source.InstanceMembers;
             if (instanceMembers != null)
             {
@@ -585,7 +596,7 @@ namespace System.Management.Automation
             bool isEnum = false;
             bool isPSObject = false;
 
-            if (!source.immediateBaseObjectIsEmpty)
+            if (!source.ImmediateBaseObjectIsEmpty)
             {
                 isEnum = source.ImmediateBaseObject is Enum;
                 isPSObject = source.ImmediateBaseObject is PSObject;
@@ -652,7 +663,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Object baseObject = mshObject.BaseObject;
+            object baseObject = mshObject.BaseObject;
             if (!_notypeinformation)
                 WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, baseObject.GetType().ToString());
         }
@@ -671,6 +682,7 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             return false;
         }
 
@@ -691,7 +703,6 @@ namespace System.Management.Automation
         {
             Dbg.Assert(me != null, "caller should validate the parameter");
 
-            bool enclosingTagWritten = false;
             foreach (PSMemberInfo info in me)
             {
                 if (!info.ShouldSerialize)
@@ -705,15 +716,11 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                enclosingTagWritten = true;
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, info.Name);
                 if (!_notypeinformation)
                     WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, info.GetType().ToString());
                 _writer.WriteString(property.Value.ToString());
-            }
-            if (enclosingTagWritten)
-            {
                 _writer.WriteEndElement();
             }
         }
@@ -731,7 +738,7 @@ namespace System.Management.Automation
 
             depth = GetDepthOfSerialization(source, depth);
 
-            //Depth available for each property is one less
+            // Depth available for each property is one less
             --depth;
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
@@ -745,6 +752,7 @@ namespace System.Management.Automation
                         specificProperties.Add(property);
                     }
                 }
+
                 SerializeProperties(specificProperties, CustomSerializationStrings.Properties, depth);
                 return;
             }
@@ -753,8 +761,8 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
                 object value = AutomationNull.Value;
-                //PSObject throws GetValueException if it cannot
-                //get value for a property.
+                // PSObject throws GetValueException if it cannot
+                // get value for a property.
                 try
                 {
                     value = prop.Value;
@@ -764,7 +772,7 @@ namespace System.Management.Automation
                     WritePropertyWithNullValue(_writer, prop, depth);
                     continue;
                 }
-                //Write the property
+                // Write the property
                 if (value == null)
                 {
                     WritePropertyWithNullValue(_writer, prop, depth);
@@ -802,8 +810,8 @@ namespace System.Management.Automation
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
 
                 object value = AutomationNull.Value;
-                //PSObject throws GetValueException if it cannot
-                //get value for a property.
+                // PSObject throws GetValueException if it cannot
+                // get value for a property.
                 try
                 {
                     value = prop.Value;
@@ -812,7 +820,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
-                //Write the property
+                // Write the property
                 WriteOneObject(value, prop.Name, depth);
             }
         }
@@ -845,8 +853,8 @@ namespace System.Management.Automation
                 enumerator = null;
             }
 
-            //AD has incorrect implementation of IEnumerable where they returned null
-            //for GetEnumerator instead of empty enumerator
+            // AD has incorrect implementation of IEnumerable where they returned null
+            // for GetEnumerator instead of empty enumerator
             if (enumerator != null)
             {
                 while (true)
@@ -867,6 +875,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     WriteOneObject(item, null, depth);
                 }
             }
@@ -875,7 +884,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes IDictionary.
         /// </summary>
-        /// <param name="dictionary">dictionary which is serialized</param>
+        /// <param name="dictionary">Dictionary which is serialized.</param>
         /// <param name="depth"></param>
         private void WriteDictionary(IDictionary dictionary, int depth)
         {
@@ -892,9 +901,9 @@ namespace System.Management.Automation
             {
                 while (dictionaryEnum.MoveNext())
                 {
-                    //Write Key
+                    // Write Key
                     WriteOneObject(dictionaryEnum.Key, CustomSerializationStrings.DictionaryKey, depth);
-                    //Write Value
+                    // Write Value
                     WriteOneObject(dictionaryEnum.Value, CustomSerializationStrings.DictionaryValue, depth);
                 }
             }
@@ -989,7 +998,7 @@ namespace System.Management.Automation
         /// and returns true if this object should be serialized as string.
         /// </summary>
         /// <param name="source">PSObject to be serialized.</param>
-        /// <returns>true if the object needs to be serialized as a string.</returns>
+        /// <returns>True if the object needs to be serialized as a string.</returns>
         private static bool SerializeAsString(PSObject source)
         {
             return source.GetSerializationMethod(null) == SerializationMethod.String;
@@ -1000,8 +1009,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Compute the serialization depth for an PSObject instance subtree.
         /// </summary>
-        /// <param name="source">PSObject whose serialization depth has to be computed</param>
-        /// <param name="depth">current depth</param>
+        /// <param name="source">PSObject whose serialization depth has to be computed.</param>
+        /// <param name="depth">Current depth.</param>
         /// <returns></returns>
         private static int GetDepthOfSerialization(PSObject source, int depth)
         {
@@ -1092,9 +1101,9 @@ namespace System.Management.Automation
         /// Writes an item or property in Monad namespace.
         /// </summary>
         /// <param name="writer">The XmlWriter stream to which the object is serialized.</param>
-        /// <param name="property">name of property. Pass null for item</param>
-        /// <param name="source">object to be written</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">Name of property. Pass null for item.</param>
+        /// <param name="source">Object to be written.</param>
+        /// <param name="entry">Serialization information about source.</param>
 
         private void WriteOnePrimitiveKnownType(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
@@ -1110,7 +1119,7 @@ namespace System.Management.Automation
         /// Writes start element in Monad namespace.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="elementTag">tag of element</param>
+        /// <param name="elementTag">Tag of element.</param>
         internal static void WriteStartElement(XmlWriter writer, string elementTag)
         {
             writer.WriteStartElement(elementTag);
@@ -1120,8 +1129,8 @@ namespace System.Management.Automation
         /// Writes attribute in monad namespace.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="name">name of attribute</param>
-        /// <param name="value">value of attribute</param>
+        /// <param name="name">Name of attribute.</param>
+        /// <param name="value">Value of attribute.</param>
         internal static void WriteAttribute(XmlWriter writer, string name, string value)
         {
             writer.WriteAttributeString(name, value);

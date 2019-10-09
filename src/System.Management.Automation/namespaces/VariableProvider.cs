@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class VariableProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Variable";
 
@@ -43,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the variables drive
+        /// Initializes the variables drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the variables drive.
@@ -56,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.VariableDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
@@ -70,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a variable from session state
+        /// Gets a variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to retrieve.
@@ -81,14 +82,14 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             return (PSVariable)SessionState.Internal.GetVariable(name, Context.Origin);
         }
 
         /// <summary>
-        /// Sets the variable of the specified name to the specified value
+        /// Sets the variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to set.
@@ -102,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             PSVariable variable = null;
@@ -118,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // ensure the name matches
 
-                    if (!String.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         PSVariable newVar = new PSVariable(name, variable.Value, variable.Options, variable.Attributes);
                         newVar.Description = variable.Description;
@@ -148,14 +149,14 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveVariable(name, Force);
         }
 
         /// <summary>
-        /// Gets a flattened view of the variables in session state
+        /// Gets a flattened view of the variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the variables in
@@ -192,6 +193,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = var.Value;
             }
+
             return value;
         }
 

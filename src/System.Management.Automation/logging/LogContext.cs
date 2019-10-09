@@ -14,7 +14,7 @@ namespace System.Management.Automation
     {
         #region Context Properties
 
-        internal String Severity { get; set; } = string.Empty;
+        internal string Severity { get; set; } = string.Empty;
 
         /// <summary>
         /// Name of the host.
@@ -50,19 +50,19 @@ namespace System.Management.Automation
         internal string EngineVersion { get; set; } = string.Empty;
 
         /// <summary>
-        /// Id for currently running runspace
+        /// Id for currently running runspace.
         /// </summary>
         /// <value></value>
         internal string RunspaceId { get; set; } = string.Empty;
 
         /// <summary>
-        /// PipelineId of current running pipeline
+        /// PipelineId of current running pipeline.
         /// </summary>
         /// <value></value>
         internal string PipelineId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Command text that is typed in from commandline
+        /// Command text that is typed in from commandline.
         /// </summary>
         /// <value></value>
         internal string CommandName { get; set; } = string.Empty;
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         internal string ConnectedUser { get; set; }
 
         /// <summary>
-        /// Event happening time
+        /// Event happening time.
         /// </summary>
         internal string Time { get; set; } = string.Empty;
 
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         #region Execution context
 
         /// <summary>
-        /// Execution context is necessary for GetVariableValue
+        /// Execution context is necessary for GetVariableValue.
         /// </summary>
         internal ExecutionContext ExecutionContext { get; set; }
 

@@ -20,9 +20,10 @@ namespace System.Management.Automation.Interpreter
     internal abstract class NotEqualInstruction : Instruction
     {
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
-        private static Instruction s_reference,s_boolean,s_SByte,s_int16,s_char,s_int32,s_int64,s_byte,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_reference, s_boolean, s_SByte, s_int16, s_char, s_int32, s_int64, s_byte, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private NotEqualInstruction()
@@ -33,7 +34,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Boolean)frame.Pop()) != ((Boolean)frame.Pop()));
+                frame.Push(((bool)frame.Pop()) != ((bool)frame.Pop()));
                 return +1;
             }
         }
@@ -60,7 +61,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Char)frame.Pop()) != ((Char)frame.Pop()));
+                frame.Push(((char)frame.Pop()) != ((char)frame.Pop()));
                 return +1;
             }
         }

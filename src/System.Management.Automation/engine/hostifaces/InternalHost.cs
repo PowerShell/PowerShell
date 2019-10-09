@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation.Host;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-using System.Collections.Generic;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -64,12 +64,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(_nameResult))
+                if (string.IsNullOrEmpty(_nameResult))
                 {
                     _nameResult = _externalHostRef.Value.Name;
 
 #pragma warning disable 56503
-                    if (String.IsNullOrEmpty(_nameResult))
+                    if (string.IsNullOrEmpty(_nameResult))
                     {
                         throw PSTraceSource.NewNotImplementedException();
                     }
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -108,7 +108,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -129,12 +129,13 @@ namespace System.Management.Automation.Internal.Host
                     }
 #pragma warning restore 56503
                 }
+
                 return _idResult;
             }
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -161,7 +162,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -179,7 +180,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -196,7 +197,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="exitCode"></param>
         public override void SetShouldExit(int exitCode)
@@ -223,7 +224,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Internal proxy for EnterNestedPrompt
+        /// Internal proxy for EnterNestedPrompt.
         /// </summary>
         /// <param name="callingCommand"></param>
         internal void EnterNestedPrompt(InternalCommand callingCommand)
@@ -349,6 +350,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     commandInfoProperty.Value = oldCommandInfo;
                 }
+
                 if (stackTraceProperty != null)
                 {
                     stackTraceProperty.Value = oldStackTrace;
@@ -400,12 +402,13 @@ namespace System.Management.Automation.Internal.Host
             {
                 ExitNestedPromptHelper();
             }
+
             ExitNestedPromptException enpe = new ExitNestedPromptException();
             throw enpe;
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override PSObject PrivateData
         {
@@ -450,6 +453,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 throw new PSNotImplementedException();
             }
+
             return host;
         }
 
@@ -498,10 +502,10 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Checks if the host is in a nested prompt
+        /// Checks if the host is in a nested prompt.
         /// </summary>
-        /// <returns>true, if host in nested prompt
-        /// false, otherwise</returns>
+        /// <returns>True, if host in nested prompt
+        /// false, otherwise.</returns>
         internal bool HostInNestedPrompt()
         {
             if (NestedPromptCount > 0)
@@ -535,6 +539,7 @@ namespace System.Management.Automation.Internal.Host
         {
             // nothing to revert if Host reference is not set.
             if (!IsHostRefSet) { return; }
+
             _externalHostRef.Revert();
             _internalUIRef.Revert();
         }
@@ -571,4 +576,4 @@ namespace System.Management.Automation.Internal.Host
 
         private readonly Guid _zeroGuid;
     }
-}  // namespace
+}

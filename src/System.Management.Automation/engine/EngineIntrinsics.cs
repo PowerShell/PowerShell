@@ -2,19 +2,20 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Exposes the Engine APIs for a particular instance of the engine
+    /// Exposes the Engine APIs for a particular instance of the engine.
     /// </summary>
     public class EngineIntrinsics
     {
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of ExecutionContext
+        /// Hide the default constructor since we always require an instance of ExecutionContext.
         /// </summary>
         private EngineIntrinsics()
         {
@@ -48,7 +49,7 @@ namespace System.Management.Automation
         #region Public methods
 
         /// <summary>
-        /// Gets engine APIs to access the host
+        /// Gets engine APIs to access the host.
         /// </summary>
         public PSHost Host
         {
@@ -63,7 +64,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets engine APIs to access the event manager
+        /// Gets engine APIs to access the event manager.
         /// </summary>
         public PSEventManager Events
         {
@@ -74,7 +75,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the engine APIs to access providers
+        /// Gets the engine APIs to access providers.
         /// </summary>
         public ProviderIntrinsics InvokeProvider
         {
@@ -85,7 +86,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the engine APIs to access session state
+        /// Gets the engine APIs to access session state.
         /// </summary>
         public SessionState SessionState
         {
@@ -96,7 +97,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the engine APIs to invoke a command
+        /// Gets the engine APIs to invoke a command.
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {

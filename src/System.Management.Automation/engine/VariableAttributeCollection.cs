@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System.Collections.ObjectModel;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -96,7 +97,7 @@ namespace System.Management.Automation
         /// has already been done, this function will add the attribute without checking
         /// and possibly updating the value.
         /// </summary>
-        /// <param name="item">The attribute to add</param>
+        /// <param name="item">The attribute to add.</param>
         internal void AddAttributeNoCheck(Attribute item)
         {
             base.InsertItem(this.Count, item);

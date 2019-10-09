@@ -35,7 +35,7 @@ namespace System.Management.Automation.Provider
         {
             // verify parameters
 
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw PSTraceSource.NewArgumentNullException("providerName");
             }
@@ -57,7 +57,7 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public string ProviderName { get; } = String.Empty;
+        public string ProviderName { get; } = string.Empty;
 
         /// <summary>
         /// Gets the flags that represent the capabilities of the provider.
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// The provider supports ShouldProcess. When this capability is specified, the
         /// -Whatif and -Confirm parameters become available to the user when using
-        /// this provider
+        /// this provider.
         /// </summary>
         ShouldProcess = 0x10,
 

@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return base.NameInternal; }
+
             set { base.NameInternal = value; }
         }
 
@@ -34,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
         public PSTraceSourceOptions Option
         {
             get { return base.OptionsInternal; }
+
             set
             {
                 base.OptionsInternal = value;
@@ -47,6 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public TraceOptions ListenerOption
         {
             get { return base.ListenerOptionsInternal; }
+
             set
             {
                 base.ListenerOptionsInternal = value;
@@ -62,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return base.FileListener; }
+
             set { base.FileListener = value; }
         }
 
@@ -72,6 +76,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return base.ForceWrite; }
+
             set { base.ForceWrite = value; }
         }
 
@@ -83,6 +88,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Debugger
         {
             get { return base.DebuggerListener; }
+
             set { base.DebuggerListener = value; }
         }
 
@@ -94,6 +100,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PSHost
         {
             get { return base.PSHostListener; }
+
             set { base.PSHostListener = value; }
         }
 
@@ -120,8 +127,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
+
         private bool _passThru;
 
         #endregion Parameters
@@ -146,6 +155,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(matchingSources, true);
                         WriteObject(preconfiguredTraceSources, true);
                     }
+
                     break;
 
                 case "removeAllListenersSet":

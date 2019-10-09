@@ -56,11 +56,11 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript("1..10")
         $null = $ps.AddCommand("foreach-object")
-        $null = $ps.AddParameter("Process", { $_; start-sleep 1 })
+        $null = $ps.AddParameter("Process", { $_; Start-Sleep -Seconds 1 })
         $null = $ps.AddCommand("Export-CliXml")
         $null = $ps.AddParameter("Path", $testfile)
         $null = $ps.BeginInvoke()
-        Start-Sleep 1
+        Start-Sleep -Seconds 1
         $null = $ps.Stop()
         $ps.InvocationStateInfo.State | Should -Be "Stopped"
         $ps.Dispose()

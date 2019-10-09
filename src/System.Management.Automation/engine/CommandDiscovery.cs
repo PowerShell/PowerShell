@@ -7,27 +7,29 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Security;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Host;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// EventArgs for the ScriptCmdletVariableUpdate event
+    /// EventArgs for the ScriptCmdletVariableUpdate event.
     /// </summary>
     public class CommandLookupEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor for event args object
+        /// Constructor for event args object.
         /// </summary>
-        /// <param name="commandName">The name of the command we're searching for</param>
-        /// <param name="commandOrigin">The origin of the command internal or runspace (external)</param>
-        /// <param name="context">The execution context for this command</param>
+        /// <param name="commandName">The name of the command we're searching for.</param>
+        /// <param name="commandOrigin">The origin of the command internal or runspace (external).</param>
+        /// <param name="context">The execution context for this command.</param>
         internal CommandLookupEventArgs(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
             CommandName = commandName;
@@ -38,7 +40,7 @@ namespace System.Management.Automation
         private ExecutionContext _context;
 
         /// <summary>
-        /// The name of the command we're looking for
+        /// The name of the command we're looking for.
         /// </summary>
         public string CommandName { get; }
 
@@ -81,11 +83,12 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScriptBlock _scriptBlock;
     }
 
     /// <summary>
-    /// Defines the preference options for the Module Auto-loading feature
+    /// Defines the preference options for the Module Auto-loading feature.
     /// </summary>
     public enum PSModuleAutoLoadingPreference
     {
@@ -197,7 +200,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletInfo AddCmdletInfoToCache(string name, CmdletInfo newCmdletInfo, bool isGlobal)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -250,7 +253,7 @@ namespace System.Management.Automation
         /// <param name="commandName">
         /// The command name to lookup.
         /// </param>
-        /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
+        /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
@@ -310,7 +313,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Collection<String> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
+        private static Collection<string> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
         {
             Collection<string> result = new Collection<string>();
 
@@ -318,6 +321,7 @@ namespace System.Management.Automation
             {
                 result.Add(BuildPSSnapInDisplayName(PSSnapin));
             }
+
             return result;
         }
 
@@ -346,18 +350,19 @@ namespace System.Management.Automation
                 // If there were no PSSnapins required but there is a shellID required, then we need
                 // to error
 
-                if (!String.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
+                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
                 {
                     ScriptRequiresException sre =
                       new ScriptRequiresException(
                           scriptInfo.Name,
-                          String.Empty,
-                          String.Empty,
+                          string.Empty,
+                          string.Empty,
                           "RequiresShellIDInvalidForSingleShell");
 
                     throw sre;
                 }
             }
+
             return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
         }
 
@@ -376,6 +381,7 @@ namespace System.Management.Automation
                     {
                         requiresMissingPSSnapIns = new Collection<string>();
                     }
+
                     requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                 }
                 else
@@ -395,6 +401,7 @@ namespace System.Management.Automation
                             {
                                 requiresMissingPSSnapIns = new Collection<string>();
                             }
+
                             requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                         }
                     }
@@ -481,38 +488,12 @@ namespace System.Management.Automation
             }
         }
 
-        #region comment out RequiresNetFrameworkVersion feature 8/10/2010
-        /*
-         * The "#requires -NetFrameworkVersion" feature is CUT OFF.
-         * This method will be reenabled will be CUT OFF too
-        /*
-        internal static void VerifyNetFrameworkVersion(ExternalScriptInfo scriptInfo)
-        {
-            Version requiresNetFrameworkVersion = scriptInfo.RequiresNetFrameworkVersion;
-
-            if (requiresNetFrameworkVersion != null)
-            {
-                if (!Utils.IsNetFrameworkVersionSupported(requiresNetFrameworkVersion))
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            scriptInfo.NetFrameworkVersionLineNumber,
-                            requiresNetFrameworkVersion,
-                            "ScriptRequiresUnmatchedNetFrameworkVersion");
-                    throw scriptRequiresException;
-                }
-            }
-        }
-        */
-        #endregion
-
         /// <summary>
-        /// used to determine compatibility between the versions in the requires statement and
-        /// the installed version. The version can be PSSnapin or msh
+        /// Used to determine compatibility between the versions in the requires statement and
+        /// the installed version. The version can be PSSnapin or msh.
         /// </summary>
-        /// <param name="requires">versions in the requires statement</param>
-        /// <param name="installed">version installed</param>
+        /// <param name="requires">Versions in the requires statement.</param>
+        /// <param name="installed">Version installed.</param>
         /// <returns>
         /// true if requires and installed's major version match and requires' minor version
         /// is smaller than or equal to installed's
@@ -539,7 +520,7 @@ namespace System.Management.Automation
         /// <param name="commandInfo">
         /// The commandInfo for the command to lookup.
         /// </param>
-        /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
+        /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
@@ -609,6 +590,7 @@ namespace System.Management.Automation
                             new CommandNotFoundException(reqSyntaxException.Message, reqSyntaxException);
                         throw e;
                     }
+
                     break;
                 case CommandTypes.Filter:
                 case CommandTypes.Function:
@@ -642,7 +624,7 @@ namespace System.Management.Automation
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
-            //ShouldRunInternal throws PSSecurityException if run is not allowed
+            // ShouldRunInternal throws PSSecurityException if run is not allowed
             try
             {
                 if (commandOrigin == CommandOrigin.Runspace && commandInfo.Visibility != SessionStateEntryVisibility.Public)
@@ -755,7 +737,7 @@ namespace System.Management.Automation
 
         internal static CommandInfo LookupCommandInfo(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
-            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.None, commandOrigin, context);
+            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.ResolveLiteralThenPathPatterns, commandOrigin, context);
         }
 
         internal static CommandInfo LookupCommandInfo(
@@ -765,7 +747,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin,
             ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 return null;
             }
@@ -920,6 +902,7 @@ namespace System.Management.Automation
                                 AutoloadSpecifiedModule(module, context, cmdletInfo.Visibility, out unUsedException);
                             }
                         }
+
                         context.IsModuleWithJobSourceAdapterLoaded = true;
                     }
                 }
@@ -955,7 +938,7 @@ namespace System.Management.Automation
             {
                 exception = e;
                 discoveryTracer.WriteLine("Encountered error importing module: {0}", e.Message);
-                //Call-out to user code, catch-all OK
+                // Call-out to user code, catch-all OK
             }
 
             return matchingModules;
@@ -981,6 +964,7 @@ namespace System.Management.Automation
                 }
                 finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveCommandNotFound", originalCommandName); }
             }
+
             return result;
         }
 
@@ -1045,6 +1029,7 @@ namespace System.Management.Automation
             {
                 lastError = metadataException;
             }
+
             return result;
         }
 
@@ -1102,7 +1087,7 @@ namespace System.Management.Automation
                             if (exportedCommands == null) { continue; }
 
                             CommandTypes exportedCommandTypes;
-                            //Skip if module only has class or other types and no commands.
+                            // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
                             {
                                 Exception exception;
@@ -1130,7 +1115,6 @@ namespace System.Management.Automation
                             }
                         }
 
-                        // TODO: this causes AppVeyor builds to fail due to invalid XML being output
 #if !CORECLR
                         // Close the progress pane that may have popped up from analyzing UNC paths.
                         if (context.CurrentCommandProcessor != null)
@@ -1198,7 +1182,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(moduleName) || String.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith('.'))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1299,7 +1283,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories
+        /// using the PATH as the lookup directories.
         /// </summary>
         /// <param name="patterns">
         /// The patterns to search for. These patterns must be in the form taken
@@ -1340,7 +1324,7 @@ namespace System.Management.Automation
 
             bool isPathCacheValid =
                 path != null &&
-                String.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
                 _cachedPath != null;
 
             if (!isPathCacheValid)
@@ -1386,7 +1370,7 @@ namespace System.Management.Automation
         private string _pathCacheKey;
 
         /// <summary>
-        /// The cache of the tokenized PATH directories
+        /// The cache of the tokenized PATH directories.
         /// </summary>
         private Collection<string> _cachedPath;
 
@@ -1438,7 +1422,7 @@ namespace System.Management.Automation
             {
                 s_cachedPathExtCollection = pathExt != null
                     ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-                    : Utils.EmptyArray<string>();
+                    : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
                 Array.Copy(s_cachedPathExtCollection, 0, s_cachedPathExtCollectionWithPs1, 1, s_cachedPathExtCollection.Length);
@@ -1473,7 +1457,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
+            Dbg.Assert(!string.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
 
             PSSnapinQualifiedName commandName = PSSnapinQualifiedName.GetInstance(cmdletName);
 
@@ -1484,7 +1468,6 @@ namespace System.Management.Automation
 
             // Check the current cmdlet cache then check the top level
             // if we aren't already at the top level.
-
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
@@ -1498,9 +1481,9 @@ namespace System.Management.Automation
 
                 foreach (var cmdletInfo in cmdlets)
                 {
-                    if (!String.IsNullOrEmpty(commandName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(commandName.PSSnapInName))
                     {
-                        if (String.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                         {
                             yield return cmdletInfo;
                             if (!searchAllScopes)
@@ -1514,7 +1497,7 @@ namespace System.Management.Automation
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {
-                            if (String.Equals(
+                            if (string.Equals(
                                 cmdletInfo.ModuleName,
                                 InitialSessionState.GetNestedModuleDllName(commandName.PSSnapInName),
                                 StringComparison.OrdinalIgnoreCase))
@@ -1563,8 +1546,8 @@ namespace System.Management.Automation
                 }
 
                 // check the environment variable
-                String psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
-                if (!String.IsNullOrEmpty(psEnvironmentVariable))
+                string psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
+                if (!string.IsNullOrEmpty(psEnvironmentVariable))
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);
                 }
@@ -1587,7 +1570,7 @@ namespace System.Management.Automation
     internal class LookupPathCollection : Collection<string>
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal LookupPathCollection() : base() { }
 
@@ -1624,11 +1607,12 @@ namespace System.Management.Automation
                 base.Add(item);
                 result = base.IndexOf(item);
             }
+
             return result;
         }
 
         /// <summary>
-        /// Adds all the strings in the specified collection to this collection
+        /// Adds all the strings in the specified collection to this collection.
         /// </summary>
         /// <param name="collection">
         /// The collection of strings to add.
@@ -1660,12 +1644,13 @@ namespace System.Management.Automation
 
             foreach (string name in this)
             {
-                if (String.Equals(item, name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(item, name, StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
                 }
             }
+
             return result;
         }
 
@@ -1682,12 +1667,13 @@ namespace System.Management.Automation
             for (int index = 0; index < this.Count; ++index)
             {
                 string path = this[index];
-                if (!String.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.Ordinal))
+                if (!string.IsNullOrEmpty(path) &&
+                    path.StartsWith('.'))
                 {
                     result.Add(index);
                 }
             }
+
             return result;
         }
 
@@ -1706,7 +1692,7 @@ namespace System.Management.Automation
         /// </exception>
         public new int IndexOf(string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1715,33 +1701,46 @@ namespace System.Management.Automation
 
             for (int index = 0; index < this.Count; ++index)
             {
-                if (String.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
                 {
                     result = index;
                     break;
                 }
             }
+
             return result;
         }
     }
 
     // Guid is {ea9e8155-5042-5537-0b73-8c0e6b53f398}
+
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]
     internal class CommandDiscoveryEventSource : EventSource
     {
         internal static CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
 
         public void CommandLookupStart(string CommandName) { WriteEvent(1, CommandName); }
+
         public void CommandLookupStop(string CommandName) { WriteEvent(2, CommandName); }
+
         public void ModuleAutoLoadingStart(string CommandName) { WriteEvent(3, CommandName); }
+
         public void ModuleAutoLoadingStop(string CommandName) { WriteEvent(4, CommandName); }
+
         public void ModuleAutoDiscoveryStart(string CommandName) { WriteEvent(5, CommandName); }
+
         public void ModuleAutoDiscoveryStop(string CommandName) { WriteEvent(6, CommandName); }
+
         public void SearchingForModuleFilesStart() { WriteEvent(7); }
+
         public void SearchingForModuleFilesStop() { WriteEvent(8); }
+
         public void GetModuleExportedCommandsStart(string ModulePath) { WriteEvent(9, ModulePath); }
+
         public void GetModuleExportedCommandsStop(string ModulePath) { WriteEvent(10, ModulePath); }
+
         public void ModuleManifestAnalysisResult(string ModulePath, bool Success) { WriteEvent(11, ModulePath, Success); }
+
         public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }

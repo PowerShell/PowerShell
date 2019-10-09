@@ -4,13 +4,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using Microsoft.PowerShell.Commands;
-using System.Linq;
 using System.Text;
 using System.Threading;
+
+using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -26,7 +28,7 @@ namespace System.Management.Automation
     public class ModuleIntrinsics
     {
         /// <summary>
-        /// Tracer for module analysis
+        /// Tracer for module analysis.
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
         internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
@@ -43,6 +45,7 @@ namespace System.Management.Automation
             // And initialize the module path...
             SetModulePath();
         }
+
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
@@ -71,6 +74,7 @@ namespace System.Management.Automation
                 cmdlet.ThrowTerminatingError(er);
             }
         }
+
         internal void DecrementModuleNestingCount()
         {
             --ModuleNestingDepth;
@@ -79,34 +83,34 @@ namespace System.Management.Automation
         internal int ModuleNestingDepth { get; private set; }
 
         /// <summary>
-        /// Create a new module object from a scriptblock specifying the path to set for the module
+        /// Create a new module object from a scriptblock specifying the path to set for the module.
         /// </summary>
-        /// <param name="name">The name of the module</param>
-        /// <param name="path">The path where the module is rooted</param>
+        /// <param name="name">The name of the module.</param>
+        /// <param name="path">The path where the module is rooted.</param>
         /// <param name="scriptBlock">
         /// ScriptBlock that is executed to initialize the module...
         /// </param>
         /// <param name="arguments">
         /// The arguments to pass to the scriptblock used to initialize the module
         /// </param>
-        /// <param name="ss">The session state instance to use for this module - may be null</param>
-        /// <param name="results">The results produced from evaluating the scriptblock</param>
-        /// <returns>The newly created module info object</returns>
+        /// <param name="ss">The session state instance to use for this module - may be null.</param>
+        /// <param name="results">The results produced from evaluating the scriptblock.</param>
+        /// <returns>The newly created module info object.</returns>
         internal PSModuleInfo CreateModule(string name, string path, ScriptBlock scriptBlock, SessionState ss, out List<object> results, params object[] arguments)
         {
             return CreateModuleImplementation(name, path, scriptBlock, null, ss, null, out results, arguments);
         }
 
         /// <summary>
-        /// Create a new module object from a ScriptInfo object
+        /// Create a new module object from a ScriptInfo object.
         /// </summary>
-        /// <param name="path">The path where the module is rooted</param>
-        /// <param name="scriptInfo">The script info to use to create the module</param>
-        /// <param name="scriptPosition">The position for the command that loaded this module</param>
-        /// <param name="arguments">Optional arguments to pass to the script while executing</param>
-        /// <param name="ss">The session state instance to use for this module - may be null</param>
-        /// <param name="privateData">The private data to use for this module - may be null</param>
-        /// <returns>The constructed module object</returns>
+        /// <param name="path">The path where the module is rooted.</param>
+        /// <param name="scriptInfo">The script info to use to create the module.</param>
+        /// <param name="scriptPosition">The position for the command that loaded this module.</param>
+        /// <param name="arguments">Optional arguments to pass to the script while executing.</param>
+        /// <param name="ss">The session state instance to use for this module - may be null.</param>
+        /// <param name="privateData">The private data to use for this module - may be null.</param>
+        /// <returns>The constructed module object.</returns>
         internal PSModuleInfo CreateModule(string path, ExternalScriptInfo scriptInfo, IScriptExtent scriptPosition, SessionState ss, object privateData, params object[] arguments)
         {
             List<object> result;
@@ -114,10 +118,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new module object from code specifying the path to set for the module
+        /// Create a new module object from code specifying the path to set for the module.
         /// </summary>
-        /// <param name="name">The name of the module</param>
-        /// <param name="path">The path to use for the module root</param>
+        /// <param name="name">The name of the module.</param>
+        /// <param name="path">The path to use for the module root.</param>
         /// <param name="moduleCode">
         /// The code to use to create the module. This can be one of ScriptBlock, string
         /// or ExternalScriptInfo
@@ -132,9 +136,9 @@ namespace System.Management.Automation
         /// The position of the caller of this function so you can tell where the call
         /// to Import-Module (or whatever) occurred. This can be null.
         /// </param>
-        /// <param name="ss">The session state instance to use for this module - may be null</param>
-        /// <param name="privateData">The private data to use for this module - may be null</param>
-        /// <returns>The created module</returns>
+        /// <param name="ss">The session state instance to use for this module - may be null.</param>
+        /// <param name="privateData">The private data to use for this module - may be null.</param>
+        /// <returns>The created module.</returns>
         private PSModuleInfo CreateModuleImplementation(string name, string path, object moduleCode, IScriptExtent scriptPosition, SessionState ss, object privateData, out List<object> result, params object[] arguments)
         {
             ScriptBlock sb;
@@ -190,6 +194,7 @@ namespace System.Management.Automation
                             sb = ScriptBlock.Create(_context, sbText);
                     }
                 }
+
                 if (sb == null)
                     throw PSTraceSource.NewInvalidOperationException();
 
@@ -225,13 +230,14 @@ namespace System.Management.Automation
                         scriptThis: AutomationNull.Value,
                         outputPipe: outputPipe,
                         invocationInfo: invocationInfo,
-                        args: arguments ?? Utils.EmptyArray<object>());
+                        args: arguments ?? Array.Empty<object>());
                 }
                 catch (ExitException ee)
                 {
                     exitCode = (int)ee.Argument;
                     setExitCode = true;
                 }
+
                 result = resultList;
             }
             finally
@@ -256,9 +262,9 @@ namespace System.Management.Automation
         /// bound to the module instance.
         /// </summary>
         /// <param name="context">Context to use to create bounded script.</param>
-        /// <param name="sb">The scriptblock to bind</param>
-        /// <param name="linkToGlobal">Whether it should be linked to the global session state or not</param>
-        /// <returns>A new scriptblock</returns>
+        /// <param name="sb">The scriptblock to bind.</param>
+        /// <param name="linkToGlobal">Whether it should be linked to the global session state or not.</param>
+        /// <returns>A new scriptblock.</returns>
         internal ScriptBlock CreateBoundScriptBlock(ExecutionContext context, ScriptBlock sb, bool linkToGlobal)
         {
             PSModuleInfo module = new PSModuleInfo(context, linkToGlobal);
@@ -272,7 +278,8 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = String.Empty; }
+            if (moduleName == null) { moduleName = string.Empty; }
+
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
 
@@ -330,6 +337,7 @@ namespace System.Management.Automation
                         found[path] = true;
                     }
                 }
+
                 if (_context.EngineSessionState != _context.TopLevelSessionState)
                 {
                     foreach (var pair in _context.TopLevelSessionState.ModuleTable)
@@ -417,10 +425,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
-            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
+            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec, skipNameCheck);
         }
 
         /// <summary>
@@ -429,8 +441,13 @@ namespace System.Management.Automation
         /// <param name="matchFailureReason">The constraint that caused the match failure, if any.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            out ModuleMatchFailure matchFailureReason,
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
             if (moduleSpec == null)
             {
@@ -441,7 +458,7 @@ namespace System.Management.Automation
             return IsModuleMatchingConstraints(
                 out matchFailureReason,
                 moduleInfo,
-                moduleSpec.Name,
+                skipNameCheck ? null : moduleSpec.Name,
                 moduleSpec.Guid,
                 moduleSpec.RequiredVersion,
                 moduleSpec.Version,
@@ -607,7 +624,7 @@ namespace System.Management.Automation
         /// Check that a given module version matches the required or minimum/maximum version constraints.
         /// Null constraints are not checked.
         /// </summary>
-        /// <param name="version">The module version to check. Must not be null</param>
+        /// <param name="version">The module version to check. Must not be null.</param>
         /// <param name="requiredVersion">The version that the given version must be, if not null.</param>
         /// <param name="minimumVersion">The minimum version that the given version must be greater than or equal to, if not null.</param>
         /// <param name="maximumVersion">The maximum version that the given version must be less then or equal to, if not null.</param>
@@ -628,7 +645,7 @@ namespace System.Management.Automation
         /// Null constraints are not checked.
         /// </summary>
         /// <param name="matchFailureReason">The reason why the match failed.</param>
-        /// <param name="version">The module version to check. Must not be null</param>
+        /// <param name="version">The module version to check. Must not be null.</param>
         /// <param name="requiredVersion">The version that the given version must be, if not null.</param>
         /// <param name="minimumVersion">The minimum version that the given version must be greater than or equal to, if not null.</param>
         /// <param name="maximumVersion">The maximum version that the given version must be less then or equal to, if not null.</param>
@@ -857,7 +874,7 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (String.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName)) { continue; }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -866,13 +883,14 @@ namespace System.Management.Automation
                                                                            ExperimentalFeature.IsEnabled(featureName)));
                             }
                         }
+
                         return expFeatureList.ToArray();
                     }
                 }
             }
             catch (PSInvalidOperationException) { }
 
-            return Utils.EmptyArray<ExperimentalFeature>();
+            return Array.Empty<ExperimentalFeature>();
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
@@ -881,23 +899,25 @@ namespace System.Management.Automation
                             StringLiterals.PowerShellScriptFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension,
+                            StringLiterals.PowerShellILExecutableExtension,
+                        };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
         internal static string[] PSModuleExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension,
+                            StringLiterals.PowerShellILExecutableExtension,
+                        };
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
         /// </summary>
-        /// <param name="extension">The extension to check</param>
+        /// <param name="extension">The extension to check.</param>
         /// <returns>True if it was a module extension...</returns>
         internal static bool IsPowerShellModuleExtension(string extension)
         {
@@ -913,8 +933,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the module name from module path.
         /// </summary>
-        /// <param name="path">The path to the module</param>
-        /// <returns>The module name</returns>
+        /// <param name="path">The path to the module.</param>
+        /// <returns>The module name.</returns>
         internal static string GetModuleName(string path)
         {
             string fileName = path == null ? string.Empty : Path.GetFileName(path);
@@ -927,6 +947,7 @@ namespace System.Management.Automation
             {
                 ext = Path.GetExtension(fileName);
             }
+
             if (!string.IsNullOrEmpty(ext) && IsPowerShellModuleExtension(ext))
             {
                 return fileName.Substring(0, fileName.Length - ext.Length);
@@ -938,9 +959,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the personal module path
+        /// Gets the personal module path.
         /// </summary>
-        /// <returns>personal module path</returns>
+        /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
 #if UNIX
@@ -953,7 +974,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
         /// </summary>
-        /// <returns>The PSHome module path</returns>
+        /// <returns>The PSHome module path.</returns>
         internal static string GetPSHomeModulePath()
         {
             if (s_psHomeModulePath != null)
@@ -1017,7 +1038,7 @@ namespace System.Management.Automation
         /// <returns>The path of the Windows PowerShell system module directory.</returns>
         internal static string GetWindowsPowerShellPSHomeModulePath()
         {
-            if (!String.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
             {
                 return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
             }
@@ -1059,6 +1080,7 @@ namespace System.Management.Automation
             {
                 result = Environment.ExpandEnvironmentVariables(result);
             }
+
             return result;
         }
 
@@ -1083,6 +1105,7 @@ namespace System.Management.Automation
 
                 // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
                 // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }
+
                 if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
                 {
                     return pos; // match found - return index of it in the 'pathToScan' string
@@ -1209,7 +1232,7 @@ namespace System.Management.Automation
                     string psDepsPath = Path.Combine(parentDir, powershellDepsName);
                     if ((File.Exists(psExePath) && File.Exists(psDepsPath)))
                     {
-                        // Path is a PSHome module path from a different powershell core instance. Ignore it.
+                        // Path is a PSHome module path from a different PowerShell instance. Ignore it.
                         continue;
                     }
                 }
@@ -1218,6 +1241,7 @@ namespace System.Management.Automation
                 {
                     modulePathString.Append(Path.PathSeparator);
                 }
+
                 modulePathString.Append(trimedPath);
             }
 
@@ -1360,7 +1384,7 @@ namespace System.Management.Automation
         /// modules long term - e.g. when open sourcing a module and installing from the gallery.
         /// </param>
         /// <param name="context"></param>
-        /// <returns>The module path as an array of strings</returns>
+        /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
             string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
@@ -1458,8 +1482,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes all functions not belonging to the parent module.
         /// </summary>
-        /// <param name="module">Parent module</param>
-        static internal void RemoveNestedModuleFunctions(PSModuleInfo module)
+        /// <param name="module">Parent module.</param>
+        internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
         {
             var input = module.SessionState?.Internal?.ExportedFunctions;
             if ((input == null) || (input.Count == 0))
@@ -1511,14 +1535,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Mark stuff to be exported from the current environment using the various patterns
+        /// Mark stuff to be exported from the current environment using the various patterns.
         /// </summary>
-        /// <param name="cmdlet">The cmdlet calling this method</param>
-        /// <param name="sessionState">The session state instance to do the exports on</param>
-        /// <param name="functionPatterns">Patterns describing the functions to export</param>
-        /// <param name="cmdletPatterns">Patterns describing the cmdlets to export</param>
-        /// <param name="aliasPatterns">Patterns describing the aliases to export</param>
-        /// <param name="variablePatterns">Patterns describing the variables to export</param>
+        /// <param name="cmdlet">The cmdlet calling this method.</param>
+        /// <param name="sessionState">The session state instance to do the exports on.</param>
+        /// <param name="functionPatterns">Patterns describing the functions to export.</param>
+        /// <param name="cmdletPatterns">Patterns describing the cmdlets to export.</param>
+        /// <param name="aliasPatterns">Patterns describing the aliases to export.</param>
+        /// <param name="variablePatterns">Patterns describing the variables to export.</param>
         /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported, even if they match in cmdletPatterns.</param>
         internal static void ExportModuleMembers(
             PSCmdlet cmdlet,
@@ -1559,6 +1583,7 @@ namespace System.Management.Automation
                         cmdlet.WriteVerbose(message);
                     }
                 }
+
                 SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
             }
 
@@ -1636,6 +1661,7 @@ namespace System.Management.Automation
                         sessionState.ExportedVariables.Add(entry.Value);
                     }
                 }
+
                 SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
             }
 
@@ -1683,8 +1709,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks pattern list for wildcard characters.
         /// </summary>
-        /// <param name="list">Pattern list</param>
-        /// <returns>True if pattern contains '*'</returns>
+        /// <param name="list">Pattern list.</param>
+        /// <returns>True if pattern contains '*'.</returns>
         internal static bool PatternContainsWildcard(List<WildcardPattern> list)
         {
             if (list != null)

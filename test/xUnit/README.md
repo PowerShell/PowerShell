@@ -9,7 +9,7 @@ Go to the top level of the PowerShell repository and run full set of tests:
 
 Go to the test project folder and run `dotnet test -c Release`.
 
-Use [`filter`](xunit-filter) parameter to run only needed tests:
+Use [`filter`][xunit-filter] parameter to run only needed tests:
 ```powershell
 dotnet test -c Release --filter "FullyQualifiedName~UnitTest1   # Runs tests which have UnitTest1 in FullyQualifiedName
 dotnet test --filter Name~TestMethod1   # Runs tests whose name contains TestMethod1
@@ -26,4 +26,4 @@ namespace PSTests.YourNameSpace
 }
 ```
 
-[xunit-filter]: https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
+[xunit-filter]: https://docs.microsoft.com/dotnet/core/testing/selective-unit-tests

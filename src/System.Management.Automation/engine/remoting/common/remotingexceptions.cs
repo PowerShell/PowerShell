@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 
 namespace System.Management.Automation.Remoting
@@ -488,8 +488,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -522,6 +522,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _errorCode;
             }
+
             set
             {
                 _errorCode = value;
@@ -537,6 +538,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _transportMessage;
             }
+
             set
             {
                 _transportMessage = value;
@@ -651,8 +653,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

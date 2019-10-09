@@ -5,10 +5,16 @@ param(
     [string] $Path,
     [string[]] $AuthenticodeDualFiles,
     [string[]] $AuthenticodeFiles,
-    [string[]] $NuPkgFiles
+    [string[]] $NuPkgFiles,
+    [string[]] $MacDeveloperFiles,
+    [string[]] $LinuxFiles
 )
 
-if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0))
+if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
+    (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and
+    (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0) -and
+    (!$MacDeveloperFiles -or $MacDeveloperFiles.Count -eq 0) -and
+    (!$LinuxFiles -or $LinuxFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
 }
@@ -67,12 +73,20 @@ foreach($file in $AuthenticodeDualFiles)
 
 foreach($file in $AuthenticodeFiles)
 {
-    New-FileElement -File $file -SignType 'Authenticode' -XmlDoc $signingXml -Job $job
+    New-FileElement -File $file -SignType 'AuthenticodeFormer' -XmlDoc $signingXml -Job $job
 }
 
 foreach($file in $NuPkgFiles)
 {
     New-FileElement -File $file -SignType 'NuGet' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $MacDeveloperFiles) {
+    New-FileElement -File $file -SignType 'MacDeveloper' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $LinuxFiles) {
+    New-FileElement -File $file -SignType 'LinuxPack' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)

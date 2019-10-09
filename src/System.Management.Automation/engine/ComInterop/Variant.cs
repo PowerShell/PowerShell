@@ -136,7 +136,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
+            return string.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Release any unmanaged memory associated with the Variant
+        /// Release any unmanaged memory associated with the Variant.
         /// </summary>
         /// <returns></returns>
         public void Clear()
@@ -274,6 +274,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return (VarEnum)_typeUnion._vt;
             }
+
             set
             {
                 _typeUnion._vt = (ushort)value;
@@ -340,6 +341,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_I1);
                 return _typeUnion._unionTypes._i1;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -363,6 +365,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_I2);
                 return _typeUnion._unionTypes._i2;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -386,6 +389,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_I4);
                 return _typeUnion._unionTypes._i4;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -409,6 +413,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_I8);
                 return _typeUnion._unionTypes._i8;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -432,6 +437,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_UI1);
                 return _typeUnion._unionTypes._ui1;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -455,6 +461,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_UI2);
                 return _typeUnion._unionTypes._ui2;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -478,6 +485,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_UI4);
                 return _typeUnion._unionTypes._ui4;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -501,6 +509,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_UI8);
                 return _typeUnion._unionTypes._ui8;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -524,6 +533,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_INT);
                 return _typeUnion._unionTypes._int;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -547,6 +557,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_UINT);
                 return _typeUnion._unionTypes._uint;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -563,13 +574,14 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_BOOL
-        public Boolean AsBool
+        public bool AsBool
         {
             get
             {
                 Debug.Assert(VariantType == VarEnum.VT_BOOL);
                 return _typeUnion._unionTypes._bool != 0;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -593,6 +605,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_ERROR);
                 return _typeUnion._unionTypes._error;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -616,6 +629,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_R4);
                 return _typeUnion._unionTypes._r4;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -639,6 +653,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_R8);
                 return _typeUnion._unionTypes._r8;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -665,6 +680,7 @@ namespace System.Management.Automation.ComInterop
                 v._typeUnion._vt = 0;
                 return v._decimal;
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -690,6 +706,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_CY);
                 return Decimal.FromOACurrency(_typeUnion._unionTypes._cy);
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -713,6 +730,7 @@ namespace System.Management.Automation.ComInterop
                 Debug.Assert(VariantType == VarEnum.VT_DATE);
                 return DateTime.FromOADate(_typeUnion._unionTypes._date);
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -729,7 +747,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_BSTR
-        public String AsBstr
+        public string AsBstr
         {
             get
             {
@@ -743,6 +761,7 @@ namespace System.Management.Automation.ComInterop
                     return null;
                 }
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -762,7 +781,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_UNKNOWN
-        public Object AsUnknown
+        public object AsUnknown
         {
             get
             {
@@ -776,6 +795,7 @@ namespace System.Management.Automation.ComInterop
                     return null;
                 }
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -795,7 +815,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_DISPATCH
-        public Object AsDispatch
+        public object AsDispatch
         {
             get
             {
@@ -809,6 +829,7 @@ namespace System.Management.Automation.ComInterop
                     return null;
                 }
             }
+
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
@@ -833,7 +854,7 @@ namespace System.Management.Automation.ComInterop
 
         // VT_VARIANT
 
-        public Object AsVariant
+        public object AsVariant
         {
             get
             {
@@ -882,6 +903,7 @@ namespace System.Management.Automation.ComInterop
                     _typeUnion._unionTypes._byref = UnsafeMethods.ConvertIntPtrByrefToPtr(ref value._typeUnion._unionTypes._byref);
                     break;
             }
+
             VariantType = (value.VariantType | VarEnum.VT_BYREF);
         }
 

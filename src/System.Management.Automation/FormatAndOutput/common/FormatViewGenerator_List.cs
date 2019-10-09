@@ -130,8 +130,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                     }
                 }
+
                 lve.listViewFieldList.Add(lvf);
             }
+
             return lve;
         }
 
@@ -147,6 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return x;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return match.BestMatch as ListControlEntryDefinition;
@@ -164,6 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return x;
                         }
                     }
+
                     if (match.BestMatch != null)
                     {
                         return match.BestMatch as ListControlEntryDefinition;
@@ -213,6 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
+
                 lvf.formatPropertyField.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
                 lve.listViewFieldList.Add(lvf);
             }

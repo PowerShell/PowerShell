@@ -50,8 +50,10 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalUser[] InputObject
         {
             get { return this.inputobject; }
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalUser[] inputobject;
 
         /// <summary>
@@ -69,8 +71,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return this.name; }
+
             set { this.name = value; }
         }
+
         private string[] name;
 
         /// <summary>
@@ -88,8 +92,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier[] SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
@@ -134,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process users requested by -Name
+        /// Process users requested by -Name.
         /// </summary>
         /// <remarks>
         /// All arguments to -Name will be treated as names,
@@ -160,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process users requested by -SID
+        /// Process users requested by -SID.
         /// </summary>
         private void ProcessSids()
         {
@@ -182,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process users requested by -InputObject
+        /// Process users requested by -InputObject.
         /// </summary>
         private void ProcessUsers()
         {
@@ -208,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionDisableUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

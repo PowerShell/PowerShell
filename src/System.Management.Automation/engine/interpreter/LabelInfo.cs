@@ -80,7 +80,7 @@ namespace System.Management.Automation.Interpreter
             {
                 if (j.ContainsTarget(_node))
                 {
-                    throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
                 }
             }
 
@@ -121,6 +121,7 @@ namespace System.Management.Automation.Interpreter
                     // found it, jump is valid!
                     return;
                 }
+
                 if (j.Kind == LabelScopeKind.Filter)
                 {
                     break;
@@ -131,7 +132,7 @@ namespace System.Management.Automation.Interpreter
 
             if (HasMultipleDefinitions)
             {
-                throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
             }
 
             // We didn't find an outward jump. Look for a jump across blocks
@@ -193,6 +194,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return definitions.Contains(scope);
             }
+
             return false;
         }
 
@@ -211,6 +213,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return scope;
             }
+
             return ((HashSet<LabelScopeInfo>)_definitions).First();
         }
 
@@ -227,6 +230,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _definitions = set = new HashSet<LabelScopeInfo>() { (LabelScopeInfo)_definitions };
                 }
+
                 set.Add(scope);
             }
         }
@@ -246,11 +250,13 @@ namespace System.Management.Automation.Interpreter
             {
                 return first;
             }
+
             var set = new HashSet<T>(cmp);
             for (T t = first; t != null; t = parent(t))
             {
                 set.Add(t);
             }
+
             for (T t = second; t != null; t = parent(t))
             {
                 if (set.Contains(t))
@@ -258,6 +264,7 @@ namespace System.Management.Automation.Interpreter
                     return t;
                 }
             }
+
             return null;
         }
     }
@@ -308,7 +315,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns true if we can jump into this node
+        /// Returns true if we can jump into this node.
         /// </summary>
         internal bool CanJumpInto
         {
@@ -322,6 +329,7 @@ namespace System.Management.Automation.Interpreter
                     case LabelScopeKind.Lambda:
                         return true;
                 }
+
                 return false;
             }
         }

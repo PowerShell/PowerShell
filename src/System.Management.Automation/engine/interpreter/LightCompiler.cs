@@ -62,6 +62,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return true;
             }
+
             return false;
         }
 
@@ -91,7 +92,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
+            return string.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
                 (IsFault ? "fault" : "catch(" + ExceptionType.Name + ")"),
                 StartIndex, EndIndex,
                 HandlerStartIndex, HandlerEndIndex
@@ -120,7 +121,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No finally block
+        /// No finally block.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, ExceptionHandler[] handlers)
             : this(tryStart, tryEnd, gotoEndTargetIndex, Instruction.UnknownInstrIndex, Instruction.UnknownInstrIndex, handlers)
@@ -129,7 +130,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No catch blocks
+        /// No catch blocks.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, int finallyStart, int finallyEnd)
             : this(tryStart, tryEnd, gotoEndTargetIndex, finallyStart, finallyEnd, null)
@@ -138,7 +139,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Generic constructor
+        /// Generic constructor.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndLabelIndex, int finallyStart, int finallyEnd, ExceptionHandler[] handlers)
         {
@@ -161,19 +162,20 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Goto the index of the first instruction of the suitable catch block
+        /// Goto the index of the first instruction of the suitable catch block.
         /// </summary>
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
             Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
             handler = _handlers.FirstOrDefault(t => t.Matches(exception.GetType()));
             if (handler == null) { return 0; }
+
             return frame.Goto(handler.LabelIndex, exception, gotoExceptionHandler: true);
         }
     }
 
     /// <summary>
-    /// The re-throw instruction will throw this exception
+    /// The re-throw instruction will throw this exception.
     /// </summary>
     internal sealed class RethrowException : SystemException
     {
@@ -192,7 +194,7 @@ namespace System.Management.Automation.Interpreter
 
         private class DebugInfoComparer : IComparer<DebugInfo>
         {
-            //We allow comparison between int and DebugInfo here
+            // We allow comparison between int and DebugInfo here
             int IComparer<DebugInfo>.Compare(DebugInfo d1, DebugInfo d2)
             {
                 if (d1.Index > d2.Index) return 1;
@@ -203,22 +205,22 @@ namespace System.Management.Automation.Interpreter
 
         public static DebugInfo GetMatchingDebugInfo(DebugInfo[] debugInfos, int index)
         {
-            //Create a faked DebugInfo to do the search
+            // Create a faked DebugInfo to do the search
             DebugInfo d = new DebugInfo { Index = index };
 
-            //to find the closest debug info before the current index
+            // to find the closest debug info before the current index
 
             int i = Array.BinarySearch<DebugInfo>(debugInfos, d, s_debugComparer);
             if (i < 0)
             {
-                //~i is the index for the first bigger element
-                //if there is no bigger element, ~i is the length of the array
+                // ~i is the index for the first bigger element
+                // if there is no bigger element, ~i is the length of the array
                 i = ~i;
                 if (i == 0)
                 {
                     return null;
                 }
-                //return the last one that is smaller
+                // return the last one that is smaller
                 i = i - 1;
             }
 
@@ -229,11 +231,11 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
+                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
             }
             else
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
+                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
             }
         }
     }
@@ -286,7 +288,7 @@ namespace System.Management.Automation.Interpreter
 
         private readonly LightCompiler _parent;
 
-        private static LocalDefinition[] s_emptyLocals = Automation.Utils.EmptyArray<LocalDefinition>();
+        private static LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
 
         public LightCompiler(int compilationThreshold)
         {
@@ -337,7 +339,7 @@ namespace System.Management.Automation.Interpreter
             return new LightDelegateCreator(MakeInterpreter(node.Name), node);
         }
 
-        //internal LightDelegateCreator CompileTop(LightLambdaExpression node) {
+        // internal LightDelegateCreator CompileTop(LightLambdaExpression node) {
         //    foreach (var p in node.Parameters) {
         //        var local = _locals.DefineLocal(p, 0);
         //        _instructions.EmitInitializeParameter(local.Index);
@@ -353,7 +355,7 @@ namespace System.Management.Automation.Interpreter
         //    Debug.Assert(_instructions.CurrentStackDepth == (node.ReturnType != typeof(void) ? 1 : 0));
         //
         //    return new LightDelegateCreator(MakeInterpreter(node.Name), node);
-        //}
+        // }
 
         private Interpreter MakeInterpreter(string lambdaName)
         {
@@ -409,6 +411,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _locals.Box(expr, _instructions);
                 }
+
                 return local;
             }
             else if (_parent != null)
@@ -422,11 +425,11 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        //private void EnsureVariable(ParameterExpression variable) {
+        // private void EnsureVariable(ParameterExpression variable) {
         //    if (!_locals.ContainsVariable(variable)) {
         //        EnsureAvailableForClosure(variable);
         //    }
-        //}
+        // }
 
         private LocalVariable ResolveLocal(ParameterExpression variable)
         {
@@ -435,6 +438,7 @@ namespace System.Management.Automation.Interpreter
             {
                 local = EnsureAvailableForClosure(variable);
             }
+
             return local;
         }
 
@@ -563,6 +567,7 @@ namespace System.Management.Automation.Interpreter
             {
                 CompileAsVoid(node.Expressions[i]);
             }
+
             return locals;
         }
 
@@ -657,6 +662,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(member.Expression);
                 }
+
                 Compile(node.Right);
 
                 int start = _instructions.Count;
@@ -672,6 +678,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitCall(method);
                 }
+
                 return;
             }
 
@@ -682,6 +689,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(member.Expression);
                 }
+
                 Compile(node.Right);
 
                 int start = _instructions.Count;
@@ -697,6 +705,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitStoreField(fi);
                 }
+
                 return;
             }
 
@@ -888,6 +897,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitNumericConvertUnchecked(from, to);
                 }
+
                 return;
             }
 
@@ -967,6 +977,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitBranchTrue(elseLabel);
                 }
+
                 Compile(node.Right);
                 _instructions.EmitBranch(endLabel, false, true);
                 _instructions.MarkLabel(elseLabel);
@@ -1056,6 +1067,7 @@ namespace System.Management.Automation.Interpreter
             {
                 throw new NotImplementedException();
             }
+
             LabelInfo end = DefineLabel(null);
             bool hasValue = node.Type != typeof(void);
 
@@ -1072,6 +1084,7 @@ namespace System.Management.Automation.Interpreter
             {
                 Debug.Assert(!hasValue);
             }
+
             _instructions.EmitBranch(end.GetLabel(this), false, hasValue);
 
             for (int i = 0; i < node.Cases.Count; i++)
@@ -1176,6 +1189,7 @@ namespace System.Management.Automation.Interpreter
             {
                 _treeLabels[node] = result = new LabelInfo(node);
             }
+
             return result;
         }
 
@@ -1192,6 +1206,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return new LabelInfo(null);
             }
+
             LabelInfo result = EnsureLabel(node);
             result.Define(_labelBlock);
             return result;
@@ -1213,6 +1228,7 @@ namespace System.Management.Automation.Interpreter
                         PushLabelBlock(LabelScopeKind.Expression);
                         return true;
                     }
+
                     return false;
                 case ExpressionType.Label:
                     // LabelExpression is a bit special, if it's directly in a
@@ -1225,12 +1241,14 @@ namespace System.Management.Automation.Interpreter
                         {
                             return false;
                         }
+
                         if (_labelBlock.Parent.Kind == LabelScopeKind.Switch &&
                             _labelBlock.Parent.ContainsTarget(label))
                         {
                             return false;
                         }
                     }
+
                     PushLabelBlock(LabelScopeKind.Statement);
                     return true;
                 case ExpressionType.Block:
@@ -1241,6 +1259,7 @@ namespace System.Management.Automation.Interpreter
                     {
                         DefineBlockLabels(node);
                     }
+
                     return true;
                 case ExpressionType.Switch:
                     PushLabelBlock(LabelScopeKind.Switch);
@@ -1253,6 +1272,7 @@ namespace System.Management.Automation.Interpreter
                         SwitchCase c = @switch.Cases[index];
                         DefineBlockLabels(c.Body);
                     }
+
                     DefineBlockLabels(@switch.DefaultBody);
                     return true;
 
@@ -1263,6 +1283,7 @@ namespace System.Management.Automation.Interpreter
                         // treat it as an expression
                         goto default;
                     }
+
                     PushLabelBlock(LabelScopeKind.Statement);
                     return true;
 
@@ -1301,6 +1322,7 @@ namespace System.Management.Automation.Interpreter
             {
                 newLabelMapping[kvp.Key] = kvp.Value.GetLabel(this);
             }
+
             return newLabelMapping;
         }
 
@@ -1348,6 +1370,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return EndsWithRethrow(block.Expressions[block.Expressions.Count - 1]);
             }
+
             return false;
         }
 
@@ -1450,9 +1473,9 @@ namespace System.Management.Automation.Interpreter
 
                     if (handler.Filter != null)
                     {
-                        //PushLabelBlock(LabelScopeKind.Filter);
+                        // PushLabelBlock(LabelScopeKind.Filter);
                         throw new NotImplementedException();
-                        //PopLabelBlock(LabelScopeKind.Filter);
+                        // PopLabelBlock(LabelScopeKind.Filter);
                     }
 
                     var parameter = handler.Variable ?? Expression.Parameter(handler.Test);
@@ -1591,6 +1614,7 @@ namespace System.Management.Automation.Interpreter
                     var arg = node.Arguments[index];
                     this.Compile(arg);
                 }
+
                 _instructions.EmitNew(node.Constructor);
             }
             else
@@ -1628,6 +1652,7 @@ namespace System.Management.Automation.Interpreter
                     Compile(node.Expression);
                     _instructions.EmitLoadField(fi);
                 }
+
                 return;
             }
 
@@ -1639,6 +1664,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(node.Expression);
                 }
+
                 _instructions.EmitCall(method);
                 return;
             }
@@ -1741,6 +1767,7 @@ namespace System.Management.Automation.Interpreter
                     CompileGetBoxedVariable(variable);
                 }
             }
+
             _instructions.EmitCreateDelegate(creator);
         }
 
@@ -1778,7 +1805,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // TODO: do not create a new Call Expression
-            //if (PlatformAdaptationLayer.IsCompactFramework) {
+            // if (PlatformAdaptationLayer.IsCompactFramework) {
             //    // Workaround for a bug in Compact Framework
             //    Compile(
             //        AstUtils.Convert(
@@ -1790,9 +1817,9 @@ namespace System.Management.Automation.Interpreter
             //            node.Type
             //        )
             //    );
-            //} else {
+            // } else {
             CompileMethodCallExpression(Expression.Call(node.Expression, node.Expression.Type.GetMethod("Invoke"), node.Arguments));
-            //}
+            // }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]
@@ -1903,8 +1930,10 @@ namespace System.Management.Automation.Interpreter
                     {
                         _instructions.EmitPop();
                     }
+
                     break;
             }
+
             Debug.Assert(_instructions.CurrentStackDepth == startingStackDepth);
             if (pushLabelBlock)
             {

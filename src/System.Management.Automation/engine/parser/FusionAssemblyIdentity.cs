@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis
             hr = nameObject.GetDisplayName(null, ref characterCountIncludingTerminator, displayFlags);
             if (hr == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (hr != ERROR_INSUFFICIENT_BUFFER)

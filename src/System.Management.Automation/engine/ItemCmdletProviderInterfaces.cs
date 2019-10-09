@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -15,7 +16,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ItemCmdletProviderIntrinsics()
         {
@@ -25,7 +26,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
@@ -45,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the "real" session state class.
@@ -1389,7 +1390,7 @@ namespace System.Management.Automation
         #region CopyItem
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include
@@ -1444,7 +1445,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to copy. They may be a drive or provider-qualified path and may include
@@ -1507,7 +1508,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include

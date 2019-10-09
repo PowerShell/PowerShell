@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Management.Automation;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     internal class ExpressionColumnInfo : ColumnInfo
     {
         private PSPropertyExpression _expression;
@@ -18,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
             _expression = expression;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             List<PSPropertyExpressionResult> resList = _expression.GetValues(liveObject);
 
@@ -35,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object objectResult = result.Result;
-            return objectResult == null ? String.Empty : ColumnInfo.LimitString(objectResult.ToString());
+            return objectResult == null ? string.Empty : ColumnInfo.LimitString(objectResult.ToString());
         }
     }
 }

@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -47,11 +47,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _script;
             }
+
             set
             {
                 _script = value;
             }
         }
+
         private string[] _script;
 
         /// <summary>
@@ -66,11 +68,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 _id = value;
             }
         }
+
         private int[] _id;
 
         /// <summary>
@@ -85,11 +89,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _variable;
             }
+
             set
             {
                 _variable = value;
             }
         }
+
         private string[] _variable;
 
         /// <summary>
@@ -104,11 +110,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _command;
             }
+
             set
             {
                 _command = value;
             }
         }
+
         private string[] _command;
 
         /// <summary>
@@ -124,11 +132,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _type;
             }
+
             set
             {
                 _type = value;
             }
         }
+
         private BreakpointType[] _type;
 
         #endregion parameters
@@ -206,6 +216,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
 
                             case BreakpointType.Command:
@@ -213,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
 
                             case BreakpointType.Variable:
@@ -220,6 +232,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
                         }
 
@@ -264,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gives the criteria to filter breakpoints
+        /// Gives the criteria to filter breakpoints.
         /// </summary>
         private delegate bool FilterSelector<T>(Breakpoint breakpoint, T target);
 

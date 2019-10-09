@@ -232,7 +232,7 @@
     <value>The property {0} does not exist or was not found.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation.</value>
+    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
     <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
@@ -253,7 +253,7 @@
     <value>Cannot process the file because the file {0} was not found.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>Directory: </value>
+    <value>    Directory: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
     <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>

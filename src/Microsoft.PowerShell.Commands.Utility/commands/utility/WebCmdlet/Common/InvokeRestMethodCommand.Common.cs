@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.IO;
-using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Management.Automation;
 using System.Net.Http;
 using System.Text;
+using System.Xml;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
         public override WebRequestMethod Method
         {
             get { return base.Method; }
+
             set { base.Method = value; }
         }
 
@@ -37,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
         public override string CustomMethod
         {
             get { return base.CustomMethod; }
+
             set { base.CustomMethod = value; }
         }
 
@@ -48,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter FollowRelLink
         {
             get { return base._followRelLink; }
+
             set { base._followRelLink = value; }
         }
 
@@ -60,6 +64,7 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumFollowRelLink
         {
             get { return base._maximumFollowRelLink; }
+
             set { base._maximumFollowRelLink = value; }
         }
 
@@ -87,8 +92,8 @@ namespace Microsoft.PowerShell.Commands
                 int readCount = 0;
                 while ((readCount < 10) && reader.Read())
                 {
-                    if (String.Equals("rss", reader.Name, StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals("feed", reader.Name, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals("rss", reader.Name, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals("feed", reader.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         isRssOrFeed = true;
                         break;
@@ -139,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
             xrs.CheckCharacters = false;
             xrs.CloseInput = false;
 
-            //The XML data needs to be in conformance to the rules for a well-formed XML 1.0 document.
+            // The XML data needs to be in conformance to the rules for a well-formed XML 1.0 document.
             xrs.IgnoreProcessingInstructions = true;
             xrs.MaxCharactersFromEntities = 1024;
             xrs.DtdProcessing = DtdProcessing.Ignore;
@@ -166,6 +171,7 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 doc = null;
             }
+
             return (doc != null);
         }
 
@@ -210,13 +216,14 @@ namespace Microsoft.PowerShell.Commands
                 exRef = new ArgumentException(msg, ex);
                 obj = null;
             }
+
             return converted;
         }
 
         #endregion
 
         /// <summary>
-        /// enum for rest return type.
+        /// Enum for rest return type.
         /// </summary>
         public enum RestReturnType
         {
@@ -276,11 +283,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 get { return _length; }
             }
+
             private long _length;
 
             public override long Position
             {
                 get { return _streamBuffer.Position; }
+
                 set { _streamBuffer.Position = value; }
             }
 
@@ -401,12 +410,22 @@ namespace Microsoft.PowerShell.Commands
                         Exception ex = null;
 
                         string str = StreamHelper.DecodeStream(responseStream, ref encoding);
+
+                        string encodingVerboseName;
+                        try
+                        {
+                            encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
+                        }
+                        catch (NotSupportedException)
+                        {
+                            encodingVerboseName = encoding.EncodingName;
+                        }
                         // NOTE: Tests use this verbose output to verify the encoding.
                         WriteVerbose(string.Format
                         (
                             System.Globalization.CultureInfo.InvariantCulture,
                             "Content encoding: {0}",
-                            string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName)
+                            encodingVerboseName)
                         );
                         bool convertSuccess = false;
 
@@ -435,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                     StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
                 }
 
-                if (!String.IsNullOrEmpty(ResponseHeadersVariable))
+                if (!string.IsNullOrEmpty(ResponseHeadersVariable))
                 {
                     PSVariableIntrinsics vi = SessionState.PSVariable;
                     vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));

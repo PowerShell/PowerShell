@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Globalization;
+using System.Xml;
+
 namespace Microsoft.WSMan.Management
 {
-    using System;
-    using System.Globalization;
-    using System.Xml;
-
     /// <summary>
     /// Class that queries the server and gets current configurations.
     /// Also provides a generic way to update the configurations.
@@ -79,7 +79,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation failed.</returns>
         public bool RefreshCurrentConfiguration(string responseOfGet)
         {
-            if (String.IsNullOrEmpty(responseOfGet))
+            if (string.IsNullOrEmpty(responseOfGet))
             {
                 throw new ArgumentNullException("responseOfGet");
             }
@@ -90,7 +90,7 @@ namespace Microsoft.WSMan.Management
             this.nameSpaceManger = new XmlNamespaceManager(this.rootDocument.NameTable);
             this.nameSpaceManger.AddNamespace(CurrentConfigurations.DefaultNameSpacePrefix, this.documentElement.NamespaceURI);
 
-            return String.IsNullOrEmpty(this.serverSession.Error);
+            return string.IsNullOrEmpty(this.serverSession.Error);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation is not succesful.</returns>
         public void PutConfigurationOnServer(string resourceUri)
         {
-            if (String.IsNullOrEmpty(resourceUri))
+            if (string.IsNullOrEmpty(resourceUri))
             {
                 throw new ArgumentNullException("resourceUri");
             }
@@ -155,7 +155,7 @@ namespace Microsoft.WSMan.Management
                 throw new ArgumentNullException("pathToNodeFromRoot");
             }
 
-            if (String.IsNullOrEmpty(configurationName))
+            if (string.IsNullOrEmpty(configurationName))
             {
                 throw new ArgumentNullException("configurationName");
             }
@@ -181,7 +181,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, String.Empty);
+                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, string.Empty);
                 attr.Value = configurationValue;
 
                 nodeToUpdate.Attributes.SetNamedItem(attr);

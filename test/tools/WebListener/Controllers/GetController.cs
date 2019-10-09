@@ -20,13 +20,15 @@ namespace mvc.Controllers
             Hashtable args = new Hashtable();
             foreach (var key in Request.Query.Keys)
             {
-                args.Add(key, String.Join(Constants.HeaderSeparator, Request.Query[key]));
+                args.Add(key, string.Join(Constants.HeaderSeparator, Request.Query[key]));
             }
+
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Headers.Keys)
             {
-                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Headers[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Headers[key]));
             }
+
             Hashtable output = new Hashtable
             {
                 {"args"   , args},
@@ -43,17 +45,19 @@ namespace mvc.Controllers
                 {
                     form.Add(key,Request.Form[key]);
                 }
+
                 output["form"] = form;
             }
 
             string data = new StreamReader(Request.Body).ReadToEnd();
-            if (!String.IsNullOrEmpty(data))
+            if (!string.IsNullOrEmpty(data))
             {
                 output["data"] = data;
             }
 
             return Json(output);
         }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

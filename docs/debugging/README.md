@@ -1,5 +1,4 @@
-Visual Studio Code
-==================
+# Visual Studio Code
 
 [Experimental .NET Core Debugging in VS Code][core-debug] enables
 cross-platform debugging with the [Visual Studio Code][vscode] editor.
@@ -46,10 +45,9 @@ careful not to commit such a change.)
 [core-debug]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
-[vscclrdebugger]: http://aka.ms/vscclrdebugger
+[vscclrdebugger]: https://aka.ms/vscclrdebugger
 
-PowerShell
-==========
+## PowerShell
 
 The `Trace-Command` cmdlet can be used to enable tracing of certain PowerShell
 subsystems. Use `Get-TraceSource` for a list of tracers:
@@ -91,8 +89,7 @@ The `-PSHost` specifies the sink, in this case the console host,
 so we can see the tracing messages.
 The `-Name` chooses the list of tracers to enable.
 
-LLDB with SOS plug-in
-=====================
+## LLDB with SOS plug-in
 
 The `./tools/debug.sh` script can be used to launch PowerShell inside of LLDB
 with the SOS plug-in provided by .NET Core. This provides an additional way to
@@ -104,14 +101,12 @@ The script is self-documented and contains a link to the
 
 [clr-debug]: https://github.com/dotnet/coreclr/blob/master/Documentation/building/debugging-instructions.md#debugging-coreclr-on-linux
 
-corehost
-========
+## `corehost`
 
 The native executable produced by .NET CLI will produce trace output
 if launched with `COREHOST_TRACE=1 ./powershell`.
 
-CoreCLR PAL
-===========
+## CoreCLR PAL
 
 The native code in the CLR has debug channels to selectively output
 information to the console. These are controlled by the
@@ -123,8 +118,7 @@ you will need to narrow your scope.
 
 [header]: https://github.com/dotnet/coreclr/blob/release/1.0.0/src/pal/src/include/pal/dbgmsg.h
 
-Debugging .NET Core
-===================
+## Debugging .NET Core
 
 The .NET Core libraries downloaded from NuGet and shipped with PowerShell are release versions.
 This means that `PAL_DBG_CHANNELS` will not work with them,
@@ -134,16 +128,14 @@ but should prove useful.
 
 They are currently written for Linux and are meant only as a shortcut means to debug.
 
-Build and deploy CoreCLR
-------------------------
+## Build and deploy CoreCLR
 
 * Clone CoreCLR: `git clone -b release/1.0.0 https://github.com/dotnet/coreclr.git`
 * Follow [building instructions](https://github.com/dotnet/coreclr/blob/release/1.0.0/Documentation/building/linux-instructions.md)
 * Wait for `./build.sh` to finish
 * Overwrite PowerShell libraries: `cp bin/Product/Linux.x64.Debug/*{so,dll} /path/to/powershell/`
 
-Build and deploy CoreFX
------------------------
+## Build and deploy CoreFX
 
 * Clone CoreFX: `git clone -b release/1.0.0 https://github.com/dotnet/corefx.git`
 * Follow [building instructions](https://github.com/dotnet/corefx/blob/release/1.0.0/Documentation/building/unix-instructions.md)

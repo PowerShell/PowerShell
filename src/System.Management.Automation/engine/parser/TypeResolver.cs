@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Management.Infrastructure;
-using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -23,6 +21,9 @@ using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
+
+using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation.Language
 {
@@ -53,6 +54,7 @@ namespace System.Management.Automation.Language
         internal class AmbiguousTypeException : InvalidCastException
         {
             public string[] Candidates { private set; get; }
+
             public TypeName TypeName { private set; get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
@@ -126,7 +128,7 @@ namespace System.Management.Automation.Language
 
             if (foundType2 != null)
             {
-                exception = new AmbiguousTypeException(typeName, new String[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
+                exception = new AmbiguousTypeException(typeName, new string[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
                 return null;
             }
 
@@ -142,6 +144,7 @@ namespace System.Management.Automation.Language
             {
                 return true;
             }
+
             if (!type.IsNestedPublic)
             {
                 return false;
@@ -154,6 +157,7 @@ namespace System.Management.Automation.Language
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -178,6 +182,7 @@ namespace System.Management.Automation.Language
                     {
                         return result;
                     }
+
                     currentScope = currentScope.Parent;
                 }
 
@@ -438,6 +443,7 @@ namespace System.Management.Automation.Language
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
             }
+
             return result;
         }
 
@@ -477,13 +483,13 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// This routine converts a string into a Type object using the msh rules.
         /// </summary>
-        /// <param name="strTypeName">A string representing the name of the type to convert</param>
-        /// <param name="exception">The exception, if one happened, trying to find the type</param>
+        /// <param name="strTypeName">A string representing the name of the type to convert.</param>
+        /// <param name="exception">The exception, if one happened, trying to find the type.</param>
         /// <returns>A type if the conversion was successful, null otherwise.</returns>
         internal static Type ResolveType(string strTypeName, out Exception exception)
         {
             exception = null;
-            if (String.IsNullOrWhiteSpace(strTypeName))
+            if (string.IsNullOrWhiteSpace(strTypeName))
             {
                 return null;
             }
@@ -513,7 +519,7 @@ namespace System.Management.Automation.Language
     internal class TypeResolutionState
     {
         internal static readonly string[] systemNamespace = { "System" };
-        internal static readonly Assembly[] emptyAssemblies = Utils.EmptyArray<Assembly>();
+        internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
@@ -600,6 +606,7 @@ namespace System.Management.Automation.Language
             {
                 alternateName = typeName + "Attribute";
             }
+
             return alternateName;
         }
 
@@ -651,14 +658,17 @@ namespace System.Management.Automation.Language
             {
                 result = Utils.CombineHashCodes(result, stringComparer.GetHashCode(namespaces[i]));
             }
+
             for (int i = 0; i < assemblies.Length; i++)
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
             }
+
             foreach (var t in _typesDefined)
             {
                 result = Utils.CombineHashCodes(result, t.GetHashCode());
             }
+
             return result;
         }
     }
@@ -812,15 +822,18 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             if (inputType.IsEnum)
             {
                 return true;
             }
+
             if (inputType.IsGenericType)
             {
                 var genericTypeDefinition = inputType.GetGenericTypeDefinition();
                 return genericTypeDefinition == typeof(Nullable<>) || genericTypeDefinition == typeof(FlagsExpression<>);
             }
+
             return (inputType.IsArray && Contains(inputType.GetElementType()));
         }
     }
@@ -897,6 +910,7 @@ namespace System.Management.Automation
                     return expectedKey;
                 }
             }
+
             return null;
         }
         /// <summary>
@@ -925,6 +939,7 @@ namespace System.Management.Automation
             {
                 s_allTypeAccelerators.Remove(typeName);
             }
+
             return true;
         }
 
@@ -959,6 +974,7 @@ namespace System.Management.Automation
             {
                 cache.Add(val.Key, val.Value);
             }
+
             foreach (KeyValuePair<string, Type> val in userTypeAccelerators)
             {
                 cache.Add(val.Key, val.Value);

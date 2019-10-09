@@ -3,6 +3,7 @@
 
 #pragma warning disable 1634, 1691
 
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -49,28 +50,31 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class WildcardPattern
     {
-        //
         // char that escapes special chars
-        //
         private const char escapeChar = '`';
 
-        //
+        // Threshold for stack allocation.
+        // The size is less than MaxShortPath = 260.
+        private const int StackAllocThreshold = 256;
+
         // we convert a wildcard pattern to a predicate
-        //
         private Predicate<string> _isMatch;
 
-        //
+        // chars that are considered special in a wildcard pattern
+        private static readonly char[] s_specialChars = new[] { '*', '?', '[', ']', '`' };
+
+        // static match-all delegate that is shared by all WildcardPattern instances
+        private static readonly Predicate<string> s_matchAll = _ => true;
+
         // wildcard pattern
-        //
         internal string Pattern { get; }
 
-        //
-        // options that control match behavior
-        //
-        internal WildcardOptions Options { get; } = WildcardOptions.None;
+        // Options that control match behavior.
+        // Default is WildcardOptions.None.
+        internal WildcardOptions Options { get; }
 
         /// <summary>
-        /// wildcard pattern converted to regex pattern.
+        /// Wildcard pattern converted to regex pattern.
         /// </summary>
         internal string PatternConvertedToRegex
         {
@@ -85,17 +89,10 @@ namespace System.Management.Automation
         /// Initializes and instance of the WildcardPattern class
         /// for the specified wildcard pattern.
         /// </summary>
-        /// <param name="pattern">The wildcard pattern to match</param>
-        /// <returns>The constructed WildcardPattern object</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
-        public WildcardPattern(string pattern)
+        /// <param name="pattern">The wildcard pattern to match.</param>
+        /// <returns>The constructed WildcardPattern object.</returns>
+        public WildcardPattern(string pattern) : this(pattern, WildcardOptions.None)
         {
-            if (pattern == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("pattern");
-            }
-
-            Pattern = pattern;
         }
 
         /// <summary>
@@ -104,15 +101,13 @@ namespace System.Management.Automation
         /// that modify the pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
-        /// <param name="options">Wildcard options</param>
-        /// <returns>The constructed WildcardPattern object</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
-        public WildcardPattern(string pattern,
-                               WildcardOptions options)
+        /// <param name="options">Wildcard options.</param>
+        /// <returns>The constructed WildcardPattern object.</returns>
+        public WildcardPattern(string pattern, WildcardOptions options)
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             Pattern = pattern;
@@ -124,7 +119,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new WildcardPattern, or return an already created one.
         /// </summary>
-        /// <param name="pattern">The pattern</param>
+        /// <param name="pattern">The pattern.</param>
         /// <param name="options"></param>
         /// <returns></returns>
         public static WildcardPattern Get(string pattern, WildcardOptions options)
@@ -141,22 +136,61 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiate internal regex member if not already done.
         /// </summary>
-        /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
+        /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
-            if (_isMatch == null)
+            StringComparison GetStringComparison()
             {
-                if (Pattern.Length == 1 && Pattern[0] == '*')
+                StringComparison stringComparison;
+                if (Options.HasFlag(WildcardOptions.IgnoreCase))
                 {
-                    _isMatch = _ => true;
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCultureIgnoreCase
+                        : CultureInfo.CurrentCulture.Name.Equals("en-US-POSIX", StringComparison.OrdinalIgnoreCase)
+                            // The collation behavior of the POSIX locale (also known as the C locale) is case sensitive.
+                            // For this specific locale, we use 'OrdinalIgnoreCase'.
+                            ? StringComparison.OrdinalIgnoreCase
+                            : StringComparison.CurrentCultureIgnoreCase;
                 }
                 else
                 {
-                    var matcher = new WildcardPatternMatcher(this);
-                    _isMatch = matcher.IsMatch;
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCulture
+                        : StringComparison.CurrentCulture;
                 }
+
+                return stringComparison;
             }
+
+            if (_isMatch != null)
+            {
+                return;
+            }
+
+            if (Pattern.Length == 1 && Pattern[0] == '*')
+            {
+                _isMatch = s_matchAll;
+                return;
+            }
+
+            int index = Pattern.IndexOfAny(s_specialChars);
+            if (index == -1)
+            {
+                // No special characters present in the pattern, so we can just do a string comparison.
+                _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
+                return;
+            }
+
+            if (index == Pattern.Length - 1 && Pattern[index] == '*')
+            {
+                // No special characters present in the pattern before last position and last character is asterisk.
+                var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
+                _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
+                return;
+            }
+
+            var matcher = new WildcardPatternMatcher(this);
+            _isMatch = matcher.IsMatch;
         }
 
         /// <summary>
@@ -164,7 +198,7 @@ namespace System.Management.Automation
         /// constructor finds a match in the input string.
         /// </summary>
         /// <param name="input">The string to search for a match.</param>
-        /// <returns>true if the wildcard pattern finds a match; otherwise, false</returns>
+        /// <returns>True if the wildcard pattern finds a match; otherwise, false.</returns>
         public bool IsMatch(string input)
         {
             Init();
@@ -175,25 +209,28 @@ namespace System.Management.Automation
         /// Escape special chars, except for those specified in <paramref name="charsNotToEscape"/>, in a string by replacing them with their escape codes.
         /// </summary>
         /// <param name="pattern">The input string containing the text to convert.</param>
-        /// <param name="charsNotToEscape">Array of characters that not to escape</param>
+        /// <param name="charsNotToEscape">Array of characters that not to escape.</param>
         /// <returns>
         /// A string of characters with any metacharacters, except for those specified in <paramref name="charsNotToEscape"/>, converted to their escaped form.
         /// </returns>
         internal static string Escape(string pattern, char[] charsNotToEscape)
         {
-#pragma warning disable 56506
-
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             if (charsNotToEscape == null)
             {
-                throw PSTraceSource.NewArgumentNullException("charsNotToEscape");
+                throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
 
-            char[] temp = new char[pattern.Length * 2 + 1];
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
             for (int i = 0; i < pattern.Length; i++)
@@ -213,18 +250,16 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex > 0)
+            if (tempIndex == pattern.Length)
             {
-                s = new string(temp, 0, tempIndex);
+                s = pattern;
             }
             else
             {
-                s = String.Empty;
+                s = new string(temp.Slice(0, tempIndex));
             }
 
             return s;
-
-#pragma warning restore 56506
         }
 
         /// <summary>
@@ -236,7 +271,7 @@ namespace System.Management.Automation
         /// </returns>
         public static string Escape(string pattern)
         {
-            return Escape(pattern, Utils.EmptyArray<char>());
+            return Escape(pattern, Array.Empty<char>());
         }
 
         /// <summary>
@@ -245,7 +280,7 @@ namespace System.Management.Automation
         /// <param name="pattern">
         /// String which needs to be checked for the presence of wildcard chars
         /// </param>
-        /// <returns> true if the string has wild card chars, false otherwise. </returns>
+        /// <returns>True if the string has wild card chars, false otherwise..</returns>
         /// <remarks>
         /// Currently { '*', '?', '[' } are considered wild card chars and
         /// '`' is the escape character.
@@ -275,6 +310,7 @@ namespace System.Management.Automation
                     ++index;
                 }
             }
+
             return result;
         }
 
@@ -295,10 +331,16 @@ namespace System.Management.Automation
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
-            char[] temp = new char[pattern.Length];
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length] : new char[pattern.Length];
+
             int tempIndex = 0;
             bool prevCharWasEscapeChar = false;
 
@@ -317,6 +359,7 @@ namespace System.Management.Automation
                     {
                         prevCharWasEscapeChar = true;
                     }
+
                     continue;
                 }
 
@@ -343,13 +386,13 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex > 0)
+            if (tempIndex == pattern.Length)
             {
-                s = new string(temp, 0, tempIndex);
+                s = pattern;
             }
             else
             {
-                s = String.Empty;
+                s = new string(temp.Slice(0, tempIndex));
             }
 
             return s;
@@ -400,7 +443,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord">
         /// ErrorRecord object containing additional information about the error condition.
         /// </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal WildcardPatternException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord))
         {
@@ -408,8 +451,10 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("errorRecord");
             }
+
             _errorRecord = errorRecord;
         }
+
         [NonSerialized]
         private ErrorRecord _errorRecord;
 
@@ -424,7 +469,7 @@ namespace System.Management.Automation
         /// Constructs an instance of the WildcardPatternException object taking
         /// a message parameter to use in constructing the exception.
         /// </summary>
-        /// <param name="message">The string to use as the exception message</param>
+        /// <param name="message">The string to use as the exception message.</param>
         public WildcardPatternException(string message) : base(message)
         {
         }
@@ -433,7 +478,7 @@ namespace System.Management.Automation
         /// Constructor for class WildcardPatternException that takes both a message to use
         /// and an inner exception to include in this object.
         /// </summary>
-        /// <param name="message">The exception message to use</param>
+        /// <param name="message">The exception message to use.</param>
         /// <param name="innerException">The innerException object to encapsulate.</param>
         public WildcardPatternException(string message,
                                         Exception innerException)
@@ -444,8 +489,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class WildcardPatternException for serialization.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)
@@ -508,7 +553,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Bracket expressions of <see cref="WildcardPattern"/> are
         /// a greatly simplified version of bracket expressions of POSIX wildcards
-        /// (http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html).
+        /// (https://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html).
         /// Only literal characters and character ranges are supported.
         /// Negation (with either '!' or '^' characters),
         /// character classes ([:alpha:])
@@ -585,8 +630,8 @@ namespace System.Management.Automation
         /// Parses <paramref name="pattern"/>, calling appropriate overloads
         /// in <paramref name="parser"/>
         /// </summary>
-        /// <param name="pattern">Pattern to parse</param>
-        /// <param name="parser">Parser to call back</param>
+        /// <param name="pattern">Pattern to parse.</param>
+        /// <param name="parser">Parser to call back.</param>
         public static void Parse(WildcardPattern pattern, WildcardPatternParser parser)
         {
             parser.BeginWildcardPattern(pattern);
@@ -605,7 +650,7 @@ namespace System.Management.Automation
                         // An unescaped closing square bracket closes the character set.  In other
                         // words, there are no nested square bracket expressions
                         // This is different than the POSIX spec
-                        // (at http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
+                        // (at https://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
                         // but we are keeping this behavior for back-compatibility.
 
                         insideCharacterRange = false;
@@ -687,7 +732,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Convert a string with wild cards into its equivalent regex
+    /// Convert a string with wild cards into its equivalent regex.
     /// </summary>
     /// <remarks>
     /// A list of glob patterns and their equivalent regexes
@@ -728,10 +773,12 @@ namespace System.Management.Automation
             {
                 regexOptions |= RegexOptions.Compiled;
             }
+
             if ((options & WildcardOptions.IgnoreCase) != 0)
             {
                 regexOptions |= RegexOptions.IgnoreCase;
             }
+
             if ((options & WildcardOptions.CultureInvariant) == WildcardOptions.CultureInvariant)
             {
                 regexOptions |= RegexOptions.CultureInvariant;
@@ -754,6 +801,7 @@ namespace System.Management.Automation
             {
                 regexPattern.Append('\\');
             }
+
             regexPattern.Append(c);
         }
 
@@ -790,6 +838,7 @@ namespace System.Management.Automation
                 {
                     _regexPattern.Remove(0, 3);
                 }
+
                 if (regexPatternString.EndsWith(".*$", StringComparison.Ordinal))
                 {
                     _regexPattern.Remove(_regexPattern.Length - 3, 3);
@@ -821,6 +870,7 @@ namespace System.Management.Automation
                 AppendLiteralCharacter(regexPattern, c);
             }
         }
+
         protected override void AppendLiteralCharacterToBracketExpression(char c)
         {
             AppendLiteralCharacterToBracketExpression(_regexPattern, c);
@@ -851,7 +901,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Parses a <paramref name="wildcardPattern"/> into a <see cref="Regex"/>
         /// </summary>
-        /// <param name="wildcardPattern">Wildcard pattern to parse</param>
+        /// <param name="wildcardPattern">Wildcard pattern to parse.</param>
         /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
         public static Regex Parse(WildcardPattern wildcardPattern)
         {
@@ -897,7 +947,7 @@ namespace System.Management.Automation
             //      therefore requiring only O(lengthOfPattern) memory for remembering
             //      which states have been already visited
             //  - Wikipedia calls this algorithm the "NFA" algorithm at
-            //    http://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
+            //    https://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
 
             var patternPositionsForCurrentStringPosition =
                     new PatternPositionsVisitor(_patternElements.Length);
@@ -906,43 +956,51 @@ namespace System.Management.Automation
             var patternPositionsForNextStringPosition =
                     new PatternPositionsVisitor(_patternElements.Length);
 
-            for (int currentStringPosition = 0;
-                 currentStringPosition < str.Length;
-                 currentStringPosition++)
+            try
             {
-                char currentStringCharacter = _characterNormalizer.Normalize(str[currentStringPosition]);
-                patternPositionsForCurrentStringPosition.StringPosition = currentStringPosition;
-                patternPositionsForNextStringPosition.StringPosition = currentStringPosition + 1;
-
-                int patternPosition;
-                while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
+                for (int currentStringPosition = 0;
+                    currentStringPosition < str.Length;
+                    currentStringPosition++)
                 {
-                    _patternElements[patternPosition].ProcessStringCharacter(
-                        currentStringCharacter,
-                        patternPosition,
-                        patternPositionsForCurrentStringPosition,
-                        patternPositionsForNextStringPosition);
+                    char currentStringCharacter = _characterNormalizer.Normalize(str[currentStringPosition]);
+                    patternPositionsForCurrentStringPosition.StringPosition = currentStringPosition;
+                    patternPositionsForNextStringPosition.StringPosition = currentStringPosition + 1;
+
+                    int patternPosition;
+                    while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
+                    {
+                        _patternElements[patternPosition].ProcessStringCharacter(
+                            currentStringCharacter,
+                            patternPosition,
+                            patternPositionsForCurrentStringPosition,
+                            patternPositionsForNextStringPosition);
+                    }
+
+                    // swap patternPositionsForCurrentStringPosition
+                    // with patternPositionsForNextStringPosition
+                    var tmp = patternPositionsForCurrentStringPosition;
+                    patternPositionsForCurrentStringPosition = patternPositionsForNextStringPosition;
+                    patternPositionsForNextStringPosition = tmp;
                 }
 
-                // swap patternPositionsForCurrentStringPosition
-                // with patternPositionsForNextStringPosition
-                var tmp = patternPositionsForCurrentStringPosition;
-                patternPositionsForCurrentStringPosition = patternPositionsForNextStringPosition;
-                patternPositionsForNextStringPosition = tmp;
-            }
+                int patternPosition2;
+                while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
+                {
+                    _patternElements[patternPosition2].ProcessEndOfString(
+                        patternPosition2,
+                        patternPositionsForCurrentStringPosition);
+                }
 
-            int patternPosition2;
-            while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
+                return patternPositionsForCurrentStringPosition.ReachedEndOfPattern;
+            }
+            finally
             {
-                _patternElements[patternPosition2].ProcessEndOfString(
-                    patternPosition2,
-                    patternPositionsForCurrentStringPosition);
+                patternPositionsForCurrentStringPosition.Dispose();
+                patternPositionsForNextStringPosition.Dispose();
             }
-
-            return patternPositionsForCurrentStringPosition.ReachedEndOfPattern;
         }
 
-        private class PatternPositionsVisitor
+        private class PatternPositionsVisitor : IDisposable
         {
             private readonly int _lengthOfPattern;
 
@@ -957,14 +1015,20 @@ namespace System.Management.Automation
 
                 _lengthOfPattern = lengthOfPattern;
 
-                _isPatternPositionVisitedMarker = new int[lengthOfPattern + 1];
-                for (int i = 0; i < _isPatternPositionVisitedMarker.Length; i++)
+                _isPatternPositionVisitedMarker = ArrayPool<int>.Shared.Rent(_lengthOfPattern + 1);
+                for (int i = 0; i <= _lengthOfPattern; i++)
                 {
                     _isPatternPositionVisitedMarker[i] = -1;
                 }
 
-                _patternPositionsForFurtherProcessing = new int[lengthOfPattern];
+                _patternPositionsForFurtherProcessing = ArrayPool<int>.Shared.Rent(_lengthOfPattern);
                 _patternPositionsForFurtherProcessingCount = 0;
+            }
+
+            public void Dispose()
+            {
+                ArrayPool<int>.Shared.Return(_isPatternPositionVisitedMarker, clearArray: true);
+                ArrayPool<int>.Shared.Return(_patternPositionsForFurtherProcessing, clearArray: true);
             }
 
             public int StringPosition { private get; set; }
@@ -976,7 +1040,7 @@ namespace System.Management.Automation
                         patternPosition <= _lengthOfPattern,
                         "Caller should verify patternPosition <= this._lengthOfPattern");
 
-                // is patternPosition already visited?);
+                // is patternPosition already visited?
                 if (_isPatternPositionVisitedMarker[patternPosition] == this.StringPosition)
                 {
                     return;
@@ -1234,7 +1298,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Translates a <see cref="WildcardPattern"/> into a DOS wildcard
+    /// Translates a <see cref="WildcardPattern"/> into a DOS wildcard.
     /// </summary>
     internal class WildcardPatternToDosWildcardParser : WildcardPatternParser
     {
@@ -1273,7 +1337,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts <paramref name="wildcardPattern"/> into a DOS wildcard
+        /// Converts <paramref name="wildcardPattern"/> into a DOS wildcard.
         /// </summary>
         internal static string Parse(WildcardPattern wildcardPattern)
         {

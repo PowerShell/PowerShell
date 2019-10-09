@@ -10,7 +10,6 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
-
     internal static class EncodingConversion
     {
         internal const string Unknown = "unknown";
@@ -29,7 +28,7 @@ namespace System.Management.Automation
                 Ascii, BigEndianUnicode, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
-        internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string,Encoding>(StringComparer.OrdinalIgnoreCase)
+        internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
         {
             { Ascii, System.Text.Encoding.ASCII },
             { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },
@@ -46,10 +45,10 @@ namespace System.Management.Automation
         };
 
         /// <summary>
-        /// retrieve the encoding parameter from the command line
-        /// it throws if the encoding does not match the known ones
+        /// Retrieve the encoding parameter from the command line
+        /// it throws if the encoding does not match the known ones.
         /// </summary>
-        /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
+        /// <returns>A System.Text.Encoding object (null if no encoding specified).</returns>
         internal static Encoding Convert(Cmdlet cmdlet, string encoding)
         {
             if (string.IsNullOrEmpty(encoding))
@@ -79,7 +78,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
     }
 
     /// <summary>
@@ -103,7 +101,7 @@ namespace System.Management.Automation
                         return System.Text.Encoding.GetEncoding(stringName);
                     }
                 case int intName:
-                        return System.Text.Encoding.GetEncoding(intName);
+                    return System.Text.Encoding.GetEncoding(intName);
             }
 
             return inputData;
@@ -126,6 +124,6 @@ namespace System.Management.Automation
             EncodingConversion.Utf8NoBom,
             EncodingConversion.Utf32
         )
-        {}
+        { }
     }
 }

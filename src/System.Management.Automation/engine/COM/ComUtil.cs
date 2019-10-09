@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
-using System.Management.Automation.ComInterop;
-using System.Text;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Management.Automation.ComInterop;
+using System.Runtime.InteropServices;
+using System.Text;
+
 using COM = System.Runtime.InteropServices.ComTypes;
 
 // Stops compiler from warning about unknown warnings. Prefast warning numbers are not recognized by C# compiler
@@ -28,24 +29,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets Method Signature from FuncDesc describing the method.
         /// </summary>
-        /// <param name="typeinfo">ITypeInfo interface of the object</param>
-        /// <param name="funcdesc">FuncDesc which defines the method</param>
-        /// <param name="isPropertyPut">True if this is a property put; these properties take their return type from their first parameter</param>
-        /// <returns>signature of the method</returns>
+        /// <param name="typeinfo">ITypeInfo interface of the object.</param>
+        /// <param name="funcdesc">FuncDesc which defines the method.</param>
+        /// <param name="isPropertyPut">True if this is a property put; these properties take their return type from their first parameter.</param>
+        /// <returns>Signature of the method.</returns>
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {
             StringBuilder builder = new StringBuilder();
-            string name = GetNameFromFuncDesc(typeinfo, funcdesc);
+
+            // First value is function name
+            int namesCount = funcdesc.cParams + 1;
+            string[] names = new string[funcdesc.cParams + 1];
+            typeinfo.GetNames(funcdesc.memid, names, namesCount, out namesCount);
 
             if (!isPropertyPut)
             {
-                //First get the string for return type.
+                // First get the string for return type.
                 string retstring = GetStringFromTypeDesc(typeinfo, funcdesc.elemdescFunc.tdesc);
                 builder.Append(retstring + " ");
             }
 
-            //Append the function name
-            builder.Append(name);
+            // Append the function name
+            builder.Append(names[0]);
             builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
@@ -60,8 +65,8 @@ namespace System.Management.Automation
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
 
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
                 if (IntPtr.Size == 4)
                 {
@@ -84,6 +89,7 @@ namespace System.Management.Automation
                 else
                 {
                     builder.Append(paramstring);
+                    builder.Append(" " + names[i + 1]);
 
                     if (i < funcdesc.cParams - 1)
                     {
@@ -91,32 +97,33 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             builder.Append(")");
 
             return builder.ToString();
         }
 
         /// <summary>
-        /// Gets the name of the method or property defined by funcdesc
+        /// Gets the name of the method or property defined by funcdesc.
         /// </summary>
-        /// <param name="typeinfo">ITypeInfo interface of the type</param>
-        /// <param name="funcdesc">FuncDesc of property of method</param>
-        /// <returns>name of the method or property</returns>
+        /// <param name="typeinfo">ITypeInfo interface of the type.</param>
+        /// <param name="funcdesc">FuncDesc of property of method.</param>
+        /// <returns>Name of the method or property.</returns>
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
-            //Get the method or property name.
-            String strName, strDoc, strHelp;
+            // Get the method or property name.
+            string strName, strDoc, strHelp;
             int id;
             typeinfo.GetDocumentation(funcdesc.memid, out strName, out strDoc, out id, out strHelp);
             return strName;
         }
 
         /// <summary>
-        ///  Gets the name of the custom type defined in the type library
+        /// Gets the name of the custom type defined in the type library.
         /// </summary>
-        /// <param name="typeinfo">ITypeInfo interface of the type</param>
-        /// <param name="refptr">reference to the custom type</param>
-        /// <returns>name of the custom type</returns>
+        /// <param name="typeinfo">ITypeInfo interface of the type.</param>
+        /// <param name="refptr">Reference to the custom type.</param>
+        /// <returns>Name of the custom type.</returns>
         private static string GetStringFromCustomType(COM.ITypeInfo typeinfo, IntPtr refptr)
         {
             COM.ITypeInfo custtypeinfo;
@@ -126,11 +133,12 @@ namespace System.Management.Automation
 
             if (custtypeinfo != null)
             {
-                String strName, strDoc, strHelp;
+                string strName, strDoc, strHelp;
                 int id;
                 custtypeinfo.GetDocumentation(-1, out strName, out strDoc, out id, out strHelp);
                 return strName;
             }
+
             return "UnknownCustomtype";
         }
 
@@ -141,9 +149,9 @@ namespace System.Management.Automation
         /// This function gets a string representation of the Type Descriptor
         /// This is used in generating signature for Properties and Methods.
         /// </summary>
-        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
-        /// <param name="typedesc">reference to type descriptor which is being converted to string from</param>
-        /// <returns>string representation of the type descriptor</returns>
+        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs.</param>
+        /// <param name="typedesc">Reference to type descriptor which is being converted to string from.</param>
+        /// <returns>String representation of the type descriptor.</returns>
         private static string GetStringFromTypeDesc(COM.ITypeInfo typeinfo, COM.TYPEDESC typedesc)
         {
             if ((VarEnum)typedesc.vt == VarEnum.VT_PTR)
@@ -242,10 +250,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Determine .net type for the given type descriptor
+        /// Determine .net type for the given type descriptor.
         /// </summary>
-        /// <param name="typedesc">COM type descriptor to convert</param>
-        /// <returns>type represented by the typedesc</returns>
+        /// <param name="typedesc">COM type descriptor to convert.</param>
+        /// <returns>Type represented by the typedesc.</returns>
         internal static Type GetTypeFromTypeDesc(COM.TYPEDESC typedesc)
         {
             VarEnum vt = (VarEnum)typedesc.vt;
@@ -255,7 +263,7 @@ namespace System.Management.Automation
 #pragma warning restore 618
 
         /// <summary>
-        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation
+        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation.
         /// </summary>
         private static ComMethodInformation GetMethodInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
@@ -270,11 +278,12 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return new ComMethodInformation(false, hasOptional, parameters, returntype, funcdesc.memid, funcdesc.invkind);
         }
 
         /// <summary>
-        /// Obtains the parameter information for a given FuncDesc
+        /// Obtains the parameter information for a given FuncDesc.
         /// </summary>
         internal static ParameterInformation[] GetParameterInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
@@ -284,6 +293,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(cParams > 0, "skipLastParameter is only true for property setters where there is at least one parameter");
                 cParams--;
             }
+
             ParameterInformation[] parameters = new ParameterInformation[cParams];
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
@@ -298,8 +308,8 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
 
                 if (IntPtr.Size == 4)
@@ -311,15 +321,15 @@ namespace System.Management.Automation
                     ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
                 }
 
-#pragma warning enable 56515
+#pragma warning restore 56515
 
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
-                //get the type of parameter
+                // get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
-                Object defaultvalue = null;
+                object defaultvalue = null;
 
-                //check is this parameter is optional.
+                // check is this parameter is optional.
                 if ((ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOPT) != 0)
                 {
                     fOptional = true;
@@ -336,7 +346,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts a MethodBase[] into a MethodInformation[]
         /// </summary>
-        /// <returns>the ComMethodInformation[] corresponding to methods</returns>
+        /// <returns>The ComMethodInformation[] corresponding to methods.</returns>
         internal static ComMethodInformation[] GetMethodInformationArray(COM.ITypeInfo typeInfo, Collection<int> methods, bool skipLastParameters)
         {
             int methodCount = methods.Count;
@@ -351,6 +361,7 @@ namespace System.Management.Automation
                 returnValue[count++] = ComUtil.GetMethodInformation(funcdesc, skipLastParameters);
                 typeInfo.ReleaseFuncDesc(pFuncDesc);
             }
+
             return returnValue;
         }
     }
@@ -418,7 +429,7 @@ namespace System.Management.Automation
                         // The COM object is a collection and also a IDispatch interface, so we try to get a
                         // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
                         var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
-                                                        args: Utils.EmptyArray<object>(), byRef: null,
+                                                        args: Array.Empty<object>(), byRef: null,
                                                         invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
                         enumVariant = result as COM.IEnumVARIANT;
                         if (enumVariant != null)

@@ -69,7 +69,7 @@ if ($Build.IsPresent) {
         $name = split-path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
-        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$filePath"
+        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
         Copy-Item -Path $filePath -Destination $destination -force
     }

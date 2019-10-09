@@ -114,5 +114,12 @@ Describe "Stream writer tests" -Tags "CI" {
             $result.Count | Should -Be $returnCount
             (Compare-Object $result $returnValue -SyncWindow 0).length | Should -Be 0
         }
+
+        It "Write-Information accepts `$Null" {
+            $streamPath = Join-Path $testdrive information.txt
+            $null | Write-Information -Tags myTag -ErrorAction Stop -InformationAction SilentlyContinue -InformationVariable i
+            $i.Tags | Should -BeExactly "myTag"
+            $i.MessageData | Should -Be $null
+        }
     }
 }

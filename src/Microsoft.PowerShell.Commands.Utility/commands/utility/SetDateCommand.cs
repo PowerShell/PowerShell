@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -100,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
             }
 
-            //output DateTime object wrapped in an PSObject with DisplayHint attached
+            // output DateTime object wrapped in an PSObject with DisplayHint attached
             PSObject outputObj = new PSObject(dateToUse);
             PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
             outputObj.Properties.Add(note);
@@ -128,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetLocalTime(ref SystemTime systime);
         }
         #endregion

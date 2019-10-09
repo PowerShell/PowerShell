@@ -143,6 +143,7 @@ internal class {0} {{
                 global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(""{1}.resources.{3}"", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
+
             return resourceMan;
         }}
     }}
@@ -156,6 +157,7 @@ internal class {0} {{
         get {{
             return resourceCulture;
         }}
+
         set {{
             resourceCulture = value;
         }}

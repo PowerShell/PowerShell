@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Globalization;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
     internal partial class ConsoleHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -70,8 +70,7 @@ namespace Microsoft.PowerShell
                     // Should be a skin lookup
 
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
 
                 if (!string.IsNullOrEmpty(message))
@@ -216,8 +215,7 @@ namespace Microsoft.PowerShell
                 {
                     // Should be a skin lookup
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
                 // write message
                 if (!string.IsNullOrEmpty(message))
@@ -320,7 +318,7 @@ namespace Microsoft.PowerShell
                 }
 
                 string choice =
-                    String.Format(
+                    string.Format(
                         CultureInfo.InvariantCulture,
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
@@ -360,6 +358,7 @@ namespace Microsoft.PowerShell
                         "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
+
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
                 if (defaultChoiceKeys.Count == 1)
@@ -437,7 +436,7 @@ namespace Microsoft.PowerShell
 
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        String.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
             }
         }
 

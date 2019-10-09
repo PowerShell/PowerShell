@@ -27,13 +27,13 @@ try
 
             $trustedModuleName1 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath1 = Join-Path $TestDrive $trustedModuleName1
-            mkdir $trustedModulePath1
+            New-Item -ItemType Directory $trustedModulePath1
             $trustedModuleFilePath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psm1")
             $trustedModuleManifestPath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psd1")
 
             $trustedModuleName2 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath2 = Join-Path $TestDrive $trustedModuleName2
-            mkdir $trustedModulePath2
+            New-Item -ItemType Directory $trustedModulePath2
             $trustedModuleFilePath2 = Join-Path $trustedModulePath2 ($trustedModuleName2 + ".psm1")
 
             $trustedModuleScript1 = @'
@@ -79,8 +79,8 @@ try
                 Import-Module -Name $trustedModuleName1 -Force -ErrorAction Stop;
 "@
                 $command += @'
-                $null = help NestedFn1 2>$null;
-                $result = Get-Command NestedFn1 2>$null; 
+                $null = help -Name NestedFn1 -Category Function 2> $null;
+                $result = Get-Command NestedFn1 2> $null;
                 return ($result -ne $null)
 '@
                 $isCommandAccessible = powershell.exe -noprofile -nologo -c $command
@@ -140,7 +140,7 @@ try
 
                 $mod = Import-Module -Name $moduleFilePath -Force -PassThru
 
-                # Running module function TestRestrictedSession should throw a 'script not allowed' error 
+                # Running module function TestRestrictedSession should throw a 'script not allowed' error
                 # because it runs in a 'no language' session.
                 try
                 {
@@ -365,116 +365,6 @@ try
         }
     }
 
-    Describe "Script debugging in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
-
-        It "Verifies that a debugging breakpoint cannot be set in constrained language and no system lockdown" {
-
-            try
-            {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                function MyDebuggerFunction {}
-
-                Set-PSBreakpoint -Command MyDebuggerFunction
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-            }
-
-            $expectedError.FullyQualifiedErrorId | Should -BeExactly "CannotSetBreakpointInconsistentLanguageMode,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-
-        It "Verifies that a debugging breakpoint can be set in constrained language with system lockdown" {
-
-            try
-            {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-
-                function MyDebuggerFunction2 {}
-                $Global:DebuggingOk = $null
-                $null = Set-PSBreakpoint -Command MyDebuggerFunction2 -Action { $Global:DebuggingOk = "DebuggingOk" }
-                MyDebuggerFunction2
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-            }
-
-            $Global:DebuggingOk | Should -BeExactly "DebuggingOk"
-        }
-
-        It "Verifies that debugger commands do not run in full language mode when system is locked down" {
-
-            try
-            {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                function MyDebuggerFunction3 {}
-
-                & {
-                    $null = Set-PSBreakpoint -Command MyDebuggerFunction3 -Action { $Global:dbgResult = [object]::Equals("A", "B") }
-                    $restoreEAPreference = $ErrorActionPreference
-                    $ErrorActionPreference = "Stop"
-                    MyDebuggerFunction3
-                }
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedError = $_
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-                if ($restoreEAPreference -ne $null) { $ErrorActionPreference = $restoreEAPreference }
-            }
-
-            $expectedError.FullyQualifiedErrorId | Should -BeExactly "CannotSetBreakpointInconsistentLanguageMode,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-
-        It "Verifies that debugger command injection is blocked in system lock down" {
-
-            $trustedScriptContent = @'
-            function Trusted
-            {
-                param ($UserInput)
-
-                Add-Type -TypeDefinition $UserInput
-                try { $null = New-Object safe_738057 -ErrorAction Ignore } catch {}
-                try { $null = New-Object pwnd_738057 -ErrorAction Ignore } catch {}
-            }
-
-            Trusted -UserInput 'public class safe_738057 { public safe_738057() { System.Environment.SetEnvironmentVariable("pwnd_738057", "False"); } }'
-
-            "Hello World"
-'@
-            $trustedFile = Join-Path $TestDrive CommandInjectionDebuggingBlocked_System32.ps1
-
-            try
-            {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-
-                Set-Content $trustedScriptContent -Path $trustedFile
-                $env:pwnd_738057 = "False"
-                Set-PSBreakpoint -Script $trustedFile -Line 12 -Action { Trusted -UserInput 'public class pwnd_738057 { public pwnd_738057() { System.Environment.SetEnvironmentVariable("pwnd_738057", "Pwnd"); } }' }
-                & $trustedFile
-            }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-            }
-
-            $env:pwnd_738057 | Should -Not -Be "Pwnd"
-        }
-    }
-
     Describe "Engine events in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies engine event in constrained language mode, its action runs as constrained" {
@@ -667,7 +557,7 @@ try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | % CompletionMatches | ? CompletionText -Match Pointer)
+                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | ForEach-Object CompletionMatches | Where-Object CompletionText -Match Pointer)
             }
             finally
             {
@@ -858,16 +748,16 @@ try
                     }
                 )
 
-                $result = $data.foreach('value1')
+                $result = $data.ForEach('value1')
                 Write-Output $result
 
-                # Execute method in scriptblock of foreach operator, should throw in ConstrainedLanguage mode.
-                $data.foreach{[system.io.path]::GetRandomFileName().Length}
+                # Execute method in scriptblock of ForEach operator, should throw in ConstrainedLanguage mode.
+                $data.ForEach{[system.io.path]::GetRandomFileName().Length}
 '@
 
             $script3 = @'
             # Method call should throw error.
-            (Get-Process powershell*).Foreach('GetHashCode')
+            (Get-Process powershell*).ForEach('GetHashCode')
 '@
 
             $script4 = @'
@@ -977,7 +867,7 @@ try
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
 
-                $results = $sb | Start-ThreadJob -ScriptBlock { $input | foreach { & $_ } } | Wait-Job | Receive-Job
+                $results = $sb | Start-ThreadJob -ScriptBlock { $input | ForEach-Object { & $_ } } | Wait-Job | Receive-Job
             }
             finally
             {
@@ -985,6 +875,354 @@ try
             }
 
             $results | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
+    Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
+            if ($skipTest) {
+                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+            }
+        }
+    
+        AfterAll {
+    
+            if ($skipTest) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            }
+        }
+
+        It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
+
+            try 
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $results | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
+    Describe "Dot sourced script block functions from trusted script files should not run FullLanguage in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $scriptFileName = "TrustedScriptBlockTest_System32"
+            $scriptFilePath = Join-Path $TestDrive ($scriptFileName + ".ps1")
+            @'
+            function TrustedFn {
+                Write-Output $ExecutionContext.SessionState.LanguageMode
+            }
+'@ | Out-File -FilePath $scriptFilePath
+
+            $scriptModuleName = "UntrustedModuleScriptBlockTest"
+            $scriptModulePath = Join-Path $TestDrive ($scriptModuleName + ".psm1")
+            @'
+            function RunScriptBlock {{
+                $sb = (Get-Command -Name {0}).ScriptBlock
+
+                # ScriptBlock trusted function, TrustedFn, is dot sourced into current scope
+                1 | ForEach-Object $sb
+                TrustedFn
+            }}
+'@ -f $scriptFilePath | Out-File -FilePath $scriptModulePath
+        }
+
+        It "Verifies a scriptblock from a trusted script file does not run as trusted" {
+
+            $result = $null
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Import untrusted module
+                Import-Module -Name $scriptModulePath -Force
+
+                # Run module function that dot sources TrustedFn and runs it in module scope
+                $result = RunScriptBlock
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            # Ensure scriptblock TrustedFn function ran as untrusted
+            $result | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
+    Describe "Dot sourcing trusted script in ConstrainedLanguage context is allowed when importing modules" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $importModuleName = "ToImportTrustedModuleTest_System32"
+            $importModulePath = Join-Path $TestDrive ($importModuleName + ".psm1")
+            $modScript = @'
+            function ImportModuleFn { "ImportModuleFn: $($ExecutionContext.SessionState.LanguageMode)" }
+            Export-ModuleMember -Function "ImportModuleFn"
+'@ | Out-File -FilePath $importModulePath
+
+            $scriptModuleName = "ImportTrustedModuleTest_System32"
+            $scriptModulePath = Join-Path $TestDrive ($scriptModuleName + ".psm1")
+            @'
+            Import-Module -Name {0} -Force
+            function ModuleFn {{ "ModuleFn: $($ExecutionContext.SessionState.LanguageMode)" }}
+            Export-ModuleMember -Function "ModuleFn","ImportModuleFn"
+'@ -f $importModulePath | Out-File -FilePath $scriptModulePath
+        }
+
+        It "Verifies that trusted module functions run in FullLanguage" {
+
+            $result1 = $null
+            $result2 = $null
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Import-Module -Name $scriptModulePath -Force
+
+                $result1 = ModuleFn
+                $result2 = ImportModuleFn
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $result1 | Should -BeExactly "ModuleFn: FullLanguage"
+            $result2 | Should -BeExactly "ImportModuleFn: FullLanguage"
+        }
+    }
+
+    Describe "PowerShell classes are not allowed in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $randomClassName = "class_$(Get-Random -Max 9999)"
+
+            $script = @'
+            class {0} {{ static Hello([string] $msg) {{ [System.Console]::WriteLine("Hello from: $msg") }} }}
+'@ -f $randomClassName
+
+            $modulePathName = "modulePath_$(Get-Random -Max 9999)"
+            $modulePath = Join-Path $testdrive $modulePathName
+            New-Item -Path $modulePath -ItemType Directory -Force
+
+            $untrustedScriptFile = Join-Path $modulePath "T1ScriptClass.ps1"
+            $script | Out-File -FilePath $untrustedScriptFile
+
+            $untrustedScriptModule = Join-Path $modulePath "T1ScriptClass.psm1"
+            $script | Out-File -FilePath $untrustedScriptModule
+
+            $trustedScriptFile = Join-Path $modulePath "T1ScriptClass_System32.ps1"
+            $script | Out-File -FilePath $trustedScriptFile
+
+            $trustedScriptModule = Join-Path $modulePath "T1ScriptClass_System32.psm1"
+            $script | Out-File -FilePath $trustedScriptModule
+        }
+
+        AfterAll {
+
+            Remove-Module -Name T1ScriptClass_System32 -Force -ErrorAction Ignore
+        }
+
+        It "Verifies that classes cannot be created in script running under constrained language" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Invoke-Expression -Command $script 2>$null -ErrorAction Stop
+                throw "No Error!"
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "ClassesNotAllowedInConstrainedLanguage,Microsoft.PowerShell.Commands.InvokeExpressionCommand"
+        }
+
+        It "Verifies that classes cannot be created in script files running under constrained language" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                & ($untrustedScriptFile)
+                throw "No Error!"
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "ClassesNotAllowedInConstrainedLanguage"
+        }
+
+        It "Verifies that classes cannot be created in untrusted script modules running under constrained language" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Import-Module -Name $untrustedScriptModule -ErrorAction Stop
+                throw "No Error!"
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "ClassesNotAllowedInConstrainedLanguage"
+        }
+
+        It "Verifies that classes can be created in trusted script files running under constrained language" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                { & ($trustedScriptFile) } | Should -Not -Throw
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            }
+        }
+
+        It "Verifies that classes can be created in trusted script modules running under constrained language" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                { Import-Module -Name $trustedScriptModule -ErrorAction Stop } | Should -Not -Throw
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            }
+        }
+    }
+
+    Describe "Invoke-History should not run command lines in FullLanguage mode when system is locked down" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $LanguageModeHistoryFilePath = Join-Path $TestDrive "LanguageModeHistory.XML"
+
+            # $ExecutionContext.SessionState.LanguageMode command line history item clixml
+            @'
+            <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+                <Obj RefId="0">
+                <TN RefId="0">
+                    <T>Microsoft.PowerShell.Commands.HistoryInfo</T>
+                    <T>System.Object</T>
+                </TN>
+                <ToString>$ExecutionContext.SessionState.LanguageMode</ToString>
+                <Props>
+                    <I64 N="Id">123</I64>
+                    <S N="CommandLine">$ExecutionContext.SessionState.LanguageMode</S>
+                    <Obj N="ExecutionStatus" RefId="1">
+                    <TN RefId="1">
+                        <T>System.Management.Automation.Runspaces.PipelineState</T>
+                        <T>System.Enum</T>
+                        <T>System.ValueType</T>
+                        <T>System.Object</T>
+                    </TN>
+                    <ToString>Completed</ToString>
+                    <I32>4</I32>
+                    </Obj>
+                    <DT N="StartExecutionTime">2018-07-26T14:36:33.923608-07:00</DT>
+                    <DT N="EndExecutionTime">2018-07-26T14:36:33.9266018-07:00</DT>
+                </Props>
+                </Obj>
+            </Objs>
+'@ | Out-File -FilePath $LanguageModeHistoryFilePath
+
+            $historyItem = Import-Clixml -Path $LanguageModeHistoryFilePath
+        }
+
+        It "Verifies that Invoke-History runs command lines in ConstrainedLanguage" {
+
+            $result = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Add "$ExecutionContext.SessionState.LanguageMode" command line to history
+                $historyItem | Add-History
+
+                # Retrieve history item command and invoke
+                $retrievedItem = Get-History -Count 1
+                $result = $retrievedItem | Invoke-History
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $result | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
+    Describe "Enter-PSHostProcess cmdlet should be disabled on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies that Enter-PSHostProcess is disabled with lock down policy" {
+
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Enter-PSHostProcess -Id 5555 -ErrorAction Stop
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly 'EnterPSHostProcessCmdletDisabled,Microsoft.PowerShell.Commands.EnterPSHostProcessCommand'
         }
     }
 

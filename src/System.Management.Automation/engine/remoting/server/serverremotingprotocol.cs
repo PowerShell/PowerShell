@@ -61,7 +61,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This event indicates a request for creating a new runspace pool
-        /// has been received on the server side
+        /// has been received on the server side.
         /// </summary>
         internal abstract event EventHandler<RemoteDataEventArgs> CreateRunspacePoolReceived;
 
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Transport manager used by this data structure handler
+        /// Transport manager used by this data structure handler.
         /// </summary>
         internal abstract AbstractServerSessionTransportManager TransportManager
         {
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal abstract void RaiseDataReceivedEvent(RemoteDataEventArgs arg); // this is the API the Transport calls
 
-        internal abstract event EventHandler<RemoteDataEventArgs<String>> PublicKeyReceived;
+        internal abstract event EventHandler<RemoteDataEventArgs<string>> PublicKeyReceived;
 
         internal abstract void SendRequestForPublicKey();
 

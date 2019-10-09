@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-runtime-stretch-slim
+FROM microsoft/dotnet:2.1.7-runtime-stretch-slim
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION
@@ -13,7 +13,8 @@ RUN apt-get update \
         ca-certificates \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8

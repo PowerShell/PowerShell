@@ -25,52 +25,52 @@ namespace System.Management.Automation.Security
     internal partial class NativeConstants
     {
         /// <Summary>
-        /// SAFER_TOKEN_NULL_IF_EQUAL -> 0x00000001
+        /// SAFER_TOKEN_NULL_IF_EQUAL -> 0x00000001.
         /// </Summary>
         public const int SAFER_TOKEN_NULL_IF_EQUAL = 1;
 
         /// <Summary>
-        /// SAFER_TOKEN_COMPARE_ONLY -> 0x00000002
+        /// SAFER_TOKEN_COMPARE_ONLY -> 0x00000002.
         /// </Summary>
         public const int SAFER_TOKEN_COMPARE_ONLY = 2;
 
         /// <Summary>
-        /// SAFER_TOKEN_MAKE_INERT -> 0x00000004
+        /// SAFER_TOKEN_MAKE_INERT -> 0x00000004.
         /// </Summary>
         public const int SAFER_TOKEN_MAKE_INERT = 4;
 
         /// <Summary>
-        /// SAFER_CRITERIA_IMAGEPATH -> 0x00001
+        /// SAFER_CRITERIA_IMAGEPATH -> 0x00001.
         /// </Summary>
         public const int SAFER_CRITERIA_IMAGEPATH = 1;
 
         /// <Summary>
-        /// SAFER_CRITERIA_NOSIGNEDHASH -> 0x00002
+        /// SAFER_CRITERIA_NOSIGNEDHASH -> 0x00002.
         /// </Summary>
         public const int SAFER_CRITERIA_NOSIGNEDHASH = 2;
 
         /// <Summary>
-        /// SAFER_CRITERIA_IMAGEHASH -> 0x00004
+        /// SAFER_CRITERIA_IMAGEHASH -> 0x00004.
         /// </Summary>
         public const int SAFER_CRITERIA_IMAGEHASH = 4;
 
         /// <Summary>
-        /// SAFER_CRITERIA_AUTHENTICODE -> 0x00008
+        /// SAFER_CRITERIA_AUTHENTICODE -> 0x00008.
         /// </Summary>
         public const int SAFER_CRITERIA_AUTHENTICODE = 8;
 
         /// <Summary>
-        /// SAFER_CRITERIA_URLZONE -> 0x00010
+        /// SAFER_CRITERIA_URLZONE -> 0x00010.
         /// </Summary>
         public const int SAFER_CRITERIA_URLZONE = 16;
 
         /// <Summary>
-        /// SAFER_CRITERIA_IMAGEPATH_NT -> 0x01000
+        /// SAFER_CRITERIA_IMAGEPATH_NT -> 0x01000.
         /// </Summary>
         public const int SAFER_CRITERIA_IMAGEPATH_NT = 4096;
 
         /// <Summary>
-        /// WTD_UI_NONE -> 0x00002
+        /// WTD_UI_NONE -> 0x00002.
         /// </Summary>
         public const int WTD_UI_NONE = 2;
 
@@ -85,22 +85,22 @@ namespace System.Management.Automation.Security
         public const int S_FALSE = 1;
 
         /// <Summary>
-        /// ERROR_MORE_DATA -> 234L
+        /// ERROR_MORE_DATA -> 234L.
         /// </Summary>
         public const int ERROR_MORE_DATA = 234;
 
         /// <Summary>
-        /// ERROR_ACCESS_DISABLED_BY_POLICY -> 1260L
+        /// ERROR_ACCESS_DISABLED_BY_POLICY -> 1260L.
         /// </Summary>
         public const int ERROR_ACCESS_DISABLED_BY_POLICY = 1260;
 
         /// <Summary>
-        /// ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY -> 786L
+        /// ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY -> 786L.
         /// </Summary>
         public const int ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY = 786;
 
         /// <Summary>
-        /// SAFER_MAX_HASH_SIZE -> 64
+        /// SAFER_MAX_HASH_SIZE -> 64.
         /// </Summary>
         public const int SAFER_MAX_HASH_SIZE = 64;
 
@@ -110,33 +110,33 @@ namespace System.Management.Automation.Security
         public const string SRP_POLICY_SCRIPT = "SCRIPT";
 
         /// <Summary>
-        /// SIGNATURE_DISPLAYNAME_LENGTH -> MAX_PATH
+        /// SIGNATURE_DISPLAYNAME_LENGTH -> MAX_PATH.
         /// </Summary>
         internal const int SIGNATURE_DISPLAYNAME_LENGTH = NativeConstants.MAX_PATH;
 
         /// <Summary>
-        /// SIGNATURE_PUBLISHER_LENGTH -> 128
+        /// SIGNATURE_PUBLISHER_LENGTH -> 128.
         /// </Summary>
         internal const int SIGNATURE_PUBLISHER_LENGTH = 128;
 
         /// <Summary>
-        /// SIGNATURE_HASH_LENGTH -> 64
+        /// SIGNATURE_HASH_LENGTH -> 64.
         /// </Summary>
         internal const int SIGNATURE_HASH_LENGTH = 64;
 
         /// <Summary>
-        /// MAX_PATH -> 260
+        /// MAX_PATH -> 260.
         /// </Summary>
         internal const int MAX_PATH = 260;
 
         /// <Summary>
-        /// This function is not supported on this system
+        /// This function is not supported on this system.
         /// </Summary>
         internal const int FUNCTION_NOT_SUPPORTED = 120;
     }
 
     /// <summary>
-    /// pinvoke methods from crypt32.dll
+    /// Pinvoke methods from crypt32.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Security
                                  CertEnumSystemStoreCallBackProto fn);
 
         /// <summary>
-        /// signature of call back function used by CertEnumSystemStore
+        /// Signature of call back function used by CertEnumSystemStore.
         /// </summary>
         internal delegate
         bool CertEnumSystemStoreCallBackProto([MarshalAs(UnmanagedType.LPWStr)]
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Security
                                                IntPtr notUsed3);
 
         /// <summary>
-        /// signature of cert enumeration function
+        /// Signature of cert enumeration function.
         /// </summary>
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Security
                                             IntPtr certContext);
 
         /// <summary>
-        /// signature of cert find function
+        /// Signature of cert find function.
         /// </summary>
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -498,8 +498,8 @@ namespace System.Management.Automation.Security
         [DllImport(PinvokeDllNames.CryptAcquireContextDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
         bool CryptAcquireContext(ref IntPtr hProv,
-                                 String strContainerName,
-                                 String strProviderName,
+                                 string strContainerName,
+                                 string strProviderName,
                                  int nProviderType,
                                  uint uiProviderFlags);
 
@@ -514,19 +514,19 @@ namespace System.Management.Automation.Security
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenStorageProvider(ref IntPtr hProv,
-                                      String strProviderName,
+                                      string strProviderName,
                                       uint dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenKey(IntPtr hProv,
                           ref IntPtr hKey,
-                          String strKeyName,
+                          string strKeyName,
                           uint dwLegacySpec,
                           uint dwFlags);
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern unsafe
-        int NCryptSetProperty(IntPtr hProv, String pszProperty, void* pbInput, int cbInput, int dwFlags);
+        int NCryptSetProperty(IntPtr hProv, string pszProperty, void* pbInput, int cbInput, int dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
@@ -579,15 +579,15 @@ namespace System.Management.Automation.Security
         internal enum SignInfoSubjectChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_FILE = 0x01
-            //CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_BLOB = 0x02 NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_BLOB = 0x02 NotUsed
         };
 
         [Flags]
         internal enum SignInfoCertChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_CERT = 0x01
-            //CRYPTUI_WIZ_DIGITAL_SIGN_STORE = 0x02, NotUsed
-            //CRYPTUI_WIZ_DIGITAL_SIGN_PVK = 0x03, NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_STORE = 0x02, NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_PVK = 0x03, NotUsed
         };
 
         [Flags]
@@ -891,10 +891,10 @@ namespace System.Management.Automation.Security
         internal enum WintrustUnionChoice
         {
             WTD_CHOICE_FILE = 1,
-            //WTD_CHOICE_CATALOG = 2,
+            // WTD_CHOICE_CATALOG = 2,
             WTD_CHOICE_BLOB = 3,
-            //WTD_CHOICE_SIGNER = 4,
-            //WTD_CHOICE_CERT = 5,
+            // WTD_CHOICE_SIGNER = 4,
+            // WTD_CHOICE_CERT = 5,
         };
 
         [Flags]
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 wtd = Marshal.PtrToStructure<WINTRUST_DATA>(wtdBuffer);
             }
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
             }
             finally
             {
@@ -1221,8 +1221,8 @@ namespace System.Management.Automation.Security
         internal struct CERT_ENHKEY_USAGE
         {
             internal DWORD cUsageIdentifier;
-            //[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)]
-            //internal string[] rgpszUsageIdentifier; // LPSTR*
+            // [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)]
+            // internal string[] rgpszUsageIdentifier; // LPSTR*
             internal IntPtr rgpszUsageIdentifier;
         };
 
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// pinvoke methods from certca.dll
+    /// Pinvoke methods from certca.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -1475,25 +1475,6 @@ namespace System.Management.Automation.Security
             CRYPT_DECODE_ENABLE_IA5CONVERSION_FLAG = (CRYPT_DECODE_ENABLE_PUNYCODE_FLAG | CRYPT_DECODE_ENABLE_UTF8PERCENT_FLAG),
         }
     }
-
-    #region Check_UI_Allowed
-
-    /// <summary>
-    /// Used in CertificateProvider to detect if UI is allowed.
-    /// </summary>
-    internal static partial class NativeMethods
-    {
-        [DllImport("kernel32.dll")]
-        internal static extern bool ProcessIdToSessionId(uint dwProcessId, out uint pSessionId);
-
-        [DllImport("kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        internal static extern IntPtr GetDesktopWindow();
-    }
-
-    #endregion Check_UI_Allowed
 
     #region SAFER_APIs
 
@@ -1637,7 +1618,7 @@ namespace System.Management.Automation.Security
     #endregion SAFER_APIs
 
     /// <summary>
-    /// pinvoke methods from advapi32.dll
+    /// Pinvoke methods from advapi32.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -1796,11 +1777,13 @@ namespace System.Management.Automation.Security
             IntPtr pSacl);
 
         [DllImport(PinvokeDllNames.ConvertStringSidToSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ConvertStringSidToSid(
             string StringSid,
             out IntPtr Sid);
 
         [DllImport(PinvokeDllNames.IsValidSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool IsValidSid(IntPtr pSid);
 
         [DllImport(PinvokeDllNames.GetLengthSidDllName, CharSet = CharSet.Unicode)]
@@ -1817,6 +1800,7 @@ namespace System.Management.Automation.Security
         internal static extern uint LsaFreeMemory(IntPtr Buffer);
 
         [DllImport(PinvokeDllNames.InitializeAclDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool InitializeAcl(
             IntPtr pAcl,
             uint nAclLength,
@@ -1837,12 +1821,14 @@ namespace System.Management.Automation.Security
         internal static extern IntPtr GetCurrentThread();
 
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenProcessToken(
             IntPtr ProcessHandle,
             uint DesiredAccess,
             out IntPtr TokenHandle);
 
         [DllImport(PinvokeDllNames.OpenThreadTokenDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenThreadToken(
             IntPtr ThreadHandle,
             uint DesiredAccess,
@@ -1850,12 +1836,14 @@ namespace System.Management.Automation.Security
             out IntPtr TokenHandle);
 
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupPrivilegeValue(
             string lpSystemName,
             string lpName,
             ref LUID lpLuid);
 
         [DllImport(PinvokeDllNames.AdjustTokenPrivilegesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AdjustTokenPrivileges(
             IntPtr TokenHandle,
             bool DisableAllPrivileges,
@@ -1887,6 +1875,7 @@ namespace System.Management.Automation.Security
             uint Flags);
 
         [DllImport(PinvokeDllNames.FreeLibrary, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FreeLibrary(
             IntPtr Module);
 
@@ -1911,6 +1900,7 @@ namespace System.Management.Automation.Security
             catch (Exception)
             {
             }
+
             return DllExists;
         }
     }
@@ -1956,8 +1946,8 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// pinvoke methods from wintrust.dll
-    /// These are added to Generate and Validate Window Catalog Files
+    /// Pinvoke methods from wintrust.dll
+    /// These are added to Generate and Validate Window Catalog Files.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -2044,7 +2034,8 @@ namespace System.Management.Automation.Security
         );
 
         [DllImport("wintrust.dll")]
-        internal static extern BOOL CryptCATCDFClose(
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CryptCATCDFClose(
             IntPtr pCDF
         );
 
@@ -2085,7 +2076,8 @@ namespace System.Management.Automation.Security
          );
 
         [DllImport("wintrust.dll")]
-        internal static extern BOOL CryptCATClose(
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CryptCATClose(
           IntPtr hCatalog
         );
 
@@ -2095,6 +2087,7 @@ namespace System.Management.Automation.Security
         );
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminAcquireContext2(
           ref IntPtr phCatAdmin,
           IntPtr pgSubsystem,
@@ -2105,6 +2098,7 @@ namespace System.Management.Automation.Security
       );
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminReleaseContext(
             IntPtr phCatAdmin,
             DWORD dwFlags
@@ -2122,6 +2116,7 @@ namespace System.Management.Automation.Security
            );
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminCalcHashFromFileHandle2(
             IntPtr hCatAdmin,
             IntPtr hFile,
@@ -2150,7 +2145,7 @@ namespace System.Management.Automation.Security
         );
 
         /// <summary>
-        /// signature of call back function used by CryptCATCDFOpen
+        /// Signature of call back function used by CryptCATCDFOpen.
         /// </summary>
         internal delegate
         void CryptCATCDFOpenCallBack(DWORD NotUsedDWORD1,
@@ -2159,7 +2154,7 @@ namespace System.Management.Automation.Security
                                       string NotUsedString);
 
         /// <summary>
-        /// signature of call back function used by CryptCATCDFEnumMembersByCDFTagEx
+        /// Signature of call back function used by CryptCATCDFEnumMembersByCDFTagEx.
         /// </summary>
         internal delegate
         void CryptCATCDFEnumMembersByCDFTagExErrorCallBack(DWORD NotUsedDWORD1,

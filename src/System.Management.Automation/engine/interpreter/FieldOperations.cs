@@ -48,6 +48,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -68,6 +69,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame)
@@ -90,6 +92,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame)

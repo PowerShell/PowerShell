@@ -62,6 +62,8 @@
             Tracking Issue https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
 
@@ -89,13 +91,12 @@
   </Target>
 
   <PropertyGroup>
-    <Product>PowerShell Core</Product>
+    <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
-    <LangVersion>Latest</LangVersion>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -111,7 +112,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-    <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
+    <IsWindows Condition="'$(IsWindows)' =='true' or ( '$(IsWindows)' == '' and '$(OS)' == 'Windows_NT')">true</IsWindows>
   </PropertyGroup>
 
   <!-- Define non-windows, all configuration properties -->
@@ -132,6 +133,7 @@
   <!-- Define windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
     <Optimize>true</Optimize>
+    <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
   </PropertyGroup>
 
@@ -146,6 +148,7 @@
 
   <!-- Define all OS, CodeCoverage configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
+    <!-- This is required to be portable to Coverlet tool !-->
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>

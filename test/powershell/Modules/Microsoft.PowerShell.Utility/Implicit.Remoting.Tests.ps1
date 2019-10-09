@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-#
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-#
+
 $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 $originalWarningPreference = $WarningPreference
 $WarningPreference = "SilentlyContinue"
@@ -160,7 +159,7 @@ try
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
-	    }
+	}
     }
 
     Describe "Import-PSSession Cmdlet error handling" -tags "Feature","RequireAdminOnWindows" {
@@ -194,11 +193,14 @@ try
             BeforeAll {
                 if ($skipTest) { return }
                 $module = Import-PSSession -Session $session -Name Get-Variable -Prefix My -AllowClobber
+                $oldErrorView = $ErrorView
+                $ErrorView = "NormalView"
             }
 
             AfterAll {
                 if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                $ErrorView = $oldErrorView
             }
 
             It "Test non-terminating error" {
@@ -230,7 +232,7 @@ try
 
                 $icmErr = $($icmOut = Invoke-Command $session { foo1 }) 2>&1
                 $proxiedErr = $($proxiedOut = foo1) 2>&1
-                $proxiedOut2 = foo1 2>$null
+                $proxiedOut2 = foo1 2> $null
 
                 $icmOut = "$icmOut"
                 $icmErr = "$icmErr"
@@ -383,7 +385,7 @@ try
         }
 
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
-        ## Implicit credential doesn't work in AppVeyor builder, so mark all tests here '-pending'.
+        ## Implicit credential doesn't work in the Azure DevOps builder, so mark all tests here '-pending'.
 
         Context "Proxy module should create a new session" {
             BeforeAll {
@@ -855,7 +857,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -937,7 +939,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -988,14 +990,14 @@ try
                             $PriorityClass
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {gps -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1006,15 +1008,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1034,7 +1036,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -1465,7 +1467,7 @@ try
 
             Get-PSSessionConfiguration ImplicitRemotingRestrictedConfiguration* | Unregister-PSSessionConfiguration -Force
 
-            ## The 'Register-PSSessionConfiguration' call below raises an AssemblyLoadException in powershell core:
+            ## The 'Register-PSSessionConfiguration' call below raises an AssemblyLoadException in powershell:
             ## "Could not load file or assembly 'Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified."
             ## Issue #2555 is created to track this issue and all tests here are skipped for CoreCLR for now.
 
@@ -1564,13 +1566,17 @@ try
                 ($module.Name -notlike "${env:TMP}*") | Should -BeTrue
             }
 
-            It "Get-Command returns only 1 public command from implicit remoting module (1)" {
+            # Test temporarily disabled because of conflict with DG UMCI tests.
+            # Re-enable after DG UMCI tests moved to a separate test process.
+            It "Get-Command returns only 1 public command from implicit remoting module (1)" -Pending {
                 $c = @(Get-Command -Module $module)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
             }
 
-            It "Get-Command returns only 1 public command from implicit remoting module (2)" {
+            # Test temporarily disabled because of conflict with DG UMCI tests.
+            # Re-enable after DG UMCI tests moved to a separate test process.
+            It "Get-Command returns only 1 public command from implicit remoting module (2)" -Pending {
                 $c = @(Get-Command -Module $module.Name)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
@@ -1625,7 +1631,7 @@ try
 
         It "Strange parameter names should trigger an error" {
             try {
-                Invoke-Command $session { function attack(${foo="$(calc)"}){echo "It is done."}}
+                Invoke-Command $session { function attack(${foo="$(calc)"}){Write-Output "It is done."}}
                 $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
                 $expectedError | Should -Not -BeNullOrEmpty
             } finally {
@@ -1864,7 +1870,7 @@ try
             $oldNumberOfHandlers | Should -Be $newNumberOfHandlers
 
             ## Private functions from the implicit remoting module shouldn't get imported into global scope
-            @(dir function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
+            @(Get-ChildItem function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
         }
     }
 
@@ -1941,13 +1947,14 @@ try
         }
 
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
-        ## Implicit credential doesn't work in AppVeyor builder, so mark this test '-pending'.
+        ## Implicit credential doesn't work in the Windows Azure DevOps builder, so mark this test '-pending'.
+        ## Also, this feature doesn't work on macOS or Linux
         It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
             ## Disconnect session and make it un-connectable.
             Disconnect-PSSession $session
-            start powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
+            Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
 
-            sleep 3
+            Start-Sleep -Seconds 3
 
             ## This time a new session is created because the old one is unavailable.
             $dSessionPid = Get-RemoteVariable pid
@@ -1970,7 +1977,7 @@ try
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
-        It "Select -First should work with implicit remoting" {
+        It "Select-Object -First should work with implicit remoting" {
             $bar = foo | Select-Object -First 2
             $bar | Should -Not -BeNullOrEmpty
             $bar.Count | Should -Be 2
@@ -2049,7 +2056,6 @@ try
         }
 
         AfterAll {
-
             if ($skipTest) { return }
 
             if ($session -ne $null) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }

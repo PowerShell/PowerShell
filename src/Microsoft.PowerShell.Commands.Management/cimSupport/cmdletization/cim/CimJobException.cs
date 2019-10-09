@@ -5,13 +5,15 @@ using System;
 using System.Globalization;
 using System.Management.Automation;
 using System.Runtime.Serialization;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Represents an error during execution of a CIM job
+    /// Represents an error during execution of a CIM job.
     /// </summary>
     [Serializable]
     public class CimJobException : SystemException, IContainsErrorRecord
@@ -125,6 +127,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     errorId: "CimJob_" + inner.GetType().Name,
                     errorCategory: ErrorCategory.NotSpecified);
             }
+
             return cimJobException;
         }
 
@@ -267,7 +270,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 case NativeErrorCode.Ok:
                     return ErrorCategory.NotSpecified;
                 case NativeErrorCode.Failed:
-                    return ErrorCategory.NotSpecified; 
+                    return ErrorCategory.NotSpecified;
                 case NativeErrorCode.AccessDenied:
                     return ErrorCategory.PermissionDenied;
                 case NativeErrorCode.InvalidNamespace:
@@ -352,6 +355,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get { return _errorRecord; }
         }
+
         private ErrorRecord _errorRecord;
 
         internal bool IsTerminatingError

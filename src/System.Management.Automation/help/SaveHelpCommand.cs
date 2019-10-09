@@ -3,19 +3,19 @@
 
 using System;
 using System.Collections;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Help;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Save-Help cmdlet
+    /// This class implements the Save-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210612")]
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructor
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         public SaveHelpCommand() : base(UpdatableHelpCommandType.SaveHelpCommand)
         {
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Specifies the paths to save updates to
+        /// Specifies the paths to save updates to.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
@@ -49,18 +49,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
-        /// Specifies the literal path to save updates to
+        /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -69,16 +71,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Specifies the modules to update
+        /// Specifies the modules to update.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = PathParameterSetName)]
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = LiteralPathParameterSetName)]
@@ -89,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         public PSModuleInfo[] Module { get; set; }
 
         /// <summary>
-        /// Specifies the Module Specifications to update
+        /// Specifies the Module Specifications to update.
         /// </summary>
         [Parameter(ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -157,11 +161,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process a single module with a given culture
+        /// Process a single module with a given culture.
         /// </summary>
-        /// <param name="module">module to process</param>
-        /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <param name="module">Module to process.</param>
+        /// <param name="culture">Culture to use.</param>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             Collection<string> resolvedPaths = new Collection<string>();
@@ -173,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path))
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                         WriteError(e.ErrorRecord);
@@ -188,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Deal with wildcards
 
-                            int index = path.IndexOf("*", StringComparison.OrdinalIgnoreCase);
+                            int index = path.IndexOf('*');
 
                             if (index == 0)
                             {

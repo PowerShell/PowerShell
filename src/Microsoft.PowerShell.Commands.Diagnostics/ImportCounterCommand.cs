@@ -2,28 +2,29 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.ComponentModel;
-using System.Reflection;
-using System.Globalization;
-using System.Management.Automation.Runspaces;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Security;
 using System.Security.Principal;
-using System.Resources;
+using System.Text;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
-using Microsoft.PowerShell.Commands.GetCounter;
+using System.Xml;
+
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using Microsoft.PowerShell.Commands.GetCounter;
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -51,8 +52,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string[] _path;
 
         private StringCollection _resolvedPaths = new StringCollection();
@@ -76,9 +79,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] ListSet
         {
             get { return _listSet; }
+
             set { _listSet = value; }
         }
-        private string[] _listSet = new string[0];
+
+        private string[] _listSet = Array.Empty<string>();
 
         //
         // StartTime parameter
@@ -91,8 +96,10 @@ namespace Microsoft.PowerShell.Commands
         public DateTime StartTime
         {
             get { return _startTime; }
+
             set { _startTime = value; }
         }
+
         private DateTime _startTime = DateTime.MinValue;
 
         //
@@ -106,8 +113,10 @@ namespace Microsoft.PowerShell.Commands
         public DateTime EndTime
         {
             get { return _endTime; }
+
             set { _endTime = value; }
         }
+
         private DateTime _endTime = DateTime.MaxValue;
 
         //
@@ -126,9 +135,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] Counter
         {
             get { return _counter; }
+
             set { _counter = value; }
         }
-        private string[] _counter = new string[0];
+
+        private string[] _counter = Array.Empty<string>();
 
         //
         // Summary switch
@@ -137,8 +148,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Summary
         {
             get { return _summary; }
+
             set { _summary = value; }
         }
+
         private SwitchParameter _summary;
 
         //
@@ -154,8 +167,10 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaxSamples
         {
             get { return _maxSamples; }
+
             set { _maxSamples = value; }
         }
+
         private Int64 _maxSamples = KEEP_ON_SAMPLING;
 
         private ResourceManager _resourceMgr = null;
@@ -186,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell Core requires at least Windows 7,
+            // PowerShell 7 requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
 #else
@@ -207,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             ValidateFilePaths();
 
             switch (ParameterSetName)
@@ -347,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             categoryType = PerformanceCounterCategoryType.MultiInstance;
                         }
-                        else //if (counterSetInstances.Count == 1) //???
+                        else // if (counterSetInstances.Count == 1) //???
                         {
                             categoryType = PerformanceCounterCategoryType.SingleInstance;
                         }
@@ -358,6 +374,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(setObj);
                         bMatched = true;
                     }
+
                     if (!bMatched)
                     {
                         string msg = _resourceMgr.GetString("NoMatchingCounterSetsInFile");
@@ -419,9 +436,11 @@ namespace Microsoft.PowerShell.Commands
 
                             continue;
                         }
+
                         validPaths.Add(expandedPath);
                     }
                 }
+
                 if (validPaths.Count == 0)
                 {
                     return;
@@ -475,6 +494,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
+
                 if (res != 0 && res != PdhResults.PDH_INVALID_DATA)
                 {
                     ReportPdhError(res, false);
@@ -620,6 +640,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {

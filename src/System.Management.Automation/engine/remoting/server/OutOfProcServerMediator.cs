@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
 using System.IO;
-using System.Threading;
-using System.Security.Principal;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Threading;
+#if !UNIX
+using System.Security.Principal;
+#endif
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Server
@@ -26,11 +29,13 @@ namespace System.Management.Automation.Remoting.Server
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
 
+#if !UNIX
         // Thread impersonation.
         protected WindowsIdentity _windowsIdentityToImpersonate;
+#endif
 
         /// <summary>
-        /// Count of commands in progress
+        /// Count of commands in progress.
         /// </summary>
         protected int _inProgressCommandsCount = 0;
 
@@ -82,7 +87,9 @@ namespace System.Management.Automation.Remoting.Server
             catch (Exception e)
             {
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -91,7 +98,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -153,7 +162,9 @@ namespace System.Management.Automation.Remoting.Server
 
         protected void OnDataAckPacketReceived(Guid psGuid)
         {
-            throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived, RemotingErrorIdStrings.IPCUnknownElementReceived,
+            throw new PSRemotingTransportException(
+                PSRemotingErrorId.IPCUnknownElementReceived,
+                RemotingErrorIdStrings.IPCUnknownElementReceived,
                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
         }
 
@@ -248,6 +259,7 @@ namespace System.Management.Automation.Remoting.Server
                         // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
                         sessionTM.Close(null);
                     }
+
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
                 }
@@ -295,33 +307,39 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, currentIdentity.Name, null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, currentIdentity.Name, null),
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #else
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, string.Empty, null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, string.Empty, null),
                 null);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
-            ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                _initialCommand, tm, configurationName);
+            ServerRemoteSession.CreateServerRemoteSession(
+                senderInfo,
+                _initialCommand,
+                tm,
+                configurationName,
+                workingDirectory);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string configurationName = null)
+        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
 
             try
             {
@@ -332,9 +350,10 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
                         }
                     }
+
                     if (string.IsNullOrEmpty(data))
                     {
                         lock (_syncObject)
@@ -344,26 +363,32 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM.Close(null);
                             sessionTM = null;
                         }
-                        throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
-                            RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
+
+                        throw new PSRemotingTransportException(
+                            PSRemotingErrorId.IPCUnknownElementReceived,
+                            RemotingErrorIdStrings.IPCUnknownElementReceived,
+                            string.Empty);
                     }
 
                     // process data in a thread pool thread..this way Runspace, Command
                     // data can be processed concurrently.
-#if CORECLR
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
-#else
+#if !UNIX
                     Utils.QueueWorkItemWithImpersonation(
-                        _windowsIdentityToImpersonate,
-                        new WaitCallback(ProcessingThreadStart),
-                        data);
+                            _windowsIdentityToImpersonate,
+                            new WaitCallback(ProcessingThreadStart),
+                            data);
+#else
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
-                } while (true);
+                }
+                while (true);
             }
             catch (Exception e)
             {
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -372,7 +397,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -460,8 +487,11 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
+        /// Starts the out-of-process powershell server instance.
         /// </summary>
-        internal static void Run(string initialCommand)
+        /// <param name="initialCommand">Specifies the initialization script.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
+        internal static void Run(string initialCommand, string workingDirectory)
         {
             lock (SyncObject)
             {
@@ -478,7 +508,7 @@ namespace System.Management.Automation.Remoting.Server
             // Setup unhandled exception to log events
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
         }
 
         #endregion
@@ -591,15 +621,8 @@ namespace System.Management.Automation.Remoting.Server
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
 
 #if !UNIX
-            // Flow impersonation if requested.
-            WindowsIdentity currentIdentity = null;
-            try
-            {
-                currentIdentity = WindowsIdentity.GetCurrent();
-            }
-            catch (System.Security.SecurityException) { }
-            _windowsIdentityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ?
-                currentIdentity : null;
+            // Flow impersonation as needed.
+            Utils.TryGetWindowsImpersonatedIdentity(out _windowsIdentityToImpersonate);
 #endif
         }
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -25,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (int)_timeout.TotalMinutes;
             }
+
             set
             {
                 // The transactions constructor treats a timeout of
@@ -37,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeoutSpecified = true;
             }
         }
+
         private bool _timeoutSpecified = false;
         private TimeSpan _timeout = TimeSpan.MinValue;
 
@@ -48,8 +51,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Independent
         {
             get { return _independent; }
+
             set { _independent = value; }
         }
+
         private SwitchParameter _independent;
 
         /// <summary>
@@ -59,8 +64,10 @@ namespace Microsoft.PowerShell.Commands
         public RollbackSeverity RollbackPreference
         {
             get { return _rollbackPreference; }
+
             set { _rollbackPreference = value; }
         }
+
         private RollbackSeverity _rollbackPreference = RollbackSeverity.Error;
 
         /// <summary>

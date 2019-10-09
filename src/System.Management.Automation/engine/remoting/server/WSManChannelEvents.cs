@@ -53,7 +53,7 @@ namespace System.Management.Automation.Remoting.WSMan
     }
 
     /// <summary>
-    /// Holds the event arguments when active sessions count changed
+    /// Holds the event arguments when active sessions count changed.
     /// </summary>
     public sealed class ActiveSessionsChangedEventArgs : EventArgs
     {
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Remoting.WSMan
         }
 
         /// <summary>
-        /// ActiveSessionsCount
+        /// ActiveSessionsCount.
         /// </summary>
         public int ActiveSessionsCount
         {

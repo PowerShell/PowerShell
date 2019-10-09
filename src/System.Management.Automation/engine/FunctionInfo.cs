@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Text;
-using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -15,7 +15,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the function.
@@ -34,7 +34,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the function.
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the function.
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the function.
@@ -164,12 +164,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the ScriptBlock which is the implementation of the function
+        /// Gets the ScriptBlock which is the implementation of the function.
         /// </summary>
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -367,10 +368,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
-        /// Gets or sets the description associated with the function
+        /// Gets or sets the description associated with the function.
         /// </summary>
         public string Description
         {
@@ -391,10 +393,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private string _description = null;
 
         /// <summary>
-        /// Gets the verb of the function
+        /// Gets the verb of the function.
         /// </summary>
         public string Verb
         {
@@ -403,7 +406,8 @@ namespace System.Management.Automation
                 return _verb;
             }
         }
-        private string _verb = String.Empty;
+
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the function.
@@ -415,7 +419,8 @@ namespace System.Management.Automation
                 return _noun;
             }
         }
-        private string _noun = String.Empty;
+
+        private string _noun = string.Empty;
 
         /// <summary>
         /// Gets the help file path for the function.
@@ -426,15 +431,17 @@ namespace System.Management.Automation
             {
                 return _helpFile;
             }
+
             internal set
             {
                 _helpFile = value;
             }
         }
-        private string _helpFile = String.Empty;
+
+        private string _helpFile = string.Empty;
 
         /// <summary>
-        /// Returns the syntax of a command
+        /// Returns the syntax of a command.
         /// </summary>
         internal override string Syntax
         {
@@ -446,7 +453,7 @@ namespace System.Management.Automation
                 {
                     synopsis.AppendLine();
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
@@ -466,7 +473,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The command metadata for the function or filter
+        /// The command metadata for the function or filter.
         /// </summary>
         internal override CommandMetadata CommandMetadata
         {
@@ -477,10 +484,11 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {

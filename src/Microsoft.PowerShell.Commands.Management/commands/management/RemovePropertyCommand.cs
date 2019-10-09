@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -16,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -34,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -54,18 +56,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The name of the property to create on the item
+        /// The name of the property to create on the item.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
         public string[] Name
         {
             get { return _property; }
-            set { _property = value ?? Utils.EmptyArray<string>(); }
+
+            set { _property = value ?? Array.Empty<string>(); }
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -80,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter Force
         {
             get { return base.Force; }
+
             set { base.Force = value; }
         }
 
@@ -107,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.RemovePropertyDynamicParameters(Path[0], propertyName, context);
             }
+
             return InvokeProvider.Property.RemovePropertyDynamicParameters(".", propertyName, context);
         }
 
@@ -117,14 +122,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The property to be created.
         /// </summary>
-        private string[] _property = new string[0];
+        private string[] _property = Array.Empty<string>();
 
         #endregion parameter data
 
         #region Command code
 
         /// <summary>
-        /// Removes the property from the item
+        /// Removes the property from the item.
         /// </summary>
         protected override void ProcessRecord()
         {

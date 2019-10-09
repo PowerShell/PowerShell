@@ -126,7 +126,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 
         public UNICODE_STRING(string s)
         {
-            buffer = String.IsNullOrEmpty(s) ? String.Empty : s;
+            buffer = string.IsNullOrEmpty(s) ? string.Empty : s;
             Length = (UInt16)(2 * buffer.Length);
             MaximumLength = Length;
         }
@@ -137,7 +137,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             // often have buffers that point to junk if Length = 0, or that
             // point to non-null-terminated strings, resulting in marshaled
             // String objects that have more characters than they should.
-            return Length == 0 ? String.Empty
+            return Length == 0 ? string.Empty
                                : buffer.Substring(0, Length / 2);
         }
     }
@@ -347,6 +347,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 
         #region Win32 Functions
         [DllImport(PInvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupAccountSid(string systemName,
                                                      byte[] accountSid,
                                                      StringBuilder accountName,
@@ -356,6 +357,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                      out SID_NAME_USE use);
 
         [DllImport(PInvokeDllNames.LookupAccountNameDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupAccountName(string systemName,
                                                       string accountName,
                                                       [MarshalAs(UnmanagedType.LPArray)]

@@ -26,6 +26,14 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
     Context 'Basic tests' {
 
+        BeforeAll {
+            $invalidPathTestCases = @(
+                @{ path = "This is an invalid path"; case = "invalid path"; errorId = "DirectoryNotFoundException,Microsoft.PowerShell.Commands.StartJobCommand"}
+                @{ path = ""; case = "empty string"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+                @{ path = " "; case = "whitespace string (single space)"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+            )
+        }
+
         AfterEach {
             Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
@@ -67,6 +75,18 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg = $job.ChildJobs[0].progress.readall()
             $ProgressMsg[0].Activity | Should -BeExactly 1
             $ProgressMsg[0].StatusDescription | Should -BeExactly 2
+        }
+
+        It 'Can use the user specified working directory parameter' {
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $TestDrive | Wait-Job
+            $jobOutput = Receive-Job $job
+            $jobOutput | Should -BeExactly $TestDrive.ToString()
+        }
+
+        It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
+            param($path, $case, $expectedErrorId)
+
+            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $expectedErrorId
         }
 
         It "Create job with native command" {

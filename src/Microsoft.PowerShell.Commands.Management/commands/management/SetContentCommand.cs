@@ -3,12 +3,13 @@
 
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to set the content of an item at a specified path
+    /// A command to set the content of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113392")]
@@ -63,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ItemNotFoundException)
                 {
-                    //If the item is not found then there is nothing to clear so ignore this exception.
+                    // If the item is not found then there is nothing to clear so ignore this exception.
                     continue;
                 }
             }

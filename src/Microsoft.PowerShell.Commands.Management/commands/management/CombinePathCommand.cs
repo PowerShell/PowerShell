@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -20,14 +21,14 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the childPath parameter to the command
+        /// Gets or sets the childPath parameter to the command.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
@@ -41,10 +42,10 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [AllowEmptyCollection]
-        public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
+        public string[] AdditionalChildPath { get; set; } = Array.Empty<string>();
 
         /// <summary>
-        /// Determines if the path should be resolved after being joined
+        /// Determines if the path should be resolved after being joined.
         /// </summary>
         /// <value></value>
         [Parameter]
