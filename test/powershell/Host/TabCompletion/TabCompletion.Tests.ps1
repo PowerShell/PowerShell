@@ -688,19 +688,6 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
-            $script = @'
-function Test-Completion {
-    param (
-        [String]$TestVal
-    )
-}
-
-Register-ArgumentCompleter -CommandName Test-Completion -ParameterName TestVal -ScriptBlock $completer
-
-Test-Completion -TestVal
-'@
-            # Workaround to prevent editors from trimming required trailing space.
-            $script += " "
             $scriptBl = {
                 function Test-Completion {
                     param (
@@ -717,7 +704,10 @@ Test-Completion -TestVal
             $pwsh = [PowerShell]::Create()
             $pwsh.AddScript($scriptBl)
             $pwsh.Invoke()
-            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($script, $script.Length, $null, $pwsh)
+
+            $completeInput_Input = $scriptBl.ToString()
+            $completeInput_Input += "`nTest-Completion -TestVal "
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($completeInput_Input, $completeInput_Input.Length, $null, $pwsh)
             $res.CompletionMatches | Should -HaveCount 2
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Val1'
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Val2'

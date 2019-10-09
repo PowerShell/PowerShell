@@ -1994,16 +1994,20 @@ namespace System.Management.Automation
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
             var parameterName = parameter.Name;
-            ScriptBlock customCompleter;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
             // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
             // See issue https://github.com/PowerShell/PowerShell/issues/10567
+            if(string.IsNullOrEmpty(commandName) && string.IsNullOrEmpty(commandAst.GetCommandName()))
+            {
+                return;
+            }
+
             var parameterFullName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName() + ":" + parameterName
                         : commandName + ":" + parameterName;
 
-            customCompleter = GetCustomArgumentCompleter(
+            ScriptBlock customCompleter = GetCustomArgumentCompleter(
                 "CustomArgumentCompleters",
                 new[] { parameterFullName, parameterName },
                 context);
