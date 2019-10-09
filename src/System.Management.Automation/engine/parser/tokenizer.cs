@@ -5006,10 +5006,10 @@ namespace System.Management.Automation.Language
                             if (c1 == '=')
                             {
                                 SkipChar();
-                                return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestionEquals);
+                                return this.NewToken(TokenKind.QuestionQuestionEquals);
                             }
 
-                            return CheckOperatorInCommandMode(c, c1, TokenKind.QuestionQuestion);
+                            return this.NewToken(TokenKind.QuestionQuestion);
                         }
                     }
 

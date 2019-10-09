@@ -608,7 +608,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
         /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
-        /// and all of the case sensitive variants of these operators, if they exists.
+        /// '??', and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
         BinaryPrecedenceComparison = 3,
 
@@ -861,7 +861,7 @@ namespace System.Management.Automation.Language
           /*                  Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
           /*           QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
-          /*       QuestionQuestion */ TokenFlags.BinaryOperator,
+          /*       QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison,
           /*     Reserved slot 5    */ TokenFlags.None,
           /*     Reserved slot 6    */ TokenFlags.None,
           /*     Reserved slot 7    */ TokenFlags.None,

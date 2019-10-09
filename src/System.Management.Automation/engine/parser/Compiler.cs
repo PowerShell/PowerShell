@@ -14,7 +14,6 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Interpreter;
 using System.Management.Automation.Runspaces;
-using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -663,8 +662,6 @@ namespace System.Management.Automation.Language
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length + SpecialVariables.PreferenceVariableTypes.Length,
                                         StringComparer.OrdinalIgnoreCase);
 
-        private static bool? IsNullCoalescingFeatureEnabled;
-
         static Compiler()
         {
             _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
@@ -791,6 +788,8 @@ namespace System.Management.Automation.Language
         {
             IAssignableValue av = left.GetAssignableValue();
             ExpressionType et = ExpressionType.Extension;
+            PSBinaryOperationBinder.ExtendedBinaryOperation extendedOperation = PSBinaryOperationBinder.ExtendedBinaryOperation.None;
+
             switch (tokenKind)
             {
                 case TokenKind.Equals: return av.SetValue(this, right);
@@ -799,40 +798,14 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionQuestionEquals: return GetCoalesceExpression(right, av, tokenKind);
+                case TokenKind.QuestionQuestionEquals: extendedOperation = PSBinaryOperationBinder.ExtendedBinaryOperation.Coalesce; break;
             }
 
             var exprs = new List<Expression>();
             var temps = new List<ParameterExpression>();
             var getExpr = av.GetValue(this, exprs, temps);
-            exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et), typeof(object), getExpr, right)));
+            exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et, ignoreCase: true, scalarCompare: false, extendedOperation), typeof(object), getExpr, right)));
             return Expression.Block(temps, exprs);
-        }
-
-        private Expression GetCoalesceExpression(Expression rhs, IAssignableValue leftAssignableValue, TokenKind tokenKind)
-        {
-            IsNullCoalescingFeatureEnabled ??= ExperimentalFeature.IsEnabled("PSNullCoalescingOperators");
-
-            if (IsNullCoalescingFeatureEnabled.Value == false)
-            {
-                return null;
-            }
-
-            var exprs = new List<Expression>();
-            var temps = new List<ParameterExpression>();
-            Expression leftExpr = leftAssignableValue.GetValue(this, exprs, temps);
-
-            if (tokenKind == TokenKind.QuestionQuestionEquals)
-            {
-                exprs.Add(
-                    Expression.Condition(
-                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, leftExpr),
-                            leftAssignableValue.SetValue(this, rhs),
-                            leftExpr.Convert(typeof(object))));
-                return Expression.Block(temps, exprs);
-            }
-
-            return null;
         }
 
         internal Expression GetLocal(int tupleIndex)
@@ -5263,18 +5236,9 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_SplitOperator,
                         _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
-                case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSNullCoalescingOperators") :
-                    if (lhs is ConstantExpression lhsConstExpr && lhsConstExpr.Value != null)
-                    {
-                        return lhs;
-                    }
-                    else
-                    {
-                        return Expression.Condition(
-                                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
-                                rhs.Convert(typeof(object)),
-                                lhs.Convert(typeof(object)));
-                    }
+                case TokenKind.QuestionQuestion:
+                    binder = PSBinaryOperationBinder.Get(ExpressionType.Extension, ignoreCase: true, scalarCompare: false, PSBinaryOperationBinder.ExtendedBinaryOperation.Coalesce);
+                    return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
             }
 
             throw new InvalidOperationException("Unknown token in binary operator.");

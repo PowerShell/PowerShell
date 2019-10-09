@@ -2114,7 +2114,16 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<Tuple<ExpressionType, bool, bool>, PSBinaryOperationBinder> s_binderCache =
             new Dictionary<Tuple<ExpressionType, bool, bool>, PSBinaryOperationBinder>();
 
-        internal static PSBinaryOperationBinder Get(ExpressionType operation, bool ignoreCase = true, bool scalarCompare = false)
+        private static bool? s_IsNullCoalescingFeatureEnabled;
+
+        internal enum ExtendedBinaryOperation
+        {
+            None,
+            Coalesce,
+            CoalesceAssignment
+        }
+
+        internal static PSBinaryOperationBinder Get(ExpressionType operation, bool ignoreCase = true, bool scalarCompare = false, ExtendedBinaryOperation extendedBinaryOperation = ExtendedBinaryOperation.None)
         {
             PSBinaryOperationBinder result;
             lock (s_binderCache)
@@ -2122,7 +2131,7 @@ namespace System.Management.Automation.Language
                 var key = Tuple.Create(operation, ignoreCase, scalarCompare);
                 if (!s_binderCache.TryGetValue(key, out result))
                 {
-                    result = new PSBinaryOperationBinder(operation, ignoreCase, scalarCompare);
+                    result = new PSBinaryOperationBinder(operation, ignoreCase, scalarCompare, extendedBinaryOperation);
                     s_binderCache.Add(key, result);
                 }
             }
@@ -2132,13 +2141,15 @@ namespace System.Management.Automation.Language
 
         private readonly bool _ignoreCase;
         private readonly bool _scalarCompare;
+        private readonly ExtendedBinaryOperation _extendedBinaryOperation;
         internal int _version;
 
-        private PSBinaryOperationBinder(ExpressionType operation, bool ignoreCase, bool scalarCompare)
+        private PSBinaryOperationBinder(ExpressionType operation, bool ignoreCase, bool scalarCompare, ExtendedBinaryOperation extendedBinaryOperation)
             : base(operation)
         {
             _ignoreCase = ignoreCase;
             _scalarCompare = scalarCompare;
+            _extendedBinaryOperation = extendedBinaryOperation;
             this._version = 0;
         }
 
@@ -2220,6 +2231,8 @@ namespace System.Management.Automation.Language
                     return LeftShift(target, arg, errorSuggestion).WriteToDebugLog(this);
                 case ExpressionType.RightShift:
                     return RightShift(target, arg, errorSuggestion).WriteToDebugLog(this);
+                case ExpressionType.Extension when _extendedBinaryOperation == ExtendedBinaryOperation.Coalesce || _extendedBinaryOperation == ExtendedBinaryOperation.CoalesceAssignment:
+                    return Coalesce(target, arg).WriteToDebugLog(this);
             }
 
             return (errorSuggestion ??
@@ -2267,6 +2280,8 @@ namespace System.Management.Automation.Language
                 case ExpressionType.LessThanOrEqual: return _ignoreCase ? TokenKind.Ile.Text() : TokenKind.Cle.Text();
                 case ExpressionType.LeftShift: return TokenKind.Shl.Text();
                 case ExpressionType.RightShift: return TokenKind.Shr.Text();
+                case ExpressionType.Extension when _extendedBinaryOperation == ExtendedBinaryOperation.Coalesce: return TokenKind.QuestionQuestion.Text();
+                case ExpressionType.Extension when _extendedBinaryOperation == ExtendedBinaryOperation.CoalesceAssignment: return TokenKind.QuestionQuestionEquals.Text();
             }
 
             Diagnostics.Assert(false, "Unexpected operator");
@@ -3403,6 +3418,43 @@ namespace System.Management.Automation.Language
             }
 
             return null;
+        }
+
+        private DynamicMetaObject Coalesce(DynamicMetaObject target, DynamicMetaObject arg)
+        {
+            s_IsNullCoalescingFeatureEnabled ??= ExperimentalFeature.IsEnabled("PSNullCoalescingOperators");
+
+            if (s_IsNullCoalescingFeatureEnabled.Value == false)
+            {
+                return null;
+            }
+
+            Type targetExpType = target.Expression.Type;
+            Expression lhs = target.Expression.Cast(typeof(object));
+            Expression rhs = arg.Expression.Cast(typeof(object));
+
+            Expression retExp;
+            if (targetExpType.IsValueType)
+            {
+                retExp = lhs;
+            }
+            else if (targetExpType == typeof(DBNull) || targetExpType == typeof(NullString) || targetExpType == typeof(AutomationNull))
+            {
+                retExp = rhs;
+            }
+            else if (target.Expression is ConstantExpression targetConstExp)
+            {
+                retExp = targetConstExp.Value != null ? lhs : rhs;
+            }
+            else
+            {
+                retExp = Expression.Condition(
+                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
+                    rhs,
+                    lhs);
+            }
+
+            return new DynamicMetaObject(retExp, target.CombineRestrictions(arg));
         }
 
         #endregion Comparison operations
