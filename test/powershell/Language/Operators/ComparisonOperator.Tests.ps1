@@ -83,14 +83,48 @@ Describe "ComparisonOperator" -tag "CI" {
         Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
 
-    It 'Should succeed in comparing null: <lhs> <operator> $null' {
-        ([Array]$null) -is $null | Should -BeTrue
-        'Hello' -isnot $null | Should -BeTrue
+    Context '-is $null comparisons' {
+        It 'Should return true when the left side is null' {
+            ([Array]$null) -is $null | Should -BeTrue
+        }
+
+        It 'Should return true when the left side is [System.Management.Automation.Internal.AutomationNull]::Value' {
+            [System.Management.Automation.Internal.AutomationNull]::Value -is $null | Should -BeTrue
+        }
+
+        It 'Should return true when the left side is [DBNull]::Value' {
+            [DBNull]::Value -is $null | Should -BeTrue
+        }
+
+        It 'Should return true when the left side is [NullString]::Value' {
+            [NullString]::Value -is $null | Should -BeTrue
+        }
+
+        It 'Should return false when the left side is not null' {
+            'Hello' -is $null | Should -BeFalse
+        }
     }
 
-    It 'Should fail in comparing null: <lhs> <operator> $null'{
-        ([Array]$null) -isnot $null | Should -BeFalse
-        'Hello' -is $null | Should -BeFalse
+    Context '-isnot $null comparisons' {
+        It 'Should return false when the left side is null' {
+            ([Array]$null) -isnot $null | Should -BeFalse
+        }
+
+        It 'Should return false when the left side is [System.Management.Automation.Internal.AutomationNull]::Value' {
+            [System.Management.Automation.Internal.AutomationNull]::Value -isnot $null | Should -BeFalse
+        }
+
+        It 'Should return false when the left side is [DBNull]::Value' {
+            [DBNull]::Value -isnot $null | Should -BeFalse
+        }
+
+        It 'Should return false when the left side is [NullString]::Value' {
+            [NullString]::Value -isnot $null | Should -BeFalse
+        }
+
+        It 'Should return true the the left side is not null' {
+            'Hello' -isnot $null | Should -BeTrue
+        }
     }
 }
 
