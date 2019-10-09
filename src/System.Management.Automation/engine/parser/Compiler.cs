@@ -798,7 +798,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionQuestionEquals: extendedOperation = PSBinaryOperationBinder.ExtendedBinaryOperation.Coalesce; break;
+                case TokenKind.QuestionQuestionEquals: extendedOperation = PSBinaryOperationBinder.ExtendedBinaryOperation.CoalesceAssignment; break;
             }
 
             var exprs = new List<Expression>();
