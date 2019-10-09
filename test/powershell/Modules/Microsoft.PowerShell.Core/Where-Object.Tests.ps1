@@ -10,20 +10,44 @@ Describe "Where-Object" -Tags "CI" {
                 IPAddress = "192.168.0.1"
                 NumberOfCores = 1
                 Drives = 'C','D'
-                NICCards = @('Broadcom')
             },
             [PSCustomObject]@{
                 ComputerName = "BGP-5678"
                 IPAddress = ""
                 NumberOfCores = 2
                 Drives = 'C','D','E'
-                NICCards = $null
             },
             [PSCustomObject]@{
                 ComputerName = "MGC-9101"
                 NumberOfCores = 3
                 Drives = 'C'
-                NICCards = $null
+            }
+        )
+
+        $NullTestData = @(
+            [PSCustomObject]@{
+                Value = $null
+            }
+            [PSCustomObject]@{
+                Value = [NullString]::Value
+            }
+            [PSCustomObject]@{
+                Value = [DBNull]::Value
+            }
+            [PSCustomObject]@{
+                Value = [System.Management.Automation.Internal.AutomationNull]::Value
+            }
+            [PSCustomObject]@{
+                Value = @()
+            }
+            [PSCustomObject]@{
+                Value = @($null)
+            }
+            [PSCustomObject]@{
+                Value = @('Some value')
+            }
+            [PSCustomObject]@{
+                Value = @(1, $null, 2, $null, 3)
             }
         )
     }
@@ -146,14 +170,48 @@ Describe "Where-Object" -Tags "CI" {
         $Result[1] | Should -Be $dynObj
     }
 
-    It 'Where-Object Prop -Is $null' {
-        $Result = $Computers | Where-Object NICCards -Is $null
-        $Result | Should -HaveCount 2
+    Context 'Where-Object Prop -is $null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Value -Is $null
+        }
+
+        It 'Should find all null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Should have found a $null match' {
+            $Result[0].Value -is $null | Should -BeTrue
+            $Result[0].Value | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+
+        It 'Should have found a [NullString]::Value match' {
+            $Result[1].Value | Should -BeOfType [NullString]
+        }
+
+        It 'Should have found a [DBNull]::Value match' {
+            $Result[2].Value | Should -BeOfType [DBNull]
+        }
+
+        It 'Should have found a [S.M.A.Internal.AutomationNull]::Value match' {
+            $Result[3].Value -is $null | Should -BeTrue
+            $Result[3].Value | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
     }
 
-    It 'Where-Object Prop -IsNot $null' {
-        $Result = $Computers | Where-Object NICCards -IsNot $null
-        $Result | Should -HaveCount 1
+    Context 'Where-Object Prop -isnot $null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Value -IsNot $null
+        }
+
+        It 'Should find all non-null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Each non-null match should be of type array' {
+            foreach ($item in $Result) {
+                ,$item.Value | Should -BeOfType [array]
+            }
+        }
     }
 
 }
