@@ -1908,9 +1908,15 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_UseNewEnvironment)
                 {
-                    startInfo.EnvironmentVariables.Clear();
-                    LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
-                    LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
+                    // Use environment variables from saved at startup dictionary
+                    var envVariables = startInfo.EnvironmentVariables;
+                    envVariables.Clear();
+                    IDictionaryEnumerator e = System.Management.Automation.Runspaces.EarlyStartup.InitialEnvironmentVariables.GetEnumerator();
+                    while (e.MoveNext())
+                    {
+                        DictionaryEntry entry = e.Entry;
+                        envVariables.Add((string)entry.Key, (string)entry.Value);
+                    }
                 }
 
                 startInfo.WindowStyle = _windowstyle;

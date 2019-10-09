@@ -65,6 +65,18 @@ namespace System.Management.Automation.Runspaces
                 LanguagePrimitives.GetEnumerator(null);
             });
         }
+
+        internal static IDictionary InitialEnvironmentVariables
+        {
+            get => _environmentVariables;
+        }
+
+        private static IDictionary _environmentVariables;
+
+        internal static void SaveEnvironmentVariables()
+        {
+            _environmentVariables = Environment.GetEnvironmentVariables();
+        }
     }
 
     /// <summary>

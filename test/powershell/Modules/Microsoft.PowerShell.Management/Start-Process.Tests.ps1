@@ -147,6 +147,28 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 }
 
+Describe "Start-Process" -Tags "CI" {
+
+    It "UseNewEnvironment parameter should restore environment variables for child process" {
+        $TestVariableName = "TestVariableName"
+        [Environment]::SetEnvironmentVariable($TestVariableName, 1)
+
+        if ($IsWindows) {
+            Start-Process -Wait -ArgumentList '/c','set' cmd.exe -RedirectStandardOutput "$TESTDRIVE/outputBefore"
+            Start-Process -Wait -ArgumentList '/c','set' cmd.exe -UseNewEnvironment -RedirectStandardOutput "$TESTDRIVE/outputAfter"
+        } else {
+            Start-Process -Wait -ArgumentList '--norc','-c','printenv' bash -RedirectStandardOutput "$TESTDRIVE/outputBefore"
+            Start-Process -Wait -ArgumentList '--norc','-c','printenv' bash -UseNewEnvironment -RedirectStandardOutput "$TESTDRIVE/outputAfter"
+        }
+
+        $before = Get-Content -Raw -Path "$TESTDRIVE/outputBefore"
+        $after = Get-Content -Raw -Path "$TESTDRIVE/outputAfter"
+
+        $before          | Should -Not -BeExactly $after
+        $before          | Should -Match $TestVariableName
+    }
+}
+
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
 
     BeforeEach {

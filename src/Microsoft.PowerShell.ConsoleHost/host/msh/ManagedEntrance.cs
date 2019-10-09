@@ -32,6 +32,9 @@ namespace Microsoft.PowerShell
         /// </param>
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         {
+            // Save environment variables before we change them.
+            EarlyStartup.SaveEnvironmentVariables();
+
             // Warm up some components concurrently on background threads.
             EarlyStartup.Init();
 
