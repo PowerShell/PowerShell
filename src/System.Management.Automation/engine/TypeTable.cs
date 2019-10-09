@@ -4489,6 +4489,13 @@ namespace System.Management.Automation.Runspaces
                 ProcessTypeData(filePath, errors, Types_Ps1Xml.Get());
                 result = true;
             }
+            else if (string.Equals(Path.Combine(psHome, "typesv3.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            {
+                // Workaround for a scenario where we get the 'typesv3.ps1xml' file name from public API.
+                // Now all types from 'typesv3.ps1xml' is in 'types.ps1xml' so we load 'types.ps1xml'.
+                ProcessTypeData("types.ps1xml", errors, Types_Ps1Xml.Get());
+                result = true;
+            }
             else if (string.Equals(Path.Combine(psHome, "GetEvent.types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
             {
                 ProcessTypeData(filePath, errors, GetEvent_Types_Ps1Xml.Get());
