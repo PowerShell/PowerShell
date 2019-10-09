@@ -101,7 +101,7 @@ Describe "ComparisonOperator" -tag "CI" {
         }
 
         It 'Should return false when the left side is not null' {
-            'Hello' -is $null | Should -BeFalse
+            @('Hello',$null) -is $null | Should -BeFalse
         }
     }
 
@@ -123,7 +123,7 @@ Describe "ComparisonOperator" -tag "CI" {
         }
 
         It 'Should return true the the left side is not null' {
-            'Hello' -isnot $null | Should -BeTrue
+            @('Hello',$null) -isnot $null | Should -BeTrue
         }
     }
 }
