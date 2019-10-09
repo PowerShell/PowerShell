@@ -1601,7 +1601,8 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection()
         {
-            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.ByteCollection",
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, label: "Offset", width: 16)
                     .AddHeader(Alignment.Left, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
@@ -1609,20 +1610,9 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("HexOffset")
                         .AddPropertyColumn("HexBytes")
-                        .AddPropertyColumn("AsciiBytes")
+                        .AddPropertyColumn("Ascii")
                     .EndRowDefinition()
-                    .GroupByScriptBlock(@"
-                        if ($_.SourceType) {
-                            'TypeName: {0}' -f $_.SourceType.FullName
-                        }
-                        else if ($_.Path)
-                        {
-                            'Path: {0}' -f $_.Path
-                        }
-                        else {
-                            'String: {0}' -f $_.AsciiBytes
-                        }
-                    ")
+                    .GroupByProperty("Label")
                 .EndTable());
         }
     }
