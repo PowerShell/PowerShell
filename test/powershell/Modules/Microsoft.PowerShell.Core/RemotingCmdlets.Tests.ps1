@@ -22,7 +22,7 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
             Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
     }
 
-    It "Invoke-Command should support poisitonal parameter ScriptBlock when using SSHConnection" {
+    It "Invoke-Command should support positional parameter ScriptBlock when using SSHConnection" {
         { Invoke-Command -SSHConnection @{ HostName = "localhost" } { "test" } } |
             Should -Not -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.InvokeCommandCommand"
     }
