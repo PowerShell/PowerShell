@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
     public class ByteCollection
     {
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Initializes a new instance of ByteCollection.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
@@ -153,14 +153,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
-        /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="label">
-        /// The label for the byte group. This may be a file path, a string value, or a
-        /// formatted identifying string for the group.
+        /// The label for the byte group. This may be a file path or a formatted identifying string for the group.
         /// </param>
+        /// <param name="value">Underlying bytes stored in the collection.</param>
         public ByteCollection(ulong offset, string label, byte[] value)
             : this(offset, value)
         {
@@ -168,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         public ByteCollection(byte[] value)
@@ -227,6 +226,7 @@ namespace Microsoft.PowerShell.Commands
         private const int BytesPerLine = 16;
 
         private string _hexBytes = string.Empty;
+
         /// <summary>
         /// Gets a space-delimited string of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>
         /// in hexadecimal format.
@@ -252,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _ascii = string.Empty;
+
         /// <summary>
         /// Gets the ASCII string representation of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>.
         /// </summary>
