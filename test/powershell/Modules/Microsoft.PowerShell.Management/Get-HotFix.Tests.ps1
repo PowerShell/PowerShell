@@ -10,6 +10,7 @@ Describe "Get-HotFix Tests" -Tag CI {
             $skip = $true
         }
         else {
+            # skip the tests if there are no hotfixes returned
             $qfe = Get-CimInstance Win32_QuickFixEngineering
             if ($qfe.Count -eq 0) {
                 $skip = $true
@@ -38,7 +39,18 @@ Describe "Get-HotFix Tests" -Tag CI {
 
     It "Get-HotFix can filter on -Description" {
         $testQfes = $qfe | Where-Object { $_.Description -eq 'Update' }
-        $hotfixes = Get-HotFix -Description 'Update'
+        if ($testQfes.Count -gt 0) {
+            $hotfixes = Get-HotFix -Description 'Update'
+        }
+        elseif ($qfe.Count -gt 0) {
+            $description = $qfe[0].Description
+            $testQfes = $qfe | Where-Object { $_.Description -eq $description }
+            $hotfixes = Get-HotFix -Desscription $description
+        }
+
+        # if no applicable qfes are found on test system, this test will still
+        # pass as both will have count 0
+
         $hotfixes.Count | Should -Be $testQfes.Count
     }
 

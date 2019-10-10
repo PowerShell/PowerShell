@@ -75,14 +75,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool foundRecord = false;
                 StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = new ConnectionOptions();
-                conOptions.Authentication = AuthenticationLevel.Packet;
-                conOptions.Impersonation = ImpersonationLevel.Impersonate;
-                if (Credential != null)
+                ConnectionOptions conOptions = new ConnectionOptions()
                 {
-                    conOptions.Username = Credential.UserName;
-                    conOptions.SecurePassword = Credential.Password;
-                }
+                    Authentication = AuthenticationLevel.Packet,
+                    Impersonation = ImpersonationLevel.Impersonate,
+                    Username = Credential?.UserName,
+                    SecurePassword = Credential?.Password
+                };
 
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
