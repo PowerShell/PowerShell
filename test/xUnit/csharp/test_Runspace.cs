@@ -109,7 +109,7 @@ namespace PSTests.Sequential
             Delegate[] delegates;
             FieldInfo field = typeof(AppContext).GetField("ProcessExit", BindingFlags.NonPublic | BindingFlags.Static);
 
-            // Open runspace and invoke script twice.
+            // Open runspace and invoke script.
             using (var ps = PowerShell.Create())
             {
                 ps.AddScript("1").Invoke();
