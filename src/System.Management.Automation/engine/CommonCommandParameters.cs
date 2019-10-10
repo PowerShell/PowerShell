@@ -108,6 +108,12 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This parameter tells the command what to do when an informational record occurs.
         /// </remarks>
+        /// <!--
+        /// NOTE: The "infa" alias name does not follow the same alias naming convention used
+        /// with other common parameter aliases that control stream functionality; however,
+        /// "ia" was already taken as a parameter alias in other commands when this parameter
+        /// was added to PowerShell, so "infa" was chosen instead.
+        /// -->
         [Parameter]
         [Alias("infa")]
         public ActionPreference InformationAction
