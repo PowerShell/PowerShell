@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool foundRecord = false;
                 StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = new ConnectionOptions()
+                ConnectionOptions conOptions = new ConnectionOptions
                 {
                     Authentication = AuthenticationLevel.Packet,
                     Impersonation = ImpersonationLevel.Impersonate,
