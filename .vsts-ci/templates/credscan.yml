@@ -12,7 +12,7 @@ jobs:
 
   steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-    displayName: 'Scan for secrets'
+    displayName: 'Scan for Secrets'
     inputs:
       suppressionsFile: tools/credScan/suppress.json
       debugMode: false
@@ -22,7 +22,7 @@ jobs:
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@1
-    displayName: 'Check for failures'
+    displayName: 'Check for Failures'
     inputs:
       CredScan: true
       ToolLogsNotFoundAction: Error
