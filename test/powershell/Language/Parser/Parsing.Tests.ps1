@@ -269,11 +269,10 @@ Describe 'assignment statement parsing' -Tags "CI" {
 }
 
 Describe 'null coalescing statement parsing' -Tag "CI" {
-    ShouldBeParseError '$x??y' UnexpectedToken 0
-    ShouldBeParseError '$x??=' ExpectedValueExpression 0
-    ShouldBeParseError '$x ??Get-Thing' ExpectedValueExpression 0
-    ShouldBeParseError '$??=$false' ExpectedValueExpression 0
-    ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 0
+    ShouldBeParseError '$x??=' ExpectedValueExpression 5
+    ShouldBeParseError '$x ??Get-Thing' ExpectedValueExpression,UnexpectedToken 5,5
+    ShouldBeParseError '$??=$false' ExpectedValueExpression,InvalidLeftHandSide 3,0
+    ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 9,17
 }
 
 Describe 'splatting parsing' -Tags "CI" {
