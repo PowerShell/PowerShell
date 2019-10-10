@@ -102,9 +102,11 @@ namespace PSTests.Sequential
             }
         }
 
-        [Fact]
+        [SkippableFact]
         public void TestAppDomainProcessExitEvenHandlerNotLeaking()
         {
+            Skip.IfNot(Platform.IsWindows);
+
             EventHandler eventHandler;
             Delegate[] delegates;
             FieldInfo field = typeof(AppContext).GetField("ProcessExit", BindingFlags.NonPublic | BindingFlags.Static);
