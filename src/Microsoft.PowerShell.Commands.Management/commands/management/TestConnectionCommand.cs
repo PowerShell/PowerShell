@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
@@ -20,8 +23,9 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
     [OutputType(typeof(PingStatus), ParameterSetName = new string[] { DefaultPingParameterSet })]
-    [OutputType(typeof(PingReply), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
     [OutputType(typeof(bool), ParameterSetName = new string[] { DefaultPingParameterSet, RepeatPingParameterSet, TcpPortParameterSet })]
+    [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
@@ -44,21 +48,23 @@ namespace Microsoft.PowerShell.Commands
         // Default size for the send buffer.
         private const int DefaultSendBufferSize = 32;
 
+        private const int DefaultMaxHops = 128;
+
         private const string TestConnectionExceptionId = "TestConnectionException";
 
         #endregion
 
         #region Private Fields
 
-        private static byte[] s_DefaultSendBuffer = null;
+        private static byte[]? s_DefaultSendBuffer;
 
         private bool _disposed;
 
-        private Ping _sender;
+        private Ping? _sender;
 
         private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
 
-        private PingCompletedEventArgs _pingCompleteArgs;
+        private PingCompletedEventArgs? _pingCompleteArgs;
 
         #endregion
 
@@ -122,11 +128,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
-        [ValidateRange(1, sMaxHops)]
+        [ValidateRange(1, DefaultMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
-        public int MaxHops { get; set; } = sMaxHops;
-
-        private const int sMaxHops = 128;
+        public int MaxHops { get; set; } = DefaultMaxHops;
 
         /// <summary>
         /// Gets or sets the number of ping attempts.
@@ -168,12 +172,12 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = RepeatPingParameterSet)]
-        [Alias("Continues", "Continuous")]
+        [Alias("Continuous")]
         public SwitchParameter Repeat { get; set; }
 
         /// <summary>
         /// Gets or sets whether to enable quiet output mode, reducing output to a single simple value only.
-        /// By default, objects are emitted.
+        /// By default, PingStatus, PingMtuStatus, or TraceStatus objects are emitted.
         /// With this switch, standard ping and -Traceroute returns only true / false, and -MtuSize returns an integer.
         /// </summary>
         [Parameter]
@@ -198,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("ComputerName")]
-        public string[] TargetName { get; set; }
+        public string[]? TargetName { get; set; }
 
         /// <summary>
         /// Gets or sets whether to detect Maximum Transmission Unit size.
@@ -242,6 +246,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (TargetName == null)
+            {
+                return;
+            }
+
             foreach (var targetName in TargetName)
             {
                 switch (ParameterSetName)
@@ -276,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -327,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -343,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Clear the stored router name for every hop
-                string routerName = null;
+                string routerName = string.Empty;
                 pingOptions.Ttl = currentHop;
 
 #if !UNIX
@@ -372,6 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 hopAddress = targetAddress;
                 discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 #endif
+                var hopAddressString = discoveryReply.Address.ToString();
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -380,11 +390,11 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
 #if !UNIX
-                        if (ResolveDestination.IsPresent && routerName == null)
+                        if (ResolveDestination.IsPresent && routerName == string.Empty)
                         {
                             try
                             {
-                                InitProcessPing(discoveryReply.Address.ToString(), out routerName, out _);
+                                InitProcessPing(hopAddressString, out routerName, out _);
                             }
                             catch
                             {
@@ -400,7 +410,6 @@ namespace Microsoft.PowerShell.Commands
                                 Source,
                                 routerName,
                                 reply,
-                                pingOptions,
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
@@ -465,8 +474,8 @@ namespace Microsoft.PowerShell.Commands
         #region MTUSizeTest
         private void ProcessMTUSize(string targetNameOrAddress)
         {
-            PingReply reply, replyResult = null;
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
+            PingReply? reply, replyResult = null;
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -487,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
                     WriteDebug(StringUtil.Format(
-                        "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
+                                    "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
                         LowMTUSize,
                         CurrentMTUSize,
                         HighMTUSize));
@@ -507,7 +516,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // If the host did't reply, try again up to the 'Count' value.
+                        // If the host didn't reply, try again up to the 'Count' value.
                         if (retry >= Count)
                         {
                             string message = StringUtil.Format(
@@ -555,7 +564,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(new PingMtuStatus(Source, resolvedTargetName, replyResult, CurrentMTUSize));
+                WriteObject(new PingMtuStatus(
+                    Source,
+                    resolvedTargetName,
+                    replyResult ?? throw new ArgumentNullException(nameof(replyResult)),
+                    CurrentMTUSize));
             }
         }
 
@@ -565,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -606,13 +619,10 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // We must re-insert the pingOptions as pinging "localhost" will get back
-                    // a PingReply with a null value for its Options property.
                     WriteObject(new PingStatus(
                         Source,
                         resolvedTargetName,
                         reply,
-                        pingOptions,
                         reply.RoundtripTime,
                         buffer.Length,
                         pingNum: i));
@@ -633,43 +643,37 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool InitProcessPing(string targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
+        private bool InitProcessPing(
+            string targetNameOrAddress,
+            out string resolvedTargetName,
+            [NotNullWhen(true)]
+            out IPAddress? targetAddress)
         {
             resolvedTargetName = targetNameOrAddress;
 
-            IPHostEntry hostEntry = null;
+            IPHostEntry hostEntry;
             if (IPAddress.TryParse(targetNameOrAddress, out targetAddress))
             {
                 if ((IPv4 && targetAddress.AddressFamily != AddressFamily.InterNetwork)
                     || (IPv6 && targetAddress.AddressFamily != AddressFamily.InterNetworkV6))
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
-                    targetAddress = GetHostAddress(hostEntry);
-
-                    if (targetAddress == null)
-                    {
-                        string message = StringUtil.Format(
-                            TestConnectionResources.NoPingResult,
-                            resolvedTargetName,
-                            TestConnectionResources.TargetAddressAbsent);
-                        Exception pingException = new PingException(message, null);
-                        ErrorRecord errorRecord = new ErrorRecord(
-                            pingException,
-                            TestConnectionExceptionId,
-                            ErrorCategory.ResourceUnavailable,
-                            resolvedTargetName);
-                        WriteError(errorRecord);
-                        return false;
-                    }
+                    string message = StringUtil.Format(
+                        TestConnectionResources.NoPingResult,
+                        resolvedTargetName,
+                        TestConnectionResources.TargetAddressAbsent);
+                    Exception pingException = new PingException(message, null);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        pingException,
+                        TestConnectionExceptionId,
+                        ErrorCategory.ResourceUnavailable,
+                        resolvedTargetName);
+                    WriteError(errorRecord);
+                    return false;
                 }
 
                 if (ResolveDestination)
                 {
-                    if (hostEntry == null)
-                    {
-                        hostEntry = Dns.GetHostEntry(targetNameOrAddress);
-                    }
-
+                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
                     resolvedTargetName = hostEntry.HostName;
                 }
                 else
@@ -734,7 +738,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private IPAddress GetHostAddress(IPHostEntry hostEntry)
+        private IPAddress? GetHostAddress(IPHostEntry hostEntry)
         {
             AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
 
@@ -808,7 +812,7 @@ namespace Microsoft.PowerShell.Commands
             int timeout,
             byte[] buffer,
             PingOptions pingOptions,
-            Stopwatch timer = null)
+            Stopwatch? timer = null)
         {
             try
             {
@@ -820,6 +824,14 @@ namespace Microsoft.PowerShell.Commands
                 _pingComplete.Wait();
                 timer?.Stop();
                 _pingComplete.Reset();
+
+                if (_pingCompleteArgs == null)
+                {
+                    throw new PingException(string.Format(
+                        TestConnectionResources.NoPingResult,
+                        targetAddress,
+                        IPStatus.Unknown));
+                }
 
                 if (_pingCompleteArgs.Cancelled)
                 {
@@ -836,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                _sender.Dispose();
+                _sender?.Dispose();
                 _sender = null;
             }
         }
@@ -863,7 +875,6 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
             /// <param name="reply">The response from the ping attempt.</param>
-            /// <param name="options">The PingOptions specified when the ping was sent.</param>
             /// <param name="latency">The latency of the ping.</param>
             /// <param name="bufferSize">The buffer size.</param>
             /// <param name="pingNum">The sequence number in the sequence of pings to the hop point.</param>
@@ -871,13 +882,11 @@ namespace Microsoft.PowerShell.Commands
                 string source,
                 string destination,
                 PingReply reply,
-                PingOptions options,
                 long latency,
                 int bufferSize,
                 uint pingNum)
                 : this(source, destination, reply, pingNum)
             {
-                _options = options;
                 _bufferSize = bufferSize;
                 _latency = latency;
             }
@@ -894,14 +903,12 @@ namespace Microsoft.PowerShell.Commands
                 Ping = pingNum;
                 Reply = reply;
                 Source = source;
-                Destination = destination ?? reply.Address.ToString();
+                Destination = destination;
             }
 
             // These values can be set manually to skirt issues with the Ping API on Unix platforms
             // so that we can return meaningful known data that is discarded by the API.
             private readonly int _bufferSize = -1;
-
-            private readonly PingOptions _options;
 
             private readonly long _latency = -1;
 
@@ -923,7 +930,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the target address of the ping.
             /// </summary>
-            public IPAddress Address { get => Reply.Status == IPStatus.Success ? Reply.Address : null; }
+            public IPAddress? Address { get => Reply.Status == IPStatus.Success ? Reply.Address : null; }
+
+            /// <summary>
+            /// Gets the target address of the ping if one is available, or "*" if it is not.
+            /// </summary>
+            public string DisplayAddress { get => Address?.ToString() ?? "*"; }
 
             /// <summary>
             /// Gets the roundtrip time of the ping in milliseconds.
@@ -944,11 +956,6 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the reply object from this ping.
             /// </summary>
             public PingReply Reply { get; }
-
-            /// <summary>
-            /// Gets the options used when sending the ping.
-            /// </summary>
-            public PingOptions Options { get => _options ?? Reply.Options; }
         }
 
         /// <summary>
@@ -1013,7 +1020,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string Hostname
+            public string? Hostname
             {
                 get => _status.Destination != IPAddress.Any.ToString()
                     && _status.Destination != IPAddress.IPv6Any.ToString()
@@ -1029,7 +1036,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the IP address of the current hop point.
             /// </summary>
-            public IPAddress HopAddress { get => _status.Address; }
+            public IPAddress? HopAddress { get => _status.Address; }
 
             /// <summary>
             /// Gets the latency values of each ping to the current hop point.
@@ -1060,11 +1067,6 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the raw PingReply object received from the ping to this hop point.
             /// </summary>
             public PingReply Reply { get => _status.Reply; }
-
-            /// <summary>
-            /// Gets the PingOptions used to send the ping to the trace hop.
-            /// </summary>
-            public PingOptions Options { get => _status.Options; }
         }
 
         /// <summary>

@@ -1652,14 +1652,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("Ping")
                         .AddPropertyColumn("Source")
-                        .AddScriptBlockColumn(@"
-                            if ($_.Address) {
-                                $_.Address
-                            }
-                            else {
-                                '*'
-                            }
-                        ")
+                        .AddScriptBlockColumn("DisplayAddress")
                         .AddScriptBlockColumn(@"
                             if ($_.Status -eq 'TimedOut') {
                                 '*'
@@ -1694,14 +1687,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "MtuSize(B)", width: 7)
                     .StartRowDefinition()
                         .AddPropertyColumn("Source")
-                        .AddScriptBlockColumn(@"
-                            if ($_.Address) {
-                                $_.Address
-                            }
-                            else {
-                                '*'
-                            }
-                        ")
+                        .AddScriptBlockColumn("DisplayAddress")
                         .AddScriptBlockColumn(@"
                             if ($_.Status -eq 'TimedOut') {
                                 '*'
