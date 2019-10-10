@@ -152,12 +152,16 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
-    It 'Should work for variable assignment of `$ErrorActionPreference: <inputStr>' -TestCases @(
+    It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference="'; filter = ''; doubleQuotes = $true }
         @{ inputStr = '$ErrorActionPreference = ''s'; filter = '| Where-Object { $_ -like "''s*" }'; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference = "siL'; filter = '| Where-Object { $_ -like ''"sil*'' }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "s'; filter = '| Where-Object { $_ -like """s*" }'; doubleQuotes = $true }
     ){
         param($inputStr, $filter, $doubleQuotes)
 
@@ -178,13 +182,15 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should work for variable assignment of custom enum: <inputStr>' -TestCases @(
-        @{ inputStr = '$animal = "g'; expected = '"Giraffe"','"Goose"' }
-        @{ inputStr = '$animal='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '[Animal]$c="g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '[Animal]$c='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '$script:test='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
     ){
         param($inputStr, $expected)
 
         enum Animal { Duck; Goose; Horse; Giraffe }
-        [Animal]$animal = 'Duck'
+        [Animal]$script:test = 'Duck'
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
         [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
@@ -220,6 +226,23 @@ Describe "TabCompletion" -Tags CI {
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
         [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
     }
 
     Context NativeCommand {

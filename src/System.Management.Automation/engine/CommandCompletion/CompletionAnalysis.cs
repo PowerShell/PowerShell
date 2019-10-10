@@ -424,7 +424,7 @@ namespace System.Management.Automation
                         if (lastAst.Parent is CommandExpressionAst
                             && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst)
                         {
-                            // Handle scenarios like '$ErrorActionPreference = '<tab>'
+                            // Handle scenarios like `$ErrorActionPreference = '<tab>`
                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out List<CompletionResult> completions))
                             {
                                 return completions;
@@ -519,7 +519,7 @@ namespace System.Management.Automation
                         else if (lastAst.Parent is CommandExpressionAst
                             && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst2)
                         {
-                            // Handle scenarios like '[ValidateSet(1,2)][int]$i = 2; $i = <tab>'
+                            // Handle scenarios like '[ValidateSet(11,22)][int]$i = 11; $i = 2<tab>'
                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
                             {
                                 result = completions;
@@ -763,7 +763,8 @@ namespace System.Management.Automation
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
                                     {
-                                        if (lastAst is AssignmentStatementAst assignmentAst && assignmentAst.Left is VariableExpressionAst variableAst)
+                                        if (lastAst is AssignmentStatementAst assignmentAst && (assignmentAst.Left is VariableExpressionAst variableAst ||
+                                            assignmentAst.Left is ConvertExpressionAst || assignmentAst.Left is AttributedExpressionAst))
                                         {
                                             // Handle scenarios like '$ErrorActionPreference = <tab>'
                                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out result))
@@ -1072,7 +1073,6 @@ namespace System.Management.Automation
             ref Type typeConstraint,
             ref ValidateSetAttribute setConstraint)
         {
-            typeConstraint = null;
             switch (expression)
             {
                 // $x = ...
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
 
                     return GetVariableFromExpressionAst(attributedExpressionAst.Child, ref typeConstraint, ref setConstraint);
 
-                // Something else. Shouldn't be possible, but defend anyway
+                // Something else, like `MemberExpressionAst` $a.p = <tab> which isn't currently handled
                 default:
                     return null;
             }
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation
 
             PSVariable variable = completionContext.ExecutionContext.EngineSessionState.GetVariable(variableName);
 
-            if (variable.Attributes.Count == 0)
+            if (variable == null || variable.Attributes.Count == 0)
             {
                 return false;
             }
@@ -1155,24 +1155,23 @@ namespace System.Management.Automation
                 return false;
             }
 
-            var variableValue = completionContext.ExecutionContext.GetVariableValue(variableAst.VariablePath);
-            Type type = variableValue.GetType();
-
             // Assignment constraints override any existing ones, so try them first
 
             // Check any [ValidateSet()] constraint first since it's likely to be narrow
             if (setConstraint?.ValidValues != null)
             {
-                completions = GetResultForSet(type, setConstraint.ValidValues, completionContext);
+                completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
                 return true;
             }
 
-            // Then try to complete for an enum type
-            if (variableValue != null)
+            // Check if this is a ConvertExpressionAst and handle that next
+            if (assignmentAst.Left is ConvertExpressionAst convertExpressionAst)
             {
-                if (type.IsEnum)
+                typeConstraint = convertExpressionAst.StaticType;
+
+                if (typeConstraint.IsEnum)
                 {
-                    completions = GetResultForEnum(type, completionContext);
+                    completions = GetResultForEnum(typeConstraint, completionContext);
                     return true;
                 }
             }
@@ -1186,31 +1185,29 @@ namespace System.Management.Automation
             // Again try the [ValidateSet()] constraint first
             if (setConstraint?.ValidValues != null)
             {
-                completions = GetResultForSet(type, setConstraint.ValidValues, completionContext);
+                completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
                 return true;
             }
 
             // Then try to complete for an enum type
-            if (!typeConstraint.IsEnum)
-            {
-                return false;
-            }
-            else
+            if (typeConstraint.IsEnum)
             {
                 completions = GetResultForEnum(typeConstraint, completionContext);
                 return true;
             }
+
+            return false;
         }
 
         private static List<CompletionResult> GetResultForSet(
-            Type type,
+            Type typeConstraint,
             IList<string> validValues,
             CompletionContext completionContext)
         {
             var allValues = new List<string>();
             foreach (string value in validValues)
             {
-                if (type == typeof(string) || type.IsEnum)
+                if (typeConstraint != null && (typeConstraint == typeof(string) || typeConstraint.IsEnum))
                 {
                     allValues.Add(GetQuotedString(value, completionContext));
                 }
@@ -1233,10 +1230,16 @@ namespace System.Management.Automation
                 stringToComplete = completionContext.TokenAtCursor.Text;
             }
 
-            string matchString = stringToComplete + "*";
-            var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            IEnumerable<string> matchedResults = null;
 
-            IEnumerable<string> matchedResults = allValues.Where(r => wildcardPattern.IsMatch(r));
+            if (!string.IsNullOrEmpty(stringToComplete))
+            {
+                string matchString = stringToComplete + "*";
+                var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+
+                matchedResults = allValues.Where(r => wildcardPattern.IsMatch(r));
+            }
+
             if (matchedResults == null || !matchedResults.Any())
             {
                 matchedResults = allValues;
