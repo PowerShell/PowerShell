@@ -122,11 +122,4 @@ Describe "Stream writer tests" -Tags "CI" {
             $i.MessageData | Should -Be $null
         }
     }
-
-    Context "Stream common parameter tests" {
-        It '-InformationAction accepts -ia alias' {
-            Write-Information -MessageData Test -ia Continue -iv i *> $null
-            $i.MessageData | Should -BeExactly 'Test'
-        }
-    }
 }
