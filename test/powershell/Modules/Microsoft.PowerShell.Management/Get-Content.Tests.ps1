@@ -342,7 +342,7 @@ baz
             $expected[1] = $thirdLine
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should -BeNullOrEmpty
         }
-        It "Should return first three lines at a time for -TotalCount 3 and -ReadCount 0" {
+        It "Should return the same number of first lines as set in -TotalCount at one time for -ReadCount 0" {
             $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 0
             $result.Length | Should -Be 3
             $expected = $firstLine,$secondLine,$thirdLine
