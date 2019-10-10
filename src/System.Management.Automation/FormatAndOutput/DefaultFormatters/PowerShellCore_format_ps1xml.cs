@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Runspaces
                                         $prefix = ''
                                         $newline = [Environment]::Newline
 
-                                        if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $_.CategoryInfo.Category -eq 'ParserError') {
                                             if ($myinv.ScriptName) {
                                                 $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
                                             }
