@@ -113,13 +113,13 @@ namespace PSTests.Sequential
             using (var ps = PowerShell.Create())
             {
                 ps.AddScript("1").Invoke();
-                eventHandler = (EventHandler) field.GetValue(null);
+                eventHandler = (EventHandler)field.GetValue(null);
                 delegates = eventHandler.GetInvocationList();
                 Assert.Contains(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
             }
 
             // Handler registered by PowerShell should be unregistered.
-            eventHandler = (EventHandler) field.GetValue(null);
+            eventHandler = (EventHandler)field.GetValue(null);
             delegates = eventHandler.GetInvocationList();
             Assert.DoesNotContain(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
         }
