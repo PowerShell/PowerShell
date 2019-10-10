@@ -265,7 +265,7 @@ Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '@{} ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '1..2 ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '[int] ??= 1' InvalidLeftHandSide 0
-    ShouldBeParseError '$cricket ?= $soccer' ExpectedValueExpression 0
+    ShouldBeParseError '$cricket ?= $soccer' ExpectedValueExpression,InvalidLeftHandSide 10,0
 }
 
 Describe 'null coalescing statement parsing' -Tag "CI" {
