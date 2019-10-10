@@ -1714,6 +1714,9 @@ namespace System.Management.Automation
                     {
                         CloseSession();
 
+                        // Unregister the event handler.
+                        AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
+
                         // Uninitialize the AMSI interface.
                         AmsiCleanedUp = true;
                         AmsiNativeMethods.AmsiUninitialize(s_amsiContext);

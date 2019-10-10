@@ -115,6 +115,11 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
         $results | Should -BeExactly 'FullLanguage'
     }
+
+    It 'Verifies that the current working directory is preserved' {
+        $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $pwd }
+        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
+    }
 }
 
 Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
@@ -343,6 +348,13 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $job.Command | Should -BeExactly '"Hello"'
         $job.ChildJobs[0].Command | Should -BeExactly '"Hello"'
         $job | Wait-Job | Remove-Job
+    }
+
+    It 'Verifies that the current working directory is preserved' {
+        $job = 1..1 | ForEach-Object -AsJob -Parallel { $pwd }
+        $parallelScriptLocation = $job | Wait-Job | Receive-Job
+        $job | Remove-Job
+        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
     }
 }
 

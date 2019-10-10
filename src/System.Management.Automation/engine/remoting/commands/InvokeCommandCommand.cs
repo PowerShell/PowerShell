@@ -531,9 +531,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(Mandatory = true,
+        [Parameter(Position = 1,
+                   Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Mandatory = true,
+        [Parameter(Position = 1,
+                   Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]

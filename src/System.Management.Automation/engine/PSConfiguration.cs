@@ -68,7 +68,7 @@ namespace System.Management.Automation.Configuration
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
-            perUserConfigDirectory = Utils.GetUserConfigurationDirectory();
+            perUserConfigDirectory = Platform.ConfigDirectory;
             perUserConfigFile = Path.Combine(perUserConfigDirectory, configFileName);
         }
 
