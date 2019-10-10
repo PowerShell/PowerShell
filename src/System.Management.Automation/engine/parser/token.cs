@@ -603,41 +603,46 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'
         /// </summary>
-        BinaryPrecedenceBitwise = 2,
+        BinaryPrecedenceBitwise = 3,
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
         /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
-        /// '??', and all of the case sensitive variants of these operators, if they exists.
+        /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
-        BinaryPrecedenceComparison = 3,
+        BinaryPrecedenceComparison = 5,
+
+        /// <summary>
+        /// The precedence of null coalesce operator '??'.
+        /// </summary>
+        BinaryPrecedenceNullCoalesce = 7,
 
         /// <summary>
         /// The precedence of the binary operators '+' and '-'.
         /// </summary>
-        BinaryPrecedenceAdd = 4,
+        BinaryPrecedenceAdd = 9,
 
         /// <summary>
         /// The precedence of the operators '*', '/', and '%'.
         /// </summary>
-        BinaryPrecedenceMultiply = 5,
+        BinaryPrecedenceMultiply = 10,
 
         /// <summary>
         /// The precedence of the '-f' operator.
         /// </summary>
-        BinaryPrecedenceFormat = 6,
+        BinaryPrecedenceFormat = 12,
 
         /// <summary>
         /// The precedence of the '..' operator.
         /// </summary>
-        BinaryPrecedenceRange = 7,
+        BinaryPrecedenceRange = 13,
 
         #endregion Precedence Values
 
         /// <summary>
         /// A bitmask to get the precedence of binary operators.
         /// </summary>
-        BinaryPrecedenceMask = 0x00000007,
+        BinaryPrecedenceMask = 0x0000000f,
 
         /// <summary>
         /// The token is a keyword.
@@ -861,7 +866,7 @@ namespace System.Management.Automation.Language
           /*                  Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
           /*           QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
-          /*       QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison,
+          /*       QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceNullCoalesce,
           /*     Reserved slot 5    */ TokenFlags.None,
           /*     Reserved slot 6    */ TokenFlags.None,
           /*     Reserved slot 7    */ TokenFlags.None,

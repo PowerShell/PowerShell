@@ -192,6 +192,45 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
         }
     }
 
+    Context 'Null Coalesce ?? operator precedence' {
+        It '?? precedence over -and' {
+            $true -and $null ?? $true | Should -BeTrue
+        }
+
+        It '?? precedence over -band' {
+            1 -band $null ?? 1 | Should -Be 1
+        }
+
+        It '?? precedence over -eq' {
+            'x' -eq $null ?? 'x' | Should -BeTrue
+            $null -eq $null ?? 'x' | Should -BeFalse
+        }
+
+        It '?? precedence over -as' {
+            'abc' -as [datetime] ?? 1 | Should -BeNullOrEmpty
+        }
+
+        It '?? precedence over -replace' {
+            'x' -replace 'x',$null ?? 1 | Should -Be ([string]::empty)
+        }
+
+        It '+ precedence over ??' {
+            2 + $null ?? 3 | Should -Be 2
+        }
+
+        It '* precedence over ??' {
+            2 * $null ?? 3 | Should -Be 0
+        }
+
+        It '-f precedence over ??' {
+            "{0}" -f $null ?? 'b' | Should -Be ([string]::empty)
+        }
+
+        It '.. precedence ove ??' {
+            1..$null ?? 2 | Should -BeIn 1,0
+        }
+    }
+
     Context 'Combined usage of null conditional operators' {
 
         BeforeAll {
