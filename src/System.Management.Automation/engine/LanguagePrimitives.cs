@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        public static bool IsNullLike(object obj) => obj == DBNull.Value || obj == NullString.Value || IsNull(obj);
+        public static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
