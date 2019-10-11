@@ -3015,7 +3015,7 @@ namespace System.Management.Automation
         // workings of the command and when what information will get output.
         // See "User Feedback Mechanisms - Note.doc" for details.
 
-        private bool _isConfirmPreferenceCached = false;
+        private bool _readCommandConfirmPreference = false;
         private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
 
         /// <summary>
@@ -3026,30 +3026,41 @@ namespace System.Management.Automation
         /// Verbose, Debug, Confirm, and WhatIf parameters and the
         /// $ConfirmPreference shell variable.
         ///
-        /// We only read $ConfirmPreference once, then cache the value.
+        /// We only read $ConfirmPreference once, then reuse the value.
         /// </remarks>
         internal ConfirmImpact ConfirmPreference
         {
             get
             {
-                // WhatIf not relevant, it never gets this far in that case
+                // Setting CommonParameters.Confirm has the highest priority.
+                // WhatIf is not relevant. It never gets this far in that case.
                 if (Confirm)
+                {
                     return ConfirmImpact.Low;
+                }
+
                 if (Debug)
                 {
                     if (IsConfirmFlagSet) // -Debug -Confirm:$false
+                    {
                         return ConfirmImpact.None;
+                    }
+
                     return ConfirmImpact.Low;
                 }
 
                 if (IsConfirmFlagSet) // -Confirm:$false
-                    return ConfirmImpact.None;
-
-                if (!_isConfirmPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
-                    _isConfirmPreferenceCached = true;
+                    return ConfirmImpact.None;
+                }
+
+                // If the common parameter was not used, read the inherited confirm
+                // preference once per command, regardless of how many times
+                // PSCmdlet.ShouldProcess is invoked in that command.
+                if (!_readCommandConfirmPreference)
+                {
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out _);
+                    _readCommandConfirmPreference = true;
                 }
 
                 return _confirmPreference;
@@ -3057,7 +3068,7 @@ namespace System.Management.Automation
         }
 
         private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
-        private bool _isDebugPreferenceCached = false;
+        private bool _readCommandDebugPreference = false;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3068,17 +3079,27 @@ namespace System.Management.Automation
         {
             get
             {
+                // Setting CommonParameters.DebugAction has the highest priority.
                 if (IsDebugActionSet)
                 {
                     return _debugPreference;
                 }
 
-                if (IsDebugFlagSet)
+                // Setting CommonParameters.Debug has the next highest priority.
+                if (Debug)
                 {
-                    return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
+                    return ActionPreference.Continue;
                 }
 
-                if (!_isDebugPreferenceCached)
+                if (IsDebugFlagSet)
+                {
+                    return ActionPreference.SilentlyContinue;
+                }
+
+                // If the common parameter was not used, read the inherited debug
+                // preference once per command, regardless of how many times
+                // PSCmdlet.WriteDebug is invoked in that command.
+                if (!_readCommandDebugPreference)
                 {
                     _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out _);
 
@@ -3089,7 +3110,7 @@ namespace System.Management.Automation
                         _debugPreference = ActionPreference.Continue;
                     }
 
-                    _isDebugPreferenceCached = true;
+                    _readCommandDebugPreference = true;
                 }
 
                 return _debugPreference;
@@ -3110,7 +3131,7 @@ namespace System.Management.Automation
         internal bool IsDebugActionSet { get; private set; } = false;
 
         private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
-        private bool _isVerbosePreferenceCached = false;
+        private bool _readCommandVerbosePreference = false;
 
         /// <summary>
         /// Preference setting.
@@ -3122,14 +3143,21 @@ namespace System.Management.Automation
         {
             get
             {
+                // Setting CommonParameters.VerboseAction has the highest priority.
                 if (IsVerboseActionSet)
                 {
                     return _verbosePreference;
                 }
 
+                // Setting CommonParameters.Verbose has the next highest priority.
+                if (Verbose)
+                {
+                    return ActionPreference.Continue;
+                }
+
                 if (IsVerboseFlagSet)
                 {
-                    return Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
+                    return ActionPreference.SilentlyContinue;
                 }
 
                 // Legacy functionality support:
@@ -3143,7 +3171,10 @@ namespace System.Management.Automation
                     return ActionPreference.Continue;
                 }
 
-                if (!_isVerbosePreferenceCached)
+                // If the common parameter was not used, read the inherited verbose
+                // preference once per command, regardless of how many times
+                // PSCmdlet.WriteVerbose is invoked in that command.
+                if (!_readCommandVerbosePreference)
                 {
                     _verbosePreference = Context.GetEnumPreference(SpecialVariables.VerbosePreferenceVarPath, _verbosePreference, out _);
 
@@ -3154,7 +3185,7 @@ namespace System.Management.Automation
                         _verbosePreference = ActionPreference.Continue;
                     }
 
-                    _isVerbosePreferenceCached = true;
+                    _readCommandVerbosePreference = true;
                 }
 
                 return _verbosePreference;
@@ -3174,7 +3205,7 @@ namespace System.Management.Automation
 
         internal bool IsVerboseActionSet { get; private set; }
 
-        private bool _isWarningPreferenceCached = false;
+        private bool _readCommandWarningPreference = false;
         private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
 
         /// <summary>
@@ -3209,7 +3240,10 @@ namespace System.Management.Automation
 
                 // Debug:$false and Verbose:$false ignored
 
-                if (!_isWarningPreferenceCached)
+                // If the common parameter was not used, read the inherited warning
+                // preference once per command, regardless of how many times
+                // PSCmdlet.WriteWarning is invoked in that command.
+                if (!_readCommandWarningPreference)
                 {
                     _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out _);
 
@@ -3220,7 +3254,7 @@ namespace System.Management.Automation
                         _warningPreference = ActionPreference.Continue;
                     }
 
-                    _isWarningPreferenceCached = true;
+                    _readCommandWarningPreference = true;
                 }
 
                 return _warningPreference;
@@ -3338,7 +3372,7 @@ namespace System.Management.Automation
         internal bool IsDebugFlagSet { get; private set; } = false;
 
         private bool _whatIfFlag = InitialSessionState.defaultWhatIfPreference;
-        private bool _isWhatIfPreferenceCached /* = false */;
+        private bool _readCommandWhatIfPreference /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
         /// perform any changes to persistent state outside Monad.
@@ -3350,11 +3384,19 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!IsWhatIfFlagSet && !_isWhatIfPreferenceCached)
+                // Setting CommonParameters.WhatIf has highest priority
+                if (IsWhatIfFlagSet)
                 {
-                    bool defaultUsed = false;
-                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out defaultUsed);
-                    _isWhatIfPreferenceCached = true;
+                    return _whatIfFlag;
+                }
+
+                // If the common parameter was not used, read the inherited WhatIf
+                // preference once per command, regardless of how many times
+                // PSCmdlet.ShouldProcess is invoked in that command.
+                if (!_readCommandWhatIfPreference)
+                {
+                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out _);
+                    _readCommandWhatIfPreference = true;
                 }
 
                 return _whatIfFlag;
@@ -3370,7 +3412,7 @@ namespace System.Management.Automation
         internal bool IsWhatIfFlagSet { get; private set; }
 
         private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
-        private bool _isErrorActionPreferenceCached = false;
+        private bool _readCommandErrorActionPreference = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
         /// </summary>
@@ -3388,11 +3430,14 @@ namespace System.Management.Automation
                 if (IsErrorActionSet)
                     return _errorAction;
 
-                if (!_isErrorActionPreferenceCached)
+                // If the common parameter was not used, read the inherited error
+                // action preference once per command, regardless of how many times
+                // PSCmdlet.WriteError is invoked in that command.
+                if (!_readCommandErrorActionPreference)
                 {
                     bool defaultUsed = false;
                     _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
-                    _isErrorActionPreferenceCached = true;
+                    _readCommandErrorActionPreference = true;
                 }
 
                 return _errorAction;
@@ -3413,7 +3458,7 @@ namespace System.Management.Automation
         internal bool IsErrorActionSet { get; private set; } = false;
 
         private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
-        private bool _isProgressPreferenceCached = false;
+        private bool _readCommandProgressPreference = false;
 
         /// <summary>
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
@@ -3428,11 +3473,14 @@ namespace System.Management.Automation
                     return _progressPreference;
                 }
 
-                if (!_isProgressPreferenceCached)
+                // If the common parameter was not used, read the inherited progress
+                // preference once per command, regardless of how many times
+                // PSCmdlet.WriteProgress is invoked in that command.
+                if (!_readCommandProgressPreference)
                 {
                     bool defaultUsed = false;
                     _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
-                    _isProgressPreferenceCached = true;
+                    _readCommandProgressPreference = true;
                 }
 
                 return _progressPreference;
@@ -3453,7 +3501,7 @@ namespace System.Management.Automation
         internal bool IsProgressActionSet { get; private set; }
 
         private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
-        private bool _isInformationPreferenceCached;
+        private bool _readCommandInformationPreference;
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
@@ -3466,11 +3514,14 @@ namespace System.Management.Automation
                 if (IsInformationActionSet)
                     return _informationPreference;
 
-                if (!_isInformationPreferenceCached)
+                // If the common parameter was not used, read the inherited
+                // information preference once per command, regardless of how
+                // many times PSCmdlet.WriteInformation is invoked in that command.
+                if (!_readCommandInformationPreference)
                 {
                     bool defaultUsed = false;
                     _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
-                    _isInformationPreferenceCached = true;
+                    _readCommandInformationPreference = true;
                 }
 
                 return _informationPreference;
