@@ -260,6 +260,24 @@ Describe 'function statement parsing' -Tags "CI" {
 
 Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '$a,$b += 1,2' InvalidLeftHandSide 0
+}
+
+Describe 'null coalescing assignment statement parsing' -Tag 'CI' {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
     ShouldBeParseError '1 ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '@() ??= 1' InvalidLeftHandSide 0
     ShouldBeParseError '@{} ??= 1' InvalidLeftHandSide 0
@@ -269,6 +287,21 @@ Describe 'assignment statement parsing' -Tags "CI" {
 }
 
 Describe 'null coalescing statement parsing' -Tag "CI" {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
     ShouldBeParseError '$x??=' ExpectedValueExpression 5
     ShouldBeParseError '$x ??Get-Thing' ExpectedValueExpression,UnexpectedToken 5,5
     ShouldBeParseError '$??=$false' ExpectedValueExpression,InvalidLeftHandSide 3,0
