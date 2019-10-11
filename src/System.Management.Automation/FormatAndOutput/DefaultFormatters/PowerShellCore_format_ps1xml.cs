@@ -1083,6 +1083,17 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ProgressRecord()
         {
+            // This generates string output that uses the following format:
+            //   PROGRESS: [<PercentComplete>% - ]<Activity>[: <StatusDescription>][ (<CurrentOperation>)]
+            // Activity is always shown.
+            // Items in square brackets are conditional, so:
+            // - PercentComplete only shows up if it is set, and uses a format like this: " 83% -"
+            // - StatusDescription is only shown if it is not "Processing"
+            // - CurrentOperation is only shown if it is not null or empty
+            // The end result is a string that might look something like any of the following examples:
+            //   PROGRESS: Initializing...
+            //   PROGRESS:  57% - Creating user: 57 of 100 (Initializing home directory)
+            //   PROGRESS: 100% - Task finished
             yield return new FormatViewDefinition(
                 "ProgressRecord",
                 CustomControl

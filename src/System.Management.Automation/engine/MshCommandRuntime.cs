@@ -3132,18 +3132,15 @@ namespace System.Management.Automation
                     return Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
                 }
 
+                // Legacy functionality support:
+                // If a user invoked Write-Verbose without -Verbose and with -Debug, they would
+                // originally have been prompted using Inquire (in v6.x and earlier), but with
+                // https://github.com/PowerShell/PowerShell/pull/8195, -Debug was changed to
+                // apply ActionPreference.Continue behavior instead, so the legacy -Debug
+                // behavior on Write-Verbose is simply showing the message using Continue as well.
                 if (Debug)
                 {
-                    // If the host couldn't prompt for the debug action anyways, use 'Continue'.
-                    // This lets hosts still see debug output without having to implement the prompting logic.
-                    if (CBhost.ExternalHost.UI == null)
-                    {
-                        return ActionPreference.Continue;
-                    }
-                    else
-                    {
-                        return ActionPreference.Inquire;
-                    }
+                    return ActionPreference.Continue;
                 }
 
                 if (!_isVerbosePreferenceCached)
@@ -3151,8 +3148,8 @@ namespace System.Management.Automation
                     _verbosePreference = Context.GetEnumPreference(SpecialVariables.VerbosePreferenceVarPath, _verbosePreference, out _);
 
                     // If the host couldn't prompt for the verbose action anyways, change it to 'Continue'.
-                    // This lets hosts still see debug output without having to implement the prompting logic.
-                    if ((CBhost.ExternalHost.UI == null) && (_verbosePreference == ActionPreference.Continue))
+                    // This lets hosts still see warning output without having to implement the prompting logic.
+                    if ((CBhost.ExternalHost.UI == null) && (_verbosePreference == ActionPreference.Inquire))
                     {
                         _verbosePreference = ActionPreference.Continue;
                     }
@@ -3196,12 +3193,16 @@ namespace System.Management.Automation
                     return _warningPreference;
                 }
 
-                if (Debug)
-                {
-                    return ActionPreference.Inquire;
-                }
-
-                if (Verbose)
+                // Legacy functionality support:
+                // If a user invokes Write-Warning without -WarningAction and with -Verbose,
+                // show the warning message.
+                // If a user invoked Write-Warning without -WarningAction and with -Debug,
+                // they would originally have been prompted using Inquire (in v6.x and earlier),
+                // but with https://github.com/PowerShell/PowerShell/pull/8195, -Debug was
+                // changed to apply ActionPreference.Continue behavior instead, so the legacy
+                // -Debug behavior on Write-Warning is simply showing the warning using Continue
+                // as well.
+                if (Debug || Verbose)
                 {
                     return ActionPreference.Continue;
                 }
@@ -3213,8 +3214,8 @@ namespace System.Management.Automation
                     _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out _);
 
                     // If the host couldn't prompt for the warning action anyways, change it to 'Continue'.
-                    // This lets hosts still see debug output without having to implement the prompting logic.
-                    if ((CBhost.ExternalHost.UI == null) && (_warningPreference == ActionPreference.Continue))
+                    // This lets hosts still see warning output without having to implement the prompting logic.
+                    if ((CBhost.ExternalHost.UI == null) && (_warningPreference == ActionPreference.Inquire))
                     {
                         _warningPreference = ActionPreference.Continue;
                     }
