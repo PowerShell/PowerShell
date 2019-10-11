@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class for Resolve-ErrorRecord implementation.
     /// </summary>
     [Experimental("Microsoft.PowerShell.Utility.PSResolveErrorRecord", ExperimentAction.Show)]
-    [Cmdlet(VerbsDiagnostic.Resolve, "ErrorRecord", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=", DefaultParameterSetName = NewestParameterSetName)]
+    [Cmdlet(VerbsDiagnostic.Resolve, "ErrorRecord", HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/resolve-errorrecord?view=powershell-7&WT.mc_id=ps-gethelp", DefaultParameterSetName = NewestParameterSetName)]
     public sealed class ResolveErrorRecordCommand : PSCmdlet
     {
         internal const string ErrorRecordParameterSetName = "ErrorRecord";
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the number of error objects to resolve starting with newest first.
         /// </summary>
         [Parameter(ParameterSetName = NewestParameterSetName)]
-        [ValidateRange(0, int.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         public int Newest { get; set; } = 1;
 
         /// <summary>

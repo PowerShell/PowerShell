@@ -28,7 +28,13 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         $out | Should -BeLikeExactly '*InnerException*'
     }
 
-    It 'Resolve-ErrorRecord -Newest works' {
+    It 'Resolve-ErrorRecord -Newest `<count>` works: <scenario>' -TestCases @(
+        @{ scenario = 'less than total'; count = 1 }
+        @{ scenario = 'equal to total'; count = 2 }
+        @{ scenario = 'greater than total'; count = 99 }
+    ){
+        param ($count)
+
         try {
             1/0
         }
@@ -41,8 +47,23 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         catch {
         }
 
-        $out = Resolve-ErrorRecord -Newest 2
-        $out.Count | Should -Be 2
+        $out = Resolve-ErrorRecord -Newest $count
+
+        $expected = $count
+        if ($count -eq 99) {
+            $expected = $error.Count
+        }
+
+        $out.Count | Should -Be $expected
+    }
+
+    It 'Resolve-ErrorRecord -Newest with invalid value `<value>` should fail' -TestCases @(
+        @{ value = 0 }
+        @{ value = -2 }
+    ){
+        param($value)
+
+        { Resolve-ErrorRecord -Newest $value } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ResolveErrorRecordCommand'
     }
 
     It 'Resolve-ErrorRecord will accept pipeline input' {
