@@ -91,19 +91,19 @@ Describe "Test-Connection" -tags "CI" {
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1[0].Address | Should -BeExactly $realAddress
-            $result1[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
+            $result1.Address | Should -BeExactly $realAddress
+            $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$isWindows) {
-                $result1[0].Reply.Options.DontFragment | Should -BeTrue
+                $result1.Reply.Options.DontFragment | Should -BeFalse
                 # Depending on the network configuration any of the following should be returned
-                $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
+                $result2.Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
             }
             else {
-                $result1[0].Reply.Options.DontFragment | Should -BeTrue
+                $result1.Reply.Options.DontFragment | Should -BeTrue
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
-                $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", $null
+                $result2.Status | Should -BeIn "TtlExpired", "TimedOut", $null
             }
         }
 
