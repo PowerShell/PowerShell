@@ -5701,7 +5701,6 @@ namespace System.Management.Automation.Language
             // G
             // G  assignment-expression:
             // G      expression   assignment-operator   statement
-            // G      expression   nullcoalesce-assignment-operator statement
             // G
             // G  pipeline-tail:
             // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
@@ -6556,11 +6555,11 @@ namespace System.Management.Automation.Language
             // G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
             // G
             // G  comparison-expression:
-            // G      additive-expression
-            // G      comparison-expression   comparison-operator   new-lines:opt   additive-expression
+            // G      nullcoalesce-expression
+            // G      comparison-expression   comparison-operator   new-lines:opt   nullcoalesce-expression
             // G
             // G  nullcoalesce-expression:
-            // G      comparison-expression
+            // G      additive-expression
             // G      nullcoalesce-expression   '??'   new-lines:opt   additive-expression
             // G
             // G  additive-expression:

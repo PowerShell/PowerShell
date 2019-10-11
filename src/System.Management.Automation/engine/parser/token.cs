@@ -598,44 +598,44 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of the logical operators '-and', '-or', and '-xor'.
         /// </summary>
-        BinaryPrecedenceLogical = 1,
+        BinaryPrecedenceLogical = 0x1,
 
         /// <summary>
         /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'
         /// </summary>
-        BinaryPrecedenceBitwise = 3,
+        BinaryPrecedenceBitwise = 0x2,
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
         /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
         /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
-        BinaryPrecedenceComparison = 5,
+        BinaryPrecedenceComparison = 0x5,
 
         /// <summary>
         /// The precedence of null coalesce operator '??'.
         /// </summary>
-        BinaryPrecedenceNullCoalesce = 7,
+        BinaryPrecedenceNullCoalesce = 0x7,
 
         /// <summary>
         /// The precedence of the binary operators '+' and '-'.
         /// </summary>
-        BinaryPrecedenceAdd = 9,
+        BinaryPrecedenceAdd = 0x9,
 
         /// <summary>
         /// The precedence of the operators '*', '/', and '%'.
         /// </summary>
-        BinaryPrecedenceMultiply = 10,
+        BinaryPrecedenceMultiply = 0xa,
 
         /// <summary>
         /// The precedence of the '-f' operator.
         /// </summary>
-        BinaryPrecedenceFormat = 12,
+        BinaryPrecedenceFormat = 0xc,
 
         /// <summary>
         /// The precedence of the '..' operator.
         /// </summary>
-        BinaryPrecedenceRange = 13,
+        BinaryPrecedenceRange = 0xd,
 
         #endregion Precedence Values
 
