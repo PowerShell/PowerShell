@@ -87,8 +87,16 @@ namespace Microsoft.PowerShell.Commands
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder queryString = new StringBuilder();
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
+                StringBuilder QueryString = new StringBuilder();
+                ConnectionOptions conOptions = new ConnectionOptions
+                {
+                    Authentication = AuthenticationLevel.Packet,
+                    Impersonation = ImpersonationLevel.Impersonate,
+                    Username = Credential?.UserName,
+                    SecurePassword = Credential?.Password
+                };
+
+                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
                 if (Id != null)
                 {

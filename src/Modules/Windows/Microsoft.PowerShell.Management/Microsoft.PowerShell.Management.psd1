@@ -69,6 +69,5 @@ CmdletsToExport=@("Add-Content",
     "Get-ComputerInfo",
     "Get-TimeZone",
     "Set-TimeZone",
-    "Get-HotFix",
-    "Clear-RecycleBin")
+    "Get-HotFix")
 }
