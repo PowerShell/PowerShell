@@ -50,7 +50,7 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         $out = Resolve-ErrorRecord -Newest $count
 
         $expected = $count
-        if ($count -eq 99) {
+        if ($count -eq 9999) {
             $expected = $error.Count
         }
 
