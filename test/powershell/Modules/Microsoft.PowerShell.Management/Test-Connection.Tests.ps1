@@ -38,7 +38,6 @@ Describe "Test-Connection" -tags "CI" {
             $result.Status | Should -BeExactly "Success"
             $result.Latency | Should -BeOfType "long"
             $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
-            $result.Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
             $result.BufferSize | Should -Be 32
         }
 
@@ -78,9 +77,9 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $realAddress
-            $result[0].Options.Ttl | Should -BeLessOrEqual 128
+            $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($isWindows) {
-                $result[0].Options.DontFragment | Should -BeFalse
+                $result[0].Reply.Options.DontFragment | Should -BeFalse
             }
         }
 
@@ -93,15 +92,15 @@ Describe "Test-Connection" -tags "CI" {
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
             $result1[0].Address | Should -BeExactly $realAddress
-            $result1[0].Options.Ttl | Should -BeLessOrEqual 128
+            $result1[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$isWindows) {
-                $result1[0].Options.DontFragment | Should -BeTrue
+                $result1[0].Reply.Options.DontFragment | Should -BeTrue
                 # Depending on the network configuration any of the following should be returned
                 $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
             }
             else {
-                $result1[0].Options.DontFragment | Should -BeTrue
+                $result1[0].Reply.Options.DontFragment | Should -BeTrue
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
                 $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", $null
@@ -118,7 +117,7 @@ Describe "Test-Connection" -tags "CI" {
                     Select-Object -First 1
 
                 $result.Address | Should -BeExactly $targetAddressIPv6
-                $result.Options | Should -Not -BeNullOrEmpty
+                $result.Reply.Options | Should -Not -BeNullOrEmpty
             }
 
             It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' -Pending {
