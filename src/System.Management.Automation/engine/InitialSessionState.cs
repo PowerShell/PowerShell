@@ -28,6 +28,8 @@ namespace System.Management.Automation.Runspaces
 {
     internal class EarlyStartup
     {
+        private static IDictionary _environmentVariables;
+
         internal static void Init()
         {
             // Code added here should:
@@ -70,8 +72,6 @@ namespace System.Management.Automation.Runspaces
         {
             get => _environmentVariables;
         }
-
-        private static IDictionary _environmentVariables;
 
         internal static void SaveEnvironmentVariables()
         {

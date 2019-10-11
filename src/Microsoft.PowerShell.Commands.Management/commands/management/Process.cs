@@ -1911,10 +1911,8 @@ namespace Microsoft.PowerShell.Commands
                     // Use environment variables from saved at startup dictionary
                     var envVariables = startInfo.EnvironmentVariables;
                     envVariables.Clear();
-                    IDictionaryEnumerator e = System.Management.Automation.Runspaces.EarlyStartup.InitialEnvironmentVariables.GetEnumerator();
-                    while (e.MoveNext())
+                    foreach (DictionaryEntry entry in System.Management.Automation.Runspaces.EarlyStartup.InitialEnvironmentVariables)
                     {
-                        DictionaryEntry entry = e.Entry;
                         envVariables.Add((string)entry.Key, (string)entry.Value);
                     }
                 }
