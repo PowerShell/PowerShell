@@ -86,7 +86,7 @@ Describe "Delimiter parameter tests" -Tags "CI" {
         $sampleData = @"
 a:b
 "@
-    { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
+        { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
     }
 
     It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
@@ -99,5 +99,4 @@ a:b
             $Result.$Key | Should -Be $ExpectedResult.$Key
         }
     }
-
 }
