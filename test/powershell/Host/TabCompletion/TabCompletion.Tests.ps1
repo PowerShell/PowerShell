@@ -162,6 +162,7 @@ Describe "TabCompletion" -Tags CI {
         @{ inputStr = '[System.Management.Automation.ActionPreference]$e = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "'; filter = ''; doubleQuotes = $true }
         @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "s'; filter = '| Where-Object { $_ -like """s*" }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "x'; filter = '| Where-Object { $_ -like """x*" }'; doubleQuotes = $true }
     ){
         param($inputStr, $filter, $doubleQuotes)
 
@@ -174,11 +175,23 @@ Describe "TabCompletion" -Tags CI {
             [cmdletbinding()] param([Parameter(ValueFromPipeline=`$true)]`$obj) process { `$obj $filter }
 "@)
 
-        $expected = [string]::Join(",",([enum]::GetValues("System.Management.Automation.ActionPreference") |
-            ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object))
+        $expectedValues = [enum]::GetValues("System.Management.Automation.ActionPreference") | ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object
+        if ($expectedValues.Count -gt 0) {
+            $expected = [string]::Join(",",$expectedValues)
+        }
+        else {
+            $expected = ''
+        }
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
     }
 
     It 'Should work for variable assignment of custom enum: <inputStr>' -TestCases @(
@@ -186,6 +199,7 @@ Describe "TabCompletion" -Tags CI {
         @{ inputStr = '[Animal]$c='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
         @{ inputStr = '$script:test = "g'; expected = '"Giraffe"','"Goose"' }
         @{ inputStr = '$script:test='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "x'; expected = @() }
     ){
         param($inputStr, $expected)
 
@@ -193,7 +207,14 @@ Describe "TabCompletion" -Tags CI {
         [Animal]$script:test = 'Duck'
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
     }
 
     It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
@@ -201,6 +222,7 @@ Describe "TabCompletion" -Tags CI {
         @{ inputStr = '$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
         @{ inputStr = '$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
         @{ inputStr = '$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '$test="c'; expected = ''; doubleQuotes = $true }
     ){
         param($inputStr, $expected, $doubleQuotes)
 
@@ -212,20 +234,35 @@ Describe "TabCompletion" -Tags CI {
         }
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
     }
 
     It 'Should work for assignment of variable with validateset of int: <inputStr>' -TestCases @(
         @{ inputStr = '$test='; expected = 2,3,11,112 }
         @{ inputStr = '$test = 1'; expected = 11,112 }
         @{ inputStr = '$test =11'; expected = 11,112 }
+        @{ inputStr = '$test =4'; expected = @() }
     ){
         param($inputStr, $expected)
 
         [ValidateSet(2,3,11,112)][int]$test = 2
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly ([string]::Join(",",$expected))
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
     }
 
     It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
@@ -233,6 +270,7 @@ Describe "TabCompletion" -Tags CI {
         @{ inputStr = '[validateset("a","aa","aab","b")][string]$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
         @{ inputStr = '[validateset("a","aa","aab","b")][string]$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
         @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''c'; expected = ''; doubleQuotes = $false }
     ){
         param($inputStr, $expected, $doubleQuotes)
 
@@ -242,7 +280,14 @@ Describe "TabCompletion" -Tags CI {
         }
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-        [string]::Join(",",$res.CompletionMatches.completiontext) | Should -BeExactly $expected
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
     }
 
     Context NativeCommand {

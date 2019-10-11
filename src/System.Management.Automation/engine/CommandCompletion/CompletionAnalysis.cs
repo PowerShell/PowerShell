@@ -763,8 +763,7 @@ namespace System.Management.Automation
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
                                     {
-                                        if (lastAst is AssignmentStatementAst assignmentAst && (assignmentAst.Left is VariableExpressionAst variableAst ||
-                                            assignmentAst.Left is ConvertExpressionAst || assignmentAst.Left is AttributedExpressionAst))
+                                        if (lastAst is AssignmentStatementAst assignmentAst)
                                         {
                                             // Handle scenarios like '$ErrorActionPreference = <tab>'
                                             if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out result))
@@ -1143,6 +1142,32 @@ namespace System.Management.Automation
             AssignmentStatementAst assignmentAst,
             out List<CompletionResult> completions)
         {
+            bool TryGetResultForEnum(Type typeConstraint, CompletionContext completionContext, out List<CompletionResult> completions)
+            {
+                completions = null;
+
+                if (typeConstraint != null && typeConstraint.IsEnum)
+                {
+                    completions = GetResultForEnum(typeConstraint, completionContext);
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool TryGetResultForSet(Type typeConstraint, ValidateSetAttribute setConstraint, CompletionContext completionContext1, out List<CompletionResult> completions)
+            {
+                completions = null;
+
+                if (setConstraint?.ValidValues != null)
+                {
+                    completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
+                    return true;
+                }
+
+                return false;
+            }
+
             completions = null;
 
             // Try to get the variable from the assignment, plus any type constraint on it
@@ -1158,22 +1183,15 @@ namespace System.Management.Automation
             // Assignment constraints override any existing ones, so try them first
 
             // Check any [ValidateSet()] constraint first since it's likely to be narrow
-            if (setConstraint?.ValidValues != null)
+            if (TryGetResultForSet(typeConstraint, setConstraint, completionContext, out completions))
             {
-                completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
                 return true;
             }
 
-            // Check if this is a ConvertExpressionAst and handle that next
-            if (assignmentAst.Left is ConvertExpressionAst convertExpressionAst)
+            // Then try to complete for an enum type
+            if (TryGetResultForEnum(typeConstraint, completionContext, out completions))
             {
-                typeConstraint = convertExpressionAst.StaticType;
-
-                if (typeConstraint.IsEnum)
-                {
-                    completions = GetResultForEnum(typeConstraint, completionContext);
-                    return true;
-                }
+                return true;
             }
 
             // If the assignment itself was unconstrained, the variable still might be
@@ -1183,16 +1201,14 @@ namespace System.Management.Automation
             }
 
             // Again try the [ValidateSet()] constraint first
-            if (setConstraint?.ValidValues != null)
+            if (TryGetResultForSet(typeConstraint, setConstraint, completionContext, out completions))
             {
-                completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
                 return true;
             }
 
-            // Then try to complete for an enum type
-            if (typeConstraint.IsEnum)
+            // Then try to complete for an enum type again
+            if (TryGetResultForEnum(typeConstraint, completionContext, out completions))
             {
-                completions = GetResultForEnum(typeConstraint, completionContext);
                 return true;
             }
 
@@ -1225,7 +1241,7 @@ namespace System.Management.Automation
             CompletionContext completionContext)
         {
             var stringToComplete = string.Empty;
-            if (completionContext.TokenAtCursor != null)
+            if (completionContext.TokenAtCursor != null && completionContext.TokenAtCursor.Kind != TokenKind.Equals)
             {
                 stringToComplete = completionContext.TokenAtCursor.Text;
             }
@@ -1239,8 +1255,7 @@ namespace System.Management.Automation
 
                 matchedResults = allValues.Where(r => wildcardPattern.IsMatch(r));
             }
-
-            if (matchedResults == null || !matchedResults.Any())
+            else
             {
                 matchedResults = allValues;
             }
