@@ -59,7 +59,10 @@ namespace System.Management.Automation
                     };
                 }
 
-                // If you add new common parameters, manually sort them into this list
+                // If you add new common parameters, please manually sort them into this list
+                // so that they appear in sorted order to anyone who wants to view the common
+                // parameters in PowerShell by invoking the following command:
+                //     [System.Management.Automation.Cmdlet]::CommonParameters
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "Debug", "DebugAction", "DebugVariable", "ErrorAction", "ErrorVariable",

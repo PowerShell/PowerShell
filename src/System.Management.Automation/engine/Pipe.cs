@@ -346,8 +346,8 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// When a temporary pipe is used in the middle of execution, then we need to pass along
-        /// the message variable lists to hold messages written out while the temporary pipe is
-        /// being used.
+        /// the data stream variable lists to hold messages written out while the temporary pipe
+        /// is being used.
         ///
         /// We don't need to pass along the out variable list because we don't care about the output
         /// generated in the middle of execution.
