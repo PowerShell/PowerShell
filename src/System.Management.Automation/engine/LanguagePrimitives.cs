@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        public static bool IsNull(object obj) => obj == null || obj == AutomationNull.Value;
+        public static bool IsNull(object obj) => obj is null || obj == AutomationNull.Value;
 
         /// <summary>
         /// Internal routine that determines if an object meets any of our criteria for null.
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        public static bool IsNullLike(object obj) => obj == DBNull.Value || obj == NullString.Value || IsNull(obj);
+        public static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
