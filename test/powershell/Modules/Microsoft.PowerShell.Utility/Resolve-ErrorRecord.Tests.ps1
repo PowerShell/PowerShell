@@ -31,7 +31,7 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
     It 'Resolve-ErrorRecord -Newest `<count>` works: <scenario>' -TestCases @(
         @{ scenario = 'less than total'; count = 1 }
         @{ scenario = 'equal to total'; count = 2 }
-        @{ scenario = 'greater than total'; count = 99 }
+        @{ scenario = 'greater than total'; count = 9999 }
     ){
         param ($count)
 
