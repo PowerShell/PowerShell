@@ -105,9 +105,6 @@ namespace PSTests.Sequential
         [SkippableFact]
         public void TestAppDomainProcessExitEvenHandlerNotLeaking()
         {
-            // Skip this flaky test for now.
-            Skip.IfNot(false);
-
             Skip.IfNot(Platform.IsWindows);
 
             EventHandler eventHandler;
