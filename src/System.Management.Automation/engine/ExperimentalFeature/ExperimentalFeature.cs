@@ -117,7 +117,13 @@ namespace System.Management.Automation
                     description: "New -DebugAction, -DebugVariable, -ProgressAction, -ProgressVariable, -VerboseAction, and -VerboseVariable common parameters"),
                 new ExperimentalFeature(
                     name: "PSTernaryOperator",
-                    description: "Support the ternary operator in PowerShell language")
+                    description: "Support the ternary operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSErrorView",
+                    description: "New formatting for ErrorRecord"),
+                new ExperimentalFeature(
+                    name: "PSUpdatesNotification",
+                    description: "Print notification message when new releases are available")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

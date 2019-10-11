@@ -1520,11 +1520,7 @@ namespace System.Management.Automation
 
             if (!wasEncoded)
             {
-                // The logging mechanism(s) cannot handle null and rendering may not be able to handle
-                // null as we have the string defined as a null terminated string in the manifest.
-                // So, replace null characters with the Unicode `SYMBOL FOR NULL`
-                // We don't just remove the characters to preserve the fact that a null character was there.
-                textToLog = textToLog.Replace('\u0000', '\u2400');
+                textToLog = FormatLogString(textToLog);
             }
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
@@ -1555,6 +1551,50 @@ namespace System.Management.Automation
             }
 
             return true;
+        }
+
+        private static string FormatLogString(string textToLog)
+        {
+            const char NullControlChar = '\u0000';
+
+            // The null symbol - `␀`
+            const char NullSymbolChar = '\u2400';
+
+            // No logging mechanism(s) cannot handle null and rendering may not be able to handle
+            // null as we have the string defined as a null terminated string in the manifest.
+            // So, replace null characters with the Unicode `SYMBOL FOR NULL`
+            // We don't just remove the characters to preserve the fact that a null character was there.
+#if UNIX
+            const char LinefeedControlChar = '\u000A';
+            const char CarriageReturnControlChar = '\u000D';
+
+            // We chose the return symbol because we believe it is more associated with these concepts
+            // than the carriage return (␍), line feed (␊), or new line (␤) symbols.
+            // The return symbol - `⏎`
+            const char ReturnSymbolChar = '\u23CE';
+
+            if (Platform.IsLinux)
+            {
+                // Because the creation of the string builder is expensive
+                // We only do this on Linux where we are doing multiple replace operations
+                StringBuilder logBuilder = new StringBuilder(textToLog);
+
+                logBuilder.Replace(NullControlChar, NullSymbolChar);
+
+                // Syslog (only used on Linux) encodes CR and NL to their octal values.
+                // We will replace them with a unicode  'RETURN SYMBOL' (U+23CE) charater for easier viewing
+                logBuilder.Replace(LinefeedControlChar, ReturnSymbolChar);
+                logBuilder.Replace(CarriageReturnControlChar, ReturnSymbolChar);
+
+                return logBuilder.ToString();
+            }
+            else
+            {
+                return textToLog.Replace(NullControlChar, NullSymbolChar);
+            }
+#else
+            return textToLog.Replace(NullControlChar, NullSymbolChar);
+#endif
         }
 
         private static bool GetAndValidateEncryptionRecipients(
