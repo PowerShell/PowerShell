@@ -65,3 +65,38 @@ bazz = 2
 	$(ConvertFrom-StringData -StringData $sampleData).Values | Should -BeIn @("0","1","2")
     }
 }
+
+Describe "Delimiter parameter tests" -Tags "CI" {
+    BeforeAll  {
+        $TestCases = @(
+            @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } }
+            @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } }
+            @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
+        )
+    }
+
+    It "Default delimiter '=' works" {
+        $actualValue = ConvertFrom-StringData -StringData 'a=b'
+
+        $actualValue.Values | Should -BeExactly "b"
+        $actualValue.Keys | Should -BeExactly "a"
+    }
+
+    It "Should not throw on given delimiter" {
+        $sampleData = @"
+a:b
+"@
+        { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
+    }
+
+    It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
+        param($Delimiter, $StringData, $ExpectedResult)
+
+        $Result = ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter
+
+        foreach ($Key in $ExpectedResult.Keys) {
+            $Key | Should -BeIn $ExpectedResult.Keys
+            $Result.$Key | Should -Be $ExpectedResult.$Key
+        }
+    }
+}
