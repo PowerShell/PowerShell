@@ -448,6 +448,15 @@ namespace System.Management.Automation
             }
         }
 
+        internal IEnumerable<string> RequiredOSVersions
+        {
+            get
+            {
+                var data = GetRequiresData();
+                return data == null ? null : data.RequiredOSVersions;
+            }
+        }
+
         internal uint PSVersionLineNumber
         {
             get { return 0; }

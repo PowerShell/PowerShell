@@ -1891,6 +1891,7 @@ namespace System.Management.Automation.Language
             List<PSSnapInSpecification> requiredSnapins = null;
             List<string> requiredAssemblies = null;
             bool requiresElevation = false;
+            List<string> requiredOSVersions = null;
 
             foreach (var token in requiresTokens)
             {
@@ -1938,7 +1939,7 @@ namespace System.Management.Automation.Language
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,
-                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation);
+                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation, ref requiredOSVersions);
                         }
                         else
                         {
@@ -1972,7 +1973,10 @@ namespace System.Management.Automation.Language
                 RequiredModules = requiredModules != null
                                                     ? new ReadOnlyCollection<ModuleSpecification>(requiredModules)
                                                     : ScriptRequirements.EmptyModuleCollection,
-                IsElevationRequired = requiresElevation
+                IsElevationRequired = requiresElevation,
+                RequiredOSVersions = requiredOSVersions != null
+                                                    ? new ReadOnlyCollection<string>(requiredOSVersions)
+                                                    : ScriptRequirements.EmptyEditionCollection
             };
         }
 
@@ -1983,7 +1987,8 @@ namespace System.Management.Automation.Language
         private const string assemblyToken = "assembly";
         private const string modulesToken = "modules";
         private const string elevationToken = "runasadministrator";
-
+        
+        private const string osVersionsToken = "os";
         private void HandleRequiresParameter(CommandParameterAst parameter,
                                              ReadOnlyCollection<CommandElementAst> commandElements,
                                              bool snapinSpecified,
@@ -1995,7 +2000,8 @@ namespace System.Management.Automation.Language
                                              ref List<string> requiredEditions,
                                              ref List<ModuleSpecification> requiredModules,
                                              ref List<string> requiredAssemblies,
-                                             ref bool requiresElevation)
+                                             ref bool requiresElevation,
+                                             ref List<string> requiredOSVersions)
         {
             Ast argumentAst = parameter.Argument ?? (index + 1 < commandElements.Count ? commandElements[++index] : null);
 
@@ -2108,6 +2114,28 @@ namespace System.Management.Automation.Language
                         requiredEditions = HandleRequiresPSEditionArgument(argumentAst, arg, ref requiredEditions);
                     }
                 }
+            } else if (osVersionsToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (requiredOSVersions != null)
+                {
+                    ReportError(parameter.Extent,
+                        nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                        ParameterBinderStrings.ParameterAlreadyBound,
+                        null,
+                        editionToken);
+                    return;
+                }
+                if (argumentValue is string || !(argumentValue is IEnumerable))
+                {
+                    requiredOSVersions = HandleRequiresOSVersionsArgument(argumentAst, argumentValue, ref requiredOSVersions);
+                }
+                else
+                {
+                    foreach (var arg in (IEnumerable)argumentValue)
+                    {
+                        requiredOSVersions = HandleRequiresOSVersionsArgument(argumentAst, arg, ref requiredOSVersions);
+                    }
+                }                
             }
             else if (versionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
@@ -2202,6 +2230,28 @@ namespace System.Management.Automation.Language
                     nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
                     DiscoveryExceptions.ScriptRequiresInvalidFormat);
             }
+        }
+
+        private List<string> HandleRequiresOSVersionsArgument(Ast argumentAst, object arg, ref List<string> requiredOSVersions)
+        {
+            if (!(arg is string))
+            {
+                ReportError(argumentAst.Extent,
+                    nameof(ParserStrings.RequiresInvalidStringArgument),
+                    ParserStrings.RequiresInvalidStringArgument,
+                    assemblyToken);
+            }
+            else
+            {
+                if (requiredOSVersions == null)
+                    requiredOSVersions = new List<string>();
+
+                if (!requiredOSVersions.Contains((string)arg))
+                {
+                    requiredOSVersions.Add((string)arg);
+                }
+            }
+            return requiredOSVersions;
         }
 
         private List<string> HandleRequiresAssemblyArgument(Ast argumentAst, object arg, List<string> requiredAssemblies)

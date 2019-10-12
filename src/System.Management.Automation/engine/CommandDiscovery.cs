@@ -409,17 +409,37 @@ namespace System.Management.Automation
             }
         }
 
-        // This method verifies the following 3 elements of #Requires statement
+        // This method verifies the following 4 elements of #Requires statement
         // #Requires -RunAsAdministrator
         // #Requires -PSVersion
         // #Requires -PSEdition
         // #Requires -Module
+        // #Requires -OSVersion
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
             VerifyElevatedPrivileges(scriptInfo);
             VerifyPSVersion(scriptInfo);
             VerifyPSEdition(scriptInfo);
             VerifyRequiredModules(scriptInfo, context);
+            VerifyOSVersions(scriptInfo);
+        }
+
+        internal static void VerifyOSVersions(ExternalScriptInfo scriptInfo)
+        {
+            var currentOSVersion = Environment.OSVersion.Platform.ToString();
+            foreach( string OSVersion in scriptInfo.RequiredOSVersions )
+            {
+                if(currentOSVersion.Equals(OSVersion, StringComparison.InvariantCultureIgnoreCase)) {
+                    return;
+                }
+            }
+            ScriptRequiresException scriptRequiresException =
+                new ScriptRequiresException(
+                    scriptInfo.Name,
+                    currentOSVersion,
+                    "ScriptRequiresOSVersionInvalid");
+            throw scriptRequiresException;
+            
         }
 
         internal static void VerifyPSVersion(ExternalScriptInfo scriptInfo)

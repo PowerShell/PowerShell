@@ -751,6 +751,13 @@ namespace System.Management.Automation.Language
         /// If nothing is specified, this property is false.
         /// </summary>
         public bool IsElevationRequired { get; internal set; }
+
+        /// <summary>
+        /// Specifies if this script requires elevated privileges, specified like:
+        ///     <code>#requires -RequiredOSVersions OSVersion</code>
+        ///     <code>#requires -RequiredOSVersions "OSVersion1,OSVersion2,OSVersion3"</code>
+        /// </summary>
+        public ReadOnlyCollection<string> RequiredOSVersions { get; internal set; }
     }
 
     /// <summary>
