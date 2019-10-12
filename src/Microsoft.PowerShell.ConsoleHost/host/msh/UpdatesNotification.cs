@@ -71,8 +71,9 @@ namespace Microsoft.PowerShell
                 // We calculate how much whitespace we need to make it look nice
                 if (hostUI.SupportsVirtualTerminal)
                 {
-                    // Use inverse yellow
-                    notificationColor = "\x1B[7m\x1B[1;33m";
+                    // Use Warning Color
+
+                    notificationColor = "\x1B[7m";
                     resetColor = "\x1B[0m";
 
                     // The first line is longest, if the message changes, this needs to be updated
