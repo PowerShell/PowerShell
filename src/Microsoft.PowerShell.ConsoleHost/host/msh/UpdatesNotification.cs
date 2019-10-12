@@ -62,7 +62,27 @@ namespace Microsoft.PowerShell
                     ? ManagedEntranceStrings.StableUpdateNotificationMessage
                     : ManagedEntranceStrings.PreviewUpdateNotificationMessage;
 
-                string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag);
+                string notificationColor = string.Empty;
+                string resetColor = string.Empty;
+
+                string line2Padding = string.Empty;
+                string line3Padding = string.Empty;
+
+                // We calculate how much whitespace we need to make it look nice
+                if (hostUI.SupportsVirtualTerminal)
+                {
+                    // Use inverse yellow
+                    notificationColor = "\x1B[7m\x1B[1;33m";
+                    resetColor = "\x1B[0m";
+
+                    // The first line is longest, if the message changes, this needs to be updated
+                    string[] lines = notificationMsgTemplate.Split('\n');
+                    line2Padding = line2Padding.PadRight(lines[0].Length - lines[1].Length + releaseTag.Length);
+                    line3Padding = line3Padding.PadRight(lines[0].Length - lines[2].Length + 3);  // 3 represents the extra placeholder
+                }
+
+                string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
+
                 hostUI.WriteLine(notificationMsg);
             }
         }
