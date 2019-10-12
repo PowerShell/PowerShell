@@ -1886,6 +1886,7 @@ namespace System.Management.Automation.Language
 
             string requiredShellId = null;
             Version requiredVersion = null;
+            Version requiredMaximumPSVersion = null;
             List<string> requiredEditions = null;
             List<ModuleSpecification> requiredModules = null;
             List<PSSnapInSpecification> requiredSnapins = null;
@@ -1939,7 +1940,7 @@ namespace System.Management.Automation.Language
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,
-                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation, ref requiredOSVersions);
+                                ref requiredShellId, ref requiredVersion, ref requiredMaximumPSVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation, ref requiredOSVersions);
                         }
                         else
                         {
@@ -1961,6 +1962,7 @@ namespace System.Management.Automation.Language
             {
                 RequiredApplicationId = requiredShellId,
                 RequiredPSVersion = requiredVersion,
+                RequiredMaximumPSVersion = requiredMaximumPSVersion,
                 RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
@@ -1987,8 +1989,8 @@ namespace System.Management.Automation.Language
         private const string assemblyToken = "assembly";
         private const string modulesToken = "modules";
         private const string elevationToken = "runasadministrator";
-        
         private const string osVersionsToken = "os";
+        private const string maximumPSVersionToken = "maximumpsversion";
         private void HandleRequiresParameter(CommandParameterAst parameter,
                                              ReadOnlyCollection<CommandElementAst> commandElements,
                                              bool snapinSpecified,
@@ -1997,6 +1999,7 @@ namespace System.Management.Automation.Language
                                              ref Version snapinVersion,
                                              ref string requiredShellId,
                                              ref Version requiredVersion,
+                                             ref Version requiredMaximumPSVersion,
                                              ref List<string> requiredEditions,
                                              ref List<ModuleSpecification> requiredModules,
                                              ref List<string> requiredAssemblies,
@@ -2122,7 +2125,7 @@ namespace System.Management.Automation.Language
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
                         ParameterBinderStrings.ParameterAlreadyBound,
                         null,
-                        editionToken);
+                        osVersionsToken);
                     return;
                 }
                 if (argumentValue is string || !(argumentValue is IEnumerable))
@@ -2177,6 +2180,27 @@ namespace System.Management.Automation.Language
 
                     requiredVersion = version;
                 }
+            }
+            else if (maximumPSVersionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)) {
+                var argumentText = argumentValue as string ?? argumentAst.Extent.Text;
+                var version = Utils.StringToVersion(argumentText);
+                if (version == null)
+                {
+                    ReportError(argumentAst.Extent,
+                        nameof(ParserStrings.RequiresVersionInvalid),
+                        ParserStrings.RequiresVersionInvalid);
+                    return;
+                }
+                if (requiredMaximumPSVersion != null && !requiredMaximumPSVersion.Equals(version))
+                {
+                    ReportError(parameter.Extent,
+                        nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                        ParameterBinderStrings.ParameterAlreadyBound,
+                        null,
+                        maximumPSVersionToken);
+                    return;
+                }
+                requiredMaximumPSVersion = version;
             }
             else if (assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
@@ -2239,7 +2263,7 @@ namespace System.Management.Automation.Language
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
                     ParserStrings.RequiresInvalidStringArgument,
-                    assemblyToken);
+                    osVersionsToken);
             }
             else
             {

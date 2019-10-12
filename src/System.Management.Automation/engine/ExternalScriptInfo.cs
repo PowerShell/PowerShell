@@ -421,6 +421,15 @@ namespace System.Management.Automation
             }
         }
 
+        internal Version RequiresMaximumPSVersion
+        {
+            get
+            {
+                var data = GetRequiresData();
+                return data == null ? null : data.RequiredMaximumPSVersion;
+            }
+        }
+
         internal IEnumerable<string> RequiresPSEditions
         {
             get

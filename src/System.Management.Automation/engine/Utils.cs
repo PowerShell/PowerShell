@@ -579,6 +579,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Checks whether current PS Version is <= another PS version.
+        /// </summary>
+        /// <param name="ver">Version to check.</param>
+        /// <returns>True if PS version <= Current PS version, false otherwise.</returns>
+        internal static bool comparePSVersionToCurrent(Version version)
+        {
+            if (version.Major < PSVersionInfo.PSVersion.Major)
+            {
+                return true;
+            }
+            if (version.Major > PSVersionInfo.PSVersion.Major)
+            {
+                return false;
+            }
+            if (version.Minor < PSVersionInfo.PSVersion.Minor) {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Coverts a string to version format.
         /// If the string is of the format x (ie., no dots), then ".0" is appended
         /// to the string.

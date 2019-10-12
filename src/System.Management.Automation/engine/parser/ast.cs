@@ -753,11 +753,18 @@ namespace System.Management.Automation.Language
         public bool IsElevationRequired { get; internal set; }
 
         /// <summary>
-        /// Specifies if this script requires elevated privileges, specified like:
+        /// Specifies if this script requires specific OS versions, specified like:
         ///     <code>#requires -RequiredOSVersions OSVersion</code>
         ///     <code>#requires -RequiredOSVersions "OSVersion1,OSVersion2,OSVersion3"</code>
         /// </summary>
         public ReadOnlyCollection<string> RequiredOSVersions { get; internal set; }
+
+        /// <summary>
+        /// The PowerShell maximum version this script requires, specified like:
+        ///     <code>#requires -MaximumPSVersion 3</code>
+        /// If no version has been specified, this property is null.
+        /// </summary>
+        public Version RequiredMaximumPSVersion { get; internal set; }
     }
 
     /// <summary>
