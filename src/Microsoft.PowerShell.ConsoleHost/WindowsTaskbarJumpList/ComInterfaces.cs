@@ -199,6 +199,7 @@ namespace Microsoft.PowerShell
         {
             // IObjectArray
             void GetCount(out uint cObjects);
+
             void GetAt(
                 uint iIndex,
                 ref Guid riid,
