@@ -122,20 +122,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_inputBuffer.Count > 0)
-            {
-                int offset = Math.Min(_inputBuffer.Count, Offset < int.MaxValue ? (int)Offset : int.MaxValue);
-                int count = Math.Min(_inputBuffer.Count - offset, Count < int.MaxValue ? (int)Count : int.MaxValue);
-
-                if (offset != 0 || count != _inputBuffer.Count)
-                {
-                    WriteHexadecimal(_inputBuffer.GetRange(offset, count).ToArray(), 0, GetGroupLabel(_lastInputType));
-                }
-                else
-                {
-                    WriteHexadecimal(_inputBuffer.ToArray(), 0, GetGroupLabel(_lastInputType));
-                }
-            }
+            FlushInputBuffer();
         }
 
         #endregion
@@ -284,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (offset != 0 || count != bytes.Length)
             {
-                WriteHexadecimal(bytes.Slice(offset, count), offset: 0, GetGroupLabel(typeof(string)));
+                WriteHexadecimal(bytes.Slice(offset, count), offset: 0, label: GetGroupLabel(typeof(string)));
             }
             else
             {
@@ -310,15 +297,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteHexadecimal(
                     _inputBuffer.GetRange(offset, count).ToArray(),
-                    label: GetGroupLabel(_lastInputType),
-                    offset: 0);
+                    offset: 0,
+                    label: GetGroupLabel(_lastInputType));
             }
             else
             {
                 WriteHexadecimal(
                     _inputBuffer.ToArray(),
-                    label: GetGroupLabel(_lastInputType),
-                    offset: 0);
+                    offset: 0,
+                    label: GetGroupLabel(_lastInputType));
             }
 
             // Reset flags so we can go back to filling up the buffer when needed.
@@ -512,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                     ? inputBytes.Length - index
                     : bytesPerObject;
                 var bytes = inputBytes.Slice(index, count);
-                WriteObject(new ByteCollection((ulong)index + (ulong)offset, bytes.ToArray(), label));
+                WriteObject(new ByteCollection((ulong)index + (ulong)offset, label, bytes.ToArray()));
             }
         }
 
