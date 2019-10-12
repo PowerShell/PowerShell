@@ -328,14 +328,14 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 [ebook-list]: https://martin77s.wordpress.com/2014/05/26/free-powershell-ebooks/
 [tutorial]: https://www.computerperformance.co.uk/powershell/index.htm
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
-[ps-module]:https://msdn.microsoft.com/library/dd878324%28v=vs.85%29.aspx
+[ps-module]:https://docs.microsoft.com/en-us/powershell/scripting/developer/module/understanding-a-windows-powershell-module
 [create-ps-module]:https://www.business.com/articles/powershell-modules/
 [remoting]:https://channel9.msdn.com/Series/GetStartedPowerShell3/06
 [in-depth]: https://channel9.msdn.com/events/MMS/2012/SV-B406
 [remote-mgmt]:https://www.itprotoday.com/powershell/powershell-basics-remote-management
-[remote-commands]:https://docs.microsoft.com/powershell/scripting/core-powershell/running-remote-commands?view=powershell-6
+[remote-commands]:https://docs.microsoft.com/powershell/scripting/core-powershell/running-remote-commands
 [examples]:https://examples.oreilly.com/9780596528492/
-[examples-ps-module]:https://msdn.microsoft.com/library/dd878340%28v=vs.85%29.aspx
+[examples-ps-module]:https://docs.microsoft.com/en-us/powershell/scripting/developer/module/how-to-write-a-powershell-script-module
 [writing-ps-module]:https://www.powershellmagazine.com/2014/03/18/writing-a-powershell-module-in-c-part-1-the-basics/
-[sample-code]:https://msdn.microsoft.com/library/ff602031%28v=vs.85%29.aspx
+[sample-code]:https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/examples-of-cmdlet-code
 [create-run-script]:./create-powershell-scripts.md
