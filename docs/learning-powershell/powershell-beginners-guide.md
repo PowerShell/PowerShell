@@ -328,7 +328,7 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 [ebook-list]: https://martin77s.wordpress.com/2014/05/26/free-powershell-ebooks/
 [tutorial]: https://www.computerperformance.co.uk/powershell/index.htm
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
-[ps-module]:https://docs.microsoft.com/en-us/powershell/scripting/developer/module/understanding-a-windows-powershell-module
+[ps-module]:https://docs.microsoft.com/powershell/scripting/developer/module/understanding-a-windows-powershell-module
 [create-ps-module]:https://www.business.com/articles/powershell-modules/
 [remoting]:https://channel9.msdn.com/Series/GetStartedPowerShell3/06
 [in-depth]: https://channel9.msdn.com/events/MMS/2012/SV-B406
