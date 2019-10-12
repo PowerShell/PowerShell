@@ -253,4 +253,64 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamData.Count | Should -Be 0
         }
     }
+
+    Context 'Stream API tests' {
+        BeforeAll {
+            # Define a function to test stream output
+            function Test-StreamOutput {
+                [CmdletBinding()]
+                param()
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Management.Automation.CommandNotFoundException]::new('Before'),
+                        'FirstError',
+                        'InvalidOperation',
+                        $null))
+                $ErrorActionPreference = 'Continue'
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Management.Automation.CommandNotFoundException]::new('After'),
+                        'SecondError',
+                        'InvalidOperation',
+                        $null))
+                $PSCmdlet.WriteWarning('Before')
+                $WarningPreference = 'Continue'
+                $PSCmdlet.WriteWarning('After')
+                $PSCmdlet.WriteVerbose('Before')
+                $VerbosePreference = 'Continue'
+                $PSCmdlet.WriteVerbose('After')
+                $PSCmdlet.WriteDebug('Before')
+                $DebugPreference = 'Continue'
+                $PSCmdlet.WriteDebug('After')
+                $PSCmdlet.WriteInformation('Before', $null)
+                $InformationPreference = 'Continue'
+                $PSCmdlet.WriteInformation('After', $null)
+                $PSCmdlet.WriteProgress(
+                    [System.Management.Automation.ProgressRecord]::new(
+                        1,
+                        'Testing progress stream',
+                        'Starting test'
+                    )
+                )
+                $ProgressPreference = 'Continue'
+                $PSCmdlet.WriteProgress(
+                    [System.Management.Automation.ProgressRecord]::new(
+                        1,
+                        'Testing progress stream',
+                        'Finished test'
+                    )
+                )
+            }
+        }
+
+        It 'Should not output anything from stream APIs when all streams are ignored at invocation time' {
+            & {
+                # Ignore all messages in a child scope so that they get reset afterwards
+                $ErrorActionPreference = $WarningPreference = $VerbosePreference = $DebugPreference = $InformationPreference = $ProgressPreference = 'Ignore'
+
+                # Invoke the function and verify no stream data was returned
+                Test-StreamOutput *>&1 | Should -BeNullOrEmpty
+            }
+        }
+    }
 }
