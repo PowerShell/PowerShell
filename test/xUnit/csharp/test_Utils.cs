@@ -80,7 +80,7 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestConvertToJsonBasic()
         {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
             string expected = "{\"name\":\"req\",\"type\":\"http\"}";
             OrderedDictionary hash = new OrderedDictionary {
                 {"name", "req"},
@@ -96,9 +96,37 @@ namespace PSTests.Parallel
         }
 
         [Fact]
+        public static void TestConvertToJsonWithExcludeNullFalse()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
+            string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
+            OrderedDictionary hash = new OrderedDictionary {
+                {"name", "req"},
+                {"type", "http"},
+                {"nullEntry", null }
+            };
+            string json = JsonObject.ConvertToJson(hash, in context);
+            Assert.Equal(expected, json);
+        }
+
+        [Fact]
+        public static void TestConvertToJsonWithExcludeNullTrue()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: true, compressOutput: true);
+            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
+            OrderedDictionary hash = new OrderedDictionary {
+                {"name", "req"},
+                {"type", "http"},
+                {"nullEntry", null }
+            };
+            string json = JsonObject.ConvertToJson(hash, in context);
+            Assert.Equal(expected, json);
+        }
+
+        [Fact]
         public static void TestConvertToJsonWithEnum()
         {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
             string expected = "{\"type\":1}";
             Hashtable hash = new Hashtable {
                 {"type", CommandTypes.Alias}
@@ -106,7 +134,7 @@ namespace PSTests.Parallel
             string json = JsonObject.ConvertToJson(hash, in context);
             Assert.Equal(expected, json);
 
-            context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, compressOutput: true);
+            context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, excludeNull: false, compressOutput: true);
             json = JsonObject.ConvertToJson(hash, in context);
             expected = "{\"type\":\"Alias\"}";
             Assert.Equal(expected, json);
@@ -115,7 +143,7 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestConvertToJsonWithoutCompress()
         {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, compressOutput: false);
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, excludeNull: false, compressOutput: false);
             string expected = @"{
   ""type"": ""Alias""
 }";
@@ -133,6 +161,7 @@ namespace PSTests.Parallel
             var context = new JsonObject.ConvertToJsonContext(
                 maxDepth: 1,
                 enumsAsStrings: true,
+                excludeNull: false,
                 compressOutput: false,
                 source.Token,
                 Newtonsoft.Json.StringEscapeHandling.Default,
