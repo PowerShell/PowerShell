@@ -50,10 +50,19 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Compress { get; set; }
 
         /// <summary>
-        /// Gets or sets the EnumsAsStrings property.
-        /// If the EnumsAsStrings property is set to true, enum values will
-        /// be converted to their string equivalent. Otherwise, enum values
-        /// will be converted to their numeric equivalent.
+        /// Gets or sets the Compress property.
+        /// If the Compress property is set to be true, the Json string will
+        /// be output in the compressed way. Otherwise, the Json string will
+        /// be output with indentations.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter ExcludeNull { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ExcludeNull property.
+        /// If the ExcludeNull property is set to true, key with null value
+        /// be ignored. Otherwise, key with null value
+        /// will be considered for conversion.
         /// </summary>
         [Parameter]
         public SwitchParameter EnumsAsStrings { get; set; }
@@ -116,6 +125,7 @@ namespace Microsoft.PowerShell.Commands
                 var context = new JsonObject.ConvertToJsonContext(
                     Depth,
                     EnumsAsStrings.IsPresent,
+                    ExcludeNull.IsPresent,
                     Compress.IsPresent,
                     _cancellationSource.Token,
                     EscapeHandling,

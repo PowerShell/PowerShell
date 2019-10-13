@@ -51,6 +51,11 @@ namespace Microsoft.PowerShell.Commands
             public readonly bool EnumsAsStrings;
 
             /// <summary>
+            /// Gets the ExcludeNull setting.
+            /// </summary>
+            public readonly bool ExcludeNull;
+
+            /// <summary>
             /// Gets the CompressOutput setting.
             /// </summary>
             public readonly bool CompressOutput;
@@ -65,9 +70,10 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+            /// <param name="excludeNull">Indicates whether to include null values for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
-            public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+            public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool excludeNull, bool compressOutput)
+                : this(maxDepth, enumsAsStrings, excludeNull, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
             {
             }
 
@@ -76,6 +82,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+            /// <param name="excludeNull">Indicates whether to include null values for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
@@ -83,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
             public ConvertToJsonContext(
                 int maxDepth,
                 bool enumsAsStrings,
+                bool excludeNull,
                 bool compressOutput,
                 CancellationToken cancellationToken,
                 StringEscapeHandling stringEscapeHandling,
@@ -92,6 +100,7 @@ namespace Microsoft.PowerShell.Commands
                 this.CancellationToken = cancellationToken;
                 this.StringEscapeHandling = stringEscapeHandling;
                 this.EnumsAsStrings = enumsAsStrings;
+                this.ExcludeNull = excludeNull;
                 this.CompressOutput = compressOutput;
                 this.Cmdlet = targetCmdlet;
             }
@@ -464,6 +473,11 @@ namespace Microsoft.PowerShell.Commands
                     MaxDepth = 1024,
                     StringEscapeHandling = context.StringEscapeHandling
                 };
+
+                if (context.ExcludeNull)
+                {
+                    jsonSettings.NullValueHandling = NullValueHandling.Ignore;
+                }
 
                 if (context.EnumsAsStrings)
                 {
