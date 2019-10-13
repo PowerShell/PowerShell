@@ -1229,31 +1229,28 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isCommandMatch)
                 {
-                    if (ArgumentList != null)
+                    if (Syntax.IsPresent && current is AliasInfo ai)
                     {
-                        AliasInfo ai = current as AliasInfo;
-                        if (ai != null)
+                        // If the matching command was an alias, then use the resolved command
+                        // instead of the alias...
+                        current = ai.ResolvedCommand;
+                        if (current == null)
                         {
-                            // If the matching command was an alias, then use the resolved command
-                            // instead of the alias...
-                            current = ai.ResolvedCommand;
-                            if (current == null)
-                            {
-                                return false;
-                            }
+                            return false;
                         }
-                        else if (!(current is CmdletInfo || current is IScriptCommandInfo))
-                        {
-                            // If current is not a cmdlet or script, we need to throw a terminating error.
-                            ThrowTerminatingError(
-                                new ErrorRecord(
-                                    PSTraceSource.NewArgumentException(
-                                        "ArgumentList",
-                                        DiscoveryExceptions.CommandArgsOnlyForSingleCmdlet),
-                                    "CommandArgsOnlyForSingleCmdlet",
-                                    ErrorCategory.InvalidArgument,
-                                    current));
-                        }
+                    }
+
+                    if (ArgumentList != null && !(current is CmdletInfo || current is IScriptCommandInfo))
+                    {
+                        // If current is not a cmdlet or script, we need to throw a terminating error.
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                PSTraceSource.NewArgumentException(
+                                    "ArgumentList",
+                                    DiscoveryExceptions.CommandArgsOnlyForSingleCmdlet),
+                                "CommandArgsOnlyForSingleCmdlet",
+                                ErrorCategory.InvalidArgument,
+                                current));
                     }
 
                     // If the command implements dynamic parameters

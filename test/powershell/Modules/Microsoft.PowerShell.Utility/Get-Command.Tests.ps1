@@ -103,3 +103,32 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
     }
 }
+
+Describe "Get-Command" -Tag CI {
+    BeforeAll {
+        Import-Module Microsoft.PowerShell.Management
+    }
+    Context "-Syntax tests" {
+        It "Should return a string object when -Name is an alias and -Syntax is specified" {
+            $Result = Get-Command -Name del -Syntax
+
+            $Result | Should -BeOfType [String]
+            $Result | Should -Match 'Remove-Item \[-Path\]'
+        }
+    }
+
+    Context "-Name tests" {
+        It "Should return a AliasInfo object when -Name is an alias" {
+            $Result = Get-Command -Name del
+
+            $Result | Should -BeOfType [System.Management.Automation.AliasInfo]
+            $Result.DisplayName | Should -Be 'del -> Remove-Item'
+        }
+
+        It "Should return a CommandInfo object when -Name is a command" {
+            $Result = Get-Command -Name Remove-Item
+
+            $Result | Should -BeOfType [System.Management.Automation.CommandInfo]
+        }
+    }
+}
