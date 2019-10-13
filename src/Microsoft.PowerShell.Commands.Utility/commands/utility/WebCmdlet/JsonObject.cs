@@ -474,11 +474,6 @@ namespace Microsoft.PowerShell.Commands
                     StringEscapeHandling = context.StringEscapeHandling
                 };
 
-                if (context.ExcludeNull)
-                {
-                    jsonSettings.NullValueHandling = NullValueHandling.Ignore;
-                }
-
                 if (context.EnumsAsStrings)
                 {
                     jsonSettings.Converters.Add(new StringEnumConverter());
@@ -725,6 +720,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         throw exception;
                     }
+                }
+
+                if (context.ExcludeNull && entry.Value == null)
+                {
+                    continue;
                 }
 
                 result.Add(name, ProcessValue(entry.Value, depth + 1, in context));
