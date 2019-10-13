@@ -30,7 +30,7 @@ jobs:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - powershell: |

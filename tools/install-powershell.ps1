@@ -249,7 +249,7 @@ try {
         $blobName = $metadata.BlobName
 
         # Get version from currently installed PowerShell Daily if available.
-        $pwshPath = Join-Path $Destination "pwsh"
+        $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
         $currentlyInstalledVersion = if(Test-Path $pwshPath) {
             ((& $pwshPath -version) -split " ")[1]
         }

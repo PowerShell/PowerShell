@@ -93,7 +93,6 @@ namespace System.Management.Automation
         internal static readonly string RunspaceIdNoteProperty = "RunspaceId";
         internal static readonly string ShowComputerNameNoteProperty = "PSShowComputerName";
         internal static readonly string SourceJobInstanceId = "PSSourceJobInstanceId";
-        internal static readonly string SourceLength = "Length";
         internal static readonly string EventObject = "PSEventObject";
         // used by Custom Shell related cmdlets.
         internal const string PSSessionConfigurationNoun = "PSSessionConfiguration";

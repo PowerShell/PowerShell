@@ -230,20 +230,32 @@ namespace System.Management.Automation.Language
                 }
 
                 if (needsPrefixDots)
-                    sb.Append("... ");
+                {
+                    sb.Append("\u2026 "); // Unicode ellipsis character
+                }
+
                 sb.Append(sourceLine);
+
                 if (needsSuffixDots)
-                    sb.Append(" ...");
+                {
+                    sb.Append(" \u2026"); // Unicode ellipsis character
+                }
+
                 sb.Append(Environment.NewLine);
                 sb.Append("+ ");
-                sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 4 : 0));
+                sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 2 : 0));
                 // errorLength of 0 happens at EOF - always write out 1.
                 sb.Append('~', errorLength > 0 ? errorLength : 1);
+
                 message = sb.ToString();
             }
 
-            return StringUtil.Format(ParserStrings.TextForPositionMessage, fileName, position.StartLineNumber,
-                                     position.StartColumnNumber, message);
+            return StringUtil.Format(
+                ParserStrings.TextForPositionMessage,
+                fileName,
+                position.StartLineNumber,
+                position.StartColumnNumber,
+                message);
         }
 
         /// <summary>
