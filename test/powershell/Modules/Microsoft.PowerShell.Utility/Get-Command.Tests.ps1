@@ -113,7 +113,30 @@ Describe "Get-Command" -Tag CI {
             $Result = Get-Command -Name del -Syntax
 
             $Result | Should -BeOfType [String]
-            $Result | Should -Match 'Remove-Item \[-Path\]'
+            $Result | Should -Match 'del \[-Path\]'
+        }
+
+        It "Should return the path to an aliased script when -Syntax is specified" {
+            # First, create a script file
+            @'
+            [CmdletBinding()]
+            param(
+                [Parameter(Position=0, Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+                [ValidateNotNullOrEmpty()]
+                [string[]]
+                $Name
+            )
+            process {
+                "Processing ${Name}"
+            }
+'@ | out-File TestDrive:\Test-GcmSyntax.ps1
+
+            # Now set up an alias for that file
+            new-alias tgs TestDrive:\Test-GcmSyntax.ps1
+
+            $Result = Get-Command -Name tgs -Syntax
+
+            $Result | Should -Match "tgs -> $([Regex]::Escape((Get-Item TestDrive:\\Test-GcmSyntax.ps1).FullName))"
         }
     }
 

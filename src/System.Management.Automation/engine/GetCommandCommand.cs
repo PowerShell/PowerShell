@@ -533,6 +533,17 @@ namespace Microsoft.PowerShell.Commands
                         {
                             PSObject syntax = PSObject.AsPSObject(result.Syntax);
 
+                            if (!_nameContainsWildcard && !this.Name[0].Equals(result.Name))
+                            {
+                                string replacedSyntax = string.Format(
+                                    "{0} -> {1}{2}{3}",
+                                    this.Name[0],
+                                    result is ExternalScriptInfo extScript ? string.Format("{0}{1}", extScript.Path, Environment.NewLine) : result.Name,
+                                    Environment.NewLine,
+                                    result.Syntax.Replace(result.Name, this.Name[0]));
+                                syntax = PSObject.AsPSObject(replacedSyntax);
+                            }
+
                             syntax.IsHelpObject = true;
 
                             WriteObject(syntax);
