@@ -701,6 +701,11 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (DictionaryEntry entry in dict)
             {
+                if (context.ExcludeNull && entry.Value == null)
+                {
+                    continue;
+                }
+
                 string name = entry.Key as string;
                 if (name == null)
                 {
@@ -720,11 +725,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         throw exception;
                     }
-                }
-
-                if (context.ExcludeNull && entry.Value == null)
-                {
-                    continue;
                 }
 
                 result.Add(name, ProcessValue(entry.Value, depth + 1, in context));
