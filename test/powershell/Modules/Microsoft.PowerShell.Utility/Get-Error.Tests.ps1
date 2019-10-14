@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'Resolve-ErrorRecord tests' -Tag CI {
+Describe 'Get-Error tests' -Tag CI {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSResolveErrorRecord')
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSGetError')
         if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSResolveErrorRecord' to be enabled." -Verbose
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSGetError' to be enabled." -Verbose
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -17,23 +17,23 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         }
     }
 
-    It 'Resolve-ErrorRecord resolves $Error[0] and includes InnerException' {
+    It 'Get-Error resolves $Error[0] and includes InnerException' {
         try {
             1/0
         }
         catch {
         }
 
-        $out = Resolve-ErrorRecord | Out-String
+        $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*InnerException*'
     }
 
-    It 'Resolve-ErrorRecord -Newest `<count>` works: <scenario>' -TestCases @(
-        @{ scenario = 'less than total'; count = 1 }
-        @{ scenario = 'equal to total'; count = 2 }
-        @{ scenario = 'greater than total'; count = 9999 }
+    It 'Get-Error -Newest `<count>` works: <scenario>' -TestCases @(
+        @{ scenario = 'less than total'; count = 1; paramname = 'Newest' }
+        @{ scenario = 'equal to total'; count = 2; paramname = 'Last' }
+        @{ scenario = 'greater than total'; count = 9999; paramname = 'Newest' }
     ){
-        param ($count)
+        param ($count, $paramname)
 
         try {
             1/0
@@ -47,7 +47,9 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         catch {
         }
 
-        $out = Resolve-ErrorRecord -Newest $count
+        $params = @{ $paramname = $count }
+
+        $out = Get-Error @params
 
         $expected = $count
         if ($count -eq 9999) {
@@ -57,34 +59,34 @@ Describe 'Resolve-ErrorRecord tests' -Tag CI {
         $out.Count | Should -Be $expected
     }
 
-    It 'Resolve-ErrorRecord -Newest with invalid value `<value>` should fail' -TestCases @(
+    It 'Get-Error -Newest with invalid value `<value>` should fail' -TestCases @(
         @{ value = 0 }
         @{ value = -2 }
     ){
         param($value)
 
-        { Resolve-ErrorRecord -Newest $value } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ResolveErrorRecordCommand'
+        { Get-Error -Newest $value } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetErrorCommand'
     }
 
-    It 'Resolve-ErrorRecord will accept pipeline input' {
+    It 'Get-Error will accept pipeline input' {
         try {
             1/0
         }
         catch {
         }
 
-        $out = $error[0] | Resolve-ErrorRecord | Out-String
+        $out = $error[0] | Get-Error | Out-String
         $out | Should -BeLikeExactly '*-2146233087*'
     }
 
-    It 'Resolve-ErrorRecord will handle Exceptions' {
+    It 'Get-Error will handle Exceptions' {
         try {
             Invoke-Expression '1/d'
         }
         catch {
         }
 
-        $out = Resolve-ErrorRecord | Out-String
+        $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*ExpectedValueExpression*'
         $out | Should -BeLikeExactly '*UnexpectedToken*'
     }

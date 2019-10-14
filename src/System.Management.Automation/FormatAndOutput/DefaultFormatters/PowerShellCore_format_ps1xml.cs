@@ -152,8 +152,8 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
             yield return new ExtendedTypeDefinition(
-                "System.Management.Automation.ErrorRecord#ResolvedErrorRecord",
-                ViewsOf_System_Management_Automation_ResolvedErrorRecord());
+                "System.Management.Automation.ErrorRecord#GetError",
+                ViewsOf_System_Management_Automation_GetError());
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
@@ -740,9 +740,9 @@ namespace System.Management.Automation.Runspaces
                 .EndControl());
         }
 
-        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ResolvedErrorRecord()
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_GetError()
         {
-            yield return new FormatViewDefinition("ResolvedErrorInstance",
+            yield return new FormatViewDefinition("GetErrorInstance",
                 CustomControl.Create()
                     .GroupByProperty("PSErrorIdentifier", label: "ErrorIdentifier")
                     .StartEntry()

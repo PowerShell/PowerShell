@@ -9,25 +9,27 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class for Resolve-ErrorRecord implementation.
+    /// Class for Get-Error implementation.
     /// </summary>
-    [Experimental("Microsoft.PowerShell.Utility.PSResolveErrorRecord", ExperimentAction.Show)]
-    [Cmdlet(VerbsDiagnostic.Resolve, "ErrorRecord", HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/resolve-errorrecord?view=powershell-7&WT.mc_id=ps-gethelp", DefaultParameterSetName = NewestParameterSetName)]
-    public sealed class ResolveErrorRecordCommand : PSCmdlet
+    [Experimental("Microsoft.PowerShell.Utility.PSGetError", ExperimentAction.Show)]
+    [Cmdlet(VerbsCommon.Get, "Error", HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp", DefaultParameterSetName = NewestParameterSetName)]
+    public sealed class GetErrorCommand : PSCmdlet
     {
-        internal const string ErrorRecordParameterSetName = "ErrorRecord";
+        internal const string ErrorParameterSetName = "Error";
         internal const string NewestParameterSetName = "Newest";
+        internal const string AliasNewest = "Last";
 
         /// <summary>
         /// Gets or sets the error object to resolve.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = ErrorRecordParameterSetName)]
+        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = ErrorParameterSetName)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
         /// Gets or sets the number of error objects to resolve starting with newest first.
         /// </summary>
         [Parameter(ParameterSetName = NewestParameterSetName)]
+        [Alias(AliasNewest)]
         [ValidateRange(1, int.MaxValue)]
         public int Newest { get; set; } = 1;
 
@@ -70,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (object errorRecord in errorRecords)
             {
                 PSObject obj = PSObject.AsPSObject(errorRecord);
-                obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#ResolvedErrorRecord");
+                obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#GetError");
 
                 // Remove some types so they don't get rendered by those formats
                 obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
