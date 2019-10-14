@@ -615,7 +615,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of null coalesce operator '??'.
         /// </summary>
-        BinaryPrecedenceNullCoalesce = 0x7,
+        BinaryPrecedenceCoalesce = 0x7,
 
         /// <summary>
         /// The precedence of the binary operators '+' and '-'.
@@ -866,7 +866,7 @@ namespace System.Management.Automation.Language
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
-            /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceNullCoalesce,
+            /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
