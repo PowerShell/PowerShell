@@ -11,10 +11,9 @@ namespace System.Management.Automation.Runspaces
         {
             var AvailableModules_GroupingFormat = CustomControl.Create()
                     .StartEntry()
-                        .StartFrame(leftIndent: 4)
+                        .StartFrame()
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent")
-                            .AddNewline()
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
@@ -377,7 +376,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("MatchInfo",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_.ToString(((get-location).path))")
+                        .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
                     .EndEntry()
                 .EndControl());
         }
@@ -743,7 +742,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""CategoryView"")
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -754,7 +753,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.Path)
                                                     {
-                                                        $myinv.MyCommand.Path + "" : ""
+                                                        $myinv.MyCommand.Path + ' : '
                                                     }
 
                                                     break
@@ -764,7 +763,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.ScriptBlock)
                                                     {
-                                                        $myinv.MyCommand.ScriptBlock.ToString() + "" : ""
+                                                        $myinv.MyCommand.ScriptBlock.ToString() + ' : '
                                                     }
 
                                                     break
@@ -775,12 +774,12 @@ namespace System.Management.Automation.Runspaces
                                                     {
                                                         if ($myinv.MyCommand.Name)
                                                         {
-                                                            $myinv.MyCommand.Name + "" : ""
+                                                            $myinv.MyCommand.Name + ' : '
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        $myinv.InvocationName + "" : ""
+                                                        $myinv.InvocationName + ' : '
                                                     }
 
                                                     break
@@ -789,30 +788,223 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         elseif ($myinv -and $myinv.InvocationName)
                                         {
-                                            $myinv.InvocationName + "" : ""
+                                            $myinv.InvocationName + ' : '
                                         }
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
-                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
-                                        $_.Exception.Message
-                                   }
-                                   else
-                                   {
-                                        $myinv = $_.InvocationInfo
-                                        if ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
-                                            $posmsg = $myinv.PositionMessage
-                                        } else {
-                                            $posmsg = """"
+
+                                    function Get-ConciseViewPositionMessage {
+                                        Set-StrictMode -Off
+
+                                        $resetColor = ''
+                                        if ($Host.UI.SupportsVirtualTerminal) {
+                                            $resetColor = ""`e[0m""
                                         }
 
-                                        if ($posmsg -ne """")
+                                        function Get-VT100Color([string] $color) {
+                                            if (! $Host.UI.SupportsVirtualTerminal) {
+                                                return ''
+                                            }
+
+                                            $colors = @{
+                                                'Black' = ""`e[2;30m""
+                                                'DarkRed' = ""`e[2;31m""
+                                                'DarkGreen' = ""`e[2;32m""
+                                                'DarkYellow' = ""`e[2;33m""
+                                                'DarkBlue' = ""`e[2;34m""
+                                                'DarkMagenta' = ""`e[2;35m""
+                                                'DarkCyan' = ""`e[2;36m""
+                                                'Gray' = ""`e[2;37m""
+                                                'DarkGray' = ""`e[1;30m""
+                                                'Red' = ""`e[1;31m""
+                                                'Green' = ""`e[1;32m""
+                                                'Yellow' = ""`e[1;33m""
+                                                'Blue' = ""`e[1;34m""
+                                                'Magenta' = ""`e[1;35m""
+                                                'Cyan' = ""`e[1;36m""
+                                                'White' = ""`e[1;37m""
+                                            }
+
+                                            return $colors[$color]
+                                        }
+
+                                        # return length of string sans VT100 codes
+                                        function Get-RawStringLength($string) {
+                                            $vtCodes = ""`e[0m"", ""`e[2;30m"", ""`e[2;31m"", ""`e[2;32m"", ""`e[2;33m"", ""`e[2;34m"",
+                                                ""`e[2;35m"", ""`e[2;36m"", ""`e[2;37m"", ""`e[1;30m"", ""`e[1;31m"", ""`e[1;32m"",
+                                                ""`e[1;33m"", ""`e[1;34m"", ""`e[1;35m"", ""`e[1;36m"", ""`e[1;37m""
+
+                                            $newString = $string
+                                            foreach ($vtCode in $vtCodes) {
+                                                $newString = $newString.Replace($vtCode, '')
+                                            }
+
+                                            return $newString.Length
+                                        }
+
+                                        # returns a string cut to last whitespace
+                                        function Get-TruncatedString($string, [int]$length) {
+
+                                            if ($string.Length -le $length) {
+                                                return $string
+                                            }
+
+                                            return ($string.Substring(0,$length) -split '\s',-2)[0]
+
+                                            #if (-not $string.Contains(' ')) {
+                                            #    return $string.Substring(0, $length)
+                                            #}
+
+                                            #$split = $string.Substring(0, $length).Split(' ')
+                                            #if ($split.Count -gt 1) {
+                                            #    return [string]::Join(' ', $split, 0, $split.Count - 1)
+                                            #}
+                                            #else {
+                                            #    return $split[0]
+                                            #}
+                                        }
+
+                                        $errorColor = ''
+                                        $accentColor = ''
+                                        if ($Host.PrivateData) {
+                                            $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
+                                            $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
+                                        }
+
+                                        $posmsg = ''
+                                        $headerWhitespace = ''
+                                        $offsetWhitespace = ''
+                                        $message = ''
+                                        $prefix = ''
+                                        $newline = [Environment]::Newline
+
+                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                            if ($myinv.ScriptName) {
+                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
+                                            }
+                                            else {
+                                                $posmsg = ""${newline}""
+                                            }
+
+                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($scriptLineNumberLength -gt 4) {
+                                                $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
+                                            }
+
+                                            $lineWhitespace = ''
+                                            if ($scriptLineNumberLength -lt 4) {
+                                                $lineWhitespace = ' ' * (4 - $scriptLineNumberLength)
+                                            }
+
+                                            $verticalBar = '|'
+                                            $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
+                                            $line = $myinv.Line
+                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
+                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
+
+                                            # don't color the whole line red
+                                            if ($offsetLength -lt $line.Length - 1) {
+                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor).Insert($myinv.OffsetInLine - 1, $accentColor)
+                                            }
+
+                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
+                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
+                                            $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
+                                            $message = ""${prefix}${offsetWhitespace}^ ""
+                                        }
+
+                                        if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
+                                            # we use `n instead of $newline here because that's what is in the message
+                                            if ($_.CategoryInfo.Category -eq 'ParserError' -and $_.Exception.Message.Contains(""~`n"")) {
+                                                # need to parse out the relevant part of the pre-rendered positionmessage
+                                                $message += $_.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
+                                            }
+                                            else {
+                                                $message += $_.Exception.Message
+                                            }
+                                        }
+                                        else {
+                                            $message += $_.ErrorDetails.Message
+                                        }
+
+                                        # if rendering line information, break up the message if it's wider than the console
+                                        if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                            $prefixLength = Get-RawStringLength -string $prefix
+                                            $prefixVtLength = $prefix.Length - $prefixLength
+
+                                            # replace newlines in message so it lines up correct
+                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
+                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+                                                $sb = [Text.StringBuilder]::new()
+                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $null = $sb.Append($substring)
+                                                $remainingMessage = $message.Substring($substring.Length).Trim()
+                                                $null = $sb.Append($newline)
+                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                    $subMessage = $prefix + $remainingMessage
+                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
+                                                    $null = $sb.Append($substring)
+                                                    $null = $sb.Append($newline)
+                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                }
+                                                $null = $sb.Append($prefix + $remainingMessage.Trim())
+                                                $message = $sb.ToString()
+                                            }
+
+                                            $message += $newline
+                                        }
+
+                                        $posmsg += ""${errorColor}"" + $message
+
+                                        $reason = 'Error'
+                                        if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
+                                            $reason = 'Exception'
+                                        }
+                                        elseif ($myinv.MyCommand) {
+                                            $reason = $myinv.MyCommand
+                                        }
+                                        elseif ($myinv.InvocationName) {
+                                            $reason = $myinv.InvocationName
+                                        }
+                                        elseif ($_.CategoryInfo.Category) {
+                                            $reason = $_.CategoryInfo.Category
+                                        }
+                                        elseif ($_.CategoryInfo.Reason) {
+                                            $reason = $_.CategoryInfo.Reason
+                                        }
+
+                                        $errorMsg = 'Error'
+
+                                        ""${errorColor}${reason}: ${posmsg}${resetcolor}""
+                                    }
+
+                                    if ($_.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $_.FullyQualifiedErrorId -eq 'NativeCommandError') {
+                                        $_.Exception.Message
+                                    }
+                                    else
+                                    {
+                                        $myinv = $_.InvocationInfo
+                                        if ($ErrorView -eq 'ConciseView') {
+                                            $posmsg = Get-ConciseViewPositionMessage
+                                        }
+                                        elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
+                                            $posmsg = $myinv.PositionMessage
+                                        } else {
+                                            $posmsg = ''
+                                        }
+
+                                        if ($posmsg -ne '')
                                         {
                                             $posmsg = ""`n"" + $posmsg
                                         }
 
                                         if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
+                                            $posmsg = ' : ' +  $_.PSMessageDetails + $posmsg
+                                        }
+
+                                        if ($ErrorView -eq 'ConciseView') {
+                                            return $posmsg
                                         }
 
                                         $indent = 4
@@ -821,11 +1013,11 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($null -ne $errorCategoryMsg)
                                         {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
+                                            $indentString = '+ CategoryInfo          : ' + $_.ErrorCategory_Message
                                         }
                                         else
                                         {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
+                                            $indentString = '+ CategoryInfo          : ' + $_.CategoryInfo
                                         }
 
                                         $posmsg += ""`n"" + $indentString
@@ -841,15 +1033,15 @@ namespace System.Management.Automation.Runspaces
                                             $posmsg += ""`n"" + $indentString
                                         }
 
-                                        if ($ErrorView -eq ""CategoryView"") {
+                                        if ($ErrorView -eq 'CategoryView') {
                                             $_.CategoryInfo.GetMessage()
                                         }
                                         elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            $_.Exception.Message + $posmsg + ""`n ""
+                                            $_.Exception.Message + $posmsg + ""`n""
                                         } else {
                                             $_.ErrorDetails.Message + $posmsg
                                         }
-                                   }
+                                    }
                                 ")
                     .EndEntry()
                 .EndControl());

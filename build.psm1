@@ -123,6 +123,15 @@ function Get-EnvironmentInformation
         $environment += @{'nugetPackagesRoot' = "${env:HOME}/.nuget/packages"}
     }
 
+    if ($Environment.IsMacOS) {
+        $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
+        $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
+
+        if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
+            throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
+        }
+    }
+
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
@@ -446,29 +455,11 @@ Fix steps:
         Pop-Location
     }
 
-    # publish powershell.config.json
-    $config = @{}
-    if ($Environment.IsWindows) {
-        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
-    }
-
     if ($ReleaseTag) {
         $psVersion = $ReleaseTag
     }
     else {
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
-    }
-
-    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm")) {
-        $expFeatures = [System.Collections.Generic.List[string]]::new()
-        & $publishPath\pwsh -noprofile -out XML -command Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
-        $config += @{ ExperimentalFeatures = $expFeatures.ToArray() }
-    }
-
-    if ($config.Count -gt 0) {
-        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
-        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
@@ -499,6 +490,37 @@ Fix steps:
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if ($PSModuleRestore) {
         Restore-PSModuleToBuild -PublishPath $publishPath
+    }
+
+    # publish powershell.config.json
+    $config = @{}
+    if ($Environment.IsWindows) {
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+    }
+
+    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+        $json = & $publishPath\pwsh -noprofile -command {
+            $expFeatures = [System.Collections.Generic.List[string]]::new()
+            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+
+            # Make sure ExperimentalFeatures from modules in PSHome are added
+            # https://github.com/PowerShell/PowerShell/issues/10550
+            @("PSDesiredStateConfiguration.InvokeDscResource") | ForEach-Object {
+                if (!$expFeatures.Contains($_)) {
+                    $expFeatures.Add($_)
+                }
+            }
+
+            ConvertTo-Json $expFeatures.ToArray()
+        }
+
+        $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
+    }
+
+    if ($config.Count -gt 0) {
+        $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
+        Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
     }
 
     # Restore the Pester module
@@ -1697,7 +1719,11 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
+                if ($Environment.UsingHomebrew) {
+                    $PackageManager = "brew"
+                } elseif ($Environment.UsingMacports) {
+                    $PackageManager = "$sudo port"
+                }
 
                 # Build tools
                 $Deps += "cmake"
@@ -1707,7 +1733,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution { brew install $Deps } -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 

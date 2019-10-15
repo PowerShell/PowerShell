@@ -152,6 +152,144 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
+    It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
+        @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference="'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '$ErrorActionPreference = ''s'; filter = '| Where-Object { $_ -like "''s*" }'; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference = "siL'; filter = '| Where-Object { $_ -like ''"sil*'' }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "s'; filter = '| Where-Object { $_ -like """s*" }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "x'; filter = '| Where-Object { $_ -like """x*" }'; doubleQuotes = $true }
+    ){
+        param($inputStr, $filter, $doubleQuotes)
+
+        $quote = ''''
+        if ($doubleQuotes) {
+            $quote = '"'
+        }
+
+        $sb = [scriptblock]::Create(@"
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=`$true)]`$obj) process { `$obj $filter }
+"@)
+
+        $expectedValues = [enum]::GetValues("System.Management.Automation.ActionPreference") | ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object
+        if ($expectedValues.Count -gt 0) {
+            $expected = [string]::Join(",",$expectedValues)
+        }
+        else {
+            $expected = ''
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
+    }
+
+    It 'Should work for variable assignment of custom enum: <inputStr>' -TestCases @(
+        @{ inputStr = '[Animal]$c="g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '[Animal]$c='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '$script:test='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "x'; expected = @() }
+    ){
+        param($inputStr, $expected)
+
+        enum Animal { Duck; Goose; Horse; Giraffe }
+        [Animal]$script:test = 'Duck'
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '$test="c'; expected = ''; doubleQuotes = $true }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        [ValidateSet('a','aa','aab','b')][string]$test = 'b'
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
+    }
+
+    It 'Should work for assignment of variable with validateset of int: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = 2,3,11,112 }
+        @{ inputStr = '$test = 1'; expected = 11,112 }
+        @{ inputStr = '$test =11'; expected = 11,112 }
+        @{ inputStr = '$test =4'; expected = @() }
+    ){
+        param($inputStr, $expected)
+
+        [ValidateSet(2,3,11,112)][int]$test = 2
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''c'; expected = ''; doubleQuotes = $false }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
+    }
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name

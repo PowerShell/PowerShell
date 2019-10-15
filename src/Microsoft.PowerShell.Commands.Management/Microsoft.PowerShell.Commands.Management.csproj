@@ -22,7 +22,6 @@
     <Compile Remove="commands\management\GetClipboardCommand.cs" />
     <Compile Remove="commands\management\GetTransactionCommand.cs" />
     <Compile Remove="commands\management\GetWMIObjectCommand.cs" />
-    <Compile Remove="commands\management\Hotfix.cs" />
     <Compile Remove="commands\management\InvokeWMIMethodCommand.cs" />
     <Compile Remove="commands\management\RegisterWMIEventCommand.cs" />
     <Compile Remove="commands\management\RemoveWMIObjectCommand.cs" />
@@ -37,7 +36,6 @@
     <Compile Remove="gen\EventlogResources.cs" />
     <Compile Remove="gen\TransactionResources.cs" />
     <Compile Remove="gen\WebServiceResources.cs" />
-    <Compile Remove="gen\HotFixResources.cs" />
     <Compile Remove="gen\ControlPanelResources.cs" />
     <Compile Remove="gen\WmiResources.cs" />
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
@@ -47,7 +45,6 @@
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
     <EmbeddedResource Remove="resources\TransactionResources.resx" />
     <EmbeddedResource Remove="resources\WebServiceResources.resx" />
-    <EmbeddedResource Remove="resources\HotFixResources.resx" />
     <EmbeddedResource Remove="resources\ControlPanelResources.resx" />
     <EmbeddedResource Remove="resources\WmiResources.resx" />
     <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
@@ -57,7 +54,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0" />
   </ItemGroup>
 
 </Project>

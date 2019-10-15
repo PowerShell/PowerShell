@@ -66,7 +66,46 @@ Describe "Get-Culture" -Tags "CI" {
 
 Describe "`$PSCulture" -Tags "CI" {
 
-    It "Check `$PSCulture value" {
-        $PSCulture | Should -BeExactly $([System.Globalization.CultureInfo]::CurrentCulture.Name)
+    It "`$PSCulture is the current thread culture" {
+        $PSCulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentCulture.Name)
+    }
+
+    It "`$PSUICulture is the current thread culture" {
+        $PSUICulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentUICulture.Name)
+    }
+
+    It "`$PSCulture follows the current thread culture" {
+        $oldCulture = [CultureInfo]::CurrentCulture
+        $newCulture = "ru-RU"
+
+        # Workaround to pass tests locally
+        if ($oldCulture -eq "ru-RU") {
+            $newCulture = "fr-FR"
+        }
+
+        try {
+            [CultureInfo]::currentculture = $newCulture
+            $PSCulture | Should -BeExactly $newCulture
+            $PSCulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentCulture.Name)
+        } finally {
+            [CultureInfo]::CurrentCulture = $oldCulture
+        }
+    }
+
+    It "`$PSUICulture follows the current thread culture" {
+        $oldUICulture = [CultureInfo]::CurrentUICulture
+        $newUICulture = "ru-RU"
+
+        if ($oldUICulture -eq "ru-RU") {
+            $newUICulture = "fr-FR"
+        }
+
+        try {
+            [CultureInfo]::CurrentUICulture = $newUICulture
+            $PSUICulture | Should -BeExactly $newUICulture
+            $PSUICulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentUICulture.Name)
+        } finally {
+            [CultureInfo]::CurrentUICulture = $oldUICulture
+        }
     }
 }

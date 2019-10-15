@@ -1515,6 +1515,11 @@ namespace System.Management.Automation.Runspaces
         public bool RunAs32 { get; set; }
 
         /// <summary>
+        /// Gets or sets an initial working directory for the powershell background process.
+        /// </summary>
+        public string WorkingDirectory { get; set; }
+
+        /// <summary>
         /// Powershell version to execute the job in.
         /// </summary>
         public Version PSVersion { get; set; }
@@ -1590,6 +1595,7 @@ namespace System.Management.Automation.Runspaces
             NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential);
             result.AuthenticationMechanism = this.AuthenticationMechanism;
             result.InitializationScript = this.InitializationScript;
+            result.WorkingDirectory = this.WorkingDirectory;
             result.RunAs32 = this.RunAs32;
             result.PSVersion = this.PSVersion;
             result.Process = Process;

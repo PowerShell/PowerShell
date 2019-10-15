@@ -1561,6 +1561,16 @@ function New-ILNugetPackage
                 CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
             }
 
+            if ($file -eq "Microsoft.PowerShell.SDK.dll")
+            {
+                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # This is to make 'Add-Type' work in application that hosts PowerShell.
+
+                $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
+                $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
+                Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
+            }
+
             #region nuspec
             # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
             $deps = [System.Collections.ArrayList]::new()
@@ -2813,6 +2823,17 @@ function New-MSIXPackage
     if (([Version]$ProductVersion).Revision -eq -1) {
         $ProductVersion += ".0"
     }
+
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
