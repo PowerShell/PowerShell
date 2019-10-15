@@ -51,9 +51,9 @@ namespace Microsoft.PowerShell.Commands
             public readonly bool EnumsAsStrings;
 
             /// <summary>
-            /// Gets the ExcludeNull setting.
+            /// Gets the IgnoreNullProperties setting.
             /// </summary>
-            public readonly bool ExcludeNull;
+            public readonly bool IgnoreNullProperties;
 
             /// <summary>
             /// Gets the CompressOutput setting.
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, excludeNull: false, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+                : this(maxDepth, enumsAsStrings, ignoreNullProperties: false, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
             {
             }
 
@@ -81,10 +81,10 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
-            /// <param name="excludeNull">Indicates whether to include null values for the JSON conversion.</param>
+            /// <param name="ignoreNullProperties">Indicates whether to include null values for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
-            public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool excludeNull, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, excludeNull, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+            public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool ignoreNullProperties, bool compressOutput)
+                : this(maxDepth, enumsAsStrings, ignoreNullProperties, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
             {
             }
 
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
                 CancellationToken cancellationToken,
                 StringEscapeHandling stringEscapeHandling,
                 PSCmdlet targetCmdlet)
-                : this(maxDepth, enumsAsStrings, excludeNull: false, compressOutput, cancellationToken, stringEscapeHandling, targetCmdlet)
+                : this(maxDepth, enumsAsStrings, ignoreNullProperties: false, compressOutput, cancellationToken, stringEscapeHandling, targetCmdlet)
             {
             }
 
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
-            /// <param name="excludeNull">Indicates whether to include null values for the JSON conversion.</param>
+            /// <param name="ignoreNullProperties">Indicates whether to include null values for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             public ConvertToJsonContext(
                 int maxDepth,
                 bool enumsAsStrings,
-                bool excludeNull,
+                bool ignoreNullProperties,
                 bool compressOutput,
                 CancellationToken cancellationToken,
                 StringEscapeHandling stringEscapeHandling,
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 this.CancellationToken = cancellationToken;
                 this.StringEscapeHandling = stringEscapeHandling;
                 this.EnumsAsStrings = enumsAsStrings;
-                this.ExcludeNull = excludeNull;
+                this.IgnoreNullProperties = ignoreNullProperties;
                 this.CompressOutput = compressOutput;
                 this.Cmdlet = targetCmdlet;
             }
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
                     jsonSettings.Formatting = Formatting.Indented;
                 }
 
-                if (context.ExcludeNull)
+                if (context.IgnoreNullProperties)
                 {
                     jsonSettings.NullValueHandling = NullValueHandling.Ignore;
                 }
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (DictionaryEntry entry in dict)
             {
-                if (context.ExcludeNull && entry.Value == null)
+                if (context.IgnoreNullProperties && entry.Value == null)
                 {
                     continue;
                 }
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.Commands
                         value = null;
                     }
 
-                    if (value == null && context.ExcludeNull)
+                    if (value == null && context.IgnoreNullProperties)
                     {
                         continue;
                     }
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.Commands
                             value = null;
                         }
 
-                        if (value == null && context.ExcludeNull)
+                        if (value == null && context.IgnoreNullProperties)
                         {
                             continue;
                         }
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (KeyValuePair<string, JToken> entry in jobject)
             {
-                if (context.ExcludeNull && entry.Value.Type == JTokenType.Null)
+                if (context.IgnoreNullProperties && entry.Value.Type == JTokenType.Null)
                 {
                     continue;
                 }
