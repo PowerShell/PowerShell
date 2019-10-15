@@ -797,7 +797,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionQuestionEquals when ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"): et = ExpressionType.Coalesce; break;
+                case TokenKind.QuestionQuestionEquals when ExperimentalFeature.IsEnabled("PSCoalescingOperators"): et = ExpressionType.Coalesce; break;
             }
 
             var exprs = new List<Expression>();
@@ -816,7 +816,7 @@ namespace System.Management.Automation.Language
             return Expression.Block(temps, exprs);
         }
 
-        private Expression Coalesce(Expression left, Expression right)
+        private static Expression Coalesce(Expression left, Expression right)
         {
             Type leftType = left.Type;
 
@@ -5268,7 +5268,7 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_SplitOperator,
                         _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
-                case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"):
+                case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSCoalescingOperators"):
                     return Coalesce(lhs, rhs);
             }
 

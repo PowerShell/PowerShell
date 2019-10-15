@@ -264,9 +264,9 @@ Describe 'assignment statement parsing' -Tags "CI" {
 
 Describe 'null coalescing assignment statement parsing' -Tag 'CI' {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCoalescingOperators')
         if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCoalescingOperators' to be enabled." -Verbose
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -288,9 +288,9 @@ Describe 'null coalescing assignment statement parsing' -Tag 'CI' {
 
 Describe 'null coalescing statement parsing' -Tag "CI" {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullCoalescingOperators')
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCoalescingOperators')
         if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullCoalescingOperators' to be enabled." -Verbose
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCoalescingOperators' to be enabled." -Verbose
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         }

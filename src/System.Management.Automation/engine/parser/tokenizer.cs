@@ -4994,7 +4994,7 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
-                    if (ExperimentalFeature.IsEnabled("PSNullCoalescingOperators"))
+                    if (ExperimentalFeature.IsEnabled("PSCoalescingOperators"))
                     {
                         c1 = PeekChar();
 
