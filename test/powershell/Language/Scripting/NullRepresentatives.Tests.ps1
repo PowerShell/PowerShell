@@ -100,25 +100,33 @@ Describe 'Null Representatives' -Tags 'CI' {
         It '<Value> should be considered greater than or equal to 0' -TestCases $TestValues {
             param($Value)
 
-            $Value.InvokeReturnAsIs() -ge 0 | Should -BeTrue
+            $TestValue = $Value.InvokeReturnAsIs()
+            $TestValue -ge 0 | Should -BeTrue
+            0 -le $TestValue | Should -BeTrue
         }
 
         It '<Value> should be considered less than or equal to 0' -TestCases $TestValues {
             param($Value)
 
-            $Value.InvokeReturnAsIs() -le 0 | Should -BeTrue
+            $TestValue = $Value.InvokeReturnAsIs()
+            $TestValue -le 0 | Should -BeTrue
+            0 -ge $TestValue | Should -BeTrue
         }
 
         It '<Value> should be less than 1' -TestCases $TestValues {
             param($Value)
 
-            $Value.InvokeReturnAsIs() -lt 1 | Should -BeTrue
+            $TestValue = $Value.InvokeReturnAsIs()
+            $TestValue -lt 1 | Should -BeTrue
+            1 -gt $TestValue | Should -BeTrue
         }
 
         It '<Value> should be greater than -1' -TestCases $TestValues {
             param($Value)
 
-            $Value.InvokeReturnAsIs() -gt -1 | Should -BeTrue
+            $TestValue = $Value.InvokeReturnAsIs()
+            $TestValue -gt -1 | Should -BeTrue
+            -1 -lt $TestValue | Should -BeTrue
         }
     }
 }
