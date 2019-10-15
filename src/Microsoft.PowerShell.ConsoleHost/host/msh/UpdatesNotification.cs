@@ -77,9 +77,13 @@ namespace Microsoft.PowerShell
                     resetColor = "\x1B[0m";
 
                     // The first line is longest, if the message changes, this needs to be updated
-                    string[] lines = notificationMsgTemplate.Split('\n');
-                    line2Padding = line2Padding.PadRight(lines[0].Length - lines[1].Length + releaseTag.Length);
-                    line3Padding = line3Padding.PadRight(lines[0].Length - lines[2].Length + 3);  // 3 represents the extra placeholder
+                    int line1Length = notificationMsgTemplate.IndexOf('\n');
+                    int line2Length = notificationMsgTemplate.IndexOf('\n', line1Length + 1);
+                    int line3Length = notificationMsgTemplate.IndexOf('\n', line2Length + 1);
+                    line3Length -= line2Length + 1;
+                    line2Length -= line1Length + 1;
+                    line2Padding = line2Padding.PadRight(line1Length - line2Length + releaseTag.Length);
+                    line3Padding = line3Padding.PadRight(line1Length - line3Length + 3);  // 3 represents the extra placeholder
                 }
 
                 string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);

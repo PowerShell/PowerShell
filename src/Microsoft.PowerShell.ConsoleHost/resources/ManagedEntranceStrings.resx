@@ -130,13 +130,13 @@ Type 'help' to get help.</value>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
     <value>  {1} A new PowerShell preview release is available: v{0} {2}
   {1} Upgrade now, or check out the release page at:{3}{2}
-  {1}   https://aka.ms/PowerShell-Releases?tag=v{0} {4}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
     <value>  {1} A new PowerShell stable release is available: v{0} {2}
   {1} Upgrade now, or check out the release page at:{3}{2}
-  {1}   https://aka.ms/PowerShell-Releases?tag=v{0} {4}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
