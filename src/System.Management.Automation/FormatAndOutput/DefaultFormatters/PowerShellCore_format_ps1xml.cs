@@ -152,7 +152,7 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
             yield return new ExtendedTypeDefinition(
-                "System.Management.Automation.ErrorRecord#GetError",
+                "PSExtendedError",
                 ViewsOf_System_Management_Automation_GetError());
 
             yield return new ExtendedTypeDefinition(
@@ -740,11 +740,14 @@ namespace System.Management.Automation.Runspaces
                 .EndControl());
         }
 
+        // This generates a custom view for ErrorRecords and Exceptions making
+        // specific nested types defined in $expandTypes visible.  It also handles
+        // IEnumerable types.  Nested types are indented by 4 spaces.
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_GetError()
         {
             yield return new FormatViewDefinition("GetErrorInstance",
                 CustomControl.Create()
-                    .GroupByProperty("PSErrorIdentifier", label: "ErrorIdentifier")
+                    .GroupByProperty("PSErrorIndex", label: "ErrorIdentifier")
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
                             $maxDepth = 10
@@ -790,7 +793,6 @@ namespace System.Management.Automation.Runspaces
                                     'Microsoft.Rest.HttpRequestMessageWrapper'
                                     'Microsoft.Rest.HttpResponseMessageWrapper'
                                     'System.Management.Automation.InvocationInfo'
-#                                    'System.Management.Automation.Language.ParseError'
                                 )
 
                                 # first find the longest property so we can indent properly
@@ -803,7 +805,9 @@ namespace System.Management.Automation.Runspaces
 
                                 $addedProperty = $false
                                 foreach ($prop in $obj.PSObject.Properties) {
-                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIdentifier') {
+
+                                    # don't show empty properties or our added property for $error[index]
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIndex') {
                                         $addedProperty = $true
                                         $null = $output.Append($prefix)
                                         $null = $output.Append($accentColor)
@@ -815,6 +819,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $newIndent = $indent + 4
 
+                                        # only show nested objects that are Exceptions, ErrorRecords, or types defined in $expandTypes and types not in $ignoreTypes
                                         if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or
                                             $expandTypes -contains $prop.TypeNameOfValue -or ($prop.TypeNames -ne $null -and $expandTypes -contains $prop.TypeNames[0])) {
 
@@ -826,12 +831,13 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent ($depth + 1)))
                                             }
                                         }
+                                        # `TargetSite` has many members that are not useful visually, so we have a reduced view of the relevant members
                                         elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
                                             if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
                                             }
                                             else {
-                                                $targetSite = [pscustomobject]@{
+                                                $targetSite = [PSCustomObject]@{
                                                     Name = $prop.Value.Name
                                                     DeclaringType = $prop.Value.DeclaringType
                                                     MemberType = $prop.Value.MemberType
@@ -842,11 +848,13 @@ namespace System.Management.Automation.Runspaces
                                                 $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
                                             }
                                         }
+                                        # `StackTrace` is handled specifically because the lines are typically long but necessary so they are left justified without additional indentation
                                         elseif ($prop.Name -eq 'StackTrace') {
                                             # for a stacktrace which is usually quite wide with info, we left justify it
                                             $null = $output.Append($newline)
                                             $null = $output.Append($prop.Value)
                                         }
+                                        # Dictionary and Hashtable we want to show as Key/Value pairs, we don't do the extra whitespace alignment here
                                         elseif ($prop.Value.GetType().Name.StartsWith('Dictionary') -or $prop.Value.GetType().Name -eq 'Hashtable') {
                                             $isFirstElement = $true
                                             foreach ($key in $prop.Value.Keys) {
@@ -855,16 +863,18 @@ namespace System.Management.Automation.Runspaces
                                                 }
 
                                                 if ($key -eq 'Authorization') {
-                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} = ${resetColor}${ellipsis}${newline}"")
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}${ellipsis}${newline}"")
                                                 }
                                                 else {
-                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} = ${resetColor}$($prop.Value[$key])${newline}"")
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}$($prop.Value[$key])${newline}"")
                                                 }
 
                                                 $isFirstElement = $false
                                             }
                                         }
-                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null) {
+                                        # if the object implements IEnumerable and not a string, we try to show each object
+                                        # We ignore the `Data` property as it can contain lots of type information by the interpreter that isn't useful here
+                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null -and $prop.Name -ne 'Data') {
 
                                             if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
@@ -881,6 +891,7 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                             }
                                         }
+                                        # anything else, we use ToString()
                                         else {
                                             $value = $prop.Value.ToString().Trim()
 

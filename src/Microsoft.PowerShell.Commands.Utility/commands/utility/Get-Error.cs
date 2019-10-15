@@ -12,7 +12,9 @@ namespace Microsoft.PowerShell.Commands
     /// Class for Get-Error implementation.
     /// </summary>
     [Experimental("Microsoft.PowerShell.Utility.PSGetError", ExperimentAction.Show)]
-    [Cmdlet(VerbsCommon.Get, "Error", HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp", DefaultParameterSetName = NewestParameterSetName)]
+    [Cmdlet(VerbsCommon.Get, "Error",
+        HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp",
+        DefaultParameterSetName = NewestParameterSetName)]
     public sealed class GetErrorCommand : PSCmdlet
     {
         internal const string ErrorParameterSetName = "Error";
@@ -23,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the error object to resolve.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = ErrorParameterSetName)]
+        [ValidateNotNullOrEmpty]
         public PSObject InputObject { get; set; }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (object errorRecord in errorRecords)
             {
                 PSObject obj = PSObject.AsPSObject(errorRecord);
-                obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#GetError");
+                obj.TypeNames.Insert(0, "PSExtendedError");
 
                 // Remove some types so they don't get rendered by those formats
                 obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
@@ -80,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (addErrorIdentifier)
                 {
-                    obj.Properties.Add(new PSNoteProperty("PSErrorIdentifier", index++));
+                    obj.Properties.Add(new PSNoteProperty("PSErrorIndex", index++));
                 }
 
                 WriteObject(obj);
