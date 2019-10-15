@@ -807,12 +807,7 @@ namespace System.Management.Automation.Runspaces
                                         $null = $output.Append(' : ')
                                         $null = $output.Append($resetColor)
 
-                                        if ([Console]::WindowWidth -le 120) {
-                                            $newIndent = $indent + 4
-                                        }
-                                        else {
-                                            $newIndent = $propLength + $indent + 3
-                                        }
+                                        $newIndent = $indent + 4
 
                                         if ($prop.Value -is [Exception] -or $prop.TypeNameOfValue -eq 'System.Management.Automation.InvocationInfo' -or
                                             $prop.Value -is [System.Management.Automation.ErrorRecord]) {
@@ -866,11 +861,11 @@ namespace System.Management.Automation.Runspaces
                                             $value = $prop.Value.ToString().Trim()
 
                                             $isFirstLine = $true
-                                            if ($value.Contains(""`n"")) {
+                                            if ($value.Contains($newline)) {
                                                 # the 3 is to account for ' : '
                                                 $valueIndent = ' ' * ($propLength + 3)
                                                 # need to trim any extra whitespace already in the text
-                                                foreach ($line in $value.Split(""`n"")) {
+                                                foreach ($line in $value.Split($newline)) {
                                                     if (!$isFirstLine) {
                                                         $null = $output.Append(""${newline}${prefix}${valueIndent}"")
                                                     }
