@@ -2334,7 +2334,7 @@ namespace System.Management.Automation
         object ICustomAstVisitor2.VisitPipelineChain(PipelineChainAst pipelineChainAst)
         {
             var types = new List<PSTypeName>();
-            types.AddRange(InferTypes(pipelineChainAst.LhsPipeline));
+            types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
             types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
             return GetArrayType(types);
         }

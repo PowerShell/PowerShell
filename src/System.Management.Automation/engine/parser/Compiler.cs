@@ -3120,15 +3120,15 @@ namespace System.Management.Automation.Language
             return Expression.Block(exprs);
         }
 
-        public object VisitPipelineChain(PipelineChainAst statementChainAst)
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
         {
             // If the statement chain is backgrounded,
             // we defer that to the background operation call
-            if (statementChainAst.Background)
+            if (pipelineChainAst.Background)
             {
                 return Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
-                    Expression.Constant(statementChainAst),
+                    Expression.Constant(pipelineChainAst),
                     _functionContext);
             }
 
@@ -3162,6 +3162,15 @@ namespace System.Management.Automation.Language
 
             var exprs = new List<Expression>(); 
 
+            // A pipeline chain is left-hand-side deep,
+            // so to compile from left to right, we need to start from the leaf
+            // and roll back up to the top, being the right-most element in the chain
+            PipelineChainAst currentChain = pipelineChainAst;
+            while (currentChain.LhsPipelineChain is PipelineChainAst lhsPipelineChain)
+            {
+                currentChain = lhsPipelineChain;
+            }
+
             // int chainIndex = 0;
             ParameterExpression dispatchIndex = Expression.Variable(typeof(int), nameof(dispatchIndex));
             var temps = new ParameterExpression[] { dispatchIndex };
@@ -3188,17 +3197,13 @@ namespace System.Management.Automation.Language
                     ExpressionCache.Constant(0)));
             tryBodyExprs.Add(Expression.Label(label0));
             tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
-            tryBodyExprs.Add(Compile(statementChainAst.LhsPipeline));
+            tryBodyExprs.Add(Compile(currentChain.LhsPipelineChain));
 
             // Remainder of try statement body
             // L1: dispatchIndex = 2; if ($?) pipeline2;
             // ...
-            StatementAst rhs = statementChainAst.RhsPipeline;
-            bool stillUnrolling = true;
-            TokenKind currentChainOperator = statementChainAst.Operator;
             int chainIndex = 1;
-            do
-            {
+            do {
                 // Record label and switch case for later use
                 LabelTarget currentLabel = Expression.Label();
                 dispatchTargets.Add(currentLabel);
@@ -3218,29 +3223,17 @@ namespace System.Management.Automation.Language
                 chainIndex++;
 
                 Diagnostics.Assert(
-                    currentChainOperator == TokenKind.AndAnd || currentChainOperator == TokenKind.OrOr,
+                    currentChain.Operator == TokenKind.AndAnd || currentChain.Operator == TokenKind.OrOr,
                     "Chain operators must be either && or ||");
 
-                Expression dollarQuestionCheck = currentChainOperator == TokenKind.AndAnd
+                Expression dollarQuestionCheck = currentChain.Operator == TokenKind.AndAnd
                     ? s_getDollarQuestion
                     : Expression.Not(s_getDollarQuestion);
 
-                // Unroll next chain as required
-                switch (rhs)
-                {
-                    case PipelineChainAst pipelineChain:
-                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(pipelineChain.LhsPipeline)));
-                        rhs = pipelineChain.RhsPipeline;
-                        currentChainOperator = pipelineChain.Operator;
-                        continue;
+                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
 
-                    default:
-                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(rhs)));
-                        stillUnrolling = false;
-                        continue;
-                }
-            }
-            while (stillUnrolling);
+                currentChain = currentChain.Parent as PipelineChainAst;
+            } while (currentChain != null);
 
             // Add empty expression to make the block value void
             tryBodyExprs.Add(ExpressionCache.Empty);

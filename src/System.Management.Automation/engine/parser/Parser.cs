@@ -5822,11 +5822,10 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         currentChainOperatorToken.Text);
-                    return new PipelineChainAst(
+                    return new ErrorStatementAst(
                         ExtentOf(currentPipelineChain, currentChainOperatorToken),
-                        currentPipelineChain,
-                        new ErrorStatementAst(errorPosition),
-                        currentChainOperatorToken.Kind);
+                        currentChainOperatorToken,
+                        new [] { currentPipelineChain });
                 }
 
                 // Look ahead for a chain operator
@@ -5887,7 +5886,7 @@ namespace System.Management.Automation.Language
                     : new PipelineChainAst(
                         ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                         currentPipelineChain,
-                        nextPipelineChain,
+                        nextPipeline,
                         currentChainOperatorToken.Kind);
 
                 // Remember the last operator to chain the coming pipeline

@@ -432,7 +432,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// A placeholder statement used when there are syntactic errors in the source script.
     /// </summary>
-    public class ErrorStatementAst : ChainableAst
+    public class ErrorStatementAst : PipelineBaseAst
     {
         internal ErrorStatementAst(IScriptExtent extent, IEnumerable<Ast> nestedAsts = null)
             : base(extent)
@@ -5373,7 +5373,7 @@ namespace System.Management.Automation.Language
         public PipelineChainAst(
             IScriptExtent extent,
             ChainableAst lhsChain,
-            ChainableAst rhsPipeline,
+            PipelineAst rhsPipeline,
             TokenKind chainOperator,
             bool background = false)
             : base(extent)
@@ -5393,24 +5393,24 @@ namespace System.Management.Automation.Language
                 throw new ArgumentException(nameof(chainOperator));
             }
 
-            LhsPipeline = lhsChain;
+            LhsPipelineChain = lhsChain;
             RhsPipeline = rhsPipeline;
             Operator = chainOperator;
             Background = background;
 
-            SetParent(LhsPipeline);
+            SetParent(LhsPipelineChain);
             SetParent(RhsPipeline);
         }
 
         /// <summary>
         /// The left hand pipeline in the chain.
         /// </summary>
-        public ChainableAst LhsPipeline { get; }
+        public ChainableAst LhsPipelineChain { get; }
 
         /// <summary>
         /// The right hand pipeline in the chain.
         /// </summary>
-        public ChainableAst RhsPipeline { get; }
+        public PipelineAst RhsPipeline { get; }
 
         /// <summary>
         /// The chaining operator used.
@@ -5427,7 +5427,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            return new PipelineChainAst(Extent, CopyElement(LhsPipeline), CopyElement(RhsPipeline), Operator, Background);
+            return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
         }
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5458,7 +5458,7 @@ namespace System.Management.Automation.Language
             // To get here we haven't got an AstVisitor2,
             // or we did and the action is Continue.
             // So no need to check -- just proceed.
-            action = LhsPipeline.InternalVisit(visitor);
+            action = LhsPipelineChain.InternalVisit(visitor);
 
             if (action != AstVisitAction.StopVisit)
             {
