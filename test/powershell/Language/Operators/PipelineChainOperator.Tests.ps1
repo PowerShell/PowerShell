@@ -204,6 +204,9 @@ function Test-FullyTerminatingError
                 @{ Statement = 'try { $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2 } catch {}; $result'; Output = @() }
                 @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4 } catch {}; $result'; Output = @() }
                 @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4 } catch {}; $result'; Output = @(1, 3, 4); NTErrors = @('NTError') }
+                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" }'; Output = @("Hi", "Bye") }
+                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Bye", "Final") }
+                @{ Statement = 'try { "Hi" && Test-FullyTerminatingError || "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Nothing", "Final") }
 
                 # Trap continue semantics
                 @{ Statement = 'trap { continue }; Write-Output 2 && Test-FullyTerminatingError'; Output = @(2) }
@@ -249,7 +252,6 @@ function Test-FullyTerminatingError
             catch
             {
                 $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly $ThrownError
-                return
             }
 
             $result | Should -Be $Output
