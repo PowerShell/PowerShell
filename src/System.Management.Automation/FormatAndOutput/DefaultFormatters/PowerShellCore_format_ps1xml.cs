@@ -790,6 +790,7 @@ namespace System.Management.Automation.Runspaces
                                     'Microsoft.Rest.HttpRequestMessageWrapper'
                                     'Microsoft.Rest.HttpResponseMessageWrapper'
                                     'System.Management.Automation.InvocationInfo'
+#                                    'System.Management.Automation.Language.ParseError'
                                 )
 
                                 # first find the longest property so we can indent properly
@@ -814,7 +815,8 @@ namespace System.Management.Automation.Runspaces
 
                                         $newIndent = $indent + 4
 
-                                        if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or $expandTypes -contains $prop.TypeNameOfValue) {
+                                        if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or
+                                            $expandTypes -contains $prop.TypeNameOfValue -or ($prop.TypeNames -ne $null -and $expandTypes -contains $prop.TypeNames[0])) {
 
                                             if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
@@ -825,7 +827,7 @@ namespace System.Management.Automation.Runspaces
                                             }
                                         }
                                         elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
-                                            if ($depth -eq $maxDepth) {
+                                            if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
                                             }
                                             else {
@@ -862,8 +864,9 @@ namespace System.Management.Automation.Runspaces
                                                 $isFirstElement = $false
                                             }
                                         }
-                                        elseif (!$prop.Value -is [System.String] -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null) {
-                                            if ($depth -eq $maxDepth) {
+                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null) {
+
+                                            if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
                                             }
                                             else {
