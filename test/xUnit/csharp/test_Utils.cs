@@ -10,6 +10,7 @@ using System.Threading;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
 using Xunit;
+using Newtonsoft.Json.Linq;
 
 namespace PSTests.Parallel
 {
@@ -96,7 +97,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestConvertToJsonWithExcludeNullFalse()
+        public static void TestDictionaryConvertToJsonWithExcludeNullFalse()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
             string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
@@ -110,7 +111,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestConvertToJsonWithExcludeNullTrue()
+        public static void TestDictionaryConvertToJsonWithExcludeNullTrue()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: true, compressOutput: true);
             string expected = "{\"name\":\"req\",\"type\":\"http\"}";
@@ -120,6 +121,67 @@ namespace PSTests.Parallel
                 {"nullEntry", null }
             };
             string json = JsonObject.ConvertToJson(hash, in context);
+            Assert.Equal(expected, json);
+        }
+
+        public class MyObject
+        {
+            public string name;
+            public string type;
+            public string nullEntry;
+        };
+
+        [Fact]
+        public static void TestObjectConvertToJsonWithExcludeNullFalse()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
+
+            string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
+            MyObject myObject = new MyObject { name = "req", type = "http", nullEntry = null };
+
+            string json = JsonObject.ConvertToJson(myObject, in context);
+            Assert.Equal(expected, json);
+        }
+
+        [Fact]
+        public static void TestObjectConvertToJsonWithExcludeNullTrue()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: true, compressOutput: true);
+
+            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
+            MyObject myObject = new MyObject { name = "req", type = "http", nullEntry = null };
+
+            string json = JsonObject.ConvertToJson(myObject, in context);
+            Assert.Equal(expected, json);
+        }
+
+        [Fact]
+        public static void TestJObjectConvertToJsonWithExcludeNullFalse()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: false, compressOutput: true);
+
+            string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
+            JObject myObject = new JObject();
+            myObject.Add("name", "req");
+            myObject.Add("type", "http");
+            myObject.Add("nullEntry", null);
+
+            string json = JsonObject.ConvertToJson(myObject, in context);
+            Assert.Equal(expected, json);
+        }
+
+        [Fact]
+        public static void TestJObjectConvertToJsonWithExcludeNullTrue()
+        {
+            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, excludeNull: true, compressOutput: true);
+
+            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
+            JObject myObject = new JObject();
+            myObject.Add("name", "req");
+            myObject.Add("type", "http");
+            myObject.Add("nullEntry", null);
+
+            string json = JsonObject.ConvertToJson(myObject, in context);
             Assert.Equal(expected, json);
         }
 

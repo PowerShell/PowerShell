@@ -515,6 +515,11 @@ namespace Microsoft.PowerShell.Commands
                     jsonSettings.Formatting = Formatting.Indented;
                 }
 
+                if (context.ExcludeNull)
+                {
+                    jsonSettings.NullValueHandling = NullValueHandling.Ignore;
+                }
+
                 return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
             }
             catch (OperationCanceledException)
@@ -564,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                rv = jObject.ToObject<Dictionary<object, object>>();
+                rv = ProcessJObject(jObject, context);
             }
             else
             {
@@ -807,6 +812,11 @@ namespace Microsoft.PowerShell.Commands
                         value = null;
                     }
 
+                    if (value == null && context.ExcludeNull)
+                    {
+                        continue;
+                    }
+
                     result.Add(info.Name, ProcessValue(value, depth + 1, in context));
                 }
             }
@@ -828,9 +838,35 @@ namespace Microsoft.PowerShell.Commands
                             value = null;
                         }
 
+                        if (value == null && context.ExcludeNull)
+                        {
+                            continue;
+                        }
+
                         result.Add(info2.Name, ProcessValue(value, depth + 1, in context));
                     }
                 }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Return an alternate representation of the specified JObject that serializes the same JSON, except
+        /// that any contained properties that cannot be evaluated are treated as having the value null.
+        /// </summary>
+        private static object ProcessJObject(JObject jobject, in ConvertToJsonContext context)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>(jobject.Count);
+
+            foreach (KeyValuePair<string, JToken> entry in jobject)
+            {
+                if (context.ExcludeNull && entry.Value.Type == JTokenType.Null)
+                {
+                    continue;
+                }
+
+                result.Add(entry.Key, entry.Value);
             }
 
             return result;
