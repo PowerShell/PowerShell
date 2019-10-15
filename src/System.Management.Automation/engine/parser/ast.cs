@@ -5437,30 +5437,27 @@ namespace System.Management.Automation.Language
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
-            AstVisitAction action;
+            AstVisitAction action = AstVisitAction.Continue;
 
             // Can only visit new AST type if using AstVisitor2
             if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitPipelineChain(this);
-
-                // If SkipChildren or StopVisit, we end and run post action here
-                switch (action)
+                if (action == AstVisitAction.SkipChildren)
                 {
-                    case AstVisitAction.SkipChildren:
-                        return visitor2.CheckForPostAction(this, AstVisitAction.Continue);
-
-                    case AstVisitAction.StopVisit:
-                        return visitor2.CheckForPostAction(this, AstVisitAction.StopVisit);
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
                 }
             }
 
             // To get here we haven't got an AstVisitor2,
             // or we did and the action is Continue.
             // So no need to check -- just proceed.
-            action = LhsPipelineChain.InternalVisit(visitor);
+            if (action == AstVisitAction.Continue)
+            {
+                action = LhsPipelineChain.InternalVisit(visitor);
+            }
 
-            if (action != AstVisitAction.StopVisit)
+            if (action == AstVisitAction.Continue)
             {
                 action = RhsPipeline.InternalVisit(visitor);
             }
