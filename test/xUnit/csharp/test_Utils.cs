@@ -110,7 +110,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestDictionaryConvertToJsonWithExcludeNullTrue()
+        public static void TestDictionaryConvertToJsonWithIgnoreNullPropertiesTrue()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
             string expected = "{\"name\":\"req\",\"type\":\"http\"}";
@@ -131,7 +131,7 @@ namespace PSTests.Parallel
         };
 
         [Fact]
-        public static void TestObjectConvertToJsonWithExcludeNullFalse()
+        public static void TestObjectConvertToJsonWithIgnoreNullPropertiesFalse()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
 
@@ -143,7 +143,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestObjectConvertToJsonWithExcludeNullTrue()
+        public static void TestObjectConvertToJsonWithIgnoreNullPropertiesTrue()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
 
@@ -155,7 +155,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestJObjectConvertToJsonWithExcludeNullFalse()
+        public static void TestJObjectConvertToJsonWithIgnoreNullPropertiesFalse()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
 
@@ -170,7 +170,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestJObjectConvertToJsonWithExcludeNullTrue()
+        public static void TestJObjectConvertToJsonWithIgnoreNullPropertiesTrue()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
 
