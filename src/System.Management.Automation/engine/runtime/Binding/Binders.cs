@@ -3206,7 +3206,7 @@ namespace System.Management.Automation.Language
                     || LanguagePrimitives.IsNullLike(arg.Value)))
             {
                 Expression result = target.LimitType.IsNumeric()
-                    ? CompareWithZero(target, Expression.LessThan)
+                    ? CompareWithZero(target, Expression.LessThanOrEqual)
                     : arg.LimitType.IsNumeric()
                         ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
                         : LanguagePrimitives.IsNullLike(target.Value)
@@ -3262,7 +3262,7 @@ namespace System.Management.Automation.Language
                 Expression result = target.LimitType.IsNumeric()
                     ? CompareWithZero(target, Expression.GreaterThanOrEqual)
                     : arg.LimitType.IsNumeric()
-                        ? CompareWithZero(arg, Expression.LessThan)
+                        ? CompareWithZero(arg, Expression.LessThanOrEqual)
                         : LanguagePrimitives.IsNullLike(arg.Value)
                             ? ExpressionCache.BoxedTrue
                             : ExpressionCache.BoxedFalse;
