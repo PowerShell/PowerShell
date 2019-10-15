@@ -5449,9 +5449,6 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            // To get here we haven't got an AstVisitor2,
-            // or we did and the action is Continue.
-            // So no need to check -- just proceed.
             if (action == AstVisitAction.Continue)
             {
                 action = LhsPipelineChain.InternalVisit(visitor);
