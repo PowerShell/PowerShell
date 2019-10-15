@@ -459,15 +459,13 @@ namespace System.Management.Automation
             if (scriptInfo.RequiredOSVersions != null && scriptInfo.RequiredOSVersions.Any())
             {
                 var currentOSVersion = Environment.OSVersion.Platform.ToString();
-                foreach( string OSVersion in scriptInfo.RequiredOSVersions )
-                {
-                    if(currentOSVersion.Equals(OSVersion, StringComparison.InvariantCultureIgnoreCase))
-                        return;
-                }
+                if (Utils.isOSVersionValid(scriptInfo.RequiredOSVersions))
+                    return;
                 ScriptRequiresException scriptRequiresException =
                     new ScriptRequiresException(
                         scriptInfo.Name,
-                        currentOSVersion,
+                        Utils.getOSVersionString(),
+                        scriptInfo.RequiredOSVersions,
                         "ScriptRequiresOSVersionInvalid");
                 throw scriptRequiresException;
             }

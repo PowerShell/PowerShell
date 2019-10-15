@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -320,17 +321,21 @@ namespace System.Management.Automation
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        /// <param name="OSVersion">
-        /// The OS version.
+        /// <param name="currentOSVersion">
+        /// The users's current OS version.
+        /// </param>
+        /// <param name="requiredOSVersions">
+        /// The list of required OS versions.
         /// </param>
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
         internal ScriptRequiresException(
             string commandName,
-            string OSVersion,
+            string currentOSVersion,
+            IEnumerable<string> requiredOSVersions,
             string errorId)
-            : base(BuildMessage(commandName, OSVersion))
+            : base(BuildMessage(commandName, requiredOSVersions, currentOSVersion))
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "commandName is null or empty when constructing ScriptRequiresException");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "errorId is null or empty when constructing ScriptRequiresException");
@@ -565,9 +570,8 @@ namespace System.Management.Automation
 
             return StringUtil.Format(resourceStr, commandName, first, second);
         }
-        private static string BuildMessage(string commandName, string OSVersion) {
-            return "invalid" + OSVersion;
-            // return StringUtil.Format(DiscoveryExceptions.RequiresOSVersionInvalid, commandName, OSVersion);
+        private static string BuildMessage(string commandName, IEnumerable<string> requiredOSVersions, string currentOSVersion) {
+            return StringUtil.Format(DiscoveryExceptions.RequiresOSVersionInvalid, commandName, currentOSVersion, string.Join(",", requiredOSVersions));
         }
 
         private static string BuildMessage(string commandName)

@@ -600,6 +600,43 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Checks whether the user's OS version is in a list of required versions.
+        /// </summary>
+        /// <param name="requiredOSVersions">A list of required versions.</param>
+        /// <returns>True if the user's OS version is in the list of required versions, false otherwise.</returns>
+        internal static bool isOSVersionValid(IEnumerable<string> requiredOSVersions)
+        {
+            string OSName = getOSVersionString();
+            foreach (string OSVersion in requiredOSVersions) {
+                if (OSVersion.Equals(OSName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Gets a string representation of the user's current OS version or null if unknown version.
+        /// </summary>
+        internal static string getOSVersionString()
+        {
+            string OSName = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) 
+            {
+                OSName = "MacOS"; 
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                OSName = "Linux"; 
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                OSName = "Windows";
+            }
+            return OSName;
+        }
+
+
+        /// <summary>
         /// Coverts a string to version format.
         /// If the string is of the format x (ie., no dots), then ".0" is appended
         /// to the string.

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.ComponentModel;
 
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
@@ -611,6 +612,7 @@ namespace System.Management.Automation.Language
         private string _script;
         private int _tokenStart;
         private int _currentIndex;
+        private bool _requiresDeclarationsComplete;
         private InternalScriptExtent _beginSignatureExtent;
 
         #region Tables for initialization
@@ -779,6 +781,7 @@ namespace System.Management.Automation.Language
             }
 
             _currentIndex = 0;
+            _requiresDeclarationsComplete = false;
             Mode = TokenizerMode.Command;
 
             _positionHelper.LineStartMap = lineStartMap.ToArray();
@@ -926,6 +929,7 @@ namespace System.Management.Automation.Language
                         _tokenStart = _currentIndex - 1;
                         SkipChar();
                         ScanBlockComment();
+                        _requiresDeclarationsComplete = true;
                         goto again;
                     }
 
@@ -936,12 +940,14 @@ namespace System.Management.Automation.Language
                     if (c1 == '\n' || c1 == '\r')
                     {
                         ScanLineContinuation(c1);
+                        _requiresDeclarationsComplete = true;
                         goto again;
                     }
 
                     if (char.IsWhiteSpace(c1))
                     {
                         SkipWhiteSpace();
+                        _requiresDeclarationsComplete = true;
                         goto again;
                     }
 
@@ -1787,6 +1793,16 @@ namespace System.Management.Automation.Language
                 if (RequiresTokens == null)
                     RequiresTokens = new List<Token>();
                 RequiresTokens.Add(token);
+                if (_requiresDeclarationsComplete) {
+                    string warningMessage = string.Format(@"
+Requires statement
+
++ {0} 
+
+at char {1} is not at the top of the script, but it will behave as if it was at the top of the script.", token, _currentIndex);
+                    WarningException myEx=new WarningException(warningMessage);        
+                    Console.WriteLine(myEx.ToString());  
+                }
             }
         }
 
@@ -4355,6 +4371,7 @@ namespace System.Management.Automation.Language
                         resyncIfMemberAccess = false;
                         SkipChar();
                         ScanBlockComment();
+                        _requiresDeclarationsComplete = true;
                         goto again;
                     }
 
@@ -4362,6 +4379,7 @@ namespace System.Management.Automation.Language
                     break;
 
                 case '[':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.LBracket);
 
                 case '.':
@@ -4373,6 +4391,7 @@ namespace System.Management.Automation.Language
                     // in an attribute and the member access token.
                     if (resyncIfMemberAccess)
                     {
+                        _requiresDeclarationsComplete = true;
                         Resync(resyncPoint);
                     }
                     else
@@ -4665,17 +4684,20 @@ namespace System.Management.Automation.Language
                 case SpecialChars.QuoteSingleRight:
                 case SpecialChars.QuoteSingleBase:
                 case SpecialChars.QuoteReversed:
+                    _requiresDeclarationsComplete = true;
                     return ScanStringLiteral();
 
                 case '"':
                 case SpecialChars.QuoteDoubleLeft:
                 case SpecialChars.QuoteDoubleRight:
                 case SpecialChars.QuoteLowDoubleLeft:
+                    _requiresDeclarationsComplete = true;
                     return ScanStringExpandable();
 
                 case '@':
                     // Could be start of hash literal, array operator, multi-line string, splatted variable
                     c1 = GetChar();
+                    _requiresDeclarationsComplete = true;
                     if (c1 == '{')
                     {
                         return NewToken(TokenKind.AtCurly);
@@ -4720,6 +4742,7 @@ namespace System.Management.Automation.Language
 
                 case '`':
                     c1 = GetChar();
+                    _requiresDeclarationsComplete = true;
                     if (c1 == '\r')
                     {
                         NormalizeCRLF(c1);
@@ -4752,9 +4775,11 @@ namespace System.Management.Automation.Language
                     return ScanGenericToken(c, surrogateCharacter);
 
                 case '=':
+                    _requiresDeclarationsComplete = true;
                     return CheckOperatorInCommandMode(c, TokenKind.Equals);
 
                 case '+':
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if (c1 == '+')
                     {
@@ -4779,6 +4804,7 @@ namespace System.Management.Automation.Language
                 case SpecialChars.EmDash:
                 case SpecialChars.EnDash:
                 case SpecialChars.HorizontalBar:
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if (c1.IsDash())
                     {
@@ -4805,6 +4831,7 @@ namespace System.Management.Automation.Language
                     return CheckOperatorInCommandMode(c, TokenKind.Minus);
 
                 case '*':
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if (c1 == '=')
                     {
@@ -4841,6 +4868,7 @@ namespace System.Management.Automation.Language
                     return CheckOperatorInCommandMode(c, TokenKind.Multiply);
 
                 case '/':
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if (c1 == '=')
                     {
@@ -4851,6 +4879,7 @@ namespace System.Management.Automation.Language
                     return CheckOperatorInCommandMode(c, TokenKind.Divide);
 
                 case '%':
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if (c1 == '=')
                     {
@@ -4861,6 +4890,7 @@ namespace System.Management.Automation.Language
                     return CheckOperatorInCommandMode(c, TokenKind.Rem);
 
                 case '$':
+                    _requiresDeclarationsComplete = true;
                     if (PeekChar() == '(')
                     {
                         SkipChar();
@@ -4870,6 +4900,7 @@ namespace System.Management.Automation.Language
                     return ScanVariable(false, false);
 
                 case '<':
+                    _requiresDeclarationsComplete = true;
                     if (PeekChar() == '#')
                     {
                         SkipChar();
@@ -4880,6 +4911,7 @@ namespace System.Management.Automation.Language
                     return NewInputRedirectionToken();
 
                 case '>':
+                    _requiresDeclarationsComplete = true;
                     if (PeekChar() == '>')
                     {
                         SkipChar();
@@ -4941,13 +4973,17 @@ namespace System.Management.Automation.Language
                 case 'Y':
                 case 'Z':
                 case '_':
+                    _requiresDeclarationsComplete = true;
                     return ScanIdentifier(c);
 
                 case '(':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.LParen);
                 case ')':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.RParen);
                 case '[':
+                    _requiresDeclarationsComplete = true;
                     if (InCommandMode() && !PeekChar().ForceStartNewToken())
                     {
                         return ScanGenericToken('[');
@@ -4955,22 +4991,28 @@ namespace System.Management.Automation.Language
 
                     return NewToken(TokenKind.LBracket);
                 case ']':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.RBracket);
                 case '{':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.LCurly);
                 case '}':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.RCurly);
                 case '.':
+                    _requiresDeclarationsComplete = true;
                     return ScanDot();
                 case ';':
                     return NewToken(TokenKind.Semi);
                 case ',':
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.Comma);
 
                 case '0':
                 case '7':
                 case '8':
                 case '9':
+                    _requiresDeclarationsComplete = true;
                     return ScanNumber(c);
 
                 case '1':
@@ -4979,6 +5021,7 @@ namespace System.Management.Automation.Language
                 case '4':
                 case '5':
                 case '6':
+                    _requiresDeclarationsComplete = true;
                     if (PeekChar() == '>')
                     {
                         SkipChar();
@@ -5013,7 +5056,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.AndAnd);
                     }
-
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.Ampersand);
 
                 case '|':
@@ -5022,10 +5065,11 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.OrOr);
                     }
-
+                    _requiresDeclarationsComplete = true;
                     return NewToken(TokenKind.Pipe);
 
                 case '!':
+                    _requiresDeclarationsComplete = true;
                     c1 = PeekChar();
                     if ((InCommandMode() && !c1.ForceStartNewToken()) ||
                         (InExpressionMode() && c1.IsIdentifierStart()))
@@ -5047,6 +5091,7 @@ namespace System.Management.Automation.Language
                     return NewToken(TokenKind.Exclaim);
 
                 case ':':
+                    _requiresDeclarationsComplete = true;
                     if (PeekChar() == ':')
                     {
                         SkipChar();
@@ -5068,6 +5113,7 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
+                    _requiresDeclarationsComplete = true;
                     return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
@@ -5075,7 +5121,6 @@ namespace System.Management.Automation.Language
                     {
                         return SaveToken(new Token(NewScriptExtent(_tokenStart + 1, _tokenStart + 1), TokenKind.EndOfInput, TokenFlags.None));
                     }
-
                     return ScanGenericToken(c);
 
                 default:
