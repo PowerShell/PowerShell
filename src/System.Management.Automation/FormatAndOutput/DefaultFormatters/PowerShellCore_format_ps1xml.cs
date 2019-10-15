@@ -852,7 +852,10 @@ namespace System.Management.Automation.Runspaces
                                                     $null = $output.Append($newline)
                                                 }
 
-                                                if ($key -ne 'Authorization') {
+                                                if ($key -eq 'Authorization') {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} = ${resetColor}${ellipsis}${newline}"")
+                                                }
+                                                else {
                                                     $null = $output.Append(""${prefix}    ${accentColor}${key} = ${resetColor}$($prop.Value[$key])${newline}"")
                                                 }
 
