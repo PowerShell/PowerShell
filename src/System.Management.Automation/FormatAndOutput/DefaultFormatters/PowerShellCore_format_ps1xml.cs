@@ -786,6 +786,11 @@ namespace System.Management.Automation.Runspaces
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
                                 $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
+                                $expandTypes = @(
+                                    'Microsoft.Rest.HttpRequestMessageWrapper'
+                                    'Microsoft.Rest.HttpResponseMessageWrapper'
+                                    'System.Management.Automation.InvocationInfo'
+                                )
 
                                 # first find the longest property so we can indent properly
                                 $propLength = 0
@@ -809,10 +814,9 @@ namespace System.Management.Automation.Runspaces
 
                                         $newIndent = $indent + 4
 
-                                        if ($prop.Value -is [Exception] -or $prop.TypeNameOfValue -eq 'System.Management.Automation.InvocationInfo' -or
-                                            $prop.Value -is [System.Management.Automation.ErrorRecord]) {
+                                        if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or $expandTypes -contains $prop.TypeNameOfValue) {
 
-                                            if ($depth -eq $maxDepth) {
+                                            if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
                                             }
                                             else {
@@ -841,7 +845,21 @@ namespace System.Management.Automation.Runspaces
                                             $null = $output.Append($newline)
                                             $null = $output.Append($prop.Value)
                                         }
-                                        elseif ($prop.Value.GetType().IsArray) {
+                                        elseif ($prop.Value.GetType().Name.StartsWith('Dictionary') -or $prop.Value.GetType().Name -eq 'Hashtable') {
+                                            $isFirstElement = $true
+                                            foreach ($key in $prop.Value.Keys) {
+                                                if ($isFirstElement) {
+                                                    $null = $output.Append($newline)
+                                                }
+
+                                                if ($key -ne 'Authorization') {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} = ${resetColor}$($prop.Value[$key])${newline}"")
+                                                }
+
+                                                $isFirstElement = $false
+                                            }
+                                        }
+                                        elseif (!$prop.Value -is [System.String] -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null) {
                                             if ($depth -eq $maxDepth) {
                                                 $null = $output.Append($ellipsis)
                                             }
