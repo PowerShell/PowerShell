@@ -321,6 +321,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return CheckParent(ast); }
 
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) => CheckParent(ast);
     }
 
     /// <summary>

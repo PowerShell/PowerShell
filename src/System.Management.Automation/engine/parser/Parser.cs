@@ -5816,12 +5816,12 @@ namespace System.Management.Automation.Language
 
                     // Otherwise, we need to report that we were
                     // expecting something after the last non-statement token
-                    IScriptExtent errorPosition = After(currentChainOperatorToken);
                     ReportIncompleteInput(
-                        errorPosition,
+                        After(currentChainOperatorToken),
                         nameof(ParserStrings.ExpectedValueExpression),
                         ParserStrings.ExpectedValueExpression,
                         currentChainOperatorToken.Text);
+
                     return new ErrorStatementAst(
                         ExtentOf(currentPipelineChain, currentChainOperatorToken),
                         currentChainOperatorToken,

@@ -649,8 +649,9 @@ namespace System.Management.Automation.Language
         internal static readonly ParameterExpression _executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
         internal static readonly ParameterExpression _returnPipe;
-        private static readonly Expression s_setDollarQuestionToTrue;
+        private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
+        private static readonly Expression s_setDollarQuestionToTrue;
         private static readonly Expression s_callCheckForInterrupts;
         private static readonly Expression s_getCurrentPipe;
         private static readonly Expression s_currentExceptionBeingHandled;
@@ -669,11 +670,13 @@ namespace System.Management.Automation.Language
             _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
             _executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 
-            s_setDollarQuestionToTrue = Expression.Assign(
-                Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue),
-                ExpressionCache.TrueConstant);
-
             s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
+            
+            s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
+
+            s_setDollarQuestionToTrue = Expression.Assign(
+                s_getDollarQuestion,
+                ExpressionCache.TrueConstant);
 
             s_callCheckForInterrupts = Expression.Call(CachedReflectionInfo.PipelineOps_CheckForInterrupts,
                                                       _executionContextParameter);
@@ -3146,7 +3149,7 @@ namespace System.Management.Automation.Language
             //         pipeline1;
             // L1:     dispatchIndex = 2;
             //         if ($?) pipeline2;
-            // L3:     dispatchIndex = 3;
+            // L2:     dispatchIndex = 3;
             //         if ($?) pipeline3;
             //         ...
             //     } catch (FlowControlException) {
@@ -3228,7 +3231,7 @@ namespace System.Management.Automation.Language
 
                 Expression dollarQuestionCheck = currentChain.Operator == TokenKind.AndAnd
                     ? s_getDollarQuestion
-                    : Expression.Not(s_getDollarQuestion);
+                    : s_notDollarQuestion;
 
                 tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
 
