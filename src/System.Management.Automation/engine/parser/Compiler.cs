@@ -819,24 +819,24 @@ namespace System.Management.Automation.Language
         private Expression Coalesce(Expression left, Expression right)
         {
             Type leftType = left.Type;
-            Expression lhs = left.Cast(typeof(object));
-            Expression rhs = right.Cast(typeof(object));
 
             if (leftType.IsValueType)
             {
-                return lhs;
+                return left;
             }
             else if(leftType == typeof(DBNull) || leftType == typeof(NullString) || leftType == typeof(AutomationNull))
             {
-                return rhs;
+                return right;
             }
             else
             {
+                Expression lhs = left.Cast(typeof(object));
+                Expression rhs = right.Cast(typeof(object));
+
                 return Expression.Condition(
                     Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
                     rhs,
-                    lhs
-                    );
+                    lhs);
             }
         }
 
