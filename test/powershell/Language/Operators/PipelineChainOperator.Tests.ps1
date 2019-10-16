@@ -42,6 +42,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         $simpleTestCases = @(
             # Two native commands
             @{ Statement = 'testexe -returncode -1 && testexe -echoargs "A"'; Output = @('-1') }
+            @{ Statement = '& "testexe" -returncode -1 && & "testexe" -echoargs "A"'; Output = @('-1') }
             @{ Statement = 'testexe -returncode -1 || testexe -echoargs "A"'; Output = '-1','Arg 0 is <A>' }
             @{ Statement = 'testexe -returncode 0 && testexe -echoargs "A"'; Output = '0','Arg 0 is <A>' }
             @{ Statement = 'testexe -returncode 0 || testexe -echoargs "A"'; Output = @('0') }
@@ -119,10 +120,9 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         )
 
         $invalidSyntaxCases = @(
-            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'BackgroundOperatorInPipelineChain,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
-            @{ Statement = 'testexe -returncode 0 && '; ErrorID = 'EmptyPipelineChainElement,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
-            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'MissingExpression,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
-            @{ Statement = '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'; ErrorID = 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand' }
+            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'BackgroundOperatorInPipelineChain' }
+            @{ Statement = 'testexe -returncode 0 && '; ErrorID = 'EmptyPipelineChainElement'; IncompleteInput = $true }
+            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'MissingExpression' }
         )
     }
 
@@ -289,9 +289,14 @@ function Test-FullyTerminatingError
     }
 
     It "Rejects invalid syntax usage in '<Statement>'" -TestCases $invalidSyntaxCases {
-        param($Statement, $ErrorID)
+        param([string]$Statement, [string]$ErrorID, [bool]$IncompleteInput)
 
-        { Invoke-Expression -Command $Statement } | Should -Throw -ErrorId $ErrorID
+        $tokens = $errors = $null
+        [System.Management.Automation.Language.Parser]::ParseInput($Statement, [ref]$tokens, [ref]$errors)
+
+        $errors.Count | Should -BeExactly 1
+        $errors[0].ErrorId | Should -BeExactly $ErrorID
+        $errors[0].IncompleteInput | Should -Be $IncompleteInput
     }
 
     Context "File redirection with && and ||" {
@@ -337,5 +342,11 @@ function Test-FullyTerminatingError
                 $file | Should -FileContentMatchMultiline $expectedValue
             }
         }
+    }
+
+    It "Recognises invalid assignment" {
+        {
+            Invoke-Expression -Command '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'
+        } | Should -Throw -ErrorID 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
     }
 }

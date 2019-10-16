@@ -5795,6 +5795,7 @@ namespace System.Management.Automation.Language
                 // at this point we should already have parsed all assignments
                 // in enclosing calls to PipelineChainRule
                 PipelineAst nextPipeline;
+                Token firstPipelineToken = null;
                 if (startExpression != null)
                 {
                     nextPipeline = (PipelineAst)PipelineRule(startExpression);
@@ -5802,6 +5803,9 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
+                    // Remember the token for error reporting,
+                    // since erroneous results in the rules still consume tokens
+                    firstPipelineToken = PeekToken();
                     nextPipeline = (PipelineAst)PipelineRule();
                 }
 
@@ -5814,13 +5818,32 @@ namespace System.Management.Automation.Language
                         return null;
                     }
 
-                    // Otherwise, we need to report that we were
-                    // expecting something after the last non-statement token
-                    ReportIncompleteInput(
-                        After(currentChainOperatorToken),
-                        nameof(ParserStrings.ExpectedValueExpression),
-                        ParserStrings.ExpectedValueExpression,
-                        currentChainOperatorToken.Text);
+                    // See if we are responsible for reporting the issue
+                    switch (firstPipelineToken.Kind)
+                    {
+                        case TokenKind.EndOfInput:
+                            // If we're at EOF, we should allow input to complete
+                            ReportIncompleteInput(
+                                After(currentChainOperatorToken),
+                                nameof(ParserStrings.EmptyPipelineChainElement),
+                                ParserStrings.EmptyPipelineChainElement,
+                                currentChainOperatorToken.Text);
+                            break;
+
+                        case TokenKind.Dot:
+                        case TokenKind.Ampersand:
+                            // If something like 'command && &' or 'command && .' was provided,
+                            // the command rule will provide report the error.
+                            break;
+
+                        default:
+                            ReportError(
+                                ExtentOf(currentChainOperatorToken, firstPipelineToken),
+                                nameof(ParserStrings.EmptyPipelineChainElement),
+                                ParserStrings.EmptyPipelineChainElement,
+                                currentChainOperatorToken.Text);
+                            break;
+                    }
 
                     return new ErrorStatementAst(
                         ExtentOf(currentPipelineChain, currentChainOperatorToken),
