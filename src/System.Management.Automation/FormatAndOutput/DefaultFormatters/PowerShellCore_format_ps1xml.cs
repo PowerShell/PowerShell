@@ -733,7 +733,7 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("GetErrorInstance",
                 CustomControl.Create()
-                    .GroupByProperty("PSErrorIndex", label: "ErrorIdentifier")
+                    .GroupByProperty("PSErrorIndex", label: "ErrorIndex")
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
                             Set-StrictMode -Off
