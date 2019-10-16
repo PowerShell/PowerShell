@@ -736,6 +736,8 @@ namespace System.Management.Automation.Runspaces
                     .GroupByProperty("PSErrorIndex", label: "ErrorIdentifier")
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
+                            Set-StrictMode -Off
+
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
