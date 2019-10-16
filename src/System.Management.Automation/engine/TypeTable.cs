@@ -3135,7 +3135,8 @@ namespace System.Management.Automation.Runspaces
             }
 
             // the node cardinality is OneToMany
-            Collection<string> referencedProperties = new Collection<string>();
+            var propList = new List<string>(propertySetData.ReferencedProperties.Count);
+            Collection<string> referencedProperties = new Collection<string>(propList);
             foreach (string name in propertySetData.ReferencedProperties)
             {
                 if (string.IsNullOrEmpty(name))

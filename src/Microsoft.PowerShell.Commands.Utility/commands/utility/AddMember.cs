@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1IsNotNull();
             Collection<string> value1Collection =
                 (Collection<string>)GetParameterType(_value1, typeof(Collection<string>));
-            return new PSPropertySet(_memberName, value1Collection);
+            return new PSPropertySet(_memberName, (IEnumerable<string>)value1Collection);
         }
 
         private PSMemberInfo GetScriptMethod()

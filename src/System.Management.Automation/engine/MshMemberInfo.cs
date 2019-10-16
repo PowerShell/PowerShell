@@ -3455,6 +3455,24 @@ namespace System.Management.Automation
             }
         }
 
+        // We mean that 'referencedPropertyNames' does not contain null and empty values,
+        // otherwise we should use public constructor with the check.
+        internal PSPropertySet(string name, IList<string> referencedPropertyNames)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw PSTraceSource.NewArgumentException(nameof(name));
+            }
+
+            this.name = name;
+            if (referencedPropertyNames == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(referencedPropertyNames));
+            }
+
+            ReferencedPropertyNames = new Collection<string>(referencedPropertyNames);
+        }
+
         /// <summary>
         /// Gets the property names in this property set.
         /// </summary>
