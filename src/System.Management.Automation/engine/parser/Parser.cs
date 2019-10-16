@@ -5848,7 +5848,7 @@ namespace System.Management.Automation.Language
                     return new ErrorStatementAst(
                         ExtentOf(currentPipelineChain, currentChainOperatorToken),
                         currentChainOperatorToken,
-                        new [] { currentPipelineChain });
+                        new[] { currentPipelineChain });
                 }
 
                 // Look ahead for a chain operator
