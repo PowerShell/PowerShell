@@ -83,7 +83,9 @@ namespace Microsoft.PowerShell
                     line3Length -= line2Length + 1;
                     line2Length -= line1Length + 1;
                     line2Padding = line2Padding.PadRight(line1Length - line2Length + releaseTag.Length);
-                    line3Padding = line3Padding.PadRight(line1Length - line3Length + 3);  // 3 represents the extra placeholder
+
+                    // 3 represents the extra placeholder in the template
+                    line3Padding = line3Padding.PadRight(line1Length - line3Length + 3);
                 }
 
                 string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
