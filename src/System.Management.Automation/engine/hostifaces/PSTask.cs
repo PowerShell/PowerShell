@@ -1091,10 +1091,8 @@ namespace System.Management.Automation.PSTasks
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">List of breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
             _wrappedDebugger.SetBreakpoints(breakpoints);
-        }
 
         /// <summary>
         /// Sets the debugger resume action.

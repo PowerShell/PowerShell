@@ -2187,31 +2187,6 @@ namespace System.Management.Automation
         #region Debugger Overrides
 
         /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints"></param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            foreach (Breakpoint bp in breakpoints)
-            {
-                switch (bp)
-                {
-                    case CommandBreakpoint commandBreakpoint:
-                        AddCommandBreakpoint(commandBreakpoint);
-                        continue;
-
-                    case LineBreakpoint lineBreakpoint:
-                        AddLineBreakpoint(lineBreakpoint);
-                        continue;
-
-                    case VariableBreakpoint variableBreakpoint:
-                        AddVariableBreakpoint(variableBreakpoint);
-                        continue;
-                }
-            }
-        }
-
-        /// <summary>
         /// Set ScriptDebugger action.
         /// </summary>
         /// <param name="resumeAction">DebuggerResumeAction.</param>
@@ -2611,6 +2586,31 @@ namespace System.Management.Automation
         }
 
         #region Breakpoints
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints"></param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            foreach (Breakpoint bp in breakpoints)
+            {
+                switch (bp)
+                {
+                    case CommandBreakpoint commandBreakpoint:
+                        AddCommandBreakpoint(commandBreakpoint);
+                        continue;
+
+                    case LineBreakpoint lineBreakpoint:
+                        AddLineBreakpoint(lineBreakpoint);
+                        continue;
+
+                    case VariableBreakpoint variableBreakpoint:
+                        AddVariableBreakpoint(variableBreakpoint);
+                        continue;
+                }
+            }
+        }
 
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
@@ -4078,16 +4078,14 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region Overridesbp
+        #region Overrides
 
         /// <summary>
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">Breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
             _wrappedDebugger.SetBreakpoints(breakpoints);
-        }
 
         /// <summary>
         /// Process debugger or PowerShell command/script.
