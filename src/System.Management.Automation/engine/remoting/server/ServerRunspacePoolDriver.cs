@@ -1842,6 +1842,16 @@ namespace System.Management.Automation
             get { return _inDebugMode; }
         }
 
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">List of breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
+        }
+
         public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.Value.GetBreakpoint(id);
 
