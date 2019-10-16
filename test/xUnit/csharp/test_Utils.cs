@@ -95,34 +95,6 @@ namespace PSTests.Parallel
             Assert.Equal(expected, json);
         }
 
-        [Fact]
-        public static void TestDictionaryConvertToJsonWithIgnoreNullPropertiesFalse()
-        {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
-            string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
-            OrderedDictionary hash = new OrderedDictionary {
-                {"name", "req"},
-                {"type", "http"},
-                {"nullEntry", null }
-            };
-            string json = JsonObject.ConvertToJson(hash, in context);
-            Assert.Equal(expected, json);
-        }
-
-        [Fact]
-        public static void TestDictionaryConvertToJsonWithIgnoreNullPropertiesTrue()
-        {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
-            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
-            OrderedDictionary hash = new OrderedDictionary {
-                {"name", "req"},
-                {"type", "http"},
-                {"nullEntry", null }
-            };
-            string json = JsonObject.ConvertToJson(hash, in context);
-            Assert.Equal(expected, json);
-        }
-
         public class MyObject
         {
             public string name;
@@ -137,48 +109,6 @@ namespace PSTests.Parallel
 
             string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
             MyObject myObject = new MyObject { name = "req", type = "http", nullEntry = null };
-
-            string json = JsonObject.ConvertToJson(myObject, in context);
-            Assert.Equal(expected, json);
-        }
-
-        [Fact]
-        public static void TestObjectConvertToJsonWithIgnoreNullPropertiesTrue()
-        {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
-
-            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
-            MyObject myObject = new MyObject { name = "req", type = "http", nullEntry = null };
-
-            string json = JsonObject.ConvertToJson(myObject, in context);
-            Assert.Equal(expected, json);
-        }
-
-        [Fact]
-        public static void TestJObjectConvertToJsonWithIgnoreNullPropertiesFalse()
-        {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
-
-            string expected = "{\"name\":\"req\",\"type\":\"http\",\"nullEntry\":null}";
-            JObject myObject = new JObject();
-            myObject.Add("name", "req");
-            myObject.Add("type", "http");
-            myObject.Add("nullEntry", null);
-
-            string json = JsonObject.ConvertToJson(myObject, in context);
-            Assert.Equal(expected, json);
-        }
-
-        [Fact]
-        public static void TestJObjectConvertToJsonWithIgnoreNullPropertiesTrue()
-        {
-            var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, ignoreNullProperties: true, compressOutput: true);
-
-            string expected = "{\"name\":\"req\",\"type\":\"http\"}";
-            JObject myObject = new JObject();
-            myObject.Add("name", "req");
-            myObject.Add("type", "http");
-            myObject.Add("nullEntry", null);
 
             string json = JsonObject.ConvertToJson(myObject, in context);
             Assert.Equal(expected, json);

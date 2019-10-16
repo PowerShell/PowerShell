@@ -10,6 +10,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $EgJObject.Add("TestValue1", "123456")
         $EgJObject.Add("TestValue2", "78910")
         $EgJObject.Add("TestValue3", "99999")
+        $EgJObject.Add("nullValue", $null)
         $dict = @{}
         $dict.Add('JObject', $EgJObject)
         $dict.Add('StrObject', 'This is a string Object')
@@ -19,6 +20,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should -Match '"TestValue1": 123456'
         $jsonFormat | Should -Match '"TestValue2": 78910'
         $jsonFormat | Should -Match '"TestValue3": 99999'
+        $jsonFormat | Should -Match '"nullValue": null'
     }
 
 	It "StopProcessing should succeed" -Pending:$true {
@@ -61,5 +63,32 @@ Describe 'ConvertTo-Json' -tags "CI" {
         param ($name, $params ,$expected)
 
         @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
+    }
+
+    It 'The result string should not contain null values when converting dictionary with IgnoreNullProperties.' {
+        $dict = @{}
+        $dict.Add('abc', "'def'")
+        $dict.Add('nullValue', $null)
+        $jsonFormat = ConvertTo-Json -InputObject $dict -IgnoreNullProperties
+        Write-Host $jsonFormat
+        $jsonFormat | Should -BeExactly "{$newline  ""abc"": "'def'"$newline}"
+    }
+
+    It 'The result string should not contain null values when converting Newtonsoft.Json.Linq.JObject with IgnoreNullProperties.' {
+        $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
+        $EgJObject.Add("TestValue3", "99999")
+        $EgJObject.Add("nullValue", $null)
+        $jsonFormat = ConvertTo-Json -InputObject $EgJObject -IgnoreNullProperties
+        $jsonFormat | Should -BeExactly "{$newline  ""TestValue3"": 99999$newline}"
+    }
+
+    It 'The result string should not contain null values when converting custom class with IgnoreNullProperties.' {
+        class CustomClass {
+            [String]$name="abc"
+            [String]$nullValue=$null
+        }
+        $object = New-Object -TypeName CustomClass
+        $jsonFormat = ConvertTo-Json -InputObject $object -IgnoreNullProperties
+        $jsonFormat | Should -BeExactly "{$newline  ""name"": ""abc""$newline}"
     }
 }
