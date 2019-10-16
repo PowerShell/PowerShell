@@ -72,7 +72,6 @@ namespace Microsoft.PowerShell
                 if (hostUI.SupportsVirtualTerminal)
                 {
                     // Use Warning Color
-
                     notificationColor = "\x1B[7m";
                     resetColor = "\x1B[0m";
 
@@ -82,8 +81,8 @@ namespace Microsoft.PowerShell
                     int line3Length = notificationMsgTemplate.IndexOf('\n', line2Length + 1);
                     line3Length -= line2Length + 1;
                     line2Length -= line1Length + 1;
-                    line2Padding = line2Padding.PadRight(line1Length - line2Length + releaseTag.Length);
 
+                    line2Padding = line2Padding.PadRight(line1Length - line2Length + releaseTag.Length);
                     // 3 represents the extra placeholder in the template
                     line3Padding = line3Padding.PadRight(line1Length - line3Length + 3);
                 }
