@@ -1130,6 +1130,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a value indicating if only string values containing matched lines should be returned.
         /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
+        /// Has no effect when OnlyMatching is also specified.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSetFileRaw)]
@@ -1244,6 +1245,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AllMatches { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets a value indicating if the actual matched string values should be returned.
+        /// Equivalent to grep -o
+        /// </summary>
+        [Alias("o")]
+        [Parameter]
+        public SwitchParameter OnlyMatching { get; set; }
+
         /// <summary>
         /// Gets or sets the text encoding to process each file as.
         /// </summary>
@@ -1293,9 +1303,9 @@ namespace Microsoft.PowerShell.Commands
 
         private int _postContext = 0;
 
-        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) 
-            ? _noContextTracker 
+        // When we are in OnlyMatching mode or Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
+        private IContextTracker GetContextTracker() => (OnlyMatching || Raw || (_preContext == 0 && _postContext == 0))
+            ? _noContextTracker
             : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
@@ -1561,7 +1571,17 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            if (Raw)
+            if (OnlyMatching)
+            {
+                foreach (MatchInfo matchInfo in contextTracker.EmitQueue)
+                {
+                    foreach (Match match in matchInfo.Matches)
+                    {
+                        WriteObject(match.Value);
+                    }
+                }
+            }
+            else if (Raw)
             {
                 foreach (MatchInfo match in contextTracker.EmitQueue)
                 {
@@ -1655,7 +1675,7 @@ namespace Microsoft.PowerShell.Commands
             List<int> indexes = null;
             List<int> lengths = null;
 
-            bool shouldEmphasize = !NoEmphasis && Host.UI.SupportsVirtualTerminal;
+            bool shouldEmphasize = !NoEmphasis && !OnlyMatching && Host.UI.SupportsVirtualTerminal;
 
             // If Emphasize is set and VT is supported,
             // the lengths and starting indexes of regex matches
