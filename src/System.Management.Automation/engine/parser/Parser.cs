@@ -5880,9 +5880,8 @@ namespace System.Management.Automation.Language
                 }
 
                 // Assemble the new chain statement AST
-                ChainableAst nextPipelineChain = nextPipeline;
                 currentPipelineChain = currentPipelineChain == null
-                    ? nextPipelineChain
+                    ? (ChainableAst)nextPipeline
                     : new PipelineChainAst(
                         ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                         currentPipelineChain,
