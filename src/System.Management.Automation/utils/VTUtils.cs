@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class to help with VT escape sequences.
     /// </summary>
-    public class VTUtility
+    public sealed class VTUtility
     {
         /// <summary>
         /// Available VT escape codes other than colors.

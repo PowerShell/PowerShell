@@ -1326,7 +1326,7 @@ namespace Microsoft.PowerShell.Commands
             if (outputPref != null)
             {
                 // the variable value is returned as a string not the enum
-                if (outputPref.ToString().EqualsOrdinalIgnoreCase("NoVtEscapeSequences"))
+                if (outputPref.ToString().EqualsOrdinalIgnoreCase(nameof(OutputPreference.NoVtEscapeSequences)))
                 {
                     NoEmphasis = true;
                 }
