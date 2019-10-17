@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                rv = ProcessJObject(jObject, context);
+                rv = RemoveNullProperties(jObject, context);
             }
             else
             {
@@ -857,24 +857,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return an alternate representation of the specified JObject that serializes the same JSON, except
-        /// that any contained properties that cannot be evaluated are treated as having the value null.
+        /// When IgnoreNullProperties is set removes all null value properties from JObject.
+        /// Otherwise the original object with all properties is returned.
         /// </summary>
-        private static object ProcessJObject(JObject jobject, in ConvertToJsonContext context)
+        private static object RemoveNullProperties(JObject jobject, in ConvertToJsonContext context)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>(jobject.Count);
-
-            foreach (KeyValuePair<string, JToken> entry in jobject)
+            if (context.IgnoreNullProperties)
             {
-                if (context.IgnoreNullProperties && entry.Value.Type == JTokenType.Null)
+                List<string> nullProperties = new List<string>();
+                foreach (KeyValuePair<string, JToken> entry in jobject)
                 {
-                    continue;
+                    if (entry.Value.Type == JTokenType.Null)
+                    {
+                        nullProperties.Add(entry.Key);
+                    }
                 }
 
-                result.Add(entry.Key, entry.Value);
+                foreach (string keyToRemove in nullProperties)
+                {
+                    jobject.Remove(keyToRemove);
+                }
             }
 
-            return result;
+            return jobject;
         }
 
         #endregion ConvertToJson
