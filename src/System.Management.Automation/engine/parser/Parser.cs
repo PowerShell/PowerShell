@@ -5833,7 +5833,7 @@ namespace System.Management.Automation.Language
                         case TokenKind.Dot:
                         case TokenKind.Ampersand:
                             // If something like 'command && &' or 'command && .' was provided,
-                            // the command rule will provide report the error.
+                            // CommandRule has already reported the error.
                             break;
 
                         default:
