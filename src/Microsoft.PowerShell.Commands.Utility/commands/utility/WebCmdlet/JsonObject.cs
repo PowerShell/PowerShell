@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (DictionaryEntry entry in dict)
             {
-                if (context.IgnoreNullProperties && entry.Value == null)
+                if (entry.Value == null && context.IgnoreNullProperties)
                 {
                     continue;
                 }
