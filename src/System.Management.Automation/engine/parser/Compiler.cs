@@ -791,9 +791,9 @@ namespace System.Management.Automation.Language
 
     internal class Compiler : ICustomAstVisitor2
     {
-        internal static readonly ParameterExpression s_executionContextParameter;
-        internal static readonly ParameterExpression s_functionContext;
-        private static readonly ParameterExpression s_returnPipe;
+        internal static readonly ParameterExpression _executionContextParameter;
+        internal static readonly ParameterExpression _functionContext;
+        internal static readonly ParameterExpression _returnPipe;
         private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_setDollarQuestionToTrue;
@@ -818,6 +818,10 @@ namespace System.Management.Automation.Language
 
             s_getDollarQuestion = Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
 
+            s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
+
+            s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
+            
             s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
 
             s_setDollarQuestionToTrue = Expression.Assign(
@@ -3404,7 +3408,7 @@ namespace System.Management.Automation.Language
                 return Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
                     Expression.Constant(pipelineChainAst),
-                    s_functionContext);
+                    _functionContext);
             }
 
             // We want to generate code like:
@@ -3431,11 +3435,11 @@ namespace System.Management.Automation.Language
             //         goto DispatchNextStatementTarget;
             //     }
             // LN:
-            //
+            // 
             // Note that we deliberately do not push trap handlers
             // so that those can be handled by the enclosing statement block instead.
 
-            var exprs = new List<Expression>();
+            var exprs = new List<Expression>(); 
 
             // A pipeline chain is left-hand-side deep,
             // so to compile from left to right, we need to start from the leaf
@@ -3472,7 +3476,7 @@ namespace System.Management.Automation.Language
                     ExpressionCache.Constant(0)));
             tryBodyExprs.Add(Expression.Label(label0));
             tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
-            tryBodyExprs.Add(CompilePipelineChainElement((PipelineAst)currentChain.LhsPipelineChain));
+            tryBodyExprs.Add(Compile(currentChain.LhsPipelineChain));
 
             // Remainder of try statement body
             // L1: dispatchIndex = 2; if ($?) pipeline2;
@@ -3506,7 +3510,7 @@ namespace System.Management.Automation.Language
                     ? s_getDollarQuestion
                     : s_notDollarQuestion;
 
-                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, CompilePipelineChainElement(currentChain.RhsPipeline)));
+                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
 
                 currentChain = currentChain.Parent as PipelineChainAst;
             }
@@ -3529,7 +3533,7 @@ namespace System.Management.Automation.Language
             ParameterExpression exception = Expression.Variable(typeof(Exception), nameof(exception));
             MethodCallExpression callCheckActionPreference = Expression.Call(
                 CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                Compiler.s_functionContext,
+                Compiler._functionContext,
                 exception);
             CatchBlock catchAll = Expression.Catch(
                 exception,
@@ -3547,24 +3551,6 @@ namespace System.Management.Automation.Language
             BlockExpression fullyExpandedBlock = Expression.Block(typeof(void), temps, exprs);
 
             return fullyExpandedBlock;
-        }
-
-        /// <summary>
-        /// Compile a pipeline as an element in a pipeline chain.
-        /// Needed since pure expressions won't set $? after them.
-        /// <seealso cref="CompileTrappableExpression"/> which does something similar.
-        /// </summary>
-        /// <param name="pipelineAst">The pipeline in the pipeline chain to compile to an expression.</param>
-        /// <returns>The compiled expression to execute the pipeline.</returns>
-        private Expression CompilePipelineChainElement(PipelineAst pipelineAst)
-        {
-            if (pipelineAst.PipelineElements.Count == 1 && pipelineAst.PipelineElements[0] is CommandExpressionAst)
-            {
-                // A single expression - must set $? after the expression.
-                return Expression.Block(Compile(pipelineAst), s_setDollarQuestionToTrue);
-            }
-
-            return Compile(pipelineAst);
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)

@@ -5348,7 +5348,7 @@ namespace System.Management.Automation.Language
     public abstract class ChainableAst : PipelineBaseAst
     {
         /// <summary>
-        /// Initializes a new instance of the new chainable AST with the given extent.
+        /// Construct a new chainable AST with the given extent.
         /// </summary>
         /// <param name="extent">The script extent of the AST.</param>
         protected ChainableAst(IScriptExtent extent) : base(extent)
@@ -5363,7 +5363,7 @@ namespace System.Management.Automation.Language
     public class PipelineChainAst : ChainableAst
     {
         /// <summary>
-        /// Initializes a new instance of the new statement chain AST from two statements and an operator.
+        /// Create a new statement chain AST from two statements and an operator.
         /// </summary>
         /// <param name="extent">The extent of the chained statement.</param>
         /// <param name="lhsChain">The pipeline or pipeline chain to the left of the operator.</param>
@@ -5403,31 +5403,28 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Gets the left hand pipeline in the chain.
+        /// The left hand pipeline in the chain.
         /// </summary>
         public ChainableAst LhsPipelineChain { get; }
 
         /// <summary>
-        /// Gets the right hand pipeline in the chain.
+        /// The right hand pipeline in the chain.
         /// </summary>
         public PipelineAst RhsPipeline { get; }
 
         /// <summary>
-        /// Gets the chaining operator used.
+        /// The chaining operator used.
         /// </summary>
         public TokenKind Operator { get; }
 
         /// <summary>
-        /// Gets a flag that indicates whether this chain has been invoked with the background operator.
+        /// Indicates whether this chain has been invoked with the background operator.
         /// </summary>
         public bool Background { get; }
 
         /// <summary>
         /// Create a copy of this Ast.
         /// </summary>
-        /// <returns>
-        /// A fresh copy of this PipelineChainAst instance.
-        /// </returns>
         public override Ast Copy()
         {
             return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
