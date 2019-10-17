@@ -6154,8 +6154,8 @@ namespace System.Management.Automation.Language
 
                     default:
                         // ErrorRecovery: don't eat the token, assume it belongs to something else.
-
-                        ReportError(nextToken.Extent,
+                        ReportError(
+                            nextToken.Extent,
                             nameof(ParserStrings.UnexpectedToken),
                             ParserStrings.UnexpectedToken,
                             nextToken.Text);

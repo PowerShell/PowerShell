@@ -3206,7 +3206,8 @@ namespace System.Management.Automation.Language
             // L1: dispatchIndex = 2; if ($?) pipeline2;
             // ...
             int chainIndex = 1;
-            do {
+            do
+            {
                 // Record label and switch case for later use
                 LabelTarget currentLabel = Expression.Label();
                 dispatchTargets.Add(currentLabel);
@@ -3236,7 +3237,8 @@ namespace System.Management.Automation.Language
                 tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
 
                 currentChain = currentChain.Parent as PipelineChainAst;
-            } while (currentChain != null);
+            }
+            while (currentChain != null);
 
             // Add empty expression to make the block value void
             tryBodyExprs.Add(ExpressionCache.Empty);
