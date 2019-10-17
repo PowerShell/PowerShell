@@ -505,7 +505,7 @@ namespace System.Management.Automation
         }
 
         internal static void InvokePipelineInBackground(
-                                            PipelineAst pipelineAst,
+                                            PipelineBaseAst pipelineAst,
                                             FunctionContext funcContext)
         {
             PipelineProcessor pipelineProcessor = new PipelineProcessor();

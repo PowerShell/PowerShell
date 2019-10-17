@@ -123,7 +123,10 @@ namespace System.Management.Automation
                     description: "Print notification message when new releases are available"),
                 new ExperimentalFeature(
                     name: "PSCoalescingOperators",
-                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language")
+                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSBashCommandOperators",
+                    description: "Allow use of && and || as operators between pipeline invocations"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
