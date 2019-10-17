@@ -70,7 +70,6 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $dict.Add('abc', "'def'")
         $dict.Add('nullValue', $null)
         $jsonFormat = ConvertTo-Json -InputObject $dict -IgnoreNullProperties
-        Write-Host $jsonFormat
         $jsonFormat | Should -BeExactly "{$newline  ""abc"": "'def'"$newline}"
     }
 
@@ -82,10 +81,10 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should -BeExactly "{$newline  ""TestValue3"": 99999$newline}"
     }
 
-    It 'The result string should not contain null values when converting custom class with IgnoreNullProperties.' {
+    It 'The result string should not contain null values when converting custom PS object with IgnoreNullProperties.' {
         class CustomClass {
             [String]$name="abc"
-            [String]$nullValue=$null
+            [nullable[int]]$nullValue=$null
         }
         $object = New-Object -TypeName CustomClass
         $jsonFormat = ConvertTo-Json -InputObject $object -IgnoreNullProperties
