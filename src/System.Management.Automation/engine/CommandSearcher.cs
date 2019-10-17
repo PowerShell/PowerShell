@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
                     result.Add(name + StringLiterals.PowerShellDataFileExtension);
                 }
             }
-
+#if !Unix
             if (_commandTypes.HasFlag(CommandTypes.Application))
             {
                 // Now add each extension from the PATHEXT environment variable
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation
                     result.Add(name + extension);
                 }
             }
-
+#endif
             // Now add the commandName by itself if it wasn't added as the first pattern
             if (!commandNameAddedFirst)
             {
