@@ -40,14 +40,19 @@ namespace System.Management.Automation
             '#', ',', '(', ')', '{', '}', '[', ']', '&', '/', '\\', '$', '^', ';', ':',
             '"', '\'', '<', '>', '|', '?', '@', '`', '*', '%', '+', '=', '~'
         };
-
         internal static ConcurrentDictionary<string, CommandTypes> GetExportedCommands(string modulePath, bool testOnly, ExecutionContext context)
+        {
+            bool IsWinModule; // not used
+            return GetExportedCommands(modulePath, testOnly, context, out IsWinModule);
+        }
+        internal static ConcurrentDictionary<string, CommandTypes> GetExportedCommands(string modulePath, bool testOnly, ExecutionContext context, out bool IsWinModule)
         {
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
             if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStart(modulePath);
 
             DateTime lastWriteTime;
             ModuleCacheEntry moduleCacheEntry;
+            IsWinModule = false;
             if (GetModuleEntryFromCache(modulePath, out lastWriteTime, out moduleCacheEntry))
             {
                 if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStop(modulePath);
@@ -61,7 +66,7 @@ namespace System.Management.Automation
                 var extension = Path.GetExtension(modulePath);
                 if (extension.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    result = AnalyzeManifestModule(modulePath, context, lastWriteTime, etwEnabled);
+                    result = AnalyzeManifestModule(modulePath, context, lastWriteTime, etwEnabled, out IsWinModule);
                 }
                 else if (extension.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
@@ -95,9 +100,10 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static ConcurrentDictionary<string, CommandTypes> AnalyzeManifestModule(string modulePath, ExecutionContext context, DateTime lastWriteTime, bool etwEnabled)
+        private static ConcurrentDictionary<string, CommandTypes> AnalyzeManifestModule(string modulePath, ExecutionContext context, DateTime lastWriteTime, bool etwEnabled, out bool IsWinModule)
         {
             ConcurrentDictionary<string, CommandTypes> result = null;
+            IsWinModule = false;
             try
             {
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
@@ -105,8 +111,7 @@ namespace System.Management.Automation
                 {
                     if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
-                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
-                        return null;
+                        IsWinModule = true;
                     }
 
                     Version version;
@@ -139,15 +144,18 @@ namespace System.Management.Automation
 
                     if (analysisSucceeded)
                     {
-                        var moduleCacheEntry = new ModuleCacheEntry
+                        if (!IsWinModule) // do not add 'WinCompat' modules to the Cache
                         {
-                            ModulePath = modulePath,
-                            LastWriteTime = lastWriteTime,
-                            Commands = result,
-                            TypesAnalyzed = false,
-                            Types = new ConcurrentDictionary<string, TypeAttributes>(1, 8, StringComparer.OrdinalIgnoreCase)
-                        };
-                        s_cacheData.Entries[modulePath] = moduleCacheEntry;
+                            var moduleCacheEntry = new ModuleCacheEntry
+                            {
+                                ModulePath = modulePath,
+                                LastWriteTime = lastWriteTime,
+                                Commands = result,
+                                TypesAnalyzed = false,
+                                Types = new ConcurrentDictionary<string, TypeAttributes>(1, 8, StringComparer.OrdinalIgnoreCase)
+                            };
+                            s_cacheData.Entries[modulePath] = moduleCacheEntry;
+                        }
                     }
                     else
                     {
