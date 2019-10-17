@@ -862,10 +862,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object RemoveNullProperties(JObject jobject, in ConvertToJsonContext context)
         {
+            JObject clonedJobject = (JObject)jobject.DeepClone();
+
             if (context.IgnoreNullProperties)
             {
                 List<string> nullProperties = new List<string>();
-                foreach (KeyValuePair<string, JToken> entry in jobject)
+                foreach (KeyValuePair<string, JToken> entry in clonedJobject)
                 {
                     if (entry.Value.Type == JTokenType.Null)
                     {
@@ -875,11 +877,11 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string keyToRemove in nullProperties)
                 {
-                    jobject.Remove(keyToRemove);
+                    clonedJobject.Remove(keyToRemove);
                 }
             }
 
-            return jobject;
+            return clonedJobject;
         }
 
         #endregion ConvertToJson
