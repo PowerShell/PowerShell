@@ -283,6 +283,20 @@ namespace System.Management.Automation
     }
     #endregion ErrorView
 
+    #region OutputPreference
+    /// <summary>
+    /// Defines the OutputPreference options.
+    /// </summary>
+    public enum OutputPreference
+    {
+        /// <summary>Allow text to contain VT Escape Sequences.</summary>
+        AllowVtEscapeSequences = 0,
+
+        /// <summary>Don't allow text to contain VT Escape Sequences.</summary>
+        NoVtEscapeSequences = 1
+    }
+    #endregion OutputPreference
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine

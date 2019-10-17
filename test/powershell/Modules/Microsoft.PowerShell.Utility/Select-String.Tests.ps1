@@ -7,6 +7,10 @@ Describe "Select-String" -Tags "CI" {
         $currentDirectory = $pwd.Path
     }
 
+    AfterAll {
+        Push-Location $currentDirectory
+    }
+
     Context "String actions" {
         $testinputone = "hello","Hello","goodbye"
         $testinputtwo = "hello","Hello"
@@ -76,7 +80,7 @@ Describe "Select-String" -Tags "CI" {
         }
 
         it "Should output a string with the first match highlighted" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences')
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
                 $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
@@ -89,7 +93,7 @@ Describe "Select-String" -Tags "CI" {
         }
 
         it "Should output a string with all matches highlighted when AllMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences')
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
                 $result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
@@ -102,7 +106,7 @@ Describe "Select-String" -Tags "CI" {
         }
 
         it "Should output a string with the first match highlighted when SimpleMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences')
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
                 $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
@@ -246,9 +250,5 @@ Describe "Select-String" -Tags "CI" {
             $expected = "This is the second line"
             Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
         }
-    }
-
-    AfterAll {
-        Push-Location $currentDirectory
     }
 }

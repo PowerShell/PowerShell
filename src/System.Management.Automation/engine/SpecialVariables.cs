@@ -196,6 +196,9 @@ namespace System.Management.Automation
         internal const string InformationPreference = "InformationPreference";
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
+        internal const string OutputPreference = "OutputPreference";
+        internal static readonly VariablePath OutputPreferenceVarPath = new VariablePath(OutputPreference);
+
         #endregion Preference Variables
 
         internal const string ErrorView = "ErrorView";
@@ -262,6 +265,7 @@ namespace System.Management.Automation
                                                                     SpecialVariables.WarningPreference,
                                                                     SpecialVariables.InformationPreference,
                                                                     SpecialVariables.ConfirmPreference,
+                                                                    SpecialVariables.OutputPreference,
                                                                 };
 
         internal static readonly Type[] PreferenceVariableTypes = {
@@ -272,6 +276,7 @@ namespace System.Management.Automation
                                                                     /* WarningPreference */     typeof(ActionPreference),
                                                                     /* InformationPreference */ typeof(ActionPreference),
                                                                     /* ConfirmPreference */     typeof(ConfirmImpact),
+                                                                    /* OutputPreference */      typeof(OutputPreference),
                                                                   };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we

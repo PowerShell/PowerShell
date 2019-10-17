@@ -177,6 +177,9 @@
   <data name="InformationPreferenceDescription" xml:space="preserve">
     <value>Dictates the action taken when a command generates an item in the Information stream</value>
   </data>
+  <data name="OutputPreferenceDescription" xml:space="preserve">
+    <value>Dictates the action taken for text output with regards to VT escape sequences</value>
+  </data>
   <data name="ErrorViewDescription" xml:space="preserve">
     <value>Dictates the view mode to use when displaying errors</value>
   </data>

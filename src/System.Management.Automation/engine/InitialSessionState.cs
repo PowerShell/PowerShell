@@ -4321,6 +4321,7 @@ end {
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
+        internal const OutputPreference defaultOutputPreference = OutputPreference.AllowVtEscapeSequences;
 
         internal const ErrorView defaultErrorView = ErrorView.NormalView;
         internal const bool defaultWhatIfPreference = false;
@@ -4402,6 +4403,13 @@ end {
                 RunspaceInit.InformationPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))
+                 ),
+            new SessionStateVariableEntry(
+                SpecialVariables.OutputPreference,
+                defaultOutputPreference,
+                RunspaceInit.OutputPreferenceDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(OutputPreference))
                  ),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
