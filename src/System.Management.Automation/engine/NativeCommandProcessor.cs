@@ -1101,11 +1101,13 @@ namespace System.Management.Automation
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
+                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
+                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
                 }
             }
             else
