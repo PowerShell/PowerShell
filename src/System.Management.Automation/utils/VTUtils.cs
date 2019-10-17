@@ -13,7 +13,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Available VT escape codes other than colors.
         /// </summary>
-        public enum VT {
+        public enum VT
+        {
 
             /// <summary>Reset the text style.</summary>
             Reset,
@@ -51,6 +52,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the VT escape sequence for a ConsoleColor.
         /// </summary>
+        /// <param name="color">
+        /// The ConsoleColor to return the equivalent VT escape sequence.
+        /// </param>
+        /// <returns>
+        /// The requested VT escape sequence.
+        /// </returns>
         public static string GetEscapeSequence(ConsoleColor color)
         {
             string value = string.Empty;
@@ -61,6 +68,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the VT escape sequence for a supported VT enum value.
         /// </summary>
+        /// <param name="vt">
+        /// The VT code to return the VT escape sequence.
+        /// </param>
+        /// <returns>
+        /// The requested VT escape sequence.
+        /// </returns>
         public static string GetEscapeSequence(VT vt)
         {
             string value = string.Empty;
