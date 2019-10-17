@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 try {
     if ( ! $IsWindows ) {
-        $PSDefaultParameterValues['It:Skip'] = $true
+        $PSDefaultParameterValues['It:Pending'] = $true
     }
 
     Describe "CimInstance cmdlet tests" -Tag @("CI") {
@@ -40,5 +40,5 @@ try {
 }
 
 finally {
-    $PSDefaultParameterValues.Remove('It:Skip')
+    $PSDefaultParameterValues.Remove('It:Pending')
 }
