@@ -279,9 +279,9 @@ namespace System.Management.Automation.Language
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), StaticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
         internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), StaticPublicFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
