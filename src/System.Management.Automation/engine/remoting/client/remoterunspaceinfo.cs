@@ -312,6 +312,15 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
+            // NamedPipe session
+            NamedPipeConnectionInfo namedPipeConnectionInfo = remoteRunspace.ConnectionInfo as NamedPipeConnectionInfo;
+            if (namedPipeConnectionInfo != null)
+            {
+                ComputerType = TargetMachineType.Container; // TBD - if a new TargetMachineType needed.
+                ConfigurationName = namedPipeConnectionInfo.AppDomainName; // TBD - if AppDomainName semantically can be used for ConfigurationName.
+                return;
+            }
+
             // We only support WSMan/VM/Container sessions now.
             Dbg.Assert(false, "Invalid Runspace");
         }

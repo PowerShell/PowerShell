@@ -51,6 +51,8 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_ViaPsrpSession = "PSSession";
         private const string ParameterSet_ViaCimSession = "CimSession";
         private const string ParameterSet_FQName_ViaPsrpSession = "FullyQualifiedNameAndPSSession";
+        private const string ParameterSet_WindowsPSCompat = "WindowsPSCompat";
+        
 
         /// <summary>
         /// This parameter specifies whether to import to the current session state
@@ -405,6 +407,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public string CimNamespace { get; set; }
+
+        /// <summary>
+        /// This parameter causes a module to be loaded into Windows PowerShell
+        /// </summary>
+        [Parameter(ParameterSetName = ParameterSet_Name, Mandatory = false, ValueFromPipeline = true)]
+        [Alias("UseWinPS")]
+        public SwitchParameter UseWindowsPowerShell { get; set; }
 
         #endregion Cmdlet parameters
 
@@ -1788,18 +1797,34 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (this.ParameterSetName.Equals(ParameterSet_Name, StringComparison.OrdinalIgnoreCase))
             {
-                foreach (string name in Name)
+                if (this.UseWindowsPowerShell)
                 {
-                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                    if (foundModule != null)
-                    {
-                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+                    CreateWindowsPowerShellCompatResources();
 
-                        // Telemetry here - report module load
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
-#if LEGACYTELEMETRY
-                        TelemetryAPI.ReportModuleLoad(foundModule);
-#endif
+                    if (WindowsPowerShellCompatRemotingSession != null)
+                    {
+                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, null, WindowsPowerShellCompatRemotingSession))
+                        {
+                            moduleProxy.IsWindowsPowerShellCompatModule = true;
+                            System.Threading.Interlocked.Increment(ref WindowsPowerShellCompatUsageCounter);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (string name in Name)
+                    {
+                        PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
+                        if (foundModule != null)
+                        {
+                            SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+
+                            // Telemetry here - report module load
+                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+    #if LEGACYTELEMETRY
+                            TelemetryAPI.ReportModuleLoad(foundModule);
+    #endif
+                        }
                     }
                 }
             }
