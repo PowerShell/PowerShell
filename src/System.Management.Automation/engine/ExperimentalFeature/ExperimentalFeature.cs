@@ -120,7 +120,10 @@ namespace System.Management.Automation
                     description: "New formatting for ErrorRecord"),
                 new ExperimentalFeature(
                     name: "PSUpdatesNotification",
-                    description: "Print notification message when new releases are available")
+                    description: "Print notification message when new releases are available"),
+                new ExperimentalFeature(
+                    name: "PSCoalescingOperators",
+                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

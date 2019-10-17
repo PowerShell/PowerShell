@@ -6555,8 +6555,12 @@ namespace System.Management.Automation.Language
             // G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
             // G
             // G  comparison-expression:
+            // G      nullcoalesce-expression
+            // G      comparison-expression   comparison-operator   new-lines:opt   nullcoalesce-expression
+            // G
+            // G  nullcoalesce-expression:
             // G      additive-expression
-            // G      comparison-expression   comparison-operator   new-lines:opt   additive-expression
+            // G      nullcoalesce-expression   '??'   new-lines:opt   additive-expression
             // G
             // G  additive-expression:
             // G      multiplicative-expression
