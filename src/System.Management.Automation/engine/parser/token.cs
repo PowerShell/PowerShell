@@ -1051,7 +1051,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ string.Empty,
+            /*         QuestionMark */ "?",
             /*    Reserved slot 3   */ string.Empty,
             /*    Reserved slot 4   */ string.Empty,
             /*    Reserved slot 5   */ string.Empty,
