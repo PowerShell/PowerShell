@@ -70,7 +70,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $dict.Add('abc', "'def'")
         $dict.Add('nullValue', $null)
         $jsonFormat = ConvertTo-Json -InputObject $dict -IgnoreNullProperties
-        $jsonFormat | Should -BeExactly "{$newline  ""abc"": "'def'"$newline}"
+        $jsonFormat | Should -BeExactly "{$newline  ""abc"": ""'def'""$newline}"
     }
 
     It 'The result string should not contain null values when converting Newtonsoft.Json.Linq.JObject with IgnoreNullProperties.' {
