@@ -116,9 +116,33 @@ Describe "Get-Command" -Tag CI {
             $Result | Should -Match 'del \[-Path\]'
         }
 
+        It "Should replace commands with aliases in matching commands when using a wildcard search" {
+            $Result = Get-Command -Name sp* -Syntax
+
+            $Result | Should -BeOfType [String]
+            $Result -join '' | Should -Match 'sp \(alias\) -> Set-ItemProperty'
+            $Result -join '' | Should -Match 'sp \[-Path\]'
+        }
+
+        It "Should not add the alias (alias) -> command decorator for non-alias commands" {
+            $Result = Get-Command -Name sp* -Syntax
+
+            $Result -join '' | Should -Not -Match 'Split-Path \(alias\) -> Split-Path'
+            $Result -join '' | Should -Match 'Split-Path \[-Path\]'
+        }
+
+        It "Should only replace aliases when given multiple entries including a command and an alias" {
+            $Result = Get-Command -Name get-help, del -Syntax
+
+            $Result -join '' | Should -Match 'del \(alias\) -> Remove-Item'
+            $Result -join '' | Should -Match 'del \[-Path\]'
+            $Result -join '' | Should -Match 'Get-Help \[\[-Name\]'
+            $Result -join '' | Should -Not -Match 'del \(alias\) -> Get-Help'
+        }
+
         It "Should return the path to an aliased script when -Syntax is specified" {
             # First, create a script file
-            @'
+            $TestGcmSyntax = @'
             [CmdletBinding()]
             param(
                 [Parameter(Position=0, Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -129,14 +153,15 @@ Describe "Get-Command" -Tag CI {
             process {
                 "Processing ${Name}"
             }
-'@ | out-File TestDrive:\Test-GcmSyntax.ps1
+'@
+            Set-Content -Path TestDrive:\Test-GcmSyntax.ps1 -Value $TestGcmSyntax
 
             # Now set up an alias for that file
-            new-alias tgs TestDrive:\Test-GcmSyntax.ps1
+            New-Alias -Name tgs -Value TestDrive:\Test-GcmSyntax.ps1
 
             $Result = Get-Command -Name tgs -Syntax
 
-            $Result | Should -Match "tgs -> $([Regex]::Escape((Get-Item TestDrive:\\Test-GcmSyntax.ps1).FullName))"
+            $Result | Should -Match "tgs \(alias\) -> $([Regex]::Escape((Get-Item TestDrive:\\Test-GcmSyntax.ps1).FullName))"
         }
     }
 

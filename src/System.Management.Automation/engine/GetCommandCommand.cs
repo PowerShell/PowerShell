@@ -531,20 +531,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!string.IsNullOrEmpty(result.Syntax))
                         {
-                            PSObject syntax = PSObject.AsPSObject(result.Syntax);
-
-                            if (!_nameContainsWildcard && !this.Name[0].Equals(result.Name))
-                            {
-                                string replacedSyntax = string.Format(
-                                    "{0} -> {1}{2}{3}",
-                                    this.Name[0],
-                                    result is ExternalScriptInfo extScript ? string.Format("{0}{1}", extScript.Path, Environment.NewLine) : result.Name,
-                                    Environment.NewLine,
-                                    result.Syntax.Replace(result.Name, this.Name[0]));
-                                syntax = PSObject.AsPSObject(replacedSyntax);
-                            }
-
-                            syntax.IsHelpObject = true;
+                            PSObject syntax = GetSyntaxObject(result);
 
                             WriteObject(syntax);
                         }
@@ -580,6 +567,81 @@ namespace Microsoft.PowerShell.Commands
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
 #endif
+        }
+
+        /// <summary>
+        /// Creates the syntax output based on if the command is an alias, script, application or command.
+        /// </summary>
+        /// <param name="command">
+        /// CommandInfo object containing the syntax to be output.
+        /// </param>
+        /// <returns>
+        /// Syntax string cast as a PSObject for outputting.
+        /// </returns>
+        private PSObject GetSyntaxObject(CommandInfo command)
+        {
+            PSObject syntax = PSObject.AsPSObject(command.Syntax);
+
+            // This is checking if the command name that's been passed in is one that was specified by a user,
+            // if not then we have to assume they specified an alias or a wildcard and do some extra formatting for those,
+            // if it is then just go with the default formatting.
+            // So if a user runs Get-Command -Name del -Syntax the code will find del and the command it resolves to as Remove-Item
+            // and attempt to return that, but as the user specified del we want to fiddle with the output a bit to make it clear
+            // that's an alias but still give the Remove-Item syntax.
+            if (this.Name != null && !Array.Exists(this.Name, name => name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                string aliasName = _nameContainsWildcard ? command.Name : this.Name[0];
+                
+                IDictionary<string, AliasInfo> aliasTable = SessionState.Internal.GetAliasTable();
+                foreach (KeyValuePair<string, AliasInfo> tableEntry in aliasTable)
+                {
+                    if ((Array.Exists(this.Name, name => name.Equals(tableEntry.Key, StringComparison.InvariantCultureIgnoreCase)) && 
+                        tableEntry.Value.Definition == command.Name) || 
+                        (_nameContainsWildcard && tableEntry.Value.Definition == command.Name))
+                    {
+                        aliasName = tableEntry.Key;
+                        break;
+                    }
+                }
+
+                string replacedSyntax = string.Empty;
+                switch (command)
+                {
+                    case ExternalScriptInfo externalScript:
+                        replacedSyntax = string.Format(
+                            "{0} (alias) -> {1}{2}{3}",
+                            aliasName,
+                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
+                            Environment.NewLine,
+                            command.Syntax.Replace(command.Name, aliasName));
+                        break;
+                    case ApplicationInfo app:
+                        replacedSyntax = app.Path;
+                        break;
+                    default:
+                        if (aliasName.Equals(command.Name))
+                        {
+                            replacedSyntax = command.Syntax;
+                        }
+                        else
+                        {
+                            replacedSyntax = string.Format(
+                                "{0} (alias) -> {1}{2}{3}",
+                                aliasName,
+                                command.Name,
+                                Environment.NewLine,
+                                command.Syntax.Replace(command.Name, aliasName));
+                        }
+
+                        break;
+                }
+                
+                syntax = PSObject.AsPSObject(replacedSyntax);
+            }
+
+            syntax.IsHelpObject = true;
+
+            return syntax;
         }
 
         /// <summary>
