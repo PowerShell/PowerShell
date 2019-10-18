@@ -125,7 +125,7 @@ namespace System.Management.Automation
                     name: "PSCoalescingOperators",
                     description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
                 new ExperimentalFeature(
-                    name: "PSBashCommandOperators",
+                    name: "PSPipelineChainOperators",
                     description: "Allow use of && and || as operators between pipeline invocations"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
