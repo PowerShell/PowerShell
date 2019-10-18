@@ -100,7 +100,7 @@ Describe "Requires tests" -Tags "CI" {
             $null = New-Item -Path $scriptPath -Value "#requires -MaximumPSVersion $($currentVersion.Major).$($currentVersion.Minor)" -Force
             { & $scriptPath } | Should -Not -Throw
         }
-        if ($currentVersion.Minor > 0) {
+        if ($currentVersion.Minor -gt 0) {
             It "Current major version equals required maximum major version, and current minor version < required minor version." {
                 $scriptPath = Join-Path $TestDrive 'script.ps1'
                 $script = "#requires -MaximumPSVersion $($currentVersion.Major).0"

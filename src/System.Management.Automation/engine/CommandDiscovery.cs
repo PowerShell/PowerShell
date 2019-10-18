@@ -458,9 +458,10 @@ namespace System.Management.Automation
         {
             if (scriptInfo.RequiredOSVersions != null && scriptInfo.RequiredOSVersions.Any())
             {
-                var currentOSVersion = Environment.OSVersion.Platform.ToString();
                 if (Utils.isOSVersionValid(scriptInfo.RequiredOSVersions))
+                {
                     return;
+                }
                 ScriptRequiresException scriptRequiresException =
                     new ScriptRequiresException(
                         scriptInfo.Name,
