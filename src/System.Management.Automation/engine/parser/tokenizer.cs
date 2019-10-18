@@ -1800,8 +1800,8 @@ Requires statement
 + {0} 
 
 at char {1} is not at the top of the script, but it will behave as if it was at the top of the script.", token, _currentIndex);
-                    WarningException myEx=new WarningException(warningMessage);        
-                    Console.WriteLine(myEx.ToString());  
+                    WarningException requiresWarning=new WarningException(warningMessage);        
+                    Console.WriteLine(requiresWarning.ToString());  
                 }
             }
         }
@@ -1909,7 +1909,6 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
             List<string> requiredAssemblies = null;
             bool requiresElevation = false;
             List<string> requiredOSVersions = null;
-
             foreach (var token in requiresTokens)
             {
                 var requiresExtent = new InternalScriptExtent(_positionHelper, token.Extent.StartOffset + 1, token.Extent.EndOffset);
@@ -1973,7 +1972,6 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                     }
                 }
             }
-
             return new ScriptRequirements
             {
                 RequiredApplicationId = requiredShellId,
