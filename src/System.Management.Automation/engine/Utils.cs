@@ -628,21 +628,21 @@ namespace System.Management.Automation
         /// <returns>The string representation of the user's OS.</returns>
         internal static string GetOSVersionString()
         {
-            string osName = null;
+            string platformName = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) 
             {
-                osName = "MacOS"; 
+                platformName = "MacOS"; 
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                osName = "Linux"; 
+                platformName = "Linux"; 
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                osName = "Windows";
+                platformName = "Windows";
             }
 
-            return osName;
+            return platformName;
         }
 
         /// <summary>

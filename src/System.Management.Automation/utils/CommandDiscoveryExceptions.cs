@@ -314,7 +314,7 @@ namespace System.Management.Automation
         }
 
          /// <summary>
-        /// Constructs an ScriptRequiresException. Recommended constructor for the class for
+        /// Initializes a new instance of the ScriptRequiresException class. Recommended constructor for the class for
         /// #requires -OS statement.
         /// </summary>
         /// <param name="commandName">
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an ScriptRequiresException. Recommended constructor for the class for
+        /// Initializes a new instance of the ScriptRequiresException class. Recommended constructor for the class for
         /// #requires -RunAsAdministrator statement.
         /// </summary>
         /// <param name="commandName">
