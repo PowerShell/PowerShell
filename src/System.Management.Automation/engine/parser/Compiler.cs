@@ -3476,7 +3476,7 @@ namespace System.Management.Automation.Language
                     ExpressionCache.Constant(0)));
             tryBodyExprs.Add(Expression.Label(label0));
             tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
-            tryBodyExprs.Add(Compile(currentChain.LhsPipelineChain));
+            tryBodyExprs.Add(CompilePipelineChainElement((PipelineAst)currentChain.LhsPipelineChain));
 
             // Remainder of try statement body
             // L1: dispatchIndex = 2; if ($?) pipeline2;
@@ -3510,7 +3510,7 @@ namespace System.Management.Automation.Language
                     ? s_getDollarQuestion
                     : s_notDollarQuestion;
 
-                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
+                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, CompilePipelineChainElement(currentChain.RhsPipeline)));
 
                 currentChain = currentChain.Parent as PipelineChainAst;
             }
@@ -3551,6 +3551,24 @@ namespace System.Management.Automation.Language
             BlockExpression fullyExpandedBlock = Expression.Block(typeof(void), temps, exprs);
 
             return fullyExpandedBlock;
+        }
+
+        /// <summary>
+        /// Compile a pipeline as an element in a pipeline chain.
+        /// Needed since pure expressions won't set $? after them.
+        /// <seealso cref="CompileTrappableExpression"/> which does something similar.
+        /// </summary>
+        /// <param name="pipelineAst">The pipeline in the pipeline chain to compile to an expression.</param>
+        /// <returns>The compiled expression to execute the pipeline.</returns>
+        private Expression CompilePipelineChainElement(PipelineAst pipelineAst)
+        {
+            if (pipelineAst.PipelineElements.Count == 1 && pipelineAst.PipelineElements[0] is CommandExpressionAst)
+            {
+                // A single expression - must set $? after the expression.
+                return Expression.Block(Compile(pipelineAst), s_setDollarQuestionToTrue);
+            }
+
+            return Compile(pipelineAst);
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)

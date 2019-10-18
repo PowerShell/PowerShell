@@ -76,6 +76,8 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '"hi" && testexe -returncode 1'; Output = @('hi', '1') }
             @{ Statement = 'testexe -returncode 1 && "Hi"'; Output = @('1') }
             @{ Statement = 'testexe -returncode 1 || "hi"'; Output = @('1', 'hi') }
+            @{ Statement = '"hello" && get-item macarena_doesnotexist || "there"; "hello" || "there"'; Output = @('hello', 'there', 'hello') }
+            @{ Statement = '1 + 1 && "Hi"'; Output = @(2, 'Hi') }
 
             # Pipeline and native command
             @{ Statement = '1,2,3 | % { $_ + 1 } && testexe -returncode 0'; Output = @('2','3','4','0') }
