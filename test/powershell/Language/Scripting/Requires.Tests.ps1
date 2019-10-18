@@ -113,13 +113,13 @@ Describe "Requires tests" -Tags "CI" {
             $null = New-Item -Path $scriptPath -Value "#requires -MaximumPSVersion $($currentVersion.Major - 1)" -Force
             { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresMaximumPSVersion"
         }
-        
+
     }
 
     Context "OS version checks" {
         BeforeAll {
             $currentOSVersion = [Environment]::OSVersion.Platform
-            if ($currentOSVersion -like "Unix") {
+            if ($currentOSVersion -eq "Unix") {
                 $currentOSVersion = "MacOS"
             }
             $otherOSVersions = @(@("Linux", "MacOS", "Windows") | Where-Object { $_ -ne $currentOSVersion })
