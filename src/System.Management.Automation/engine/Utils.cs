@@ -610,10 +610,10 @@ namespace System.Management.Automation
         /// <returns>True if the user's OS version is in the list of required versions, false otherwise.</returns>
         internal static bool IsOSVersionValid(IEnumerable<string> requiredOSVersions)
         {
-            string OSName = GetOSVersionString();
-            foreach (string osVersion in requiredOSVersions) 
+            string currentOSName = GetOSVersionString();
+            foreach (string requiredOSVersion in requiredOSVersions) 
             {
-                if (osVersion.Equals(OSName, StringComparison.OrdinalIgnoreCase))
+                if (requiredOSVersion.Equals(currentOSName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -625,6 +625,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a string representation of the user's current OS version or null if unknown version.
         /// </summary>
+        /// <returns>The string representation of the user's OS.</returns>
         internal static string GetOSVersionString()
         {
             string osName = null;
@@ -632,12 +633,10 @@ namespace System.Management.Automation
             {
                 osName = "MacOS"; 
             }
-
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 osName = "Linux"; 
             }
-
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 osName = "Windows";
@@ -645,7 +644,6 @@ namespace System.Management.Automation
 
             return osName;
         }
-
 
         /// <summary>
         /// Coverts a string to version format.
