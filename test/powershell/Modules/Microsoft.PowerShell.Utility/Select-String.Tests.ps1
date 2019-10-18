@@ -83,12 +83,12 @@ Describe "Select-String" -Tags "CI" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
@@ -96,12 +96,12 @@ Describe "Select-String" -Tags "CI" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0m`e[7ml`e[0mo${nl}He`e[7ml`e[0m`e[7ml`e[0mo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
@@ -109,18 +109,18 @@ Describe "Select-String" -Tags "CI" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string without highlighting when NoEmphasis is used" {
             $result = $testinputone | Select-String -Pattern "l" -NoEmphasis | Out-String
-            $result | Should -Be "`nhello`nHello`n`n"
+            $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
         }
 
         it "Should return an array of matching strings without virtual terminal sequences" {
