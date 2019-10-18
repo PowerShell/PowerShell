@@ -15,7 +15,6 @@ namespace System.Management.Automation
         /// </summary>
         public enum VT
         {
-
             /// <summary>Reset the text style.</summary>
             Reset,
 
