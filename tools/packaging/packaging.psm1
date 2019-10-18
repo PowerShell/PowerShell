@@ -216,6 +216,7 @@ function Start-PSPackage {
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
 
                 $signingXml = [xml] (Get-Content (Join-Path $PSScriptRoot "..\releaseBuild\signing.xml" -Resolve))
+                # Only include the files we sign for compliance scanning, those are the files we build.
                 $filesToInclude = $signingXml.SignConfigXML.job.file.src | Where-Object {  -not $_.endswith('pwsh.exe') -and ($_.endswith(".dll") -or $_.endswith(".exe")) } | ForEach-Object { ($_ -split '\\')[-1] }
                 $filesToInclude += $filesToInclude | ForEach-Object { $_ -replace '.dll', '.pdb' }
                 Get-ChildItem -Path $buildSource | Where-Object { $_.Name -in $filesToInclude } | Copy-Item -Destination $symbolsSource -Recurse
