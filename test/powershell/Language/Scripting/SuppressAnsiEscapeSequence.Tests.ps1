@@ -1,19 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe '$OutputPreference tests' -Tag CI {
+Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
-        $originalOutputPreference = $OutputPreference
+        $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
     }
 
     AfterAll {
-        $OutputPreference = $originalOutputPreference
+        $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
     }
 
 
-    Context 'AllowVtEscapeSequences' {
+    Context 'Allow Escape Sequences' {
         BeforeAll {
-            $OutputPreference = 'AllowVtEscapeSequences'
+            Remove-Item env:__SuppressAnsiEscapeSequences -ErrorAction Ignore
         }
 
         It 'Select-String emits VT' {
@@ -48,9 +48,9 @@ Describe '$OutputPreference tests' -Tag CI {
         }
     }
 
-    Context 'NoVtEscapeSequences' {
+    Context 'No Escape Sequences' {
         BeforeAll {
-            $OutputPreference = 'NoVtEscapeSequences'
+            $env:__SuppressAnsiEscapeSequences = 1
         }
 
         It 'Select-String does not emit VT' {
