@@ -3060,7 +3060,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
@@ -3080,13 +3080,13 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
             if (members == null)
             {
-                throw PSTraceSource.NewArgumentNullException("members");
+                throw PSTraceSource.NewArgumentNullException(nameof(members));
             }
 
             this.internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
@@ -3094,11 +3094,27 @@ namespace System.Management.Automation
             {
                 if (member == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("members");
+                    throw PSTraceSource.NewArgumentNullException(nameof(members));
                 }
 
                 this.internalMembers.Add(member.Copy());
             }
+
+            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
+            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_emptyPropertyCollection);
+            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_emptyMethodCollection);
+        }
+
+        /// <summary>
+        /// This constructor is supposed to be used in TypeTable to reuse the passed-in member collection.
+        /// Null-argument check is skipped here, so callers need to check arguments before passing in.
+        /// </summary>
+        /// <param name="name">Name for the member set.</param>
+        /// <param name="members">Members in the member set.</param>
+        internal PSMemberSet(string name, PSMemberInfoInternalCollection<PSMemberInfo> members)
+        {
+            this.name = name;
+            this.internalMembers = members;
 
             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
             _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_emptyPropertyCollection);

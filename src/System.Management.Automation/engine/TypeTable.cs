@@ -2495,11 +2495,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("referencedProperties");
             }
 
-            ReferencedProperties = new Collection<string>();
-            foreach (string property in referencedProperties)
-            {
-                ReferencedProperties.Add(property);
-            }
+            ReferencedProperties = new Collection<string>(new List<string>(referencedProperties));
         }
 
         /// <summary>
@@ -3135,7 +3131,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // the node cardinality is OneToMany
-            Collection<string> referencedProperties = new Collection<string>();
+            List<string> referencedProperties = new List<string>(propertySetData.ReferencedProperties.Count);
             foreach (string name in propertySetData.ReferencedProperties)
             {
                 if (string.IsNullOrEmpty(name))
@@ -3161,7 +3157,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessMemberSetData(ConcurrentBag<string> errors, string typeName, MemberSetData memberSetData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(memberSetData.Members.Count);
             foreach (var m in memberSetData.Members)
             {
                 m.Process(errors, typeName, memberSetMembers, isOverride);
@@ -3177,10 +3173,11 @@ namespace System.Management.Automation.Runspaces
 
         private static void ProcessStandardMembers(ConcurrentBag<string> errors, string typeName, IEnumerable<TypeMemberData> standardMembers, IEnumerable<PropertySetData> propertySets, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
+            int newMemberCount = standardMembers.Count() + propertySets.Count();
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
             if (membersCollection[PSStandardMembers] == null)
             {
-                var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(newMemberCount);
 
                 ProcessMembersData(errors, typeName, standardMembers, memberSetMembers, false);
                 foreach (PropertySetData propertySet in propertySets)
@@ -3203,8 +3200,9 @@ namespace System.Management.Automation.Runspaces
             var psStandardMemberSet = (PSMemberSet)membersCollection[PSStandardMembers];
 
             // Copy existing internal PSStandard members
-            var existingMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
-            var oldMembersCopy = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            int totalMemberCount = psStandardMemberSet.InternalMembers.Count + newMemberCount;
+            var existingMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
+            var oldMembersCopy = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
             foreach (var existingMember in psStandardMemberSet.InternalMembers)
             {
                 existingMembers.Add(existingMember.Copy());
@@ -3281,9 +3279,12 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
+            bool hasStandardMembers = typeData.StandardMembers.Count > 0 || propertySets.Count > 0;
+            int collectionSize = typeData.Members.Count + (hasStandardMembers ? 1 : 0);
+
             if (typeData.Members.Count > 0)
             {
-                typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>(collectionSize));
                 ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
@@ -3292,11 +3293,11 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (typeData.StandardMembers.Count > 0 || propertySets.Count > 0)
+            if (hasStandardMembers)
             {
                 if (typeMembers == null)
                 {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                    typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
                 }
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
@@ -4335,79 +4336,6 @@ namespace System.Management.Automation.Runspaces
             StandardMembersUpdated();
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, FormatAndTypeDataHelper.Category.Types);
-        }
-
-        /// <summary>
-        /// Update typetable from psSnapinTypes, this method will always rebuild the typetable.
-        /// The psSnapinTypes contain files and strong type data.
-        /// </summary>
-        /// <param name="psSnapinTypes"></param>
-        /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
-        /// </param>
-        /// <param name="host">
-        /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
-        /// </param>
-        /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated because the TypeTable might have
-        /// been created outside of the Runspace.
-        /// </exception>
-        internal void Update(
-            Collection<PSSnapInTypeAndFormatErrors> psSnapinTypes,
-            AuthorizationManager authorizationManager,
-            PSHost host
-            )
-        {
-            if (isShared)
-            {
-                throw PSTraceSource.NewInvalidOperationException(TypesXmlStrings.SharedTypeTableCannotBeUpdated);
-            }
-
-            // Always rebuild the whole TypeTable
-            Clear();
-
-            foreach (PSSnapInTypeAndFormatErrors snapin in psSnapinTypes)
-            {
-                // FullPath is not null, then it is a type xml file
-                if (snapin.FullPath != null)
-                {
-                    Initialize(snapin.PSSnapinName, snapin.FullPath, snapin.Errors, authorizationManager, host,
-                        out snapin.FailToLoadFile);
-                }
-                // FullPath is null, then it is a TypeData
-                else
-                {
-                    Update(snapin.Errors, snapin.TypeData, snapin.IsRemove);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Entry created to make reflection-based test suites happy. DO NOT USE THIS ENTRY.
-        /// </summary>
-        /// <param name="filePath">The path to the file to load.</param>
-        /// <param name="errors">A place to put the errors...</param>
-        /// <param name="clearTable">If true, reset the table to empty...</param>
-        /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
-        /// </param>
-        /// <param name="host">
-        /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
-        /// </param>
-        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to the security reason.</param>
-        /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated because the TypeTable might have
-        /// been created outside of the Runspace.
-        /// </exception>
-        internal void Update(
-            string filePath,
-            ConcurrentBag<string> errors,
-            bool clearTable,
-            AuthorizationManager authorizationManager,
-            PSHost host,
-            out bool failToLoadFile)
-        {
-            Update(filePath, filePath, errors, authorizationManager, host, out failToLoadFile);
         }
 
         /// <summary>
