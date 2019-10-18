@@ -483,12 +483,13 @@ namespace System.Management.Automation
         private string _requiresShellId;
 
         /// <summary>
-        /// Gets or sets the OS type.
+        /// Gets the OS type.
         /// </summary>
         public string RequiresOSVersions
         {
             get { return _requiresOSVersions; }
         }
+
         private string _requiresOSVersions;
 
         /// <summary>
@@ -570,7 +571,9 @@ namespace System.Management.Automation
 
             return StringUtil.Format(resourceStr, commandName, first, second);
         }
-        private static string BuildMessage(string commandName, IEnumerable<string> requiredOSVersions, string currentOSVersion) {
+
+        private static string BuildMessage(string commandName, IEnumerable<string> requiredOSVersions, string currentOSVersion)
+        {
             return StringUtil.Format(DiscoveryExceptions.RequiresOSVersionInvalid, commandName, currentOSVersion, string.Join(",", requiredOSVersions));
         }
 

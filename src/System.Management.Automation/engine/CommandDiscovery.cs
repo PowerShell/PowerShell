@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
@@ -441,7 +441,8 @@ namespace System.Management.Automation
                             "ScriptRequiresUnmatchedPSVersion");
                     throw scriptRequiresException;
                 }
-                if (Utils.comparePSVersionToCurrent(requiresMaximumPSVersion))
+
+                if (Utils.ComparePSVersionToCurrent(requiresMaximumPSVersion))
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -458,14 +459,14 @@ namespace System.Management.Automation
         {
             if (scriptInfo.RequiredOSVersions != null && scriptInfo.RequiredOSVersions.Any())
             {
-                if (Utils.isOSVersionValid(scriptInfo.RequiredOSVersions))
+                if (Utils.IsOSVersionValid(scriptInfo.RequiredOSVersions))
                 {
                     return;
                 }
                 ScriptRequiresException scriptRequiresException =
                     new ScriptRequiresException(
                         scriptInfo.Name,
-                        Utils.getOSVersionString(),
+                        Utils.GetOSVersionString(),
                         scriptInfo.RequiredOSVersions,
                         "ScriptRequiresOSVersionInvalid");
                 throw scriptRequiresException;

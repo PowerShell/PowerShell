@@ -579,23 +579,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current PS Version is <= another PS version.
+        /// Checks whether current PS Version is -leq another PS version.
         /// </summary>
-        /// <param name="ver">Version to check.</param>
-        /// <returns>True if PS version <= Current PS version, false otherwise.</returns>
-        internal static bool comparePSVersionToCurrent(Version version)
+        /// <param name="version">Version to check.</param>
+        /// <returns>True if PS version -leq Current PS version, false otherwise.</returns>
+        internal static bool ComparePSVersionToCurrent(Version version)
         {
             if (version.Major < PSVersionInfo.PSVersion.Major)
             {
                 return true;
             }
+
             if (version.Major > PSVersionInfo.PSVersion.Major)
             {
                 return false;
             }
-            if (version.Minor < PSVersionInfo.PSVersion.Minor) {
+
+            if (version.Minor < PSVersionInfo.PSVersion.Minor)
+            {
                 return true;
             }
+
             return false;
         }
 
@@ -604,35 +608,42 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="requiredOSVersions">A list of required versions.</param>
         /// <returns>True if the user's OS version is in the list of required versions, false otherwise.</returns>
-        internal static bool isOSVersionValid(IEnumerable<string> requiredOSVersions)
+        internal static bool IsOSVersionValid(IEnumerable<string> requiredOSVersions)
         {
-            string OSName = getOSVersionString();
-            foreach (string OSVersion in requiredOSVersions) {
-                if (OSVersion.Equals(OSName, StringComparison.OrdinalIgnoreCase))
+            string OSName = GetOSVersionString();
+            foreach (string osVersion in requiredOSVersions) 
+            {
+                if (osVersion.Equals(OSName, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
             }
+
             return false;
         }
 
         /// <summary>
         /// Gets a string representation of the user's current OS version or null if unknown version.
         /// </summary>
-        internal static string getOSVersionString()
+        internal static string GetOSVersionString()
         {
-            string OSName = null;
+            string osName = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) 
             {
-                OSName = "MacOS"; 
+                osName = "MacOS"; 
             }
+
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                OSName = "Linux"; 
+                osName = "Linux"; 
             }
+
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                OSName = "Windows";
+                osName = "Windows";
             }
-            return OSName;
+
+            return osName;
         }
 
 
