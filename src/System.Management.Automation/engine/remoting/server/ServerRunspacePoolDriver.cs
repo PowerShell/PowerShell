@@ -44,6 +44,9 @@ namespace System.Management.Automation
 
         // local runspace pool at the server
 
+        // Optional initial location of the PowerShell session
+        private readonly string _initialLocation;
+
         // Script to run after a RunspacePool/Runspace is created in this session.
         private ConfigurationDataFromXML _configData;
 
@@ -87,9 +90,6 @@ namespace System.Management.Automation
         // Results in a configured remote runspace pushed onto driver host.
         private string _configurationName;
 
-        // Optional initial location of the PowerShell session
-        private readonly string _initialLocation;
-
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
         /// </summary>
@@ -100,18 +100,17 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Creates the runspace pool driver.
+        /// Initializes a new instance of the runspace pool driver.
         /// </summary>
         /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
-        /// <param name="transportManager">transport manager associated with this
-        /// runspace pool driver</param>
+        /// <param name="transportManager">Transport manager associated with this
+        /// runspace pool driver.</param>
         /// <param name="maxRunspaces">Maximum runspaces to open.</param>
         /// <param name="minRunspaces">Minimum runspaces to open.</param>
         /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
         /// <param name="apartmentState">Apartment state for the runspaces in the pool.</param>
         /// <param name="hostInfo">Host information about client side host.</param>
-        /// <param name="configData">
-        /// Contains:
+        /// <param name="configData">Contains:
         /// 1. Script to run after a RunspacePool/Runspace is created in this session.
         /// For RunspacePool case, every newly created Runspace (in the pool) will run
         /// this script.

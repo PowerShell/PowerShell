@@ -221,6 +221,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
+        internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), staticFlags);
 
@@ -507,6 +509,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression InvariantCulture = Expression.Constant(CultureInfo.InvariantCulture);
         internal static readonly Expression OrdinalIgnoreCaseComparer = Expression.Constant(StringComparer.OrdinalIgnoreCase, typeof(StringComparer));
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
+        // Empty expression is used at the end of blocks to give them the void expression result
         internal static readonly Expression Empty = Expression.Empty();
         internal static Expression GetExecutionContextFromTLS =
             Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
@@ -646,6 +649,8 @@ namespace System.Management.Automation.Language
         internal static readonly ParameterExpression _executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
         internal static readonly ParameterExpression _returnPipe;
+        private static readonly Expression s_notDollarQuestion;
+        private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_setDollarQuestionToTrue;
         private static readonly Expression s_callCheckForInterrupts;
         private static readonly Expression s_getCurrentPipe;
@@ -665,8 +670,12 @@ namespace System.Management.Automation.Language
             _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
             _executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 
+            s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
+            
+            s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
+
             s_setDollarQuestionToTrue = Expression.Assign(
-                Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue),
+                s_getDollarQuestion,
                 ExpressionCache.TrueConstant);
 
             s_callCheckForInterrupts = Expression.Call(CachedReflectionInfo.PipelineOps_CheckForInterrupts,
@@ -786,6 +795,7 @@ namespace System.Management.Automation.Language
         {
             IAssignableValue av = left.GetAssignableValue();
             ExpressionType et = ExpressionType.Extension;
+
             switch (tokenKind)
             {
                 case TokenKind.Equals: return av.SetValue(this, right);
@@ -794,13 +804,47 @@ namespace System.Management.Automation.Language
                 case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
                 case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
                 case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
+                case TokenKind.QuestionQuestionEquals when ExperimentalFeature.IsEnabled("PSCoalescingOperators"): et = ExpressionType.Coalesce; break;
             }
 
             var exprs = new List<Expression>();
             var temps = new List<ParameterExpression>();
             var getExpr = av.GetValue(this, exprs, temps);
-            exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et), typeof(object), getExpr, right)));
+
+            if(et == ExpressionType.Coalesce)
+            {
+                exprs.Add(av.SetValue(this, Coalesce(getExpr, right)));
+            }
+            else
+            {
+                exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et), typeof(object), getExpr, right)));
+            }
+
             return Expression.Block(temps, exprs);
+        }
+
+        private static Expression Coalesce(Expression left, Expression right)
+        {
+            Type leftType = left.Type;
+
+            if (leftType.IsValueType)
+            {
+                return left;
+            }
+            else if(leftType == typeof(DBNull) || leftType == typeof(NullString) || leftType == typeof(AutomationNull))
+            {
+                return right;
+            }
+            else
+            {
+                Expression lhs = left.Cast(typeof(object));
+                Expression rhs = right.Cast(typeof(object));
+
+                return Expression.Condition(
+                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
+                    rhs,
+                    lhs);
+            }
         }
 
         internal Expression GetLocal(int tupleIndex)
@@ -2866,8 +2910,9 @@ namespace System.Management.Automation.Language
                     Compiler._functionContext, exception);
                 var catchAll = Expression.Catch(
                     exception,
-                    Expression.Block(callCheckActionPreference,
-                    Expression.Goto(dispatchNextStatementTarget)));
+                    Expression.Block(
+                        callCheckActionPreference,
+                        Expression.Goto(dispatchNextStatementTarget)));
 
                 var expr = Expression.TryCatch(Expression.Block(tryBodyExprs),
                                                new CatchBlock[] { s_catchFlowControl, catchAll });
@@ -3076,6 +3121,160 @@ namespace System.Management.Automation.Language
                         };
 
             return Expression.Block(exprs);
+        }
+
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
+        {
+            // If the statement chain is backgrounded,
+            // we defer that to the background operation call
+            if (pipelineChainAst.Background)
+            {
+                return Expression.Call(
+                    CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
+                    Expression.Constant(pipelineChainAst),
+                    _functionContext);
+            }
+
+            // We want to generate code like:
+            //
+            // dispatchIndex = 0;
+            // DispatchNextStatementTarget:
+            //     try {
+            //         switch (dispatchIndex) {
+            //         case 0: goto L0;
+            //         case 1: goto L1;
+            //         case 2: goto L2;
+            //         }
+            // L0:     dispatchIndex = 1;
+            //         pipeline1;
+            // L1:     dispatchIndex = 2;
+            //         if ($?) pipeline2;
+            // L2:     dispatchIndex = 3;
+            //         if ($?) pipeline3;
+            //         ...
+            //     } catch (FlowControlException) {
+            //         throw;
+            //     } catch (Exception e) {
+            //         ExceptionHandlingOps.CheckActionPreference(functionContext, e);
+            //         goto DispatchNextStatementTarget;
+            //     }
+            // LN:
+            // 
+            // Note that we deliberately do not push trap handlers
+            // so that those can be handled by the enclosing statement block instead.
+
+            var exprs = new List<Expression>(); 
+
+            // A pipeline chain is left-hand-side deep,
+            // so to compile from left to right, we need to start from the leaf
+            // and roll back up to the top, being the right-most element in the chain
+            PipelineChainAst currentChain = pipelineChainAst;
+            while (currentChain.LhsPipelineChain is PipelineChainAst lhsPipelineChain)
+            {
+                currentChain = lhsPipelineChain;
+            }
+
+            // int chainIndex = 0;
+            ParameterExpression dispatchIndex = Expression.Variable(typeof(int), nameof(dispatchIndex));
+            var temps = new ParameterExpression[] { dispatchIndex };
+            exprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(0)));
+
+            // DispatchNextTargetStatement:
+            LabelTarget dispatchNextStatementTargetLabel = Expression.Label();
+            exprs.Add(Expression.Label(dispatchNextStatementTargetLabel));
+
+            // try statement body
+            var switchCases = new List<SwitchCase>();
+            var dispatchTargets = new List<LabelTarget>();
+            var tryBodyExprs = new List<Expression>()
+            {
+                null, // Add a slot for the inital switch/case that we'll come back to
+            };
+
+            // L0: dispatchIndex = 1; pipeline1
+            LabelTarget label0 = Expression.Label();
+            dispatchTargets.Add(label0);
+            switchCases.Add(
+                Expression.SwitchCase(
+                    Expression.Goto(label0),
+                    ExpressionCache.Constant(0)));
+            tryBodyExprs.Add(Expression.Label(label0));
+            tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
+            tryBodyExprs.Add(Compile(currentChain.LhsPipelineChain));
+
+            // Remainder of try statement body
+            // L1: dispatchIndex = 2; if ($?) pipeline2;
+            // ...
+            int chainIndex = 1;
+            do
+            {
+                // Record label and switch case for later use
+                LabelTarget currentLabel = Expression.Label();
+                dispatchTargets.Add(currentLabel);
+                switchCases.Add(
+                    Expression.SwitchCase(
+                        Expression.Goto(currentLabel),
+                        ExpressionCache.Constant(chainIndex)));
+
+                // Add label and dispatchIndex for current pipeline
+                tryBodyExprs.Add(Expression.Label(currentLabel));
+                tryBodyExprs.Add(
+                    Expression.Assign(
+                        dispatchIndex,
+                        ExpressionCache.Constant(chainIndex + 1)));
+
+                // Increment chain index for next iteration
+                chainIndex++;
+
+                Diagnostics.Assert(
+                    currentChain.Operator == TokenKind.AndAnd || currentChain.Operator == TokenKind.OrOr,
+                    "Chain operators must be either && or ||");
+
+                Expression dollarQuestionCheck = currentChain.Operator == TokenKind.AndAnd
+                    ? s_getDollarQuestion
+                    : s_notDollarQuestion;
+
+                tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(currentChain.RhsPipeline)));
+
+                currentChain = currentChain.Parent as PipelineChainAst;
+            }
+            while (currentChain != null);
+
+            // Add empty expression to make the block value void
+            tryBodyExprs.Add(ExpressionCache.Empty);
+
+            // Create the final label that follows the entire try/catch
+            LabelTarget afterLabel = Expression.Label();
+            switchCases.Add(
+                Expression.SwitchCase(
+                    Expression.Goto(afterLabel),
+                    ExpressionCache.Constant(chainIndex)));
+
+            // Now set the switch/case that belongs at the top
+            tryBodyExprs[0] = Expression.Switch(dispatchIndex, switchCases.ToArray());
+
+            // Create the catch block for flow control and action preference
+            ParameterExpression exception = Expression.Variable(typeof(Exception), nameof(exception));
+            MethodCallExpression callCheckActionPreference = Expression.Call(
+                CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
+                Compiler._functionContext,
+                exception);
+            CatchBlock catchAll = Expression.Catch(
+                exception,
+                Expression.Block(
+                    callCheckActionPreference,
+                    Expression.Goto(dispatchNextStatementTargetLabel)));
+
+            TryExpression expr = Expression.TryCatch(
+                Expression.Block(tryBodyExprs),
+                new CatchBlock[] { s_catchFlowControl, catchAll });
+
+            exprs.Add(expr);
+            exprs.Add(Expression.Label(afterLabel));
+
+            BlockExpression fullyExpandedBlock = Expression.Block(typeof(void), temps, exprs);
+
+            return fullyExpandedBlock;
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)
@@ -5231,6 +5430,8 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_SplitOperator,
                         _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
+                case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSCoalescingOperators"):
+                    return Coalesce(lhs, rhs);
             }
 
             throw new InvalidOperationException("Unknown token in binary operator.");

@@ -416,6 +416,12 @@ namespace System.Management.Automation.Language
         /// <summary>The ternary operator '?'.</summary>
         QuestionMark = 100,
 
+        /// <summary>The null conditional assignment operator '??='.</summary>
+        QuestionQuestionEquals = 101,
+
+        /// <summary>The null coalesce operator '??'.</summary>
+        QuestionQuestion = 102,
+
         #endregion Operators
 
         #region Keywords
@@ -592,46 +598,51 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of the logical operators '-and', '-or', and '-xor'.
         /// </summary>
-        BinaryPrecedenceLogical = 1,
+        BinaryPrecedenceLogical = 0x1,
 
         /// <summary>
         /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'
         /// </summary>
-        BinaryPrecedenceBitwise = 2,
+        BinaryPrecedenceBitwise = 0x2,
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
         /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
         /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
-        BinaryPrecedenceComparison = 3,
+        BinaryPrecedenceComparison = 0x5,
+
+        /// <summary>
+        /// The precedence of null coalesce operator '??'.
+        /// </summary>
+        BinaryPrecedenceCoalesce = 0x7,
 
         /// <summary>
         /// The precedence of the binary operators '+' and '-'.
         /// </summary>
-        BinaryPrecedenceAdd = 4,
+        BinaryPrecedenceAdd = 0x9,
 
         /// <summary>
         /// The precedence of the operators '*', '/', and '%'.
         /// </summary>
-        BinaryPrecedenceMultiply = 5,
+        BinaryPrecedenceMultiply = 0xa,
 
         /// <summary>
         /// The precedence of the '-f' operator.
         /// </summary>
-        BinaryPrecedenceFormat = 6,
+        BinaryPrecedenceFormat = 0xc,
 
         /// <summary>
         /// The precedence of the '..' operator.
         /// </summary>
-        BinaryPrecedenceRange = 7,
+        BinaryPrecedenceRange = 0xd,
 
         #endregion Precedence Values
 
         /// <summary>
         /// A bitmask to get the precedence of binary operators.
         /// </summary>
-        BinaryPrecedenceMask = 0x00000007,
+        BinaryPrecedenceMask = 0x0000000f,
 
         /// <summary>
         /// The token is a keyword.
@@ -669,7 +680,7 @@ namespace System.Management.Automation.Language
         SpecialOperator = 0x00001000,
 
         /// <summary>
-        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', or '%='
+        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='
         /// </summary>
         AssignmentOperator = 0x00002000,
 
@@ -854,8 +865,8 @@ namespace System.Management.Automation.Language
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 3  */ TokenFlags.None,
-            /*     Reserved slot 4  */ TokenFlags.None,
+          /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
+            /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
@@ -1051,9 +1062,9 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ string.Empty,
-            /*    Reserved slot 3   */ string.Empty,
-            /*    Reserved slot 4   */ string.Empty,
+            /*         QuestionMark */ "?",
+          /* QuestionQuestionEquals */ "??=",
+            /*     QuestionQuestion */ "??",
             /*    Reserved slot 5   */ string.Empty,
             /*    Reserved slot 6   */ string.Empty,
             /*    Reserved slot 7   */ string.Empty,

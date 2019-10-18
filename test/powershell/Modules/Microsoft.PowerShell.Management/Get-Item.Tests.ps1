@@ -52,6 +52,15 @@ Describe "Get-Item" -Tags "CI" {
         ${result}.FullName | Should -BeExactly ${item}.FullName
     }
 
+    It "Should get properties for special reparse points" -skip:$skipNotWindows {
+        $result = Get-Item -Path $HOME/Cookies -Force
+        $result.LinkType | Should -BeExactly "Junction"
+        $result.Target | Should -Not -BeNullOrEmpty
+        $result.Name | Should -BeExactly "Cookies"
+        $result.Mode | Should -BeExactly "l--hs"
+        $result.Exists | Should -BeTrue
+    }
+
     Context "Test for Include, Exclude, and Filter" {
         BeforeAll {
             ${testBaseDir} = "${TESTDRIVE}/IncludeExclude"

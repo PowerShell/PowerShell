@@ -89,6 +89,43 @@ namespace Microsoft.PowerShell.Commands
         public string Line { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets a value indicating whether the matched portion of the string is highlighted.
+        /// </summary>
+        /// <value>Whether the matched portion of the string is highlighted with the negative VT sequence.</value>
+        private readonly bool _emphasize;
+
+        /// <summary>
+        /// Stores the starting index of each match within the line.
+        /// </summary>
+        private readonly IReadOnlyList<int> _matchIndexes;
+
+        /// <summary>
+        /// Stores the length of each match within the line.
+        /// </summary>
+        private readonly IReadOnlyList<int> _matchLengths;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasis disabled.
+        /// </summary>
+        public MatchInfo()
+        {
+            this._emphasize = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasized matched text.
+        /// Used when virtual terminal sequences are supported.
+        /// </summary>
+        /// <param name="matchIndexes">Sets the matchIndexes.</param>
+        /// <param name="matchLengths">Sets the matchLengths.</param>
+        public MatchInfo(IReadOnlyList<int> matchIndexes, IReadOnlyList<int> matchLengths)
+        {
+            this._emphasize = true;
+            this._matchIndexes = matchIndexes;
+            this._matchLengths = matchLengths;
+        }
+
+        /// <summary>
         /// Gets the base name of the file containing the matching line.
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
@@ -215,13 +252,26 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of the match object.</returns>
         public string ToString(string directory)
         {
+            return ToString(directory, Line);
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object with the matched line passed 
+        /// in as <paramref name="line"/> and trims the path to be relative to
+        /// the<paramref name="directory"/> argument.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <param name="line">Line that the match occurs in.</param>
+        /// <returns>The string representation of the match object.</returns>
+        private string ToString(string directory, string line)
+        {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
 
             // Just return a single line if the user didn't
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                return FormatLine(line, this.LineNumber, displayPath, EmptyPrefix);
             }
 
             // Otherwise, render the full context.
@@ -233,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
             }
 
-            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            lines.Add(FormatLine(line, displayLineNumber++, displayPath, MatchPrefix));
 
             foreach (string contextLine in Context.DisplayPostContext)
             {
@@ -241,6 +291,61 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return string.Join(System.Environment.NewLine, lines.ToArray());
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object same format as ToString()
+        /// and inverts the color of the matched text if virtual terminal is supported.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <returns>The string representation of the match object with matched text inverted.</returns>
+        public string ToEmphasizedString(string directory)
+        {
+            if (!_emphasize)
+            {
+                return ToString(directory);
+            }
+
+            return ToString(directory, EmphasizeLine());
+        }
+
+        /// <summary>
+        /// Surrounds the matched text with virtual terminal sequences to invert it's color. Used in ToEmphasizedString.
+        /// </summary>
+        /// <returns>The matched line with matched text inverted.</returns>
+        private string EmphasizeLine()
+        {
+            const string InvertColorsVT100 = "\u001b[7m";
+            const string ResetVT100 = "\u001b[0m";
+
+            char[] chars = new char[(_matchIndexes.Count * (InvertColorsVT100.Length + ResetVT100.Length)) + Line.Length];
+            int lineIndex = 0;
+            int charsIndex = 0;
+            for (int i = 0; i < _matchIndexes.Count; i++)
+            {
+                // Adds characters before match
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i] - lineIndex);
+                charsIndex += _matchIndexes[i] - lineIndex;
+                lineIndex = _matchIndexes[i];
+
+                // Adds opening vt sequence
+                InvertColorsVT100.CopyTo(0, chars, charsIndex, InvertColorsVT100.Length);
+                charsIndex += InvertColorsVT100.Length;
+
+                // Adds characters being emphasized
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
+                lineIndex += _matchLengths[i];
+                charsIndex += _matchLengths[i];
+
+                // Adds closing vt sequence
+                ResetVT100.CopyTo(0, chars, charsIndex, ResetVT100.Length);
+                charsIndex += ResetVT100.Length;
+            }
+
+            // Adds remaining characters in line
+            Line.CopyTo(lineIndex, chars, charsIndex, Line.Length - lineIndex);
+
+            return new string(chars);
         }
 
         /// <summary>
@@ -1063,6 +1168,12 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating if highlighting should be disabled.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoEmphasis { get; set; }
+
+        /// <summary>
         /// Gets or sets files to include. Files matching
         /// one of these (if specified) are included.
         /// </summary>
@@ -1541,6 +1652,20 @@ namespace Microsoft.PowerShell.Commands
             int patternIndex = 0;
             matchResult = null;
 
+            List<int> indexes = null;
+            List<int> lengths = null;
+
+            bool shouldEmphasize = !NoEmphasis && Host.UI.SupportsVirtualTerminal;
+
+            // If Emphasize is set and VT is supported,
+            // the lengths and starting indexes of regex matches
+            // need to be passed in to the matchInfo object.
+            if (shouldEmphasize)
+            {
+                indexes = new List<int>();
+                lengths = new List<int>();
+            }
+
             if (!SimpleMatch)
             {
                 while (patternIndex < Pattern.Length)
@@ -1557,6 +1682,16 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
+
+                            if (shouldEmphasize)
+                            {
+                                foreach (Match match in matches)
+                                {
+                                    indexes.Add(match.Index);
+                                    lengths.Add(match.Length);
+                                }
+                            }
+
                             gotMatch = true;
                         }
                     }
@@ -1567,6 +1702,12 @@ namespace Microsoft.PowerShell.Commands
 
                         if (match.Success)
                         {
+                            if (shouldEmphasize)
+                            {
+                                indexes.Add(match.Index);
+                                lengths.Add(match.Length);
+                            }
+
                             matches = new Match[] { match };
                         }
                     }
@@ -1587,8 +1728,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string pat = Pattern[patternIndex];
 
-                    if (operandString.IndexOf(pat, compareOption) >= 0)
+                    int index = operandString.IndexOf(pat, compareOption);
+                    if (index >= 0)
                     {
+                        if (shouldEmphasize)
+                        {
+                            indexes.Add(index);
+                            lengths.Add(pat.Length);
+                        }
+
                         gotMatch = true;
                         break;
                     }
@@ -1637,12 +1785,12 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo
-                {
-                    IgnoreCase = !CaseSensitive,
-                    Line = operandString,
-                    Pattern = Pattern[patternIndex]
-                };
+                matchResult = shouldEmphasize
+                    ? new MatchInfo(indexes, lengths)
+                    : new MatchInfo();
+                matchResult.IgnoreCase = !CaseSensitive;
+                matchResult.Line = operandString;
+                matchResult.Pattern = Pattern[patternIndex];
 
                 if (_preContext > 0 || _postContext > 0)
                 {

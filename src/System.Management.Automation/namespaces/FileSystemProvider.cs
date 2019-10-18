@@ -7712,6 +7712,7 @@ namespace Microsoft.PowerShell.Commands
         // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
+            GenericZero = 0,
             GenericRead = 0x80000000,
             GenericWrite = 0x40000000,
             GenericExecute = 0x20000000,
@@ -7917,7 +7918,11 @@ namespace Microsoft.PowerShell.Commands
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
 #if !UNIX
-                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
+                // We set accessMode parameter to zero because documentation says:
+                // If this parameter is zero, the application can query certain metadata
+                // such as file, directory, or device attributes without accessing
+                // that file or device, even if GENERIC_READ access would have been denied.
+                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericZero))
                 {
                     string linkTarget = WinInternalGetTarget(handle);
 
@@ -7982,7 +7987,11 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericRead))
+            // We set accessMode parameter to zero because documentation says:
+            // If this parameter is zero, the application can query certain metadata
+            // such as file, directory, or device attributes without accessing
+            // that file or device, even if GENERIC_READ access would have been denied.
+            using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
             {
                 int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -8596,14 +8605,14 @@ namespace System.Management.Automation.Internal
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-            [DllImport(PinvokeDllNames.FindFirstStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern SafeFindHandle FindFirstStreamW(
                 string lpFileName, StreamInfoLevels InfoLevel,
                 [In, Out, MarshalAs(UnmanagedType.LPStruct)]
                 AlternateStreamNativeData lpFindStreamData, uint dwFlags);
 
-            [DllImport(PinvokeDllNames.FindNextStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern bool FindNextStreamW(

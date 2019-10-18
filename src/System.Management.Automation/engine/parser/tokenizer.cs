@@ -5112,6 +5112,25 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
 
                 case '?' when InExpressionMode():
                     _requiresDeclarationsComplete = true;
+                    if (ExperimentalFeature.IsEnabled("PSCoalescingOperators"))
+                    {
+                        c1 = PeekChar();
+
+                        if (c1 == '?')
+                        {
+                            SkipChar();
+                            c1 = PeekChar();
+
+                            if (c1 == '=')
+                            {
+                                SkipChar();
+                                return this.NewToken(TokenKind.QuestionQuestionEquals);
+                            }
+
+                            return this.NewToken(TokenKind.QuestionQuestion);
+                        }
+                    }
+
                     return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':

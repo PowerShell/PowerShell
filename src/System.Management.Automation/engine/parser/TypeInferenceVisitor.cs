@@ -2331,6 +2331,14 @@ namespace System.Management.Automation
             return InferTypes(ternaryExpressionAst.IfTrue).Concat(InferTypes(ternaryExpressionAst.IfFalse));
         }
 
+        object ICustomAstVisitor2.VisitPipelineChain(PipelineChainAst pipelineChainAst)
+        {
+            var types = new List<PSTypeName>();
+            types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
+            types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
+            return GetArrayType(types);
+        }
+
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
         {
             var pipe = (PipelineAst)commandAst.Parent;
