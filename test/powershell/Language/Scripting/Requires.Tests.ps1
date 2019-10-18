@@ -108,12 +108,35 @@ Describe "Requires tests" -Tags "CI" {
                 { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresMaximumPSVersion"
             }
         }
-        It "Current major version is greater than maximum major version" -TestCase $TestCasesThatShouldThrow{
+        It "Current major version is greater than maximum major version" {
             $scriptPath = Join-Path $TestDrive 'script.ps1'
             $null = New-Item -Path $scriptPath -Value "#requires -MaximumPSVersion $($currentVersion.Major - 1)" -Force
             { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresMaximumPSVersion"
         }
         
+    }
+
+    Context "OS version checks" {
+        BeforeAll {
+            $currentOSVersion = [Environment]::OSVersion.Platform
+            if ($currentOSVersion -like "Unix") {
+                $currentOSVersion = "MacOS"
+            }
+            $otherOSVersions = @(@("Linux", "MacOS", "Windows") | Where-Object { $_ -ne $currentOSVersion })
+        }
+
+        It "OS Version is in the supported OS versions." {
+            $scriptPath = Join-Path $TestDrive 'script.ps1'
+            $null = New-Item -Path $scriptPath -Value "#requires -OS $($currentOSVersion)" -Force
+            { & $scriptPath } | Should -Not -Throw
+        }
+
+        It "OS Version is not in the supported OS versions." {
+            $scriptPath = Join-Path $TestDrive 'script.ps1'
+            $otherOSVersions = $otherOSVersions -join ","
+            $null = New-Item -Path $scriptPath -Value "#requires -OS $($otherOSVersions)" -Force
+            { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresOSVersion"
+        }
     }
 }
 
