@@ -90,6 +90,31 @@ Describe "Requires tests" -Tags "CI" {
             { . $File } | Should -Throw -ExceptionType ([System.Management.Automation.ScriptRequiresException])
         }
     }
+
+    Context "Maxmimum PS Version checks" {
+        BeforeAll {
+            $currentVersion = $PSVersionTable.PSVersion
+        }
+        It "Both current major and minor versions equals required maximum version." {
+            $scriptPath = Join-Path $TestDrive 'script.ps1'
+            $null = New-Item -Path $scriptPath -Value "#requires -MaximumPSVersion $($currentVersion.Major).$($currentVersion.Minor)" -Force
+            { & $scriptPath } | Should -Not -Throw
+        }
+        if ($currentVersion.Minor > 0) {
+            It "Current major version equals required maximum major version, and current minor version < required minor version." {
+                $scriptPath = Join-Path $TestDrive 'script.ps1'
+                $script = "#requires -MaximumPSVersion $($currentVersion.Major).0"
+                $null = New-Item -Path $scriptPath -Value $script -Force
+                { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresMaximumPSVersion"
+            }
+        }
+        It "Current major version is greater than maximum major version" -TestCase $TestCasesThatShouldThrow{
+            $scriptPath = Join-Path $TestDrive 'script.ps1'
+            $null = New-Item -Path $scriptPath -Value "#requires -MaximumPSVersion $($currentVersion.Major - 1)" -Force
+            { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresMaximumPSVersion"
+        }
+        
+    }
 }
 
 Describe "#requires -Modules" -Tags "CI" {
