@@ -22,7 +22,7 @@ namespace System.Management.Automation
             Inverse
         }
 
-        private static readonly Dictionary<ConsoleColor, string> ConsoleColors = new Dictionary<ConsoleColor, string>()
+        private static readonly Dictionary<ConsoleColor, string> ConsoleColors = new Dictionary<ConsoleColor, string>
         {
             { ConsoleColor.Black, "\x1b[2;30m" },
             { ConsoleColor.Gray, "\x1b[2;37m" },
@@ -42,7 +42,7 @@ namespace System.Management.Automation
             { ConsoleColor.DarkGray, "\x1b[1;30m" },
         };
 
-        private static readonly Dictionary<VT, string> VTCodes = new Dictionary<VT, string>()
+        private static readonly Dictionary<VT, string> VTCodes = new Dictionary<VT, string>
         {
             { VT.Reset, "\x1b[0m" },
             { VT.Inverse, "\x1b[7m" }

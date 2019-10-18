@@ -42,6 +42,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
                 1/0
             }
             catch {
+                # ignore
             }
 
             Get-Error | Out-String | Should -BeLikeExactly "*`e*"
@@ -79,6 +80,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
                 1/0
             }
             catch {
+                # ignore
             }
 
             Get-Error | Out-String | Should -Not -BeLikeExactly "*`e*"
