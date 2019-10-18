@@ -660,8 +660,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp3.0")]
-        [string]$Framework = "netcoreapp3.0",
+        [ValidateSet("netcoreapp3.1")]
+        [string]$Framework = "netcoreapp3.1",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
