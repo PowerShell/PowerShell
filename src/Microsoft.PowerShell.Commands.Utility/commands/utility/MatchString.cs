@@ -315,10 +315,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            string InvertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
-            string ResetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
+            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
+            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
 
-            char[] chars = new char[(_matchIndexes.Count * (InvertColorsVT100.Length + ResetVT100.Length)) + Line.Length];
+            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
             for (int i = 0; i < _matchIndexes.Count; i++)
@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
                 lineIndex = _matchIndexes[i];
 
                 // Adds opening vt sequence
-                InvertColorsVT100.CopyTo(0, chars, charsIndex, InvertColorsVT100.Length);
-                charsIndex += InvertColorsVT100.Length;
+                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
+                charsIndex += invertColorsVT100.Length;
 
                 // Adds characters being emphasized
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
@@ -338,8 +338,8 @@ namespace Microsoft.PowerShell.Commands
                 charsIndex += _matchLengths[i];
 
                 // Adds closing vt sequence
-                ResetVT100.CopyTo(0, chars, charsIndex, ResetVT100.Length);
-                charsIndex += ResetVT100.Length;
+                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
+                charsIndex += resetVT100.Length;
             }
 
             // Adds remaining characters in line
