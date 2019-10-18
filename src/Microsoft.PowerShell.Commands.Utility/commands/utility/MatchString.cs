@@ -1322,14 +1322,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            object outputPref = this.GetVariableValue(SpecialVariables.OutputPreference);
-            if (outputPref != null)
+            string suppressVt = Environment.GetEnvironmentVariable("__SuppressAnsiEscapeSequences");
+            if (!string.IsNullOrEmpty(suppressVt))
             {
-                // the variable value is returned as a string not the enum
-                if (outputPref.ToString().EqualsOrdinalIgnoreCase(nameof(OutputPreference.NoVtEscapeSequences)))
-                {
-                    NoEmphasis = true;
-                }
+                NoEmphasis = true;
             }
 
             if (!SimpleMatch)

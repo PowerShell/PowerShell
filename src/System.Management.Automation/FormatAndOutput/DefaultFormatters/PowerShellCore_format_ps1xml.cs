@@ -739,14 +739,14 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
-                            if ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences') {
+                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
                             }
 
                             function Get-VT100Color([ConsoleColor] $color) {
-                                if (! ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences')) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
                                     return ''
                                 }
 
@@ -962,14 +962,14 @@ namespace System.Management.Automation.Runspaces
                                         Set-StrictMode -Off
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences') {
+                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
                                             $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                                 [System.Management.Automation.VTUtility+VT]::Reset
                                             )
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
-                                            if (! ($Host.UI.SupportsVirtualTerminal -and $OutputPreference -eq 'AllowVtEscapeSequences')) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
                                                 return ''
                                             }
 
