@@ -215,20 +215,10 @@ function Start-PSPackage {
                 # Copy files which go into the root package
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
 
-                # files not to include as individual files.  These files will be included in the root package
-                # pwsh.exe is just dotnet.exe renamed by dotnet.exe during the build.
-                $toExclude = @(
-                    'hostfxr.dll'
-                    'hostpolicy.dll'
-                    'libhostfxr.so'
-                    'libhostpolicy.so'
-                    'libhostfxr.dylib'
-                    'libhostpolicy.dylib'
-                    'Publish'
-                    'pwsh.exe'
-                    )
-                # Copy file which go into symbols.zip
-                Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
+                $signingXml = [xml] (Get-Content (Join-Path $PSScriptRoot "..\releaseBuild\signing.xml" -Resolve))
+                $filesToInclude = $signingXml.SignConfigXML.job.file.src | Where-Object {  -not $_.endswith('pwsh.exe') -and ($_.endswith(".dll") -or $_.endswith(".exe")) } | ForEach-Object { ($_ -split '\\')[-1] }
+                $filesToInclude += $filesToInclude | ForEach-Object { $_ -replace '.dll', '.pdb' }
+                Get-ChildItem -Path $buildSource | Where-Object { $_.Name -in $filesToInclude } | Copy-Item -Destination $symbolsSource -Recurse
 
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
