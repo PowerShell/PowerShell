@@ -790,8 +790,8 @@ namespace System.Management.Automation.Language
 
             #region Flags for operators
 
-            /*               AndAnd */ TokenFlags.BinaryOperator | TokenFlags.ParseModeInvariant,
-            /*                 OrOr */ TokenFlags.BinaryOperator | TokenFlags.ParseModeInvariant,
+            /*               AndAnd */ TokenFlags.ParseModeInvariant,
+            /*                 OrOr */ TokenFlags.ParseModeInvariant,
             /*            Ampersand */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                 Pipe */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                Comma */ TokenFlags.UnaryOperator | TokenFlags.ParseModeInvariant,
