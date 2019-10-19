@@ -49,7 +49,7 @@ namespace System.Management.Automation.Configuration
         private const string configFileName = "powershell.config.json";
 
         // Provide a singleton
-        internal static PowerShellConfig Instance => new PowerShellConfig();
+        internal static PowerShellConfig Instance = new PowerShellConfig();
 
         // The json file containing system-wide configuration settings.
         // When passed as a pwsh command-line option, overrides the system wide configuration file.
