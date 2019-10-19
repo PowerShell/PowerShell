@@ -117,24 +117,16 @@ Describe "Requires tests" -Tags "CI" {
     }
 
     Context "OS version checks" {
-        BeforeAll {
-            $currentOSVersion = [Environment]::OSVersion.Platform
-            if ($currentOSVersion -eq "Unix") {
-                $currentOSVersion = "MacOS"
-            }
-            $otherOSVersions = @(@("Linux", "MacOS", "Windows") | Where-Object { $_ -ne $currentOSVersion })
-        }
-
         It "OS Version is in the supported OS versions." {
             $scriptPath = Join-Path $TestDrive 'script.ps1'
-            $null = New-Item -Path $scriptPath -Value "#requires -OS $($currentOSVersion)" -Force
+            $null = New-Item -Path $scriptPath -Value "#requires -OS Linux,MacOS,Windows" -Force
             { & $scriptPath } | Should -Not -Throw
         }
 
         It "OS Version is not in the supported OS versions." {
             $scriptPath = Join-Path $TestDrive 'script.ps1'
             $otherOSVersions = $otherOSVersions -join ","
-            $null = New-Item -Path $scriptPath -Value "#requires -OS $($otherOSVersions)" -Force
+            $null = New-Item -Path $scriptPath -Value "#requires -OS NonExistantOS" -Force
             { & $scriptPath } | Should -Throw -ErrorId "ScriptRequiresOSVersion"
         }
     }
