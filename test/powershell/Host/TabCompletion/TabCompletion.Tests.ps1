@@ -895,6 +895,20 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 33
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
+
+        It "Test completion with common parameters" {
+            $inputStr = 'invoke-webrequest -out'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutVariable"
+        }
+
+        It "Test completion with exact match" {
+            $inputStr = 'get-content -wa'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
+        }
     }
 
     Context "Module completion for 'using module'" {
