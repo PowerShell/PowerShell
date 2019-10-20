@@ -66,23 +66,28 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
+        ConnectionOptions conOptions = new ConnectionOptions{};
+
+        /// <summary>
+        /// Builds the connection options.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            conOptions.Authentication = AuthenticationLevel.Packet;
+            conOptions.Impersonation = ImpersonationLevel.Impersonate;
+            conOptions.Username = Credential?.UserName;
+            conOptions.SecurePassword = Credential?.Password;
+        }
+
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void ProcessRecord()
         {
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
                 StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = new ConnectionOptions
-                {
-                    Authentication = AuthenticationLevel.Packet,
-                    Impersonation = ImpersonationLevel.Impersonate,
-                    Username = Credential?.UserName,
-                    SecurePassword = Credential?.Password
-                };
-
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
                 if (Id != null)
