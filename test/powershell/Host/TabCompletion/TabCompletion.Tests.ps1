@@ -1345,7 +1345,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     ) {
         param($path, $parameter, $expected)
         $script = "new-item wsman:\$path $parameter"
-        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $res = TabExpansion2 -inputScript $script
         $res.CompletionMatches | Should -HaveCount $expected.Count
         $completionOptions = ""
         foreach ($completion in $res.CompletionMatches) {
