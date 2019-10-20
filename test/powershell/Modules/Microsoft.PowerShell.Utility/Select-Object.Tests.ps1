@@ -115,7 +115,7 @@ Describe "Select-Object" -Tags "CI" {
 	$dirObject[$TestLength].Size | Should -Be ($orig2 + 1)
 	}
 
-	It "Should not leak internal exception for stopping upstream" {
+	It "Should not leak 'StopUpstreamCommandsException' internal exception for stopping upstream" {
 		1,2 | Select-Object -First 1 -ErrorVariable err
 		$err | Should -BeNullOrEmpty
 	}
