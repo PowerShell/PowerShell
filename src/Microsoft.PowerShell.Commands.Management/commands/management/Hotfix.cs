@@ -66,18 +66,13 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
-        ConnectionOptions conOptions = new ConnectionOptions{};
-
-        /// <summary>
-        /// Builds the connection options.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            conOptions.Authentication = AuthenticationLevel.Packet;
-            conOptions.Impersonation = ImpersonationLevel.Impersonate;
-            conOptions.Username = Credential?.UserName;
-            conOptions.SecurePassword = Credential?.Password;
-        }
+        ConnectionOptions conOptions = new ConnectionOptions
+            {
+                Authentication = AuthenticationLevel.Packet,
+                Impersonation = ImpersonationLevel.Impersonate,
+                Username = Credential?.UserName,
+                SecurePassword = Credential?.Password
+            };
 
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
@@ -87,36 +82,40 @@ namespace Microsoft.PowerShell.Commands
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder QueryString = new StringBuilder();
+                StringBuilder queryString = new StringBuilder();
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
                 if (Id != null)
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering where (");
+                    queryString.Append("Select * from Win32_QuickFixEngineering where (");
                     for (int i = 0; i <= Id.Length - 1; i++)
                     {
-                        QueryString.Append("HotFixID= '");
-                        QueryString.Append(Id[i].ToString().Replace("'", "\\'"));
-                        QueryString.Append("'");
+                        queryString.Append("HotFixID= '");
+                        queryString.Append(Id[i].ToString().Replace("'", "\\'"));
+                        queryString.Append("'");
                         if (i < Id.Length - 1)
-                            QueryString.Append(" Or ");
+                        {
+                            queryString.Append(" Or ");
+                        }
                     }
 
-                    QueryString.Append(")");
+                    queryString.Append(")");
                 }
                 else
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering");
+                    queryString.Append("Select * from Win32_QuickFixEngineering");
                     foundRecord = true;
                 }
 
-                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
+                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(queryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
                     if (Description != null)
                     {
                         if (!FilterMatch(obj))
+                        {
                             continue;
+                        }
                     }
                     else
                     {
@@ -131,12 +130,14 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SecurityIdentifier secObj = new SecurityIdentifier(installed);
-                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount)); ;
+                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
-                        catch (IdentityNotMappedException) // thrown by SecurityIdentifier.Translate
+                        // thrown by SecurityIdentifier.Translate
+                        catch (IdentityNotMappedException)
                         {
                         }
-                        catch (SystemException) // thrown by SecurityIdentifier.constr
+                        // thrown by SecurityIdentifier.constr
+                        catch (SystemException)
                         {
                         }
                     }
@@ -147,8 +148,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!foundRecord && !_inputContainsWildcard)
                 {
-                    Exception Ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
-                    WriteError(new ErrorRecord(Ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
+                    Exception ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
+                    WriteError(new ErrorRecord(ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
 
                 if (_searchProcess != null)
