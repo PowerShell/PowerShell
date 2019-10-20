@@ -906,7 +906,7 @@ dir -Recurse `
         It "Test completion with exact match" {
             $inputStr = 'get-content -wa'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches | Should -HaveCount 4
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
         }
     }
