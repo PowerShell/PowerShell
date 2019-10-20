@@ -1336,7 +1336,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
-        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
         @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
