@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
-        ConnectionOptions conOptions = new ConnectionOptions
+        private readonly ConnectionOptions _connectionOptions  = new ConnectionOptions
             {
                 Authentication = AuthenticationLevel.Packet,
                 Impersonation = ImpersonationLevel.Impersonate,
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool foundRecord = false;
                 StringBuilder queryString = new StringBuilder();
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
+                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions );
                 scope.Connect();
                 if (Id != null)
                 {
@@ -132,13 +132,13 @@ namespace Microsoft.PowerShell.Commands
                             SecurityIdentifier secObj = new SecurityIdentifier(installed);
                             obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
-                        // thrown by SecurityIdentifier.Translate
                         catch (IdentityNotMappedException)
                         {
+                            // thrown by SecurityIdentifier.Translate
                         }
-                        // thrown by SecurityIdentifier.constr
                         catch (SystemException)
                         {
+                            // thrown by SecurityIdentifier.constr
                         }
                     }
 
