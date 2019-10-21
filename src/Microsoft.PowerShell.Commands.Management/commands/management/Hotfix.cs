@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                     for (int i = 0; i <= Id.Length - 1; i++)
                     {
                         queryString.Append("HotFixID= '");
-                        queryString.Append(Id[i].ToString().Replace("'", "\\'"));
+                        queryString.Append(Id[i].Replace("'", "\\'"));
                         queryString.Append("'");
                         if (i < Id.Length - 1)
                         {
