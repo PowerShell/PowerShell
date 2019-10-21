@@ -646,7 +646,7 @@ namespace System.Management.Automation.Language
 
     internal class Compiler : ICustomAstVisitor2
     {
-        internal static readonly ParameterExpression _executionContextParameter;
+        internal static readonly ParameterExpression s_executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
         internal static readonly ParameterExpression _returnPipe;
         private static readonly Expression s_notDollarQuestion;
@@ -668,9 +668,9 @@ namespace System.Management.Automation.Language
         static Compiler()
         {
             _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
-            _executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
+            s_executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 
-            s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
+            s_getDollarQuestion = Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
 
             s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
 
@@ -678,8 +678,9 @@ namespace System.Management.Automation.Language
                 s_getDollarQuestion,
                 ExpressionCache.TrueConstant);
 
-            s_callCheckForInterrupts = Expression.Call(CachedReflectionInfo.PipelineOps_CheckForInterrupts,
-                                                      _executionContextParameter);
+            s_callCheckForInterrupts = Expression.Call(
+                CachedReflectionInfo.PipelineOps_CheckForInterrupts,
+                s_executionContextParameter);
 
             s_getCurrentPipe = Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__outputPipe);
             _returnPipe = Expression.Variable(s_getCurrentPipe.Type, "returnPipe");
@@ -696,7 +697,7 @@ namespace System.Management.Automation.Language
             _stmtCatchHandlers = new CatchBlock[] { s_catchFlowControl, catchAll };
 
             s_currentExceptionBeingHandled = Expression.Property(
-                _executionContextParameter, CachedReflectionInfo.ExecutionContext_CurrentExceptionBeingHandled);
+                s_executionContextParameter, CachedReflectionInfo.ExecutionContext_CurrentExceptionBeingHandled);
 
             int i;
             for (i = 0; i < SpecialVariables.AutomaticVariables.Length; ++i)
@@ -860,16 +861,20 @@ namespace System.Management.Automation.Language
 
         internal static Expression CallGetVariable(Expression variablePath, VariableExpressionAst varAst)
         {
-            return Expression.Call(CachedReflectionInfo.VariableOps_GetVariableValue, variablePath,
-                                   _executionContextParameter,
-                                   Expression.Constant(varAst).Cast(typeof(VariableExpressionAst)));
+            return Expression.Call(
+                CachedReflectionInfo.VariableOps_GetVariableValue,
+                variablePath,
+                s_executionContextParameter,
+                Expression.Constant(varAst).Cast(typeof(VariableExpressionAst)));
         }
 
         internal static Expression CallSetVariable(Expression variablePath, Expression rhs, Expression attributes = null)
         {
-            return Expression.Call(CachedReflectionInfo.VariableOps_SetVariableValue,
-                                   variablePath, rhs.Cast(typeof(object)), _executionContextParameter,
-                                   attributes ?? ExpressionCache.NullConstant.Cast(typeof(AttributeAst[])));
+            return Expression.Call(
+                CachedReflectionInfo.VariableOps_SetVariableValue,
+                variablePath, rhs.Cast(typeof(object)),
+                s_executionContextParameter,
+                attributes ?? ExpressionCache.NullConstant.Cast(typeof(AttributeAst[])));
         }
 
         internal Expression GetAutomaticVariable(VariableExpressionAst varAst)
@@ -891,10 +896,11 @@ namespace System.Management.Automation.Language
 
             int tupleIndex = varAst.TupleIndex;
             var expr = GetLocal(tupleIndex);
-            var callGetAutomaticVariable = Expression.Call(CachedReflectionInfo.VariableOps_GetAutomaticVariableValue,
-                                                           ExpressionCache.Constant(tupleIndex),
-                                                           _executionContextParameter,
-                                                           Expression.Constant(varAst)).Convert(expr.Type);
+            var callGetAutomaticVariable = Expression.Call(
+                CachedReflectionInfo.VariableOps_GetAutomaticVariableValue,
+                ExpressionCache.Constant(tupleIndex),
+                s_executionContextParameter,
+                Expression.Constant(varAst)).Convert(expr.Type);
             if (!Optimize)
                 return callGetAutomaticVariable;
 
@@ -1924,13 +1930,13 @@ namespace System.Management.Automation.Language
             _loopTargets.Clear();
 
             var exprs = new List<Expression>();
-            var temps = new List<ParameterExpression> { _executionContextParameter, LocalVariablesParameter };
+            var temps = new List<ParameterExpression> { s_executionContextParameter, LocalVariablesParameter };
             GenerateFunctionProlog(exprs, temps, null);
             int index = AddSequencePoint(expressionAst.Extent);
             exprs.Add(new UpdatePositionExpr(expressionAst.Extent, index, _debugSymbolDocument, checkBreakpoints: true));
             var result = Compile(expressionAst).Cast(typeof(object));
             exprs.Add(Expression.Label(_returnTarget, result));
-            var body = Expression.Block(new[] { _executionContextParameter, LocalVariablesParameter }, exprs);
+            var body = Expression.Block(new[] { s_executionContextParameter, LocalVariablesParameter }, exprs);
             var parameters = new[] { _functionContext };
             sequencePoints = _sequencePoints.ToArray();
             return Expression.Lambda<Func<FunctionContext, object>>(body, parameters).Compile();
@@ -2138,7 +2144,7 @@ namespace System.Management.Automation.Language
                 return Expression.Call(pipe, CachedReflectionInfo.Pipe_Add, expr.Cast(typeof(object)));
             }
 
-            return DynamicExpression.Dynamic(PSPipeWriterBinder.Get(), typeof(void), expr, pipe, _executionContextParameter);
+            return DynamicExpression.Dynamic(PSPipeWriterBinder.Get(), typeof(void), expr, pipe, s_executionContextParameter);
         }
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst)
@@ -2301,11 +2307,11 @@ namespace System.Management.Automation.Language
                 || statements.Any(stmt => AstSearcher.Contains(stmt, ast => ast is TrapStatementAst, searchNestedScriptBlocks: false))))
             {
                 body = Expression.Block(
-                    new[] { _executionContextParameter },
+                    new[] { s_executionContextParameter },
                     Expression.TryCatchFinally(
                         body,
                         Expression.Call(
-                            Expression.Field(_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
+                            Expression.Field(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                             CachedReflectionInfo.Debugger_ExitScriptFunction),
                         Expression.Catch(typeof(ReturnException), ExpressionCache.Empty)));
             }
@@ -2313,11 +2319,11 @@ namespace System.Management.Automation.Language
             {
                 // Either no traps, or we're compiling a trap - either way don't catch the ReturnException.
                 body = Expression.Block(
-                    new[] { _executionContextParameter },
+                    new[] { s_executionContextParameter },
                     Expression.TryFinally(
                         body,
                         Expression.Call(
-                            Expression.Field(_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
+                            Expression.Field(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                             CachedReflectionInfo.Debugger_ExitScriptFunction)));
             }
 
@@ -2363,8 +2369,11 @@ namespace System.Management.Automation.Language
                     .ToDictionary(type => type.Name);
             if (typesToAddToScope.Count > 0)
             {
-                exprs.Add(Expression.Call(CachedReflectionInfo.TypeOps_AddPowerShellTypesToTheScope,
-                    Expression.Constant(typesToAddToScope), _executionContextParameter));
+                exprs.Add(
+                    Expression.Call(
+                        CachedReflectionInfo.TypeOps_AddPowerShellTypesToTheScope,
+                        Expression.Constant(typesToAddToScope),
+                        s_executionContextParameter));
             }
         }
 
@@ -2390,12 +2399,14 @@ namespace System.Management.Automation.Language
                     assemblies);
             }
 
-            exprs.Add(Expression.Call(CachedReflectionInfo.TypeOps_SetCurrentTypeResolutionState,
-                    Expression.Constant(trs), _executionContextParameter));
+            exprs.Add(Expression.Call(
+                CachedReflectionInfo.TypeOps_SetCurrentTypeResolutionState,
+                Expression.Constant(trs), s_executionContextParameter));
             if (typesToAdd != null && typesToAdd.Count > 0)
             {
-                exprs.Add(Expression.Call(CachedReflectionInfo.TypeOps_AddPowerShellTypesToTheScope,
-                    Expression.Constant(typesToAdd), _executionContextParameter));
+                exprs.Add(Expression.Call(
+                    CachedReflectionInfo.TypeOps_AddPowerShellTypesToTheScope,
+                    Expression.Constant(typesToAdd), s_executionContextParameter));
             }
         }
 
@@ -2590,10 +2601,12 @@ namespace System.Management.Automation.Language
 
         private void GenerateFunctionProlog(List<Expression> exprs, List<ParameterExpression> temps, IScriptExtent entryExtent)
         {
-            exprs.Add(Expression.Assign(_executionContextParameter,
-                                        Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__executionContext)));
-            exprs.Add(Expression.Assign(LocalVariablesParameter,
-                                        Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__localsTuple).Cast(this.LocalVariablesTupleType)));
+            exprs.Add(Expression.Assign(
+                s_executionContextParameter,
+                Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__executionContext)));
+            exprs.Add(Expression.Assign(
+                LocalVariablesParameter,
+                Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__localsTuple).Cast(this.LocalVariablesTupleType)));
 
             // Compiling a single expression (a default argument, or an locally evaluated argument in a ScriptBlock=>PowerShell conversion)
             // does not support debugging, so skip calling EnterScriptFunction.
@@ -2611,7 +2624,7 @@ namespace System.Management.Automation.Language
 
                 exprs.Add(
                     Expression.Call(
-                        Expression.Field(_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
+                        Expression.Field(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                         CachedReflectionInfo.Debugger_EnterScriptFunction,
                         _functionContext));
             }
@@ -2769,8 +2782,9 @@ namespace System.Management.Automation.Language
 
                 exprs = new List<Expression>();
 
-                handlerInScope = Expression.Property(_executionContextParameter,
-                                                     CachedReflectionInfo.ExecutionContext_ExceptionHandlerInEnclosingStatementBlock);
+                handlerInScope = Expression.Property(
+                    s_executionContextParameter,
+                    CachedReflectionInfo.ExecutionContext_ExceptionHandlerInEnclosingStatementBlock);
                 oldActiveHandler = NewTemp(typeof(bool), "oldActiveHandler");
 
                 exprs.Add(Expression.Assign(oldActiveHandler, handlerInScope));
@@ -3032,10 +3046,11 @@ namespace System.Management.Automation.Language
 
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            return Expression.Call(CachedReflectionInfo.FunctionOps_DefineFunction,
-                                   _executionContextParameter,
-                                   Expression.Constant(functionDefinitionAst),
-                                   Expression.Constant(new ScriptBlockExpressionWrapper(functionDefinitionAst)));
+            return Expression.Call(
+                CachedReflectionInfo.FunctionOps_DefineFunction,
+                s_executionContextParameter,
+                Expression.Constant(functionDefinitionAst),
+                Expression.Constant(new ScriptBlockExpressionWrapper(functionDefinitionAst)));
         }
 
         public object VisitIfStatement(IfStatementAst ifStmtAst)
@@ -3684,10 +3699,12 @@ namespace System.Management.Automation.Language
                 var redirectionExpr = Expression.Constant(VisitMergingRedirection(mergingRedirectionAst));
                 exprs.Add(
                     Expression.Assign(savedPipes,
-                                      Expression.Call(redirectionExpr,
-                                                      CachedReflectionInfo.MergingRedirection_BindForExpression,
-                                                      _executionContextParameter,
-                                                      _functionContext)));
+                                      Expression.Call(
+                                          redirectionExpr,
+                                            CachedReflectionInfo.MergingRedirection_BindForExpression,
+                                            s_executionContextParameter,
+                                            _functionContext)));
+
                 // Undo merging redirections first (so file redirections get undone after).
                 finallyExprs.Insert(0, Expression.Call(redirectionExpr.Cast(typeof(CommandRedirection)),
                                                        CachedReflectionInfo.CommandRedirection_UnbindForExpression,
@@ -3720,8 +3737,11 @@ namespace System.Management.Automation.Language
             else
             {
                 // The filename is not constant, so we must generate code to evaluate the filename at runtime.
-                fileNameExpr = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
-                                                         CompileExpressionOperand(fileRedirectionAst.Location), _executionContextParameter);
+                fileNameExpr = DynamicExpression.Dynamic(
+                    PSToStringBinder.Get(),
+                    typeof(string),
+                    CompileExpressionOperand(fileRedirectionAst.Location),
+                    s_executionContextParameter);
             }
 
             return Expression.New(CachedReflectionInfo.FileRedirection_ctor,
@@ -3783,9 +3803,8 @@ namespace System.Management.Automation.Language
                         // no whitespace b/w command name and paren, add a strict mode check
                         result = Expression.Block(
                             Expression.IfThen(
-                                Compiler.IsStrictMode(2, _executionContextParameter),
-                                Compiler.ThrowRuntimeError("StrictModeFunctionCallWithParens",
-                                                           ParserStrings.StrictModeFunctionCallWithParens)),
+                                Compiler.IsStrictMode(2, s_executionContextParameter),
+                                Compiler.ThrowRuntimeError("StrictModeFunctionCallWithParens", ParserStrings.StrictModeFunctionCallWithParens)),
                             result);
                     }
                 }
@@ -4008,16 +4027,19 @@ namespace System.Management.Automation.Language
                 exprs.Add(UpdatePosition(switchStatementAst.Condition));
 
                 // We should not preserve the partial output if exception is thrown when evaluating the condition.
-                var cond = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
-                                                     CaptureStatementResults(switchStatementAst.Condition, CaptureAstContext.AssignmentWithoutResultPreservation),
-                                                     _executionContextParameter);
+                var cond = DynamicExpression.Dynamic(
+                    PSToStringBinder.Get(),
+                    typeof(string),
+                    CaptureStatementResults(switchStatementAst.Condition, CaptureAstContext.AssignmentWithoutResultPreservation),
+                    s_executionContextParameter);
                 exprs.Add(
                     Expression.Assign(
                         path,
-                        Expression.Call(CachedReflectionInfo.SwitchOps_ResolveFilePath,
-                                        Expression.Constant(switchStatementAst.Condition.Extent),
-                                        cond,
-                                        _executionContextParameter)));
+                        Expression.Call(
+                            CachedReflectionInfo.SwitchOps_ResolveFilePath,
+                            Expression.Constant(switchStatementAst.Condition.Extent),
+                            cond,
+                            s_executionContextParameter)));
 
                 var tryBodyExprs = new List<Expression>();
 
@@ -4125,14 +4147,16 @@ namespace System.Management.Automation.Language
                                SwitchFlags flags = switchStatementAst.Flags;
                                Expression conditionExpr = constValue is Regex || constValue is WildcardPattern
                                                     ? (Expression)Expression.Constant(constValue)
-                                                    : DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
-                                                                                (constValue is Type)
-                                                                                    ? Expression.Constant(constValue, typeof(Type))
-                                                                                    : Expression.Constant(constValue),
-                                                                                _executionContextParameter);
+                                                    : DynamicExpression.Dynamic(
+                                                            PSToStringBinder.Get(),
+                                                            typeof(string),
+                                                            (constValue is Type)
+                                                                ? Expression.Constant(constValue, typeof(Type))
+                                                                : Expression.Constant(constValue),
+                                                            s_executionContextParameter);
                                Expression currentAsString =
                                    DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string), GetLocal((int)AutomaticVariable.Underbar),
-                                                             _executionContextParameter);
+                                                             s_executionContextParameter);
                                if ((flags & SwitchFlags.Regex) != 0 || constValue is Regex)
                                {
                                    test = Expression.Call(CachedReflectionInfo.SwitchOps_ConditionSatisfiedRegex,
@@ -4140,7 +4164,7 @@ namespace System.Management.Automation.Language
                                        /*condition=*/     conditionExpr,
                                        /*errorPosition=*/ Expression.Constant(clause.Item1.Extent),
                                        /*str=*/           currentAsString,
-                                       /*context=*/       _executionContextParameter);
+                                       /*context=*/       s_executionContextParameter);
                                }
                                else if ((flags & SwitchFlags.Wildcard) != 0 || constValue is WildcardPattern)
                                {
@@ -4150,7 +4174,7 @@ namespace System.Management.Automation.Language
                                        /*caseSensitive=*/ ExpressionCache.Constant((flags & SwitchFlags.CaseSensitive) != 0),
                                        /*condition=*/     conditionExpr,
                                        /*str=*/           currentAsString,
-                                       /*context=*/       _executionContextParameter);
+                                       /*context=*/       s_executionContextParameter);
                                }
                                else
                                {
@@ -4161,8 +4185,12 @@ namespace System.Management.Automation.Language
                            else
                            {
                                var cond = Compile(clause.Item1);
-                               test = DynamicExpression.Dynamic(clauseEvalBinder, typeof(bool),
-                                                                cond, GetLocal((int)AutomaticVariable.Underbar), _executionContextParameter);
+                               test = DynamicExpression.Dynamic(
+                                    clauseEvalBinder,
+                                    typeof(bool),
+                                    cond,
+                                    GetLocal((int)AutomaticVariable.Underbar),
+                                    s_executionContextParameter);
                            }
 
                            exprs.Add(UpdatePosition(clause.Item1));
@@ -4207,7 +4235,7 @@ namespace System.Management.Automation.Language
             // }
 
             var oldLanguageMode = NewTemp(typeof(PSLanguageMode), "oldLanguageMode");
-            var languageModePropertyExpr = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_LanguageMode);
+            var languageModePropertyExpr = Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_LanguageMode);
 
             var exprs = new List<Expression>
                 {
@@ -4219,8 +4247,9 @@ namespace System.Management.Automation.Language
 
                     // Auto-import utility module if needed, so that ConvertFrom-StringData isn't set to RestrictedLanguage
                     // by the data section.
-                    Expression.Call(CachedReflectionInfo.RestrictedLanguageChecker_EnsureUtilityModuleLoaded,
-                                    _executionContextParameter)
+                    Expression.Call(
+                        CachedReflectionInfo.RestrictedLanguageChecker_EnsureUtilityModuleLoaded,
+                        s_executionContextParameter)
                 };
 
             if (dataStatementAst.CommandsAllowed.Count > 0)
@@ -4231,7 +4260,8 @@ namespace System.Management.Automation.Language
                 exprs.Add(
                     Expression.Call(
                         CachedReflectionInfo.RestrictedLanguageChecker_CheckDataStatementLanguageModeAtRuntime,
-                        Expression.Constant(dataStatementAst), _executionContextParameter));
+                        Expression.Constant(dataStatementAst),
+                        s_executionContextParameter));
             }
 
             if (dataStatementAst.HasNonConstantAllowedCommand)
@@ -4787,8 +4817,9 @@ namespace System.Management.Automation.Language
             // know if we're dynamically executing code guarded by a try/catch.
             var oldActiveHandler = NewTemp(typeof(bool), "oldActiveHandler");
             temps.Add(oldActiveHandler);
-            var handlerInScope = Expression.Property(_executionContextParameter,
-                                     CachedReflectionInfo.ExecutionContext_ExceptionHandlerInEnclosingStatementBlock);
+            var handlerInScope = Expression.Property(
+                s_executionContextParameter,
+                CachedReflectionInfo.ExecutionContext_ExceptionHandlerInEnclosingStatementBlock);
             tryBlockExprs.Add(Expression.Assign(oldActiveHandler, handlerInScope));
             tryBlockExprs.Add(Expression.Assign(handlerInScope, ExpressionCache.Constant(true)));
             finallyBlockExprs.Add(Expression.Assign(handlerInScope, oldActiveHandler));
@@ -4955,10 +4986,13 @@ namespace System.Management.Automation.Language
                     catchTypesExpr = Expression.Block(dynamicCatchTypes.Append(catchTypesExpr));
                 }
 
-                AutomaticVarSaver avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath,
-                                                              (int)AutomaticVariable.Underbar);
-                var swCond = Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_FindMatchingHandler,
-                                             LocalVariablesParameter, exception, catchTypesExpr, _executionContextParameter);
+                AutomaticVarSaver avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath, (int)AutomaticVariable.Underbar);
+                var swCond = Expression.Call(
+                    CachedReflectionInfo.ExceptionHandlingOps_FindMatchingHandler,
+                    LocalVariablesParameter,
+                    exception,
+                    catchTypesExpr,
+                    s_executionContextParameter);
                 var oldexception = NewTemp(typeof(RuntimeException), "oldrte");
 
                 var tf = Expression.TryFinally(
@@ -4995,9 +5029,11 @@ namespace System.Management.Automation.Language
                 var oldIsStopping = NewTemp(typeof(bool), "oldIsStopping");
                 temps.Add(oldIsStopping);
                 finallyBlockExprs.Add(
-                    Expression.Assign(oldIsStopping,
-                                      Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_SuspendStoppingPipeline,
-                                                      _executionContextParameter)));
+                    Expression.Assign(
+                        oldIsStopping,
+                        Expression.Call(
+                            CachedReflectionInfo.ExceptionHandlingOps_SuspendStoppingPipeline,
+                            s_executionContextParameter)));
                 var nestedFinallyExprs = new List<Expression>();
                 CompileStatementListWithTraps(tryStatementAst.Finally.Statements,
                                               tryStatementAst.Finally.Traps, nestedFinallyExprs, temps);
@@ -5009,9 +5045,7 @@ namespace System.Management.Automation.Language
                 finallyBlockExprs.Add(Expression.Block(
                     Expression.TryFinally(
                         Expression.Block(nestedFinallyExprs),
-                        Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_RestoreStoppingPipeline,
-                                        _executionContextParameter,
-                                        oldIsStopping))));
+                        Expression.Call(CachedReflectionInfo.ExceptionHandlingOps_RestoreStoppingPipeline, s_executionContextParameter, oldIsStopping))));
             }
 
             // Our result must have void type, so make sure it does.
@@ -5183,7 +5217,7 @@ namespace System.Management.Automation.Language
         {
             return Expression.Call(
                 CachedReflectionInfo.ParserOps_ContainsOperatorCompiled,
-                _executionContextParameter,
+                s_executionContextParameter,
                 Expression.Constant(CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get())),
                 Expression.Constant(CallSite<Func<CallSite, object, object, object>>.Create(
                     PSBinaryOperationBinder.Get(ExpressionType.Equal, ignoreCase, scalarCompare: true))),
@@ -5290,7 +5324,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.Format:
                     if (lhs.Type != typeof(string))
                     {
-                        lhs = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string), lhs, _executionContextParameter);
+                        lhs = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string), lhs, s_executionContextParameter);
                     }
 
                     return Expression.Call(CachedReflectionInfo.StringOps_FormatOperator, lhs, rhs.Cast(typeof(object)));
@@ -5315,7 +5349,10 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_JoinOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)));
                 case TokenKind.Ieq:
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Equal);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
@@ -5338,7 +5375,8 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_LikeOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
                         lhs.Cast(typeof(object)),
                         GetLikeRHSOperand(WildcardOptions.IgnoreCase, rhs).Cast(typeof(object)),
                         Expression.Constant(binaryExpressionAst.Operator));
@@ -5346,7 +5384,8 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_LikeOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
                         lhs.Cast(typeof(object)),
                         GetLikeRHSOperand(WildcardOptions.IgnoreCase, rhs).Cast(typeof(object)),
                         Expression.Constant(binaryExpressionAst.Operator));
@@ -5354,19 +5393,30 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
-                        ExpressionCache.Constant(false), ExpressionCache.Constant(true));
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
+                        ExpressionCache.Constant(false),
+                        ExpressionCache.Constant(true));
                 case TokenKind.Inotmatch:
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
-                        ExpressionCache.Constant(true), ExpressionCache.Constant(true));
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
+                        ExpressionCache.Constant(true),
+                        ExpressionCache.Constant(true));
                 case TokenKind.Ireplace:
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_ReplaceOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(true));
                 case TokenKind.Icontains:
                     return GenerateCallContains(lhs, rhs, true);
@@ -5380,7 +5430,10 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_SplitOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(true));
                 case TokenKind.Ceq:
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Equal, false);
@@ -5404,7 +5457,8 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_LikeOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
                         lhs.Cast(typeof(object)),
                         GetLikeRHSOperand(WildcardOptions.None, rhs).Cast(typeof(object)),
                         Expression.Constant(binaryExpressionAst.Operator));
@@ -5412,7 +5466,8 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_LikeOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
                         lhs.Cast(typeof(object)),
                         GetLikeRHSOperand(WildcardOptions.None, rhs).Cast(typeof(object)),
                         Expression.Constant(binaryExpressionAst.Operator));
@@ -5420,19 +5475,30 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
-                        ExpressionCache.Constant(false), ExpressionCache.Constant(false));
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
+                        ExpressionCache.Constant(false),
+                        ExpressionCache.Constant(false));
                 case TokenKind.Cnotmatch:
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
-                        ExpressionCache.Constant(true), ExpressionCache.Constant(false));
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
+                        ExpressionCache.Constant(true),
+                        ExpressionCache.Constant(false));
                 case TokenKind.Creplace:
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_ReplaceOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
                 case TokenKind.Ccontains:
                     return GenerateCallContains(lhs, rhs, false);
@@ -5446,7 +5512,10 @@ namespace System.Management.Automation.Language
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_SplitOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)),
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false));
                 case TokenKind.QuestionQuestion when ExperimentalFeature.IsEnabled("PSCoalescingOperators"):
                     return Coalesce(lhs, rhs);
@@ -5501,17 +5570,19 @@ namespace System.Management.Automation.Language
                     return CompileIncrementOrDecrement(child, -1, false);
                 case TokenKind.Join:
                     // TODO: replace this with faster code
-                    return Expression.Call(CachedReflectionInfo.ParserOps_UnaryJoinOperator,
-                                           _executionContextParameter,
-                                           Expression.Constant(unaryExpressionAst.Extent),
-                                           (CompileExpressionOperand(child)).Cast(typeof(object)));
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_UnaryJoinOperator,
+                        s_executionContextParameter,
+                        Expression.Constant(unaryExpressionAst.Extent),
+                        (CompileExpressionOperand(child)).Cast(typeof(object)));
                 case TokenKind.Isplit:
                 case TokenKind.Csplit:
                     // TODO: replace this with faster code
-                    return Expression.Call(CachedReflectionInfo.ParserOps_UnarySplitOperator,
-                                           _executionContextParameter,
-                                           Expression.Constant(unaryExpressionAst.Extent),
-                                           (CompileExpressionOperand(child)).Cast(typeof(object)));
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_UnarySplitOperator,
+                        s_executionContextParameter,
+                        Expression.Constant(unaryExpressionAst.Extent),
+                        (CompileExpressionOperand(child)).Cast(typeof(object)));
             }
 
             throw new InvalidOperationException("Unknown token in unary operator.");
@@ -5601,11 +5672,13 @@ namespace System.Management.Automation.Language
                     IEnumerable<PropertyInfo> unused1;
                     bool unused2;
                     var varType = varExpr.GetVariableType(this, out unused1, out unused2);
-                    return Expression.Call(CachedReflectionInfo.VariableOps_GetVariableAsRef,
-                                           Expression.Constant(varExpr.VariablePath), _executionContextParameter,
-                                           varType != null && varType != typeof(object)
-                                               ? Expression.Constant(varType, typeof(Type))
-                                               : ExpressionCache.NullType);
+                    return Expression.Call(
+                        CachedReflectionInfo.VariableOps_GetVariableAsRef,
+                        Expression.Constant(varExpr.VariablePath),
+                        s_executionContextParameter,
+                        varType != null && varType != typeof(object)
+                            ? Expression.Constant(varType, typeof(Type))
+                            : ExpressionCache.NullType);
                 }
             }
 
@@ -5656,10 +5729,11 @@ namespace System.Management.Automation.Language
         public object VisitUsingExpression(UsingExpressionAst usingExpression)
         {
             string usingExprKey = PsUtils.GetUsingExpressionKey(usingExpression);
-            return Expression.Call(CachedReflectionInfo.VariableOps_GetUsingValue, LocalVariablesParameter,
-                                   Expression.Constant(usingExprKey),
-                                   ExpressionCache.Constant(usingExpression.RuntimeUsingIndex),
-                                   _executionContextParameter);
+            return Expression.Call(
+                CachedReflectionInfo.VariableOps_GetUsingValue, LocalVariablesParameter,
+                Expression.Constant(usingExprKey),
+                ExpressionCache.Constant(usingExpression.RuntimeUsingIndex),
+                s_executionContextParameter);
         }
 
         public object VisitVariableExpression(VariableExpressionAst variableExpressionAst)
@@ -5691,8 +5765,7 @@ namespace System.Management.Automation.Language
                 {
                     if (Optimize)
                     {
-                        return Expression.Property(_executionContextParameter,
-                                                   CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
+                        return Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
                     }
 
                     // Unoptimized - need to check for breakpoints, so just get the variable, etc.
@@ -5987,11 +6060,10 @@ namespace System.Management.Automation.Language
             // the expression is evaluated more than once (e.g. in a loop, or if the containing function/script
             // is called again.)
             return Expression.Call(
-                Expression.Constant(new ScriptBlockExpressionWrapper(scriptBlockExpressionAst.ScriptBlock)),
-                CachedReflectionInfo.ScriptBlockExpressionWrapper_GetScriptBlock,
-                _executionContextParameter,
-                ExpressionCache.Constant(false)
-                );
+                                Expression.Constant(new ScriptBlockExpressionWrapper(scriptBlockExpressionAst.ScriptBlock)),
+                                CachedReflectionInfo.ScriptBlockExpressionWrapper_GetScriptBlock,
+                                s_executionContextParameter,
+                                ExpressionCache.Constant(false));
         }
 
         public object VisitParenExpression(ParenExpressionAst parenExpressionAst)
@@ -6019,11 +6091,10 @@ namespace System.Management.Automation.Language
             var left = Expression.Constant(expandableStringExpressionAst.FormatExpression);
             var nestedAsts = expandableStringExpressionAst.NestedExpressions;
             var toStringBinder = PSToStringBinder.Get();
-            var right = Expression.NewArrayInit(typeof(string),
-                nestedAsts.Select(
-                    e => DynamicExpression.Dynamic(toStringBinder, typeof(string), Compile(e), _executionContextParameter)));
-            return Expression.Call(CachedReflectionInfo.StringOps_FormatOperator,
-                                   left, right);
+            var right = Expression.NewArrayInit(
+                                    typeof(string),
+                                    nestedAsts.Select(e => DynamicExpression.Dynamic(toStringBinder, typeof(string), Compile(e), s_executionContextParameter)));
+            return Expression.Call(CachedReflectionInfo.StringOps_FormatOperator, left, right);
         }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -6447,10 +6518,10 @@ namespace System.Management.Automation.Language
                 exprs.Add(
                     Expression.IfThen(
                         Expression.GreaterThan(
-                            Expression.Field(Compiler._executionContextParameter, CachedReflectionInfo.ExecutionContext_DebuggingMode),
+                            Expression.Field(Compiler.s_executionContextParameter, CachedReflectionInfo.ExecutionContext_DebuggingMode),
                             ExpressionCache.Constant(0)),
                         Expression.Call(
-                            Expression.Field(Compiler._executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
+                            Expression.Field(Compiler.s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                             CachedReflectionInfo.Debugger_OnSequencePointHit,
                             Compiler._functionContext)));
             }
