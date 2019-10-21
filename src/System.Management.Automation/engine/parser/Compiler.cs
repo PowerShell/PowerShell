@@ -792,7 +792,7 @@ namespace System.Management.Automation.Language
     internal class Compiler : ICustomAstVisitor2
     {
         internal static readonly ParameterExpression s_executionContextParameter;
-        internal static readonly ParameterExpression _functionContext;
+        internal static readonly ParameterExpression s_functionContext;
         internal static readonly ParameterExpression s_returnPipe;
         private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
@@ -813,7 +813,7 @@ namespace System.Management.Automation.Language
 
         static Compiler()
         {
-            _functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
+            s_functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
             s_executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 
             s_getDollarQuestion = Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
@@ -828,7 +828,7 @@ namespace System.Management.Automation.Language
                 CachedReflectionInfo.PipelineOps_CheckForInterrupts,
                 s_executionContextParameter);
 
-            s_getCurrentPipe = Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__outputPipe);
+            s_getCurrentPipe = Expression.Field(s_functionContext, CachedReflectionInfo.FunctionContext__outputPipe);
             s_returnPipe = Expression.Variable(s_getCurrentPipe.Type, "returnPipe");
 
             var exception = Expression.Variable(typeof(Exception), "exception");
@@ -839,7 +839,7 @@ namespace System.Management.Automation.Language
                 Expression.Block(
                     Expression.Call(
                         CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                        Compiler._functionContext, exception)));
+                        Compiler.s_functionContext, exception)));
             s_stmtCatchHandlers = new CatchBlock[] { s_catchFlowControl, catchAll };
 
             s_currentExceptionBeingHandled = Expression.Property(
@@ -2165,7 +2165,7 @@ namespace System.Management.Automation.Language
             var result = Compile(expressionAst).Cast(typeof(object));
             exprs.Add(Expression.Label(_returnTarget, result));
             var body = Expression.Block(new[] { s_executionContextParameter, LocalVariablesParameter }, exprs);
-            var parameters = new[] { _functionContext };
+            var parameters = new[] { s_functionContext };
             sequencePoints = _sequencePoints.ToArray();
             return Expression.Lambda<Func<FunctionContext, object>>(body, parameters).Compile();
         }
@@ -2561,7 +2561,7 @@ namespace System.Management.Automation.Language
                             CachedReflectionInfo.Debugger_ExitScriptFunction)));
             }
 
-            return Expression.Lambda<Action<FunctionContext>>(body, funcName, new[] { _functionContext });
+            return Expression.Lambda<Action<FunctionContext>>(body, funcName, new[] { s_functionContext });
         }
 
         private void GenerateTypesAndUsings(ScriptBlockAst rootForDefiningTypesAndUsings, List<Expression> exprs)
@@ -2592,7 +2592,7 @@ namespace System.Management.Automation.Language
                     exprs.Add(
                         Expression.Call(
                             CachedReflectionInfo.TypeOps_SetAssemblyDefiningPSTypes,
-                            _functionContext,
+                            s_functionContext,
                             Expression.Constant(assembly)));
 
                     exprs.Add(Expression.Call(CachedReflectionInfo.TypeOps_InitPowerShellTypesAtRuntime, Expression.Constant(typeAsts)));
@@ -2849,17 +2849,17 @@ namespace System.Management.Automation.Language
         {
             exprs.Add(Expression.Assign(
                 s_executionContextParameter,
-                Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__executionContext)));
+                Expression.Field(s_functionContext, CachedReflectionInfo.FunctionContext__executionContext)));
             exprs.Add(Expression.Assign(
                 LocalVariablesParameter,
-                Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__localsTuple).Cast(this.LocalVariablesTupleType)));
+                Expression.Field(s_functionContext, CachedReflectionInfo.FunctionContext__localsTuple).Cast(this.LocalVariablesTupleType)));
 
             // Compiling a single expression (a default argument, or an locally evaluated argument in a ScriptBlock=>PowerShell conversion)
             // does not support debugging, so skip calling EnterScriptFunction.
             if (!_compilingSingleExpression)
             {
                 exprs.Add(Expression.Assign(
-                    Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__functionName),
+                    Expression.Field(s_functionContext, CachedReflectionInfo.FunctionContext__functionName),
                     Expression.Constant(_currentFunctionName)));
 
                 if (entryExtent != null)
@@ -2872,7 +2872,7 @@ namespace System.Management.Automation.Language
                     Expression.Call(
                         Expression.Field(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                         CachedReflectionInfo.Debugger_EnterScriptFunction,
-                        _functionContext));
+                        s_functionContext));
             }
 
             if (CompilingMemberFunction)
@@ -3053,7 +3053,7 @@ namespace System.Management.Automation.Language
                 }
 
                 exprs.Add(Expression.Call(
-                    _functionContext, CachedReflectionInfo.FunctionContext_PushTrapHandlers,
+                    s_functionContext, CachedReflectionInfo.FunctionContext_PushTrapHandlers,
                     Expression.NewArrayInit(typeof(Type), trapTypes),
                     Expression.Constant(trapDelegates.ToArray()),
                     Expression.Constant(trapTupleType.ToArray())));
@@ -3085,7 +3085,7 @@ namespace System.Management.Automation.Language
                     exprs = new List<Expression>();
 
                     exprs.Add(Expression.Call(
-                        _functionContext,
+                        s_functionContext,
                         CachedReflectionInfo.FunctionContext_PushTrapHandlers,
                         ExpressionCache.NullTypeArray,
                         ExpressionCache.NullDelegateArray,
@@ -3173,7 +3173,7 @@ namespace System.Management.Automation.Language
                 var exception = Expression.Variable(typeof(Exception), "exception");
                 var callCheckActionPreference = Expression.Call(
                     CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                    Compiler._functionContext,
+                    Compiler.s_functionContext,
                     exception);
                 var catchAll = Expression.Catch(
                     exception,
@@ -3200,7 +3200,7 @@ namespace System.Management.Automation.Language
 
                 parameterExprs.Add(trapHandlersPushed);
                 finallyBlockExprs.Add(
-                    Expression.IfThen(trapHandlersPushed, Expression.Call(_functionContext, CachedReflectionInfo.FunctionContext_PopTrapHandlers)));
+                    Expression.IfThen(trapHandlersPushed, Expression.Call(s_functionContext, CachedReflectionInfo.FunctionContext_PopTrapHandlers)));
 
                 originalExprs.Add(
                     Expression.Block(parameterExprs, Expression.TryFinally(Expression.Block(exprs), Expression.Block(finallyBlockExprs))));
@@ -3404,7 +3404,7 @@ namespace System.Management.Automation.Language
                 return Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
                     Expression.Constant(pipelineChainAst),
-                    _functionContext);
+                    s_functionContext);
             }
 
             // We want to generate code like:
@@ -3529,7 +3529,7 @@ namespace System.Management.Automation.Language
             ParameterExpression exception = Expression.Variable(typeof(Exception), nameof(exception));
             MethodCallExpression callCheckActionPreference = Expression.Call(
                 CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                Compiler._functionContext,
+                Compiler.s_functionContext,
                 exception);
             CatchBlock catchAll = Expression.Catch(
                 exception,
@@ -3583,7 +3583,7 @@ namespace System.Management.Automation.Language
                 Expression invokeBackgroundPipe = Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
                     Expression.Constant(pipelineAst),
-                    _functionContext);
+                    s_functionContext);
                 exprs.Add(invokeBackgroundPipe);
             }
             else
@@ -3691,7 +3691,7 @@ namespace System.Management.Automation.Language
                         Expression.NewArrayInit(typeof(CommandParameterInternal[]), pipelineExprs),
                         Expression.Constant(pipeElementAsts),
                         redirectionExpr,
-                        _functionContext);
+                        s_functionContext);
                     exprs.Add(invokePipe);
                 }
             }
@@ -3802,7 +3802,7 @@ namespace System.Management.Automation.Language
                 temps.Add(savedPipes);
                 exprs.Add(Expression.Assign(
                     savedPipes,
-                    Expression.Call(redirectionExpr, CachedReflectionInfo.FileRedirection_BindForExpression, _functionContext)));
+                    Expression.Call(redirectionExpr, CachedReflectionInfo.FileRedirection_BindForExpression, s_functionContext)));
 
                 // We need to call 'DoComplete' on the file redirection pipeline processor after writing the stream output to redirection pipe,
                 // so that the 'EndProcessing' method of 'Out-File' would be called as expected.
@@ -3832,7 +3832,7 @@ namespace System.Management.Automation.Language
                 finallyExprs.Insert(0, Expression.Call(
                     redirectionExpr.Cast(typeof(CommandRedirection)),
                     CachedReflectionInfo.CommandRedirection_UnbindForExpression,
-                    _functionContext,
+                    s_functionContext,
                     savedPipes));
 
                 // In either case, we must dispose of the redirection or file handles won't get released.
@@ -3963,13 +3963,13 @@ namespace System.Management.Automation.Language
                                           redirectionExpr,
                                             CachedReflectionInfo.MergingRedirection_BindForExpression,
                                             s_executionContextParameter,
-                                            _functionContext)));
+                                            s_functionContext)));
 
                 // Undo merging redirections first (so file redirections get undone after).
                 finallyExprs.Insert(0, Expression.Call(
                     redirectionExpr.Cast(typeof(CommandRedirection)),
                     CachedReflectionInfo.CommandRedirection_UnbindForExpression,
-                    _functionContext,
+                    s_functionContext,
                     savedPipes));
             }
         }
@@ -5275,7 +5275,7 @@ namespace System.Management.Automation.Language
                             swCond,
                             Expression.Call(
                                 CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                                _functionContext, exception),
+                                s_functionContext, exception),
                             cases.ToArray())),
                     Expression.Block(
                         avs.RestoreAutomaticVar(),
@@ -6831,7 +6831,7 @@ namespace System.Management.Automation.Language
 
             exprs.Add(
                 Expression.Assign(
-                    Expression.Field(Compiler._functionContext, CachedReflectionInfo.FunctionContext__currentSequencePointIndex),
+                    Expression.Field(Compiler.s_functionContext, CachedReflectionInfo.FunctionContext__currentSequencePointIndex),
                     ExpressionCache.Constant(_sequencePoint)));
 
             if (_checkBreakpoints)
@@ -6844,7 +6844,7 @@ namespace System.Management.Automation.Language
                         Expression.Call(
                             Expression.Field(Compiler.s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
                             CachedReflectionInfo.Debugger_OnSequencePointHit,
-                            Compiler._functionContext)));
+                            Compiler.s_functionContext)));
             }
 
             exprs.Add(ExpressionCache.Empty);
