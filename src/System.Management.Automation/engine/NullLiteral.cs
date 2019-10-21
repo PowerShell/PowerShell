@@ -13,11 +13,15 @@ namespace System.Management.Automation.Internal
         #region public_property
 
         /// <summary>
-        /// This overrides ToString() method and returns null.
+        /// This overrides ToString() method.
         /// </summary>
         /// <returns>
-        /// null
+        /// This command always returns null.
         /// </returns>
+        /// <remarks>
+        /// Since this object represents null, we want <see cref="ToString"/> to
+        /// always return null.
+        /// </remarks>
         public override string ToString()
         {
             return null;
