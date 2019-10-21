@@ -89,7 +89,7 @@ namespace System.Management.Automation.Configuration
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
-            serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
+            serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
         }
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Configuration
             return defaultValue;
         }
 
-        private FileStream OpenFileStreamWithRetry(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        private static FileStream OpenFileStreamWithRetry(string fullPath, FileMode mode, FileAccess access, FileShare share)
         {
             const int MaxTries = 5;
             for (int numTries = 0; numTries < MaxTries; numTries++)
