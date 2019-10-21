@@ -581,7 +581,7 @@ namespace System.Management.Automation
                         // for a null literal, bind the NullLiteral singleton instead.
                         BindParameter(
                             parameter.ParameterName,
-                            parameterValue == null && parameter.ArgumentValue == null && parameter.ArgumentNullLiteral && parameterMetadata.SupportsNullLiteralArgument
+                            parameterValue == null && parameter.ArgumentNullLiteral && parameterMetadata.SupportsNullLiteralArgument
                                 ? NullLiteral.Value
                                 : parameterValue,
                             parameterMetadata);

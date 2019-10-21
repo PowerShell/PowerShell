@@ -451,15 +451,11 @@ namespace System.Management.Automation
                     return;
 
                 case ValidateArgumentsAttribute validateAttr:
-                    if (validationAttributes == null)
-                    {
-                        validationAttributes = new Collection<ValidateArgumentsAttribute>();
-                    }
-
+                    validationAttributes ??= new Collection<ValidateArgumentsAttribute>();
                     validationAttributes.Add(validateAttr);
                     if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
                     {
-                        this.CannotBeNull = true;
+                        CannotBeNull = true;
                     }
 
                     return;
@@ -481,24 +477,20 @@ namespace System.Management.Automation
                     return;
 
                 case ArgumentTransformationAttribute argumentAttr:
-                    if (argTransformationAttributes == null)
-                    {
-                        argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
-                    }
-
+                    argTransformationAttributes ??= new Collection<ArgumentTransformationAttribute>();
                     argTransformationAttributes.Add(argumentAttr);
                     return;
 
                 case AllowNullAttribute _:
-                    this.AllowsNullArgument = true;
+                    AllowsNullArgument = true;
                     return;
 
                 case AllowEmptyStringAttribute _:
-                    this.AllowsEmptyStringArgument = true;
+                    AllowsEmptyStringArgument = true;
                     return;
 
                 case AllowEmptyCollectionAttribute _:
-                    this.AllowsEmptyCollectionArgument = true;
+                    AllowsEmptyCollectionArgument = true;
                     return;
 
                 case ObsoleteAttribute obsoleteAttr:
@@ -506,11 +498,11 @@ namespace System.Management.Automation
                     return;
 
                 case PSTypeNameAttribute psTypeNameAttribute:
-                    this.PSTypeName = psTypeNameAttribute.PSTypeName;
+                    PSTypeName = psTypeNameAttribute.PSTypeName;
                     return;
 
                 case SupportsNullLiteralAttribute _:
-                    this.SupportsNullLiteralArgument = true;
+                    SupportsNullLiteralArgument = true;
                     return;
 
                 default:

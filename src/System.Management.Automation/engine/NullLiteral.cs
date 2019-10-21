@@ -10,8 +10,6 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class NullLiteral
     {
-        #region public_property
-
         /// <summary>
         /// This overrides ToString() method.
         /// </summary>
@@ -32,10 +30,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal static NullLiteral Value { get; } = new NullLiteral();
 
-        #endregion public_property
-
-        #region private Constructor
-
         /// <summary>
         /// Prevents a default instance of the <see cref="NullLiteral"/> class from
         /// being created by any source other than the <see cref="Value"/> method's
@@ -44,7 +38,5 @@ namespace System.Management.Automation.Internal
         private NullLiteral()
         {
         }
-
-        #endregion private Constructor
     }
 }
