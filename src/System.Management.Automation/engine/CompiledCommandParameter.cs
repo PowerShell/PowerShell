@@ -253,11 +253,14 @@ namespace System.Management.Automation
         internal bool CannotBeNull { get; private set; }
 
         /// <summary>
-        /// If true, the NullLiteral.Value singleton is passed into the parameter when the
-        /// parameter was invoked with $null. This allows commands that need to distinguish
-        /// between a null value (such as a variable whose value is $null) and a null literal
-        /// to do so.
+        /// Gets a value indicating whether the parameter has special handling for null
+        /// literal values. If true, the NullLiteral.Value singleton is bound to the
+        /// parameter when the parameter is invoked with $null.
         /// </summary>
+        /// <remarks>
+        /// This allows commands that need to distinguish between a null value (such as
+        /// a variable whose value is $null) and a null literal to do so.
+        /// </remarks>
         internal bool SupportsNullLiteralArgument { get; private set; }
 
         /// <summary>
@@ -508,6 +511,9 @@ namespace System.Management.Automation
 
                 case SupportsNullLiteralAttribute _:
                     this.SupportsNullLiteralArgument = true;
+                    return;
+
+                default:
                     return;
             }
         }

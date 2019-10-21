@@ -15,13 +15,16 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This overrides ToString() method and returns null.
         /// </summary>
+        /// <returns>
+        /// null
+        /// </returns>
         public override string ToString()
         {
             return null;
         }
 
         /// <summary>
-        /// This returns the singleton instance of NullLiteral.
+        /// Gets the singleton instance of NullLiteral.
         /// </summary>
         internal static NullLiteral Value { get; } = new NullLiteral();
 
@@ -30,7 +33,9 @@ namespace System.Management.Automation.Internal
         #region private Constructor
 
         /// <summary>
-        /// This is a private constructor, meaning no outsiders have access.
+        /// Prevents a default instance of the <see cref="NullLiteral"/> class from
+        /// being created by any source other than the <see cref="Value"/> method's
+        /// default assignment.
         /// </summary>
         private NullLiteral()
         {

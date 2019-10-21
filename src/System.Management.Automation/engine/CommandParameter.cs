@@ -118,7 +118,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// If an argument is a null literal, returns true, otherwise false.
+        /// Gets a value indicating whether or not an argument is a null literal.
         /// </summary>
         internal bool ArgumentNullLiteral
         {
@@ -179,6 +179,7 @@ namespace System.Management.Automation
         /// <param name="ast">The ast of the argument value in the script.</param>
         /// <param name="splatted">True if the argument value is to be splatted, false otherwise.</param>
         /// <param name="nullLiteral">True if the argument value is a null literal, false otherwise.</param>
+        /// <returns>A new <see cref="CommandParameterInternal" /> instance.</returns>
         internal static CommandParameterInternal CreateArgument(
             object value,
             Ast ast = null,
@@ -214,6 +215,7 @@ namespace System.Management.Automation
         /// <param name="value">The argument value.</param>
         /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar.</param>
         /// <param name="nullLiteral">True if the argument value is a null literal; false otherwise.</param>
+        /// <returns>A new <see cref="CommandParameterInternal" /> instance.</returns>
         internal static CommandParameterInternal CreateParameterWithArgument(
             Ast parameterAst,
             string parameterName,
