@@ -9002,6 +9002,19 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Check if the variable is $null.
+        /// </summary>
+        /// <returns>
+        /// True if it is a constant null variable, false otherwise.
+        /// </returns>
+        public bool IsNullLiteral()
+        {
+            return VariablePath.IsVariable &&
+                   !VariablePath.IsDriveQualified &&
+                   VariablePath.UnqualifiedPath.Equals(SpecialVariables.Null, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
         /// Copy the VariableExpressionAst instance.
         /// </summary>
         public override Ast Copy()

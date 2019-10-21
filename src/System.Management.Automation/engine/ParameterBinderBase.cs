@@ -11,7 +11,7 @@ using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-
+using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -576,7 +576,15 @@ namespace System.Management.Automation
 
                     try
                     {
-                        BindParameter(parameter.ParameterName, parameterValue, parameterMetadata);
+                        // After transformations and validations, if the parameter value is still null,
+                        // if it was originally a null literal, and if the parameter has explicit support
+                        // for a null literal, bind the NullLiteral singleton instead.
+                        BindParameter(
+                            parameter.ParameterName,
+                            parameterValue == null && parameter.ArgumentValue == null && parameter.ArgumentNullLiteral && parameterMetadata.SupportsNullLiteralArgument
+                                ? NullLiteral.Value
+                                : parameterValue,
+                            parameterMetadata);
                         result = true;
                     }
                     catch (SetValueException setValueException)

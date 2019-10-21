@@ -2143,13 +2143,13 @@ namespace System.Management.Automation
             return result;
         }
 
+        internal static bool IsNull(object left)
+        {
+            return LanguagePrimitives.IsNullLike(left);
+        }
+
         internal static bool IsInstance(object left, object right)
         {
-            if (right is null)
-            {
-                return LanguagePrimitives.IsNullLike(left);
-            }
-
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 
@@ -2161,9 +2161,9 @@ namespace System.Management.Automation
 
                 if (rType == null)
                 {
-                    // "the right operand of '-is' must be a type"
+                    // "The right operand of '-is' and '-isnot' must be a type or literal $null."
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
-                        null, "IsOperatorRequiresType", ParserStrings.IsOperatorRequiresType);
+                        null, "RightOperandMustBeTypeOrNull", ParserStrings.RightOperandMustBeTypeOrNull);
                 }
             }
 

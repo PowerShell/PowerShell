@@ -1389,6 +1389,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = "CaseSensitiveNotInSet")]
         [Parameter(Position = 1, ParameterSetName = "IsSet")]
         [Parameter(Position = 1, ParameterSetName = "IsNotSet")]
+        [SupportsNullLiteral]
         public object Value
         {
             get
@@ -2166,6 +2167,7 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
+
                 case TokenKind.Is:
                     _operationDelegate = (lval, rval) => ParserOps.IsOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
                     break;
@@ -2174,7 +2176,12 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            _convertedValue = _value;
+            // NullLiteral values are only handled by the -is and -isnot operators.
+            // For all other operators, convert a NullLiteral _value back to null.
+            _convertedValue = _value is NullLiteral && _binaryOperator != TokenKind.Is && _binaryOperator != TokenKind.IsNot
+                ? null
+                : _value;
+
             if (!_valueNotSpecified)
             {
                 switch (_binaryOperator)

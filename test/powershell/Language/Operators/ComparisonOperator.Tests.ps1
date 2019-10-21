@@ -103,6 +103,10 @@ Describe "ComparisonOperator" -tag "CI" {
         It 'Should return false when the left side is not null' {
             @('Hello',$null) -is $null | Should -BeFalse
         }
+
+        It 'Should cause an error when the right-hand side is a null value, but not a null literal' {
+            { ([Array]$null) -is $($null) } | Should -Throw -ErrorId 'RightOperandMustBeTypeOrNull'
+        }
     }
 
     Context '-isnot $null comparisons' {
@@ -124,6 +128,10 @@ Describe "ComparisonOperator" -tag "CI" {
 
         It 'Should return true the the left side is not null' {
             @('Hello',$null) -isnot $null | Should -BeTrue
+        }
+
+        It 'Should cause an error when the right-hand side is a null value, but not a null literal' {
+            { @('Hello',$null) -isnot $($null) } | Should -Throw -ErrorId 'RightOperandMustBeTypeOrNull'
         }
     }
 }

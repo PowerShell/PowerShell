@@ -253,6 +253,14 @@ namespace System.Management.Automation
         internal bool CannotBeNull { get; private set; }
 
         /// <summary>
+        /// If true, the NullLiteral.Value singleton is passed into the parameter when the
+        /// parameter was invoked with $null. This allows commands that need to distinguish
+        /// between a null value (such as a variable whose value is $null) and a null literal
+        /// to do so.
+        /// </summary>
+        internal bool SupportsNullLiteralArgument { get; private set; }
+
+        /// <summary>
         /// If true, an empty string can be bound to the string parameter
         /// even if the parameter is mandatory.
         /// </summary>
@@ -426,91 +434,81 @@ namespace System.Management.Automation
             ref string[] aliases)
         {
             if (attribute == null)
+            {
                 return;
+            }
 
             CompiledAttributes.Add(attribute);
 
             // Now process the attribute based on it's type
-            if (attribute is ParameterAttribute paramAttr)
+            switch (attribute)
             {
-                ProcessParameterAttribute(memberName, paramAttr);
-                return;
-            }
+                case ParameterAttribute paramAttr:
+                    ProcessParameterAttribute(memberName, paramAttr);
+                    return;
 
-            ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
-            if (validateAttr != null)
-            {
-                if (validationAttributes == null)
-                    validationAttributes = new Collection<ValidateArgumentsAttribute>();
-                validationAttributes.Add(validateAttr);
-                if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
-                {
-                    this.CannotBeNull = true;
-                }
+                case ValidateArgumentsAttribute validateAttr:
+                    if (validationAttributes == null)
+                    {
+                        validationAttributes = new Collection<ValidateArgumentsAttribute>();
+                    }
 
-                return;
-            }
+                    validationAttributes.Add(validateAttr);
+                    if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
+                    {
+                        this.CannotBeNull = true;
+                    }
 
-            AliasAttribute aliasAttr = attribute as AliasAttribute;
-            if (aliasAttr != null)
-            {
-                if (aliases == null)
-                {
-                    aliases = aliasAttr.aliasNames;
-                }
-                else
-                {
-                    var prevAliasNames = aliases;
-                    var newAliasNames = aliasAttr.aliasNames;
-                    aliases = new string[prevAliasNames.Length + newAliasNames.Length];
-                    Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
-                    Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
-                }
+                    return;
 
-                return;
-            }
+                case AliasAttribute aliasAttr:
+                    if (aliases == null)
+                    {
+                        aliases = aliasAttr.aliasNames;
+                    }
+                    else
+                    {
+                        var prevAliasNames = aliases;
+                        var newAliasNames = aliasAttr.aliasNames;
+                        aliases = new string[prevAliasNames.Length + newAliasNames.Length];
+                        Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
+                        Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
+                    }
 
-            ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
-            if (argumentAttr != null)
-            {
-                if (argTransformationAttributes == null)
-                    argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
-                argTransformationAttributes.Add(argumentAttr);
-                return;
-            }
+                    return;
 
-            AllowNullAttribute allowNullAttribute = attribute as AllowNullAttribute;
-            if (allowNullAttribute != null)
-            {
-                this.AllowsNullArgument = true;
-                return;
-            }
+                case ArgumentTransformationAttribute argumentAttr:
+                    if (argTransformationAttributes == null)
+                    {
+                        argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
+                    }
 
-            AllowEmptyStringAttribute allowEmptyStringAttribute = attribute as AllowEmptyStringAttribute;
-            if (allowEmptyStringAttribute != null)
-            {
-                this.AllowsEmptyStringArgument = true;
-                return;
-            }
+                    argTransformationAttributes.Add(argumentAttr);
+                    return;
 
-            AllowEmptyCollectionAttribute allowEmptyCollectionAttribute = attribute as AllowEmptyCollectionAttribute;
-            if (allowEmptyCollectionAttribute != null)
-            {
-                this.AllowsEmptyCollectionArgument = true;
-                return;
-            }
+                case AllowNullAttribute _:
+                    this.AllowsNullArgument = true;
+                    return;
 
-            ObsoleteAttribute obsoleteAttr = attribute as ObsoleteAttribute;
-            if (obsoleteAttr != null)
-            {
-                ObsoleteAttribute = obsoleteAttr;
-                return;
-            }
+                case AllowEmptyStringAttribute _:
+                    this.AllowsEmptyStringArgument = true;
+                    return;
 
-            PSTypeNameAttribute psTypeNameAttribute = attribute as PSTypeNameAttribute;
-            if (psTypeNameAttribute != null)
-            {
-                this.PSTypeName = psTypeNameAttribute.PSTypeName;
+                case AllowEmptyCollectionAttribute _:
+                    this.AllowsEmptyCollectionArgument = true;
+                    return;
+
+                case ObsoleteAttribute obsoleteAttr:
+                    ObsoleteAttribute = obsoleteAttr;
+                    return;
+
+                case PSTypeNameAttribute psTypeNameAttribute:
+                    this.PSTypeName = psTypeNameAttribute.PSTypeName;
+                    return;
+
+                case SupportsNullLiteralAttribute _:
+                    this.SupportsNullLiteralArgument = true;
+                    return;
             }
         }
 

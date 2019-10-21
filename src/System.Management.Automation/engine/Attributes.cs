@@ -2185,5 +2185,23 @@ namespace System.Management.Automation
         public virtual bool TransformNullOptionalParameters { get => true; }
     }
 
+    /// <summary>
+    /// Passes in the NullLiteral.Value singleton to a parameter that explicitly
+    /// supports a null literal. This allows the command to distinguish between a
+    /// null value (e.g. null assigned to a variable that is passed into a parameter)
+    /// and a null literal, so that special processing can be performed.
+    /// </summary>
+    /// <remarks>
+    /// The Where-Object -Value parameter is an example of where this is used.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    internal sealed class SupportsNullLiteralAttribute : CmdletMetadataAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SupportsNullLiteralAttribute"/> class.
+        /// </summary>
+        internal SupportsNullLiteralAttribute() { }
+    }
+
     #endregion Data Generation Attributes
 }

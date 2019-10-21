@@ -26,28 +26,28 @@ Describe "Where-Object" -Tags "CI" {
 
         $NullTestData = @(
             [PSCustomObject]@{
-                Value = $null
+                Prop = $null
             }
             [PSCustomObject]@{
-                Value = [NullString]::Value
+                Prop = [NullString]::Value
             }
             [PSCustomObject]@{
-                Value = [DBNull]::Value
+                Prop = [DBNull]::Value
             }
             [PSCustomObject]@{
-                Value = [System.Management.Automation.Internal.AutomationNull]::Value
+                Prop = [System.Management.Automation.Internal.AutomationNull]::Value
             }
             [PSCustomObject]@{
-                Value = @()
+                Prop = @()
             }
             [PSCustomObject]@{
-                Value = @($null)
+                Prop = @($null)
             }
             [PSCustomObject]@{
-                Value = @('Some value')
+                Prop = @('Some value')
             }
             [PSCustomObject]@{
-                Value = @(1, $null, 2, $null, 3)
+                Prop = @(1, $null, 2, $null, 3)
             }
         )
     }
@@ -172,7 +172,7 @@ Describe "Where-Object" -Tags "CI" {
 
     Context 'Where-Object Prop -is $null' {
         BeforeAll {
-            $Result = $NullTestData | Where-Object Value -Is $null
+            $Result = $NullTestData | Where-Object Prop -Is $null
         }
 
         It 'Should find all null matches' {
@@ -180,27 +180,97 @@ Describe "Where-Object" -Tags "CI" {
         }
 
         It 'Should have found a $null match' {
-            $Result[0].Value -is $null | Should -BeTrue
-            $Result[0].Value | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+            $Result[0].Prop -is $null | Should -BeTrue
+            $Result[0].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
         }
 
         It 'Should have found a [NullString]::Value match' {
-            $Result[1].Value | Should -BeOfType [NullString]
+            $Result[1].Prop | Should -BeOfType [NullString]
         }
 
         It 'Should have found a [DBNull]::Value match' {
-            $Result[2].Value | Should -BeOfType [DBNull]
+            $Result[2].Prop | Should -BeOfType [DBNull]
         }
 
         It 'Should have found a [S.M.A.Internal.AutomationNull]::Value match' {
-            $Result[3].Value -is $null | Should -BeTrue
-            $Result[3].Value | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+            $Result[3].Prop -is $null | Should -BeTrue
+            $Result[3].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+    }
+
+    Context 'Where-Object Prop -is -Value $null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Prop -Is -Value $null
+        }
+
+        It 'Should find all null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Should have found a $null match' {
+            $Result[0].Prop -is $null | Should -BeTrue
+            $Result[0].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+
+        It 'Should have found a [NullString]::Value match' {
+            $Result[1].Prop | Should -BeOfType [NullString]
+        }
+
+        It 'Should have found a [DBNull]::Value match' {
+            $Result[2].Prop | Should -BeOfType [DBNull]
+        }
+
+        It 'Should have found a [S.M.A.Internal.AutomationNull]::Value match' {
+            $Result[3].Prop -is $null | Should -BeTrue
+            $Result[3].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+    }
+
+    Context 'Where-Object Prop -is -Value:$null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Prop -Is -Value:$null
+        }
+
+        It 'Should find all null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Should have found a $null match' {
+            $Result[0].Prop -is $null | Should -BeTrue
+            $Result[0].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+
+        It 'Should have found a [NullString]::Value match' {
+            $Result[1].Prop | Should -BeOfType [NullString]
+        }
+
+        It 'Should have found a [DBNull]::Value match' {
+            $Result[2].Prop | Should -BeOfType [DBNull]
+        }
+
+        It 'Should have found a [S.M.A.Internal.AutomationNull]::Value match' {
+            $Result[3].Prop -is $null | Should -BeTrue
+            $Result[3].Prop | Get-Member -ErrorAction Ignore | Should -BeNullOrEmpty
+        }
+    }
+
+    Context 'Where-Object NullProp -is $($null)' {
+        BeforeAll {
+            $testObject = [pscustomobject]@{
+                NonNullProp = 'Hello'
+                NullProp = $null
+            }
+        }
+
+        It 'Should cause an error when the right-hand side is a null value, but not a null literal' {
+            $testObject | Where-Object NullProp -Is $($null) -ErrorAction SilentlyContinue -ErrorVariable myError
+            $myError.FullyQualifiedErrorId | Should -Be 'OperatorFailed,Microsoft.PowerShell.Commands.WhereObjectCommand'
         }
     }
 
     Context 'Where-Object Prop -isnot $null' {
         BeforeAll {
-            $Result = $NullTestData | Where-Object Value -IsNot $null
+            $Result = $NullTestData | Where-Object Prop -IsNot $null
         }
 
         It 'Should find all non-null matches' {
@@ -209,8 +279,54 @@ Describe "Where-Object" -Tags "CI" {
 
         It 'Each non-null match should be of type array' {
             foreach ($item in $Result) {
-                ,$item.Value | Should -BeOfType [array]
+                ,$item.Prop | Should -BeOfType [array]
             }
+        }
+    }
+
+    Context 'Where-Object Prop -isnot -Value $null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Prop -IsNot -Value $null
+        }
+
+        It 'Should find all non-null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Each non-null match should be of type array' {
+            foreach ($item in $Result) {
+                ,$item.Prop | Should -BeOfType [array]
+            }
+        }
+    }
+
+    Context 'Where-Object Prop -isnot -Value:$null' {
+        BeforeAll {
+            $Result = $NullTestData | Where-Object Prop -IsNot -Value:$null
+        }
+
+        It 'Should find all non-null matches' {
+            $Result | Should -HaveCount 4
+        }
+
+        It 'Each non-null match should be of type array' {
+            foreach ($item in $Result) {
+                ,$item.Prop | Should -BeOfType [array]
+            }
+        }
+    }
+
+    Context 'Where-Object NonNullProp -isnot $($null)' {
+        BeforeAll {
+            $testObject = [pscustomobject]@{
+                NonNullProp = 'Hello'
+                NullProp    = $null
+            }
+        }
+
+        It 'Should cause an error when the right-hand side is a null value, but not a null literal' {
+            $testObject | Where-Object NonNullProp -IsNot $($null) -ErrorAction SilentlyContinue -ErrorVariable myError
+            $myError.FullyQualifiedErrorId | Should -Be 'OperatorFailed,Microsoft.PowerShell.Commands.WhereObjectCommand'
         }
     }
 

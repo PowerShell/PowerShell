@@ -239,8 +239,8 @@ Possible matches are</value>
   <data name="AddHashTableToNonHashTable" xml:space="preserve">
     <value>A hash table can only be added to another hash table.</value>
   </data>
-  <data name="IsOperatorRequiresType" xml:space="preserve">
-    <value>The right operand of '-is' must be a type.</value>
+  <data name="RightOperandMustBeTypeOrNull" xml:space="preserve">
+    <value>The right operand of '-is' and '-isnot' must be a type or literal $null.</value>
   </data>
   <data name="AsOperatorRequiresType" xml:space="preserve">
     <value>The right operand of '-as' must be a type.</value>

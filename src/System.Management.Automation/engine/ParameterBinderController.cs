@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Text;
 
@@ -234,7 +235,11 @@ namespace System.Management.Automation
 
                     ++index;
                     argument.ParameterName = matchingParameter.Parameter.Name;
-                    argument.SetArgumentValue(nextArgument.ArgumentAst, nextArgument.ArgumentValue);
+                    argument.SetArgumentValue(
+                        nextArgument.ArgumentAst,
+                        nextArgument.ArgumentNullLiteral && matchingParameter.Parameter.SupportsNullLiteralArgument
+                            ? NullLiteral.Value
+                            : nextArgument.ArgumentValue);
                     result.Add(argument);
                 }
                 else
@@ -803,7 +808,8 @@ namespace System.Management.Automation
                             CommandParameterInternal.CreateParameterWithArgument(
                                 /*parameterAst*/null, parameterName, "-" + parameterName + ":",
                                 argument.ArgumentAst, argument.ArgumentValue,
-                                false);
+                                false,
+                                argument.ArgumentNullLiteral);
 
                         bindResult =
                             BindParameter(

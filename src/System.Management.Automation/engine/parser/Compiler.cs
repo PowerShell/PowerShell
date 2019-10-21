@@ -451,6 +451,8 @@ namespace System.Management.Automation.Language
             typeof(TypeOps).GetMethod(nameof(TypeOps.SetCurrentTypeResolutionState), staticFlags);
         internal static readonly MethodInfo TypeOps_SetAssemblyDefiningPSTypes =
             typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), staticFlags);
+        internal static readonly MethodInfo TypeOps_IsNull =
+            typeof(TypeOps).GetMethod(nameof(TypeOps.IsNull), staticFlags);
         internal static readonly MethodInfo TypeOps_IsInstance =
             typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), staticFlags);
         internal static readonly MethodInfo TypeOps_ResolveTypeName =
@@ -3529,24 +3531,25 @@ namespace System.Management.Automation.Language
                 {
                     var splatTest = element;
                     bool splatted = false;
+                    bool nullLiteral = false;
 
-                    UsingExpressionAst usingExpression = element as UsingExpressionAst;
-                    if (usingExpression != null)
+                    if (element is UsingExpressionAst usingExpression)
                     {
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
-                    if (variableExpression != null)
+                    if (splatTest is VariableExpressionAst variableExpression)
                     {
                         splatted = variableExpression.Splatted;
+                        nullLiteral = variableExpression.IsNullLiteral();
                     }
 
                     elementExprs[i] =
                         Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgument,
                                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
                                         Expression.Constant(element),
-                                        ExpressionCache.Constant(splatted));
+                                        ExpressionCache.Constant(splatted),
+                                        ExpressionCache.Constant(nullLiteral));
                 }
             }
 
@@ -3625,13 +3628,17 @@ namespace System.Management.Automation.Language
             {
                 bool spaceAfterParameter = (errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
                                             errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
+                bool nullLiteral = arg is VariableExpressionAst variableExpression &&
+                                   variableExpression.IsNullLiteral();
+
                 return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgument,
                                        Expression.Constant(commandParameterAst),
                                        Expression.Constant(commandParameterAst.ParameterName),
                                        Expression.Constant(errorPos.Text),
                                        Expression.Constant(arg),
                                        Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                                       ExpressionCache.Constant(spaceAfterParameter));
+                                       ExpressionCache.Constant(spaceAfterParameter),
+                                       ExpressionCache.Constant(nullLiteral));
             }
 
             return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameter,
@@ -5016,7 +5023,9 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    Expression result = Expression.Call(CachedReflectionInfo.TypeOps_IsInstance, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+                    Expression result = rhs == ExpressionCache.NullConstant
+                        ? Expression.Call(CachedReflectionInfo.TypeOps_IsNull, lhs.Cast(typeof(object)))
+                        : Expression.Call(CachedReflectionInfo.TypeOps_IsInstance, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
                     if (binaryExpressionAst.Operator == TokenKind.IsNot)
                     {
                         result = Expression.Not(result);

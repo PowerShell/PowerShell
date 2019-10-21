@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object IsOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right)
         {
-            if (right is null)
+            if (right is NullLiteral)
             {
                 return LanguagePrimitives.IsNullLike(left)
                     ? _TrueObject
@@ -1054,9 +1054,9 @@ namespace System.Management.Automation
 
                 if (rType == null)
                 {
-                    // "the right operand of '-is' must be a type"
+                    // "The right operand of '-is' and '-isnot' must be a type or literal $null."
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
-                        errorPosition, "IsOperatorRequiresType", ParserStrings.IsOperatorRequiresType);
+                        errorPosition, "RightOperandMustBeTypeOrNull", ParserStrings.RightOperandMustBeTypeOrNull);
                 }
             }
 
@@ -1084,7 +1084,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object IsNotOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right)
         {
-            if (right is null)
+            if (right is NullLiteral)
             {
                 return LanguagePrimitives.IsNullLike(left)
                     ? _FalseObject
@@ -1102,9 +1102,9 @@ namespace System.Management.Automation
 
                 if (rType == null)
                 {
-                    // "the right operand of '-is' must be a type"
+                    // "The right operand of '-is' and '-isnot' must be a type or literal $null."
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
-                        errorPosition, "IsOperatorRequiresType", ParserStrings.IsOperatorRequiresType);
+                        errorPosition, "RightOperandMustBeTypeOrNull", ParserStrings.RightOperandMustBeTypeOrNull);
                 }
             }
 

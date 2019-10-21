@@ -24,6 +24,7 @@ namespace System.Management.Automation
             internal Ast ast;
             internal object value;
             internal bool splatted;
+            internal bool nullLiteral;
         }
 
         private Parameter _parameter;
@@ -117,6 +118,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// If an argument is a null literal, returns true, otherwise false.
+        /// </summary>
+        internal bool ArgumentNullLiteral
+        {
+            get { return _argument != null ? _argument.nullLiteral : false; }
+        }
+
+        /// <summary>
         /// Set the argument value and ast.
         /// </summary>
         internal void SetArgumentValue(Ast ast, object value)
@@ -169,10 +178,12 @@ namespace System.Management.Automation
         /// <param name="value">The argument value.</param>
         /// <param name="ast">The ast of the argument value in the script.</param>
         /// <param name="splatted">True if the argument value is to be splatted, false otherwise.</param>
+        /// <param name="nullLiteral">True if the argument value is a null literal, false otherwise.</param>
         internal static CommandParameterInternal CreateArgument(
             object value,
             Ast ast = null,
-            bool splatted = false)
+            bool splatted = false,
+            bool nullLiteral = false)
         {
             return new CommandParameterInternal
             {
@@ -181,6 +192,7 @@ namespace System.Management.Automation
                     value = value,
                     ast = ast,
                     splatted = splatted,
+                    nullLiteral = nullLiteral,
                 }
             };
         }
@@ -201,18 +213,20 @@ namespace System.Management.Automation
         /// <param name="argumentAst">The ast of the argument value in the script.</param>
         /// <param name="value">The argument value.</param>
         /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar.</param>
+        /// <param name="nullLiteral">True if the argument value is a null literal; false otherwise.</param>
         internal static CommandParameterInternal CreateParameterWithArgument(
             Ast parameterAst,
             string parameterName,
             string parameterText,
             Ast argumentAst,
             object value,
-            bool spaceAfterParameter)
+            bool spaceAfterParameter,
+            bool nullLiteral = false)
         {
             return new CommandParameterInternal
             {
                 _parameter = new Parameter { ast = parameterAst, parameterName = parameterName, parameterText = parameterText },
-                _argument = new Argument { ast = argumentAst, value = value },
+                _argument = new Argument { ast = argumentAst, value = value, nullLiteral = nullLiteral },
                 _spaceAfterParameter = spaceAfterParameter
             };
         }
