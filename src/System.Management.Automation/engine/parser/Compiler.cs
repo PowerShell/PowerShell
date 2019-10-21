@@ -1105,7 +1105,8 @@ namespace System.Management.Automation.Language
 
         private static readonly CallSite<Func<CallSite, object, int>> s_attrArgToIntConverter =
             CallSite<Func<CallSite, object, int>>.Create(PSConvertBinder.Get(typeof(int)));
-        internal static readonly CallSite<Func<CallSite, object, string>> _attrArgToStringConverter =
+
+        internal static readonly CallSite<Func<CallSite, object, string>> s_attrArgToStringConverter =
             CallSite<Func<CallSite, object, string>>.Create(PSConvertBinder.Get(typeof(string)));
         private static readonly CallSite<Func<CallSite, object, string[]>> s_attrArgToStringArrayConverter =
             CallSite<Func<CallSite, object, string[]>>.Create(PSConvertBinder.Get(typeof(string[])));
@@ -1157,7 +1158,7 @@ namespace System.Management.Automation.Language
             var argValue0 = ast.PositionalArguments[0].Accept(s_cvv);
             var argValue1 = ast.PositionalArguments[1].Accept(s_cvv);
 
-            var featureName = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue0);
+            var featureName = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue0);
             var action = s_attrArgToExperimentActionConverter.Target(s_attrArgToExperimentActionConverter, argValue1);
             return (featureName, action);
         }
@@ -1174,11 +1175,11 @@ namespace System.Management.Automation.Language
                 var argumentName = namedArg.ArgumentName;
                 if (argumentName.Equals("DefaultParameterSetName", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.DefaultParameterSetName = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.DefaultParameterSetName = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("HelpUri", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.HelpUri = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.HelpUri = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("SupportsShouldProcess", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1262,7 +1263,7 @@ namespace System.Management.Automation.Language
                 }
                 else if (argumentName.Equals("ParameterSetName", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.ParameterSetName = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.ParameterSetName = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("Mandatory", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1282,15 +1283,15 @@ namespace System.Management.Automation.Language
                 }
                 else if (argumentName.Equals("HelpMessage", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.HelpMessage = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.HelpMessage = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("HelpMessageBaseName", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.HelpMessageBaseName = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.HelpMessageBaseName = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("HelpMessageResourceId", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.HelpMessageResourceId = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.HelpMessageResourceId = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else if (argumentName.Equals("DontShow", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1330,7 +1331,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     var argValue = ast.PositionalArguments[0].Accept(s_cvv);
-                    result = new OutputTypeAttribute(_attrArgToStringConverter.Target(_attrArgToStringConverter, argValue));
+                    result = new OutputTypeAttribute(s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue));
                 }
             }
             else
@@ -1366,7 +1367,7 @@ namespace System.Management.Automation.Language
                 }
                 else if (argumentName.Equals("ProviderCmdlet", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.ProviderCmdlet = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue);
+                    result.ProviderCmdlet = s_attrArgToStringConverter.Target(s_attrArgToStringConverter, argValue);
                 }
                 else
                 {
@@ -1391,7 +1392,8 @@ namespace System.Management.Automation.Language
             var args = new string[ast.PositionalArguments.Count];
             for (int i = 0; i < ast.PositionalArguments.Count; i++)
             {
-                args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
+                args[i] = s_attrArgToStringConverter.Target(
+                    s_attrArgToStringConverter,
                     ast.PositionalArguments[i].Accept(s_cvv));
             }
 
@@ -1423,7 +1425,8 @@ namespace System.Management.Automation.Language
                 var args = new string[ast.PositionalArguments.Count];
                 for (int i = 0; i < ast.PositionalArguments.Count; i++)
                 {
-                    args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
+                    args[i] = s_attrArgToStringConverter.Target(
+                        s_attrArgToStringConverter,
                         ast.PositionalArguments[i].Accept(s_cvv));
                 }
 
