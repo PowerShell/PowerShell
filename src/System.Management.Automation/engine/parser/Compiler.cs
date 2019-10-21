@@ -793,7 +793,7 @@ namespace System.Management.Automation.Language
     {
         internal static readonly ParameterExpression s_executionContextParameter;
         internal static readonly ParameterExpression s_functionContext;
-        internal static readonly ParameterExpression s_returnPipe;
+        private static readonly ParameterExpression s_returnPipe;
         private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_setDollarQuestionToTrue;
