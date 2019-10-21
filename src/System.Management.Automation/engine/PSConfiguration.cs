@@ -64,7 +64,7 @@ namespace System.Management.Automation.Configuration
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
-        private readonly JObject[] configRoots = new JObject[2];
+        private readonly JObject[] configRoots;
         private readonly JObject emptyConfig;
         private readonly JsonSerializer serializer;
 
