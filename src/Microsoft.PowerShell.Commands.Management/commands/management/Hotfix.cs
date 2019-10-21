@@ -66,13 +66,18 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
-        private readonly ConnectionOptions _connectionOptions  = new ConnectionOptions
-            {
-                Authentication = AuthenticationLevel.Packet,
-                Impersonation = ImpersonationLevel.Impersonate,
-                Username = Credential?.UserName,
-                SecurePassword = Credential?.Password
-            };
+        private readonly ConnectionOptions _connectionOptions  = new ConnectionOptions{ };
+
+        /// <summary>
+        /// Sets connection options.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            _connectionOptions.Authentication = AuthenticationLevel.Packet;
+            _connectionOptions.Impersonation = ImpersonationLevel.Impersonate;
+            _connectionOptions.Username = Credential?.UserName;
+            _connectionOptions.SecurePassword = Credential?.Password;
+        }
 
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
