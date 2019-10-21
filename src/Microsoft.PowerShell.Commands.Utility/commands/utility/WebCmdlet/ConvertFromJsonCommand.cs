@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -42,6 +41,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Depth { get; set; } = 1024;
+
+        /// <summary>
+        /// Gets or sets the switch to prevent ConvertFrom-Json from unravelling collections during deserialization, instead passing them as a single
+        /// object through the pipeline.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoEnumerate { get; set; }
 
         #endregion parameters
 
@@ -114,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            WriteObject(result);
+            WriteObject(result, !NoEnumerate.IsPresent);
             return (result != null);
         }
 
