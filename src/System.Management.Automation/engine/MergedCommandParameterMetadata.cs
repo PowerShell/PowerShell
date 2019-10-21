@@ -500,27 +500,47 @@ namespace System.Management.Automation
 
             if (matchingParameters.Count > 1)
             {
-                StringBuilder possibleMatches = new StringBuilder();
+                // Prefer parameters in the cmdlet over common parameters
+                Collection<MergedCompiledCommandParameter> filteredParameters =
+                    new Collection<MergedCompiledCommandParameter>();
 
                 foreach (MergedCompiledCommandParameter matchingParameter in matchingParameters)
                 {
-                    possibleMatches.Append(" -");
-                    possibleMatches.Append(matchingParameter.Parameter.Name);
+                    if ((matchingParameter.BinderAssociation == ParameterBinderAssociation.DeclaredFormalParameters) ||
+                        (matchingParameter.BinderAssociation == ParameterBinderAssociation.DynamicParameters))
+                    {
+                        filteredParameters.Add(matchingParameter);
+                    }
                 }
 
-                ParameterBindingException exception =
-                    new ParameterBindingException(
-                        ErrorCategory.InvalidArgument,
-                        invocationInfo,
-                        null,
-                        name,
-                        null,
-                        null,
-                        ParameterBinderStrings.AmbiguousParameter,
-                        "AmbiguousParameter",
-                        possibleMatches);
+                if (tryExactMatching && filteredParameters.Count == 1)
+                {
+                    matchingParameters = filteredParameters;
+                }
+                else
+                {
+                    StringBuilder possibleMatches = new StringBuilder();
 
-                throw exception;
+                    foreach (MergedCompiledCommandParameter matchingParameter in matchingParameters)
+                    {
+                        possibleMatches.Append(" -");
+                        possibleMatches.Append(matchingParameter.Parameter.Name);
+                    }
+
+                    ParameterBindingException exception =
+                        new ParameterBindingException(
+                            ErrorCategory.InvalidArgument,
+                            invocationInfo,
+                            null,
+                            name,
+                            null,
+                            null,
+                            ParameterBinderStrings.AmbiguousParameter,
+                            "AmbiguousParameter",
+                            possibleMatches);
+
+                    throw exception;
+                }
             }
             else if (matchingParameters.Count == 0)
             {
