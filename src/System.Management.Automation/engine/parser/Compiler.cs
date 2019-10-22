@@ -279,9 +279,9 @@ namespace System.Management.Automation.Language
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), StaticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
         internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), staticPublicFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), StaticPublicFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
@@ -791,9 +791,9 @@ namespace System.Management.Automation.Language
 
     internal class Compiler : ICustomAstVisitor2
     {
-        internal static readonly ParameterExpression _executionContextParameter;
-        internal static readonly ParameterExpression _functionContext;
-        internal static readonly ParameterExpression _returnPipe;
+        internal static readonly ParameterExpression s_executionContextParameter;
+        internal static readonly ParameterExpression s_functionContext;
+        private static readonly ParameterExpression s_returnPipe;
         private static readonly Expression s_notDollarQuestion;
         private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_setDollarQuestionToTrue;
@@ -818,10 +818,6 @@ namespace System.Management.Automation.Language
 
             s_getDollarQuestion = Expression.Property(s_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
 
-            s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
-
-            s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
-            
             s_notDollarQuestion = Expression.Not(s_getDollarQuestion);
 
             s_setDollarQuestionToTrue = Expression.Assign(
@@ -3408,7 +3404,7 @@ namespace System.Management.Automation.Language
                 return Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
                     Expression.Constant(pipelineChainAst),
-                    _functionContext);
+                    s_functionContext);
             }
 
             // We want to generate code like:
@@ -3435,11 +3431,11 @@ namespace System.Management.Automation.Language
             //         goto DispatchNextStatementTarget;
             //     }
             // LN:
-            // 
+            //
             // Note that we deliberately do not push trap handlers
             // so that those can be handled by the enclosing statement block instead.
 
-            var exprs = new List<Expression>(); 
+            var exprs = new List<Expression>();
 
             // A pipeline chain is left-hand-side deep,
             // so to compile from left to right, we need to start from the leaf
@@ -3533,7 +3529,7 @@ namespace System.Management.Automation.Language
             ParameterExpression exception = Expression.Variable(typeof(Exception), nameof(exception));
             MethodCallExpression callCheckActionPreference = Expression.Call(
                 CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
-                Compiler._functionContext,
+                Compiler.s_functionContext,
                 exception);
             CatchBlock catchAll = Expression.Catch(
                 exception,
