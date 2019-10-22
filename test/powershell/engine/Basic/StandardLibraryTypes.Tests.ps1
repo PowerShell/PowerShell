@@ -27,7 +27,7 @@ Describe "Types referenced by PowerShell Standard should not be missing" {
         $t | Should -Not -BeNullOrEmpty
         foreach ( $property in $typeProperties ) {
             if ( $typeMetaData.$property -ne $t.$property ) {
-                throw "$property value not correct"
+                throw "$property value is not correct"
             }
         }
     }
