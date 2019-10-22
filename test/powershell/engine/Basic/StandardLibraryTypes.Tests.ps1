@@ -3,7 +3,7 @@
 
 # This is a simple type check to validate that types in PowerShellStandard are present in System.Management.Automation.dll
 # It does not check member presence and info, just the properties of the type
-Describe "Types referenced by PowerShell Standard should not be missing" {
+Describe "Types referenced by PowerShell Standard should not be missing"  -Tags "CI" {
     BeforeAll {
         $assets = [IO.Path]::Combine("$PSScriptRoot", "assets", "standardtypes.csv")
         # The properties of a type which should match PowerShell Standard
