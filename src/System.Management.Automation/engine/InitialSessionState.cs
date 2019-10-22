@@ -4420,16 +4420,16 @@ end {
 ";
         }
 
-        internal const ActionPreference defaultDebugPreference = ActionPreference.SilentlyContinue;
-        internal const ActionPreference defaultErrorActionPreference = ActionPreference.Continue;
-        internal const ActionPreference defaultProgressPreference = ActionPreference.Continue;
-        internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
-        internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
-        internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
+        internal const ActionPreference DefaultDebugPreference = ActionPreference.SilentlyContinue;
+        internal const ActionPreference DefaultErrorActionPreference = ActionPreference.Continue;
+        internal const ActionPreference DefaultProgressPreference = ActionPreference.Continue;
+        internal const ActionPreference DefaultVerbosePreference = ActionPreference.SilentlyContinue;
+        internal const ActionPreference DefaultWarningPreference = ActionPreference.Continue;
+        internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
-        internal const ErrorView defaultErrorView = ErrorView.NormalView;
-        internal const bool defaultWhatIfPreference = false;
-        internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
+        internal const ErrorView DefaultErrorView = ErrorView.NormalView;
+        internal const bool DefaultWhatIfPreference = false;
+        internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
         internal static SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
         {
@@ -4460,49 +4460,49 @@ end {
             // Variables typed to ActionPreference
             new SessionStateVariableEntry(
                 SpecialVariables.ConfirmPreference,
-                defaultConfirmPreference,
+                DefaultConfirmPreference,
                 RunspaceInit.ConfirmPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ConfirmImpact))),
             new SessionStateVariableEntry(
                 SpecialVariables.DebugPreference,
-                defaultDebugPreference,
+                DefaultDebugPreference,
                 RunspaceInit.DebugPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorActionPreference,
-                defaultErrorActionPreference,
+                DefaultErrorActionPreference,
                 RunspaceInit.ErrorActionPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.ProgressPreference,
-                defaultProgressPreference,
+                DefaultProgressPreference,
                 RunspaceInit.ProgressPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.VerbosePreference,
-                defaultVerbosePreference,
+                DefaultVerbosePreference,
                 RunspaceInit.VerbosePreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.WarningPreference,
-                defaultWarningPreference,
+                DefaultWarningPreference,
                 RunspaceInit.WarningPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.InformationPreference,
-                defaultInformationPreference,
+                DefaultInformationPreference,
                 RunspaceInit.InformationPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : defaultErrorView,
+                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : DefaultErrorView,
                 RunspaceInit.ErrorViewDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ErrorView))),
@@ -4512,7 +4512,7 @@ end {
                 RunspaceInit.NestedPromptLevelDescription),
             new SessionStateVariableEntry(
                 SpecialVariables.WhatIfPreference,
-                defaultWhatIfPreference,
+                DefaultWhatIfPreference,
                 RunspaceInit.WhatIfPreferenceDescription),
             new SessionStateVariableEntry(
                 FormatEnumerationLimit,
