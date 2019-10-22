@@ -976,7 +976,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (items == null)
             {
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
             }
 
             _internalCollection = new Collection<T>();
@@ -1078,7 +1078,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal Collection<T> LookUpByName(string name)
         {
-            if (name == null) { throw new PSArgumentNullException("name"); }
+            if (name == null) { throw new PSArgumentNullException(nameof(name)); }
 
             Collection<T> result = new Collection<T>();
             WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
@@ -1146,7 +1146,7 @@ namespace System.Management.Automation.Runspaces
         public void Remove(string name, object type)
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             lock (_syncObject)
             {
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation.Runspaces
         public void Add(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             lock (_syncObject)
             {
@@ -1194,7 +1194,7 @@ namespace System.Management.Automation.Runspaces
         public void Add(IEnumerable<T> items)
         {
             if (items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
 
             lock (_syncObject)
             {
@@ -1821,7 +1821,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             foreach (string n in name)
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (modules == null)
             {
-                throw new ArgumentNullException("modules");
+                throw new ArgumentNullException(nameof(modules));
             }
 
             foreach (var moduleSpecification in modules)
@@ -1879,7 +1879,7 @@ namespace System.Management.Automation.Runspaces
         internal void ImportPSCoreModule(string[] name)
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             foreach (string n in name)
             {
                 CoreModulesToImport.Add(n);
@@ -3748,7 +3748,7 @@ namespace System.Management.Automation.Runspaces
 
             if (psSnapInInfo == null)
             {
-                ArgumentNullException e = new ArgumentNullException("psSnapInInfo");
+                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
                 throw e;
             }
 
@@ -3924,7 +3924,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (assembly == null)
             {
-                ArgumentNullException e = new ArgumentNullException("assembly");
+                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
                 throw e;
             }
 
