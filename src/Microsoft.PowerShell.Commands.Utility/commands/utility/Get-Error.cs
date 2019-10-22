@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "Error",
         HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp",
         DefaultParameterSetName = NewestParameterSetName)]
-    [OutputType(typeof(ErrorRecord), typeof(Exception))]
+    [OutputType("PSExtendedError")]
     public sealed class GetErrorCommand : PSCmdlet
     {
         internal const string ErrorParameterSetName = "Error";
