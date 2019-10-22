@@ -50,7 +50,7 @@ Describe "Get-Member" -Tags "CI" {
 
     It "Should work with incomplete parameter '-i'" {
         $a = 1
-        Get-Member -i $a | Should -Not -BeNullOrEmpty
+        { Get-Member -i $a } | Should -Not -Throw
     }
 }
 
