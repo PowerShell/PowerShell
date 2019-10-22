@@ -16,7 +16,7 @@ Describe "Types referenced by PowerShell Standard should not be missing" {
             "IsLayoutSequential", "IsAnsiClass", "IsAutoClass", "IsUnicodeClass", "IsCOMObject", "IsContextful", "IsEnum", "IsMarshalByRef",
             "IsPrimitive", "IsValueType", "IsSignatureType", "IsSerializable", "IsVisible"
 
-        $tests = Import-Csv $assets | %{ 
+        $tests = Import-Csv $assets | ForEach-Object { 
             @{ FullName = $_.FullName; TypeMetaData = $_ }
             }
     }
