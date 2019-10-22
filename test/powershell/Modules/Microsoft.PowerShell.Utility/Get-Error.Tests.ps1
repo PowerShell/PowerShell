@@ -28,6 +28,9 @@ Describe 'Get-Error tests' -Tag CI {
         $out | Should -BeLikeExactly '*InnerException*'
 
         $err = Get-Error
+        $err.GetType().Name | Should -BeExactly 'ErrorRecord'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
 
         # need to exercise the formatter
         $null = $err | Out-String
