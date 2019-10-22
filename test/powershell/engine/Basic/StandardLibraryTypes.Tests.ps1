@@ -18,7 +18,7 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
 
         $tests = Import-Csv $assets | ForEach-Object { 
             @{ FullName = $_.FullName; TypeMetaData = $_ }
-            }
+        }
     }
 
     It "Type '<FullName>' should be present with correct attributes" -TestCases $tests {
