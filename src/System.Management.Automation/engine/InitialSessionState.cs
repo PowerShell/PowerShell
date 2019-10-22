@@ -619,8 +619,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="description">A description of the purpose of the alias.</param>
         /// <param name="options">Options defining the scope visibility, readonly and constant.</param>
         /// <param name="visibility"></param>
-        internal SessionStateAliasEntry(string name, string definition, string description,
-            ScopedItemOptions options, SessionStateEntryVisibility visibility)
+        internal SessionStateAliasEntry(string name, string definition, string description, ScopedItemOptions options, SessionStateEntryVisibility visibility)
             : base(name, visibility)
         {
             Definition = definition;
@@ -769,14 +768,12 @@ namespace System.Management.Automation.Runspaces
         internal static SessionStateFunctionEntry GetDelayParsedFunctionEntry(string name, string definition, bool isProductCode)
         {
             var sb = ScriptBlock.CreateDelayParsedScriptBlock(definition, isProductCode);
-            return new SessionStateFunctionEntry(name, definition, ScopedItemOptions.None,
-                SessionStateEntryVisibility.Public, sb, null);
+            return new SessionStateFunctionEntry(name, definition, ScopedItemOptions.None, SessionStateEntryVisibility.Public, sb, null);
         }
 
         internal static SessionStateFunctionEntry GetDelayParsedFunctionEntry(string name, string definition, ScriptBlock sb)
         {
-            return new SessionStateFunctionEntry(name, definition, ScopedItemOptions.None,
-                SessionStateEntryVisibility.Public, sb, null);
+            return new SessionStateFunctionEntry(name, definition, ScopedItemOptions.None, SessionStateEntryVisibility.Public, sb, null);
         }
 
         /// <summary>
@@ -868,8 +865,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attributes">A list of attributes to attach to the variable.</param>
-        public SessionStateVariableEntry(string name, object value, string description,
-            ScopedItemOptions options, Collection<Attribute> attributes)
+        public SessionStateVariableEntry(string name, object value, string description, ScopedItemOptions options, Collection<Attribute> attributes)
             : base(name, SessionStateEntryVisibility.Public)
         {
             Value = value;
@@ -889,8 +885,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attribute">A single attribute to attach to the variable.</param>
-        public SessionStateVariableEntry(string name, object value, string description,
-            ScopedItemOptions options, Attribute attribute)
+        public SessionStateVariableEntry(string name, object value, string description, ScopedItemOptions options, Attribute attribute)
             : base(name, SessionStateEntryVisibility.Public)
         {
             Value = value;
@@ -912,8 +907,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attributes">A single attribute to attach to the variable.</param>
         /// <param name="visibility"></param>
-        internal SessionStateVariableEntry(string name, object value, string description,
-            ScopedItemOptions options, Collection<Attribute> attributes, SessionStateEntryVisibility visibility)
+        internal SessionStateVariableEntry(string name, object value, string description, ScopedItemOptions options, Collection<Attribute> attributes, SessionStateEntryVisibility visibility)
             : base(name, visibility)
         {
             Value = value;
@@ -1367,10 +1361,7 @@ namespace System.Management.Automation.Runspaces
                 iss.ImportPSSnapIn(si, out warning);
             }
 
-            //
             // restrict what gets exposed
-            //
-
             List<string> allowedCommands = new List<string>();
 
             // required by implicit remoting and interactive remoting
@@ -1412,9 +1403,7 @@ namespace System.Management.Automation.Runspaces
             // Add built-in variables.
             iss.Variables.Add(BuiltInVariables);
 
-            //
             // wrap some commands in a proxy function to restrict their parameters
-            //
             foreach (KeyValuePair<string, CommandMetadata> proxyFunction in CommandMetadata.GetRestrictedCommands(SessionCapabilities.RemoteServer))
             {
                 string commandName = proxyFunction.Key;
@@ -2338,7 +2327,8 @@ namespace System.Management.Automation.Runspaces
                     // throw the exception instead of writing it out...
                     if ((!string.IsNullOrEmpty(context.ModuleBeingProcessed) &&
                          Path.GetExtension(context.ModuleBeingProcessed)
-                             .Equals(StringLiterals.PowerShellDataFileExtension,
+                             .Equals(
+                                 StringLiterals.PowerShellDataFileExtension,
                                  StringComparison.OrdinalIgnoreCase)) ||
                         ThrowOnRunspaceOpenError)
                     {
@@ -2374,7 +2364,9 @@ namespace System.Management.Automation.Runspaces
 
                 publicCommands = new HashSet<CommandInfo>();
                 foreach (CommandInfo sessionCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
-                            "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, nameIsPattern: true))
+                            name: "*",
+                            CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet,
+                            nameIsPattern: true))
                 {
                     if (sessionCommand.Visibility == SessionStateEntryVisibility.Public)
                     {
@@ -2405,7 +2397,8 @@ namespace System.Management.Automation.Runspaces
                 if (moduleImportException != null)
                 {
                     runspaceInitTracer.WriteLine(
-                        "Runspace open failed while loading module: First error {1}", moduleImportException);
+                        "Runspace open failed while loading module: First error {1}",
+                        moduleImportException);
                     return moduleImportException;
                 }
             }
@@ -2440,7 +2433,8 @@ namespace System.Management.Automation.Runspaces
                 if (userDriveException != null)
                 {
                     runspaceInitTracer.WriteLine(
-                                        "Runspace open failed while processing user drive with error {1}", userDriveException);
+                        "Runspace open failed while processing user drive with error {1}",
+                        userDriveException);
 
                     Exception result = PSTraceSource.NewInvalidOperationException(userDriveException, RemotingErrorIdStrings.UserDriveProcessingThrewTerminatingError, userDriveException.Message);
                     return result;
@@ -2454,7 +2448,8 @@ namespace System.Management.Automation.Runspaces
                 if (startupScriptException != null)
                 {
                     runspaceInitTracer.WriteLine(
-                        "Runspace open failed while running startup script: First error {1}", startupScriptException);
+                        "Runspace open failed while running startup script: First error {1}",
+                        startupScriptException);
 
                     Exception result = PSTraceSource.NewInvalidOperationException(startupScriptException, RemotingErrorIdStrings.StartupScriptThrewTerminatingError, startupScriptException.Message);
                     return result;
@@ -2889,7 +2884,8 @@ namespace System.Management.Automation.Runspaces
                                     version = moduleSpecification.MaximumVersion;
                                 }
 
-                                string message = StringUtil.Format(global::Modules.RequiredModuleNotFoundWrongGuidVersion,
+                                string message = StringUtil.Format(
+                                    global::Modules.RequiredModuleNotFoundWrongGuidVersion,
                                     moduleSpecification.Name,
                                     moduleSpecification.Guid,
                                     version);
@@ -2923,8 +2919,7 @@ namespace System.Management.Automation.Runspaces
                             // Special case for wild card lookups.
                             // "Import-Module" or "ipmo" cannot be visible when exposing commands via VisibleCmdlets, etc.
                             if ((cmd.Name.Equals("Import-Module", StringComparison.OrdinalIgnoreCase) &&
-                                 (!string.IsNullOrEmpty(cmd.ModuleName) && cmd.ModuleName.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase))
-                                 ) ||
+                                 (!string.IsNullOrEmpty(cmd.ModuleName) && cmd.ModuleName.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase))) ||
                                  cmd.Name.Equals("ipmo", StringComparison.OrdinalIgnoreCase)
                                 )
                             {
@@ -2936,8 +2931,10 @@ namespace System.Management.Automation.Runspaces
                                 publicCommands.Add(cmd);
                             }
                         }
-                        // Some CommandInfo derivations throw on the Visibility setter.
-                        catch (PSNotImplementedException) { }
+                        catch (PSNotImplementedException)
+                        {
+                            // Some CommandInfo derivations throw on the Visibility setter.
+                        }
                     }
 
                     if (found && !WildcardPattern.ContainsWildcardCharacters(commandToMakeVisible))
@@ -3065,7 +3062,9 @@ namespace System.Management.Automation.Runspaces
                 if (this.DefaultCommandVisibility != SessionStateEntryVisibility.Public)
                 {
                     foreach (CommandInfo importedCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
-                        "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, true))
+                        name: "*",
+                        CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet,
+                        true))
                     {
                         try
                         {
@@ -3076,8 +3075,10 @@ namespace System.Management.Automation.Runspaces
                                 importedCommand.Visibility = this.DefaultCommandVisibility;
                             }
                         }
-                        // Some CommandInfo derivations throw on the Visibility setter.
-                        catch (PSNotImplementedException) { }
+                        catch (PSNotImplementedException)
+                        {
+                            // Some CommandInfo derivations throw on the Visibility setter.
+                        }
                     }
                 }
 
@@ -3140,8 +3141,11 @@ namespace System.Management.Automation.Runspaces
                 // Add the built-in variables
                 foreach (SessionStateVariableEntry e in InitialSessionState.BuiltInVariables)
                 {
-                    PSVariable v = new PSVariable(e.Name, e.Value,
-                        e.Options, e.Attributes, e.Description)
+                    PSVariable v = new PSVariable(
+                        e.Name,
+                        e.Value,
+                        e.Options, e.Attributes,
+                        e.Description)
                     { Visibility = e.Visibility };
                     ss.GlobalScope.SetVariable(e.Name, v, false, true, ss, fastPath: true);
                 }
@@ -3151,8 +3155,12 @@ namespace System.Management.Automation.Runspaces
                 // Then re-initialize it with variables to session state...
                 foreach (SessionStateVariableEntry e in Variables)
                 {
-                    PSVariable v = new PSVariable(e.Name, e.Value,
-                        e.Options, e.Attributes, e.Description)
+                    PSVariable v = new PSVariable(
+                        e.Name,
+                        e.Value,
+                        e.Options,
+                        e.Attributes,
+                        e.Description)
                     { Visibility = e.Visibility };
                     ss.GlobalScope.SetVariable(e.Name, v, false, true, ss, fastPath: true);
                 }
@@ -3455,9 +3463,15 @@ namespace System.Management.Automation.Runspaces
             // Use at most 3 locks (we don't expect contention on that many cores anyways,
             // and typically we'll be processing just 2 or 3 files anyway, hence capacity=3.
             ConcurrentDictionary<string, string> filesProcessed
-                = new ConcurrentDictionary<string, string>(/*concurrencyLevel*/3, /*capacity*/3, StringComparer.OrdinalIgnoreCase);
-            Parallel.ForEach(Types, sste =>
+                = new ConcurrentDictionary<string, string>(
+                    concurrencyLevel: 3,
+                    capacity: 3,
+                    StringComparer.OrdinalIgnoreCase);
+            Parallel.ForEach(
+                Types,
+                sste =>
             {
+                //   foreach (var sste in Types)
                 if (sste.FileName != null)
                 {
                     if (filesProcessed.TryAdd(sste.FileName, null))
@@ -3469,8 +3483,7 @@ namespace System.Management.Automation.Runspaces
                         }
 
                         bool unused;
-                        context.TypeTable.Update(moduleName, sste.FileName, errors,
-                            context.AuthorizationManager, context.EngineHostInterface, out unused);
+                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out unused);
                     }
                 }
                 else if (sste.TypeTable != null)
@@ -3664,10 +3677,11 @@ namespace System.Management.Automation.Runspaces
             {
                 s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
 
-                throw PSTraceSource.NewArgumentException("mshSnapInID",
-                                                         ConsoleInfoErrorStrings.AddPSSnapInBadMonadVersion,
-                                                         newPSSnapIn.PSVersion.ToString(),
-                                                         "2.0");
+                throw PSTraceSource.NewArgumentException(
+                    "mshSnapInID",
+                    ConsoleInfoErrorStrings.AddPSSnapInBadMonadVersion,
+                    newPSSnapIn.PSVersion.ToString(),
+                    "2.0");
             }
 
             // Now actually load the snapin...
@@ -3794,8 +3808,7 @@ namespace System.Management.Automation.Runspaces
                 this.Formats.Add(formatEntry);
             }
 
-            SessionStateAssemblyEntry assemblyEntry =
-                new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
+            SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
 
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
 
@@ -3926,8 +3939,7 @@ namespace System.Management.Automation.Runspaces
             // since it can't be loaded by path or name
             if (!string.IsNullOrEmpty(assembly.Location))
             {
-                SessionStateAssemblyEntry assemblyEntry =
-                    new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
+                SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
                 this.Assemblies.Add(assemblyEntry);
             }
 
@@ -3959,9 +3971,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        //
         // Now define a bunch of functions that describe the rest of the default session state...
-        //
         internal const string FormatEnumerationLimit = "FormatEnumerationLimit";
         internal const int DefaultFormatEnumerationLimit = 4;
 
@@ -4711,51 +4721,51 @@ end {
 
         // The list of engine modules to create warnings when you try to remove them
         internal static HashSet<string> EngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                                                            {
-                                                                "Microsoft.PowerShell.Utility",
-                                                                "Microsoft.PowerShell.Management",
-                                                                "Microsoft.PowerShell.Diagnostics",
-                                                                "Microsoft.PowerShell.Host",
-                                                                "Microsoft.PowerShell.Security",
-                                                                "Microsoft.WSMan.Management"
-                                                            };
+            {
+                "Microsoft.PowerShell.Utility",
+                "Microsoft.PowerShell.Management",
+                "Microsoft.PowerShell.Diagnostics",
+                "Microsoft.PowerShell.Host",
+                "Microsoft.PowerShell.Security",
+                "Microsoft.WSMan.Management"
+            };
 
         internal static HashSet<string> NestedEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                       {
-                           "Microsoft.PowerShell.Commands.Utility",
-                           "Microsoft.PowerShell.Commands.Management",
-                           "Microsoft.PowerShell.Commands.Diagnostics",
-                           "Microsoft.PowerShell.ConsoleHost"
-                       };
+            {
+                "Microsoft.PowerShell.Commands.Utility",
+                "Microsoft.PowerShell.Commands.Management",
+                "Microsoft.PowerShell.Commands.Diagnostics",
+                "Microsoft.PowerShell.ConsoleHost"
+            };
 
         internal static Dictionary<string, string> EngineModuleNestedModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                                                                                         {
-                                                                                             { "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility"},
-                                                                                             { "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Commands.Management"},
-                                                                                             { "Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics"},
-                                                                                             { "Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost"},
-                                                                                         };
+            {
+                { "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility"},
+                { "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Commands.Management"},
+                { "Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics"},
+                { "Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost"},
+            };
         internal static Dictionary<string, string> NestedModuleEngineModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                                                                                         {
-                                                                                             { "Microsoft.PowerShell.Commands.Utility", "Microsoft.PowerShell.Utility"},
-                                                                                             { "Microsoft.PowerShell.Commands.Management", "Microsoft.PowerShell.Management"},
-                                                                                             { "Microsoft.PowerShell.Commands.Diagnostics", "Microsoft.PowerShell.Diagnostics"},
-                                                                                             { "Microsoft.PowerShell.ConsoleHost", "Microsoft.PowerShell.Host"},
-                                                                                             { "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Security"},
-                                                                                             { "Microsoft.WSMan.Management", "Microsoft.WSMan.Management"},
-                                                                                         };
+            {
+                { "Microsoft.PowerShell.Commands.Utility", "Microsoft.PowerShell.Utility"},
+                { "Microsoft.PowerShell.Commands.Management", "Microsoft.PowerShell.Management"},
+                { "Microsoft.PowerShell.Commands.Diagnostics", "Microsoft.PowerShell.Diagnostics"},
+                { "Microsoft.PowerShell.ConsoleHost", "Microsoft.PowerShell.Host"},
+                { "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Security"},
+                { "Microsoft.WSMan.Management", "Microsoft.WSMan.Management"},
+            };
 
         // The list of engine modules that we will not allow users to remove
         internal static HashSet<string> ConstantEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                                                            {
-                                                                CoreModule,
-                                                            };
+            {
+                CoreModule,
+            };
 
         // The list of nested engine modules that we will not allow users to remove
         internal static HashSet<string> ConstantEngineNestedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                                                            {
-                                                                "System.Management.Automation",
-                                                            };
+            {
+                "System.Management.Automation",
+            };
 
         internal static string GetNestedModuleDllName(string moduleName)
         {
@@ -5293,12 +5303,14 @@ end {
         }
 
         // cmdletCache holds the list of cmdlets along with its aliases per each assembly.
-        private static Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>> s_cmdletCache =
+        private static readonly Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>> s_cmdletCache =
             new Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>>();
-        private static Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>> s_providerCache =
+
+        private static readonly Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>> s_providerCache =
             new Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>>();
+
         // Using a ConcurrentDictionary for this so that we can avoid having a private lock variable. We use only the keys for checking.
-        private static Lazy<ConcurrentDictionary<Assembly, bool>> s_assembliesWithModuleInitializerCache = new Lazy<ConcurrentDictionary<Assembly, bool>>();
+        private static readonly Lazy<ConcurrentDictionary<Assembly, bool>> s_assembliesWithModuleInitializerCache = new Lazy<ConcurrentDictionary<Assembly, bool>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsCmdletClass(Type type)
