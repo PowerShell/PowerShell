@@ -58,4 +58,9 @@ Describe "Get-HotFix Tests" -Tag CI {
         $hotfixes = Get-HotFix -ComputerName localhost
         $hotfixes.Count | Should -Be $qfe.Count
     }
+
+    It "Get-Hotfix can accept ComputerName via pipeline" {
+        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } |Should -Throw -ExpectedMessage "The RPC server is unavailable"
+        [PSCustomObject]@{ComputerName = 'localhost'} | Get-HotFix | Should -Not -BeNullOrEmpty
+    }
 }
