@@ -21,7 +21,7 @@ Describe "Types referenced by PowerShell Standard should not be missing" {
             }
     }
 
-    It "Type '<FullName>' should be present with correct attributes" -testcase $tests {
+    It "Type '<FullName>' should be present with correct attributes" -TestCases $tests {
         param ( $FullName, $TypeMetaData )
         $t = [psobject].assembly.GetType($FullName)
         $t | Should -Not -BeNullOrEmpty
