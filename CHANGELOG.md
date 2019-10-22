@@ -1,6 +1,7 @@
 # Changelog
 
 ## v7.0.0-preview.5 - 10/23/2019
+## v7.0.0-preview.5 - 10/22/2019
 
 ### Breaking Changes
 
@@ -24,6 +25,7 @@
 ### General Cmdlet Updates and Fixes
 
 - Add emphasis to `Select-String` output (with `-NoEmphasis` parameter to opt-out) (#8963) (Thanks @derek-xia!)
+- Add `-Emphasize` parameter to colorize `Select-String` output (#8963) (Thanks @derek-xia!)
 - Add back `Get-HotFix` cmdlet (#10740)
 - Make `Add-Type` usable in applications that host `PowerShell` (#10587)
 - Use more effective evaluation order in `LanguagePrimitives.IsNullLike()` (#10781) (Thanks @vexx32!)
