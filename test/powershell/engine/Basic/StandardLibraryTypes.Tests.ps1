@@ -5,7 +5,7 @@
 # It does not check member presence and info, just the properties of the type
 Describe "Types referenced by PowerShell Standard should not be missing" {
     BeforeAll {
-        $assets = [io.path]::Combine("$PSScriptRoot", "assets", "standardtypes.csv")
+        $assets = [IO.Path]::Combine("$PSScriptRoot", "assets", "standardtypes.csv")
         # The properties of a type which should match PowerShell Standard
         # These are not members of the type
         $typeProperties = "IsCollectible", "IsSZArray", "IsByRefLike", "IsConstructedGenericType", "IsGenericType", "IsGenericTypeDefinition",
