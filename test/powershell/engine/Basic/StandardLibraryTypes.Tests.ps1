@@ -23,7 +23,7 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
 
     It "Type '<FullName>' should be present with correct attributes" -TestCases $tests {
         param ( $FullName, $TypeMetaData )
-        $t = [psobject].assembly.GetType($FullName)
+        $type = [psobject].Assembly.GetType($FullName)
         $t | Should -Not -BeNullOrEmpty
         foreach ( $property in $typeProperties ) {
             if ( $typeMetaData.$property -ne $t.$property ) {
