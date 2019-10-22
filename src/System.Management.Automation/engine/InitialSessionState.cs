@@ -3482,7 +3482,6 @@ namespace System.Management.Automation.Runspaces
             ConcurrentDictionary<string, string> filesProcessed
                 = new ConcurrentDictionary<string, string>(/*concurrencyLevel*/3, /*capacity*/3, StringComparer.OrdinalIgnoreCase);
             Parallel.ForEach(Types, sste =>
-            //            foreach (var sste in Types)
             {
                 if (sste.FileName != null)
                 {
@@ -3510,7 +3509,6 @@ namespace System.Management.Automation.Runspaces
                     context.TypeTable.Update(sste.TypeData, errors, sste.IsRemove);
                 }
             });
-            //            }
 
             context.TypeTable.ClearConsolidatedMembers();
 

@@ -2,14 +2,492 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Management.Automation;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Management.Automation.Internal;
+using Microsoft.VisualBasic;
+using System.CodeDom;
+
+namespace System.Management.Automation.Runspaces
+{
+    public sealed partial class TypeTable
+    {
+        const string Begin = @"
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Management.Automation.Language;
 using System.Reflection;
 
 namespace System.Management.Automation.Runspaces
 {
+    public sealed partial class TypeTable
+    {";
+
+        const string End = @"
+        }
+    }
+}";
+
+        const string MainMethod = @"
+        internal void Process_{0}(string filePath, ConcurrentBag<string> errors)
+        {{
+            typesInfo.Add(new SessionStateTypeEntry(filePath));
+
+            string typeName = null;
+            PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
+            PSMemberInfoInternalCollection<PSMemberInfo> memberSetMembers = null;
+            HashSet<string> newMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+";
+
+        const string HelpMethods = @"
+        private static MethodInfo GetMethodInfo(Type type, string method)
+        {
+            return type.GetMethod(method, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+        }
+
+        private static ScriptBlock GetScriptBlock(string s)
+        {
+            var sb = ScriptBlock.CreateDelayParsedScriptBlock(s, isProductCode: true);
+            sb.LanguageMode = PSLanguageMode.FullLanguage;
+            return sb;
+        }
+";
+
+        const string Entry = @"
+            typeName = @""{0}"";
+            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: {1}));
+";
+
+        const string AddMemberToTypeMembers = @"
+            AddMember(
+                errors,
+                typeName,
+                {0},
+                typeMembers,
+                isOverride: {1});
+";
+
+        const string AddMemberToMemberSet = @"
+            AddMember(
+                errors,
+                typeName,
+                {0},
+                memberSetMembers,
+                isOverride: {1});
+";
+
+        const string ProcessStandardMember = @"
+            ProcessStandardMembers(
+                errors,
+                typeName,
+                memberSetMembers,
+                typeMembers,
+                isOverride: {0});
+";
+
+        const string ProcessTypeConverterTemplate = @"
+            ProcessTypeConverter(
+                errors,
+                typeName,
+                typeof({0}),
+                _typeConverters,
+                isOverride: {1});
+";
+
+        const string ProcessTypeAdapterTemplate = @"
+            ProcessTypeAdapter(
+                errors,
+                typeName,
+                typeof({0}),
+                _typeAdapters,
+                isOverride: {1});
+";
+
+        const string NewMemberSetCollection = @"
+            memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: {0});";
+
+        const string AddNewMemberToSet = @"
+            newMembers.Add(@""{0}"");";
+
+        const string InvalidateBinderCache = @"
+            foreach (string memberName in newMembers)
+            {
+                PSGetMemberBinder.TypeTableMemberAdded(memberName);
+            }";
+
+        const string RegionStart = @"
+            #region {0}
+";
+        const string RegionEnd = @"
+            #endregion {0}
+";
+        const string RegularMemberComment = @"
+            // Process regular members.";
+        const string StandardMemberComment = @"
+            // Process standard members.";
+        const string TypeConverterComment = @"
+            // Process type converter.";
+        const string TypeAdapterComment = @"
+            // Process type adapter.";
+        const string UpdateBinderComment = @"
+            // Update binder version for newly added members.";
+
+        const string NewNoteProperty = "new PSNoteProperty(@\"{0}\", {1}){2}";
+        const string NewAliasProperty = "new PSAliasProperty(@\"{0}\", @\"{1}\", {2}){3}";
+        const string NewScriptProperty = @"new PSScriptProperty(
+                    @""{0}"",
+                    {1},
+                    {2},
+                    shouldCloneOnAccess: true){3}";
+        const string NewCodeProperty = @"new PSCodeProperty(
+                    @""{0}"",
+                    {1},
+                    {2}){3}";
+        const string NewScriptMethod = @"new PSScriptMethod(
+                    @""{0}"",
+                    {1},
+                    shouldCloneOnAccess: true)";
+        const string NewCodeMethod = @"new PSCodeMethod(
+                    @""{0}"",
+                    {1})";
+        const string NewPropertySet = @"new PSPropertySet(
+                    @""{0}"",
+                    {1}){2}";
+        const string Hidden = "{ IsHidden = true }";
+        const string TypeOf = "typeof({0})";
+
+        const string Types_Ps1Xml_String = "Types_Ps1Xml";
+        const string TypesV3_Ps1Xml_String = "TypesV3_Ps1Xml";
+        const string GetEvent_Types_Ps1Xml_String = "GetEvent_Types_Ps1Xml";
+
+        /// <summary/>
+        public static void GenerateBetterCode(string rootDir)
+        {
+            HandleOneFile(Types_Ps1Xml.Get(), rootDir, Types_Ps1Xml_String);
+            HandleOneFile(TypesV3_Ps1Xml.Get(), rootDir, TypesV3_Ps1Xml_String);
+            HandleOneFile(GetEvent_Types_Ps1Xml.Get(), rootDir, GetEvent_Types_Ps1Xml_String);
+        }
+
+        private static void HandleOneFile(IEnumerable<TypeData> types, string rootDir, string targetFile)
+        {
+            StringBuilder codeBuilder = new StringBuilder(Begin);
+            if (targetFile == Types_Ps1Xml_String)
+            {
+                codeBuilder.Append(HelpMethods);
+            }
+
+            codeBuilder.AppendFormat(MainMethod, targetFile);
+
+            foreach (TypeData typeData in types)
+            {
+                var propertySets = new List<PropertySetData>();
+                if (typeData.DefaultDisplayPropertySet != null)
+                {
+                    propertySets.Add(typeData.DefaultDisplayPropertySet);
+                }
+
+                if (typeData.DefaultKeyPropertySet != null)
+                {
+                    propertySets.Add(typeData.DefaultKeyPropertySet);
+                }
+
+                if (typeData.PropertySerializationSet != null)
+                {
+                    propertySets.Add(typeData.PropertySerializationSet);
+                }
+
+                bool hasStandardMembers = typeData.StandardMembers.Count > 0 || propertySets.Count > 0;
+                int collectionSize = typeData.Members.Count + (hasStandardMembers ? 1 : 0);
+
+                codeBuilder.AppendFormat(RegionStart, typeData.TypeName);
+                codeBuilder.AppendFormat(Entry, typeData.TypeName, collectionSize);
+
+
+                if (typeData.Members.Count > 0)
+                {
+                    codeBuilder.Append(RegularMemberComment);
+                    foreach (var entry in typeData.Members)
+                    {
+                        codeBuilder.AppendFormat(AddNewMemberToSet, entry.Key);
+                        AddOneMember(AddMemberToTypeMembers, entry.Value, typeData.IsOverride);
+                    }
+                }
+
+                if (hasStandardMembers)
+                {
+                    int standardMemberCount = typeData.StandardMembers.Count + propertySets.Count;
+
+                    codeBuilder.Append(StandardMemberComment);
+                    codeBuilder.AppendFormat(NewMemberSetCollection, standardMemberCount);
+
+                    foreach (var entry in typeData.StandardMembers)
+                    {
+                        AddOneMember(AddMemberToMemberSet, entry.Value, isOverride: false);
+                    }
+
+                    foreach (PropertySetData propertySet in propertySets)
+                    {
+                        AddOneMember(AddMemberToMemberSet, propertySet, isOverride: false);
+                    }
+
+                    codeBuilder.AppendFormat(ProcessStandardMember, GetBoolString(typeData.IsOverride));
+                }
+
+                if (typeData.TypeConverter != null)
+                {
+                    codeBuilder.Append(TypeConverterComment);
+                    codeBuilder.AppendFormat(ProcessTypeConverterTemplate, typeData.TypeConverter.FullName, GetBoolString(typeData.IsOverride));
+                }
+
+                if (typeData.TypeAdapter != null)
+                {
+                    codeBuilder.Append(TypeAdapterComment);
+                    codeBuilder.AppendFormat(ProcessTypeAdapterTemplate, typeData.TypeAdapter.FullName, GetBoolString(typeData.IsOverride));
+                }
+
+                codeBuilder.AppendFormat(RegionEnd, typeData.TypeName);
+            }
+
+            codeBuilder.Append(UpdateBinderComment);
+            codeBuilder.Append(InvalidateBinderCache);
+            codeBuilder.Append(End);
+
+            string outFile = Path.Combine(rootDir, $"TypeTable_{targetFile}.cs");
+            using StreamWriter writer = new StreamWriter(outFile, append: false, Encoding.UTF8);
+            writer.Write(codeBuilder.ToString());
+            writer.Flush();
+
+
+            void AddOneMember(string addMemberTemplate, TypeMemberData member, bool isOverride)
+            {
+                switch (member)
+                {
+                    case NotePropertyData noteProperty:
+                        AddNotePropertyMember(addMemberTemplate, noteProperty, isOverride);
+                        break;
+
+                    case AliasPropertyData aliasProperty:
+                        AddAliasPropertyMember(addMemberTemplate, aliasProperty, isOverride);
+                        break;
+
+                    case ScriptPropertyData scriptProperty:
+                        AddScriptPropertyMember(addMemberTemplate, scriptProperty, isOverride);
+                        break;
+
+                    case CodePropertyData codeProperty:
+                        AddCodePropertyMember(addMemberTemplate, codeProperty, isOverride);
+                        break;
+
+                    case ScriptMethodData scriptMethod:
+                        AddScriptMethodMember(addMemberTemplate, scriptMethod, isOverride);
+                        break;
+
+                    case CodeMethodData codeMethod:
+                        AddCodeMethodMember(addMemberTemplate, codeMethod, isOverride);
+                        break;
+
+                    case PropertySetData propertySet:
+                        AddPropertySetMember(addMemberTemplate, propertySet, isOverride);
+                        break;
+
+                    default:
+                        throw new NotSupportedException(member.GetType().FullName);
+                }
+            }
+
+
+            void AddNotePropertyMember(string addMemberTemplate, NotePropertyData noteProperty, bool isOverride)
+            {
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewNoteProperty,
+                        noteProperty.Name,
+                        GetNotePropertyValue(noteProperty),
+                        noteProperty.IsHidden ? Hidden : string.Empty),
+                    GetBoolString(isOverride));
+            }
+
+            void AddAliasPropertyMember(string addMemberTemplate, AliasPropertyData aliasProperty, bool isOverride)
+            {
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewAliasProperty,
+                        aliasProperty.Name,
+                        aliasProperty.ReferencedMemberName,
+                        aliasProperty.MemberType != null
+                            ? string.Format(TypeOf, aliasProperty.MemberType.FullName)
+                            : string.Format("conversionType: null"),
+                        aliasProperty.IsHidden ? Hidden : string.Empty),
+                    GetBoolString(isOverride));
+            }
+
+            void AddScriptPropertyMember(string addMemberTemplate, ScriptPropertyData scriptProperty, bool isOverride)
+            {
+                string getter = GetScriptBlock(scriptProperty.GetScriptBlock);
+                string setter = GetScriptBlock(scriptProperty.SetScriptBlock);
+
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewScriptProperty,
+                        scriptProperty.Name,
+                        getter ?? "getterScript: null",
+                        setter ?? "setterScript: null",
+                        scriptProperty.IsHidden ? Hidden : string.Empty),
+                    GetBoolString(isOverride));
+            }
+
+            void AddCodePropertyMember(string addMemberTemplate, CodePropertyData codeProperty, bool isOverride)
+            {
+                string getter = GetCodeReference(codeProperty.GetCodeReference);
+                string setter = GetCodeReference(codeProperty.SetCodeReference);
+
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewCodeProperty,
+                        codeProperty.Name,
+                        getter ?? "getterCodeReference: null",
+                        setter ?? "setterCodeReference: null",
+                        codeProperty.IsHidden ? Hidden : string.Empty),
+                    GetBoolString(isOverride));
+            }
+
+            void AddScriptMethodMember(string addMemberTemplate, ScriptMethodData scriptMethod, bool isOverride)
+            {
+                string script = GetScriptBlock(scriptMethod.Script);
+                if (script == null)
+                {
+                    throw new InvalidOperationException("ScriptMethod doesn't have a ScriptBlock!!!");
+                }
+
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewScriptMethod,
+                        scriptMethod.Name,
+                        script),
+                    GetBoolString(isOverride));
+            }
+
+            void AddCodeMethodMember(string addMemberTemplate, CodeMethodData codeMethod, bool isOverride)
+            {
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewCodeMethod,
+                        codeMethod.Name,
+                        GetCodeReference(codeMethod.CodeReference)),
+                    GetBoolString(isOverride));
+            }
+
+            void AddPropertySetMember(string addMemberTemplate, PropertySetData propertySet, bool isOverride)
+            {
+                codeBuilder.AppendFormat(
+                    addMemberTemplate,
+                    string.Format(
+                        NewPropertySet,
+                        propertySet.Name,
+                        GetReferencedProperties(propertySet),
+                        propertySet.IsHidden ? Hidden : string.Empty),
+                    GetBoolString(isOverride));
+            }
+        }
+
+        static string GetNotePropertyValue(NotePropertyData noteProperty)
+        {
+            if (noteProperty.Value is string noteValueAsString)
+            {
+                noteValueAsString = EscapeDoubleQuote(noteValueAsString);
+                return $"@\"{noteValueAsString}\"";
+            }
+
+            if (noteProperty.Value is int noteValueAsInt)
+            {
+                return noteValueAsInt.ToString();
+            }
+
+            if (noteProperty.Value is uint noteValueAsUInt)
+            {
+                return noteValueAsUInt.ToString();
+            }
+
+            if (noteProperty.Value is Type noteValueAsType)
+            {
+                return string.Format(TypeOf, noteValueAsType.FullName);
+            }
+
+            if (noteProperty.Value is bool noteValueAsBool)
+            {
+                return noteValueAsBool ? "true" : "false";
+            }
+
+            throw new NotSupportedException(string.Format("NoteProperty with a unknown type value. MemberName: {0}", noteProperty.Name));
+        }
+
+        static string GetScriptBlock(ScriptBlock scriptBlock)
+        {
+            if (scriptBlock == null)
+                return null;
+
+            return string.Format(
+                "GetScriptBlock(@\"{0}\")",
+                EscapeDoubleQuote(scriptBlock.ToString()));
+        }
+
+        static string GetCodeReference(MethodInfo codeReference)
+        {
+            if (codeReference == null)
+                return null;
+
+            return string.Format(
+                "GetMethodInfo(typeof({0}), @\"{1}\")",
+                codeReference.ReflectedType.FullName,
+                codeReference.Name);
+        }
+
+        static string GetReferencedProperties(PropertySetData propertySet)
+        {
+            var properties = propertySet.ReferencedProperties;
+            if (properties.Count == 0)
+            {
+                throw new InvalidOperationException("PropertySet has empty property collection.");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("new List<string> {{ \"{0}\"", properties[0]);
+            for (int i = 1; i < properties.Count; i++)
+            {
+                sb.Append(string.Format(", \"{0}\"", properties[i]));
+            }
+            sb.Append(" }");
+
+            return sb.ToString();
+        }
+
+        static string GetBoolString(bool value)
+        {
+            return value ? "true" : "false";
+        }
+
+        static string EscapeDoubleQuote(string str)
+        {
+            if (str.IndexOf('"') == -1)
+            {
+                return str;
+            }
+
+            return str.Replace("\"", "\"\"", StringComparison.Ordinal);
+        }
+    }
+
     internal sealed class Types_Ps1Xml
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         static MethodInfo GetMethodInfo(Type type, string method)
         {
             return type.GetMethod(method, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
