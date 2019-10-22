@@ -137,17 +137,17 @@ namespace System.Management.Automation.Runspaces
                 "System.Management.Automation.ScriptBlock",
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
-            var tdPSExtendedError = new ExtendedTypeDefinition(
+            var extendedError = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord#PSExtendedError",
                 ViewsOf_System_Management_Automation_GetError());
-            tdPSExtendedError.TypeNames.Add("System.Exception#PSExtendedError");
-            yield return tdPSExtendedError;
+            extendedError.TypeNames.Add("System.Exception#PSExtendedError");
+            yield return extendedError;
 
-            var tdErrorRecord_Exception = new ExtendedTypeDefinition(
+            var errorRecord_Exception = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
-            tdErrorRecord_Exception.TypeNames.Add("System.Exception");
-            yield return tdErrorRecord_Exception;
+            errorRecord_Exception.TypeNames.Add("System.Exception");
+            yield return errorRecord_Exception;
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.WarningRecord",
