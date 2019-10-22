@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
-        private readonly ConnectionOptions _connectionOptions  = new ConnectionOptions{ };
+        private readonly ConnectionOptions _connectionOptions  = new ConnectionOptions { };
 
         /// <summary>
         /// Sets connection options.
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool foundRecord = false;
                 StringBuilder queryString = new StringBuilder();
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions );
+                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
                 if (Id != null)
                 {
