@@ -26,6 +26,14 @@ Describe 'Get-Error tests' -Tag CI {
 
         $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*InnerException*'
+
+        $err = Get-Error
+
+        # need to exercise the formatter
+        $null = $err | Out-String
+        $err.GetType().Name | Should -BeExactly 'ErrorRecord'
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
     }
 
     It 'Get-Error -Newest `<count>` works: <scenario>' -TestCases @(

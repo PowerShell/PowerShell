@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "Error",
         HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp",
         DefaultParameterSetName = NewestParameterSetName)]
-    [OutputType("PSExtendedError")]
+    [OutputType(typeof(ErrorRecord), typeof(Exception))]
     public sealed class GetErrorCommand : PSCmdlet
     {
         internal const string ErrorParameterSetName = "Error";
@@ -76,11 +76,27 @@ namespace Microsoft.PowerShell.Commands
             foreach (object errorRecord in errorRecords)
             {
                 PSObject obj = PSObject.AsPSObject(errorRecord);
-                obj.TypeNames.Insert(0, "PSExtendedError");
 
-                // Remove some types so they don't get rendered by those formats
-                obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
-                obj.TypeNames.Remove("System.Exception");
+                if (obj.TypeNames.Contains("System.Management.Automation.ErrorRecord"))
+                {
+                    if (!obj.TypeNames.Contains("System.Management.Automation.ErrorRecord#PSExtendedError"))
+                    {
+                        obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#PSExtendedError");
+
+                        // Need to remove so this rendering doesn't take precedence
+                        obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
+                    }
+                }
+                else if (obj.TypeNames.Contains("System.Exception"))
+                {
+                    if (!obj.TypeNames.Contains("System.Exception#PSExtendedError"))
+                    {
+                        obj.TypeNames.Insert(0, "System.Exception#PSExtendedError");
+
+                        // Need to remove so this rendering doesn't take precedence
+                        obj.TypeNames.Remove("System.Exception");
+                    }
+                }
 
                 if (addErrorIdentifier)
                 {
