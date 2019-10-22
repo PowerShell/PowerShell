@@ -925,7 +925,10 @@ namespace System.Management.Automation.Runspaces
             // Copy the attribute collection if necessary...
             Collection<Attribute> attrs = null;
             if (_attributes != null && _attributes.Count > 0)
+            {
                 attrs = new Collection<Attribute>(_attributes);
+            }
+
             return new SessionStateVariableEntry(Name, Value, Description, Options, attrs, Visibility);
         }
 
@@ -1078,7 +1081,10 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal Collection<T> LookUpByName(string name)
         {
-            if (name == null) { throw new PSArgumentNullException(nameof(name)); }
+            if (name == null)
+            {
+                throw new PSArgumentNullException(nameof(name));
+            }
 
             Collection<T> result = new Collection<T>();
             WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
@@ -1146,7 +1152,9 @@ namespace System.Management.Automation.Runspaces
         public void Remove(string name, object type)
         {
             if (name == null)
+            {
                 throw new ArgumentNullException(nameof(name));
+            }
 
             lock (_syncObject)
             {
@@ -1162,7 +1170,10 @@ namespace System.Management.Automation.Runspaces
                 {
                     T element = _internalCollection[i];
                     if (element == null)
+                    {
                         continue;
+                    }
+
                     if ((objType == null || element.GetType() == objType) &&
                         string.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1179,7 +1190,9 @@ namespace System.Management.Automation.Runspaces
         public void Add(T item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
 
             lock (_syncObject)
             {
@@ -1194,7 +1207,9 @@ namespace System.Management.Automation.Runspaces
         public void Add(IEnumerable<T> items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             lock (_syncObject)
             {
@@ -1762,7 +1777,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Microsoft.PowerShell.ExecutionPolicy ExecutionPolicy
         {
-            get { return _executionPolicy; }
+            get
+            {
+                return _executionPolicy;
+            }
 
             set
             {
@@ -1879,7 +1897,10 @@ namespace System.Management.Automation.Runspaces
         internal void ImportPSCoreModule(string[] name)
         {
             if (name == null)
+            {
                 throw new ArgumentNullException(nameof(name));
+            }
+
             foreach (string n in name)
             {
                 CoreModulesToImport.Add(n);
@@ -1911,7 +1932,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_assemblies == null)
+                {
                     Interlocked.CompareExchange(ref _assemblies, new InitialSessionStateEntryCollection<SessionStateAssemblyEntry>(), null);
+                }
+
                 return _assemblies;
             }
         }
@@ -1926,7 +1950,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_types == null)
+                {
                     Interlocked.CompareExchange(ref _types, new InitialSessionStateEntryCollection<SessionStateTypeEntry>(), null);
+                }
+
                 return _types;
             }
         }
@@ -1940,7 +1967,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_formats == null)
+                {
                     Interlocked.CompareExchange(ref _formats, new InitialSessionStateEntryCollection<SessionStateFormatEntry>(), null);
+                }
+
                 return _formats;
             }
         }
@@ -1962,7 +1992,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_providers == null)
+                {
                     Interlocked.CompareExchange(ref _providers, new InitialSessionStateEntryCollection<SessionStateProviderEntry>(), null);
+                }
+
                 return _providers;
             }
         }
@@ -1977,7 +2010,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_commands == null)
+                {
                     Interlocked.CompareExchange(ref _commands, new InitialSessionStateEntryCollection<SessionStateCommandEntry>(), null);
+                }
+
                 return _commands;
             }
         }
@@ -1991,7 +2027,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_unresolvedCommandsToExpose == null)
+                {
                     Interlocked.CompareExchange(ref _unresolvedCommandsToExpose, new HashSet<string>(StringComparer.OrdinalIgnoreCase), null);
+                }
+
                 return _unresolvedCommandsToExpose;
             }
         }
@@ -2003,7 +2042,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_commandModifications == null)
+                {
                     Interlocked.CompareExchange(ref _commandModifications, new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase), null);
+                }
+
                 return _commandModifications;
             }
         }
@@ -2015,7 +2057,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_dynamicVariablesToDefine == null)
+                {
                     Interlocked.CompareExchange(ref _dynamicVariablesToDefine, new List<Hashtable>(), null);
+                }
+
                 return _dynamicVariablesToDefine;
             }
         }
@@ -2029,7 +2074,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_variables == null)
+                {
                     Interlocked.CompareExchange(ref _variables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
+                }
+
                 return _variables;
             }
         }
@@ -2043,7 +2091,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_environmentVariables == null)
+                {
                     Interlocked.CompareExchange(ref _environmentVariables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
+                }
+
                 return _environmentVariables;
             }
         }
@@ -2057,7 +2108,10 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 if (_startupScripts == null)
+                {
                     Interlocked.CompareExchange(ref _startupScripts, new HashSet<string>(), null);
+                }
+
                 return _startupScripts;
             }
         }
@@ -2175,7 +2229,10 @@ namespace System.Management.Automation.Runspaces
         private void Bind_SetVariables(SessionStateInternal ss)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.LoadVariablesStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadVariablesStart();
+            }
 
             // Add all of the variables to session state...
             foreach (SessionStateVariableEntry var in Variables)
@@ -2183,64 +2240,105 @@ namespace System.Management.Automation.Runspaces
                 ss.AddSessionStateEntry(var);
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.LoadVariablesStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadVariablesStop();
+            }
         }
 
         private void Bind_SetEnvironment()
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.LoadEnvironmentVariablesStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadEnvironmentVariablesStart();
+            }
 
             foreach (SessionStateVariableEntry var in EnvironmentVariables)
             {
                 Environment.SetEnvironmentVariable(var.Name, var.Value.ToString());
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.LoadEnvironmentVariablesStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadEnvironmentVariablesStop();
+            }
         }
 
         private void Bind_UpdateTypes(ExecutionContext context, bool updateOnly)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.UpdateTypeTableStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.UpdateTypeTableStart();
+            }
+
             this.UpdateTypes(context, updateOnly);
-            if (etwEnabled) RunspaceEventSource.Log.UpdateTypeTableStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.UpdateTypeTableStop();
+            }
         }
 
         private void Bind_UpdateFormats(ExecutionContext context, bool updateOnly)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.UpdateFormatTableStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.UpdateFormatTableStart();
+            }
 
             this.UpdateFormats(context, updateOnly);
 
-            if (etwEnabled) RunspaceEventSource.Log.UpdateFormatTableStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.UpdateFormatTableStop();
+            }
         }
 
         private void Bind_LoadProviders(SessionStateInternal ss)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.LoadProvidersStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadProvidersStart();
+            }
 
             // Add all of the providers to session state...
             foreach (SessionStateProviderEntry provider in Providers)
             {
-                if (etwEnabled) RunspaceEventSource.Log.LoadProviderStart(provider.Name);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadProviderStart(provider.Name);
+                }
+
                 ss.AddSessionStateEntry(provider);
-                if (etwEnabled) RunspaceEventSource.Log.LoadProviderStop(provider.Name);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadProviderStop(provider.Name);
+                }
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.LoadProvidersStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadProvidersStop();
+            }
         }
 
         private void Bind_BindCommands(PSModuleInfo module, bool noClobber, bool local, SessionStateInternal ss)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.LoadCommandsStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadCommandsStart();
+            }
 
             foreach (SessionStateCommandEntry cmd in Commands)
             {
-                if (etwEnabled) RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
+                }
 
                 SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
                 if (ssce != null)
@@ -2295,16 +2393,25 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.LoadCommandStop(cmd.Name);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadCommandStop(cmd.Name);
+                }
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.LoadCommandsStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadCommandsStop();
+            }
         }
 
         private void Bind_LoadAssemblies(ExecutionContext context)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.LoadAssembliesStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadAssembliesStart();
+            }
 
             // Load the assemblies and initialize the assembly cache...
             foreach (SessionStateAssemblyEntry ssae in Assemblies)
@@ -2340,10 +2447,16 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.LoadAssemblyStop(ssae.Name, ssae.FileName);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadAssemblyStop(ssae.Name, ssae.FileName);
+                }
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.LoadAssembliesStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.LoadAssembliesStop();
+            }
         }
 
         internal Exception BindRunspace(Runspace initializedRunspace, PSTraceSource runspaceInitTracer)
@@ -2912,7 +3025,10 @@ namespace System.Management.Automation.Runspaces
 
                     foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
                     {
-                        if (!found) { found = true; }
+                        if (!found)
+                        {
+                            found = true;
+                        }
 
                         try
                         {
@@ -2965,7 +3081,7 @@ namespace System.Management.Automation.Runspaces
             ExecutionContext context)
         {
             bool isWildCardPattern = WildcardPattern.ContainsWildcardCharacters(commandPattern);
-            var searchOptions = (isWildCardPattern) ?
+            var searchOptions = isWildCardPattern ?
                 SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveFunctionPatterns | SearchResolutionOptions.SearchAllScopes :
                 SearchResolutionOptions.ResolveFunctionPatterns | SearchResolutionOptions.SearchAllScopes;
 
@@ -2984,12 +3100,18 @@ namespace System.Management.Automation.Runspaces
                         continue;
                     }
 
-                    if (!found) { found = true; }
+                    if (!found)
+                    {
+                        found = true;
+                    }
 
                     yield return commandInfo;
 
                     // Return first match unless a wild card pattern is submitted.
-                    if (!isWildCardPattern) { break; }
+                    if (!isWildCardPattern)
+                    {
+                        break;
+                    }
                 }
 
                 if (found || (cmdOrigin == CommandOrigin.Internal))
@@ -5081,7 +5203,10 @@ end {
 
             foreach (Type type in assemblyTypes)
             {
-                if (!HasDefaultConstructor(type)) { continue; }
+                if (!HasDefaultConstructor(type))
+                {
+                    continue;
+                }
 
                 // Check for cmdlets
                 if (IsCmdletClass(type) && TryGetCustomAttribute(type, out CmdletAttribute cmdletAttribute))
@@ -5102,9 +5227,15 @@ end {
                     }
 
                     SessionStateCmdletEntry cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
-                    if (psSnapInInfo != null) { cmdlet.SetPSSnapIn(psSnapInInfo); }
+                    if (psSnapInInfo != null)
+                    {
+                        cmdlet.SetPSSnapIn(psSnapInInfo);
+                    }
 
-                    if (moduleInfo != null) { cmdlet.SetModule(moduleInfo); }
+                    if (moduleInfo != null)
+                    {
+                        cmdlet.SetModule(moduleInfo);
+                    }
 
                     cmdlets = cmdlets ?? new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
                     cmdlets.Add(cmdletName, cmdlet);
@@ -5122,7 +5253,10 @@ end {
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
                             if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
 
-                            if (moduleInfo != null) { aliasEntry.SetModule(moduleInfo); }
+                            if (moduleInfo != null)
+                            {
+                                aliasEntry.SetModule(moduleInfo);
+                            }
 
                             aliasList.Add(aliasEntry);
                         }
@@ -5151,9 +5285,15 @@ end {
                     }
 
                     SessionStateProviderEntry provider = new SessionStateProviderEntry(providerName, type, helpFile);
-                    if (psSnapInInfo != null) { provider.SetPSSnapIn(psSnapInInfo); }
+                    if (psSnapInInfo != null)
+                    {
+                        provider.SetPSSnapIn(psSnapInInfo);
+                    }
 
-                    if (moduleInfo != null) { provider.SetModule(moduleInfo); }
+                    if (moduleInfo != null)
+                    {
+                        provider.SetModule(moduleInfo);
+                    }
 
                     providers = providers ?? new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
                     providers.Add(providerName, provider);
@@ -5163,6 +5303,7 @@ end {
             }
         }
 
+        [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1001:CommasMustBeSpacedCorrectly", Justification = "Reviewed.")]
         private static void InitializeCoreCmdletsAndProviders(
             PSSnapInInfo psSnapInInfo,
             out Dictionary<string, SessionStateCmdletEntry> cmdlets,
