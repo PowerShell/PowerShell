@@ -188,7 +188,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                throw PSTraceSource.NewArgumentException("fileName");
+                throw PSTraceSource.NewArgumentException(nameof(fileName));
             }
 
             FileName = fileName.Trim();
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeTable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeTable");
+                throw PSTraceSource.NewArgumentException(nameof(typeTable));
             }
 
             TypeTable = typeTable;
@@ -219,7 +219,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeData");
+                throw PSTraceSource.NewArgumentException(nameof(typeData));
             }
 
             TypeData = typeData;
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                throw PSTraceSource.NewArgumentException("fileName");
+                throw PSTraceSource.NewArgumentException(nameof(fileName));
             }
 
             FileName = fileName.Trim();
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (formattable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("formattable");
+                throw PSTraceSource.NewArgumentException(nameof(formattable));
             }
 
             Formattable = formattable;
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeDefinition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeDefinition");
+                throw PSTraceSource.NewArgumentException(nameof(typeDefinition));
             }
 
             FormatData = typeDefinition;
@@ -3652,7 +3652,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSTraceSource.NewArgumentNullException("name");
+                PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Check whether the mshsnapin is present in the registry.
