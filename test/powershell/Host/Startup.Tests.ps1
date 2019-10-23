@@ -26,7 +26,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
-            'System.Drawing.Primitives.dll'
             'System.IO.FileSystem.AccessControl.dll'
             'System.IO.FileSystem.dll'
             'System.IO.FileSystem.DriveInfo.dll'
@@ -69,6 +68,7 @@ Describe "Validate start of console host" -Tag CI {
             $allowedAssemblies += @(
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
                 'System.DirectoryServices.dll'
+                'System.Drawing.Primitives.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
