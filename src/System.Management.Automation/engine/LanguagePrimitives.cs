@@ -5527,15 +5527,32 @@ namespace System.Management.Automation
                 }
             }
 
-            var converter = TypeDescriptor.GetConverter(type);
-            if (converter.GetType() != typeof(TypeConverter))
+            // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
+            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
+            if (typeConverters.Any())
             {
                 return true;
             }
 
-            // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
-            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-            if (typeConverters.Any())
+            return false;
+        }
+
+        private static bool TypeConverterPossiblyExists(Type fromType, Type toType)
+        {
+            var converter = TypeDescriptor.GetConverter(fromType);
+
+            // Generic TypeConverter can convert all types to string
+            // this violates specific type conversions so we exclude it.
+            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertTo(toType))
+            {
+                return true;
+            }
+
+            converter = TypeDescriptor.GetConverter(toType);
+
+            // Generic TypeConverter can convert all types to string
+            // this violates specific type conversions so we exclude it.
+            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertFrom(fromType))
             {
                 return true;
             }
@@ -5716,7 +5733,7 @@ namespace System.Management.Automation
                 converter = FigurePropertyConversion(fromType, toType, ref rank);
             }
 
-            if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
+            if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType) || TypeConverterPossiblyExists(fromType, toType)
                 || (converter != null && valueDependentConversion != null))
             {
                 ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
