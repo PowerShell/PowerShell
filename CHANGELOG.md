@@ -1,6 +1,6 @@
 # Changelog
 
-## v7.0.0-preview.5 - 10/22/2019
+## v7.0.0-preview.5 - 10/23/2019
 
 ### Breaking Changes
 
