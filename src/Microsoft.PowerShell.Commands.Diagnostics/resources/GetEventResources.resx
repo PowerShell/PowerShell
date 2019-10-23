@@ -282,5 +282,7 @@ The defined template is following:
   <data name="Counter1FileLimit" xml:space="preserve">
     <value>You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file in each command.</value>
   </data>
-
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Log count ({0}) is exceeded Windows Event Log API limit ({1}). Adjust filter to return less log names.</value>
+  </data>
 </root>

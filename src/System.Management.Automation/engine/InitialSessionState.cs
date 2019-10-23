@@ -4557,6 +4557,7 @@ end {
                     new SessionStateAliasEntry("rp", "Remove-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rmo", "Remove-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rv", "Remove-Variable", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("gerr", "Get-Error", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rvpa", "Resolve-Path", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sal", "Set-Alias", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", string.Empty, ReadOnly),
