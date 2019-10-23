@@ -1490,13 +1490,6 @@ namespace System.Management.Automation
                 return typesXmlConverter;
             }
 
-            typesXmlConverter = TypeDescriptor.GetConverter(type);
-            if (typesXmlConverter != null)
-            {
-                s_tracer.WriteLine("Use intrinsic type converter");
-                return typesXmlConverter;
-            }
-
             var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
             foreach (var typeConverter in typeConverters)
             {
@@ -1506,6 +1499,13 @@ namespace System.Management.Automation
 
                 // The return statement makes sure we only process the first TypeConverterAttribute
                 return NewConverterInstance(assemblyQualifiedtypeName);
+            }
+
+            typesXmlConverter = TypeDescriptor.GetConverter(type);
+            if (typesXmlConverter != null)
+            {
+                s_tracer.WriteLine("Use intrinsic type converter");
+                return typesXmlConverter;
             }
 
             return null;
