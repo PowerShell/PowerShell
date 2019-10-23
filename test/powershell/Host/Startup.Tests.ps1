@@ -26,6 +26,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
+            'System.Drawing.Primitives.dll'
             'System.IO.FileSystem.AccessControl.dll'
             'System.IO.FileSystem.dll'
             'System.IO.FileSystem.DriveInfo.dll'
