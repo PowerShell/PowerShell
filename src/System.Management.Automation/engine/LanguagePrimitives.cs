@@ -5733,8 +5733,8 @@ namespace System.Management.Automation
                 converter = FigurePropertyConversion(fromType, toType, ref rank);
             }
 
-            if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType) || TypeConverterPossiblyExists(fromType, toType)
-                || (converter != null && valueDependentConversion != null))
+            if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
+                || (converter != null && valueDependentConversion != null) || (converter == null && TypeConverterPossiblyExists(fromType, toType)))
             {
                 ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
                 customConverter.tryfirstConverter = valueDependentConversion;
