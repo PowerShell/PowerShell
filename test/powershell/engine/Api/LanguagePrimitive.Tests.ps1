@@ -22,10 +22,22 @@ Describe "Language Primitive Tests" -Tags "CI" {
         { $mshObj -eq [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [Object]) } | Should -BeTrue
     }
 
-    It "Test Conversion of an IEnumerable to object[]" {
+    It "Test conversion of an IEnumerable to object[]" {
         $col = [System.Diagnostics.Process]::GetCurrentProcess().Modules
         $ObjArray = [System.Management.Automation.LanguagePrimitives]::ConvertTo($col, [object[]])
         $ObjArray.Length | Should -Be $col.Count
+    }
+
+    It "Test convertion with .Net Core intrinsic type convertor" {
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('2,3', [System.Drawing.Point])
+        $result | Should -BeOfType [System.Drawing.Point]
+        $result.X | Should -Be 2
+        $result.Y | Should -Be 3
+
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo([PSObject]'2,3', [System.Drawing.Point])
+        $result | Should -BeOfType [System.Drawing.Point]
+        $result.X | Should -Be 2
+        $result.Y | Should -Be 3
     }
 
     It "Casting recursive array to bool should not cause crash" {

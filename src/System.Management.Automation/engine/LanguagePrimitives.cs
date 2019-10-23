@@ -1490,6 +1490,13 @@ namespace System.Management.Automation
                 return typesXmlConverter;
             }
 
+            typesXmlConverter = TypeDescriptor.GetConverter(type);
+            if (typesXmlConverter != null)
+            {
+                s_tracer.WriteLine("Use intrinsic type converter");
+                return typesXmlConverter;
+            }
+
             var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
             foreach (var typeConverter in typeConverters)
             {
@@ -5518,6 +5525,11 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+            }
+
+            if (TypeDescriptor.GetConverter(type) != null)
+            {
+                return true;
             }
 
             // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
