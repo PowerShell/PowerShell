@@ -5527,7 +5527,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (TypeDescriptor.GetConverter(type) != null)
+            if (Convert.GetTypeCode(type) != TypeCode.Object && TypeDescriptor.GetConverter(type) != null)
             {
                 return true;
             }
