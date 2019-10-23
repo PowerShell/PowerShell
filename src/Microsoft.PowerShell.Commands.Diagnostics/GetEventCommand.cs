@@ -963,6 +963,14 @@ namespace Microsoft.PowerShell.Commands
 
                 case "GetLogSet":
                     {
+                        const int WindowsEventLogAPILimit = 256;
+                        if (_logNamesMatchingWildcard.Count > WindowsEventLogAPILimit)
+                        {
+                            string msg = _resourceMgr.GetString("LogCountLimitExceeded");
+                            Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, _logNamesMatchingWildcard.Count, WindowsEventLogAPILimit));
+                            ThrowTerminatingError(new ErrorRecord(exc, "LogCountLimitExceeded", ErrorCategory.LimitsExceeded, null));
+                        }
+
                         result.Append(queryListOpen);
                         uint queryId = 0;
                         foreach (string log in _logNamesMatchingWildcard)
