@@ -21,6 +21,8 @@ namespace Microsoft.PowerShell.Commands
         internal const string ErrorParameterSetName = "Error";
         internal const string NewestParameterSetName = "Newest";
         internal const string AliasNewest = "Last";
+        internal const string ErrorRecordPSExtendedError = "System.Management.Automation.ErrorRecord#PSExtendedError";
+        internal const string ExceptionPSExtendedError = "System.Exception#PSExtendedError";
 
         /// <summary>
         /// Gets or sets the error object to resolve.
@@ -79,21 +81,21 @@ namespace Microsoft.PowerShell.Commands
 
                 if (obj.TypeNames.Contains("System.Management.Automation.ErrorRecord"))
                 {
-                    if (!obj.TypeNames.Contains("System.Management.Automation.ErrorRecord#PSExtendedError"))
+                    if (!obj.TypeNames.Contains(ErrorRecordPSExtendedError))
                     {
-                        obj.TypeNames.Insert(0, "System.Management.Automation.ErrorRecord#PSExtendedError");
+                        obj.TypeNames.Insert(0, ErrorRecordPSExtendedError);
 
-                        // Need to remove so this rendering doesn't take precedence
+                        // Need to remove so this rendering doesn't take precedence as ErrorRecords is "OutOfBand"
                         obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
                     }
                 }
                 else if (obj.TypeNames.Contains("System.Exception"))
                 {
-                    if (!obj.TypeNames.Contains("System.Exception#PSExtendedError"))
+                    if (!obj.TypeNames.Contains(ExceptionPSExtendedError))
                     {
-                        obj.TypeNames.Insert(0, "System.Exception#PSExtendedError");
+                        obj.TypeNames.Insert(0, ExceptionPSExtendedError);
 
-                        // Need to remove so this rendering doesn't take precedence
+                        // Need to remove so this rendering doesn't take precedence as Exception is "OutOfBand"
                         obj.TypeNames.Remove("System.Exception");
                     }
                 }
