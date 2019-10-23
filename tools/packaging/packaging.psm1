@@ -128,14 +128,14 @@ function Start-PSPackage {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp3.0"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp3.1"           ## Last build wasn't for CoreCLR
         } else {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp3.0"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp3.1"           ## Last build wasn't for CoreCLR
         }
 
         # Make sure the most recent build satisfies the package requirement
@@ -215,20 +215,11 @@ function Start-PSPackage {
                 # Copy files which go into the root package
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
 
-                # files not to include as individual files.  These files will be included in the root package
-                # pwsh.exe is just dotnet.exe renamed by dotnet.exe during the build.
-                $toExclude = @(
-                    'hostfxr.dll'
-                    'hostpolicy.dll'
-                    'libhostfxr.so'
-                    'libhostpolicy.so'
-                    'libhostfxr.dylib'
-                    'libhostpolicy.dylib'
-                    'Publish'
-                    'pwsh.exe'
-                    )
-                # Copy file which go into symbols.zip
-                Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
+                $signingXml = [xml] (Get-Content (Join-Path $PSScriptRoot "..\releaseBuild\signing.xml" -Resolve))
+                # Only include the files we sign for compliance scanning, those are the files we build.
+                $filesToInclude = $signingXml.SignConfigXML.job.file.src | Where-Object {  -not $_.endswith('pwsh.exe') -and ($_.endswith(".dll") -or $_.endswith(".exe")) } | ForEach-Object { ($_ -split '\\')[-1] }
+                $filesToInclude += $filesToInclude | ForEach-Object { $_ -replace '.dll', '.pdb' }
+                Get-ChildItem -Path $buildSource | Where-Object { $_.Name -in $filesToInclude } | Copy-Item -Destination $symbolsSource -Recurse
 
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
@@ -1449,7 +1440,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp3.0")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp3.1")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1548,7 +1539,7 @@ function New-ILNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp3.0') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp3.1') -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1559,6 +1550,16 @@ function New-ILNugetPackage
             if ($linuxExceptionList -notcontains $file )
             {
                 CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+            }
+
+            if ($file -eq "Microsoft.PowerShell.SDK.dll")
+            {
+                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # This is to make 'Add-Type' work in application that hosts PowerShell.
+
+                $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
+                $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
+                Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
             }
 
             #region nuspec
@@ -1905,7 +1906,7 @@ function New-ReferenceAssembly
             Write-Log "Running: dotnet $arguments"
             Start-NativeExecution -sb {dotnet $arguments}
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp3.0/$assemblyName.dll"
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp3.1/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -2743,10 +2744,6 @@ function New-MSIPackage
     else
     {
         $errorMessage = "Failed to create $msiLocationPath"
-        if ($null -ne $env:CI)
-        {
-           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
-        }
         throw $errorMessage
     }
 }
@@ -2817,6 +2814,17 @@ function New-MSIXPackage
     if (([Version]$ProductVersion).Revision -eq -1) {
         $ProductVersion += ".0"
     }
+
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
@@ -3133,6 +3141,12 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 
         if ($packageBuildTokens)
         {
+            if($packageBuildTokens.length -gt 4)
+            {
+                # MSIX will fail if it is more characters
+                $packageBuildTokens = $packageBuildTokens.Substring(0,4)
+            }
+
             $packageVersion = $packageVersion + '.' + $packageBuildTokens
         }
         else
@@ -3279,7 +3293,7 @@ function New-GlobalToolNupkg
     }
 
     $packageInfo | ForEach-Object {
-        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp3.0/any") -ItemType Directory
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp3.1/any") -ItemType Directory
 
         $packageType = $_.Type
 

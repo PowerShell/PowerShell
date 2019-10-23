@@ -35,16 +35,19 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run in task.</param>
         /// <param name="usingValuesMap">Using values passed into script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocationPath">Current working directory.</param>
         /// <param name="dataStreamWriter">Cmdlet data stream writer.</param>
         public PSTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
-            PSTaskDataStreamWriter dataStreamWriter) 
+            string currentLocationPath,
+            PSTaskDataStreamWriter dataStreamWriter)
             : base(
                 scriptBlock,
                 usingValuesMap,
-                dollarUnderbar)
+                dollarUnderbar,
+                currentLocationPath)
         {
             _dataStreamWriter = dataStreamWriter;
         }
@@ -127,7 +130,7 @@ namespace System.Management.Automation.PSTasks
                     new PSStreamObject(PSStreamObjectType.Information, item));
             }
         }
-        
+
         #endregion
 
         #region Event handlers
@@ -176,15 +179,18 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value for script block.</param>
+        /// <param name="currentLocationPath">Current working directory.</param>
         /// <param name="job">Job object associated with task.</param>
         public PSJobTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
+            string currentLocationPath,
             Job job) : base(
                 scriptBlock,
                 usingValuesMap,
-                dollarUnderbar)
+                dollarUnderbar,
+                currentLocationPath)
         {
             _job = job;
         }
@@ -309,6 +315,7 @@ namespace System.Management.Automation.PSTasks
         private readonly Dictionary<string, object> _usingValuesMap;
         private readonly object _dollarUnderbar;
         private readonly int _id;
+        private readonly string _currentLocationPath;
         private Runspace _runspace;
         protected PowerShell _powershell;
         protected PSDataCollection<PSObject> _output;
@@ -361,8 +368,8 @@ namespace System.Management.Automation.PSTasks
 
         #region Constructor
 
-        private PSTaskBase() 
-        { 
+        private PSTaskBase()
+        {
             _id = Interlocked.Increment(ref s_taskId);
         }
 
@@ -372,14 +379,17 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocationPath">Current working directory.</param>
         protected PSTaskBase(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
-            object dollarUnderbar) : this()
+            object dollarUnderbar,
+            string currentLocationPath) : this()
         {
             _scriptBlockToRun = scriptBlock;
             _usingValuesMap = usingValuesMap;
             _dollarUnderbar = dollarUnderbar;
+            _currentLocationPath = currentLocationPath;
         }
 
         #endregion
@@ -422,11 +432,27 @@ namespace System.Management.Automation.PSTasks
 
             // Create and open Runspace for this task to run in
             var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) 
+            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
                 ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
             _runspace = RunspaceFactory.CreateRunspace(iss);
             _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
             _runspace.Open();
+
+            // If available, set current working directory on the runspace.
+            // Temporarily set the newly created runspace as the thread default runspace for any needed module loading.
+            if (_currentLocationPath != null)
+            {
+                var oldDefaultRunspace = Runspace.DefaultRunspace;
+                try
+                {
+                    Runspace.DefaultRunspace = _runspace;
+                    _runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
+                }
+                finally
+                {
+                    Runspace.DefaultRunspace = oldDefaultRunspace;
+                }
+            }
 
             // Create the PowerShell command pipeline for the provided script block
             // The script will run on the provided Runspace in a new thread by default
@@ -475,7 +501,7 @@ namespace System.Management.Automation.PSTasks
         private readonly PSCmdlet _cmdlet;
         private readonly PSDataCollection<PSStreamObject> _dataStream;
         private readonly int _cmdletThreadId;
-        
+
         #endregion
 
         #region Properties
@@ -602,11 +628,15 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly ManualResetEvent _addAvailable;
-        private readonly ManualResetEvent _stopAll;
-        private readonly Dictionary<int, PSTaskBase> _taskPool;
         private readonly int _sizeLimit;
+        private readonly ManualResetEvent _stopAll;
         private readonly object _syncObject;
+        private readonly Dictionary<int, PSTaskBase> _taskPool;
+        private readonly WaitHandle[] _waitHandles;
         private bool _isOpen;
+
+        private const int AddAvailable = 0;
+        private const int Stop = 1;
 
         #endregion
 
@@ -625,6 +655,11 @@ namespace System.Management.Automation.PSTasks
             _syncObject = new object();
             _addAvailable = new ManualResetEvent(true);
             _stopAll = new ManualResetEvent(false);
+            _waitHandles = new WaitHandle[]
+            {
+                _addAvailable,      // index 0
+                _stopAll,           // index 1
+            };
             _taskPool = new Dictionary<int, PSTaskBase>(size);
         }
 
@@ -672,46 +707,21 @@ namespace System.Management.Automation.PSTasks
         /// This method is not multi-thread safe and assumes only one thread waits and adds tasks.
         /// </summary>
         /// <param name="task">Task to be added to pool.</param>
-        /// <param name="dataStreamWriter">Optional cmdlet data stream writer.</param>
         /// <returns>True when task is successfully added.</returns>
-        public bool Add(
-            PSTaskBase task, 
-            PSTaskDataStreamWriter dataStreamWriter = null)
+        public bool Add(PSTaskBase task)
         {
             if (!_isOpen)
             {
                 return false;
             }
 
-            WaitHandle[] waitHandles;
-            if (dataStreamWriter != null)
-            {
-                waitHandles = new WaitHandle[]
-                {
-                    _addAvailable,                          // index 0
-                    _stopAll,                               // index 1
-                    dataStreamWriter.DataAddedWaitHandle    // index 2
-                };
-            }
-            else
-            {
-                waitHandles = new WaitHandle[]
-                {
-                    _addAvailable,                          // index 0
-                    _stopAll,                               // index 1
-                };
-            }
+            // Block until either space is available, or a stop is commanded
+            var index = WaitHandle.WaitAny(_waitHandles);
 
-            // Block until either room is available, data is ready for writing, or a stop command
-            while (true)
+            switch (index)
             {
-                var index = WaitHandle.WaitAny(waitHandles);
-
-                // Add new task
-                if (index == 0)
-                {
+                case AddAvailable:
                     task.StateChanged += HandleTaskStateChangedDelegate;
-
                     lock (_syncObject)
                     {
                         if (!_isOpen)
@@ -729,19 +739,12 @@ namespace System.Management.Automation.PSTasks
                     }
 
                     return true;
-                }
 
-                // Stop all
-                if (index == 1)
-                {
+                case Stop:
                     return false;
-                }
-                
-                // Data ready for writing
-                if (index == 2)
-                {
-                    dataStreamWriter.WriteImmediate();
-                }
+
+                default:
+                    return false;
             }
         }
 
@@ -763,7 +766,7 @@ namespace System.Management.Automation.PSTasks
             // Accept no more input
             Close();
             _stopAll.Set();
-            
+
             // Stop all running tasks
             lock (_syncObject)
             {
@@ -788,7 +791,7 @@ namespace System.Management.Automation.PSTasks
         #region Private Methods
 
         private void HandleTaskStateChangedDelegate(object sender, PSInvocationStateChangedEventArgs args) => HandleTaskStateChanged(sender, args);
-        
+
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
             var task = sender as PSTaskBase;
@@ -829,10 +832,10 @@ namespace System.Management.Automation.PSTasks
                 try
                 {
                     PoolComplete.SafeInvoke(
-                        this, 
+                        this,
                         new EventArgs());
                 }
-                catch 
+                catch
                 {
                     Dbg.Assert(false, "Exceptions should not be thrown on event thread");
                 }
@@ -896,8 +899,8 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public override bool HasMoreData
         {
-            get 
-            { 
+            get
+            {
                 foreach (var childJob in ChildJobs)
                 {
                     if (childJob.HasMoreData)
@@ -925,7 +928,7 @@ namespace System.Management.Automation.PSTasks
         {
             _stopSignaled = true;
             SetJobState(JobState.Stopping);
-            
+
             _taskPool.StopAll();
             SetJobState(JobState.Stopped);
         }
@@ -977,7 +980,7 @@ namespace System.Management.Automation.PSTasks
             // This thread will end once all jobs reach a finished state by either running
             // to completion, terminating with error, or stopped.
             System.Threading.ThreadPool.QueueUserWorkItem(
-                (state) => 
+                (_) =>
                 {
                     foreach (var childJob in ChildJobs)
                     {
@@ -1015,7 +1018,7 @@ namespace System.Management.Automation.PSTasks
 
                 SetJobState(finalState);
             }
-            catch (ObjectDisposedException) 
+            catch (ObjectDisposedException)
             { }
         }
 
@@ -1085,15 +1088,6 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Adds the provided set of breakpoints to the debugger.
-        /// </summary>
-        /// <param name="breakpoints">List of breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
-        {
-            _wrappedDebugger.SetBreakpoints(breakpoints);
-        }
-
-        /// <summary>
         /// Sets the debugger resume action.
         /// </summary>
         /// <param name="resumeAction">Debugger resume action.</param>
@@ -1101,6 +1095,27 @@ namespace System.Management.Automation.PSTasks
         {
             _wrappedDebugger.SetDebuggerAction(resumeAction);
         }
+
+        public override Breakpoint GetBreakpoint(int id) =>
+            _wrappedDebugger.GetBreakpoint(id);
+
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetCommandBreakpoint(command, action, path);
+
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
+            _wrappedDebugger.SetVariableBreakpoint(variableName, accessMode, action, path);
+
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
+            _wrappedDebugger.SetLineBreakpoint(path, line, column, action);
+
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.EnableBreakpoint(breakpoint);
+
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.DisableBreakpoint(breakpoint);
+
+        public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
+            _wrappedDebugger.RemoveBreakpoint(breakpoint);
 
         /// <summary>
         /// Stops a running command.
@@ -1227,15 +1242,17 @@ namespace System.Management.Automation.PSTasks
         /// <param name="scriptBlock">Script block to run.</param>
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
+        /// <param name="currentLocationPath">Current working directory.</param>
         public PSTaskChildJob(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
-            object dollarUnderbar)
+            object dollarUnderbar,
+            string currentLocationPath)
             : base(scriptBlock.ToString(), string.Empty)
 
         {
             PSJobTypeName = nameof(PSTaskChildJob);
-            _task = new PSJobTask(scriptBlock, usingValuesMap, dollarUnderbar, this);
+            _task = new PSJobTask(scriptBlock, usingValuesMap, dollarUnderbar, currentLocationPath, this);
             _task.StateChanged += (sender, args) => HandleTaskStateChange(sender, args);
         }
 

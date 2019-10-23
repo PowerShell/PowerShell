@@ -2381,7 +2381,8 @@ namespace System.Management.Automation
             // 913088-2005/06/06
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
-            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException))
+            // 2019/10/18 - StopUpstreamCommandsException should not be added either
+            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException) && !(e is StopUpstreamCommandsException))
             {
                 try
                 {
@@ -3009,6 +3010,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _debugPreference = value;
                 _isDebugPreferenceSet = true;
             }
@@ -3098,7 +3104,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _warningPreference = value;
@@ -3268,7 +3274,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceSupportedOnlyOnWorkflow);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _errorAction = value;
@@ -3301,6 +3307,11 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _progressPreference = value;
                 _isProgressPreferenceSet = true;
             }
@@ -3335,7 +3346,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _informationPreference = value;

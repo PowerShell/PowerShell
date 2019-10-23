@@ -11,10 +11,9 @@ namespace System.Management.Automation.Runspaces
         {
             var SignatureTypes_GroupingFormat = CustomControl.Create()
                     .StartEntry()
-                        .StartFrame(leftIndent: 4)
+                        .StartFrame()
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"split-path $_.Path")
-                            .AddNewline()
                         .EndFrame()
                     .EndEntry()
                 .EndControl();

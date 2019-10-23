@@ -142,7 +142,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".netcoreapp3.0"></group>
+            <group targetFramework=".netcoreapp3.1"></group>
         </dependencies>
     </metadata>
 </package>

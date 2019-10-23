@@ -95,6 +95,15 @@ jobs:
       - upload_alpine
       - build_macOS
 
+- template: templates/json.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
+      - MacPackageSigningJob
+
 - template: templates/testartifacts.yml
 
 - job: release_json

@@ -5307,6 +5307,127 @@ namespace System.Management.Automation.Language
         #endregion Visitors
     }
 
+    /// <summary>
+    /// An AST representing a syntax element chainable with '&amp;&amp;' or '||'.
+    /// </summary>
+    public abstract class ChainableAst : PipelineBaseAst
+    {
+        /// <summary>
+        /// Construct a new chainable AST with the given extent.
+        /// </summary>
+        /// <param name="extent">The script extent of the AST.</param>
+        protected ChainableAst(IScriptExtent extent) : base(extent)
+        {
+        }
+    }
+
+    /// <summary>
+    /// A command-oriented flow-controlled pipeline chain.
+    /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
+    /// </summary>
+    public class PipelineChainAst : ChainableAst
+    {
+        /// <summary>
+        /// Create a new statement chain AST from two statements and an operator.
+        /// </summary>
+        /// <param name="extent">The extent of the chained statement.</param>
+        /// <param name="lhsChain">The pipeline or pipeline chain to the left of the operator.</param>
+        /// <param name="rhsPipeline">The pipeline to the right of the operator.</param>
+        /// <param name="chainOperator">The operator used.</param>
+        /// <param name="background">True when this chain has been invoked with the background operator, false otherwise.</param>
+        public PipelineChainAst(
+            IScriptExtent extent,
+            ChainableAst lhsChain,
+            PipelineAst rhsPipeline,
+            TokenKind chainOperator,
+            bool background = false)
+            : base(extent)
+        {
+            if (lhsChain == null)
+            {
+                throw new ArgumentNullException(nameof(lhsChain));
+            }
+
+            if (rhsPipeline == null)
+            {
+                throw new ArgumentNullException(nameof(rhsPipeline));
+            }
+
+            if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
+            {
+                throw new ArgumentException(nameof(chainOperator));
+            }
+
+            LhsPipelineChain = lhsChain;
+            RhsPipeline = rhsPipeline;
+            Operator = chainOperator;
+            Background = background;
+
+            SetParent(LhsPipelineChain);
+            SetParent(RhsPipeline);
+        }
+
+        /// <summary>
+        /// The left hand pipeline in the chain.
+        /// </summary>
+        public ChainableAst LhsPipelineChain { get; }
+
+        /// <summary>
+        /// The right hand pipeline in the chain.
+        /// </summary>
+        public PipelineAst RhsPipeline { get; }
+
+        /// <summary>
+        /// The chaining operator used.
+        /// </summary>
+        public TokenKind Operator { get; }
+
+        /// <summary>
+        /// Indicates whether this chain has been invoked with the background operator.
+        /// </summary>
+        public bool Background { get; }
+
+        /// <summary>
+        /// Create a copy of this Ast.
+        /// </summary>
+        public override Ast Copy()
+        {
+            return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+        }
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            return (visitor as ICustomAstVisitor2)?.VisitPipelineChain(this);
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            AstVisitAction action = AstVisitAction.Continue;
+
+            // Can only visit new AST type if using AstVisitor2
+            if (visitor is AstVisitor2 visitor2)
+            {
+                action = visitor2.VisitPipelineChain(this);
+                if (action == AstVisitAction.SkipChildren)
+                {
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = LhsPipelineChain.InternalVisit(visitor);
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = RhsPipeline.InternalVisit(visitor);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+    }
+
     #endregion Flow Control Statements
 
     #region Pipelines
@@ -5342,7 +5463,7 @@ namespace System.Management.Automation.Language
     /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
     /// A pipeline must have at least 1 command.  The first command may be an expression or a command invocation.
     /// </summary>
-    public class PipelineAst : PipelineBaseAst
+    public class PipelineAst : ChainableAst
     {
         /// <summary>
         /// Construct a pipeline from a collection of commands.
@@ -5426,7 +5547,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicates that this pipeline should be run in the background.
         /// </summary>
-        public bool Background { get; private set; }
+        public bool Background { get; internal set; }
 
         /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.
@@ -5450,6 +5571,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the PipelineAst instance.
         /// </summary>
+        /// <returns>A fresh copy of this PipelineAst instance.</returns>
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);
@@ -7064,12 +7186,110 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// The ast representing a ternary expression, e.g. <c>$a ? 1 : 2</c>.
+    /// </summary>
+    public class TernaryExpressionAst : ExpressionAst
+    {
+        /// <summary>
+        /// Initializes a new instance of the a ternary expression.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="condition">The condition operand.</param>
+        /// <param name="ifTrue">The if clause.</param>
+        /// <param name="ifFalse">The else clause.</param>
+        public TernaryExpressionAst(IScriptExtent extent, ExpressionAst condition, ExpressionAst ifTrue, ExpressionAst ifFalse)
+            : base(extent)
+        {
+            Condition = condition ?? throw PSTraceSource.NewArgumentNullException(nameof(condition));
+            IfTrue = ifTrue ?? throw PSTraceSource.NewArgumentNullException(nameof(ifTrue));
+            IfFalse = ifFalse ?? throw PSTraceSource.NewArgumentNullException(nameof(ifFalse));
+
+            SetParent(Condition);
+            SetParent(IfTrue);
+            SetParent(IfFalse);
+        }
+
+        /// <summary>
+        /// Gets the ast for the condition of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst Condition { get; }
+
+        /// <summary>
+        /// Gets the ast for the if-operand of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst IfTrue { get; }
+
+        /// <summary>
+        /// Gets the ast for the else-operand of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst IfFalse { get; }
+
+        /// <summary>
+        /// Copy the TernaryExpressionAst instance.
+        /// </summary>
+        /// <return>
+        /// Retirns a copy of the ast.
+        /// </return>
+        public override Ast Copy()
+        {
+            ExpressionAst newCondition = CopyElement(this.Condition);
+            ExpressionAst newIfTrue = CopyElement(this.IfTrue);
+            ExpressionAst newIfFalse = CopyElement(this.IfFalse);
+            return new TernaryExpressionAst(this.Extent, newCondition, newIfTrue, newIfFalse);
+        }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            if (visitor is ICustomAstVisitor2 visitor2)
+            {
+                return visitor2.VisitTernaryExpression(this);
+            }
+
+            return null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            if (visitor is AstVisitor2 visitor2)
+            {
+                action = visitor2.VisitTernaryExpression(this);
+                if (action == AstVisitAction.SkipChildren)
+                {
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = Condition.InternalVisit(visitor);
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = IfTrue.InternalVisit(visitor);
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = IfFalse.InternalVisit(visitor);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
+    /// <summary>
     /// The ast representing a binary expression, e.g. <c>$a + $b</c>.
     /// </summary>
     public class BinaryExpressionAst : ExpressionAst
     {
         /// <summary>
-        /// Construct a binary expression.
+        /// Initializes a new instance of the binary expression.
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="left">The left hand operand.</param>

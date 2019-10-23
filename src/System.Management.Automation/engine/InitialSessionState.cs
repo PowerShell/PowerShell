@@ -2097,12 +2097,7 @@ namespace System.Management.Automation.Runspaces
 
         private object _syncObject = new Object();
 
-        internal void Bind(ExecutionContext context, bool updateOnly)
-        {
-            Bind(context, updateOnly, null, /*noClobber*/false, /*local*/ false);
-        }
-
-        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local)
+        internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {
             Host = context.EngineHostInterface;
             lock (_syncObject)
@@ -2205,7 +2200,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            SetSessionStateDrive(context, setLocation: false);
+            SetSessionStateDrive(context, setLocation: setLocation);
         }
 
         private void Bind_SetVariables(SessionStateInternal ss)
@@ -2716,14 +2711,7 @@ namespace System.Management.Automation.Runspaces
                 // Or for virtual accounts
                 // WinDir\System32\Microsoft\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
-#if UNIX
-                string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
-#else
-                string userDrivePath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    @"Microsoft\PowerShell\DriveRoots",
-                    directoryName);
-#endif
+                string userDrivePath = Path.Combine(Platform.CacheDirectory, "DriveRoots", directoryName);
 
                 // Create directory if it doesn't exist.
                 if (!System.IO.Directory.Exists(userDrivePath))
@@ -4083,7 +4071,9 @@ $RawUI.SetBufferContents(
             {
                 // Porting note: non-Windows platforms use `clear`
                 return @"
-& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+[Console]::Write((
+    & (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+))
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
@@ -4331,6 +4321,8 @@ end {
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
+
+        internal const ErrorView defaultErrorView = ErrorView.NormalView;
         internal const bool defaultWhatIfPreference = false;
         internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
 
@@ -4413,8 +4405,10 @@ end {
                  ),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                "NormalView",
-                RunspaceInit.ErrorViewDescription
+                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : defaultErrorView,
+                RunspaceInit.ErrorViewDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(ErrorView))
                 ),
             new SessionStateVariableEntry(
                 SpecialVariables.NestedPromptLevel,
@@ -4550,7 +4544,6 @@ end {
                     new SessionStateAliasEntry("mi", "Move-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("mp", "Move-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nal", "New-Alias", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("nbp", "New-PSBreakpoint", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ndr", "New-PSDrive", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ni", "New-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nv", "New-Variable", string.Empty, ReadOnly),
@@ -4564,6 +4557,7 @@ end {
                     new SessionStateAliasEntry("rp", "Remove-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rmo", "Remove-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rv", "Remove-Variable", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("gerr", "Get-Error", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rvpa", "Resolve-Path", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sal", "Set-Alias", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", string.Empty, ReadOnly),

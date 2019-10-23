@@ -93,7 +93,6 @@ namespace System.Management.Automation
         internal static readonly string RunspaceIdNoteProperty = "RunspaceId";
         internal static readonly string ShowComputerNameNoteProperty = "PSShowComputerName";
         internal static readonly string SourceJobInstanceId = "PSSourceJobInstanceId";
-        internal static readonly string SourceLength = "Length";
         internal static readonly string EventObject = "PSEventObject";
         // used by Custom Shell related cmdlets.
         internal const string PSSessionConfigurationNoun = "PSSessionConfiguration";
@@ -1912,7 +1911,7 @@ namespace System.Management.Automation
             string computerName = GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsComputerName);
             Guid runspaceId = GetPropertyValue<Guid>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsRunspaceId);
 
-            ArrayList sourceArgs = new ArrayList();
+            var sourceArgs = new List<object>();
             foreach (object argument in RemotingDecoder.EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsSourceArgs))
             {
                 sourceArgs.Add(argument);

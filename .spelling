@@ -6,6 +6,7 @@
 0-powershell-crossplatform
 0xfeeddeadbeef
 100ms
+2.x
 2ae5d07
 32-bit
 64-bit
@@ -111,6 +112,7 @@ codepage
 commanddiscovery
 commandsearch
 comobject
+composability
 config
 connect-pssession
 consolehost
@@ -320,6 +322,7 @@ interactivetesting
 interop
 interoperation
 invoke-cimmethod
+Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
 iot
@@ -377,6 +380,7 @@ lynda.com
 lzybkr
 mababio
 macos
+macports
 maertendmsft
 mahawar
 markekraus
@@ -467,6 +471,7 @@ offthewoll
 oising
 omi
 omnisharp
+OneDrive
 oneget.org
 opencover
 opencover.zip
@@ -611,6 +616,7 @@ robo210
 ronn
 rpalo
 runspace
+runspaces
 runspaceinit
 runtime
 runtimes
@@ -762,6 +768,7 @@ v6.1.1
 v6.2.0
 v6.2.1
 v6.2.2
+v6.2.3
 validatenotnullorempty
 versioned
 versioning
@@ -840,6 +847,8 @@ CodeFormatter
 StyleCop
 SytzeAndr
 yashrajbharti
+Leonhardt
+tylerleonhardt
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -868,6 +877,8 @@ uninstallation
 vongrippen
 yurko7
 zhenggu
+davinci26
+vedhasp
 analytics
  - docs/debugging/README.md
 corehost

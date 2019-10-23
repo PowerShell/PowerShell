@@ -1,5 +1,77 @@
 # Changelog
 
+## v7.0.0-preview.4 - 09/19/2019
+
+### Engine Updates and Fixes
+
+- Add support to `ActionPreference.Break` to break into debugger when `Debug`, `Error`, `Information`, `Progress`, `Verbose` or `Warning` messages are generated (#8205) (Thanks @KirkMunro!)
+- Enable starting control panel add-ins within PowerShell Core without specifying `.CPL` extension. (#9828)
+
+### Performance
+
+- Make `ForEach-Object` faster for its commonly used scenarios (#10454) and fix `ForEach-Object -Parallel` performance problem with many runspaces (#10455)
+
+### Experimental Features
+
+- Update `PSDesiredStateConfiguration` module version to `2.0.3` and bring new tests; enable compilation to MOF on non-Windows and use of Invoke-DSCResource without LCM (#10516)
+- Add APIs for breakpoint management in runspaces and enable attach to process without `BreakAll` for PowerShell Editor Services (#10338) (Thanks @KirkMunro!)
+- Support [ternary operator](https://github.com/PowerShell/PowerShell-RFC/pull/218) in PowerShell language (#10367)
+
+### General Cmdlet Updates and Fixes
+
+- Add PowerShell Core group policy definitions (#10468)
+- Update console host to support `XTPUSHSGR`/`XTPOPSGR` VT control sequences that are used in [composability scenarios](https://github.com/microsoft/terminal/issues/1796). (#10208)
+- Add `WorkingDirectory` parameter to `Start-Job` (#10324) (Thanks @davinci26!)
+- Remove the event handler that was causing breakpoint changes to be erroneously replicated to the host runspace debugger (#10503) (Thanks @KirkMunro!)
+- Replace `api-ms-win-core-job-12-1-0.dll` with `Kernell32.dll` in `Microsoft.PowerShell.Commands.NativeMethods` P/Invoke API(#10417) (Thanks @iSazonov!)
+- Fix wrong output for `New-Service` in variable assignment and `-OutVariable` (#10444) (Thanks @kvprasoon!)
+- Fix global tool issues around exit code, command line parameters and path with spaces (#10461)
+- Fix recursion into OneDrive - change `FindFirstFileEx()` to use `SafeFindHandle` type (#10405)
+- Skip auto-loading `PSReadLine` on Windows if the [NVDA screen reader](https://www.nvaccess.org/about-nvda/) is active (#10385)
+- Increase built-with-PowerShell module versions to `7.0.0.0` (#10356)
+- Add throwing an error in `Add-Type` if a type with the same name already exists (#9609) (Thanks @iSazonov!)
+
+### Code Cleanup
+
+- Convert `ActionPreference.Suspend` enumeration value into a non-supported, reserved state, and remove restriction on using `ActionPreference.Ignore` in preference variables (#10317) (Thanks @KirkMunro!)
+- Replace `ArrayList` with `List<T>` to get more readable and reliable code without changing functionality (#10333) (Thanks @iSazonov!)
+- Make code style fixes to `TestConnectionCommand` (#10439) (Thanks @vexx32!)
+- Cleanup `AutomationEngine` and remove extra `SetSessionStateDrive` method call (#10416) (Thanks @iSazonov!)
+- Rename default `ParameterSetName` back to `Delimiter` for `ConvertTo-Csv` and `ConvertFrom-Csv` (#10425)
+
+### Tools
+
+- Update `install-powershell.ps1` to check for already installed daily build (#10489)
+
+### Tests
+
+- Add experimental check to `ForEach-Object -Parallel` tests (#10354) (Thanks @KirkMunro!)
+- Update tests for Alpine validation (#10428)
+
+### Build and Packaging Improvements
+
+- Bump `PowerShellGet` version from `2.2` to `2.2.1` (#10382)
+- Bump `PackageManagement` version from `1.4.3` to `1.4.4` (#10383)
+- Update `README.md` and `metadata.json` for `7.0.0-preview.4` (Internal 10011)
+- Upgrade `.Net Core 3.0` version from `Preview 9` to `RC1` (#10552) (Thanks @bergmeister!)
+- Fix `ExperimentalFeature` list generation (Internal 9996)
+- Bump `PSReadLine` version from `2.0.0-beta4` to `2.0.0-beta5` (#10536)
+- Fix release build script to set release tag
+- Update version of `Microsoft.PowerShell.Native` to `7.0.0-preview.2` (#10519)
+- Upgrade to `Netcoreapp3.0 preview9` (#10484) (Thanks @bergmeister!)
+- Make sure the daily coordinated build, knows it is a daily build (#10464)
+- Update the combined package build to release the daily builds (#10449)
+- Remove appveyor reference (#10445) (Thanks @RDIL!)
+- Bump `NJsonSchema` version from `10.0.22` to `10.0.23` (#10421)
+- Remove the deletion of `linux-x64` build folder because some dependencies for Alpine need it (#10407)
+
+### Documentation and Help Content
+
+- Update `README.md` and metadata for `v6.1.6` and `v6.2.3` releases (#10523)
+- Fix a typo in `README.md` (#10465) (Thanks @vedhasp!)
+- Add a reference to `PSKoans` module to Learning Resources documentation (#10369) (Thanks @vexx32!)
+- Update `README.md` and `metadata.json` for `7.0.0-preview.3` (#10393)
+
 ## v7.0.0-preview.3 - 08/20/2019
 
 ### Breaking Changes
@@ -456,6 +528,21 @@
 - Documentation Cleanup (#8851) (Thanks @RDIL!)
 - Update docs for `6.2.0-rc.1` release (#9022)
 - Update release template (#8996)
+
+## v6.2.3 - 09/12/2019
+
+### Engine Updates and Fixes
+
+- Fix debugger performance regression in system lock down mode (#10269)
+
+### Tests
+
+- Remove `markdownlint` tests due to security issues (#10163)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9946)
+- Fix macOS build break (#10207)
 
 ## v6.2.2 - 07/16/2019
 
@@ -1220,6 +1307,12 @@
 - Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## 6.1.6 - 2019-09-12
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9945)
 
 ## 6.1.5 - 2019-07-16
 
