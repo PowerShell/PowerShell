@@ -123,6 +123,15 @@ function Get-EnvironmentInformation
         $environment += @{'nugetPackagesRoot' = "${env:HOME}/.nuget/packages"}
     }
 
+    if ($Environment.IsMacOS) {
+        $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
+        $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
+
+        if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
+            throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
+        }
+    }
+
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
@@ -210,6 +219,10 @@ function Start-PSBuild {
         [Parameter(ParameterSetName="Default")]
         [switch]$NoPSModuleRestore,
         [switch]$CI,
+
+        # Skips the step where the pwsh that's been built is used to create a configuration
+        # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
+        [switch]$SkipExperimentalFeatureGeneration,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -381,11 +394,10 @@ Fix steps:
     }
 
     try {
+        # Relative paths do not work well if cwd is not changed to project
+        Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*') {
-            # Relative paths do not work well if cwd is not changed to project
-            Push-Location $Options.Top
-
             if ($Options.Runtime -like 'win-arm*') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } else {
@@ -401,7 +413,6 @@ Fix steps:
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
                 Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
             }
-
         } else {
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
@@ -411,8 +422,6 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            # Relative paths do not work well if cwd is not changed to project
-            Push-Location $Options.Top
             Write-Log "Run dotnet $Arguments from $pwd"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
@@ -429,6 +438,11 @@ Fix steps:
         }
     } finally {
         Pop-Location
+    }
+
+    # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
+    if ($SMAOnly) {
+        return
     }
 
     # publish reference assemblies
@@ -489,8 +503,13 @@ Fix steps:
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
     }
 
+    # When building preview, we want the configuration to enable all experiemental features by default
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+    if (-not $SkipExperimentalFeatureGeneration -and
+        (Test-IsPreview $psVersion) -and
+        -not $Runtime.Contains("arm") -and
+        -not ($Runtime -like 'fxdependent*')) {
+
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
@@ -641,8 +660,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp3.0")]
-        [string]$Framework = "netcoreapp3.0",
+        [ValidateSet("netcoreapp3.1")]
+        [string]$Framework = "netcoreapp3.1",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1710,7 +1729,11 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
+                if ($Environment.UsingHomebrew) {
+                    $PackageManager = "brew"
+                } elseif ($Environment.UsingMacports) {
+                    $PackageManager = "$sudo port"
+                }
 
                 # Build tools
                 $Deps += "cmake"
@@ -1720,7 +1743,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution { brew install $Deps } -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
