@@ -592,7 +592,7 @@ namespace System.Management.Automation.Language
             typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), StaticFlags);
 
         internal static readonly MethodInfo TypeOps_IsNull =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.IsNull), staticFlags);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.IsNull), StaticFlags);
 
         internal static readonly MethodInfo TypeOps_IsInstance =
             typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), StaticFlags);
