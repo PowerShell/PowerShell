@@ -43,7 +43,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
     It "Convertion with 'TypeConverterAttribute' should be before convertion with .Net Core intrinsic type convertor" {
         $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('*Method*', [System.Management.Automation.PSMemberTypes])
         $result | Should -BeOfType [System.Management.Automation.PSMemberTypes]
-        $result | Should -Be [System.Management.Automation.PSMemberTypes]::Methods
+        $result | Should -BeExactly 'Methods'
     }
 
     It "Casting recursive array to bool should not cause crash" {
