@@ -1,5 +1,113 @@
 # Changelog
 
+## v7.0.0-preview.5 - 10/23/2019
+
+### Breaking Changes
+
+- Make `$PSCulture` consistently reflect in-session culture changes (#10138) (Thanks @iSazonov!)
+
+### Engine Updates and Fixes
+
+- Move to `.NET Core 3.1 preview 1` (#10798)
+- Refactor reparse tag checks in file system provider (#10431) (Thanks @iSazonov!)
+- Replace `CR` and new line with a `0x23CE` character in script logging (#10616)
+- Fix a resource leak by unregistering the event handler from `AppDomain.CurrentDomain.ProcessExit` (#10626)
+
+### Experimental Features
+
+- Implement `Get-Error` cmdlet as Experimental Feature (#10727,#10800)
+- Add `ConciseView` for `$ErrorView` and update it to remove unnecessary text and not color entire line in red (#10641,#10724)
+- Support the pipeline chain operators `&&` and `||` in PowerShell language (#9849,#10825,#10836)
+- Implement null coalescing (`??`) and null coalescing assignment (`??=`) operators (#10636)
+- Support notification on `pwsh` startup when a new release is available and update notification message (#10689,#10777)
+
+### General Cmdlet Updates and Fixes
+
+- Add `-Emphasize` parameter to colorize `Select-String` output (#8963) (Thanks @derek-xia!)
+- Add back `Get-HotFix` cmdlet (#10740)
+- Make `Add-Type` usable in applications that host `PowerShell` (#10587)
+- Use more effective evaluation order in `LanguagePrimitives.IsNullLike()` (#10781) (Thanks @vexx32!)
+- Improve handling of mixed-collection piped input and piped streams of input in `Format-Hex` (#8674) (Thanks @vexx32!)
+- Use type conversion in `SSHConnection` hashtables when value doesn't match expected type (#10720) (Thanks @SeeminglyScience!)
+- Fix `Get-Content -ReadCount 0` behavior when `-TotalCount` is set (#10749) (Thanks @eugenesmlv!)
+- Reword access denied error message in `Get-WinEvent` (#10639) (Thanks @iSazonov!)
+- Enable tab completion for variable assignment that is enum or type constrained (#10646)
+- Remove unused `SourceLength` remoting property causing formatting issues (#10765)
+- Add `-Delimiter` parameter to `ConvertFrom-StringData` (#10665) (Thanks @steviecoaster!)
+- Add positional parameter for `ScriptBlock` when using `Invoke-Command` with `SSH` (#10721) (Thanks @machgo!)
+- Show line context information if multiple lines but no script name for `ConciseView` (#10746)
+- Add support for `\\wsl$\` paths to file system provider (#10674)
+- Add the missing token text for `TokenKind.QuestionMark` in parser (#10706)
+- Set current working directory of each `ForEach-Object -Parallel` running script to the same location as the calling script. (#10672)
+- Replace `api-ms-win-core-file-l1-2-2.dll` with `Kernell32.dll` for `FindFirstStreamW` and `FindNextStreamW` APIs (#10680) (Thanks @iSazonov!)
+- Tweak help formatting script to be more `StrictMode` tolerant (#10563)
+- Add `-SecurityDescriptorSDDL` parameter to `New-Service` (#10483) (Thanks @kvprasoon!)
+- Remove informational output, consolidate ping usage in `Test-Connection` (#10478) (Thanks @vexx32!)
+- Read special reparse points without accessing them (#10662) (Thanks @iSazonov!)
+- Direct `Clear-Host` output to terminal (#10681) (Thanks @iSazonov!)
+- Add back newline for grouping with `Format-Table` and `-Property` (#10653)
+- Remove [ValidateNotNullOrEmpty] from `-InputObject` on `Get-Random` to allow empty string (#10644)
+- Make suggestion system string distance algorithm case-insensitive (#10549) (Thanks @iSazonov!)
+- Fix null reference exception in `ForEach-Object -Parallel` input processing (#10577)
+
+### Code Cleanup
+
+- Remove `WorkflowJobSourceAdapter` reference that is no longer used (#10326) (Thanks @KirkMunro!)
+- Cleanup `COM` interfaces in jump list code by fixing `PreserveSig` attributes (#9899) (Thanks @weltkante!)
+- Add a comment describing why `-ia` is not the alias for `-InformationAction` common parameter (#10703) (Thanks @KirkMunro!)
+- Rename `InvokeCommandCmdlet.cs` to `InvokeExpressionCommand.cs` (#10659) (Thanks @kilasuit!)
+- Add minor code cleanups related to update notifications (#10698)
+- Remove deprecated workflow logic from the remoting setup scripts (#10320) (Thanks @KirkMunro!)
+- Update help format to use proper case (#10678) (Thanks @tnieto88!)
+- Clean up `CodeFactor` style issues coming in commits for the last month (#10591) (Thanks @iSazonov!)
+- Fix typo in description of `PSTernaryOperator` experimental feature (#10586) (Thanks @bergmeister!)
+
+### Performance
+
+- Add minor performance improvements for runspace initialization (#10569) (Thanks @iSazonov!)
+
+### Tools
+
+- Make `Install-PowerShellRemoting.ps1` handle empty string in `PowerShellHome` parameter (#10526) (Thanks @Orca88!)
+- Switch from `/etc/lsb-release` to `/etc/os-release` in `install-powershell.sh` (#10773) (Thanks @Himura2la!)
+- Check `pwsh.exe` and `pwsh` in daily version on Windows (#10738) (Thanks @centreboard!)
+- Remove unneeded tap in `installpsh-osx.sh` (#10752)
+
+### Tests
+
+- Temporary skip the flaky test `TestAppDomainProcessExitEvenHandlerNotLeaking` (#10827)
+- Make the event handler leaking test stable (#10790)
+- Sync capitalization in `CI` `YAML` (#10767) (Thanks @RDIL!)
+- Add test for the event handler leaking fix (#10768)
+- Add `Get-ChildItem` test (#10507) (Thanks @iSazonov!)
+- Replace ambiguous language for tests from `switch` to `parameter` for accuracy (#10666) (Thanks @romero126!)
+
+### Build and Packaging Improvements
+
+- Update package reference for `PowerShell SDK` to `preview.5` (Internal 10295)
+- Update `ThirdPartyNotices.txt` (#10834)
+- Bump `Microsoft.PowerShell.Native` to `7.0.0-preview.3` (#10826)
+- Bump `Microsoft.ApplicationInsights` from `2.10.0` to `2.11.0` (#10608)
+- Bump `NJsonSchema` from `10.0.24` to `10.0.27` (#10756)
+- Add `MacPorts` support to the build system (#10736) (Thanks @Lucius-Q-User!)
+- Bump `PackageManagement` from `1.4.4` to `1.4.5` (#10728)
+- Bump `NJsonSchema` from `10.0.23` to `10.0.24` (#10635)
+- Add environment variable to differentiate client/server telemetry in `MSI` (#10612)
+- Bump `PSDesiredStateConfiguration` from `2.0.3` to `2.0.4` (#10603)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `3.2.1` to `3.3.1` (#10607)
+- Update to `.Net Core 3.0 RTM` (#10604) (Thanks @bergmeister!)
+- Update `MSIX` packaging so the version to `Windows Store` requirements (#10588)
+
+### Documentation and Help Content
+
+- Merge stable and servicing change logs (#10527)
+- Update used `.NET` version in build docs (#10775) (Thanks @Greg-Smulko!)
+- Replace links from `MSDN` to `docs.microsoft.com` in `powershell-beginners-guide.md` (#10778) (Thanks @iSazonov!)
+- Fix broken `DSC` overview link (#10702)
+- Update `Support_Question.md` to link to `Stack Overflow` as another community resource (#10638) (Thanks @mklement0!)
+- Add processor architecture to distribution request template (#10661)
+- Add new PowerShell MoL book to learning PowerShell docs (#10602)
+
 ## v7.0.0-preview.4 - 09/19/2019
 
 ### Engine Updates and Fixes
