@@ -1355,6 +1355,9 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Format colors
+        public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
+
         // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;

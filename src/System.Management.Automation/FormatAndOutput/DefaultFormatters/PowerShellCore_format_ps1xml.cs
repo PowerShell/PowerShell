@@ -18,22 +18,8 @@ namespace System.Management.Automation.Runspaces
                     .EndEntry()
                 .EndControl();
 
-            var ByteCollection_GroupHeader = CustomControl.Create()
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"
-                      $header = ""                       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
-                      if($_.Path) { $header = ""                       "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
-
-                      $header
-                    ")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl();
-
             var sharedControls = new CustomControl[] {
-                AvailableModules_GroupingFormat,
-                ByteCollection_GroupHeader
+                AvailableModules_GroupingFormat
             };
 
             yield return new ExtendedTypeDefinition(
@@ -152,6 +138,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
             yield return new ExtendedTypeDefinition(
+                "PSExtendedError",
+                ViewsOf_System_Management_Automation_GetError());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
 
@@ -170,10 +160,6 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ProgressRecord",
                 ViewsOf_System_Management_Automation_ProgressRecord());
-
-            yield return new ExtendedTypeDefinition(
-                "Microsoft.PowerShell.Commands.ByteCollection",
-                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(sharedControls));
 
             yield return new ExtendedTypeDefinition(
                 "System.Exception",
@@ -258,6 +244,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
+                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -740,6 +730,199 @@ namespace System.Management.Automation.Runspaces
                 .EndControl());
         }
 
+        // This generates a custom view for ErrorRecords and Exceptions making
+        // specific nested types defined in $expandTypes visible.  It also handles
+        // IEnumerable types.  Nested types are indented by 4 spaces.
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_GetError()
+        {
+            yield return new FormatViewDefinition("GetErrorInstance",
+                CustomControl.Create()
+                    .GroupByProperty("PSErrorIndex", label: "ErrorIndex")
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"
+                            Set-StrictMode -Off
+
+                            $maxDepth = 10
+                            $ellipsis = ""`u{2026}""
+                            $resetColor = ''
+                            if ($Host.UI.SupportsVirtualTerminal) {
+                                $resetColor = ""`e[0m""
+                            }
+
+                            function Get-VT100Color([string] $color) {
+                                if (! $Host.UI.SupportsVirtualTerminal) {
+                                    return ''
+                                }
+
+                                $colors = @{
+                                    'Black' = ""`e[2;30m""
+                                    'DarkRed' = ""`e[2;31m""
+                                    'DarkGreen' = ""`e[2;32m""
+                                    'DarkYellow' = ""`e[2;33m""
+                                    'DarkBlue' = ""`e[2;34m""
+                                    'DarkMagenta' = ""`e[2;35m""
+                                    'DarkCyan' = ""`e[2;36m""
+                                    'Gray' = ""`e[2;37m""
+                                    'DarkGray' = ""`e[1;30m""
+                                    'Red' = ""`e[1;31m""
+                                    'Green' = ""`e[1;32m""
+                                    'Yellow' = ""`e[1;33m""
+                                    'Blue' = ""`e[1;34m""
+                                    'Magenta' = ""`e[1;35m""
+                                    'Cyan' = ""`e[1;36m""
+                                    'White' = ""`e[1;37m""
+                                }
+
+                                return $colors[$color]
+                            }
+
+                            function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
+                                $newline = [Environment]::Newline
+                                $output = [System.Text.StringBuilder]::new()
+                                $prefix = ' ' * $indent
+                                $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
+                                $expandTypes = @(
+                                    'Microsoft.Rest.HttpRequestMessageWrapper'
+                                    'Microsoft.Rest.HttpResponseMessageWrapper'
+                                    'System.Management.Automation.InvocationInfo'
+                                )
+
+                                # first find the longest property so we can indent properly
+                                $propLength = 0
+                                foreach ($prop in $obj.PSObject.Properties) {
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Name.Length -gt $propLength) {
+                                        $propLength = $prop.Name.Length
+                                    }
+                                }
+
+                                $addedProperty = $false
+                                foreach ($prop in $obj.PSObject.Properties) {
+
+                                    # don't show empty properties or our added property for $error[index]
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIndex') {
+                                        $addedProperty = $true
+                                        $null = $output.Append($prefix)
+                                        $null = $output.Append($accentColor)
+                                        $null = $output.Append($prop.Name)
+                                        $propNameIndent = ' ' * ($propLength - $prop.Name.Length)
+                                        $null = $output.Append($propNameIndent)
+                                        $null = $output.Append(' : ')
+                                        $null = $output.Append($resetColor)
+
+                                        $newIndent = $indent + 4
+
+                                        # only show nested objects that are Exceptions, ErrorRecords, or types defined in $expandTypes and types not in $ignoreTypes
+                                        if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or
+                                            $expandTypes -contains $prop.TypeNameOfValue -or ($prop.TypeNames -ne $null -and $expandTypes -contains $prop.TypeNames[0])) {
+
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent ($depth + 1)))
+                                            }
+                                        }
+                                        # `TargetSite` has many members that are not useful visually, so we have a reduced view of the relevant members
+                                        elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $targetSite = [PSCustomObject]@{
+                                                    Name = $prop.Value.Name
+                                                    DeclaringType = $prop.Value.DeclaringType
+                                                    MemberType = $prop.Value.MemberType
+                                                    Module = $prop.Value.Module
+                                                }
+
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
+                                            }
+                                        }
+                                        # `StackTrace` is handled specifically because the lines are typically long but necessary so they are left justified without additional indentation
+                                        elseif ($prop.Name -eq 'StackTrace') {
+                                            # for a stacktrace which is usually quite wide with info, we left justify it
+                                            $null = $output.Append($newline)
+                                            $null = $output.Append($prop.Value)
+                                        }
+                                        # Dictionary and Hashtable we want to show as Key/Value pairs, we don't do the extra whitespace alignment here
+                                        elseif ($prop.Value.GetType().Name.StartsWith('Dictionary') -or $prop.Value.GetType().Name -eq 'Hashtable') {
+                                            $isFirstElement = $true
+                                            foreach ($key in $prop.Value.Keys) {
+                                                if ($isFirstElement) {
+                                                    $null = $output.Append($newline)
+                                                }
+
+                                                if ($key -eq 'Authorization') {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}${ellipsis}${newline}"")
+                                                }
+                                                else {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}$($prop.Value[$key])${newline}"")
+                                                }
+
+                                                $isFirstElement = $false
+                                            }
+                                        }
+                                        # if the object implements IEnumerable and not a string, we try to show each object
+                                        # We ignore the `Data` property as it can contain lots of type information by the interpreter that isn't useful here
+                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null -and $prop.Name -ne 'Data') {
+
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $isFirstElement = $true
+                                                foreach ($value in $prop.Value) {
+                                                    $null = $output.Append($newline)
+                                                    if (!$isFirstElement) {
+                                                        $null = $output.Append($newline)
+                                                    }
+                                                    $null = $output.Append((Show-ErrorRecord $value $newIndent ($depth + 1)))
+                                                    $isFirstElement = $false
+                                                }
+                                            }
+                                        }
+                                        # anything else, we use ToString()
+                                        else {
+                                            $value = $prop.Value.ToString().Trim()
+
+                                            $isFirstLine = $true
+                                            if ($value.Contains($newline)) {
+                                                # the 3 is to account for ' : '
+                                                $valueIndent = ' ' * ($propLength + 3)
+                                                # need to trim any extra whitespace already in the text
+                                                foreach ($line in $value.Split($newline)) {
+                                                    if (!$isFirstLine) {
+                                                        $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                                    }
+                                                    $null = $output.Append($line.Trim())
+                                                    $isFirstLine = $false
+                                                }
+                                            }
+                                            else {
+                                                $null = $output.Append($value)
+                                            }
+                                        }
+
+                                        $null = $output.Append($newline)
+                                    }
+                                }
+
+                                # if we had added nested properties, we need to remove the last newline
+                                if ($addedProperty) {
+                                    $null = $output.Remove($output.Length - $newline.Length, $newline.Length)
+                                }
+
+                                $output.ToString()
+                            }
+
+                            Show-ErrorRecord $_
+                        ")
+                    .EndEntry()
+                .EndControl());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ErrorRecord()
         {
             yield return new FormatViewDefinition("ErrorInstance",
@@ -855,18 +1038,6 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             return ($string.Substring(0,$length) -split '\s',-2)[0]
-
-                                            #if (-not $string.Contains(' ')) {
-                                            #    return $string.Substring(0, $length)
-                                            #}
-
-                                            #$split = $string.Substring(0, $length).Split(' ')
-                                            #if ($split.Count -gt 1) {
-                                            #    return [string]::Join(' ', $split, 0, $split.Count - 1)
-                                            #}
-                                            #else {
-                                            #    return $split[0]
-                                            #}
                                         }
 
                                         $errorColor = ''
@@ -1102,19 +1273,6 @@ namespace System.Management.Automation.Runspaces
                             .AddScriptBlockExpressionBinding($@"'{FormatStrings.ProgressFormatString}' -f ""$(if ($_.PercentComplete -ge 0) {{'{{0,3}}% - ' -f $_.PercentComplete}})$($_.Activity)$(if ($_.StatusDescription -ne '{FormatStrings.Processing}') {{"": $($_.StatusDescription)""}})$(if ($_.CurrentOperation) {{"" ($($_.CurrentOperation))""}})""")
                         .EndEntry()
                     .EndControl());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(CustomControl[] sharedControls)
-        {
-            yield return new FormatViewDefinition("ByteCollection",
-                CustomControl.Create()
-                    .GroupByScriptBlock("if($_.Path) { $_.Path } else { $_.GetHashCode() }", customControl: sharedControls[1])
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"$_.ToString()")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Exception()
@@ -1656,6 +1814,23 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Offset", width: 16)
+                    .AddHeader(Alignment.Left, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
+                    .AddHeader(Alignment.Left, label: "Ascii", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("HexOffset")
+                        .AddPropertyColumn("HexBytes")
+                        .AddPropertyColumn("Ascii")
+                    .EndRowDefinition()
+                    .GroupByProperty("Label")
+                .EndTable());
         }
     }
 }

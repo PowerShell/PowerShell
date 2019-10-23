@@ -4994,6 +4994,25 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
+                    if (ExperimentalFeature.IsEnabled("PSCoalescingOperators"))
+                    {
+                        c1 = PeekChar();
+
+                        if (c1 == '?')
+                        {
+                            SkipChar();
+                            c1 = PeekChar();
+
+                            if (c1 == '=')
+                            {
+                                SkipChar();
+                                return this.NewToken(TokenKind.QuestionQuestionEquals);
+                            }
+
+                            return this.NewToken(TokenKind.QuestionQuestion);
+                        }
+                    }
+
                     return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':

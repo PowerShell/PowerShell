@@ -6966,14 +6966,13 @@ namespace System.Management.Automation
 
         public object VisitUsingStatement(UsingStatementAst usingStatementAst) { return false; }
 
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return false; }
+
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst) { return false; }
+
         public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
             return configurationDefinitionAst.Body.Accept(this);
-        }
-
-        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst)
-        {
-            return false;
         }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)

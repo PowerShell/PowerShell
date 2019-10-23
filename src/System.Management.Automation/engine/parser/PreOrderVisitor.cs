@@ -189,6 +189,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) { return AstVisitAction.Continue; }
     }
 
     /// <summary>
