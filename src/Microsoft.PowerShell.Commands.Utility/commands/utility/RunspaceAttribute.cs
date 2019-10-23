@@ -77,6 +77,10 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     break;
+
+                default:
+                    // Non-convertible type
+                    break;
             }
 
             // If we couldn't get a single runspace, return the inputData
