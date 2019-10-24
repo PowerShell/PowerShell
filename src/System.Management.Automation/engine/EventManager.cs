@@ -2210,7 +2210,7 @@ namespace System.Management.Automation
         /// <param name="additionalData">
         /// Additional data attached by the user to this event.
         /// </param>
-        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, Object sender, object[] originalArgs, PSObject additionalData)
+        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, object sender, object[] originalArgs, PSObject additionalData)
         {
             // Capture the first EventArgs as SourceEventArgs
             if (originalArgs != null)

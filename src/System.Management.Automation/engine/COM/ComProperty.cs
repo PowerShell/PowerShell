@@ -251,7 +251,7 @@ namespace System.Management.Automation
         /// <param name="target">Instance of the object to which to set the property value.</param>
         /// <param name="setValue">Value to set this property.</param>
         /// <param name="arguments">Parameters to set this property.</param>
-        internal void SetValue(object target, Object setValue, object[] arguments)
+        internal void SetValue(object target, object setValue, object[] arguments)
         {
             object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };
