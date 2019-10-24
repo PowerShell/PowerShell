@@ -6125,7 +6125,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Boolean[] value)
+        public void Add(string key, bool[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6135,7 +6135,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Byte value)
+        public void Add(string key, byte value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6215,7 +6215,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Double value)
+        public void Add(string key, double value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6225,7 +6225,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Double[] value)
+        public void Add(string key, double[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6295,7 +6295,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, SByte value)
+        public void Add(string key, sbyte value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6305,7 +6305,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, SByte[] value)
+        public void Add(string key, sbyte[] value)
         {
             this.Add((object)key, (object)value);
         }
