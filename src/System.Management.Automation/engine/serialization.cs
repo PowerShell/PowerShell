@@ -2583,7 +2583,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            WriteRawString(serializer, streamName, property, XmlConvert.ToString((Double)source), entry);
+            WriteRawString(serializer, streamName, property, XmlConvert.ToString((double)source), entry);
         }
 
         /// <summary>

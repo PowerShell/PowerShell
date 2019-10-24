@@ -633,7 +633,7 @@ namespace System.Management.Automation
                     retValue = typeof(System.UInt64).FullName;
                     break;
                 case CimType.Real32:
-                    retValue = typeof(single).FullName;
+                    retValue = typeof(Single).FullName;
                     break;
                 case CimType.Real64:
                     retValue = typeof(double).FullName;

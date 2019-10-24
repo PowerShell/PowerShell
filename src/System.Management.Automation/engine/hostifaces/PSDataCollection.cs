@@ -670,7 +670,7 @@ namespace System.Management.Automation
 
                     if (_serializeInput)
                     {
-                        value = (T)(Object)GetSerializedObject(value);
+                        value = (T)(object)GetSerializedObject(value);
                     }
 
                     _data[index] = value;
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             {
                 if (_serializeInput)
                 {
-                    item = (T)(Object)GetSerializedObject(item);
+                    item = (T)(object)GetSerializedObject(item);
                 }
 
                 return _data.Contains(item);
@@ -1265,7 +1265,7 @@ namespace System.Management.Automation
 
             if (_serializeInput)
             {
-                item = (T)(Object)GetSerializedObject(item);
+                item = (T)(object)GetSerializedObject(item);
             }
 
             _data.Insert(index, item);
@@ -1599,7 +1599,7 @@ namespace System.Management.Automation
         {
             if (_serializeInput)
             {
-                item = (T)(Object)GetSerializedObject(item);
+                item = (T)(object)GetSerializedObject(item);
             }
 
             int count = _data.Count;
