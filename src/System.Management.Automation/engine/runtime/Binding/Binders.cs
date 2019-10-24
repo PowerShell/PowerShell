@@ -5505,7 +5505,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        internal static bool IsAllowedInConstrainedLanguage(Object targetValue, string name, bool isStatic)
+        internal static bool IsAllowedInConstrainedLanguage(object targetValue, string name, bool isStatic)
         {
             // ToString allowed on any type
             if (string.Equals(name, "ToString", StringComparison.OrdinalIgnoreCase))

@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">The input object to serialize. Serializes to a default depth of 1.</param>
         /// <returns>The serialized object, as CliXml.</returns>
-        public static string Serialize(Object source)
+        public static string Serialize(object source)
         {
             return Serialize(source, s_mshDefaultSerializationDepth);
         }
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         /// <param name="source">The input object to serialize.</param>
         /// <param name="depth">The depth of the members to serialize.</param>
         /// <returns>The serialized object, as CliXml.</returns>
-        public static string Serialize(Object source, int depth)
+        public static string Serialize(object source, int depth)
         {
             // Create an xml writer
             StringBuilder sb = new StringBuilder();

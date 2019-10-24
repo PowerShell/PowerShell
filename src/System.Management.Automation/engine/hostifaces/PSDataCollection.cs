@@ -1643,7 +1643,7 @@ namespace System.Management.Automation
         }
 
         // Serializes an object, as long as it's not serialized.
-        private PSObject GetSerializedObject(Object value)
+        private PSObject GetSerializedObject(object value)
         {
             // This is a safe cast, as this method is only called with "SerializeInput" is set,
             // and that method throws if the collection type is not PSObject.

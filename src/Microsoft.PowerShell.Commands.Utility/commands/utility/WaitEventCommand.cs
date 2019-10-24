@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
             _eventArrived.Set();
         }
 
-        private void ReceivedEvents_PSEventReceived(Object sender, PSEventArgs e)
+        private void ReceivedEvents_PSEventReceived(object sender, PSEventArgs e)
         {
             // If they want to wait on just any event
             if (_sourceIdentifier == null)

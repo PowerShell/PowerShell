@@ -1347,7 +1347,7 @@ namespace Microsoft.PowerShell.Commands
         // HandleEventIdHashValue helper for hashtable structured query builder.
         // Constructs and returns EventId XPath portion as a string.
         //
-        private string HandleEventIdHashValue(Object value)
+        private string HandleEventIdHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
             Array idsArray = value as Array;
@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
         // HandleLevelHashValue helper for hashtable structured query builder.
         // Constructs and returns Level XPath portion as a string.
         //
-        private string HandleLevelHashValue(Object value)
+        private string HandleLevelHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
             Array levelsArray = value as Array;
@@ -1407,7 +1407,7 @@ namespace Microsoft.PowerShell.Commands
         // HandleKeywordHashValue helper for hashtable structured query builder.
         // Constructs and returns Keyword XPath portion as a string.
         //
-        private string HandleKeywordHashValue(Object value)
+        private string HandleKeywordHashValue(object value)
         {
             Int64 keywordsMask = 0;
             Int64 keywordLong = 0;
@@ -1442,7 +1442,7 @@ namespace Microsoft.PowerShell.Commands
         // Handles both SIDs and domain account names.
         // Writes an error and returns an empty string if the SID or account names are not valid.
         //
-        private string HandleContextHashValue(Object value)
+        private string HandleContextHashValue(object value)
         {
             SecurityIdentifier sidCandidate = null;
             try
@@ -1478,7 +1478,7 @@ namespace Microsoft.PowerShell.Commands
         // Constructs and returns TimeCreated XPath portion as a string.
         // NOTE that it also handles the hashtable "endtime" value (if supplied).
         //
-        private string HandleStartTimeHashValue(Object value, Hashtable hash)
+        private string HandleStartTimeHashValue(object value, Hashtable hash)
         {
             StringBuilder ret = new StringBuilder();
             DateTime startTime = new DateTime();
@@ -1521,7 +1521,7 @@ namespace Microsoft.PowerShell.Commands
         // Constructs and returns TimeCreated XPath portion as a string.
         // NOTE that it also handles the hashtable "starttime" value (if supplied).
         //
-        private string HandleEndTimeHashValue(Object value, Hashtable hash)
+        private string HandleEndTimeHashValue(object value, Hashtable hash)
         {
             StringBuilder ret = new StringBuilder();
             DateTime endTime = new DateTime();
@@ -1565,7 +1565,7 @@ namespace Microsoft.PowerShell.Commands
         // HandleDataHashValue helper for hashtable structured query builder.
         // Constructs and returns EventData/Data XPath portion as a string.
         //
-        private string HandleDataHashValue(Object value)
+        private string HandleDataHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
@@ -1596,7 +1596,7 @@ namespace Microsoft.PowerShell.Commands
         // Constructs and returns named event data field XPath portion as a string.
         // Fix Issue #2327
         //
-        private string HandleNamedDataHashValue(String key, object value)
+        private string HandleNamedDataHashValue(string key, object value)
         {
             StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;

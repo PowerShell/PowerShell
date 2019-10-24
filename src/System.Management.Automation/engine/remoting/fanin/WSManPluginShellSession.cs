@@ -305,13 +305,13 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        protected internal void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
+        protected internal void SafeInvokeSessionClosed(object sender, EventArgs eventArgs)
         {
             SessionClosed.SafeInvoke(sender, eventArgs);
         }
 
         // handle transport manager related errors
-        internal void HandleTransportError(Object sender, TransportErrorOccuredEventArgs eventArgs)
+        internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
             if (eventArgs != null)
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // handle prepare from transport by reporting context to WSMan.
-        internal void HandlePrepareFromTransportManager(Object sender, EventArgs eventArgs)
+        internal void HandlePrepareFromTransportManager(object sender, EventArgs eventArgs)
         {
             ReportContext();
             ReportSendOperationComplete();

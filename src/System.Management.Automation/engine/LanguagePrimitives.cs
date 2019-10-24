@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
         /// <typeparam name="T">The type for which to convert</typeparam>
         /// <param name="castObject">The object from which to convert.</param>
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
-        internal static T FromObjectAs<T>(Object castObject)
+        internal static T FromObjectAs<T>(object castObject)
         {
             T returnType = default(T);
 

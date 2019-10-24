@@ -135,7 +135,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            private object ConvertDouble(Double obj)
+            private object ConvertDouble(double obj)
             {
                 unchecked
                 {
@@ -259,7 +259,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            private object ConvertDouble(Double obj)
+            private object ConvertDouble(double obj)
             {
                 checked
                 {

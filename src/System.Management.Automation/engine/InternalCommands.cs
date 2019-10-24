@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
             }
-            catch (PSInvalidOperationException) 
+            catch (PSInvalidOperationException)
             {
             }
 
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             _taskCollection.Complete();
                             _taskCollectionException = ex;
                             _taskDataStreamWriter.Close();
-                            
+
                             break;
                         }
 
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessParallelParameterSet()
         {
             // Validate piped InputObject
-            if (_inputObject != null && 
+            if (_inputObject != null &&
                 _inputObject.BaseObject is ScriptBlock)
             {
                 WriteError(
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
-            
+
             // Close task collection and wait for processing to complete while streaming data.
             _taskDataStreamWriter.WriteImmediate();
             _taskCollection.Complete();
@@ -1186,7 +1186,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputObject">Source object.</param>
         /// <returns>True if we are in restrictedLanguageMode.</returns>
-        private bool BlockMethodInLanguageMode(Object inputObject)
+        private bool BlockMethodInLanguageMode(object inputObject)
         {
             // Cannot invoke a method in RestrictedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.RestrictedLanguage)
