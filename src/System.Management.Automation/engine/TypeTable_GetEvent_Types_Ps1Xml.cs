@@ -8,7 +8,7 @@ namespace System.Management.Automation.Runspaces
 {
     public sealed partial class TypeTable
     {
-        internal void Process_GetEvent_Types_Ps1Xml(string filePath, ConcurrentBag<string> errors)
+        private void Process_GetEvent_Types_Ps1Xml(string filePath, ConcurrentBag<string> errors)
         {
             typesInfo.Add(new SessionStateTypeEntry(filePath));
 

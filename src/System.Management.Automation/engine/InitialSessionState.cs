@@ -1212,26 +1212,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Special add for TypeTable type entries that removes redundant file entries.
-        /// </summary>
-        internal void AddTypeTableTypesInfo(IEnumerable<T> items)
-        {
-            if (typeof(T) != typeof(SessionStateTypeEntry)) { throw new PSInvalidOperationException(); }
-
-            lock (_syncObject)
-            {
-                foreach (var element in items)
-                {
-                    if (element is SessionStateTypeEntry typeEntry && typeEntry.TypeData != null)
-                    {
-                        // Skip type file entries.
-                        _internalCollection.Add(element);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Get enumerator for this collection.
         /// </summary>
         /// <returns></returns>
@@ -3460,12 +3440,7 @@ namespace System.Management.Automation.Runspaces
                     context.TypeTable = typeTable;
 
                     Types.Clear();
-
-                    // A TypeTable contains types info along with type file references used to create the types info,
-                    // which is redundant information.  When resused in a runspace the ISS unpacks the file types again
-                    // resulting in duplicate types and duplication errors when processed.
-                    // So use this special Add method to filter all types files found in the TypeTable.
-                    Types.AddTypeTableTypesInfo(typeTable.typesInfo);
+                    Types.Add(typeTable.typesInfo);
 
                     return;
                 }

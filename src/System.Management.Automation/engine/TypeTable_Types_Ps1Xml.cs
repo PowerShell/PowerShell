@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
             return sb;
         }
 
-        internal void Process_Types_Ps1Xml(string filePath, ConcurrentBag<string> errors)
+        private void Process_Types_Ps1Xml(string filePath, ConcurrentBag<string> errors)
         {
             typesInfo.Add(new SessionStateTypeEntry(filePath));
 

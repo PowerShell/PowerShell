@@ -2676,6 +2676,11 @@ namespace System.Management.Automation.Runspaces
             TargetTypeForDeserialization
         };
 
+        // Built-in type file paths.
+        internal static readonly string TypesFilePath;
+        internal static readonly string TypesV3FilePath;
+        internal static readonly string GetEventTypesFilePath;
+
         #endregion
 
         #region Update
@@ -3461,7 +3466,7 @@ namespace System.Management.Automation.Runspaces
 
             // Record the information that this typedata was removed from the typetable
             // The next time the typetable is updated, we will need to exclude this typedata from the typetable
-            typesInfo.Add(new SessionStateTypeEntry(typeData, false));
+            typesInfo.Add(new SessionStateTypeEntry(typeData, isRemove: false));
         }
 
         #endregion add members from TypeData
@@ -3486,15 +3491,13 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            object unused1;
-            if (_typeConverters.TryRemove(typeName, out unused1))
+            if (_typeConverters.TryRemove(typeName, out _))
             {
                 typeExist = true;
                 LanguagePrimitives.UpdateTypeConvertFromTypeTable(typeName);
             }
 
-            PSObject.AdapterSet unused2;
-            if (_typeAdapters.TryRemove(typeName, out unused2))
+            if (_typeAdapters.TryRemove(typeName, out _))
             {
                 typeExist = true;
             }
@@ -3561,7 +3564,13 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSGetMemberBinder.TypeTableMemberAdded(PSStandardMembers);
-        }
+
+            // Set the built-in type file paths.
+            var psHome = Utils.DefaultPowerShellAppBase;
+            TypesFilePath = Path.Combine(psHome, "types.ps1xml");
+            TypesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
+            GetEventTypesFilePath = Path.Combine(psHome, "GetEvent.types.ps1xml");
+    }
 
         /// <summary>
         /// </summary>
@@ -3611,17 +3620,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>List of type files.</returns>
         public static List<string> GetDefaultTypeFiles()
         {
-            string typesFilePath = string.Empty;
-            string typesV3FilePath = string.Empty;
-
-            var psHome = Utils.DefaultPowerShellAppBase;
-            if (!string.IsNullOrEmpty(psHome))
-            {
-                typesFilePath = Path.Combine(psHome, "types.ps1xml");
-                typesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
-            }
-
-            return new List<string>() { typesFilePath, typesV3FilePath };
+            return new List<string>() { TypesFilePath, TypesV3FilePath };
         }
 
         /// <summary>
@@ -4353,7 +4352,6 @@ namespace System.Management.Automation.Runspaces
             bool isProductCode,
             ConcurrentBag<string> errors)
         {
-            typesInfo.Add(new SessionStateTypeEntry(fileToLoad));
             LoadContext loadContext = new LoadContext(moduleName, fileToLoad, errors)
             {
                 IsFullyTrusted = isFullyTrusted,
@@ -4366,20 +4364,6 @@ namespace System.Management.Automation.Runspaces
                 loadContext.reader = reader;
                 Update(loadContext);
                 reader.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Removes the <paramref name="typeFile"/> from the current TypeTable's type file list.
-        /// The TypeTable will not reflect the change until Update is called.
-        /// </summary>
-        /// <param name="typeFile"></param>
-        internal void Remove(string typeFile)
-        {
-            lock (_typeFileList)
-            {
-                _typeFileList.Remove(typeFile);
-                typesInfo.Remove(typeFile, null);
             }
         }
 
@@ -4491,40 +4475,23 @@ namespace System.Management.Automation.Runspaces
             if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStop(filePath);
         }
 
-        private void ProcessTypeData(string filePath, ConcurrentBag<string> errors, IEnumerable<TypeData> types)
-        {
-            typesInfo.Add(new SessionStateTypeEntry(filePath));
-
-            // TODO - use parallel foreach without causing any contention
-            // Parallel.ForEach(types, typeData =>
-            foreach (var typeData in types)
-            {
-                ProcessTypeDataToAdd(errors, typeData);
-            }
-            // });
-        }
-
         private bool ProcessIsBuiltIn(string filePath, ConcurrentBag<string> errors, out bool failToLoadFile)
         {
             var result = false;
             var errorCount = errors.Count;
 
-            var psHome = Utils.DefaultPowerShellAppBase;
-            if (string.Equals(Path.Combine(psHome, "types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(TypesFilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                //ProcessTypeData(filePath, errors, Types_Ps1Xml.Get());
                 Process_Types_Ps1Xml(filePath, errors);
                 result = true;
             }
-            else if (string.Equals(Path.Combine(psHome, "typesv3.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(TypesV3FilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                //ProcessTypeData(filePath, errors, TypesV3_Ps1Xml.Get());
                 Process_TypesV3_Ps1Xml(filePath, errors);
                 result = true;
             }
-            else if (string.Equals(Path.Combine(psHome, "GetEvent.types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(GetEventTypesFilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                //ProcessTypeData(filePath, errors, GetEvent_Types_Ps1Xml.Get());
                 Process_GetEvent_Types_Ps1Xml(filePath, errors);
                 result = true;
             }
