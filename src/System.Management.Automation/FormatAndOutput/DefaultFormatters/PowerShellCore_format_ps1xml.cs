@@ -741,35 +741,18 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
-                            if ($Host.UI.SupportsVirtualTerminal) {
-                                $resetColor = ""`e[0m""
+                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
+                                    [System.Management.Automation.VTUtility+VT]::Reset
+                                )
                             }
 
-                            function Get-VT100Color([string] $color) {
-                                if (! $Host.UI.SupportsVirtualTerminal) {
+                            function Get-VT100Color([ConsoleColor] $color) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
                                     return ''
                                 }
 
-                                $colors = @{
-                                    'Black' = ""`e[2;30m""
-                                    'DarkRed' = ""`e[2;31m""
-                                    'DarkGreen' = ""`e[2;32m""
-                                    'DarkYellow' = ""`e[2;33m""
-                                    'DarkBlue' = ""`e[2;34m""
-                                    'DarkMagenta' = ""`e[2;35m""
-                                    'DarkCyan' = ""`e[2;36m""
-                                    'Gray' = ""`e[2;37m""
-                                    'DarkGray' = ""`e[1;30m""
-                                    'Red' = ""`e[1;31m""
-                                    'Green' = ""`e[1;32m""
-                                    'Yellow' = ""`e[1;33m""
-                                    'Blue' = ""`e[1;34m""
-                                    'Magenta' = ""`e[1;35m""
-                                    'Cyan' = ""`e[1;36m""
-                                    'White' = ""`e[1;37m""
-                                }
-
-                                return $colors[$color]
+                                return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
                             }
 
                             function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
@@ -981,35 +964,18 @@ namespace System.Management.Automation.Runspaces
                                         Set-StrictMode -Off
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal) {
-                                            $resetColor = ""`e[0m""
+                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                            $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
+                                                [System.Management.Automation.VTUtility+VT]::Reset
+                                            )
                                         }
 
-                                        function Get-VT100Color([string] $color) {
-                                            if (! $Host.UI.SupportsVirtualTerminal) {
+                                        function Get-VT100Color([ConsoleColor] $color) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
                                                 return ''
                                             }
 
-                                            $colors = @{
-                                                'Black' = ""`e[2;30m""
-                                                'DarkRed' = ""`e[2;31m""
-                                                'DarkGreen' = ""`e[2;32m""
-                                                'DarkYellow' = ""`e[2;33m""
-                                                'DarkBlue' = ""`e[2;34m""
-                                                'DarkMagenta' = ""`e[2;35m""
-                                                'DarkCyan' = ""`e[2;36m""
-                                                'Gray' = ""`e[2;37m""
-                                                'DarkGray' = ""`e[1;30m""
-                                                'Red' = ""`e[1;31m""
-                                                'Green' = ""`e[1;32m""
-                                                'Yellow' = ""`e[1;33m""
-                                                'Blue' = ""`e[1;34m""
-                                                'Magenta' = ""`e[1;35m""
-                                                'Cyan' = ""`e[1;36m""
-                                                'White' = ""`e[1;37m""
-                                            }
-
-                                            return $colors[$color]
+                                            return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
                                         }
 
                                         # return length of string sans VT100 codes
