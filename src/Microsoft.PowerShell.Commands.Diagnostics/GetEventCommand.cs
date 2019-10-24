@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
                     List<string> logPatterns = new List<string>();
                     if (hash[hashkey_logname_lc] is Array)
                     {
-                        foreach (Object elt in (Array)hash[hashkey_logname_lc])
+                        foreach (object elt in (Array)hash[hashkey_logname_lc])
                         {
                             logPatterns.Add(elt.ToString());
                         }
@@ -1167,7 +1167,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (hash[hashkey_path_lc] is Array)
                     {
-                        foreach (Object elt in (Array)hash[hashkey_path_lc])
+                        foreach (object elt in (Array)hash[hashkey_path_lc])
                         {
                             StringCollection resolvedPaths = ValidateAndResolveFilePath(elt.ToString());
                             foreach (string resolvedPath in resolvedPaths)
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
                     List<string> provPatterns = new List<string>();
                     if (hash[hashkey_providername_lc] is Array)
                     {
-                        foreach (Object elt in (Array)hash[hashkey_providername_lc])
+                        foreach (object elt in (Array)hash[hashkey_providername_lc])
                         {
                             provPatterns.Add(elt.ToString());
                         }
@@ -1415,7 +1415,7 @@ namespace Microsoft.PowerShell.Commands
             Array keywordArray = value as Array;
             if (keywordArray != null)
             {
-                foreach (Object keyword in keywordArray)
+                foreach (object keyword in keywordArray)
                 {
                     if (KeywordStringToInt64(keyword.ToString(), ref keywordLong))
                     {
@@ -1850,7 +1850,7 @@ namespace Microsoft.PowerShell.Commands
                         Array eltArray = value as Array;
                         if (eltArray != null)
                         {
-                            foreach (Object elt in eltArray)
+                            foreach (object elt in eltArray)
                             {
                                 if (elt == null)
                                 {

@@ -2215,7 +2215,7 @@ namespace System.Management.Automation
             // Capture the first EventArgs as SourceEventArgs
             if (originalArgs != null)
             {
-                foreach (Object argument in originalArgs)
+                foreach (object argument in originalArgs)
                 {
                     EventArgs sourceEventArgs = argument as EventArgs;
                     if (sourceEventArgs != null)
