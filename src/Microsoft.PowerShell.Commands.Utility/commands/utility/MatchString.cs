@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the string representation of the match object with the matched line passed 
+        /// Returns the string representation of the match object with the matched line passed
         /// in as <paramref name="line"/> and trims the path to be relative to
         /// the<paramref name="directory"/> argument.
         /// </summary>
@@ -315,10 +315,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            const string InvertColorsVT100 = "\u001b[7m";
-            const string ResetVT100 = "\u001b[0m";
+            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
+            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
 
-            char[] chars = new char[(_matchIndexes.Count * (InvertColorsVT100.Length + ResetVT100.Length)) + Line.Length];
+            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
             for (int i = 0; i < _matchIndexes.Count; i++)
@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
                 lineIndex = _matchIndexes[i];
 
                 // Adds opening vt sequence
-                InvertColorsVT100.CopyTo(0, chars, charsIndex, InvertColorsVT100.Length);
-                charsIndex += InvertColorsVT100.Length;
+                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
+                charsIndex += invertColorsVT100.Length;
 
                 // Adds characters being emphasized
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
@@ -338,8 +338,8 @@ namespace Microsoft.PowerShell.Commands
                 charsIndex += _matchLengths[i];
 
                 // Adds closing vt sequence
-                ResetVT100.CopyTo(0, chars, charsIndex, ResetVT100.Length);
-                charsIndex += ResetVT100.Length;
+                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
+                charsIndex += resetVT100.Length;
             }
 
             // Adds remaining characters in line
@@ -1294,8 +1294,8 @@ namespace Microsoft.PowerShell.Commands
         private int _postContext = 0;
 
         // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) 
-            ? _noContextTracker 
+        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))
+            ? _noContextTracker
             : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
@@ -1322,6 +1322,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            string suppressVt = Environment.GetEnvironmentVariable("__SuppressAnsiEscapeSequences");
+            if (!string.IsNullOrEmpty(suppressVt))
+            {
+                NoEmphasis = true;
+            }
+
             if (!SimpleMatch)
             {
                 RegexOptions regexOptions = CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
