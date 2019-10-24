@@ -637,7 +637,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 bool foundSession = false;
                 WildcardPattern pattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-                foreach (KeyValuePair<String, HashSet<CimSessionWrapper>> kvp in this.curCimSessionsByName)
+                foreach (KeyValuePair<string, HashSet<CimSessionWrapper>> kvp in this.curCimSessionsByName)
                 {
                     if (pattern.IsMatch(kvp.Key))
                     {

@@ -75,9 +75,9 @@ namespace Microsoft.PowerShell.Commands
             return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetShowAllModulesCommand", false, true);
         }
 
-        internal Dictionary<String, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
+        internal Dictionary<string, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
         {
-            return (Dictionary<String, ShowCommandModuleInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
+            return (Dictionary<string, ShowCommandModuleInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
         }
 
         internal List<ShowCommandCommandInfo> GetCommandList(object[] commandObjects)

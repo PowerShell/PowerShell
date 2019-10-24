@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
                         patternToMatch,
                         WildcardOptions.IgnoreCase);
 
-                Dictionary<String, PSTraceSource> traceCatalog = PSTraceSource.TraceCatalog;
+                Dictionary<string, PSTraceSource> traceCatalog = PSTraceSource.TraceCatalog;
 
                 foreach (PSTraceSource source in traceCatalog.Values)
                 {
