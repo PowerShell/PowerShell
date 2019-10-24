@@ -2891,7 +2891,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return new String(result, 0, rlen);
+            return new string(result, 0, rlen);
         }
 
         /// <summary>

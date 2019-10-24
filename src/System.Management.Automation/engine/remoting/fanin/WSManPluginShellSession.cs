@@ -55,7 +55,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager transportMgr)
         {
-            _syncObject = new Object();
+            _syncObject = new object();
             this.creationRequestDetails = creationRequestDetails;
             this.transportMgr = transportMgr;
 
@@ -424,7 +424,7 @@ namespace System.Management.Automation.Remoting
                 new EventHandler<RemoteSessionStateMachineEventArgs>(this.HandleServerRemoteSessionClosed);
 
             _activeCommandSessions = new Dictionary<IntPtr, WSManPluginCommandSession>();
-            this.shellSyncObject = new System.Object();
+            this.shellSyncObject = new object();
             this.shutDownContext = shutDownContext;
         }
         #endregion
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Remoting
             : base(creationRequestDetails, transportMgr)
         {
             _remoteSession = remoteSession;
-            cmdSyncObject = new System.Object();
+            cmdSyncObject = new object();
         }
 
         #endregion

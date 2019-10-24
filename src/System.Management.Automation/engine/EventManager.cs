@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
             }
         }
 
-        private object _actionProcessingLock = new Object();
+        private object _actionProcessingLock = new object();
         private EventAction _processingAction = null;
 
         /// <summary>

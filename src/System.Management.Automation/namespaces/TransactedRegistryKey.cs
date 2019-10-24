@@ -972,7 +972,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             EnsureNotDisposed();
             // Don't require a transaction. We don't want to throw for "Base" keys.
             int subkeys = InternalSubKeyCount();
-            string[] names = new String[subkeys];  // Returns 0-length array if empty.
+            string[] names = new string[subkeys];  // Returns 0-length array if empty.
 
             if (subkeys > 0)
             {
@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // Don't require a transaction. We don't want to throw for "Base" keys.
 
             int values = InternalValueCount();
-            string[] names = new String[values];
+            string[] names = new string[values];
 
             if (values > 0)
             {
@@ -1271,7 +1271,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                 BCLDebug.Assert(blob[nextNull] == (char)0, "blob[nextNull] should be 0");
                                 if (nextNull - cur > 0)
                                 {
-                                    strings.Add(new String(blob, cur, nextNull - cur));
+                                    strings.Add(new string(blob, cur, nextNull - cur));
                                 }
                                 else
                                 {
@@ -1283,13 +1283,13 @@ namespace Microsoft.PowerShell.Commands.Internal
                             }
                             else
                             {
-                                strings.Add(new String(blob, cur, len - cur));
+                                strings.Add(new string(blob, cur, len - cur));
                             }
 
                             cur = nextNull + 1;
                         }
 
-                        data = new String[strings.Count];
+                        data = new string[strings.Count];
                         strings.CopyTo((string[])data, 0);
                         // data = strings.GetAllItems(String.class);
                     }

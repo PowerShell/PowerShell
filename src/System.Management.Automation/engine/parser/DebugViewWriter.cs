@@ -180,7 +180,7 @@ namespace System.Management.Automation.Language {
                     break;
                 case Flow.NewLine:
                     WriteLine();
-                    Write(new String(' ', Depth));
+                    Write(new string(' ', Depth));
                     break;
             }
 
