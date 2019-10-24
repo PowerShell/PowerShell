@@ -742,7 +742,7 @@ namespace System.Management.Automation
 
                 // And create an instance of the type
                 ConstructorInfo constructor =
-                    handlerType.GetConstructor(new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    handlerType.GetConstructor(new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
                 object handler = constructor.Invoke(new object[] { this, source, sourceIdentifier, data });
                 MethodInfo eventDelegate = handlerType.GetMethod("EventDelegate", BindingFlags.Public | BindingFlags.Instance);
                 handlerDelegate = eventDelegate.CreateDelegate(eventInfo.EventHandlerType, handler);
@@ -1390,14 +1390,14 @@ namespace System.Management.Automation
             // Retrieve the existing constructor
             ConstructorInfo existingConstructor =
                 typeof(PSEventHandler).GetConstructor(
-                    new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
 
             // Define the new constructor
             // public TestEventHandler(PSEventManager eventManager, Object sender, string sourceIdentifier, PSObject extraData)
             // : base(eventManager, sender, sourceIdentifier, extraData)
             ConstructorBuilder eventConstructor =
                 eventType.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,
-                    new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
             ILGenerator extendedConstructor = eventConstructor.GetILGenerator();
             extendedConstructor.Emit(OpCodes.Ldarg_0);
             extendedConstructor.Emit(OpCodes.Ldarg_1);
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation
             methodContents.DeclareLocal(typeof(object[]));
 
             methodContents.Emit(OpCodes.Ldc_I4, parameterCount);
-            methodContents.Emit(OpCodes.Newarr, typeof(Object));
+            methodContents.Emit(OpCodes.Newarr, typeof(object));
 
             // Store the new array to the local variable 'args'
             methodContents.Emit(OpCodes.Stloc_0);

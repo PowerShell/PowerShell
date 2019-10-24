@@ -1116,15 +1116,15 @@ namespace System.Management.Automation
         internal static Type[][] LargestTypeTable = new Type[][]
         {
             //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
-            /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
+            /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(single),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.Int32   */new Type[] { typeof(System.Int32),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int32),   typeof(System.Int32),   typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.Int64   */new Type[] { typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Decimal), typeof(System.Int64),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
-            /* System.UInt16  */new Type[] { typeof(System.Int32),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.UInt16),  typeof(System.UInt32),  typeof(System.UInt64),  typeof(System.Int32),   typeof(System.UInt16),  typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
+            /* System.UInt16  */new Type[] { typeof(System.Int32),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.UInt16),  typeof(System.UInt32),  typeof(System.UInt64),  typeof(System.Int32),   typeof(System.UInt16),  typeof(single),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.UInt32  */new Type[] { typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.UInt32),  typeof(System.UInt32),  typeof(System.UInt64),  typeof(System.Int64),   typeof(System.UInt32),  typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.UInt64  */new Type[] { typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal), typeof(System.UInt64),  typeof(System.UInt64),  typeof(System.UInt64),  typeof(System.Double),  typeof(System.UInt64),  typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
-            /* System.SByte   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.SByte),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
-            /* System.Byte    */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.UInt16),  typeof(System.UInt32),  typeof(System.UInt64),  typeof(System.Int16),   typeof(System.Byte),    typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
-            /* System.Single  */new Type[] { typeof(System.Single),  typeof(System.Double),  typeof(System.Double),  typeof(System.Single),  typeof(System.Double),  typeof(System.Double),  typeof(System.Single),  typeof(System.Single),  typeof(System.Single),  typeof(System.Double),  null/*not used*/       },
+            /* System.SByte   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(sbyte),   typeof(System.Int16),   typeof(single),  typeof(System.Double),  typeof(System.Decimal) },
+            /* System.Byte    */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.UInt16),  typeof(System.UInt32),  typeof(System.UInt64),  typeof(System.Int16),   typeof(byte),    typeof(single),  typeof(System.Double),  typeof(System.Decimal) },
+            /* System.Single  */new Type[] { typeof(single),  typeof(System.Double),  typeof(System.Double),  typeof(single),  typeof(System.Double),  typeof(System.Double),  typeof(single),  typeof(single),  typeof(single),  typeof(System.Double),  null/*not used*/       },
             /* System.Double  */new Type[] { typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  typeof(System.Double),  null/*not used*/       },
             /* System.Decimal */new Type[] { typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), typeof(System.Decimal), null/*not used*/,       null/*not used*/,       typeof(System.Decimal) },
         };
@@ -1453,11 +1453,11 @@ namespace System.Management.Automation
             {
                 return new UInt64Converter();
             }
-            else if (type == typeof(Byte))
+            else if (type == typeof(byte))
             {
                 return new ByteConverter();
             }
-            else if (type == typeof(SByte))
+            else if (type == typeof(sbyte))
             {
                 return new SByteConverter();
             }
@@ -4400,21 +4400,21 @@ namespace System.Management.Automation
         private static Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte),
-            typeof(Single), typeof(Double), typeof(Decimal)
+            typeof(sbyte), typeof(byte),
+            typeof(Single), typeof(double), typeof(decimal)
         };
 
         private static Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte)
+            typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static Type[] s_signedIntegerTypes = new Type[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
+        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
         internal static void RebuildConversionCache()
         {
@@ -4426,7 +4426,7 @@ namespace System.Management.Automation
                 Type typeofNull = typeof(Null);
                 Type typeofFloat = typeof(float);
                 Type typeofDouble = typeof(double);
-                Type typeofDecimal = typeof(Decimal);
+                Type typeofDecimal = typeof(decimal);
                 Type typeofBool = typeof(bool);
                 Type typeofChar = typeof(char);
                 foreach (Type type in LanguagePrimitives.s_numericTypes)
@@ -4442,11 +4442,11 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(UInt16), typeofBool, ConvertUInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt32), typeofBool, ConvertUInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt64), typeofBool, ConvertUInt64ToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(SByte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(sbyte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Single), typeofBool, ConvertSingleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -5613,8 +5613,8 @@ namespace System.Management.Automation
 
                 if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                 {
-                    if ((toType != typeof(Object)) &&
-                        (toType != typeof(Object[])) &&
+                    if ((toType != typeof(object)) &&
+                        (toType != typeof(object[])) &&
                         (!CoreTypes.Contains(toType)))
                     {
                         converter = ConvertNotSupportedConversion;

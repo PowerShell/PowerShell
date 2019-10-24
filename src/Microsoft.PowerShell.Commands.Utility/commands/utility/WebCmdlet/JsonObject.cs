@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            rv = LanguagePrimitives.ConvertTo(obj, typeof(String),
+                            rv = LanguagePrimitives.ConvertTo(obj, typeof(string),
                                 CultureInfo.InvariantCulture);
                         }
                     }

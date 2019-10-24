@@ -548,7 +548,7 @@ namespace System.Management.Automation.Language {
                 return "UL";
             }
 
-            if (type == typeof(Double)) {
+            if (type == typeof(double)) {
                 return "D";
             }
 
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language {
                 return "F";
             }
 
-            if (type == typeof(Decimal)) {
+            if (type == typeof(decimal)) {
                 return "M";
             }
 

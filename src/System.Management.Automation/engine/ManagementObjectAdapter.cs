@@ -609,10 +609,10 @@ namespace System.Management.Automation
             switch (pData.Type)
             {
                 case CimType.SInt8:
-                    retValue = typeof(System.SByte).FullName;
+                    retValue = typeof(sbyte).FullName;
                     break;
                 case CimType.UInt8:
-                    retValue = typeof(System.Byte).FullName;
+                    retValue = typeof(byte).FullName;
                     break;
                 case CimType.SInt16:
                     retValue = typeof(System.Int16).FullName;
@@ -633,7 +633,7 @@ namespace System.Management.Automation
                     retValue = typeof(System.UInt64).FullName;
                     break;
                 case CimType.Real32:
-                    retValue = typeof(System.Single).FullName;
+                    retValue = typeof(single).FullName;
                     break;
                 case CimType.Real64:
                     retValue = typeof(double).FullName;
