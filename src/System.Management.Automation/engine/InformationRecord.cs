@@ -180,7 +180,7 @@ namespace System.Management.Automation
         {
             InformationRecord informationRecord = new InformationRecord();
 
-            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<Object>(inputObject, "MessageData");
+            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData");
             informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source");
             informationRecord.TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, "TimeGenerated");
 

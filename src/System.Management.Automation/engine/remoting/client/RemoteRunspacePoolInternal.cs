@@ -1906,7 +1906,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private RunspacePoolAsyncResult _reconnectAsyncResult;  // async result object generated on CoreReconnect
         private bool _isDisposed;
 
-        private DispatchTable<Object> DispatchTable { get; }
+        private DispatchTable<object> DispatchTable { get; }
 
         private bool _canReconnect;
         private string _friendlyName = string.Empty;
