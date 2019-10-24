@@ -350,7 +350,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public void SetAsByrefI1(ref SByte value)
+        public void SetAsByrefI1(ref sbyte value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
             VariantType = (VarEnum.VT_I1 | VarEnum.VT_BYREF);
@@ -446,7 +446,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public void SetAsByrefUi1(ref Byte value)
+        public void SetAsByrefUi1(ref byte value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
             VariantType = (VarEnum.VT_UI1 | VarEnum.VT_BYREF);
@@ -662,7 +662,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public void SetAsByrefR8(ref Double value)
+        public void SetAsByrefR8(ref double value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
             VariantType = (VarEnum.VT_R8 | VarEnum.VT_BYREF);
@@ -739,7 +739,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public void SetAsByrefDate(ref Double value)
+        public void SetAsByrefDate(ref double value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
             VariantType = (VarEnum.VT_DATE | VarEnum.VT_BYREF);
