@@ -123,13 +123,11 @@ namespace System.Management.Automation.Language
             bool requiresQuote = !name[0].IsIdentifierStart();
             if (!requiresQuote)
             {
-                // Use an enumerator, skipping the first character which has already been
-                // evaluated with different rules, to determine if any remaining characters are 
+                // Step through remainder of name to determine if any remaining characters are 
                 // not an indentifier successive character.
-                CharEnumerator ce_name = name.GetEnumerator();
-                for (ce_name.MoveNext(); ce_name.MoveNext();)
+                for (int i = 1, nameLength = name.Length; i < nameLength; i++)
                 {
-                    if (!ce_name.Current.IsIdentifierFollow())
+                    if (!name[i].IsIdentifierFollow())
                     {
                         requiresQuote = true;
                         break;
@@ -203,7 +201,7 @@ namespace System.Management.Automation.Language
             // - Characters that cannot be at start of argument: '@','#','<','>'
             // - Patterns that cannot be at start of argument: 
             // - - /[1-6]>/
-            // - - /<IsDash>(<IsDash>$|[_<IsIdentifierStart>])/
+            // - - /<IsDash>(<IsDash>$|[<IsIdentifierStart>])/
             var firstChar = value[0];
             var length = value.Length;
             bool requiresQuote = "@#<>".Contains(firstChar) ||
@@ -213,13 +211,14 @@ namespace System.Management.Automation.Language
             if (!requiresQuote)
             {
                 bool lastCharWasDollar = false;
-                foreach (char c in value)
+                for (int i = 0; i < length; i++)
                 {
                     // - Characters that cannot appear anywhere:
                     // - - ForceStartNewToken
                     // - - IsSingleQuote
                     // - - IsDoubleQuote
                     // - - Backtick ('\`')
+                    char c = value[i];
                     if (c.ForceStartNewToken() || c.IsSingleQuote() || c.IsDoubleQuote() || c == '`')
                     {
                         requiresQuote = true;
@@ -254,10 +253,12 @@ namespace System.Management.Automation.Language
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder(value.Length);
+            int valueLength = value.Length;
+            StringBuilder sb = new StringBuilder(valueLength);
             bool lastCharWasDollar = false;
-            foreach (char c in value)
+            for (int i = 0; i < valueLength; i++)
             {
+                char c = value[i];
                 if (lastCharWasDollar)
                 {
                     if (c.IsVariableStart() || c == '{' || c == '(')
