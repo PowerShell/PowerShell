@@ -1130,7 +1130,7 @@ namespace System.Management.Automation
                             }
                             else if (LanguagePrimitives.IsNumeric(boType.GetTypeCode()))
                             {
-                                Double currentValueAsDouble = (double)LanguagePrimitives.ConvertTo(
+                                double currentValueAsDouble = (double)LanguagePrimitives.ConvertTo(
                                                                         currentValue, typeof(double), CultureInfo.InvariantCulture);
 
                                 if (currentValueAsDouble != 0)
