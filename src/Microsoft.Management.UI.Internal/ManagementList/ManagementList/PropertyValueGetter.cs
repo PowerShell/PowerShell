@@ -42,18 +42,18 @@ namespace Microsoft.Management.UI.Internal
         {
             propertyValue = null;
 
-            if (String.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentException("propertyName is empty", "propertyName");
             }
 
-            if (null == value)
+            if (value == null)
             {
                 throw new ArgumentNullException("value");
             }
 
             PropertyDescriptor descriptor = this.GetPropertyDescriptor(propertyName, value);
-            if (null == descriptor)
+            if (descriptor == null)
             {
                 return false;
             }
@@ -91,7 +91,7 @@ namespace Microsoft.Management.UI.Internal
 
             PropertyDescriptor descriptor;
 
-            if (null == propertyRow)
+            if (propertyRow == null)
             {
                 PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(value);
 

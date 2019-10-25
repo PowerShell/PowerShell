@@ -42,7 +42,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         protected override DataTemplate ChooseTemplate()
         {
-            if (null == this.ContentTemplateSelector || null == this.ContentConverter)
+            if (this.ContentTemplateSelector == null || this.ContentConverter == null)
             {
                 return base.ChooseTemplate();
             }

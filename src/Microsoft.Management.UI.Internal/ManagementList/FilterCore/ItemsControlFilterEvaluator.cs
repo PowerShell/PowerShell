@@ -65,7 +65,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public override void StartFilter()
         {
-            if (null == this.FilterTarget)
+            if (this.FilterTarget == null)
             {
                 throw new InvalidOperationException("FilterTarget is null.");
             }
@@ -89,7 +89,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public override void StopFilter()
         {
-            if (null == this.FilterTarget)
+            if (this.FilterTarget == null)
             {
                 throw new InvalidOperationException("FilterTarget is null.");
             }

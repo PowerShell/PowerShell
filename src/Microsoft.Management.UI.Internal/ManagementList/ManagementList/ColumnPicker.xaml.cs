@@ -59,12 +59,12 @@ namespace Microsoft.Management.UI.Internal
             ICollection<InnerListColumn> availableColumns)
             : this()
         {
-            if (null == columns)
+            if (columns == null)
             {
                 throw new ArgumentNullException("columns");
             }
 
-            if (null == availableColumns)
+            if (availableColumns == null)
             {
                 throw new ArgumentNullException("availableColumns");
             }
@@ -332,7 +332,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // Ignore double-clicks on the listbox whitespace
-            if (null == this.PART_NotSelectedList.ContainerFromElement((DependencyObject)e.OriginalSource))
+            if (this.PART_NotSelectedList.ContainerFromElement((DependencyObject)e.OriginalSource) == null)
             {
                 return;
             }
@@ -359,7 +359,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // Ignore double-clicks on the listbox whitespace
-            if (null == this.PART_SelectedList.ContainerFromElement((DependencyObject)e.OriginalSource))
+            if (this.PART_SelectedList.ContainerFromElement((DependencyObject)e.OriginalSource) == null)
             {
                 return;
             }

@@ -23,7 +23,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// new line separators
         /// </summary>
-        private static readonly string[] Separators = new [] { "\r\n", "\n" };
+        private static readonly string[] Separators = new[] { "\r\n", "\n" };
 
         /// <summary>
         /// Object with the cmdelt
@@ -45,7 +45,12 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Enum for category of Help.
         /// </summary>
-        private enum HelpCategory { Default, DscResource, Class };
+        private enum HelpCategory
+        {
+            Default,
+            DscResource,
+            Class
+        }
 
         /// <summary>
         /// Gets the string value of a property or null if it could not be retrieved
@@ -73,22 +78,22 @@ namespace Microsoft.Management.UI.Internal
         {
             this.ResetAllText();
 
-            string strCategory = (HelpParagraphBuilder.GetProperty(this.psObj, "Category")).Value.ToString();
+            string strCategory = HelpParagraphBuilder.GetProperty(this.psObj, "Category").Value.ToString();
 
             HelpCategory category = HelpCategory.Default;
 
-            if (String.Compare(strCategory, "DscResource", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(strCategory, "DscResource", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 category =  HelpCategory.DscResource;
             }
-            else if (String.Compare(strCategory, "Class", StringComparison.OrdinalIgnoreCase) == 0)
+            else if (string.Compare(strCategory, "Class", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 category = HelpCategory.Class;
             }
 
             if (HelpParagraphBuilder.GetProperty(this.psObj, "Syntax") == null)
             {
-                if(category == HelpCategory.Default)
+                if (category == HelpCategory.Default)
                 {
                     // if there is no syntax, this is not the standard help
                     // it might be an about page
@@ -299,13 +304,12 @@ namespace Microsoft.Management.UI.Internal
 
             if (innerObject is PSObject)
             {
-                return new [] { innerObject };
+                return new[] { innerObject };
             }
 
             object[] innerObjectArray = innerObject as object[];
             return innerObjectArray;
         }
-
 
         /// <summary>
         /// Adds a section that contains only a string
@@ -365,7 +369,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                string commandStart = String.Format(CultureInfo.CurrentCulture, "{0} ", commandName);
+                string commandStart = string.Format(CultureInfo.CurrentCulture, "{0} ", commandName);
                 this.AddText(HelpParagraphBuilder.AddIndent(commandStart), false);
 
                 foreach (object parameterObj in parameterObjs)
@@ -385,11 +389,11 @@ namespace Microsoft.Management.UI.Internal
                         continue;
                     }
 
-                    string parameterType = parameterValue == null ? string.Empty : String.Format(CultureInfo.CurrentCulture, "<{0}>", parameterValue);
+                    string parameterType = parameterValue == null ? string.Empty : string.Format(CultureInfo.CurrentCulture, "<{0}>", parameterValue);
 
                     string parameterOptionalOpenBrace, parameterOptionalCloseBrace;
 
-                    if (String.Equals(required, "true", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(required, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         parameterOptionalOpenBrace = string.Empty;
                         parameterOptionalCloseBrace = string.Empty;
@@ -402,7 +406,7 @@ namespace Microsoft.Management.UI.Internal
 
                     string parameterNameOptionalOpenBrace, parameterNameOptionalCloseBrace;
 
-                    if (String.Equals(position, "named", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(position, "named", StringComparison.OrdinalIgnoreCase))
                     {
                         parameterNameOptionalOpenBrace = parameterNameOptionalCloseBrace = string.Empty;
                     }
@@ -412,7 +416,7 @@ namespace Microsoft.Management.UI.Internal
                         parameterNameOptionalCloseBrace = "]";
                     }
 
-                    string paramterPrefix = String.Format(
+                    string paramterPrefix = string.Format(
                         CultureInfo.CurrentCulture,
                         "{0}{1}-",
                         parameterOptionalOpenBrace,
@@ -421,7 +425,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(paramterPrefix, false);
                     this.AddText(parameterName, true);
 
-                    string paramterSuffix = String.Format(
+                    string paramterSuffix = string.Format(
                         CultureInfo.CurrentCulture,
                         "{0} {1}{2} ",
                         parameterNameOptionalCloseBrace,
@@ -430,7 +434,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(paramterSuffix, false);
                 }
 
-                string commonParametersText = String.Format(
+                string commonParametersText = string.Format(
                     CultureInfo.CurrentCulture,
                     "[<{0}>]\r\n\r\n",
                     HelpWindowResources.CommonParameters);
@@ -522,7 +526,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText("\r\n", false);
                 }
 
-                string codeLine = String.Format(
+                string codeLine = string.Format(
                     CultureInfo.CurrentCulture,
                     "{0}{1}\r\n\r\n",
                     introductionText,
@@ -554,7 +558,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddMembers(bool setting, string sectionTitle)
         {
-            if(!setting || String.IsNullOrEmpty(sectionTitle))
+            if(!setting || string.IsNullOrEmpty(sectionTitle))
             {
                 return;
             }
@@ -590,7 +594,7 @@ namespace Microsoft.Management.UI.Internal
                 string type = GetPropertyString(member, "type");
                 string propertyType = null;
 
-                if (String.Compare("field", type, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare("field", type, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     PSObject fieldData = HelpParagraphBuilder.GetPropertyObject(member, "fieldData") as PSObject;
 
@@ -603,17 +607,17 @@ namespace Microsoft.Management.UI.Internal
                             description = GetPropertyString(propertyTypeObject, "description");
                         }
 
-                        memberText = String.Format(CultureInfo.CurrentCulture, " [{0}] {1}\r\n", propertyType, name);
+                        memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}\r\n", propertyType, name);
                     }
                 }
-                else if (String.Compare("method", type, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare("method", type, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     FormatMethodData(member, name, out memberText, out description);
                 }
 
-                if (!String.IsNullOrEmpty(memberText))
+                if (!string.IsNullOrEmpty(memberText))
                 {
-                    this.AddText(HelpParagraphBuilder.AddIndent(""), false);
+                    this.AddText(HelpParagraphBuilder.AddIndent(string.Empty), false);
                     this.AddText(memberText, true);
 
                     if (description != null)
@@ -632,7 +636,7 @@ namespace Microsoft.Management.UI.Internal
             memberText = null;
             description = null;
 
-            if (member == null || String.IsNullOrEmpty(name))
+            if (member == null || string.IsNullOrEmpty(name))
             {
                 return;
             }
@@ -640,7 +644,7 @@ namespace Microsoft.Management.UI.Internal
             string returnType = null;
             StringBuilder parameterText = new StringBuilder();
 
-            //Get method return type
+            // Get method return type
             PSObject returnTypeObject = HelpParagraphBuilder.GetPropertyObject(member, "returnValue") as PSObject;
             if (returnTypeObject != null)
             {
@@ -651,7 +655,7 @@ namespace Microsoft.Management.UI.Internal
                 }
             }
 
-            //Get method description.
+            // Get method description.
             PSObject[] methodDescriptions = HelpParagraphBuilder.GetPropertyObject(member, "introduction") as PSObject[];
             if (methodDescriptions != null)
             {
@@ -659,15 +663,15 @@ namespace Microsoft.Management.UI.Internal
                 {
                     description = GetPropertyString(methodDescription, "Text");
 
-                    //If we get an text we do not need to iterate more.
-                    if (!String.IsNullOrEmpty(description))
+                    // If we get an text we do not need to iterate more.
+                    if (!string.IsNullOrEmpty(description))
                     {
                         break;
                     }
                 }
             }
 
-            //Get method parameters.
+            // Get method parameters.
             PSObject parametersObject = HelpParagraphBuilder.GetPropertyObject(member, "parameters") as PSObject;
             if (parametersObject != null)
             {
@@ -686,26 +690,26 @@ namespace Microsoft.Management.UI.Internal
                         {
                             parameterType = GetPropertyString(parameterTypeData, "name");
 
-                            //If there is no type for the paramter, we expect it is System.Object
-                            if (String.IsNullOrEmpty(parameterType))
+                            // If there is no type for the paramter, we expect it is System.Object
+                            if (string.IsNullOrEmpty(parameterType))
                             {
                                 parameterType = "object";
                             }
                         }
 
-                        string paramString = String.Format(CultureInfo.CurrentCulture, "[{0}] ${1},", parameterType, parameterName);
+                        string paramString = string.Format(CultureInfo.CurrentCulture, "[{0}] ${1},", parameterType, parameterName);
 
                         parameterText.Append(paramString);
                     }
 
-                    if (String.Compare(parameterText[parameterText.Length - 1].ToString(), ",", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(parameterText[parameterText.Length - 1].ToString(), ",", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         parameterText = parameterText.Remove(parameterText.Length - 1, 1);
                     }
                 }
             }
 
-            memberText = String.Format(CultureInfo.CurrentCulture, " [{0}] {1}({2})\r\n", returnType, name, parameterText);
+            memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}({2})\r\n", returnType, name, parameterText);
         }
 
         /// <summary>
@@ -730,7 +734,7 @@ namespace Microsoft.Management.UI.Internal
 
             object[] parameterObjects = null;
 
-            //Root object for Class has members not parameters.
+            // Root object for Class has members not parameters.
             if (helpCategory != HelpCategory.Class)
             {
                 parameterObjects = HelpParagraphBuilder.GetPropertyObjectArray(parameterRootObject, "parameter");
@@ -761,16 +765,14 @@ namespace Microsoft.Management.UI.Internal
                 string defaultValue = GetPropertyString(parameter, "defaultValue");
                 string acceptWildcard = GetPropertyString(parameter, "globbing");
 
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     continue;
                 }
 
-                // This syntax string is not localized
-
                 if (helpCategory == HelpCategory.DscResource)
                 {
-                    this.AddText(HelpParagraphBuilder.AddIndent(""), false);
+                    this.AddText(HelpParagraphBuilder.AddIndent(string.Empty), false);
                 }
                 else
                 {
@@ -778,7 +780,7 @@ namespace Microsoft.Management.UI.Internal
                 }
 
                 this.AddText(name, true);
-                string parameterText = String.Format(
+                string parameterText = string.Format(
                     CultureInfo.CurrentCulture,
                     " <{0}>\r\n",
                     parameterValue);
@@ -801,14 +803,14 @@ namespace Microsoft.Management.UI.Internal
                     HelpWindowResources.ParameterAcceptWildcard);
 
                 // justification of parameter values is not localized
-                string formatString = String.Format(
+                string formatString = string.Format(
                     CultureInfo.CurrentCulture,
                     "{{0,-{0}}}{{1}}",
                     largestSize + 2);
 
                 string tableLine;
 
-                tableLine = String.Format(
+                tableLine = string.Format(
                     CultureInfo.CurrentCulture,
                     formatString,
                     HelpWindowResources.ParameterRequired,
@@ -816,10 +818,10 @@ namespace Microsoft.Management.UI.Internal
                 this.AddText(HelpParagraphBuilder.AddIndent(tableLine, 2), false);
                 this.AddText("\r\n", false);
 
-                //these are not applicable for Dsc Resource help
+                // these are not applicable for Dsc Resource help
                 if (helpCategory != HelpCategory.DscResource)
                 {
-                    tableLine = String.Format(
+                    tableLine = string.Format(
                         CultureInfo.CurrentCulture,
                         formatString,
                         HelpWindowResources.ParameterPosition,
@@ -827,7 +829,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(HelpParagraphBuilder.AddIndent(tableLine, 2), false);
                     this.AddText("\r\n", false);
 
-                    tableLine = String.Format(
+                    tableLine = string.Format(
                         CultureInfo.CurrentCulture,
                         formatString,
                         HelpWindowResources.ParameterDefaultValue,
@@ -835,7 +837,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(HelpParagraphBuilder.AddIndent(tableLine, 2), false);
                     this.AddText("\r\n", false);
 
-                    tableLine = String.Format(
+                    tableLine = string.Format(
                         CultureInfo.CurrentCulture,
                         formatString,
                         HelpWindowResources.ParameterPipelineInput,
@@ -843,7 +845,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(HelpParagraphBuilder.AddIndent(tableLine, 2), false);
                     this.AddText("\r\n", false);
 
-                    tableLine = String.Format(
+                    tableLine = string.Format(
                         CultureInfo.CurrentCulture,
                         formatString,
                         HelpWindowResources.ParameterAcceptWildcard,
@@ -891,7 +893,7 @@ namespace Microsoft.Management.UI.Internal
                 string text = GetPropertyString(linkObject, "linkText");
                 string uri = GetPropertyString(linkObject, "uri");
 
-                string linkLine = String.IsNullOrEmpty(uri) ? text : String.Format(
+                string linkLine = string.IsNullOrEmpty(uri) ? text : string.Format(
                     CultureInfo.CurrentCulture,
                     HelpWindowResources.LinkTextFormat,
                     text,

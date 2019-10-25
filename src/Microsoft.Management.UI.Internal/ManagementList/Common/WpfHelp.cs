@@ -271,7 +271,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>Returns an object of type T if found, otherwise null.</returns>
         public static T GetVisualChild<T>(DependencyObject obj) where T : DependencyObject
         {
-            if (null == obj)
+            if (obj == null)
             {
                 return null;
             }
@@ -443,7 +443,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("templateParent");
             }
 
-            if (String.IsNullOrEmpty(childName))
+            if (string.IsNullOrEmpty(childName))
             {
                 throw new ArgumentNullException("childName");
             }
@@ -485,7 +485,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="name">The name of the expected template part.</param>
         private static void HandleWrongTemplatePartType<T>(string name)
         {
-            throw new ApplicationException(String.Format(
+            throw new ApplicationException(string.Format(
                 CultureInfo.CurrentCulture,
                 "A template part with the name of '{0}' is not of type {1}.",
                 name,
@@ -499,7 +499,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="name">The name of the expected template part.</param>
         public static void HandleMissingTemplatePart<T>(string name)
         {
-            throw new ApplicationException(String.Format(
+            throw new ApplicationException(string.Format(
                 CultureInfo.CurrentCulture,
                 "A template part with the name of '{0}' and type of {1} was not found.",
                 name,

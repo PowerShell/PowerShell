@@ -226,7 +226,7 @@ namespace Microsoft.Management.UI.Internal
         {
             foreach (InnerListColumn column in this.InnerGrid.AvailableColumns)
             {
-                bool isPrimarySortColumn = Object.ReferenceEquals(this.sortedColumn, column);
+                bool isPrimarySortColumn = object.ReferenceEquals(this.sortedColumn, column);
 
                 InnerList.SetIsPrimarySortColumn(column, isPrimarySortColumn);
                 InnerList.SetIsPrimarySortColumn((GridViewColumnHeader)column.Header, isPrimarySortColumn);
@@ -259,7 +259,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public void ClearSort()
         {
-            if (null == this.CollectionView)
+            if (this.CollectionView == null)
             {
                 return;
             }
@@ -295,11 +295,11 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnItemsSourceChanged(oldValue, newValue);
 
-            this.itemsSourceIsEmpty = (null != this.ItemsSource && false == this.ItemsSource.GetEnumerator().MoveNext());
+            this.itemsSourceIsEmpty = null != this.ItemsSource && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
             // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
             bool canCreateView = (null != this.ItemsSource) &&
-                (false == this.itemsSourceIsEmpty || false == this.AutoGenerateColumns);
+                (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
             if (canCreateView)
             {
@@ -362,7 +362,7 @@ namespace Microsoft.Management.UI.Internal
                 // If pressing Left or Right on a column header, move the focus \\
                 GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
 
-                if (null != header)
+                if (header != null)
                 {
                     header.MoveFocus(new TraversalRequest(KeyboardHelp.GetNavigationDirection(this, e.Key)));
                     e.Handled = true;
@@ -386,7 +386,7 @@ namespace Microsoft.Management.UI.Internal
             InnerListGridView innerGrid = e.NewValue as InnerListGridView;
             if (newGrid != null && innerGrid == null)
             {
-                throw new NotSupportedException(String.Format(
+                throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
                    InvariantResources.ViewSetWithType,
                    typeof(GridView).Name,
@@ -403,7 +403,7 @@ namespace Microsoft.Management.UI.Internal
         private static NotSupportedException GetItemsException()
         {
             return new NotSupportedException(
-                String.Format(
+                string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
                     typeof(InnerList).Name,
@@ -483,7 +483,7 @@ namespace Microsoft.Management.UI.Internal
             this.View = this.innerGrid;
             this.SetColumnHeaderActions();
 
-            if (null != sortedColumn && this.Columns.Contains(sortedColumn))
+            if (sortedColumn != null && this.Columns.Contains(sortedColumn))
             {
                 this.ApplySort(sortedColumn, false);
             }
@@ -597,7 +597,7 @@ namespace Microsoft.Management.UI.Internal
                 object propertyValue;
                 if (!FilterRuleCustomizationFactory.FactoryInstance.PropertyValueGetter.TryGetPropertyValue(column.DataDescription.PropertyName, value, out propertyValue))
                 {
-                    propertyValue = String.Empty;
+                    propertyValue = string.Empty;
                 }
 
                 entryText.AppendFormat(CultureInfo.CurrentCulture, "{0}\t", propertyValue);
@@ -608,7 +608,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void SetClipboardWithSelectedItemsText(string text)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return;
             }

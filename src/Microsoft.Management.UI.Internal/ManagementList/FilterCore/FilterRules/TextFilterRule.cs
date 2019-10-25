@@ -83,7 +83,7 @@ namespace Microsoft.Management.UI.Internal
             // If it's an exact-match value, remove quotes and use the exact-match pattern \\
             if (evaluateAsExactMatch)
             {
-                parsedValue = parsedValue.Replace("\"", String.Empty);
+                parsedValue = parsedValue.Replace("\"", string.Empty);
             }
 
             return parsedValue;
@@ -122,7 +122,7 @@ namespace Microsoft.Management.UI.Internal
             value = Regex.Escape(value);
 
             // Format the pattern using the specified data \\
-            return String.Format(CultureInfo.InvariantCulture, pattern, value);
+            return string.Format(CultureInfo.InvariantCulture, pattern, value);
         }
 
         /// <summary>

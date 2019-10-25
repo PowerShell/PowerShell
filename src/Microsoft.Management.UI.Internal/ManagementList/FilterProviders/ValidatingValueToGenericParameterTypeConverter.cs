@@ -45,7 +45,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (null == value)
+            if (value == null)
             {
                 return typeof(string);
             }

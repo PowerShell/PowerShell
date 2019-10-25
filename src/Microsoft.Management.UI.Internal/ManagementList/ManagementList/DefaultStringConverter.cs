@@ -69,7 +69,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             string val = values[0] as string;
-            if (!String.IsNullOrEmpty(val))
+            if (!string.IsNullOrEmpty(val))
             {
                 return val;
             }

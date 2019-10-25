@@ -136,7 +136,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the UntrimmedText dependency property.
         /// </summary>
-        public static readonly DependencyProperty UntrimmedTextProperty = DependencyProperty.RegisterAttached( "UntrimmedText", typeof(string), typeof(TextBlockService), new PropertyMetadata( String.Empty, UntrimmedTextProperty_PropertyChanged) );
+        public static readonly DependencyProperty UntrimmedTextProperty = DependencyProperty.RegisterAttached( "UntrimmedText", typeof(string), typeof(TextBlockService), new PropertyMetadata( string.Empty, UntrimmedTextProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets the untrimmed text.

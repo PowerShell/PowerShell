@@ -66,17 +66,17 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public PropertyValueSelectorFilterRule(string propertyName, string propertyDisplayName, IEnumerable<FilterRule> rules)
         {
-            if (String.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentNullException("propertyName");
             }
 
-            if (String.IsNullOrEmpty(propertyDisplayName))
+            if (string.IsNullOrEmpty(propertyDisplayName))
             {
                 throw new ArgumentNullException("propertyDisplayName");
             }
 
-            if (null == rules)
+            if (rules == null)
             {
                 throw new ArgumentNullException("rules");
             }
@@ -86,7 +86,7 @@ namespace Microsoft.Management.UI.Internal
 
             foreach (FilterRule rule in rules)
             {
-                if (null == rule)
+                if (rule == null)
                 {
                     throw new ArgumentException("A value within rules is null", "rules");
                 }
@@ -117,7 +117,7 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            if (null == item)
+            if (item == null)
             {
                 return false;
             }

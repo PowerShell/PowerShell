@@ -126,7 +126,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.IsValueEmpty())
             {
-                return new DataErrorInfoValidationResult(false, null, String.Empty);
+                return new DataErrorInfoValidationResult(false, null, string.Empty);
             }
 
             T castValue;
@@ -147,14 +147,14 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsValueEmpty()
         {
-            if (null == this.Value)
+            if (this.Value == null)
             {
                 return true;
             }
 
 
             string stringValue = this.Value.ToString();
-            if (String.IsNullOrEmpty(stringValue))
+            if (string.IsNullOrEmpty(stringValue))
             {
                 return true;
             }
@@ -166,7 +166,7 @@ namespace Microsoft.Management.UI.Internal
         {
             castValue = default(T);
 
-            if (null == rawValue)
+            if (rawValue == null)
             {
                 throw new ArgumentNullException("rawValue");
             }

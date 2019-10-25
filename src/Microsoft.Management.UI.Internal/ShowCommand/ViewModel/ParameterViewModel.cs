@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
             else
             {
-                this.parameterValue = String.Empty;
+                this.parameterValue = string.Empty;
             }
         }
         #endregion
@@ -143,12 +143,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             get
             {
                 return this.Parameter.IsMandatory ?
-                    String.Format(
+                    string.Format(
                         CultureInfo.CurrentUICulture,
                         ShowCommandResources.MandatoryNameLabelFormat,
                         this.Name,
                         ShowCommandResources.MandatoryLabelSegment) :
-                    String.Format(
+                    string.Format(
                         CultureInfo.CurrentUICulture,
                         ShowCommandResources.NameLabelFormat,
                         this.Name);
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns> the tooltip based on the parameters</returns>
         internal static string EvaluateTooltip(string typeName, int position, bool mandatory, bool shared, bool valueFromPipeline)
         {
-            StringBuilder returnValue = new StringBuilder(String.Format(
+            StringBuilder returnValue = new StringBuilder(string.Format(
                     CultureInfo.CurrentCulture,
                     ShowCommandResources.TypeFormat,
                     typeName));
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (position >= 0)
             {
-                string positionFormat = String.Format(
+                string positionFormat = string.Format(
                     CultureInfo.CurrentCulture,
                     ShowCommandResources.PositionFormat,
                     position);

@@ -52,7 +52,7 @@ namespace ConsoleApplication
                         if (className.StartsWith("public.", StringComparison.InvariantCultureIgnoreCase))
                         {
                             accessModifier = "public";
-                            className = className.Substring(className.IndexOf(".")+1);
+                            className = className.Substring(className.IndexOf(".") + 1);
                         }
 
                         string sourceCode = GetStronglyTypeCsFileForResx(resxPath, moduleName, className, accessModifier);
@@ -71,7 +71,6 @@ namespace ConsoleApplication
             // className = Full.Name.Of.The.ClassFoo
             // shortClassName = ClassFoo
             // namespaceName = Full.Name.Of.The
-
             string shortClassName = className;
             string namespaceName = null;
             int lastIndexOfDot = className.LastIndexOf('.');
@@ -90,7 +89,7 @@ namespace ConsoleApplication
                 entries.AppendFormat(ENTRY, name, value, accessModifier);
             }
 
-            string bodyCode = string.Format(BODY, shortClassName, moduleName, entries.ToString(), className, accessModifier, accessModifier.Equals("public", StringComparison.InvariantCultureIgnoreCase) ? "public." : "");
+            string bodyCode = string.Format(BODY, shortClassName, moduleName, entries.ToString(), className, accessModifier, accessModifier.Equals("public", StringComparison.InvariantCultureIgnoreCase) ? "public." : string.Empty);
             if (namespaceName != null)
             {
                 bodyCode = string.Format(NAMESPACE, namespaceName, bodyCode);
@@ -119,6 +118,7 @@ namespace {0} {{
 {1}
 }}
 ";
+
         private static readonly string BODY = @"
 using System;
 using System.Reflection;
@@ -185,6 +185,5 @@ using System.Reflection;
         }}
     }}
 ";
-
     }
 }

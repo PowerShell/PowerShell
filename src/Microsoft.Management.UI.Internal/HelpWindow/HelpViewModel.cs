@@ -62,7 +62,7 @@ namespace Microsoft.Management.UI.Internal
             this.helpBuilder.BuildParagraph();
             this.searcher = new ParagraphSearcher();
             this.helpBuilder.PropertyChanged += new PropertyChangedEventHandler(this.HelpBuilder_PropertyChanged);
-            this.helpTitle = String.Format(
+            this.helpTitle = string.Format(
                 CultureInfo.CurrentCulture,
                 HelpWindowResources.HelpTitleFormat,
                 HelpParagraphBuilder.GetPropertyString(psObj, "name"));
@@ -112,7 +112,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return String.Format(CultureInfo.CurrentCulture, HelpWindowResources.ZoomLabelTextFormat, this.zoom);
+                return string.Format(CultureInfo.CurrentCulture, HelpWindowResources.ZoomLabelTextFormat, this.zoom);
             }
         }
 
@@ -242,7 +242,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (this.findText == null || this.findText.Trim().Length == 0)
             {
-                this.MatchesLabel = String.Empty;
+                this.MatchesLabel = string.Empty;
             }
             else
             {
@@ -258,7 +258,7 @@ namespace Microsoft.Management.UI.Internal
                     }
                     else
                     {
-                        this.MatchesLabel = String.Format(
+                        this.MatchesLabel = string.Format(
                             CultureInfo.CurrentCulture,
                             HelpWindowResources.SomeMatchesFormat,
                             this.HelpBuilder.HighlightCount);

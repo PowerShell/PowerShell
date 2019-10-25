@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (null == this.savedViewFactory)
+                if (this.savedViewFactory == null)
                 {
                     this.savedViewFactory = new ManagementListStateDescriptorFactory();
                 }
@@ -50,7 +50,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -246,7 +246,7 @@ namespace Microsoft.Management.UI.Internal
             this.defaultFullTextSearchRule.PropertyNames.Clear();
             this.AddFilterRulePicker.ShortcutFilterRules.Clear();
             this.AddFilterRulePicker.ColumnFilterRules.Clear();
-            this.SearchBox.Text = String.Empty;
+            this.SearchBox.Text = string.Empty;
             this.SearchBox.Parser.ClearSearchableRules();
             this.SearchBox.Parser.FullTextRule = this.defaultFullTextSearchRule;
         }
@@ -311,7 +311,7 @@ namespace Microsoft.Management.UI.Internal
         partial void OnSaveViewCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
             string viewName = (string)e.Parameter;
-            bool isNotEmpty = !String.IsNullOrEmpty(viewName) && (0 != viewName.Trim().Length);
+            bool isNotEmpty = !string.IsNullOrEmpty(viewName) && (0 != viewName.Trim().Length);
             e.CanExecute = isNotEmpty;
         }
 
@@ -323,7 +323,7 @@ namespace Microsoft.Management.UI.Internal
 
             StateDescriptor<ManagementList> sd = null;
 
-            if (null == (sd = this.DoesViewAlreadyExist(viewName)))
+            if ((sd = this.DoesViewAlreadyExist(viewName)) == null)
             {
                 sd = this.SavedViewFactory.Create();
                 sd.Name = viewName;
@@ -352,7 +352,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void ViewManager_ItemSelected(object sender, DataRoutedEventArgs<object> e)
         {
-            if (null == e.Data)
+            if (e.Data == null)
             {
                 throw new ArgumentException("e.Data is null", "e");
             }
@@ -365,7 +365,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void ViewManager_ItemDeleted(object sender, DataRoutedEventArgs<object> e)
         {
-            if (null == e.Data)
+            if (e.Data == null)
             {
                 throw new ArgumentException("e.Data is null", "e");
             }

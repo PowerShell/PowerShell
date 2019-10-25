@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public static string RefreshTooltip
         {
-            get { return String.Format(CultureInfo.CurrentUICulture, ShowCommandResources.RefreshShowCommandTooltipFormat, "import-module"); }
+            get { return string.Format(CultureInfo.CurrentUICulture, ShowCommandResources.RefreshShowCommandTooltipFormat, "import-module"); }
         }
 
         /// <summary>
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 return 1;
             }
 
-            return String.Compare(source.Name, target.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(source.Name, target.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

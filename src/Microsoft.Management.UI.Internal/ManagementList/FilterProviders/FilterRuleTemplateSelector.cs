@@ -40,13 +40,13 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
         {
-            if (null == item)
+            if (item == null)
             {
                 return base.SelectTemplate(item, container);
             }
 
             Type type = item as Type;
-            if (null == type)
+            if (type == null)
             {
                 type = item.GetType();
             }

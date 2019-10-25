@@ -21,7 +21,7 @@ namespace Microsoft.Management.UI.Internal
             TextProperty.OverrideMetadata(
                                           typeof(MessageTextBox),
                                           new FrameworkPropertyMetadata(
-                                                                        String.Empty,
+                                                                        string.Empty,
                                                                         null,
                                                                         new CoerceValueCallback(OnTextBoxTextCoerce)));
         }
@@ -30,11 +30,11 @@ namespace Microsoft.Management.UI.Internal
 
         private void UpdateIsBackgroundTextShown(string text)
         {
-            if (String.IsNullOrEmpty(text) == false && this.IsBackgroundTextShown)
+            if (string.IsNullOrEmpty(text) == false && this.IsBackgroundTextShown)
             {
                 this.IsBackgroundTextShown = false;
             }
-            else if (String.IsNullOrEmpty(text) && this.IsBackgroundTextShown == false)
+            else if (string.IsNullOrEmpty(text) && this.IsBackgroundTextShown == false)
             {
                 this.IsBackgroundTextShown = true;
             }

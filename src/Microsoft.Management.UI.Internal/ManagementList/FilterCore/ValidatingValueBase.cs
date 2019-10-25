@@ -82,7 +82,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (String.IsNullOrEmpty(columnName))
+                if (string.IsNullOrEmpty(columnName))
                 {
                     throw new ArgumentNullException("columnName");
                 }
@@ -104,7 +104,7 @@ namespace Microsoft.Management.UI.Internal
             get
             {
                 DataErrorInfoValidationResult result = this.GetValidationResult();
-                return (!result.IsValid) ? result.ErrorMessage : String.Empty;
+                return (!result.IsValid) ? result.ErrorMessage : string.Empty;
             }
         }
 
@@ -140,7 +140,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The validation rule to add.</param>
         public void AddValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }
@@ -161,7 +161,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The rule to remove.</param>
         public void RemoveValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }
@@ -222,9 +222,9 @@ namespace Microsoft.Management.UI.Internal
             foreach (DataErrorInfoValidationRule rule in this.ValidationRules)
             {
                 DataErrorInfoValidationResult result = rule.Validate(value, cultureInfo);
-                if (null == result)
+                if (result == null)
                 {
-                    throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture, "DataErrorInfoValidationResult not returned by ValidationRule: {0}", rule.ToString()));
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "DataErrorInfoValidationResult not returned by ValidationRule: {0}", rule.ToString()));
                 }
 
                 if (!result.IsValid)
@@ -279,7 +279,7 @@ namespace Microsoft.Management.UI.Internal
 
         private DataErrorInfoValidationResult GetValidationResult()
         {
-            if (null == this.cachedValidationResult)
+            if (this.cachedValidationResult == null)
             {
                 this.UpdateValidationResult();
             }

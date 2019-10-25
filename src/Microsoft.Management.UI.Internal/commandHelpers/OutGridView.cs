@@ -155,7 +155,7 @@ namespace Microsoft.Management.UI.Internal
                        }
                        catch (NotSupportedException)
                        {
-                           //localized has a problematic string - going to default
+                           // localized has a problematic string - going to default
                            plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Add"));
                            plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Plus"));
                            this.gridViewWindow.CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
@@ -173,7 +173,7 @@ namespace Microsoft.Management.UI.Internal
                        }
                        catch (NotSupportedException)
                        {
-                           //localized has a problematic string - going to default
+                           // localized has a problematic string - going to default
                            minusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Subtract"));
                            minusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Minus"));
                            this.gridViewWindow.CommandBindings.Add(new CommandBinding(minusSettings, ZoomEventHandlerMinus));

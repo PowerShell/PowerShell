@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }

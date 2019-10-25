@@ -11,7 +11,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-//namespace Microsoft.Management.UI.Internal {
+// namespace Microsoft.Management.UI.Internal {
 
 
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

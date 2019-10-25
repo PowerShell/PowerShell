@@ -44,12 +44,12 @@ namespace Microsoft.Management.UI.Internal
             object item1 = values[0];
             object item2 = values[1];
 
-            if (null == item1)
+            if (item1 == null)
             {
-                return (null == item2);
+                return (item2 == null);
             }
 
-            if (null == item2)
+            if (item2 == null)
             {
                 return false;
             }

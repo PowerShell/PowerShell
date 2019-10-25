@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                             helpWindow.Closed += new EventHandler(delegate(object sender, EventArgs e) { ownerWindow.Focus(); });
                         }),
-                        String.Empty);
+                        string.Empty);
                 return;
             }
 

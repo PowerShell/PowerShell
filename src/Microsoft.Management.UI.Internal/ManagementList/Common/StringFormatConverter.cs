@@ -30,12 +30,12 @@ namespace Microsoft.Management.UI.Internal
 
             string str = (string)value;
             string formatString = (string)parameter;
-            if (String.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(str))
             {
                 return null;
             }
 
-            return String.Format(culture, formatString, str);
+            return string.Format(culture, formatString, str);
         }
 
         /// <summary>

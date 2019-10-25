@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override bool Evaluate(object item)
         {
-            if (null == item)
+            if (item == null)
             {
                 return true;
             }

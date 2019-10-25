@@ -43,8 +43,8 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("values");
             }
 
-            if (Object.ReferenceEquals(values[0], DependencyProperty.UnsetValue) ||
-                Object.ReferenceEquals(values[1], DependencyProperty.UnsetValue))
+            if (object.ReferenceEquals(values[0], DependencyProperty.UnsetValue) ||
+                object.ReferenceEquals(values[1], DependencyProperty.UnsetValue))
             {
                 return DependencyProperty.UnsetValue;
             }

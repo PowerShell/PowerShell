@@ -55,7 +55,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the TextContentPropertyName dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextContentPropertyNameProperty = DependencyProperty.Register( "TextContentPropertyName", typeof(string), typeof(ListOrganizerItem), new PropertyMetadata( String.Empty, TextContentPropertyNameProperty_PropertyChanged) );
+        public static readonly DependencyProperty TextContentPropertyNameProperty = DependencyProperty.Register( "TextContentPropertyName", typeof(string), typeof(ListOrganizerItem), new PropertyMetadata( string.Empty, TextContentPropertyNameProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets or sets a value which dictates what binding is used to provide content for the items in the list.

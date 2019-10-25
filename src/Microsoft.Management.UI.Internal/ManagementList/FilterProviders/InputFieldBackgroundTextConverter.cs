@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (null == value)
+            if (value == null)
             {
                 throw new ArgumentNullException("value");
             }

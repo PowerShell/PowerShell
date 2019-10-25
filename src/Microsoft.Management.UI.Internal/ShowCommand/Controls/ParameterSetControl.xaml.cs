@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 System.Windows.Automation.AutomationProperties.NameProperty,
                 parameterViewModel.Name);
 
-            string buttonToolTipAndName = String.Format(
+            string buttonToolTipAndName = string.Format(
                 CultureInfo.CurrentUICulture,
                 ShowCommandResources.SelectMultipleValuesForParameterFormat,
                 parameterViewModel.Name);
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     {
                         // For ValidateSet parameter
                         ArrayList itemsSource = new ArrayList();
-                        itemsSource.Add(String.Empty);
+                        itemsSource.Add(string.Empty);
 
                         for (int i = 0; i < parameter.Parameter.ValidParamSetValues.Count; i++)
                         {
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                         if (parameter.Parameter.ParameterType.HasFlagAttribute)
                         {
                             ArrayList itemsSource = new ArrayList();
-                            itemsSource.Add(String.Empty);
+                            itemsSource.Add(string.Empty);
                             itemsSource.AddRange(parameter.Parameter.ParameterType.EnumValues);
                             control = ParameterSetControl.CreateComboBoxControl(parameter, rowNumber, itemsSource);
                         }
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     }
                     else if (parameter.Parameter.ParameterType.IsBoolean)
                     {
-                        control = ParameterSetControl.CreateComboBoxControl(parameter, rowNumber, new string[] { String.Empty, "$True", "$False" });
+                        control = ParameterSetControl.CreateComboBoxControl(parameter, rowNumber, new string[] { string.Empty, "$True", "$False" });
                     }
                     else
                     {

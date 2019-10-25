@@ -88,7 +88,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (null == item)
+            if (item == null)
             {
                 throw new ArgumentNullException("item");
             }
@@ -116,7 +116,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (null == item)
+            if (item == null)
             {
                 throw new ArgumentNullException("item");
             }

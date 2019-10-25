@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (false == String.IsNullOrEmpty(this.Text));
+                return (false == string.IsNullOrEmpty(this.Text));
             }
         }
 
@@ -106,7 +106,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnClearTextExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            this.Text = String.Empty;
+            this.Text = string.Empty;
         }
 
         /// <summary>

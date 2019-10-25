@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-                return String.Format(
+                return string.Format(
                      CultureInfo.CurrentCulture,
                      ShowCommandResources.CmdletTooltipFormat,
                      this.Name,
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-                return String.Format(
+                return string.Format(
                      CultureInfo.CurrentCulture,
                      ShowCommandResources.NotImportedFormat,
                      this.ModuleName,
@@ -390,14 +390,14 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             {
                 if (this.IsImported)
                 {
-                    return String.Format(
+                    return string.Format(
                          CultureInfo.CurrentCulture,
                          ShowCommandResources.DetailsParameterTitleFormat,
                          this.Name);
                 }
                 else
                 {
-                    return String.Format(
+                    return string.Format(
                          CultureInfo.CurrentCulture,
                          ShowCommandResources.NameLabelFormat,
                          this.Name);
@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             string commandName = this.commandInfo.CommandType == CommandTypes.ExternalScript ? this.commandInfo.Definition : this.Name;
 
-            if (this.ModuleQualifyCommandName && !String.IsNullOrEmpty(this.ModuleName))
+            if (this.ModuleQualifyCommandName && !string.IsNullOrEmpty(this.ModuleName))
             {
                 commandName = this.ModuleName + "\\" + commandName;
             }
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             List<ParameterViewModel> commonParametersList = commonParametersTable.Values.ToList<ParameterViewModel>();
-            returnValue.comonParameters = new ParameterSetViewModel(String.Empty, commonParametersList);
+            returnValue.comonParameters = new ParameterSetViewModel(string.Empty, commonParametersList);
 
             returnValue.parameterSets.Sort(returnValue.Compare);
 
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
             }
 
-            return String.Compare(source.Name, target.Name, StringComparison.Ordinal);
+            return string.Compare(source.Name, target.Name, StringComparison.Ordinal);
         }
 
         /// <summary>

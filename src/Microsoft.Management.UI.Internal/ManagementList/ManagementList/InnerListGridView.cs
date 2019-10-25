@@ -199,7 +199,7 @@ namespace Microsoft.Management.UI.Internal
                     if (!this.canChangeColumns)
                     {
                         throw new NotSupportedException(
-                            String.Format(
+                            string.Format(
                                 CultureInfo.InvariantCulture,
                                 InvariantResources.CannotModified,
                                 InvariantResources.Columns,

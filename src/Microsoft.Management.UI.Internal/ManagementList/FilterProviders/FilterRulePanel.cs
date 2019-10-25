@@ -154,12 +154,12 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterRulePanelItemContentTemplate(Type type, DataTemplate dataTemplate)
         {
-            if (null == type)
+            if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
 
-            if (null == dataTemplate)
+            if (dataTemplate == null)
             {
                 throw new ArgumentNullException("dataTemplate");
             }
@@ -176,7 +176,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterRulePanelItemContentTemplate(Type type)
         {
-            if (null == type)
+            if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -237,7 +237,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Debug.Assert(null != e);
 
-            if (null == e.Parameter)
+            if (e.Parameter == null)
             {
                 throw new ArgumentException("e.Parameter is null.", "e");
             }
@@ -248,7 +248,7 @@ namespace Microsoft.Management.UI.Internal
             foreach (object item in selectedItems)
             {
                 FilterRulePanelItem newItem = item as FilterRulePanelItem;
-                if (null == newItem)
+                if (newItem == null)
                 {
                     throw new ArgumentException(
                         "e.Parameter contains a value which is not a valid FilterRulePanelItem object.",
@@ -272,13 +272,13 @@ namespace Microsoft.Management.UI.Internal
         {
             Debug.Assert(null != e);
 
-            if (null == e.Parameter)
+            if (e.Parameter == null)
             {
                 throw new ArgumentException("e.Parameter is null.", "e");
             }
 
             FilterRulePanelItem item = e.Parameter as FilterRulePanelItem;
-            if (null == item)
+            if (item == null)
             {
                 throw new ArgumentException("e.Parameter is not a valid FilterRulePanelItem object.", "e");
             }
@@ -349,7 +349,7 @@ namespace Microsoft.Management.UI.Internal
         private void AddFilterRulePanelItemContentTemplate(Type type, string resourceName)
         {
             Debug.Assert(null != type);
-            Debug.Assert(!String.IsNullOrEmpty(resourceName));
+            Debug.Assert(!string.IsNullOrEmpty(resourceName));
 
             var templateInfo = new ComponentResourceKey(typeof(FilterRulePanel), resourceName);
 

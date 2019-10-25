@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the ListStatus dependency property.
         /// </summary>
-        public static readonly DependencyProperty ListStatusProperty = DependencyProperty.Register( "ListStatus", typeof(string), typeof(ManagementListTitle), new PropertyMetadata( String.Empty, ListStatusProperty_PropertyChanged) );
+        public static readonly DependencyProperty ListStatusProperty = DependencyProperty.Register( "ListStatus", typeof(string), typeof(ManagementListTitle), new PropertyMetadata( string.Empty, ListStatusProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets the status of the list. This is a dependency property.
@@ -120,7 +120,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the Title dependency property.
         /// </summary>
-        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register( "Title", typeof(string), typeof(ManagementListTitle), new PropertyMetadata( String.Empty, TitleProperty_PropertyChanged) );
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register( "Title", typeof(string), typeof(ManagementListTitle), new PropertyMetadata( string.Empty, TitleProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets or sets the title. This is a dependency property.

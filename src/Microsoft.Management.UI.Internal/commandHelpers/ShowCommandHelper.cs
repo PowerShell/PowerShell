@@ -482,10 +482,13 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>String representation of the script for Get-SerializedCommand</returns>
         private static string GetSerializedCommandScript()
         {
-            return string.Format(CultureInfo.InvariantCulture, "@({0};{1};{2})",
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "@({0};{1};{2})",
                 ScriptGetSerializedCommand,
                 @"PSGetSerializedShowCommandInfo",
-                @"Remove-Item -Path 'function:\PSGetSerializedShowCommandInfo' -Force");
+                @"Remove-Item -Path 'function:\PSGetSerializedShowCommandInfo' -Force"
+            );
         }
 
 
@@ -634,7 +637,7 @@ Function PSGetSerializedShowCommandInfo
             }
 
             AllModulesViewModel returnValue = new AllModulesViewModel(importedModules, commands, oldViewModel.NoCommonParameter);
-            if (!String.IsNullOrEmpty(oldFilter))
+            if (!string.IsNullOrEmpty(oldFilter))
             {
                 returnValue.CommandNameFilter = oldFilter;
             }
@@ -682,7 +685,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>an error message to be displayed when failed to import a module</returns>
         internal static string GetImportModuleFailedMessage(string command, string module, string error)
         {
-            return String.Format(
+            return string.Format(
                 CultureInfo.CurrentUICulture,
                 ShowCommandResources.ImportModuleFailedFormat,
                 command,
@@ -699,7 +702,7 @@ Function PSGetSerializedShowCommandInfo
         {
             if (str == null)
             {
-                str = String.Empty;
+                str = string.Empty;
             }
 
             return "\'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(str) + "\'";
@@ -847,8 +850,8 @@ Function PSGetSerializedShowCommandInfo
         {
             string quotedCommandName = ShowCommandHelper.SingleQuote(commandName);
             return "@(get-command " + quotedCommandName + " " + ShowCommandHelper.CommandTypeSegment +
-                (includeAliasAndModules ? ",Alias" : String.Empty) + ")" +
-                (includeAliasAndModules ? ShowCommandHelper.GetGetModuleSuffix() : String.Empty);
+                (includeAliasAndModules ? ",Alias" : string.Empty) + ")" +
+                (includeAliasAndModules ? ShowCommandHelper.GetGetModuleSuffix() : string.Empty);
         }
 
         /// <summary>
@@ -880,7 +883,7 @@ Function PSGetSerializedShowCommandInfo
                     {
                         window.Activate();
                     }),
-                    String.Empty);
+                    string.Empty);
         }
 
         /// <summary>
@@ -945,7 +948,7 @@ Function PSGetSerializedShowCommandInfo
                         childWindow.Owner = this.hostWindow;
                         childWindow.Show();
                     }),
-                    String.Empty);
+                    string.Empty);
         }
 
         /// <summary>
@@ -1018,7 +1021,7 @@ Function PSGetSerializedShowCommandInfo
                                 this.commandNeedingImportModule);
                             this.SetupViewModel();
                         }),
-                        String.Empty);
+                        string.Empty);
             }
         }
 
@@ -1042,7 +1045,7 @@ Function PSGetSerializedShowCommandInfo
                                 reason.Message);
                             MessageBox.Show(this.window, message, ShowCommandResources.ShowCommandError, MessageBoxButton.OK, MessageBoxImage.Error);
                         }),
-                        String.Empty);
+                        string.Empty);
             }
         }
 
@@ -1063,7 +1066,7 @@ Function PSGetSerializedShowCommandInfo
                             help.Owner = this.window;
                             help.Show();
                         }),
-                        String.Empty);
+                        string.Empty);
             }
         }
 
@@ -1218,7 +1221,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Closes the window
+        /// Closes the window.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -1228,7 +1231,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// closes the window
+        /// closes the window.
         /// </summary>
         private void CloseWindow()
         {
@@ -1250,13 +1253,13 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Showing a MessageBox when user type a invalidate command name.
         /// </summary>
-        /// <param name="errorString">error message</param>
+        /// <param name="errorString">Error message.</param>
         private void ShowErrorString(string errorString)
         {
             if (errorString != null && errorString.Trim().Length > 0)
             {
                 MessageBox.Show(
-                    String.Format(
+                    string.Format(
                         CultureInfo.CurrentUICulture,
                         ShowCommandResources.EndProcessingErrorMessage,
                         errorString),

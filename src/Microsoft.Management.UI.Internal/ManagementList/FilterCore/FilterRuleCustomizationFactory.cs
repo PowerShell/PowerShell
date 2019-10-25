@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }

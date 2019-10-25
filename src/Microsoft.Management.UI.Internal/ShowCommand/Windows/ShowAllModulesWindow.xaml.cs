@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
             catch (NotSupportedException)
             {
-                //localized has a problematic string - going to default
+                // localized has a problematic string - going to default
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Add"));
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Plus"));
                 CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
             catch (NotSupportedException)
             {
-                //localized has a problematic string - going to default
+                // localized has a problematic string - going to default
                 minusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Subtract"));
                 minusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Minus"));
                 CommandBindings.Add(new CommandBinding(minusSettings, ZoomEventHandlerMinus));
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (this.zoomLevel < ZOOM_MAX)
             {
-                //ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing for next zoom
+                // ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing for next zoom
                 this.zoomLevel = ((this.zoomLevel + ZOOM_INCREMENT) * 100);
                 viewModel.ZoomLevel = this.zoomLevel;
                 this.zoomLevel /= 100;
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (this.zoomLevel >= ZOOM_MIN)
             {
-                //ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing it for next zoom
+                // ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing it for next zoom
                 this.zoomLevel = ((this.zoomLevel - ZOOM_INCREMENT) * 100);
                 viewModel.ZoomLevel = this.zoomLevel;
                 this.zoomLevel /= 100;

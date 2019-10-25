@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     {
         #region Properties
 
-        private static readonly DataErrorInfoValidationResult EmptyValueResult = new DataErrorInfoValidationResult(false, null, String.Empty);
+        private static readonly DataErrorInfoValidationResult EmptyValueResult = new DataErrorInfoValidationResult(false, null, string.Empty);
 
         #endregion Properties
 
@@ -34,7 +34,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override DataErrorInfoValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if (null == value)
+            if (value == null)
             {
                 return EmptyValueResult;
             }
@@ -53,10 +53,9 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion Public Methods
 
-        //private
         internal static bool IsStringNotEmpty(string value)
         {
-            return !(String.IsNullOrEmpty(value) || 0 == value.Trim().Length);
+            return !(string.IsNullOrEmpty(value) || 0 == value.Trim().Length);
         }
     }
 }

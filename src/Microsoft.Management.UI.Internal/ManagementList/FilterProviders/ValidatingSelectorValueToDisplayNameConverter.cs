@@ -38,12 +38,12 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (null == values)
+            if (values == null)
             {
                 throw new ArgumentNullException("values");
             }
 
-            if (2 != values.Length)
+            if (values.Length != 2)
             {
                 throw new ArgumentException("Two values expected", "values");
             }
@@ -52,12 +52,12 @@ namespace Microsoft.Management.UI.Internal
             object input = values[0];
 
             IValueConverter converter = values[1] as IValueConverter;
-            if (null == converter)
+            if (converter == null)
             {
                 throw new ArgumentException("Second value should be a IValueConverter", "values");
             }
 
-            if (typeof(string) != targetType)
+            if (targetType != typeof(string))
             {
                 throw new ArgumentException("targetType should be of type string", "targetType");
             }

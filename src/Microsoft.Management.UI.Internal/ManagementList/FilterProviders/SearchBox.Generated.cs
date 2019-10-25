@@ -115,7 +115,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the Text dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register( "Text", typeof(string), typeof(SearchBox), new PropertyMetadata( String.Empty, TextProperty_PropertyChanged) );
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register( "Text", typeof(string), typeof(SearchBox), new PropertyMetadata( string.Empty, TextProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets or sets the text contents of the search box.

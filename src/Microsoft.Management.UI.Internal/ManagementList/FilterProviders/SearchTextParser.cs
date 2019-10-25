@@ -80,7 +80,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>A read-only collection of results.</returns>
         public virtual ReadOnlyCollection<SearchTextParseResult> Parse(string text)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return new ReadOnlyCollection<SearchTextParseResult>(new List<SearchTextParseResult>(0));
             }
@@ -124,9 +124,9 @@ namespace Microsoft.Management.UI.Internal
                 patterns.Add(rule.Pattern);
             }
 
-            patterns.Add(String.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}", FullTextRuleGroupName, ValuePattern));
+            patterns.Add(string.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}", FullTextRuleGroupName, ValuePattern));
 
-            return String.Join("|", patterns.ToArray());
+            return string.Join("|", patterns.ToArray());
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Microsoft.Management.UI.Internal
                 this.UniqueId = uniqueId;
                 this.selectorFilterRule = selectorFilterRule;
                 this.childRule = childRule;
-                this.Pattern = String.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}\\s*:\\s*{2}", uniqueId, Regex.Escape(selectorFilterRule.DisplayName), SearchTextParser.ValuePattern);
+                this.Pattern = string.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}\\s*:\\s*{2}", uniqueId, Regex.Escape(selectorFilterRule.DisplayName), SearchTextParser.ValuePattern);
             }
 
             /// <summary>

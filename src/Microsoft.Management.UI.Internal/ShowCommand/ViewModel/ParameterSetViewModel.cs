@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 return 1;
             }
 
-            return String.Compare(source.Parameter.Name, target.Parameter.Name);
+            return string.Compare(source.Parameter.Name, target.Parameter.Name);
         }
 
         #endregion

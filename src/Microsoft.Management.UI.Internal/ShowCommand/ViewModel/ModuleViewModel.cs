@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-                if (!String.IsNullOrEmpty(this.name))
+                if (!string.IsNullOrEmpty(this.name))
                 {
                     return this.name;
                 }
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void RefreshFilteredCommands(string filter)
         {
             this.filteredCommands.Clear();
-            if (String.IsNullOrEmpty(filter))
+            if (string.IsNullOrEmpty(filter))
             {
                 foreach (CommandViewModel command in this.Commands)
                 {
@@ -511,7 +511,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>return compare result</returns>
         private int Compare(CommandViewModel source, CommandViewModel target)
         {
-            return String.Compare(source.Name, target.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(source.Name, target.Name, StringComparison.OrdinalIgnoreCase);
         }
         #endregion
 

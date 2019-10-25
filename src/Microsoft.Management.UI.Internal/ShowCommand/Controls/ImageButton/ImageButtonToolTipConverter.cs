@@ -47,9 +47,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 return toolTipObj.ToString();
             }
 
-            if (imageButtonBase.Command != null && !String.IsNullOrEmpty(imageButtonBase.Command.Text))
+            if (imageButtonBase.Command != null && !string.IsNullOrEmpty(imageButtonBase.Command.Text))
             {
-                return imageButtonBase.Command.Text.Replace("_", String.Empty);
+                return imageButtonBase.Command.Text.Replace("_", string.Empty);
             }
 
             return null;

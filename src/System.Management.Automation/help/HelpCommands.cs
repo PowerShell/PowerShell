@@ -205,8 +205,9 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
         private bool showWindow;
+
         /// <summary>
-        /// Gets and sets a value indicating whether the help should be displayed in a separate window
+        /// Gets or sets a value indicating whether the help should be displayed in a separate window.
         /// </summary>
         [Parameter(ParameterSetName = "ShowWindow", Mandatory = true)]
         public SwitchParameter ShowWindow
@@ -269,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 #if !UNIX
-                if(this.ShowWindow)
+                if (this.ShowWindow)
                 {
                     this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
                 }

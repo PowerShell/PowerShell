@@ -63,7 +63,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public override void SaveState(ManagementList subject)
         {
-            if (null == subject)
+            if (subject == null)
             {
                 throw new ArgumentNullException("subject");
             }
@@ -100,7 +100,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public void RestoreState(ManagementList subject, bool applyRestoredFilter)
         {
-            if (null == subject)
+            if (subject == null)
             {
                 throw new ArgumentNullException("subject");
             }
@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            if (null == subject.List.InnerGrid)
+            if (subject.List.InnerGrid == null)
             {
                 return false;
             }
@@ -158,7 +158,7 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            if (null == subject.List)
+            if (subject.List == null)
             {
                 return false;
             }
@@ -179,17 +179,17 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            if (null == subject.AddFilterRulePicker)
+            if (subject.AddFilterRulePicker == null)
             {
                 return false;
             }
 
-            if (null == subject.FilterRulePanel)
+            if (subject.FilterRulePanel == null)
             {
                 return false;
             }
 
-            if (null == subject.SearchBox)
+            if (subject.SearchBox == null)
             {
                 return false;
             }
@@ -387,7 +387,7 @@ namespace Microsoft.Management.UI.Internal
             }
             else
             {
-                this.sortOrderPropertyName = String.Empty;
+                this.sortOrderPropertyName = string.Empty;
             }
         }
 
@@ -400,7 +400,7 @@ namespace Microsoft.Management.UI.Internal
 
             subject.List.ClearSort();
 
-            if (!String.IsNullOrEmpty(this.sortOrderPropertyName))
+            if (!string.IsNullOrEmpty(this.sortOrderPropertyName))
             {
                 foreach (InnerListColumn column in subject.List.Columns)
                 {
@@ -567,11 +567,11 @@ namespace Microsoft.Management.UI.Internal
                 {
                     return 0;
                 }
-                else if (null == x)
+                else if (x == null)
                 {
                     return -1;
                 }
-                else if (null == y)
+                else if (y == null)
                 {
                     return 1;
                 }
@@ -581,7 +581,7 @@ namespace Microsoft.Management.UI.Internal
                 this.columns.TryGetValue(x.DataDescription.PropertyName, out csdX);
                 this.columns.TryGetValue(y.DataDescription.PropertyName, out csdY);
 
-                if (null == csdX || null == csdY || false == (csdX.IsInUse && csdX.IsInUse))
+                if (csdX == null || csdY == null || (csdX.IsInUse && csdX.IsInUse) == false)
                 {
                     return 0;
                 }

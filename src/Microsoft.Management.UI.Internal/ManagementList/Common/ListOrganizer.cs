@@ -42,7 +42,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnSelectItemExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            if (null == e.Parameter)
+            if (e.Parameter == null)
             {
                 throw new ArgumentException("e.Parameter is null", "e");
             }
@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnDeleteItemExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            if (null == e.Parameter)
+            if (e.Parameter == null)
             {
                 throw new ArgumentException("e.Parameter is null", "e");
             }

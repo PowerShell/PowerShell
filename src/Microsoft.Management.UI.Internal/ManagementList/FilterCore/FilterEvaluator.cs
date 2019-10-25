@@ -143,7 +143,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterExpressionProvider(IFilterExpressionProvider provider)
         {
-            if (null == provider)
+            if (provider == null)
             {
                 throw new ArgumentNullException("provider");
             }
@@ -160,7 +160,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterExpressionProvider(IFilterExpressionProvider provider)
         {
-            if (null == provider)
+            if (provider == null)
             {
                 throw new ArgumentNullException("provider");
             }
@@ -179,7 +179,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifyPropertyChanged(string propertyName)
         {
-            Debug.Assert(!String.IsNullOrEmpty(propertyName));
+            Debug.Assert(!string.IsNullOrEmpty(propertyName));
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
 

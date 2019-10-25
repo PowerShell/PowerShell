@@ -79,12 +79,12 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterRulePanelItem(FilterRule rule, string groupId)
         {
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }
 
-            if (String.IsNullOrEmpty(groupId))
+            if (string.IsNullOrEmpty(groupId))
             {
                 throw new ArgumentNullException("groupId");
             }
@@ -105,7 +105,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifyPropertyChanged(string propertyName)
         {
-            Debug.Assert(!String.IsNullOrEmpty(propertyName));
+            Debug.Assert(!string.IsNullOrEmpty(propertyName));
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
             if (null != eh)

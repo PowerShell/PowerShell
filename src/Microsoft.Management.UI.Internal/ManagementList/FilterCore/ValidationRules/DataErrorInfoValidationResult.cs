@@ -33,7 +33,7 @@ namespace Microsoft.Management.UI.Internal
             get;
             private set;
         }
-        private static readonly DataErrorInfoValidationResult valid = new DataErrorInfoValidationResult(true, null, String.Empty);
+        private static readonly DataErrorInfoValidationResult valid = new DataErrorInfoValidationResult(true, null, string.Empty);
 
         /// <summary>
         /// Geta an instance of DataErrorInfoValidationResult that corresponds
@@ -69,8 +69,8 @@ namespace Microsoft.Management.UI.Internal
         public DataErrorInfoValidationResult(bool isValid, object errorContent, string errorMessage)
             : base(isValid, errorContent)
         {
-            this.IsUserVisible = !String.IsNullOrEmpty(errorMessage);
-            this.ErrorMessage = errorMessage ?? String.Empty;
+            this.IsUserVisible = !string.IsNullOrEmpty(errorMessage);
+            this.ErrorMessage = errorMessage ?? string.Empty;
         }
 
         #endregion Ctor

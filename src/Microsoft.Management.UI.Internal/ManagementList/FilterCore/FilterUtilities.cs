@@ -15,13 +15,13 @@ namespace Microsoft.Management.UI.Internal
         {
             castItem = default(T);
 
-            bool isItemUncastable = null == item && typeof(T).IsValueType;
+            bool isItemUncastable = item == null && typeof(T).IsValueType;
             if (isItemUncastable)
             {
                 return false;
             }
 
-            bool shouldCastToString = null != item && typeof(string) == typeof(T);
+            bool shouldCastToString = item != null && typeof(string) == typeof(T);
             if (shouldCastToString)
             {
                 // NOTE: string => T doesn't compile. We confuse the type system

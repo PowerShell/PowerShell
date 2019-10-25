@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterExceptionEventArgs(Exception exception)
         {
-            if (null == exception)
+            if (exception == null)
             {
                 throw new ArgumentNullException("exception");
             }

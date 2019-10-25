@@ -35,7 +35,7 @@ namespace Microsoft.Management.UI.Internal
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -105,12 +105,12 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public override void TransferValues(FilterRule oldRule, FilterRule newRule)
         {
-            if (null == oldRule)
+            if (oldRule == null)
             {
                 throw new ArgumentNullException("oldRule");
             }
 
-            if (null == newRule)
+            if (newRule == null)
             {
                 throw new ArgumentNullException("newRule");
             }
@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public override void ClearValues(FilterRule rule)
         {
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }
@@ -162,7 +162,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override string GetErrorMessageForInvalidValue(string value, Type typeToParseTo)
         {
-            if (null == typeToParseTo)
+            if (typeToParseTo == null)
             {
                 throw new ArgumentNullException("typeToParseTo");
             }
@@ -181,15 +181,15 @@ namespace Microsoft.Management.UI.Internal
 
             if (isNumericType)
             {
-                return String.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorMessageForUnparsableNumericType);
+                return string.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorMessageForUnparsableNumericType);
             }
 
             if (typeToParseTo == typeof(DateTime))
             {
-                return String.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorMessageForUnparsableDateTimeType, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+                return string.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorMessageForUnparsableDateTimeType, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
             }
 
-            return String.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorTextBoxTypeConversionErrorText, typeToParseTo.Name);
+            return string.Format(CultureInfo.CurrentCulture, UICultureResources.ErrorTextBoxTypeConversionErrorText, typeToParseTo.Name);
         }
 
         #region Private Methods
@@ -219,10 +219,10 @@ namespace Microsoft.Management.UI.Internal
 
         private object GetValueFromValidatingValue(FilterRule rule, string propertyName)
         {
-            Debug.Assert(null != rule && !String.IsNullOrEmpty(propertyName));
+            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName));
 
             // NOTE: This isn't needed but OACR is complaining
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }
@@ -238,10 +238,10 @@ namespace Microsoft.Management.UI.Internal
 
         private void SetValueOnValidatingValue(FilterRule rule, string propertyName, object value)
         {
-            Debug.Assert(null != rule && !String.IsNullOrEmpty(propertyName));
+            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName));
 
             // NOTE: This isn't needed but OACR is complaining
-            if (null == rule)
+            if (rule == null)
             {
                 throw new ArgumentNullException("rule");
             }

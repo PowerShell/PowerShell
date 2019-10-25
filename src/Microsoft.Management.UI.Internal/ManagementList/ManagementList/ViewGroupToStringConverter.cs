@@ -29,13 +29,13 @@ namespace Microsoft.Management.UI.Internal
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             CollectionViewGroup cvg = value as CollectionViewGroup;
-            if (null == cvg)
+            if (cvg == null)
             {
                 throw new ArgumentException("value must be of type CollectionViewGroup", "value");
             }
 
-            string name = (!String.IsNullOrEmpty(cvg.Name.ToString())) ? cvg.Name.ToString() : UICultureResources.GroupTitleNone;
-            string display = String.Format(CultureInfo.CurrentCulture, "{0} ({1})", name, cvg.ItemCount);
+            string name = (!string.IsNullOrEmpty(cvg.Name.ToString())) ? cvg.Name.ToString() : UICultureResources.GroupTitleNone;
+            string display = string.Format(CultureInfo.CurrentCulture, "{0} ({1})", name, cvg.ItemCount);
 
             return display;
         }
