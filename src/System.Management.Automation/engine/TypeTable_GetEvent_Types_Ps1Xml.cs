@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.Eventing.Reader.EventLogConfiguration
 
             typeName = @"System.Diagnostics.Eventing.Reader.EventLogConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -46,7 +46,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.Eventing.Reader.EventLogRecord
 
             typeName = @"System.Diagnostics.Eventing.Reader.EventLogRecord";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.Eventing.Reader.ProviderMetadata
 
             typeName = @"System.Diagnostics.Eventing.Reader.ProviderMetadata";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"ProviderName");
@@ -106,7 +106,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.GetCounter.CounterSet
 
             typeName = @"Microsoft.PowerShell.Commands.GetCounter.CounterSet";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Counter");
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
 
             typeName = @"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet
 
             typeName = @"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"Readings");

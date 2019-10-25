@@ -3,11 +3,47 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Reflection;
+using System.Threading;
 
 namespace System.Management.Automation.Runspaces
 {
     public sealed partial class TypeTable
     {
+        private const int ValueFactoryCacheCount = 6;
+        private static readonly Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[] s_valueFactoryCache;
+
+        private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
+        {
+            if (capacity <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(capacity));
+            }
+
+            if (capacity > ValueFactoryCacheCount)
+            {
+                return CreateValueFactory(capacity);
+            }
+
+            int cacheIndex = capacity - 1;
+            if (s_valueFactoryCache[cacheIndex] == null)
+            {
+                Interlocked.CompareExchange(
+                    ref s_valueFactoryCache[cacheIndex],
+                    CreateValueFactory(capacity),
+                    comparand: null);
+            }
+
+            return s_valueFactoryCache[cacheIndex];
+
+
+            // Local helper function to avoid creating an instance of the generated delegate helper class
+            // every time 'GetValueFactoryBasedOnInitCapacity' is invoked.
+            static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> CreateValueFactory(int capacity)
+            {
+                return key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity);
+            }
+        }
+
         private static MethodInfo GetMethodInfo(Type type, string method)
         {
             return type.GetMethod(method, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
@@ -33,7 +69,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Xml.XmlNode
 
             typeName = @"System.Xml.XmlNode";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"ToString");
@@ -51,7 +87,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Xml.XmlNodeList
 
             typeName = @"System.Xml.XmlNodeList";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"ToString");
@@ -69,7 +105,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSDriveInfo
 
             typeName = @"System.Management.Automation.PSDriveInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"Used");
@@ -112,7 +148,7 @@ namespace System.Management.Automation.Runspaces
             #region System.DirectoryServices.PropertyValueCollection
 #if !UNIX
             typeName = @"System.DirectoryServices.PropertyValueCollection";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"ToString");
@@ -130,7 +166,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Drawing.Printing.PrintDocument
 
             typeName = @"System.Drawing.Printing.PrintDocument";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"Name");
@@ -174,7 +210,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ApplicationInfo
 
             typeName = @"System.Management.Automation.ApplicationInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"FileVersionInfo");
@@ -194,7 +230,7 @@ namespace System.Management.Automation.Runspaces
             #region System.DateTime
 
             typeName = @"System.DateTime";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"DateTime");
@@ -225,7 +261,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Net.IPAddress
 
             typeName = @"System.Net.IPAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"IPAddressToString");
@@ -268,7 +304,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Net.IPAddress
 
             typeName = @"Deserialized.System.Net.IPAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -291,7 +327,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.ProcessModule
 
             typeName = @"System.Diagnostics.ProcessModule";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 6));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 6));
 
             // Process regular members.
             newMembers.Add(@"Size");
@@ -371,7 +407,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Collections.DictionaryEntry
 
             typeName = @"System.Collections.DictionaryEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Name");
@@ -387,7 +423,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSModuleInfo
 
             typeName = @"System.Management.Automation.PSModuleInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -412,7 +448,7 @@ namespace System.Management.Automation.Runspaces
             #region System.ServiceProcess.ServiceController
 
             typeName = @"System.ServiceProcess.ServiceController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 4));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 4));
 
             // Process regular members.
             newMembers.Add(@"Name");
@@ -465,7 +501,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.ServiceProcess.ServiceController
 
             typeName = @"Deserialized.System.ServiceProcess.ServiceController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -490,7 +526,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CmdletInfo
 
             typeName = @"System.Management.Automation.CmdletInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"DLL");
@@ -510,7 +546,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.AliasInfo
 
             typeName = @"System.Management.Automation.AliasInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"ResolvedCommandName");
@@ -556,7 +592,7 @@ namespace System.Management.Automation.Runspaces
             #region System.DirectoryServices.DirectoryEntry
 #if !UNIX
             typeName = @"System.DirectoryServices.DirectoryEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"ConvertLargeIntegerToInt64");
@@ -842,7 +878,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.FileVersionInfo
 
             typeName = @"System.Diagnostics.FileVersionInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"FileVersionRaw");
@@ -882,7 +918,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.EventLogEntry
 
             typeName = @"System.Diagnostics.EventLogEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"EventID");
@@ -902,7 +938,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementBaseObject
 
             typeName = @"System.Management.ManagementBaseObject";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"PSComputerName");
@@ -918,7 +954,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PingStatus
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PingStatus";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"IPV4Address");
@@ -952,7 +988,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Process
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Process";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 5));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 5));
 
             // Process regular members.
             newMembers.Add(@"ProcessName");
@@ -1209,7 +1245,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Diagnostics.Process
 
             typeName = @"Deserialized.System.Diagnostics.Process";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSConfiguration");
@@ -1255,7 +1291,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cli\Msft_CliAlias
 
             typeName = @"System.Management.ManagementObject#root\cli\Msft_CliAlias";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -1280,7 +1316,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_BaseBoard
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_BaseBoard";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1316,7 +1352,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_BIOS
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_BIOS";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1352,7 +1388,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_BootConfiguration
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_BootConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1388,7 +1424,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_CDROMDrive
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_CDROMDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1424,7 +1460,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_ComputerSystem
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_ComputerSystem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1470,7 +1506,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_PROCESSOR
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_PROCESSOR";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1516,7 +1552,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_ComputerSystemProduct
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_ComputerSystemProduct";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1552,7 +1588,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\CIM_DataFile
 
             typeName = @"System.Management.ManagementObject#root\cimv2\CIM_DataFile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1588,7 +1624,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_DCOMApplication
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_DCOMApplication";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1624,7 +1660,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_DESKTOP
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_DESKTOP";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1660,7 +1696,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_DESKTOPMONITOR
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_DESKTOPMONITOR";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSConfiguration");
@@ -1706,7 +1742,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_DeviceMemoryAddress
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_DeviceMemoryAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1742,7 +1778,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_DiskDrive
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_DiskDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1788,7 +1824,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_DiskQuota
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_DiskQuota";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1824,7 +1860,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_DMAChannel
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_DMAChannel";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1860,7 +1896,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Environment
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Environment";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1896,7 +1932,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Directory
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Directory";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1932,7 +1968,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Group
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Group";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -1968,7 +2004,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_IDEController
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_IDEController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2004,7 +2040,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_IRQResource
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_IRQResource";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2040,7 +2076,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_ScheduledJob
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_ScheduledJob";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2076,7 +2112,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_LoadOrderGroup
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_LoadOrderGroup";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2112,7 +2148,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_LogicalDisk
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_LogicalDisk";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2148,7 +2184,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_LogonSession
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_LogonSession";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2184,7 +2220,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_CACHEMEMORY
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_CACHEMEMORY";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 4));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 4));
 
             // Process regular members.
             newMembers.Add(@"ERROR");
@@ -2240,7 +2276,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_LogicalMemoryConfiguration
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_LogicalMemoryConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2276,7 +2312,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PhysicalMemoryArray
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PhysicalMemoryArray";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2312,7 +2348,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_NetworkClient
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_NetworkClient";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2348,7 +2384,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NetworkLoginProfile
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NetworkLoginProfile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -2373,7 +2409,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NetworkProtocol
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NetworkProtocol";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"FULLXXX");
@@ -2419,7 +2455,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NetworkConnection
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NetworkConnection";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2455,7 +2491,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NetworkAdapter
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NetworkAdapter";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2491,7 +2527,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NetworkAdapterConfiguration
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NetworkAdapterConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 6));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 6));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2567,7 +2603,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NTDomain
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NTDomain";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2613,7 +2649,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NTLogEvent
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NTLogEvent";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -2638,7 +2674,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_NTEventlogFile
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_NTEventlogFile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2674,7 +2710,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_OnBoardDevice
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_OnBoardDevice";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2710,7 +2746,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_OperatingSystem
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_OperatingSystem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2756,7 +2792,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PageFileUsage
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PageFileUsage";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2792,7 +2828,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PageFileSetting
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PageFileSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -2817,7 +2853,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_DiskPartition
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_DiskPartition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2853,7 +2889,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PortResource
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PortResource";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2889,7 +2925,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PortConnector
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PortConnector";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2925,7 +2961,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Printer
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Printer";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2961,7 +2997,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PrinterConfiguration
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PrinterConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -2997,7 +3033,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PrintJob
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PrintJob";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3033,7 +3069,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_ProcessXXX
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_ProcessXXX";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 5));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 5));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3099,7 +3135,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Product
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Product";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3135,7 +3171,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_QuickFixEngineering
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_QuickFixEngineering";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"InstalledOn");
@@ -3205,7 +3241,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_QuotaSetting
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_QuotaSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3241,7 +3277,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_OSRecoveryConfiguration
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_OSRecoveryConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3266,7 +3302,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Registry
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Registry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3302,7 +3338,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SCSIController
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SCSIController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3338,7 +3374,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_PerfRawData_PerfNet_Server
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_PerfRawData_PerfNet_Server";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3363,7 +3399,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Service
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Service";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3409,7 +3445,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_Share
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_Share";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3445,7 +3481,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SoftwareElement
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SoftwareElement";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3481,7 +3517,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SoftwareFeature
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SoftwareFeature";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3517,7 +3553,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\WIN32_SoundDevice
 
             typeName = @"System.Management.ManagementObject#root\cimv2\WIN32_SoundDevice";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3553,7 +3589,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_StartupCommand
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_StartupCommand";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3578,7 +3614,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SystemAccount
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SystemAccount";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3614,7 +3650,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SystemDriver
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SystemDriver";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3650,7 +3686,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SystemEnclosure
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SystemEnclosure";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3686,7 +3722,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_SystemSlot
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_SystemSlot";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3722,7 +3758,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_TapeDrive
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_TapeDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3758,7 +3794,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_TemperatureProbe
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_TemperatureProbe";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3794,7 +3830,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_TimeZone
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_TimeZone";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3819,7 +3855,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_UninterruptiblePowerSupply
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_UninterruptiblePowerSupply";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3855,7 +3891,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_UserAccount
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_UserAccount";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3891,7 +3927,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_VoltageProbe
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_VoltageProbe";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -3927,7 +3963,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_VolumeQuotaSetting
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_VolumeQuotaSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3952,7 +3988,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject#root\cimv2\Win32_WMISetting
 
             typeName = @"System.Management.ManagementObject#root\cimv2\Win32_WMISetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -3977,7 +4013,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementObject
 
             typeName = @"System.Management.ManagementObject";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"ConvertToDateTime");
@@ -4153,7 +4189,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.HistoryInfo
 
             typeName = @"Microsoft.PowerShell.Commands.HistoryInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4178,7 +4214,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementClass
 
             typeName = @"System.Management.ManagementClass";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Name");
@@ -4194,7 +4230,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Runspaces.PSSession
 
             typeName = @"System.Management.Automation.Runspaces.PSSession";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 5));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 5));
 
             // Process regular members.
             newMembers.Add(@"State");
@@ -4262,7 +4298,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Guid
 
             typeName = @"System.Guid";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Guid");
@@ -4282,7 +4318,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Signature
 
             typeName = @"System.Management.Automation.Signature";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4305,7 +4341,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Job
 
             typeName = @"System.Management.Automation.Job";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"State");
@@ -4357,7 +4393,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.JobStateInfo
 
             typeName = @"System.Management.Automation.JobStateInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4380,7 +4416,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.JobStateInfo
 
             typeName = @"Deserialized.System.Management.Automation.JobStateInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4417,7 +4453,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Net.Mail.MailAddress
 
             typeName = @"System.Net.Mail.MailAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4440,7 +4476,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Net.Mail.MailAddress
 
             typeName = @"Deserialized.System.Net.Mail.MailAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4463,7 +4499,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Globalization.CultureInfo
 
             typeName = @"System.Globalization.CultureInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3);
@@ -4502,7 +4538,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Globalization.CultureInfo
 
             typeName = @"Deserialized.System.Globalization.CultureInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4525,7 +4561,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSCredential
 
             typeName = @"System.Management.Automation.PSCredential";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4548,7 +4584,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.PSCredential
 
             typeName = @"Deserialized.System.Management.Automation.PSCredential";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4571,7 +4607,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSPrimitiveDictionary
 
             typeName = @"System.Management.Automation.PSPrimitiveDictionary";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4594,7 +4630,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.PSPrimitiveDictionary
 
             typeName = @"Deserialized.System.Management.Automation.PSPrimitiveDictionary";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4617,7 +4653,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.SwitchParameter
 
             typeName = @"System.Management.Automation.SwitchParameter";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4640,7 +4676,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.SwitchParameter
 
             typeName = @"Deserialized.System.Management.Automation.SwitchParameter";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4663,7 +4699,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSListModifier
 
             typeName = @"System.Management.Automation.PSListModifier";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4686,7 +4722,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.PSListModifier
 
             typeName = @"Deserialized.System.Management.Automation.PSListModifier";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4709,7 +4745,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.Cryptography.X509Certificates.X509Certificate2
 
             typeName = @"System.Security.Cryptography.X509Certificates.X509Certificate2";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3);
@@ -4748,7 +4784,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Security.Cryptography.X509Certificates.X509Certificate2
 
             typeName = @"Deserialized.System.Security.Cryptography.X509Certificates.X509Certificate2";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4771,7 +4807,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.Cryptography.X509Certificates.X500DistinguishedName
 
             typeName = @"System.Security.Cryptography.X509Certificates.X500DistinguishedName";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3);
@@ -4810,7 +4846,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Security.Cryptography.X509Certificates.X500DistinguishedName
 
             typeName = @"Deserialized.System.Security.Cryptography.X509Certificates.X500DistinguishedName";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4833,7 +4869,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.AccessControl.RegistrySecurity
 
             typeName = @"System.Security.AccessControl.RegistrySecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4856,7 +4892,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Security.AccessControl.RegistrySecurity
 
             typeName = @"Deserialized.System.Security.AccessControl.RegistrySecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4879,7 +4915,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.AccessControl.FileSystemSecurity
 
             typeName = @"System.Security.AccessControl.FileSystemSecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4902,7 +4938,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Security.AccessControl.FileSystemSecurity
 
             typeName = @"Deserialized.System.Security.AccessControl.FileSystemSecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4925,7 +4961,7 @@ namespace System.Management.Automation.Runspaces
             #region HelpInfo
 
             typeName = @"HelpInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -4948,7 +4984,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSTypeName
 
             typeName = @"System.Management.Automation.PSTypeName";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2);
@@ -4978,7 +5014,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ParameterMetadata
 
             typeName = @"System.Management.Automation.ParameterMetadata";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2);
@@ -5010,7 +5046,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CommandInfo
 
             typeName = @"System.Management.Automation.CommandInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"Namespace");
@@ -5048,7 +5084,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ParameterSetMetadata
 
             typeName = @"System.Management.Automation.ParameterSetMetadata";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"Flags");
@@ -5092,7 +5128,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.ParameterSetMetadata
 
             typeName = @"Deserialized.System.Management.Automation.ParameterSetMetadata";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5115,7 +5151,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.ExtendedTypeDefinition
 
             typeName = @"Deserialized.System.Management.Automation.ExtendedTypeDefinition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5138,7 +5174,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ExtendedTypeDefinition
 
             typeName = @"System.Management.Automation.ExtendedTypeDefinition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 4);
@@ -5186,7 +5222,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.FormatViewDefinition
 
             typeName = @"Deserialized.System.Management.Automation.FormatViewDefinition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5209,7 +5245,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.FormatViewDefinition
 
             typeName = @"System.Management.Automation.FormatViewDefinition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"InstanceId");
@@ -5244,7 +5280,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.PSControl
 
             typeName = @"Deserialized.System.Management.Automation.PSControl";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5267,7 +5303,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSControl
 
             typeName = @"System.Management.Automation.PSControl";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5290,7 +5326,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.PSControlGroupBy
 
             typeName = @"Deserialized.System.Management.Automation.PSControlGroupBy";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5313,7 +5349,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.PSControlGroupBy
 
             typeName = @"System.Management.Automation.PSControlGroupBy";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5336,7 +5372,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.EntrySelectedBy
 
             typeName = @"Deserialized.System.Management.Automation.EntrySelectedBy";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5359,7 +5395,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.EntrySelectedBy
 
             typeName = @"System.Management.Automation.EntrySelectedBy";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5382,7 +5418,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.DisplayEntry
 
             typeName = @"Deserialized.System.Management.Automation.DisplayEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5405,7 +5441,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.DisplayEntry
 
             typeName = @"System.Management.Automation.DisplayEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5428,7 +5464,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.TableControlColumnHeader
 
             typeName = @"Deserialized.System.Management.Automation.TableControlColumnHeader";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5451,7 +5487,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.TableControlColumnHeader
 
             typeName = @"System.Management.Automation.TableControlColumnHeader";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5474,7 +5510,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.TableControlRow
 
             typeName = @"Deserialized.System.Management.Automation.TableControlRow";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5497,7 +5533,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.TableControlRow
 
             typeName = @"System.Management.Automation.TableControlRow";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5520,7 +5556,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.TableControlColumn
 
             typeName = @"Deserialized.System.Management.Automation.TableControlColumn";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5543,7 +5579,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.TableControlColumn
 
             typeName = @"System.Management.Automation.TableControlColumn";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5566,7 +5602,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.ListControlEntry
 
             typeName = @"Deserialized.System.Management.Automation.ListControlEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5589,7 +5625,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ListControlEntry
 
             typeName = @"System.Management.Automation.ListControlEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 4);
@@ -5637,7 +5673,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.ListControlEntryItem
 
             typeName = @"Deserialized.System.Management.Automation.ListControlEntryItem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5660,7 +5696,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ListControlEntryItem
 
             typeName = @"System.Management.Automation.ListControlEntryItem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5683,7 +5719,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.WideControlEntryItem
 
             typeName = @"Deserialized.System.Management.Automation.WideControlEntryItem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5706,7 +5742,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.WideControlEntryItem
 
             typeName = @"System.Management.Automation.WideControlEntryItem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5729,7 +5765,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.CustomControlEntry
 
             typeName = @"Deserialized.System.Management.Automation.CustomControlEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5752,7 +5788,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CustomControlEntry
 
             typeName = @"System.Management.Automation.CustomControlEntry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5775,7 +5811,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.CustomItemBase
 
             typeName = @"Deserialized.System.Management.Automation.CustomItemBase";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5798,7 +5834,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CustomItemBase
 
             typeName = @"System.Management.Automation.CustomItemBase";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5821,7 +5857,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Web.Services.Protocols.SoapException
 
             typeName = @"System.Web.Services.Protocols.SoapException";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"PSMessageDetails");
@@ -5841,7 +5877,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.ErrorRecord
 
             typeName = @"System.Management.Automation.ErrorRecord";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"PSMessageDetails");
@@ -5861,7 +5897,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Enum
 
             typeName = @"Deserialized.System.Enum";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Value");
@@ -5881,7 +5917,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.Internal.Format.FormatInfoData
 
             typeName = @"Microsoft.PowerShell.Commands.Internal.Format.FormatInfoData";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5904,7 +5940,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.Microsoft.PowerShell.Commands.Internal.Format.FormatInfoData
 
             typeName = @"Deserialized.Microsoft.PowerShell.Commands.Internal.Format.FormatInfoData";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5927,7 +5963,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.ManagementEventArgs
 
             typeName = @"System.Management.ManagementEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5950,7 +5986,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.ManagementEventArgs
 
             typeName = @"Deserialized.System.Management.ManagementEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -5973,7 +6009,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CallStackFrame
 
             typeName = @"System.Management.Automation.CallStackFrame";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"Command");
@@ -6063,7 +6099,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration
 
             typeName = @"Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"Permission");
@@ -6110,7 +6146,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PingStatus
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PingStatus";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"IPV4Address");
@@ -6144,7 +6180,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 6));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 6));
 
             // Process regular members.
             newMembers.Add(@"ProcessName");
@@ -6214,7 +6250,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Msft_CliAlias
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Msft_CliAlias";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -6239,7 +6275,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BaseBoard
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BaseBoard";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6275,7 +6311,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BIOS
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BIOS";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6311,7 +6347,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BootConfiguration
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_BootConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6347,7 +6383,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_CDROMDrive
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_CDROMDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6383,7 +6419,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ComputerSystem
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ComputerSystem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6429,7 +6465,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_PROCESSOR
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_PROCESSOR";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6475,7 +6511,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ComputerSystemProduct
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ComputerSystemProduct";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6511,7 +6547,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/CIM_DataFile
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/CIM_DataFile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6547,7 +6583,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DCOMApplication
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DCOMApplication";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6583,7 +6619,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DESKTOP
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DESKTOP";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6619,7 +6655,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DESKTOPMONITOR
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_DESKTOPMONITOR";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSConfiguration");
@@ -6665,7 +6701,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DeviceMemoryAddress
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DeviceMemoryAddress";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6701,7 +6737,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskDrive
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6747,7 +6783,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskQuota
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskQuota";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -6772,7 +6808,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DMAChannel
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DMAChannel";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6808,7 +6844,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Environment
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Environment";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6844,7 +6880,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Directory
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Directory";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6880,7 +6916,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Group
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Group";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6916,7 +6952,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_IDEController
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_IDEController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6952,7 +6988,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_IRQResource
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_IRQResource";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -6988,7 +7024,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ScheduledJob
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ScheduledJob";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7024,7 +7060,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LoadOrderGroup
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LoadOrderGroup";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7060,7 +7096,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogicalDisk
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogicalDisk";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7096,7 +7132,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogonSession
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogonSession";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -7121,7 +7157,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_CACHEMEMORY
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_CACHEMEMORY";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 4));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 4));
 
             // Process regular members.
             newMembers.Add(@"ERROR");
@@ -7177,7 +7213,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogicalMemoryConfiguration
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_LogicalMemoryConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7213,7 +7249,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PhysicalMemoryArray
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PhysicalMemoryArray";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7249,7 +7285,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_NetworkClient
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_NetworkClient";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7285,7 +7321,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkLoginProfile
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkLoginProfile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -7310,7 +7346,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkProtocol
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkProtocol";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"FULLXXX");
@@ -7356,7 +7392,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkConnection
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkConnection";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7392,7 +7428,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkAdapter
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkAdapter";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7428,7 +7464,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkAdapterConfiguration
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NetworkAdapterConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 6));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 6));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7504,7 +7540,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTDomain
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTDomain";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7550,7 +7586,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTLogEvent
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTLogEvent";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -7575,7 +7611,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTEventlogFile
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_NTEventlogFile";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7611,7 +7647,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OnBoardDevice
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OnBoardDevice";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7647,7 +7683,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OperatingSystem
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OperatingSystem";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7693,7 +7729,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PageFileUsage
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PageFileUsage";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7729,7 +7765,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PageFileSetting
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PageFileSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -7754,7 +7790,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskPartition
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_DiskPartition";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7790,7 +7826,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PortResource
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PortResource";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7826,7 +7862,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PortConnector
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PortConnector";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7862,7 +7898,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Printer
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Printer";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7898,7 +7934,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PrinterConfiguration
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PrinterConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7934,7 +7970,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PrintJob
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PrintJob";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -7970,7 +8006,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessXXX
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessXXX";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 5));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 5));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8036,7 +8072,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Product
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Product";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8072,7 +8108,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_QuickFixEngineering
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_QuickFixEngineering";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"InstalledOn");
@@ -8132,7 +8168,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_QuotaSetting
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_QuotaSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8168,7 +8204,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OSRecoveryConfiguration
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OSRecoveryConfiguration";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8193,7 +8229,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Registry
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Registry";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8229,7 +8265,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SCSIController
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SCSIController";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8265,7 +8301,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PerfRawData_PerfNet_Server
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PerfRawData_PerfNet_Server";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8290,7 +8326,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Service
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Service";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8336,7 +8372,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Share
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Share";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8372,7 +8408,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SoftwareElement
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SoftwareElement";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8408,7 +8444,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SoftwareFeature
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SoftwareFeature";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8444,7 +8480,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_SoundDevice
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/WIN32_SoundDevice";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8480,7 +8516,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_StartupCommand
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_StartupCommand";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8505,7 +8541,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemAccount
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemAccount";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8541,7 +8577,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemDriver
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemDriver";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8577,7 +8613,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemEnclosure
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemEnclosure";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8613,7 +8649,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemSlot
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_SystemSlot";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8649,7 +8685,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TapeDrive
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TapeDrive";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8685,7 +8721,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TemperatureProbe
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TemperatureProbe";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8721,7 +8757,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TimeZone
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TimeZone";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8746,7 +8782,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_UninterruptiblePowerSupply
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_UninterruptiblePowerSupply";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8782,7 +8818,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_UserAccount
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_UserAccount";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8818,7 +8854,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_VoltageProbe
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_VoltageProbe";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"PSStatus");
@@ -8854,7 +8890,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_VolumeQuotaSetting
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_VolumeQuotaSetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8879,7 +8915,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_WMISetting
 
             typeName = @"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_WMISetting";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8904,7 +8940,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimClass
 
             typeName = @"Microsoft.Management.Infrastructure.CimClass";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"CimClassName");
@@ -8926,7 +8962,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.Management.Infrastructure.CimCmdlets.CimIndicationEventInstanceEventArgs
 
             typeName = @"Microsoft.Management.Infrastructure.CimCmdlets.CimIndicationEventInstanceEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8949,7 +8985,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Breakpoint
 
             typeName = @"System.Management.Automation.Breakpoint";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8972,7 +9008,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.Breakpoint
 
             typeName = @"Deserialized.System.Management.Automation.Breakpoint";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -8995,7 +9031,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.BreakpointUpdatedEventArgs
 
             typeName = @"System.Management.Automation.BreakpointUpdatedEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9018,7 +9054,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.BreakpointUpdatedEventArgs
 
             typeName = @"Deserialized.System.Management.Automation.BreakpointUpdatedEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9041,7 +9077,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.DebuggerCommand
 
             typeName = @"System.Management.Automation.DebuggerCommand";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9064,7 +9100,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.DebuggerCommand
 
             typeName = @"Deserialized.System.Management.Automation.DebuggerCommand";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9087,7 +9123,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.DebuggerCommandResults
 
             typeName = @"System.Management.Automation.DebuggerCommandResults";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9110,7 +9146,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.DebuggerCommandResults
 
             typeName = @"Deserialized.System.Management.Automation.DebuggerCommandResults";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -9133,7 +9169,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Version#IncludeLabel
 
             typeName = @"System.Version#IncludeLabel";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process regular members.
             newMembers.Add(@"ToString");

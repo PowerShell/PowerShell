@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.Cryptography.X509Certificates.X509Certificate2
 
             typeName = @"System.Security.Cryptography.X509Certificates.X509Certificate2";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 3));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 3));
 
             // Process regular members.
             newMembers.Add(@"EnhancedKeyUsageList");
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Remoting.PSSenderInfo
 
             typeName = @"System.Management.Automation.Remoting.PSSenderInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"ConnectedUser");
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CompletionResult
 
             typeName = @"System.Management.Automation.CompletionResult";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.CompletionResult
 
             typeName = @"Deserialized.System.Management.Automation.CompletionResult";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.CommandCompletion
 
             typeName = @"System.Management.Automation.CommandCompletion";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.CommandCompletion
 
             typeName = @"Deserialized.System.Management.Automation.CommandCompletion";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Runspaces
             #region Microsoft.PowerShell.Commands.ModuleSpecification
 
             typeName = @"Microsoft.PowerShell.Commands.ModuleSpecification";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.Microsoft.PowerShell.Commands.ModuleSpecification
 
             typeName = @"Deserialized.Microsoft.PowerShell.Commands.ModuleSpecification";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.JobStateEventArgs
 
             typeName = @"System.Management.Automation.JobStateEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -262,7 +262,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.JobStateEventArgs
 
             typeName = @"Deserialized.System.Management.Automation.JobStateEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -285,7 +285,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Exception
 
             typeName = @"System.Exception";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.Remoting.PSSessionOption
 
             typeName = @"System.Management.Automation.Remoting.PSSessionOption";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -331,7 +331,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.Remoting.PSSessionOption
 
             typeName = @"Deserialized.System.Management.Automation.Remoting.PSSessionOption";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Management.Automation.DebuggerStopEventArgs
 
             typeName = @"System.Management.Automation.DebuggerStopEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 2));
 
             // Process regular members.
             newMembers.Add(@"SerializedInvocationInfo");
@@ -405,7 +405,7 @@ namespace System.Management.Automation.Runspaces
             #region Deserialized.System.Management.Automation.DebuggerStopEventArgs
 
             typeName = @"Deserialized.System.Management.Automation.DebuggerStopEventArgs";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
             // Process standard members.
             memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);

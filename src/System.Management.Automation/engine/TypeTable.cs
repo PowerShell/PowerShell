@@ -3435,7 +3435,7 @@ namespace System.Management.Automation.Runspaces
 
             if (typeData.Members.Count > 0)
             {
-                typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>(collectionSize));
+                typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(collectionSize));
                 ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
@@ -3448,7 +3448,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (typeMembers == null)
                 {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
                 }
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
@@ -3556,6 +3556,8 @@ namespace System.Management.Automation.Runspaces
 
         static TypeTable()
         {
+            s_valueFactoryCache = new Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[ValueFactoryCacheCount];
+
             // Rather than set these members every time we process the standard members, do it
             // just once at startup.
             foreach (var sm in s_standardMembers)
@@ -3570,7 +3572,7 @@ namespace System.Management.Automation.Runspaces
             TypesFilePath = Path.Combine(psHome, "types.ps1xml");
             TypesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
             GetEventTypesFilePath = Path.Combine(psHome, "GetEvent.types.ps1xml");
-    }
+        }
 
         /// <summary>
         /// </summary>
