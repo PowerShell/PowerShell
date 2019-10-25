@@ -3,6 +3,9 @@
 
 using System.Windows;
 
+// Specifies the location in which theme dictionaries are stored for types in an assembly.
+[assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
+
 namespace Microsoft.Management.UI
 {
     /// <summary>
