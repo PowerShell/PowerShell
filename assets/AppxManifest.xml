@@ -43,6 +43,7 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <rescap:Capability Name="allowElevation" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="unvirtualizedResources" />
   </Capabilities>
