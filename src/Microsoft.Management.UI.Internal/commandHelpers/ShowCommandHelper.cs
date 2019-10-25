@@ -471,7 +471,6 @@ Function PSGetSerializedShowCommandInfo
                 scriptBase = "@(Get-Command " + ShowCommandHelper.CommandTypeSegment + ")";
             }
 
-
             scriptBase += ShowCommandHelper.GetGetModuleSuffix();
             return scriptBase;
         }
@@ -487,10 +486,8 @@ Function PSGetSerializedShowCommandInfo
                 "@({0};{1};{2})",
                 ScriptGetSerializedCommand,
                 @"PSGetSerializedShowCommandInfo",
-                @"Remove-Item -Path 'function:\PSGetSerializedShowCommandInfo' -Force"
-            );
+                @"Remove-Item -Path 'function:\PSGetSerializedShowCommandInfo' -Force");
         }
-
 
         /// <summary>
         /// Gets the command to be run to in order to import a module and refresh the command data
@@ -556,7 +553,7 @@ Function PSGetSerializedShowCommandInfo
 
                 // It is probably an issue somewhere else that a module would show up twice in the list, but we want to avoid
                 // throwing an exception regarding that in returnValue.Add
-                if(!returnValue.ContainsKey(wrappedModule.Name))
+                if (!returnValue.ContainsKey(wrappedModule.Name))
                 {
                     returnValue.Add(wrappedModule.Name, wrappedModule);
                 }
@@ -576,14 +573,14 @@ Function PSGetSerializedShowCommandInfo
             foreach (PSObject rawCommand in commandObjects)
             {
                 CommandInfo command = rawCommand.BaseObject as CommandInfo;
-                if(command != null)
+                if (command != null)
                 {
                     returnValue.Add(new ShowCommandCommandInfo(command));
                 }
                 else
                 {
                     PSObject obj = rawCommand as PSObject;
-                    if(obj != null)
+                    if (obj != null)
                     {
                         returnValue.Add(new ShowCommandCommandInfo(obj));
                     }
@@ -601,7 +598,7 @@ Function PSGetSerializedShowCommandInfo
         internal static object[] ObjectArrayFromObjectCollection(object commandObjects)
         {
             object[] objectArray = commandObjects as object[];
-            if(objectArray == null)
+            if (objectArray == null)
             {
                 objectArray = ((System.Collections.ArrayList)commandObjects).ToArray();
             }

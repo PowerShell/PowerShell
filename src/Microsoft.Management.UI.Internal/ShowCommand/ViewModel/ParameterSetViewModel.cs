@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "\"", "\"");
                 }
-                else if(parameterType.IsScriptBlock)
+                else if (parameterType.IsScriptBlock)
                 {
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "{", "}");
                 }

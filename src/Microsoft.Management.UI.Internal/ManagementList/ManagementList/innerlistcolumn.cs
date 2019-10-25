@@ -96,8 +96,6 @@ namespace Microsoft.Management.UI.Internal
         }
         #endregion constructor
 
-
-
         #region private methods
         #region private static methods
 

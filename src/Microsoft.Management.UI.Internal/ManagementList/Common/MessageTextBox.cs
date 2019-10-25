@@ -9,7 +9,6 @@ using System.Windows.Controls;
 namespace Microsoft.Management.UI.Internal
 {
 
-
     /// <content>
     /// Partial class implementation for MessageTextBox control.
     /// </content>

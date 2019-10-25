@@ -107,7 +107,6 @@ namespace Microsoft.Management.UI.Internal
                 return -1;
             }
 
-
             Type firstType = firstValue.GetType();
             Type secondType = secondValue.GetType();
 

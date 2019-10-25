@@ -91,7 +91,6 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private double zoomLevel = 1.0;
 
-
         #endregion private Fields
 
         #region internal Constructors
@@ -438,7 +437,7 @@ namespace Microsoft.Management.UI.Internal
                                 bool haveTemplate = this.managementList.FilterRulePanel.TryGetContentTemplate(types[i], out dataTemplate);
                                 InnerListColumn column = null;
 
-                                if(haveTemplate)
+                                if (haveTemplate)
                                 {
                                     column = new InnerListColumn(new UIPropertyGroupDescription(propertyNames[i], displayNames[i], types[i]));
                                 }
@@ -451,7 +450,7 @@ namespace Microsoft.Management.UI.Internal
 
                             this.managementList.List.SetColumnHeaderActions();
 
-                            if(this.managementList.List.ItemsSource == null)
+                            if (this.managementList.List.ItemsSource == null)
                             {
                                 // Setting ItemsSource implicitly regenerates all columns.
                                 this.managementList.List.ItemsSource = this.listItems;
@@ -464,7 +463,7 @@ namespace Microsoft.Management.UI.Internal
                        catch (Exception e)
                        {
                            // Store the exception in a local variable that will be checked later.
-                           if(e.InnerException != null)
+                           if (e.InnerException != null)
                            {
                                this.exception = e.InnerException;
                            }
@@ -500,7 +499,7 @@ namespace Microsoft.Management.UI.Internal
                         catch (Exception e)
                         {
                             // Store the exception in a local variable that will be checked later.
-                            if(e.InnerException != null)
+                            if (e.InnerException != null)
                             {
                                 this.exception = e.InnerException;
                             }
@@ -536,7 +535,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Exception local = this.exception;
 
-            if(local != null)
+            if (local != null)
             {
                 // Clear the caught exception.
                 this.exception = null;

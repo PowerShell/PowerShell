@@ -46,7 +46,6 @@ namespace Microsoft.Management.UI.Internal
             this.SetupAutomationIdBinding();
         }
 
-
         /// <summary>
         /// Responds when the value of the IsOpen property changes from to true to false.
         /// </summary>

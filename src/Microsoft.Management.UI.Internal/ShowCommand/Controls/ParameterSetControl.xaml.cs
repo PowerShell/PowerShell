@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     this.CreateAndAddLabel(parameter, rowNumber);
                     Control control = null;
-                    if(parameter.Parameter.HasParameterSet)
+                    if (parameter.Parameter.HasParameterSet)
                     {
                         // For ValidateSet parameter
                         ArrayList itemsSource = new ArrayList();

@@ -558,7 +558,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddMembers(bool setting, string sectionTitle)
         {
-            if(!setting || string.IsNullOrEmpty(sectionTitle))
+            if (!setting || string.IsNullOrEmpty(sectionTitle))
             {
                 return;
             }

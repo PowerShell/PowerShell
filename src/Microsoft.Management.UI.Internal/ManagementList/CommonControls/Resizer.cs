@@ -76,7 +76,6 @@ namespace Microsoft.Management.UI.Internal
             return thickness;
         }
 
-
         partial void PreOnApplyTemplate()
         {
             if (this.rightGrip != null)

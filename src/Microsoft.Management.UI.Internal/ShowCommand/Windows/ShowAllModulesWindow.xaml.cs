@@ -75,7 +75,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
             };
 
-
             RoutedCommand minusSettings = new RoutedCommand();
             try
             {

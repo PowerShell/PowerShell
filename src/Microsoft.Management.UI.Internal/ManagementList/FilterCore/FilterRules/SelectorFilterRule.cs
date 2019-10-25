@@ -113,7 +113,6 @@ namespace Microsoft.Management.UI.Internal
             this.OnSelectedValueChanged(e.OldValue, e.NewValue);
         }
 
-
         #endregion Private Methods
     }
 }
