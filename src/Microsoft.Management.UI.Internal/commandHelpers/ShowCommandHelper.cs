@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     {
         #region fields
 
-        internal const string CommandTypeSegment = " -CommandType Cmdlet, Function, Script, ExternalScript, Workflow";
+        internal const string CommandTypeSegment = " -CommandType Cmdlet, Function, Script, ExternalScript";
 
         /// <summary>
         /// Method that will return the dialog from ShowAllModulesWindow or ShowCommandWindow.
