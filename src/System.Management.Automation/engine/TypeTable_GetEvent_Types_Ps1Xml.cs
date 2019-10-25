@@ -102,6 +102,94 @@ namespace System.Management.Automation.Runspaces
 
             #endregion System.Diagnostics.Eventing.Reader.ProviderMetadata
 
+#if !CORECLR
+            #region Microsoft.PowerShell.Commands.GetCounter.CounterSet
+
+            typeName = @"Microsoft.PowerShell.Commands.GetCounter.CounterSet";
+            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+
+            // Process regular members.
+            newMembers.Add(@"Counter");
+            AddMember(
+                errors,
+                typeName,
+                new PSAliasProperty(@"Counter", @"Paths", conversionType: null),
+                typeMembers,
+                isOverride: false);
+
+            #endregion Microsoft.PowerShell.Commands.GetCounter.CounterSet
+
+            #region Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
+
+            typeName = @"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample";
+            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1));
+
+            // Process standard members.
+            memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
+            AddMember(
+                errors,
+                typeName,
+                new PSPropertySet(
+                    @"DefaultDisplayPropertySet",
+                    new List<string> { "Path", "InstanceName", "CookedValue" }),
+                memberSetMembers,
+                isOverride: false);
+
+            ProcessStandardMembers(
+                errors,
+                typeName,
+                memberSetMembers,
+                typeMembers,
+                isOverride: false);
+
+            #endregion Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
+
+            #region Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet
+
+            typeName = @"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet";
+            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 2));
+
+            // Process regular members.
+            newMembers.Add(@"Readings");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(
+                    @"Readings",
+                    GetScriptBlock(@"$strPaths = """"
+          foreach ($ctr in $this.CounterSamples)
+          {
+              $strPaths += ($ctr.Path + "" :"" + ""`n"")
+              $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")
+          }
+
+          return $strPaths"),
+                    setterScript: null,
+                    shouldCloneOnAccess: true),
+                typeMembers,
+                isOverride: false);
+
+            // Process standard members.
+            memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 1);
+            AddMember(
+                errors,
+                typeName,
+                new PSPropertySet(
+                    @"DefaultDisplayPropertySet",
+                    new List<string> { "Timestamp", "Readings" }),
+                memberSetMembers,
+                isOverride: false);
+
+            ProcessStandardMembers(
+                errors,
+                typeName,
+                memberSetMembers,
+                typeMembers,
+                isOverride: false);
+
+            #endregion Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet
+#endif
+
             // Update binder version for newly added members.
             foreach (string memberName in newMembers)
             {

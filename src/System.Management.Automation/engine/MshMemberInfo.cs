@@ -3450,13 +3450,13 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
             if (referencedPropertyNames == null)
             {
-                throw PSTraceSource.NewArgumentNullException("referencedPropertyNames");
+                throw PSTraceSource.NewArgumentNullException(nameof(referencedPropertyNames));
             }
 
             ReferencedPropertyNames = new Collection<string>();
@@ -3464,11 +3464,28 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(referencedPropertyName))
                 {
-                    throw PSTraceSource.NewArgumentException("referencedPropertyNames");
+                    throw PSTraceSource.NewArgumentException(nameof(referencedPropertyNames));
                 }
 
                 ReferencedPropertyNames.Add(referencedPropertyName);
             }
+        }
+
+        /// <summary>
+        /// This constructor is supposed to be used in TypeTable to reuse the passed-in property name list.
+        /// Null-argument check is skipped here, so callers need to check arguments before passing in.
+        /// </summary>
+        /// <param name="name">Name of the set.</param>
+        /// <param name="referencedPropertyNameList">Name of the properties in the set.</param>
+        internal PSPropertySet(string name, List<string> referencedPropertyNameList)
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
+            Diagnostics.Assert(referencedPropertyNameList != null, "Caller needs to guarantee not null.");
+
+            // We use the constructor 'public Collection(IList<T> list)' to create the collection,
+            // so that the passed-in list is directly used as the backing store of the collection.
+            this.name = name;
+            ReferencedPropertyNames = new Collection<string>(referencedPropertyNameList);
         }
 
         /// <summary>
