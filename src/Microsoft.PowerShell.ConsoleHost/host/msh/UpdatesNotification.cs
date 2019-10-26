@@ -112,6 +112,12 @@ namespace Microsoft.PowerShell
                 return;
             }
 
+            // Daily builds do not support update notifications
+            if (PSVersionInfo.PreReleaseLabel?.StartsWith("daily"))
+            {
+                return;
+            }
+
             // Create the update cache directory if it doesn't exists
             if (!Directory.Exists(s_cacheDirectory))
             {
