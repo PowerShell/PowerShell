@@ -4012,7 +4012,7 @@ Param(
     [string] $inputScript,
 
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
-    [int] $cursorColumn,
+    [int] $cursorColumn = $inputScript.Length,
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 0)]
     [System.Management.Automation.Language.Ast] $ast,
@@ -4032,11 +4032,6 @@ End
 {
     if ($psCmdlet.ParameterSetName -eq 'ScriptInputSet')
     {
-        if (!$PSBoundParameters.ContainsKey('cursorColumn'))
-        {
-            $cursorColumn = $inputScript.Length
-        }
-
         return [System.Management.Automation.CommandCompletion]::CompleteInput(
             <#inputScript#>  $inputScript,
             <#cursorColumn#> $cursorColumn,
