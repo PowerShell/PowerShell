@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Windows;
+
 using Microsoft.Management.UI;
 using Microsoft.Management.UI.Internal;
 using Microsoft.PowerShell.Commands.ShowCommandExtension;

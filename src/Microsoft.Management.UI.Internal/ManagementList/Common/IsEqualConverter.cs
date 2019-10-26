@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Windows;
+using System.Windows.Data;
 
 namespace Microsoft.Management.UI.Internal
 {

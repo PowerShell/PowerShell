@@ -1,10 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Management.UI.Internal
 {

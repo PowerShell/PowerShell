@@ -3,11 +3,11 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Diagnostics;
-using System.Windows.Threading;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Microsoft.Management.UI.Internal
 {

@@ -1,17 +1,17 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
-using System.Windows;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Data;
-using System.Windows.Controls.Primitives;
 using System.Diagnostics;
-using System.Windows.Threading;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Microsoft.Management.UI.Internal
 {

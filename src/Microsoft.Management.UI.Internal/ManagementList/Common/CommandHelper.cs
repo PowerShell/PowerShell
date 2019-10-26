@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Security;
 
 namespace Microsoft.Management.UI.Internal
 {

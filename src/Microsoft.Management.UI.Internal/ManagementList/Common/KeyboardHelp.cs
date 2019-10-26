@@ -1,12 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
 using System.Diagnostics;
+using System.Text;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
