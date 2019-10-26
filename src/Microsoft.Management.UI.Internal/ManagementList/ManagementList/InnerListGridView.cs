@@ -145,7 +145,7 @@ namespace Microsoft.Management.UI.Internal
             columnPicker.Owner = Window.GetWindow((DependencyObject)sender);
 
             bool? retval = columnPicker.ShowDialog();
-            if (true != retval)
+            if (retval != true)
             {
                 return;
             }

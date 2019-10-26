@@ -133,7 +133,7 @@ namespace Microsoft.Management.UI.Internal
                 }
                 else
                 {
-                    return string.Compare(firstValue.ToString(), secondValue.ToString(), stringComparison);;
+                    return string.Compare(firstValue.ToString(), secondValue.ToString(), stringComparison);
                 }
             }
         }

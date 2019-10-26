@@ -171,7 +171,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 T sortedObject = (T)obj;
                 int foundIndex = modify.IndexOf(sortedObject);
-                if (0 <= foundIndex)
+                if (foundIndex >= 0)
                 {
                     modify.Move(foundIndex, orderedPosition);
                     orderedPosition++;

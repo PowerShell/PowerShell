@@ -36,7 +36,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("values");
             }
 
-            if (2 != values.Length)
+            if (values.Length != 2)
             {
                 throw new ArgumentException("Two values expected", "values");
             }

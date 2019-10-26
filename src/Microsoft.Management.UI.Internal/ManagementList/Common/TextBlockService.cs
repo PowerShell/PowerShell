@@ -41,13 +41,13 @@ namespace Microsoft.Management.UI.Internal
             UpdateIsTextTrimmed(textBlock);
         }
 
-        static void OnTextBlockPropertyChanged(object sender, EventArgs e)
+        private static void OnTextBlockPropertyChanged(object sender, EventArgs e)
         {
             var textBlock = (TextBlock)sender;
             UpdateIsTextTrimmed(textBlock);
         }
 
-        static void UpdateIsTextTrimmed(TextBlock textBlock)
+        private static void UpdateIsTextTrimmed(TextBlock textBlock)
         {
             Debug.Assert(textBlock != null);
 

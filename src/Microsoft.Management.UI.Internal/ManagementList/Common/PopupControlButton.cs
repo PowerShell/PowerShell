@@ -17,7 +17,7 @@ namespace Microsoft.Management.UI.Internal
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public partial class PopupControlButton : ExpanderButton
     {
-        bool isClickInProgress = false;
+        private bool isClickInProgress = false;
 
         /// <summary>
         /// Tooltip to show to expand.

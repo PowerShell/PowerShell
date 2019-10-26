@@ -19,7 +19,7 @@ namespace Microsoft.Management.UI.Internal
 
         private ReadOnlyCollection<object> logicalChildren;
 
-        PropertiesTextContainsFilterRule defaultFullTextSearchRule = new PropertiesTextContainsFilterRule();
+        private PropertiesTextContainsFilterRule defaultFullTextSearchRule = new PropertiesTextContainsFilterRule();
 
         private ObservableCollection<StateDescriptor<ManagementList>> views = new ObservableCollection<StateDescriptor<ManagementList>>();
 

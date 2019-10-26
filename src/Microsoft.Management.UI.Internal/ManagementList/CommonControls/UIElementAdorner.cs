@@ -14,9 +14,9 @@ namespace Microsoft.Management.UI.Internal
     /// <content>
     /// Partial class implementation for UIElementAdorner.
     /// </content>
-    partial class UIElementAdorner : Adorner
+    internal partial class UIElementAdorner : Adorner
     {
-        VisualCollection children;
+        private VisualCollection children;
 
         /// <summary>
         /// Constructs an instance of UIElementAdorner.

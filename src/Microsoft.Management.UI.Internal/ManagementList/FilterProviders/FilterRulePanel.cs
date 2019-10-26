@@ -298,8 +298,6 @@ namespace Microsoft.Management.UI.Internal
 
             List<KeyValuePair<Type, string>> defaultTemplates = new List<KeyValuePair<Type, string>>()
             {
-                #region Info for Default Templates
-
                 new KeyValuePair<Type, string>(typeof(SelectorFilterRule), "CompositeRuleTemplate"),
                 new KeyValuePair<Type, string>(typeof(SingleValueComparableValueFilterRule<>), "ComparableValueRuleTemplate"),
                 new KeyValuePair<Type, string>(typeof(IsEmptyFilterRule), "NoInputTemplate"),
@@ -309,8 +307,6 @@ namespace Microsoft.Management.UI.Internal
                 new KeyValuePair<Type, string>(typeof(ValidatingSelectorValue<>), "ValidatingSelectorValueTemplate"),
                 new KeyValuePair<Type, string>(typeof(IsBetweenFilterRule<>), "IsBetweenRuleTemplate"),
                 new KeyValuePair<Type, string>(typeof(object), "CatchAllTemplate")
-
-                #endregion Info for Default Templates
             };
 
             defaultTemplates.ForEach(templateInfo => this.AddFilterRulePanelItemContentTemplate(templateInfo.Key, templateInfo.Value));
@@ -320,8 +316,6 @@ namespace Microsoft.Management.UI.Internal
         {
             List<Type> inputTypes = new List<Type>()
             {
-                #region Info For Input Types
-
                 typeof(sbyte),
                 typeof(byte),
                 typeof(short),
@@ -338,8 +332,6 @@ namespace Microsoft.Management.UI.Internal
                 typeof(Enum),
                 typeof(DateTime),
                 typeof(string)
-
-                #endregion Info For Input Types
             };
 
             inputTypes.ForEach(type => this.AddFilterRulePanelItemContentTemplate(type, "InputValueTemplate"));

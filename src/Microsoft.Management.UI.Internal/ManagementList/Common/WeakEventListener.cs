@@ -10,9 +10,9 @@ namespace Microsoft.Management.UI.Internal
     /// A common weak event listener which can be used for different kinds of events.
     /// </summary>
     /// <typeparam name="TEventArgs">The EventArgs type for the event.</typeparam>
-    class WeakEventListener<TEventArgs> : IWeakEventListener where TEventArgs : EventArgs
+    internal class WeakEventListener<TEventArgs> : IWeakEventListener where TEventArgs : EventArgs
     {
-        EventHandler<TEventArgs> realHander;
+        private EventHandler<TEventArgs> realHander;
 
         /// <summary>
         /// Constructs an instance of WeakEventListener.

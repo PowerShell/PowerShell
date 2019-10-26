@@ -157,7 +157,7 @@ namespace Microsoft.Management.UI.Internal
                            plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Add"));
                            plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Plus"));
                            this.gridViewWindow.CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
-                       };
+                       }
 
                        RoutedCommand minusSettings = new RoutedCommand();
                        try

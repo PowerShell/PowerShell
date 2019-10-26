@@ -18,7 +18,7 @@ namespace Microsoft.Management.UI.Internal
     {
         #region Properties
 
-        Collection<IFilterExpressionProvider> filterExpressionProviders = new Collection<IFilterExpressionProvider>();
+        private Collection<IFilterExpressionProvider> filterExpressionProviders = new Collection<IFilterExpressionProvider>();
 
         /// <summary>
         /// Gets a readonly collection of the registered FilterExpressionProviders.

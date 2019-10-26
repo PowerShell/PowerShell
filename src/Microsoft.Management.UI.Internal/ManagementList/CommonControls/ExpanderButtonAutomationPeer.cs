@@ -72,7 +72,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (true == this.expanderButton.IsChecked)
+                if (this.expanderButton.IsChecked == true)
                 {
                     return ExpandCollapseState.Expanded;
                 }

@@ -167,7 +167,6 @@ namespace Microsoft.Management.UI.Internal
             if (this.Items.Count > 0)
             {
                 this.ScrollIntoView(this.Items[0]);
-
                 this.ScrollIntoView(item);
             }
         }

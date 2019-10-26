@@ -92,12 +92,12 @@ namespace Microsoft.Management.UI.Internal
                 }
             }
 
-            if (0 < this.SelectedColumns.Count)
+            if (this.SelectedColumns.Count > 0)
             {
                 this.PART_SelectedList.SelectedIndex = 0;
             }
 
-            if (0 < this.NotSelectedColumns.Count)
+            if (this.NotSelectedColumns.Count > 0)
             {
                 this.PART_NotSelectedList.SelectedIndex = 0;
             }
@@ -167,7 +167,7 @@ namespace Microsoft.Management.UI.Internal
         internal void MoveUpButtonClick(object sender, RoutedEventArgs e)
         {
             int selectedIndex = this.PART_SelectedList.SelectedIndex;
-            Debug.Assert(0 < selectedIndex, "Cannot move past top");
+            Debug.Assert(selectedIndex > 0, "Cannot move past top");
             this.SelectedColumns.Move(selectedIndex, selectedIndex - 1);
 
             // Moving the selected item in the bound collection does not
@@ -233,7 +233,7 @@ namespace Microsoft.Management.UI.Internal
             InnerListColumn column = (InnerListColumn)this.PART_SelectedList.SelectedItem;
             Debug.Assert(column != null);
             int selectedIndex = this.PART_SelectedList.SelectedIndex;
-            Debug.Assert(0 <= selectedIndex);
+            Debug.Assert(selectedIndex >= 0);
 
             this.NotSelectedColumns.Add(column);
             this.SelectedColumns.Remove(column);
@@ -245,7 +245,7 @@ namespace Microsoft.Management.UI.Internal
                 // in the View rather than the ViewModel.
                 this.PART_SelectedList.SelectedIndex = selectedIndex;
             }
-            else if (0 < selectedIndex)
+            else if (selectedIndex > 0)
             {   // Highest-index item removed, select previous item
                 Debug.Assert((selectedIndex - 1) < this.SelectedColumns.Count);
                 this.PART_SelectedList.SelectedIndex = selectedIndex - 1;
@@ -295,11 +295,11 @@ namespace Microsoft.Management.UI.Internal
             Selector notSelectedList = (Selector)this.FindName(
                 "PART_NotSelectedList");
 
-            this.AddButton.IsEnabled = (notSelectedList.SelectedIndex >= 0);
+            this.AddButton.IsEnabled = notSelectedList.SelectedIndex >= 0;
 
             int selectedIndex = selectedList.SelectedIndex;
-            bool selectionValid = 0 <= selectedIndex;
-            this.MoveUpButton.IsEnabled = 0 < selectedIndex;
+            bool selectionValid = selectedIndex >= 0;
+            this.MoveUpButton.IsEnabled = selectedIndex > 0;
             this.MoveDownButton.IsEnabled = selectionValid && this.SelectedColumns.Count > selectedIndex + 1;
 
             bool hasOneColumn = this.SelectedColumns.Count < 2;

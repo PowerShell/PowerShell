@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// First focusable element in the generated UI.
         /// </summary>
-        UIElement firstFocusableElement;
+        private UIElement firstFocusableElement;
 
         /// <summary>
         /// Field used for the CurrentParameterSetViewModel parameter.

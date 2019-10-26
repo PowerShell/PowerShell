@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Add"));
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Plus"));
                 CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
-            };
+            }
 
             RoutedCommand minusSettings = new RoutedCommand();
             try
