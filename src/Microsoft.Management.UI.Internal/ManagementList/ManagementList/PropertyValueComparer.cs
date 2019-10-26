@@ -74,7 +74,6 @@ namespace Microsoft.Management.UI.Internal
         {
             // NOTE : Being unable to retrieve the value is equivalent to getting a null in
             // this case since they will both be treated as "having no value" for CompareTo.
-
             firstValue = null;
             secondValue = null;
 

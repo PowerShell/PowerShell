@@ -47,7 +47,7 @@ namespace Microsoft.Management.UI.Internal
                 return DependencyProperty.UnsetValue;
             }
 
-            var source = (double) values[0];
+            var source = (double)values[0];
             var factor = (double)values[1];
 
             double padding = 0;
@@ -68,7 +68,6 @@ namespace Microsoft.Management.UI.Internal
             var result = newSource - remainder;
 
             return result;
-
         }
 
         /// <summary>

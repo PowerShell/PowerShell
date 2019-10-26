@@ -299,7 +299,6 @@ namespace Microsoft.Management.UI.Internal
             return null;
         }
 
-
         /// <summary>
         /// Finds all children of type within the specified object's visual tree.
         /// </summary>
@@ -468,7 +467,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The reference to the child.</returns>
         public static T GetTemplateChild<T>(Control templateParent, string childName) where T : FrameworkElement
         {
-            T item = GetOptionalTemplateChild<T>( templateParent, childName );
+            T item = GetOptionalTemplateChild<T>(templateParent, childName);
 
             if (item == null)
             {

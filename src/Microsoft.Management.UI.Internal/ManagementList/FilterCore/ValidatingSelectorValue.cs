@@ -147,7 +147,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Notifies listeners that the selected value has changed.
         /// </summary>
-        [field:NonSerialized]
+        [field: NonSerialized]
         public event EventHandler<PropertyChangedEventArgs<T>> SelectedValueChanged;
 
         #endregion Events

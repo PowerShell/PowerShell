@@ -106,6 +106,5 @@ namespace Microsoft.Management.UI.Internal
         }
 
         #endregion Helpers
-
     }
 }

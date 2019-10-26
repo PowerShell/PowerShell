@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
-                handler (this, new PropertyChangedEventArgs(propertyName));
+                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
         #endregion

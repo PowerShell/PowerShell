@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (visibleGripWidth < 0.0 || Double.IsNaN(visibleGripWidth))
             {
-                throw new ArgumentOutOfRangeException("visibleGripWidth", "The value must be greater than or equal to 0." );
+                throw new ArgumentOutOfRangeException("visibleGripWidth", "The value must be greater than or equal to 0.");
             }
 
             if (Double.IsInfinity(visibleGripWidth))
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
                     thickness = new Thickness(visibleGripWidth, 0, 0, 0);
                     break;
                 default:
-                    throw new InvalidEnumArgumentException("gripLocation", (int) gripLocation, typeof(ResizeGripLocation));
+                    throw new InvalidEnumArgumentException("gripLocation", (int)gripLocation, typeof(ResizeGripLocation));
             }
 
             return thickness;

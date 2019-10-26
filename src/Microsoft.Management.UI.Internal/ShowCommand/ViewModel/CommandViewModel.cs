@@ -11,12 +11,11 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Windows;
-
-using SMAI = System.Management.Automation.Internal;
-
 using Microsoft.Management.UI;
 using Microsoft.Management.UI.Internal;
 using Microsoft.PowerShell.Commands.ShowCommandExtension;
+
+using SMAI = System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {

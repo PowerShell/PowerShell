@@ -149,7 +149,7 @@ namespace Microsoft.Management.UI.Internal
         {
             List<FilterExpressionNode> groupNodes = new List<FilterExpressionNode>();
 
-            for (int i = 0; i < this.filterRulePanelItems.Count; )
+            for (int i = 0; i < this.filterRulePanelItems.Count;)
             {
                 int endIndex = this.GetExclusiveEndIndexForGroupStartingAt(i);
 
@@ -254,7 +254,6 @@ namespace Microsoft.Management.UI.Internal
                 {
                     this.filterRulePanelItems[i].ItemType = FilterRulePanelItemType.Item;
                 }
-
             }
         }
 

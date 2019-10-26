@@ -83,6 +83,7 @@ namespace Microsoft.Management.UI.Internal
 
                 return this.parser;
             }
+
             set
             {
                 if (value == null)

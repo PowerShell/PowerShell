@@ -85,7 +85,6 @@ namespace Microsoft.Management.UI.Internal
             {
                 return base.ArrangeOverride(finalSize);
             }
-
         }
 
         partial void OnChildChangedImplementation(PropertyChangedEventArgs<UIElement> e)

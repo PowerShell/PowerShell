@@ -41,5 +41,4 @@ namespace Microsoft.Management.UI.Internal
             return this.ExactMatchEvaluate(data, TextStartsWithCharactersRegexPattern, TextStartsWithWordsRegexPattern);
         }
     }
-
 }

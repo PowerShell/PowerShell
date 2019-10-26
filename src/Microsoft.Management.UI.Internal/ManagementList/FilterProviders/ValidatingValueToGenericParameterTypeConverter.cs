@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class ValidatingValueToGenericParameterTypeConverter : IValueConverter
     {
-
         /// <summary>
         /// Gets an instance of the ValidatingValueToGenericParameterTypeConverter class.
         /// </summary>

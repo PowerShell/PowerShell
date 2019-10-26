@@ -107,12 +107,12 @@ namespace Microsoft.Management.UI.Internal
 
             while (false == element.GetType().Name.Equals("PopupRoot", StringComparison.Ordinal))
             {
-                element = VisualTreeHelper.GetParent( element );
+                element = VisualTreeHelper.GetParent(element);
             }
 
-            Debug.Assert(element != null );
+            Debug.Assert(element != null);
 
-            return (FrameworkElement) element;
+            return (FrameworkElement)element;
         }
 
         /// <summary>

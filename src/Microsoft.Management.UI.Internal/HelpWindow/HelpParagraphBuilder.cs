@@ -84,7 +84,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (string.Compare(strCategory, "DscResource", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                category =  HelpCategory.DscResource;
+                category = HelpCategory.DscResource;
             }
             else if (string.Compare(strCategory, "Class", StringComparison.OrdinalIgnoreCase) == 0)
             {

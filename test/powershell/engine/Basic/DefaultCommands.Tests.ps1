@@ -439,7 +439,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Set-WmiInstance",                  "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Set-WSManInstance",                "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Set-WSManQuickConfig",             "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
-"Cmdlet",       "Show-Command",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
+"Cmdlet",       "Show-Command",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Show-ControlPanelItem",            "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Show-EventLog",                    "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Show-Markdown",                    "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"

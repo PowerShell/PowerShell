@@ -61,6 +61,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.startFilterOnExpressionChanged;
             }
+
             set
             {
                 this.startFilterOnExpressionChanged = value;
@@ -79,6 +80,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.hasFilterExpression;
             }
+
             protected set
             {
                 this.hasFilterExpression = value;

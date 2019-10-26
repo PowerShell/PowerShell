@@ -64,7 +64,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="parameter">The converter parameter to use.</param>
         /// <param name="culture">The culture to use in the converter.</param>
         /// <returns>A converted values. If the method returns nullNothingnullptra null reference (Nothing in Visual Basic), the valid null value is used.</returns>
-        public object[] ConvertBack( object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

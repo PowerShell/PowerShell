@@ -152,7 +152,6 @@ namespace Microsoft.Management.UI.Internal
                 return true;
             }
 
-
             string stringValue = this.Value.ToString();
             if (string.IsNullOrEmpty(stringValue))
             {

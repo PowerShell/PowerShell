@@ -34,6 +34,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.ignoreCase;
             }
+
             set
             {
                 this.ignoreCase = value;
@@ -51,6 +52,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.cultureInvariant;
             }
+
             set
             {
                 this.cultureInvariant = value;

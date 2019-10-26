@@ -156,7 +156,7 @@ namespace Microsoft.Management.UI.Internal
             // on the rename button causes the the edit box to change and
             // then have re-toggle.
             DependencyObject d = Mouse.DirectlyOver as DependencyObject;
-            if (d ==null || !(this.renameButton.IsAncestorOf(d) && Mouse.LeftButton == MouseButtonState.Pressed))
+            if (d == null || !(this.renameButton.IsAncestorOf(d) && Mouse.LeftButton == MouseButtonState.Pressed))
             {
                 this.renameButton.IsChecked = false;
             }

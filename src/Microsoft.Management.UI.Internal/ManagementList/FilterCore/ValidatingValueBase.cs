@@ -200,7 +200,6 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         protected abstract DataErrorInfoValidationResult Validate();
 
-
         /// <summary>
         /// Called to validate the property with the given name.
         /// </summary>

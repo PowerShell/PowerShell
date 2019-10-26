@@ -409,7 +409,6 @@ namespace Microsoft.Management.UI.Internal
             // For non-live mode, stop filtering if the user has cleared the filter (rules and search text).
             // This allows the user to clear search results without having to click the Search button on an empty filter.
             // This happens automatically in live mode.
-
             if (false == this.Evaluator.StartFilterOnExpressionChanged &&
                 false == this.FilterRulePanel.HasFilterExpression &&
                 false == this.SearchBox.HasFilterExpression)

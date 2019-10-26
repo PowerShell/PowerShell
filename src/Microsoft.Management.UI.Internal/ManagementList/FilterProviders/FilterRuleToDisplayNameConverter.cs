@@ -40,7 +40,6 @@ namespace Microsoft.Management.UI.Internal
                 return DependencyProperty.UnsetValue;
             }
 
-
             FilterRule rule = value as FilterRule;
             if (rule == null)
             {

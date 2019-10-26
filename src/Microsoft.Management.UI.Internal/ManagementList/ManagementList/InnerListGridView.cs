@@ -167,7 +167,6 @@ namespace Microsoft.Management.UI.Internal
                     //   after it is added back.
                     // Solution: Remove the column, change the width,
                     //   add the column back, then change the width back.
-
                     double width = column.Width;
                     column.Width = 0d;
                     this.Columns.Add(column);

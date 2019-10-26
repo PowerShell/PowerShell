@@ -57,7 +57,6 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private AutoResetEvent gridViewWindowLoaded;
 
-
         /// <summary> Is used to store any Management list calls exceptions. </summary>
         private Exception exception = null;
 
@@ -353,7 +352,7 @@ namespace Microsoft.Management.UI.Internal
             if (this.managementList.List.SelectedItems.Count != 0)
             {
                 this.selectedItems = new List<PSObject>();
-                foreach(PSObject obj in this.managementList.List.SelectedItems)
+                foreach (PSObject obj in this.managementList.List.SelectedItems)
                 {
                     this.selectedItems.Add(obj);
                 }
@@ -562,7 +561,7 @@ namespace Microsoft.Management.UI.Internal
                 {
                     this.closedEvent.Set();
                 }
-                catch(ObjectDisposedException)
+                catch (ObjectDisposedException)
                 {
                     // we tried to avoid this exception with "&& !this.closedEvent.SafeWaitHandle.IsClosed"
                     // but since this runs in a different thread the if condition could be evaluated and after that

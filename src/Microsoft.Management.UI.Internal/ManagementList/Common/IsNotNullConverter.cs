@@ -6,7 +6,6 @@ using System.Windows.Data;
 
 namespace Microsoft.Management.UI.Internal
 {
-
     /// <summary>
     /// The IsNotNullConverter is responsible for converting a value into
     /// a boolean indicting whether the value is not null.

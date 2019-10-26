@@ -33,13 +33,14 @@ namespace Microsoft.Management.UI.Internal
             get;
             private set;
         }
+
         private static readonly DataErrorInfoValidationResult valid = new DataErrorInfoValidationResult(true, null, string.Empty);
 
         /// <summary>
         /// Geta an instance of DataErrorInfoValidationResult that corresponds
         /// to a valid result.
         /// </summary>
-        public new static DataErrorInfoValidationResult ValidResult
+        public static new DataErrorInfoValidationResult ValidResult
         {
             get
             {

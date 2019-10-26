@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     /// </summary>
     public partial class ShowAllModulesWindow : Window
     {
-
         /// <summary>
         /// private constants for ZoomLevel
         /// </summary>
@@ -35,7 +34,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// Min ZoomLevel
         /// </summary>
         private const double ZOOM_MIN = 0.5;
-
 
         #region Construction and Destructor
 
@@ -92,7 +90,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 minusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Minus"));
                 CommandBindings.Add(new CommandBinding(minusSettings, ZoomEventHandlerMinus));
             }
-
         }
 
         /// <summary>

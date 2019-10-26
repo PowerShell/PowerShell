@@ -3,7 +3,6 @@
 
 namespace Microsoft.Management.UI.Internal
 {
-
     /// <summary>
     /// A class which returns the same boxed bool values.
     /// </summary>
@@ -40,5 +39,4 @@ namespace Microsoft.Management.UI.Internal
             }
         }
     }
-
 }

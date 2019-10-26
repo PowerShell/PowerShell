@@ -8,7 +8,6 @@ using System.Windows.Controls;
 
 namespace Microsoft.Management.UI.Internal
 {
-
     /// <content>
     /// Partial class implementation for MessageTextBox control.
     /// </content>
@@ -56,4 +55,3 @@ namespace Microsoft.Management.UI.Internal
         #endregion Non-Public Methods
     }
 }
-

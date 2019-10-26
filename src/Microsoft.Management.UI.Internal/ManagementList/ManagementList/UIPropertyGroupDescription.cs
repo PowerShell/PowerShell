@@ -76,6 +76,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.sortDirection;
             }
+
             set
             {
                 this.sortDirection = value;

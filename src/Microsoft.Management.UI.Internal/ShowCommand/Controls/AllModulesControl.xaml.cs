@@ -21,7 +21,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             InitializeComponent();
 
-            this.Loaded += (obj, args) => {
+            this.Loaded += (obj, args) =>
+            {
                 this.ModulesCombo.Focus();
             };
         }
