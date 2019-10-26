@@ -113,7 +113,8 @@ namespace Microsoft.PowerShell
             }
 
             // Daily builds do not support update notifications
-            if (PSVersionInfo.PreReleaseLabel?.StartsWith("daily"))
+            if (PSVersionInfo.PSCurrentVersion.PreReleaseLabel != null
+                && PSVersionInfo.PSCurrentVersion.PreReleaseLabel.StartsWith("daily"))
             {
                 return;
             }
