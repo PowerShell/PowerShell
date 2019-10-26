@@ -4590,6 +4590,7 @@ end {
                     // These were transferred from the "transferred from the profile" section
                     new SessionStateAliasEntry("cat", "Get-Content"),
                     new SessionStateAliasEntry("cp", "Copy-Item", string.Empty, AllScope),
+                    new SessionStateAliasEntry("lp", "Out-Printer"),
                     new SessionStateAliasEntry("ls", "Get-ChildItem"),
                     new SessionStateAliasEntry("man", "help"),
                     new SessionStateAliasEntry("mount", "New-PSDrive"),
@@ -4621,7 +4622,6 @@ end {
                     new SessionStateAliasEntry("swmi", "Set-WMIInstance", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("trcm", "Trace-Command", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("lp", "Out-Printer"),
 #endif
                     // Aliases transferred from the profile
                     new SessionStateAliasEntry("h", "Get-History"),

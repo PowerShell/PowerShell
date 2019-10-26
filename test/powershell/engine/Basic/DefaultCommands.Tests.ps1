@@ -107,7 +107,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "iwmi",                             "Invoke-WMIMethod",                 $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwr",                              "Invoke-WebRequest",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
-"Alias",        "lp",                               "Out-Printer",                      $($FullCLR                               ),     "ReadOnly",             "",                     ""
+"Alias",        "lp",                               "Out-Printer",                      $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Alias",        "ls",                               "Get-ChildItem",                    $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "man",                              "help",                             $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "md",                               "mkdir",                            $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""
@@ -372,7 +372,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Out-Host",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Out-LineOutput",                   "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Out-Null",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Out-Printer",                      "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Out-Printer",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-String",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Pop-Location",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Protect-CmsMessage",               "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
@@ -523,8 +523,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
             if ($isPreview) {
                 $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
                 Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
-                $currentAliasList = pwsh -out XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
-                $currentCmdletList = pwsh -out XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
+                $currentAliasList = pwsh -noprofile -out XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
+                $currentCmdletList = pwsh -noprofile -out XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
             }
             else {
                 $currentAliasList = & $getAliases $moduleList
