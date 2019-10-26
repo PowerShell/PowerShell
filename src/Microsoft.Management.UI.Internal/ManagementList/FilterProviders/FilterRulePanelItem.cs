@@ -108,7 +108,7 @@ namespace Microsoft.Management.UI.Internal
             Debug.Assert(!string.IsNullOrEmpty(propertyName));
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }

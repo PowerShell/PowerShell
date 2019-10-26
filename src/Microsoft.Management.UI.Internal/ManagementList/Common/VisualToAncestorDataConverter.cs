@@ -39,7 +39,7 @@ namespace Microsoft.Management.UI.Internal
 
             Type dataType = (Type)parameter;
 
-            if (false == dataType.IsClass)
+            if (dataType.IsClass == false)
             {
                 throw new ArgumentException("The specified value is not a class type.", "parameter");
             }

@@ -48,7 +48,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (this.FilterExpression != null);
+                return this.FilterExpression != null;
             }
         }
 
@@ -162,7 +162,7 @@ namespace Microsoft.Management.UI.Internal
                 i = endIndex;
             }
 
-            if (0 == groupNodes.Count)
+            if (groupNodes.Count == 0)
             {
                 return null;
             }
@@ -220,7 +220,7 @@ namespace Microsoft.Management.UI.Internal
 
         private int GetInsertionIndex(FilterRulePanelItem item)
         {
-            Debug.Assert(null != item);
+            Debug.Assert(item != null);
 
             for (int i = this.filterRulePanelItems.Count - 1; i >= 0; i--)
             {
@@ -267,7 +267,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new EventArgs());
             }

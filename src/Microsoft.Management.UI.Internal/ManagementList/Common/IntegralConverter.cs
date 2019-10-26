@@ -54,7 +54,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (parameter != null)
             {
-                padding = Double.Parse((string)parameter, CultureInfo.InvariantCulture);
+                padding = double.Parse((string)parameter, CultureInfo.InvariantCulture);
             }
 
             var newSource = source - padding;

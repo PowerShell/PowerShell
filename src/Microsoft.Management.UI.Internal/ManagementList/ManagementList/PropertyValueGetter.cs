@@ -96,7 +96,7 @@ namespace Microsoft.Management.UI.Internal
                 PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(value);
 
                 descriptor = properties[propertyName];
-                if (null != descriptor)
+                if (descriptor != null)
                 {
                     this.cachedProperties.Rows.Add(dataType, propertyName, descriptor);
                 }

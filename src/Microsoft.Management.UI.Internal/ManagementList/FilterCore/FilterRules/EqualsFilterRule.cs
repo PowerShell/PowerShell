@@ -39,7 +39,7 @@ namespace Microsoft.Management.UI.Internal
             Debug.Assert(this.IsValid);
 
             int result = CustomTypeComparer.Compare<T>(this.Value.GetCastValue(), data);
-            return (0 == result);
+            return result == 0;
         }
     }
 }

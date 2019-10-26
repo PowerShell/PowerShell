@@ -155,7 +155,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.Columns.Clear();
                 ObservableCollection<InnerListColumn> newColumns = columnPicker.SelectedColumns;
-                Debug.Assert(null != newColumns, "SelectedColumns not found");
+                Debug.Assert(newColumns != null, "SelectedColumns not found");
                 foreach (InnerListColumn column in newColumns)
                 {
                     Debug.Assert(column.Visible);

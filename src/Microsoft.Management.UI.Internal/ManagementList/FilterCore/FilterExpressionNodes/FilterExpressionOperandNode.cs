@@ -62,7 +62,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override bool Evaluate(object item)
         {
-            Debug.Assert(null != this.Rule);
+            Debug.Assert(this.Rule != null);
 
             return this.Rule.Evaluate(item);
         }

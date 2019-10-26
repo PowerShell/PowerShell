@@ -57,12 +57,12 @@ namespace Microsoft.Management.UI.Internal
         private static bool HasTimeComponent(DateTime value)
         {
             bool hasNoTimeComponent = true
-                && 0 == value.Hour
-                && 0 == value.Minute
-                && 0 == value.Second
-                && 0 == value.Millisecond;
+                && value.Hour == 0
+                && value.Minute == 0
+                && value.Second == 0
+                && value.Millisecond == 0;
 
-            return (!hasNoTimeComponent);
+            return !hasNoTimeComponent;
         }
     }
 }

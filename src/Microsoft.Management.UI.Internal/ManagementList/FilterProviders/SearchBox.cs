@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (false == string.IsNullOrEmpty(this.Text));
+                return string.IsNullOrEmpty(this.Text) == false;
             }
         }
 
@@ -61,7 +61,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new EventArgs());
             }

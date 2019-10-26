@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (item1 == null)
             {
-                return (item2 == null);
+                return item2 == null;
             }
 
             if (item2 == null)

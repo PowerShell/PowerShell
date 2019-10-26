@@ -245,7 +245,7 @@ namespace Microsoft.Management.UI.Internal
 
             foreach (InnerListColumn column in this.InnerGrid.Columns)
             {
-                if (!Object.ReferenceEquals(this.SortedColumn, column))
+                if (!object.ReferenceEquals(this.SortedColumn, column))
                 {
                     dataDescriptions.Add(column.DataDescription);
                 }
@@ -295,10 +295,10 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnItemsSourceChanged(oldValue, newValue);
 
-            this.itemsSourceIsEmpty = null != this.ItemsSource && this.ItemsSource.GetEnumerator().MoveNext() == false;
+            this.itemsSourceIsEmpty = this.ItemsSource != null && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
             // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
-            bool canCreateView = (null != this.ItemsSource) &&
+            bool canCreateView = (this.ItemsSource != null) &&
                 (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
             if (canCreateView)
@@ -665,7 +665,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // If the sorted column is sorted again, reverse the sort \\
-            if (Object.ReferenceEquals(column, this.sortedColumn))
+            if (object.ReferenceEquals(column, this.sortedColumn))
             {
                 dataDescription.ReverseSortDirection();
             }

@@ -185,7 +185,7 @@ namespace Microsoft.Management.UI.Internal
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -208,7 +208,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new EventArgs());
             }

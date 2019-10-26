@@ -118,9 +118,9 @@ namespace Microsoft.Management.UI.Internal
 
         static partial void MinWidthProperty_ValidatePropertyImplementation(double value, ref bool isValid)
         {
-            isValid = ((value >= 0.0)
-                && !Double.IsNaN(value)
-                && !Double.IsPositiveInfinity(value));
+            isValid = (value >= 0.0)
+                && !double.IsNaN(value)
+                && !double.IsPositiveInfinity(value);
         }
 
         /// <summary>

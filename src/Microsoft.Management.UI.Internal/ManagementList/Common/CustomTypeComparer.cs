@@ -47,7 +47,7 @@ namespace Microsoft.Management.UI.Internal
         public static int Compare<T>(T value1, T value2) where T : IComparable
         {
             IComparer<T> comparer;
-            if (false == TryGetCustomComparer<T>(out comparer))
+            if (TryGetCustomComparer<T>(out comparer) == false)
             {
                 return value1.CompareTo(value2);
             }
@@ -60,7 +60,7 @@ namespace Microsoft.Management.UI.Internal
             comparer = null;
 
             object uncastComparer = null;
-            if (false == comparers.TryGetValue(typeof(T), out uncastComparer))
+            if (comparers.TryGetValue(typeof(T), out uncastComparer) == false)
             {
                 return false;
             }

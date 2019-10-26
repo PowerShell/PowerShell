@@ -368,7 +368,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "New-WSManSessionOption",           "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-Default",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Out-File",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Out-GridView",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
+"Cmdlet",       "Out-GridView",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-Host",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Out-LineOutput",                   "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Out-Null",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"

@@ -85,7 +85,7 @@ namespace Microsoft.Management.UI.Internal
                 textBlock.Foreground);
             #pragma warning restore 612, 618
 
-            return (formattedText.Width > textBlock.ActualWidth);
+            return formattedText.Width > textBlock.ActualWidth;
         }
     }
 }

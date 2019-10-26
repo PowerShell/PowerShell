@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (typeof(string) == type)
             {
-                return 0 == ((string)item).Trim().Length;
+                return ((string)item).Trim().Length == 0;
             }
 
             return false;

@@ -77,7 +77,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public override bool Evaluate(object item)
         {
-            if (0 == this.Children.Count)
+            if (this.Children.Count == 0)
             {
                 return false;
             }

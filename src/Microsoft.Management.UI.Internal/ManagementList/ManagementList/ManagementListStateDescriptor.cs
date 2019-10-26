@@ -457,7 +457,7 @@ namespace Microsoft.Management.UI.Internal
 
         private static void SetColumnWidth(GridViewColumn ilc, double width)
         {
-            if (!Double.IsNaN(width))
+            if (!double.IsNaN(width))
             {
                 ilc.Width = width;
             }

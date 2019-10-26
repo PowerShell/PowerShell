@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>This method always returns false.</returns>
         protected override bool IsControlElementCore()
         {
-            return (this.Owner.Visibility != Visibility.Hidden);
+            return this.Owner.Visibility != Visibility.Hidden;
         }
 
         #endregion

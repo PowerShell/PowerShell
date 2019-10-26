@@ -51,7 +51,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
 
-            if (null != this.DropDownButtonTemplate && !ReferenceEquals(this.dropDownButton.Template, this.DropDownButtonTemplate))
+            if (this.DropDownButtonTemplate != null && !ReferenceEquals(this.dropDownButton.Template, this.DropDownButtonTemplate))
             {
                 this.dropDownButton.Template = this.DropDownButtonTemplate;
             }
@@ -79,7 +79,7 @@ namespace Microsoft.Management.UI.Internal
                 this.dropDown.Loaded += new RoutedEventHandler(this.DropDown_Loaded_FocusDropDown);
             }
 
-            if (null != this.dropDown.Child && !this.dropDown.IsAncestorOf((DependencyObject)Keyboard.FocusedElement))
+            if (this.dropDown.Child != null && !this.dropDown.IsAncestorOf((DependencyObject)Keyboard.FocusedElement))
             {
                 this.dropDown.Child.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
@@ -122,7 +122,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void DetachFromVisualTree()
         {
-            if (null != this.dropDown)
+            if (this.dropDown != null)
             {
                 this.dropDown.Opened -= this.DropDown_Opened;
                 this.dropDown.Closed -= this.DropDown_Closed;

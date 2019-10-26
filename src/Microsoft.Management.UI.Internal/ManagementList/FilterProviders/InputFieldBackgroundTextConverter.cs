@@ -71,22 +71,22 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsOfTypeValidatingValue(object value)
         {
-            Debug.Assert(null != value);
+            Debug.Assert(value != null);
 
             Type type = value.GetType();
-            if (false == type.IsGenericType)
+            if (type.IsGenericType == false)
             {
                 return false;
             }
 
             type = type.GetGenericTypeDefinition();
 
-            return (type == ValidatingValueGenericType);
+            return type == ValidatingValueGenericType;
         }
 
         private Type GetGenericParameter(object value, CultureInfo culture)
         {
-            Debug.Assert(null != value);
+            Debug.Assert(value != null);
             Debug.Assert(this.IsOfTypeValidatingValue(value));
 
             return value.GetType().GetGenericArguments()[0];

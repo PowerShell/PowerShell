@@ -35,7 +35,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (null != this.renameButton) ? this.renameButton.IsChecked.Value : false;
+                return (this.renameButton != null) ? this.renameButton.IsChecked.Value : false;
             }
         }
 
@@ -234,7 +234,7 @@ namespace Microsoft.Management.UI.Internal
             this.editBox.LostFocus += new RoutedEventHandler(this.EditBox_LostFocus);
 
             this.templatedParent = this.TemplatedParent as FrameworkElement;
-            if (null != this.templatedParent)
+            if (this.templatedParent != null)
             {
                 this.templatedParent.KeyDown += new KeyEventHandler(this.TemplatedParent_OnKeyDown);
             }
@@ -249,7 +249,7 @@ namespace Microsoft.Management.UI.Internal
                 this.editBox.LostFocus -= this.EditBox_LostFocus;
             }
 
-            if (null != this.templatedParent)
+            if (this.templatedParent != null)
             {
                 this.templatedParent.KeyDown -= this.TemplatedParent_OnKeyDown;
             }

@@ -156,12 +156,12 @@ namespace Microsoft.Management.UI.Internal
                 {
                     if (wholeWord)
                     {
-                        if (match > 0 && Char.IsLetterOrDigit(text[match - 1]))
+                        if (match > 0 && char.IsLetterOrDigit(text[match - 1]))
                         {
                             break;
                         }
 
-                        if ((match + search.Length <= text.Length - 1) && Char.IsLetterOrDigit(text[match + search.Length]))
+                        if ((match + search.Length <= text.Length - 1) && char.IsLetterOrDigit(text[match + search.Length]))
                         {
                             break;
                         }

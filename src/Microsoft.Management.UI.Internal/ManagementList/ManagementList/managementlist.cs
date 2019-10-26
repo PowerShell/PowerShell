@@ -151,8 +151,8 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // If the filter has been applied or cleared, update the scroll position \\
-            bool filteredItemsHaveChanged = (e.PropertyName == "FilterStatus" &&
-                (this.Evaluator.FilterStatus == FilterStatus.Applied || this.Evaluator.FilterStatus == FilterStatus.NotApplied));
+            bool filteredItemsHaveChanged = e.PropertyName == "FilterStatus" &&
+                (this.Evaluator.FilterStatus == FilterStatus.Applied || this.Evaluator.FilterStatus == FilterStatus.NotApplied);
 
             if (filteredItemsHaveChanged && this.List.Items.Count > 0)
             {
@@ -258,8 +258,8 @@ namespace Microsoft.Management.UI.Internal
         partial void OnStartFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
             // Allow filtering if there is a filter expression or filtering has been triggered \\
-            e.CanExecute = (this.Evaluator.HasFilterExpression ||
-                this.Evaluator.FilterStatus != FilterStatus.NotApplied);
+            e.CanExecute = this.Evaluator.HasFilterExpression ||
+                this.Evaluator.FilterStatus != FilterStatus.NotApplied;
         }
 
         partial void OnStartFilterExecutedImplementation(ExecutedRoutedEventArgs e)
@@ -273,7 +273,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnStopFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (this.Evaluator.FilterStatus == FilterStatus.InProgress);
+            e.CanExecute = this.Evaluator.FilterStatus == FilterStatus.InProgress;
         }
 
         partial void OnStopFilterExecutedImplementation(ExecutedRoutedEventArgs e)
@@ -287,7 +287,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnClearFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (this.FilterRulePanel.FilterRulePanelItems.Count > 0);
+            e.CanExecute = this.FilterRulePanel.FilterRulePanelItems.Count > 0;
         }
 
         partial void OnClearFilterExecutedImplementation(ExecutedRoutedEventArgs e)
@@ -311,7 +311,7 @@ namespace Microsoft.Management.UI.Internal
         partial void OnSaveViewCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
             string viewName = (string)e.Parameter;
-            bool isNotEmpty = !string.IsNullOrEmpty(viewName) && (0 != viewName.Trim().Length);
+            bool isNotEmpty = !string.IsNullOrEmpty(viewName) && (viewName.Trim().Length != 0);
             e.CanExecute = isNotEmpty;
         }
 
@@ -375,7 +375,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.RaiseEvent(new RoutedEventArgs(ViewsChangedEvent));
 
-            if (Object.ReferenceEquals(sd, this.CurrentView))
+            if (object.ReferenceEquals(sd, this.CurrentView))
             {
                 this.CurrentView = null;
             }
@@ -409,9 +409,9 @@ namespace Microsoft.Management.UI.Internal
             // For non-live mode, stop filtering if the user has cleared the filter (rules and search text).
             // This allows the user to clear search results without having to click the Search button on an empty filter.
             // This happens automatically in live mode.
-            if (false == this.Evaluator.StartFilterOnExpressionChanged &&
-                false == this.FilterRulePanel.HasFilterExpression &&
-                false == this.SearchBox.HasFilterExpression)
+            if (this.Evaluator.StartFilterOnExpressionChanged == false &&
+                this.FilterRulePanel.HasFilterExpression == false &&
+                this.SearchBox.HasFilterExpression == false)
             {
                 this.Evaluator.StopFilter();
             }

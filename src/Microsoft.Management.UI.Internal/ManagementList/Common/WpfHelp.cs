@@ -138,7 +138,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 get
                 {
-                    return (0 == this.callbacks.Count);
+                    return this.callbacks.Count == 0;
                 }
             }
         }
@@ -284,7 +284,7 @@ namespace Microsoft.Management.UI.Internal
                 var element = elementQueue.Dequeue();
 
                 T item = element as T;
-                if (null != item)
+                if (item != null)
                 {
                     return item;
                 }

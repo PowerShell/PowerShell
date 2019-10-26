@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (null != this.filterTarget)
+                if (this.filterTarget != null)
                 {
                     this.StopFilter();
                 }
@@ -73,7 +73,7 @@ namespace Microsoft.Management.UI.Internal
             // Cache the expression for filtering so subsequent changes are ignored \\
             this.CachedFilterExpression = this.FilterExpression;
 
-            if (null != this.CachedFilterExpression)
+            if (this.CachedFilterExpression != null)
             {
                 this.FilterTarget.Items.Filter = this.FilterExpressionAdapter;
                 this.FilterStatus = FilterStatus.Applied;
@@ -109,7 +109,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool FilterExpressionAdapter(object item)
         {
-            Debug.Assert(null != this.CachedFilterExpression);
+            Debug.Assert(this.CachedFilterExpression != null);
 
             try
             {
@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
         private bool TryNotifyFilterException(Exception e)
         {
             EventHandler<FilterExceptionEventArgs> eh = this.FilterExceptionOccurred;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new FilterExceptionEventArgs(e));
                 return true;

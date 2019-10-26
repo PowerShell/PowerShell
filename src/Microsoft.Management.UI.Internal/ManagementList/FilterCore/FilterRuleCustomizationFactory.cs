@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                Debug.Assert(null != factoryInstance);
+                Debug.Assert(factoryInstance != null);
                 return factoryInstance;
             }
 

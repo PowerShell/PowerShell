@@ -214,7 +214,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new EventArgs());
             }
@@ -235,7 +235,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnAddRulesExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            Debug.Assert(null != e);
+            Debug.Assert(e != null);
 
             if (e.Parameter == null)
             {
@@ -270,7 +270,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnRemoveRuleExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            Debug.Assert(null != e);
+            Debug.Assert(e != null);
 
             if (e.Parameter == null)
             {
@@ -308,7 +308,7 @@ namespace Microsoft.Management.UI.Internal
                 new KeyValuePair<Type, string>(typeof(ValidatingValue<>), "ValidatingValueTemplate"),
                 new KeyValuePair<Type, string>(typeof(ValidatingSelectorValue<>), "ValidatingSelectorValueTemplate"),
                 new KeyValuePair<Type, string>(typeof(IsBetweenFilterRule<>), "IsBetweenRuleTemplate"),
-                new KeyValuePair<Type, string>(typeof(Object), "CatchAllTemplate")
+                new KeyValuePair<Type, string>(typeof(object), "CatchAllTemplate")
 
                 #endregion Info for Default Templates
             };
@@ -322,23 +322,22 @@ namespace Microsoft.Management.UI.Internal
             {
                 #region Info For Input Types
 
-                typeof(SByte),
-                typeof(Byte),
-                typeof(Int16),
-                typeof(Int32),
-                typeof(Int64),
-                typeof(UInt16),
-                typeof(UInt32),
-                typeof(UInt64),
-                typeof(Char),
+                typeof(sbyte),
+                typeof(byte),
+                typeof(short),
+                typeof(int),
+                typeof(long),
+                typeof(ushort),
+                typeof(uint),
+                typeof(ulong),
+                typeof(char),
                 typeof(Single),
-                typeof(Double),
-                typeof(Decimal),
-                typeof(Boolean),
-
+                typeof(double),
+                typeof(decimal),
+                typeof(bool),
                 typeof(Enum),
                 typeof(DateTime),
-                typeof(String)
+                typeof(string)
 
                 #endregion Info For Input Types
             };
@@ -348,13 +347,13 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddFilterRulePanelItemContentTemplate(Type type, string resourceName)
         {
-            Debug.Assert(null != type);
+            Debug.Assert(type != null);
             Debug.Assert(!string.IsNullOrEmpty(resourceName));
 
             var templateInfo = new ComponentResourceKey(typeof(FilterRulePanel), resourceName);
 
             DataTemplate template = (DataTemplate)this.TryFindResource(templateInfo);
-            Debug.Assert(null != template);
+            Debug.Assert(template != null);
 
             this.AddFilterRulePanelItemContentTemplate(type, template);
         }
@@ -365,7 +364,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddFilterRuleInternal(FilterRulePanelItem item)
         {
-            Debug.Assert(null != item);
+            Debug.Assert(item != null);
 
             FilterRulePanelItem newItem = new FilterRulePanelItem(item.Rule.DeepCopy(), item.GroupId);
             this.Controller.AddFilterRulePanelItem(newItem);
@@ -373,7 +372,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void RemoveFilterRuleInternal(FilterRulePanelItem item)
         {
-            Debug.Assert(null != item);
+            Debug.Assert(item != null);
             this.Controller.RemoveFilterRulePanelItem(item);
         }
 

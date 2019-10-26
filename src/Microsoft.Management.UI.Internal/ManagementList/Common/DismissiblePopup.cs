@@ -105,7 +105,7 @@ namespace Microsoft.Management.UI.Internal
         {
             DependencyObject element = this.Child;
 
-            while (false == element.GetType().Name.Equals("PopupRoot", StringComparison.Ordinal))
+            while (element.GetType().Name.Equals("PopupRoot", StringComparison.Ordinal) == false)
             {
                 element = VisualTreeHelper.GetParent(element);
             }

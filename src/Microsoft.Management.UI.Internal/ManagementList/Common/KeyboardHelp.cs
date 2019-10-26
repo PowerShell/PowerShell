@@ -142,7 +142,7 @@ namespace Microsoft.Management.UI.Internal
         private static bool IsElementRightToLeft(DependencyObject element)
         {
             FlowDirection flowDirection = FrameworkElement.GetFlowDirection(element);
-            bool rightToLeft = (flowDirection == FlowDirection.RightToLeft);
+            bool rightToLeft = flowDirection == FlowDirection.RightToLeft;
             return rightToLeft;
         }
     }

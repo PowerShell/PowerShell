@@ -105,7 +105,7 @@ namespace Microsoft.Management.UI.Internal
                 }
             }
 
-            if (false == this.isClickInProgress)
+            if (this.isClickInProgress == false)
             {
                 this.UpdateIsChecked();
             }

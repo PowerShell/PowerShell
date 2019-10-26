@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (null != value && !value.GetType().IsSerializable)
+                if (value != null && !value.GetType().IsSerializable)
                 {
                     throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
                 }
@@ -215,7 +215,7 @@ namespace Microsoft.Management.UI.Internal
         {
             EventHandler<PropertyChangedEventArgs<T>> eh = this.SelectedValueChanged;
 
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs<T>(oldValue, newValue));
             }
@@ -231,7 +231,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsIndexWithinBounds(int value)
         {
-            return (value >= 0 && value < this.AvailableValues.Count);
+            return value >= 0 && value < this.AvailableValues.Count;
         }
 
         #endregion IsIndexWithinBounds

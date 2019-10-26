@@ -262,7 +262,7 @@ namespace Microsoft.Management.UI.Internal
         {
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
-            if (null != eh)
+            if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -304,7 +304,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void NotifyValidationResultUpdated()
         {
-            Debug.Assert(null != this.cachedValidationResult);
+            Debug.Assert(this.cachedValidationResult != null);
             this.NotifyPropertyChanged("IsValid");
             this.NotifyPropertyChanged("Error");
         }

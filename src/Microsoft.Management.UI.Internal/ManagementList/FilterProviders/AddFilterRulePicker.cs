@@ -49,7 +49,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnOkAddFilterRulesCanExecuteImplementation(System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (null != this.AddFilterRulesCommand)
+            e.CanExecute = (this.AddFilterRulesCommand != null)
                 ? CommandHelper.CanExecuteCommand(this.AddFilterRulesCommand, null, this.AddFilterRulesCommandTarget)
                 : false;
         }

@@ -22,7 +22,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (this.AvailableRules.IsValid && this.AvailableRules.SelectedValue.IsValid);
+                return this.AvailableRules.IsValid && this.AvailableRules.SelectedValue.IsValid;
             }
         }
 

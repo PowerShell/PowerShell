@@ -55,7 +55,7 @@ namespace Microsoft.Management.UI.Internal
 
         internal static bool IsStringNotEmpty(string value)
         {
-            return !(string.IsNullOrEmpty(value) || 0 == value.Trim().Length);
+            return !(string.IsNullOrEmpty(value) || value.Trim().Length == 0);
         }
     }
 }

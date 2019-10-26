@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             if (this.zoomLevel < ZOOM_MAX)
             {
                 // ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing for next zoom
-                this.zoomLevel = ((this.zoomLevel + ZOOM_INCREMENT) * 100);
+                this.zoomLevel = (this.zoomLevel + ZOOM_INCREMENT) * 100;
                 viewModel.ZoomLevel = this.zoomLevel;
                 this.zoomLevel /= 100;
             }
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             if (this.zoomLevel >= ZOOM_MIN)
             {
                 // ViewModel applies ZoomLevel after dividing it by 100, So multiply it by 100 and then later reset to normal by dividing it for next zoom
-                this.zoomLevel = ((this.zoomLevel - ZOOM_INCREMENT) * 100);
+                this.zoomLevel = (this.zoomLevel - ZOOM_INCREMENT) * 100;
                 viewModel.ZoomLevel = this.zoomLevel;
                 this.zoomLevel /= 100;
             }

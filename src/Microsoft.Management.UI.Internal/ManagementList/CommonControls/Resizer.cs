@@ -51,12 +51,12 @@ namespace Microsoft.Management.UI.Internal
         {
             Thickness thickness;
 
-            if (visibleGripWidth < 0.0 || Double.IsNaN(visibleGripWidth))
+            if (visibleGripWidth < 0.0 || double.IsNaN(visibleGripWidth))
             {
                 throw new ArgumentOutOfRangeException("visibleGripWidth", "The value must be greater than or equal to 0.");
             }
 
-            if (Double.IsInfinity(visibleGripWidth))
+            if (double.IsInfinity(visibleGripWidth))
             {
                 throw new ArgumentOutOfRangeException("visibleGripWidth", "The value must be less than infinity.");
             }
@@ -169,7 +169,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void StartDragging(ResizeGripLocation location)
         {
-            if (false == this.ResizeWhileDragging)
+            if (this.ResizeWhileDragging == false)
             {
                 if (this.adornerLayer == null)
                 {
@@ -185,7 +185,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void StopDragging(ResizeGripLocation location, DragCompletedEventArgs e)
         {
-            if (false == this.ResizeWhileDragging)
+            if (this.ResizeWhileDragging == false)
             {
                 this.RemoveAdorner();
                 double newWidth = this.GetNewWidth(location, e.HorizontalChange);

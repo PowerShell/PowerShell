@@ -201,7 +201,7 @@ namespace Microsoft.Management.UI.Internal
         internal void AddButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_NotSelectedList.SelectedItem;
-            Debug.Assert(null != column);
+            Debug.Assert(column != null);
 
             this.SelectedColumns.Add(column);
             this.NotSelectedColumns.Remove(column);
@@ -231,7 +231,7 @@ namespace Microsoft.Management.UI.Internal
         internal void RemoveButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_SelectedList.SelectedItem;
-            Debug.Assert(null != column);
+            Debug.Assert(column != null);
             int selectedIndex = this.PART_SelectedList.SelectedIndex;
             Debug.Assert(0 <= selectedIndex);
 
@@ -298,21 +298,17 @@ namespace Microsoft.Management.UI.Internal
             this.AddButton.IsEnabled = (notSelectedList.SelectedIndex >= 0);
 
             int selectedIndex = selectedList.SelectedIndex;
-            bool selectionValid = (0 <= selectedIndex);
-            this.MoveUpButton.IsEnabled = (0 < selectedIndex);
-            this.MoveDownButton.IsEnabled = selectionValid &&
-                (this.SelectedColumns.Count > selectedIndex + 1);
+            bool selectionValid = 0 <= selectedIndex;
+            this.MoveUpButton.IsEnabled = 0 < selectedIndex;
+            this.MoveDownButton.IsEnabled = selectionValid && this.SelectedColumns.Count > selectedIndex + 1;
 
-            bool hasOneColumn = (this.SelectedColumns.Count < 2);
+            bool hasOneColumn = this.SelectedColumns.Count < 2;
             bool requiredColumn = selectionValid &&
                 this.SelectedColumns[selectedIndex].Required;
-            this.RemoveButton.IsEnabled =
-                (selectionValid && !requiredColumn && !hasOneColumn);
+            this.RemoveButton.IsEnabled = selectionValid && !requiredColumn && !hasOneColumn;
 
-            this.RequiredColumnText.Visibility = (requiredColumn
-                ? Visibility.Visible : Visibility.Hidden);
-            this.LastColumnText.Visibility = ((hasOneColumn && !requiredColumn)
-                ? Visibility.Visible : Visibility.Hidden);
+            this.RequiredColumnText.Visibility = requiredColumn ? Visibility.Visible : Visibility.Hidden;
+            this.LastColumnText.Visibility = (hasOneColumn && !requiredColumn) ? Visibility.Visible : Visibility.Hidden;
         }
         #endregion enable/disable buttons
 

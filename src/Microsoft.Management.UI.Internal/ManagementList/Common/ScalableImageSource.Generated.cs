@@ -169,7 +169,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Identifies the Size dependency property.
         /// </summary>
-        public static readonly DependencyProperty SizeProperty = DependencyProperty.Register( "Size", typeof(Size), typeof(ScalableImageSource), new PropertyMetadata( new Size(Double.NaN, Double.NaN), SizeProperty_PropertyChanged) );
+        public static readonly DependencyProperty SizeProperty = DependencyProperty.Register( "Size", typeof(Size), typeof(ScalableImageSource), new PropertyMetadata( new Size(double.NaN, double.NaN), SizeProperty_PropertyChanged) );
 
         /// <summary>
         /// Gets or sets the suggested size of the image.

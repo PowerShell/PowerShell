@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
                 rules.Add(new IsEmptyFilterRule());
                 rules.Add(new IsNotEmptyFilterRule());
             }
-            else if (t == typeof(Boolean))
+            else if (t == typeof(bool))
             {
                 rules.Add(new EqualsFilterRule<T>());
             }
@@ -168,16 +168,16 @@ namespace Microsoft.Management.UI.Internal
             }
 
             bool isNumericType = false
-                || typeToParseTo == typeof(Byte)
-                || typeToParseTo == typeof(SByte)
-                || typeToParseTo == typeof(Int16)
-                || typeToParseTo == typeof(UInt16)
-                || typeToParseTo == typeof(Int32)
-                || typeToParseTo == typeof(UInt32)
-                || typeToParseTo == typeof(Int64)
-                || typeToParseTo == typeof(UInt64)
+                || typeToParseTo == typeof(byte)
+                || typeToParseTo == typeof(sbyte)
+                || typeToParseTo == typeof(short)
+                || typeToParseTo == typeof(ushort)
+                || typeToParseTo == typeof(int)
+                || typeToParseTo == typeof(uint)
+                || typeToParseTo == typeof(long)
+                || typeToParseTo == typeof(ulong)
                 || typeToParseTo == typeof(Single)
-                || typeToParseTo == typeof(Double);
+                || typeToParseTo == typeof(double);
 
             if (isNumericType)
             {
@@ -201,7 +201,7 @@ namespace Microsoft.Management.UI.Internal
             genericParameter = null;
 
             TextFilterRule textRule = rule as TextFilterRule;
-            if (null != textRule)
+            if (textRule != null)
             {
                 genericParameter = typeof(string);
                 return true;
@@ -261,7 +261,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryTransferValuesAsSingleValueComparableValueFilterRule(FilterRule oldRule, FilterRule newRule)
         {
-            Debug.Assert(null != oldRule && null != newRule);
+            Debug.Assert(oldRule != null && newRule != null);
 
             bool areCorrectType = this.IsSingleValueComparableValueFilterRule(oldRule) && this.IsSingleValueComparableValueFilterRule(newRule);
 
@@ -278,7 +278,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryClearValueFromSingleValueComparableValueFilterRule(FilterRule rule)
         {
-            Debug.Assert(null != rule);
+            Debug.Assert(rule != null);
 
             if (!this.IsSingleValueComparableValueFilterRule(rule))
             {
@@ -292,7 +292,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsSingleValueComparableValueFilterRule(FilterRule rule)
         {
-            Debug.Assert(null != rule);
+            Debug.Assert(rule != null);
 
             Type genericParameter;
             if (!this.TryGetGenericParameterForComparableValueFilterRule(rule, out genericParameter))
@@ -313,7 +313,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryClearIsBetweenFilterRule(FilterRule rule)
         {
-            Debug.Assert(null != rule);
+            Debug.Assert(rule != null);
 
             if (!this.IsIsBetweenFilterRule(rule))
             {
@@ -328,7 +328,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsIsBetweenFilterRule(FilterRule rule)
         {
-            Debug.Assert(null != rule);
+            Debug.Assert(rule != null);
 
             Type genericParameter;
             if (!this.TryGetGenericParameterForComparableValueFilterRule(rule, out genericParameter))

@@ -94,13 +94,13 @@ namespace Microsoft.Management.UI.Internal
             if (e.NewValue != null)
             {
                 // If a width was provided in the source, use it now \\
-                if (!e.NewValue.Size.Width.Equals(Double.NaN))
+                if (!e.NewValue.Size.Width.Equals(double.NaN))
                 {
                     this.Width = e.NewValue.Size.Width;
                 }
 
                 // If a height was provided in the source, use it now \\
-                if (!e.NewValue.Size.Height.Equals(Double.NaN))
+                if (!e.NewValue.Size.Height.Equals(double.NaN))
                 {
                     this.Height = e.NewValue.Size.Height;
                 }
