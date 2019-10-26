@@ -36,7 +36,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         protected override bool Evaluate(T item)
         {
-            Debug.Assert(this.IsValid);
+            Debug.Assert(this.IsValid, "is valid");
 
             int result = CustomTypeComparer.Compare<T>(this.Value.GetCastValue(), item);
             return result >= 0;

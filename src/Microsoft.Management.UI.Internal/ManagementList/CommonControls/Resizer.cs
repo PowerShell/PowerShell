@@ -212,7 +212,7 @@ namespace Microsoft.Management.UI.Internal
             }
             else
             {
-                Debug.Assert(location == ResizeGripLocation.Left);
+                Debug.Assert(location == ResizeGripLocation.Left, "location is left");
                 realDelta = -horzDelta;
             }
 

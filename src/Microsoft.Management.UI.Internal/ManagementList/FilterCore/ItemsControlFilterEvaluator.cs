@@ -109,7 +109,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool FilterExpressionAdapter(object item)
         {
-            Debug.Assert(this.CachedFilterExpression != null);
+            Debug.Assert(this.CachedFilterExpression != null, "not null");
 
             try
             {

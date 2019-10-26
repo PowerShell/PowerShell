@@ -158,7 +158,7 @@ namespace Microsoft.Management.UI.Internal
                 Debug.Assert(newColumns != null, "SelectedColumns not found");
                 foreach (InnerListColumn column in newColumns)
                 {
-                    Debug.Assert(column.Visible);
+                    Debug.Assert(column.Visible, "is visible");
 
                     // 185977: ML InnerListGridView.PopulateColumns(): Always set Width on new columns
                     // Workaround to GridView issue suggested by Ben Carter

@@ -37,7 +37,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>
         /// true if the listener handled the event. It is considered an error by the WeakEventManager handling in WPF to register a listener for an event that the listener does not handle. Regardless, the method should return false if it receives an event that it does not recognize or handle.
         /// </returns>
-        public bool ReceiveWeakEvent(Type managerType, Object sender, EventArgs e)
+        public bool ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
         {
             TEventArgs realArgs = (TEventArgs)e;
 

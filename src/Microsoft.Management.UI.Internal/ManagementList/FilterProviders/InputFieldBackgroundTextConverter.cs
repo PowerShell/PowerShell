@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsOfTypeValidatingValue(object value)
         {
-            Debug.Assert(value != null);
+            Debug.Assert(value != null, "not null");
 
             Type type = value.GetType();
             if (type.IsGenericType == false)
@@ -86,8 +86,8 @@ namespace Microsoft.Management.UI.Internal
 
         private Type GetGenericParameter(object value, CultureInfo culture)
         {
-            Debug.Assert(value != null);
-            Debug.Assert(this.IsOfTypeValidatingValue(value));
+            Debug.Assert(value != null, "not null");
+            Debug.Assert(this.IsOfTypeValidatingValue(value), "not null");
 
             return value.GetType().GetGenericArguments()[0];
         }

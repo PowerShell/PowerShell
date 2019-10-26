@@ -282,7 +282,7 @@ namespace Microsoft.Management.UI.Internal
             List<InnerListColumn> columnsCopy = new List<InnerListColumn>(subject.List.Columns);
             InnerListColumnOrderComparer ilcc = new InnerListColumnOrderComparer(this.columns);
             columnsCopy.Sort(ilcc);
-            Debug.Assert(columnsCopy.Count == subject.List.Columns.Count);
+            Debug.Assert(columnsCopy.Count == subject.List.Columns.Count, "match count");
 
             Utilities.ResortObservableCollection<InnerListColumn>(
                 subject.List.Columns,
@@ -295,8 +295,9 @@ namespace Microsoft.Management.UI.Internal
             {
                 columnsCopy.Add((InnerListColumn)gvc);
             }
+
             columnsCopy.Sort(ilcc);
-            Debug.Assert(columnsCopy.Count == subject.List.InnerGrid.Columns.Count);
+            Debug.Assert(columnsCopy.Count == subject.List.InnerGrid.Columns.Count, "match count");
 
             Utilities.ResortObservableCollection<GridViewColumn>(
                 subject.List.InnerGrid.Columns,

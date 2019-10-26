@@ -201,7 +201,7 @@ namespace Microsoft.Management.UI.Internal
         internal void AddButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_NotSelectedList.SelectedItem;
-            Debug.Assert(column != null);
+            Debug.Assert(column != null, "not null");
 
             this.SelectedColumns.Add(column);
             this.NotSelectedColumns.Remove(column);
@@ -231,9 +231,9 @@ namespace Microsoft.Management.UI.Internal
         internal void RemoveButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_SelectedList.SelectedItem;
-            Debug.Assert(column != null);
+            Debug.Assert(column != null, "not null");
             int selectedIndex = this.PART_SelectedList.SelectedIndex;
-            Debug.Assert(selectedIndex >= 0);
+            Debug.Assert(selectedIndex >= 0, "greater than or equal to 0");
 
             this.NotSelectedColumns.Add(column);
             this.SelectedColumns.Remove(column);
@@ -247,7 +247,7 @@ namespace Microsoft.Management.UI.Internal
             }
             else if (selectedIndex > 0)
             {   // Highest-index item removed, select previous item
-                Debug.Assert((selectedIndex - 1) < this.SelectedColumns.Count);
+                Debug.Assert((selectedIndex - 1) < this.SelectedColumns.Count, "less than count");
                 this.PART_SelectedList.SelectedIndex = selectedIndex - 1;
             }   // otherwise there are no more items to select
 

@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("rule");
             }
 
-            Debug.Assert(rule.GetType().IsSerializable);
+            Debug.Assert(rule.GetType().IsSerializable, "rule is serializable");
 
             BinaryFormatter formatter = new BinaryFormatter(null, new StreamingContext(StreamingContextStates.Clone));
             MemoryStream ms = new MemoryStream();

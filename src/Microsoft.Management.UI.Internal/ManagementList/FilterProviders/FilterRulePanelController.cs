@@ -172,8 +172,8 @@ namespace Microsoft.Management.UI.Internal
 
         private int GetExclusiveEndIndexForGroupStartingAt(int startIndex)
         {
-            Debug.Assert(this.filterRulePanelItems.Count > 0);
-            Debug.Assert(startIndex >= 0);
+            Debug.Assert(this.filterRulePanelItems.Count > 0, "greater than 0");
+            Debug.Assert(startIndex >= 0, "greater than or equal to 0");
 
             int i = startIndex;
             for (; i < this.filterRulePanelItems.Count; i++)
@@ -197,9 +197,9 @@ namespace Microsoft.Management.UI.Internal
 
         private FilterExpressionOrOperatorNode CreateFilterExpressionForGroup(int startIndex, int endIndex)
         {
-            Debug.Assert(this.filterRulePanelItems.Count > 0);
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(this.filterRulePanelItems.Count >= endIndex);
+            Debug.Assert(this.filterRulePanelItems.Count > 0, "greater than 0");
+            Debug.Assert(startIndex >= 0, "greater than or equal to 0");
+            Debug.Assert(this.filterRulePanelItems.Count >= endIndex, "greater than or equal to endIndex");
 
             FilterExpressionOrOperatorNode groupNode = new FilterExpressionOrOperatorNode();
             for (int i = startIndex; i < endIndex; i++)
@@ -220,7 +220,7 @@ namespace Microsoft.Management.UI.Internal
 
         private int GetInsertionIndex(FilterRulePanelItem item)
         {
-            Debug.Assert(item != null);
+            Debug.Assert(item != null, "not null");
 
             for (int i = this.filterRulePanelItems.Count - 1; i >= 0; i--)
             {

@@ -35,7 +35,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         protected override bool Evaluate(string data)
         {
-            Debug.Assert(this.IsValid);
+            Debug.Assert(this.IsValid, "is valid");
 
             return this.ExactMatchEvaluate(data, TextEqualsCharactersRegexPattern, TextEqualsCharactersRegexPattern);
         }

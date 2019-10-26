@@ -110,7 +110,7 @@ namespace Microsoft.Management.UI.Internal
                 element = VisualTreeHelper.GetParent(element);
             }
 
-            Debug.Assert(element != null);
+            Debug.Assert(element != null, "element not null");
 
             return (FrameworkElement)element;
         }

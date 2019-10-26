@@ -210,10 +210,12 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.zoomLevel = 1;
             }
+
             if (this.zoomLevel < ZOOM_MAX)
             {
                 this.zoomLevel = this.zoomLevel + ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
+
                 if (g != null)
                 {
                     g.LayoutTransform = new ScaleTransform(this.zoomLevel, this.zoomLevel, 0, 0);
@@ -444,6 +446,7 @@ namespace Microsoft.Management.UI.Internal
                                 {
                                     column = new InnerListColumn(new UIPropertyGroupDescription(propertyNames[i], displayNames[i], typeof(string)));
                                 }
+
                                 this.managementList.AddColumn(column);
                             }
 

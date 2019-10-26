@@ -111,7 +111,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("exactMatchPattern");
             }
 
-            Debug.Assert(this.IsValid);
+            Debug.Assert(this.IsValid, "is valid");
 
             bool evaluateAsExactMatch;
             string value = this.GetParsedValue(out evaluateAsExactMatch);
@@ -158,7 +158,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns><c>true</c> if the specified data matches one of the specified patterns; otherwise, <c>false</c>.</returns>
         protected internal bool ExactMatchEvaluate(string data, string pattern, string exactMatchPattern)
         {
-            Debug.Assert(this.IsValid);
+            Debug.Assert(this.IsValid, "is valid");
 
             var parsedPattern = this.GetRegexPattern(pattern, exactMatchPattern);
             var options = this.GetRegexOptions();

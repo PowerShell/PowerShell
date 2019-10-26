@@ -33,6 +33,7 @@ namespace Microsoft.Management.UI.Internal
 
                 return this.propertyValueGetter;
             }
+
             set
             {
                 if (value == null)
@@ -219,7 +220,7 @@ namespace Microsoft.Management.UI.Internal
 
         private object GetValueFromValidatingValue(FilterRule rule, string propertyName)
         {
-            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName));
+            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName), "rule and propertyname are not null");
 
             // NOTE: This isn't needed but OACR is complaining
             if (rule == null)
@@ -238,7 +239,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void SetValueOnValidatingValue(FilterRule rule, string propertyName, object value)
         {
-            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName));
+            Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName), "rule and propertyname are not null");
 
             // NOTE: This isn't needed but OACR is complaining
             if (rule == null)
@@ -261,7 +262,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryTransferValuesAsSingleValueComparableValueFilterRule(FilterRule oldRule, FilterRule newRule)
         {
-            Debug.Assert(oldRule != null && newRule != null);
+            Debug.Assert(oldRule != null && newRule != null, "oldrule and newrule are not null");
 
             bool areCorrectType = this.IsSingleValueComparableValueFilterRule(oldRule) && this.IsSingleValueComparableValueFilterRule(newRule);
 
@@ -278,7 +279,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryClearValueFromSingleValueComparableValueFilterRule(FilterRule rule)
         {
-            Debug.Assert(rule != null);
+            Debug.Assert(rule != null, "rule is not null");
 
             if (!this.IsSingleValueComparableValueFilterRule(rule))
             {
@@ -292,7 +293,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsSingleValueComparableValueFilterRule(FilterRule rule)
         {
-            Debug.Assert(rule != null);
+            Debug.Assert(rule != null, "rule is not null");
 
             Type genericParameter;
             if (!this.TryGetGenericParameterForComparableValueFilterRule(rule, out genericParameter))
@@ -313,7 +314,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryClearIsBetweenFilterRule(FilterRule rule)
         {
-            Debug.Assert(rule != null);
+            Debug.Assert(rule != null, "rule is not null");
 
             if (!this.IsIsBetweenFilterRule(rule))
             {
@@ -328,7 +329,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool IsIsBetweenFilterRule(FilterRule rule)
         {
-            Debug.Assert(rule != null);
+            Debug.Assert(rule != null, "rule is not null");
 
             Type genericParameter;
             if (!this.TryGetGenericParameterForComparableValueFilterRule(rule, out genericParameter))

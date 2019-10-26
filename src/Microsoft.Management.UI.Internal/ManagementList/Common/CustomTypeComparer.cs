@@ -65,7 +65,7 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            Debug.Assert(uncastComparer is IComparer<T>);
+            Debug.Assert(uncastComparer is IComparer<T>, "must be IComparer");
             comparer = (IComparer<T>)uncastComparer;
 
             return true;

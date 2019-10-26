@@ -304,7 +304,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void NotifyValidationResultUpdated()
         {
-            Debug.Assert(this.cachedValidationResult != null);
+            Debug.Assert(this.cachedValidationResult != null, "not null");
             this.NotifyPropertyChanged("IsValid");
             this.NotifyPropertyChanged("Error");
         }

@@ -105,7 +105,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifyPropertyChanged(string propertyName)
         {
-            Debug.Assert(!string.IsNullOrEmpty(propertyName));
+            Debug.Assert(!string.IsNullOrEmpty(propertyName), "not null");
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
             if (eh != null)

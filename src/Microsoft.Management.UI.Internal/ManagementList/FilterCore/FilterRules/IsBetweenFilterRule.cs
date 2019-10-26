@@ -86,7 +86,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         protected override bool Evaluate(T data)
         {
-            Debug.Assert(this.IsValid);
+            Debug.Assert(this.IsValid, "is valid");
             int startValueComparedToData = CustomTypeComparer.Compare<T>(this.StartValue.GetCastValue(), data);
             int endValueComparedToData = CustomTypeComparer.Compare<T>(this.EndValue.GetCastValue(), data);
 
