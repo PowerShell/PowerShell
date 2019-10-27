@@ -107,7 +107,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "iwmi",                             "Invoke-WMIMethod",                 $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "iwr",                              "Invoke-WebRequest",                $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "kill",                             "Stop-Process",                     $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
-"Alias",        "lp",                               "Out-Printer",                      $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
+"Alias",        "lp",                               "Out-Printer",                      $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "ls",                               "Get-ChildItem",                    $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "man",                              "help",                             $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "md",                               "mkdir",                            $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""
