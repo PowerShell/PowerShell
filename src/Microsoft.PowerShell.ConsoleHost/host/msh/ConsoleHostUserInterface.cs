@@ -175,6 +175,40 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
+        /// See base class
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HostException">
+        /// If obtaining a handle to the active screen buffer failed
+        ///    OR
+        ///    Win32's setting input buffer mode to disregard window and mouse input failed
+        ///    OR
+        ///    Win32's ReadConsole failed
+        /// </exception>
+        /// <exception cref="PipelineStoppedException">
+        /// If Ctrl-C is entered by user
+        /// </exception>
+        public override string ReadLineMaskedAsString()
+        {
+            HandleThrowOnReadAndPrompt();
+
+            const char printToken = '*'; // This is not localizable
+
+            // we lock here so that multiple threads won't interleave the various reads and writes here.
+
+            object result = null;
+            lock (_instanceLock)
+            {
+                result = ReadLineSafe(false, printToken);
+            }
+
+            StringBuilder resultSb = result as StringBuilder;
+            System.Management.Automation.Diagnostics.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
+
+            return resultSb.ToString();
+        }
+
+        /// <summary>
         /// See base class.
         /// </summary>
         /// <returns></returns>

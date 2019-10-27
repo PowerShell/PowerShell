@@ -55,9 +55,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set to no echo the input as is is typed.
+        /// Set to no echo the input as is is typed. Returns a secure string
         /// </summary>
-
         [Parameter]
         public
         SwitchParameter
@@ -72,6 +71,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 _safe = value;
             }
+        }
+
+        /// <summary>
+        /// Set to no echo the input as is is typed. Returns a regular string
+        /// </summary>
+        [Parameter]
+        public
+        SwitchParameter
+        MaskInput
+        {
+            get;
+            set;
         }
         #endregion Parameters
 
@@ -144,10 +155,25 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+                if (this.MyInvocation.BoundParameters.ContainsKey(nameof(AsSecureString)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(MaskInput)))
+                {
+                    InvalidOperationException exception = new InvalidOperationException(ReadHostStrings.CannotSpecifyAsSecureStringAndMaskInput);
+                    var errorRecord = new ErrorRecord(
+                        exception,
+                        "CannotSpecifyAsSecureStringAndMaskInput",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null);
+
+                    ThrowTerminatingError(errorRecord);
+                }
                 object result;
                 if (AsSecureString)
                 {
                     result = Host.UI.ReadLineAsSecureString();
+                }
+                else if (MaskInput)
+                {
+                    result = Host.UI.ReadLineMaskedAsString();
                 }
                 else
                 {
