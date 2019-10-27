@@ -124,7 +124,7 @@ namespace System.Management.Automation.Internal.Host
         /// See base class.
         /// </summary>
         /// <exception cref="HostException">
-        /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
+        /// If the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host.
         /// </exception>
         public override

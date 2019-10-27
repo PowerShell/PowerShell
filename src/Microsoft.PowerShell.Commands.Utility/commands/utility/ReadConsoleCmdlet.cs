@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set to no echo the input as is is typed. Returns a secure string.
+        /// Set to no echo the input as is is typed. If set then the cmdlet returns a secure string.
         /// </summary>
         [Parameter(ParameterSetName = "AsSecureString")]
         public
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set to no echo the input as is is typed. Returns a regular string.
+        /// Gets or Sets whether the console will echo the input as is is typed. If set then the cmdlet returns a regular string.
         /// </summary>
         [Parameter(ParameterSetName = "AsString")]
         public
