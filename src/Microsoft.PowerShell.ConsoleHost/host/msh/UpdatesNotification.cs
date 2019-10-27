@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell
 
             // Daily builds do not support update notifications
             if (PSVersionInfo.PSCurrentVersion.PreReleaseLabel != null
-                && PSVersionInfo.PSCurrentVersion.PreReleaseLabel.StartsWith("daily"))
+                && PSVersionInfo.PSCurrentVersion.PreReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
