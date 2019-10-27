@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
     /// </summary>
 
-    [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
+    [Cmdlet(VerbsCommunications.Read, "Host", DefaultParameterSetName = "AsString", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
     [OutputType(typeof(string), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
     {
@@ -55,9 +55,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set to no echo the input as is is typed. Returns a secure string
+        /// Set to no echo the input as is is typed. Returns a secure string.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "AsSecureString")]
         public
         SwitchParameter
         AsSecureString
@@ -74,9 +74,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set to no echo the input as is is typed. Returns a regular string
+        /// Set to no echo the input as is is typed. Returns a regular string.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "AsString")]
         public
         SwitchParameter
         MaskInput
@@ -155,17 +155,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (this.MyInvocation.BoundParameters.ContainsKey(nameof(AsSecureString)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(MaskInput)))
-                {
-                    InvalidOperationException exception = new InvalidOperationException(ReadHostStrings.CannotSpecifyAsSecureStringAndMaskInput);
-                    var errorRecord = new ErrorRecord(
-                        exception,
-                        "CannotSpecifyAsSecureStringAndMaskInput",
-                        ErrorCategory.InvalidOperation,
-                        targetObject: null);
-
-                    ThrowTerminatingError(errorRecord);
-                }
                 object result;
                 if (AsSecureString)
                 {

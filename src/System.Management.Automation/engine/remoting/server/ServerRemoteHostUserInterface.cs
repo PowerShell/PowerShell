@@ -200,6 +200,9 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Read line as string masked.
         /// </summary>
+        /// <returns>
+        /// Not implemented. It throws an exception.
+        /// </returns>
         public override string ReadLineMaskedAsString()
         {
             throw new PSNotImplementedException();

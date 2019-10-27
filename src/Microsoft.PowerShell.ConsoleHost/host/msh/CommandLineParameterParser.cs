@@ -97,9 +97,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLineMaskedAsString.
+        /// Null implementation of ReadLineMaskedAsString.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// It throws an exception
+        ///</returns>
         public override string ReadLineMaskedAsString()
         {
             throw new PSNotImplementedException();
