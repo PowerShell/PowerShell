@@ -195,7 +195,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Clear-History",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Clear-Item",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Clear-ItemProperty",               "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
-"Cmdlet",       "Clear-RecycleBin",                 "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Clear-RecycleBin",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "High"
 "Cmdlet",       "Clear-Variable",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Compare-Object",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Complete-Transaction",             "",                                 $($FullCLR                               ),     "",                     "",                     ""
