@@ -3106,6 +3106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of PSMemberSet with all the initial members in <paramref name="members"/>.
         /// This constructor is supposed to be used in TypeTable to reuse the passed-in member collection.
         /// Null-argument check is skipped here, so callers need to check arguments before passing in.
         /// </summary>
@@ -3113,6 +3114,9 @@ namespace System.Management.Automation
         /// <param name="members">Members in the member set.</param>
         internal PSMemberSet(string name, PSMemberInfoInternalCollection<PSMemberInfo> members)
         {
+            Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
+            Diagnostics.Assert(members != null, "Caller needs to guarantee not null.");
+
             this.name = name;
             this.internalMembers = members;
 
@@ -3472,6 +3476,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of PSPropertySet with a name and list of property names.
         /// This constructor is supposed to be used in TypeTable to reuse the passed-in property name list.
         /// Null-argument check is skipped here, so callers need to check arguments before passing in.
         /// </summary>
