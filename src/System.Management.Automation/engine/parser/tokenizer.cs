@@ -4626,12 +4626,9 @@ namespace System.Management.Automation.Language
                     {
                         if (c1 == '@')
                         {
-                            var c2 = PeekChar();
-                            if (c2 == '{')
-                            {
-                                UngetChar();
-                                return NewToken(TokenKind.At);
-                            }
+                            // We have seen 2 @ characters (generalized splatting), therefore putting the 2nd token back
+                            UngetChar();
+                            return NewToken(TokenKind.At);
                         }
                     }
 
