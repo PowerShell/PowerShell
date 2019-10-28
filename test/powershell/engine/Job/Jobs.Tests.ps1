@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe 'Basic Job Tests' -Tags 'CI' {
     BeforeAll {
         # Make sure we do not have any jobs running
@@ -87,6 +88,13 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             param($path, $case, $expectedErrorId)
 
             {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $expectedErrorId
+        }
+
+        It 'Verifies that the current working directory is preserved' {
+            $job = Start-Job -ScriptBlock { $pwd }
+            $location = $job | Wait-Job | Receive-Job
+            $job | Remove-Job
+            $location.Path | Should -BeExactly $pwd.Path
         }
 
         It "Create job with native command" {
