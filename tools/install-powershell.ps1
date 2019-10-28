@@ -22,7 +22,7 @@
     .\install-powershell.ps1 -Daily
  .EXAMPLE
     Invoke this script directly from GitHub
-    iex "& { $(irm 'https://aka.ms/install-powershell.ps1') } -daily"
+    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 #>
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
