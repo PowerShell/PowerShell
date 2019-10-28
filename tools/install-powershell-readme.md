@@ -84,11 +84,11 @@ bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/
 ### Install PowerShell Core Daily Build
 
 ```PowerShell
-iex "& { $(irm 'https://aka.ms/install-powershell.ps1') } -daily"
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 ```
 ### Install PowerShell Core using the MSI installer
 
 ```PowerShell
-iex "& { $(irm 'https://aka.ms/install-powershell.ps1') } -UseMSI"
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -UseMSI"
 ```
 
