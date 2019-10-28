@@ -4622,20 +4622,15 @@ namespace System.Management.Automation.Language
                         return ScanHereStringExpandable();
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
-                    {
-                        if (c1 == '@')
-                        {
-                            // We have seen 2 @ characters (generalized splatting), therefore putting the 2nd token back
-                            UngetChar();
-                            return NewToken(TokenKind.At);
-                        }
-                    }
-
                     UngetChar();
                     if (c1.IsVariableStart())
                     {
                         return ScanVariable(true, false);
+                    }
+
+                    if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
+                    {
+                        return NewToken(TokenKind.At);
                     }
 
                     ReportError(_currentIndex - 1,
