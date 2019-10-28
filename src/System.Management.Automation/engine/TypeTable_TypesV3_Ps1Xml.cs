@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,7 +18,6 @@ namespace System.Management.Automation.Runspaces
             PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
             PSMemberInfoInternalCollection<PSMemberInfo> memberSetMembers = null;
             HashSet<string> newMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
 
             #region System.Security.Cryptography.X509Certificates.X509Certificate2
 
@@ -364,7 +365,7 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"SerializedInvocationInfo",
                     GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), @"GetInvocationInfo"),
-                    setterCodeReference: null){ IsHidden = true },
+                    setterCodeReference: null) { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
