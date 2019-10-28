@@ -10,6 +10,8 @@ using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
+#if !UNIX
+
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -224,25 +226,14 @@ namespace Microsoft.PowerShell.Commands
                 progress.RecordType = ProgressRecordType.Processing;
                 WriteProgress(progress);
 
+                // no need to check result as a failure is returned only if recycle bin is already empty
                 uint result = NativeMethod.SHEmptyRecycleBin(IntPtr.Zero, drivePath,
                                                             NativeMethod.RecycleFlags.SHERB_NOCONFIRMATION |
                                                             NativeMethod.RecycleFlags.SHERB_NOPROGRESSUI |
                                                             NativeMethod.RecycleFlags.SHERB_NOSOUND);
-                int lastError = Marshal.GetLastWin32Error();
-
-                // update the progress bar to completed
                 progress.PercentComplete = 100;
                 progress.RecordType = ProgressRecordType.Completed;
                 WriteProgress(progress);
-
-                // 0 is for a successful operation
-                // 203 comes up when trying to empty an already emptied recyclebin
-                // 18 comes up when there are no more files in the given recyclebin
-                if (!(lastError == 0 || lastError == 203 || lastError == 18))
-                {
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteError(new ErrorRecord(exception, "FailedToClearRecycleBin", ErrorCategory.InvalidOperation, "RecycleBin"));
-                }
             }
         }
     }
@@ -261,3 +252,4 @@ namespace Microsoft.PowerShell.Commands
         internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }
 }
+#endif

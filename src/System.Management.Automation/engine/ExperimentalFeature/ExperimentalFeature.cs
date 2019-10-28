@@ -119,6 +119,15 @@ namespace System.Management.Automation
                     name: "PSErrorView",
                     description: "New formatting for ErrorRecord"),
                 new ExperimentalFeature(
+                    name: "PSUpdatesNotification",
+                    description: "Print notification message when new releases are available"),
+                new ExperimentalFeature(
+                    name: "PSCoalescingOperators",
+                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSPipelineChainOperators",
+                    description: "Allow use of && and || as operators between pipeline invocations"),
+                new ExperimentalFeature(
                     name: "PSGeneralizedSplatting",
                     description: "Preliminary support for generalized splatting, currently only inline splatting"),
             };

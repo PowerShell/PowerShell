@@ -2711,14 +2711,7 @@ namespace System.Management.Automation.Runspaces
                 // Or for virtual accounts
                 // WinDir\System32\Microsoft\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
-#if UNIX
-                string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
-#else
-                string userDrivePath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    @"Microsoft\PowerShell\DriveRoots",
-                    directoryName);
-#endif
+                string userDrivePath = Path.Combine(Platform.CacheDirectory, "DriveRoots", directoryName);
 
                 // Create directory if it doesn't exist.
                 if (!System.IO.Directory.Exists(userDrivePath))
@@ -4564,6 +4557,7 @@ end {
                     new SessionStateAliasEntry("rp", "Remove-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rmo", "Remove-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rv", "Remove-Variable", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("gerr", "Get-Error", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rvpa", "Resolve-Path", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sal", "Set-Alias", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", string.Empty, ReadOnly),

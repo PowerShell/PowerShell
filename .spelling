@@ -6,6 +6,7 @@
 0-powershell-crossplatform
 0xfeeddeadbeef
 100ms
+2.x
 2ae5d07
 32-bit
 64-bit
@@ -287,6 +288,7 @@ GoogleTest
 gzip
 hackathons
 hashtable
+hashtables
 helloworld.ps1
 helpproviderwithcache
 helpproviderwithfullcache
@@ -379,6 +381,7 @@ lynda.com
 lzybkr
 mababio
 macos
+macports
 maertendmsft
 mahawar
 markekraus
@@ -524,6 +527,7 @@ preview.1
 preview.2
 preview.3
 preview.4
+preview.5
 preview1-24530-04
 preview7
 productversion
@@ -729,6 +733,7 @@ unregister-event
 unregister-packagesource
 unregister-psrepository
 unregister-pssessionconfiguration
+unregistering
 untracked
 un-versioned
 update-formatdata
@@ -877,6 +882,18 @@ yurko7
 zhenggu
 davinci26
 vedhasp
+SeeminglyScience
+eugenesmlv
+steviecoaster
+machgo
+derek-xia
+weltkante
+kilasuit
+tnieto88
+Orca88
+centreboard
+romero126
+Greg-Smulko
 analytics
  - docs/debugging/README.md
 corehost
