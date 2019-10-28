@@ -1088,7 +1088,7 @@ namespace System.Management.Automation.Language
             if (ExperimentalFeature.IsEnabled("PSGeneralizedSplatting"))
             {
                 // Check usage of generalized splatting, which supports only arguments to a command at the moment
-                if (hashtableAst.Splatted && !(hashtableAst.Parent is CommandAst))
+                if (hashtableAst.Splatted && hashtableAst.KeyValuePairs.Count > 1 && !(hashtableAst.Parent is CommandAst))
                 {
                     _parser.ReportError(hashtableAst.Extent,
                         nameof(ParserStrings.GeneralizedSplattingOnlyPermittedForCommands),
