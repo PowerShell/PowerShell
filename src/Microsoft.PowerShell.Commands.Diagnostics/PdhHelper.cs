@@ -1466,29 +1466,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint GetFilesSummary(out CounterFileInfo summary)
-        {
-            IntPtr pNumEntries = new IntPtr(0);
-            PDH_TIME_INFO pInfo = new PDH_TIME_INFO();
-            IntPtr bufSize = new IntPtr(System.Runtime.InteropServices.Marshal.SizeOf(pInfo));
-
-            uint res = PdhGetDataSourceTimeRangeH(_hDataSource,
-                                                    ref pNumEntries,
-                                                    ref pInfo,
-                                                    ref bufSize);
-            if (res != 0)
-            {
-                summary = new CounterFileInfo();
-                return res;
-            }
-
-            summary = new CounterFileInfo(new DateTime(DateTime.FromFileTimeUtc(pInfo.StartTime).Ticks, DateTimeKind.Local),
-                                           new DateTime(DateTime.FromFileTimeUtc(pInfo.EndTime).Ticks, DateTimeKind.Local),
-                                           pInfo.SampleCount);
-
-            return res;
-        }
-
         public uint ExpandWildCardPath(string path, out StringCollection expandedPaths)
         {
             expandedPaths = new StringCollection();

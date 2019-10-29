@@ -16,21 +16,18 @@
 
   <ItemGroup>
     <Compile Remove="GetEventSnapin.cs" />
+    <Compile Remove="ExportCounterCommand.cs" />
+    <Compile Remove="ImportCounterCommand.cs" />
+    <Compile Remove="CounterFileInfo.cs" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="CounterFileInfo.cs" />
+    <Compile Remove="GetCounterCommand.cs" />
     <Compile Remove="CounterSample.cs" />
     <Compile Remove="CounterSet.cs" />
-    <Compile Remove="ExportCounterCommand.cs" />
-    <Compile Remove="GetCounterCommand.cs" />
-    <Compile Remove="ImportCounterCommand.cs" />
     <Compile Remove="PdhHelper.cs" />
     <Compile Remove="PdhSafeHandle.cs" />
     <Compile Remove="gen\GetEventResources.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="GetEventCommand.cs" />
     <Compile Remove="NewWinEventCommand.cs" />
   </ItemGroup>
