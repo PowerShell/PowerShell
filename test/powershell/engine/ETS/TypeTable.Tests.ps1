@@ -18,7 +18,7 @@ Describe "Built-in type information tests" -Tag "CI" {
     }
 
     It "Should have correct number of built-in type items in type table" {
-        $types.Count | Should -BeExactly 273
+        $types.Count | Should -BeExactly ($IsWindows ? 273 : 271)
     }
 
     It "Should have expected member info for 'System.Diagnostics.ProcessModule'" {
