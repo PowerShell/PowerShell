@@ -29,6 +29,12 @@ namespace Microsoft.PowerShell
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal partial class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
+
+        /// <summary>
+        /// This is the char that is echoed to the console when the input is masked. This not localizable
+        /// </summary>
+        private const char printToken = '*';
+
         /// <summary>
         /// Command completion implementation object.
         /// </summary>
@@ -192,8 +198,6 @@ namespace Microsoft.PowerShell
         {
             HandleThrowOnReadAndPrompt();
 
-            const char printToken = '*'; // This is not localizable
-
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
             object result = null;
@@ -226,8 +230,6 @@ namespace Microsoft.PowerShell
         public override SecureString ReadLineAsSecureString()
         {
             HandleThrowOnReadAndPrompt();
-
-            const char printToken = '*'; // This is not localizable
 
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
