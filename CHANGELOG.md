@@ -23,7 +23,7 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Add `-Emphasize` parameter to colorize `Select-String` output (#8963) (Thanks @derek-xia!)
+- Add emphasis to `Select-String` output (with `-NoEmphasis` parameter to opt-out) (#8963) (Thanks @derek-xia!)
 - Add back `Get-HotFix` cmdlet (#10740)
 - Make `Add-Type` usable in applications that host `PowerShell` (#10587)
 - Use more effective evaluation order in `LanguagePrimitives.IsNullLike()` (#10781) (Thanks @vexx32!)
@@ -278,7 +278,7 @@
 - Skip `JumpList` on `NanoServer` and `IoT` (#10164)
 - Display `COM` method signature with argument names (#9858) (Thanks @nbkalex!)
 - Use the original precision (prior-dotnet-core-3) for double/float-to-string conversion (#9893)
-- `Import-DscResource` should allow to overwrite DSC built-in resources. (#9879)
+- `Import-DscResource` can now clobber built-in DSC resource names (#9879)
 - Add ability to pass `InitialSessionState` to the `ConsoleShell.Start` (#9802) (Thanks @asrosent!)
 - Have console host not enter command prompt mode when using `Read-Host -Prompt` (#9743)
 - Fix use of `Start-Process http://bing.com` (#9793)
