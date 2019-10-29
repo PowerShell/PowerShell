@@ -3135,7 +3135,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // the node cardinality is OneToMany
-            List<string> referencedProperties = new List<string>(propertySetData.ReferencedProperties.Count);
+            var referencedProperties = new List<string>(propertySetData.ReferencedProperties.Count);
             foreach (string name in propertySetData.ReferencedProperties)
             {
                 if (string.IsNullOrEmpty(name))
@@ -3357,6 +3357,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeConverterAlreadyPresent);
                 }
+
                 // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
             }
         }
@@ -3396,6 +3397,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeAdapterAlreadyPresent);
                 }
+
                 // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
             }
         }
