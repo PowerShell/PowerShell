@@ -14,24 +14,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 {
     internal static class CommonUtilities
     {
-        //
-        // StringArrayToString helper converts a string array into a comma-separated string.
-        // Note this has only limited use, individual strings cannot have commas.
-        //
-        public static string StringArrayToString(IEnumerable input)
-        {
-            string ret = "";
-            foreach (string element in input)
-            {
-                ret += element + ", ";
-            }
-
-            ret = ret.TrimEnd();
-            ret = ret.TrimEnd(',');
-
-            return ret;
-        }
-
         private const string LibraryLoadDllName = "api-ms-win-core-libraryloader-l1-2-0.dll";
         private const string LocalizationDllName = "api-ms-win-core-localization-l1-2-1.dll";
 
@@ -68,9 +50,8 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
             uint formatError = 0;
             msg = String.Empty;
-            IntPtr moduleHandle = IntPtr.Zero;
 
-            moduleHandle = LoadLibraryEx(moduleName, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
+            IntPtr moduleHandle = LoadLibraryEx(moduleName, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
             if (moduleHandle == IntPtr.Zero)
             {
                 return (uint)Marshal.GetLastWin32Error();
