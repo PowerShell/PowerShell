@@ -524,7 +524,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
                 $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
                 Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
                 $currentAliasList = pwsh -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
-                $currentCmdletList = pwsh -noprofile -out XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
+                $currentCmdletList = pwsh -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
             }
             else {
                 $currentAliasList = & $getAliases $moduleList
