@@ -309,12 +309,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhAddCounter(PdhSafeQueryHandle queryHandle, string counterPath, IntPtr userData, out IntPtr counterHandle);
 
-        // Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhAddRelogCounter(PdhSafeQueryHandle queryHandle, string counterPath,
-                                                       UInt32 counterType, UInt32 counterDefaultScale,
-                                                       UInt64 timeBase, out IntPtr counterHandle);
-
         // not on XP
         [DllImport("pdh.dll")]
         private static extern uint PdhCollectQueryDataWithTime(PdhSafeQueryHandle queryHandle, ref Int64 pllTimeStamp);
@@ -337,23 +331,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                string szUserCaption,
                                                out PdhSafeLogHandle phLog
                                               );
-
-        // Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern void PdhResetRelogCounterValues(PdhSafeLogHandle LogHandle);
-
-        // Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhSetCounterValue(IntPtr CounterHandle,
-                                                        ref PDH_RAW_COUNTER Value, /*PPDH_RAW_COUNTER */
-                                                        string InstanceName
-                                                        );
-
-        // Win7+ only
-        [DllImport("pdh.dll")]
-        private static extern uint PdhWriteRelogSample(PdhSafeLogHandle LogHandle,
-                                                        Int64 Timestamp
-                                                        );
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetFormattedCounterValue(IntPtr counterHandle, uint dwFormat, out IntPtr lpdwType, out PDH_FMT_COUNTERVALUE_DOUBLE pValue);
@@ -458,11 +435,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // m_ConsumerPathToHandleAndInstanceMap map is used for reading counter date (live or from files).
         //
         private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
-
-        //
-        // m_ReloggerPathToHandleAndInstanceMap map is used for writing relog counters.
-        //
-        private Dictionary<string, CounterHandleNInstance> _reloggerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
@@ -1196,173 +1168,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return bAtLeastOneAdded ? 0 : res;
         }
 
-        //
-        // AddRelogCounters combines instances and adds counters to m_hQuery.
-        // The counter handles and full paths
-        //
-        public uint AddRelogCounters(PerformanceCounterSampleSet sampleSet)
-        {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            uint res = 0;
-
-            Dictionary<string, List<PerformanceCounterSample>> prefixInstanceMap = new Dictionary<string, List<PerformanceCounterSample>>();
-
-            //
-            // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //
-            foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
-            {
-                PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                res = ParsePath(sample.Path, ref pathElts);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                string lowerCaseMachine = pathElts.MachineName.ToLowerInvariant();
-                string lowerCaseObject = pathElts.ObjectName.ToLowerInvariant();
-                string lowerCaseCounter = pathElts.CounterName.ToLowerInvariant();
-
-                string lcPathMinusInstance = @"\\" + lowerCaseMachine + @"\" + lowerCaseObject + @"\" + lowerCaseCounter;
-
-                List<PerformanceCounterSample> sampleList;
-                if (prefixInstanceMap.TryGetValue(lcPathMinusInstance, out sampleList))
-                {
-                    prefixInstanceMap[lcPathMinusInstance].Add(sample);
-                }
-                else
-                {
-                    List<PerformanceCounterSample> newList = new List<PerformanceCounterSample>();
-                    newList.Add(sample);
-                    prefixInstanceMap.Add(lcPathMinusInstance, newList);
-                }
-
-                // Console.WriteLine ("Added path " + sample.Path + " to the 1ist map with prefix " + lcPathMinusInstance);
-            }
-
-            //
-            // Add counters to the query, consolidating multi-instance with a wildcard path,
-            // and construct m_ReloggerPathToHandleAndInstanceMap where each full path would be pointing to its counter handle
-            // and an instance name (might be empty for no-instance counter types).
-            // You can have multiple full paths inside m_ReloggerPathToHandleAndInstanceMap pointing to the same handle.
-            //
-
-            foreach (string prefix in prefixInstanceMap.Keys)
-            {
-                IntPtr counterHandle;
-                string unifiedPath = prefixInstanceMap[prefix][0].Path;
-
-                if (prefixInstanceMap[prefix].Count > 1)
-                {
-                    res = MakeAllInstancePath(prefixInstanceMap[prefix][0].Path, out unifiedPath);
-                    if (res != 0)
-                    {
-                        // Skipping for now, but should be a non-terminating error
-                        continue;
-                    }
-                }
-
-                res = PdhAddRelogCounter(_hQuery,
-                                         unifiedPath,
-                                         (UInt32)prefixInstanceMap[prefix][0].CounterType,
-                                         prefixInstanceMap[prefix][0].DefaultScale,
-                                         prefixInstanceMap[prefix][0].TimeBase,
-                                         out counterHandle);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    // Console.WriteLine ("PdhAddCounter returned " + res + " for counter path " + unifiedPath);
-                    continue;
-                }
-
-                // now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap
-                foreach (PerformanceCounterSample sample in prefixInstanceMap[prefix])
-                {
-                    PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                    res = ParsePath(sample.Path, ref pathElts);
-                    if (res != 0)
-                    {
-                        // Skipping for now, but should be a non-terminating error
-                        continue;
-                    }
-
-                    CounterHandleNInstance chi = new CounterHandleNInstance();
-
-                    chi.hCounter = counterHandle;
-
-                    if (pathElts.InstanceName != null)
-                    {
-                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
-                    }
-
-                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
-                    {
-                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
-                        // Console.WriteLine ("added map path:" + sample.Path );
-                    }
-                }
-            }
-
-            // TODO: verify that all counters are in the map
-
-            return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
-        }
-
-        //
-        // AddRelogCountersPreservingPaths preserves all paths and adds as relog counters to m_hQuery.
-        // The counter handles and full paths are added to m_ReloggerPathToHandleAndInstanceMap
-        //
-        public uint AddRelogCountersPreservingPaths(PerformanceCounterSampleSet sampleSet)
-        {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            uint res = 0;
-
-            //
-            // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //
-            foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
-            {
-                PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                res = ParsePath(sample.Path, ref pathElts);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                IntPtr counterHandle;
-                res = PdhAddRelogCounter(_hQuery,
-                                         sample.Path,
-                                         (uint)sample.CounterType,
-                                         sample.DefaultScale,
-                                         sample.TimeBase,
-                                         out counterHandle);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                CounterHandleNInstance chi = new CounterHandleNInstance();
-
-                chi.hCounter = counterHandle;
-                if (pathElts.InstanceName != null)
-                {
-                    chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
-                }
-
-                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
-                {
-                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
-                }
-            }
-
-            return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
-        }
-
         public string GetCounterSetHelp(string szMachineName, string szObjectName)
         {
             if (_isPreVista)
@@ -1717,45 +1522,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             return res;
-        }
-
-        public void ResetRelogValues()
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-            PdhResetRelogCounterValues(_hOutputLog);
-        }
-
-        public uint WriteRelogSample(DateTime timeStamp)
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-            return PdhWriteRelogSample(_hOutputLog, (new DateTime(timeStamp.Ticks, DateTimeKind.Utc)).ToFileTimeUtc());
-        }
-
-        public uint SetCounterValue(PerformanceCounterSample sample, out bool bUnknownPath)
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-
-            bUnknownPath = false;
-
-            string lcPath = sample.Path.ToLowerInvariant();
-
-            if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(lcPath))
-            {
-                bUnknownPath = true;
-                return 0;
-            }
-
-            PDH_RAW_COUNTER rawStruct = new PDH_RAW_COUNTER();
-            rawStruct.FirstValue = (long)sample.RawValue;
-            rawStruct.SecondValue = (long)sample.SecondValue;
-            rawStruct.MultiCount = sample.MultipleCount;
-            rawStruct.TimeStamp.dwHighDateTime = (int)((new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() >> 32) & 0xFFFFFFFFL);
-            rawStruct.TimeStamp.dwLowDateTime = (int)(new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() & 0xFFFFFFFFL);
-            rawStruct.CStatus = sample.Status;
-
-            return PdhSetCounterValue(_reloggerPathToHandleAndInstanceMap[lcPath].hCounter,
-                                        ref rawStruct, /*PPDH_RAW_COUNTER */
-                                        _reloggerPathToHandleAndInstanceMap[lcPath].InstanceName);
         }
     }
 }

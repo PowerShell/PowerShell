@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // Format parameter.
-        // Valid strings are "blg", "csv", "tsv" (case-insensitive).
+        // Valid strings are "csv", "tsv" (case-insensitive).
         //
         [Parameter(
                 Mandatory = false,
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
         [ValidateNotNull]
-        [ValidateSet("blg", "csv", "tsv")]
+        [ValidateSet("csv", "tsv")]
         public string FileFormat
         {
             get { return _format; }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             set { _format = value; }
         }
 
-        private string _format = "blg";
+        private string _format = "csv";
 
         //
         // MaxSize parameter
@@ -142,8 +142,6 @@ namespace Microsoft.PowerShell.Commands
         private ResourceManager _resourceMgr = null;
 
         private PdhHelper _pdhHelper = null;
-
-        private bool _stopping = false;
 
         private bool _queryInitialized = false;
 
@@ -221,7 +219,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         protected override void StopProcessing()
         {
-            _stopping = true;
             _pdhHelper.Dispose();
         }
 
@@ -241,20 +238,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_queryInitialized)
             {
-                if (_format.ToLowerInvariant().Equals("blg"))
-                {
-                    res = _pdhHelper.AddRelogCounters(_counterSampleSets[0]);
-                }
-                else
-                {
-                    res = _pdhHelper.AddRelogCountersPreservingPaths(_counterSampleSets[0]);
-                }
-
-                if (res != 0)
-                {
-                    ReportPdhError(res, true);
-                }
-
                 res = _pdhHelper.OpenLogForWriting(_resolvedPath, _outputFormat, Force.IsPresent, _maxSize * 1024 * 1024, Circular.IsPresent, null);
                 if (res == PdhResults.PDH_FILE_ALREADY_EXISTS)
                 {
@@ -281,38 +264,6 @@ namespace Microsoft.PowerShell.Commands
 
                 _queryInitialized = true;
             }
-
-            foreach (PerformanceCounterSampleSet set in _counterSampleSets)
-            {
-                _pdhHelper.ResetRelogValues();
-
-                foreach (PerformanceCounterSample sample in set.CounterSamples)
-                {
-                    bool bUnknownKey = false;
-                    res = _pdhHelper.SetCounterValue(sample, out bUnknownKey);
-                    if (bUnknownKey)
-                    {
-                        string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterExportSampleNotInInitialSet"), sample.Path, _resolvedPath);
-                        Exception exc = new Exception(msg);
-                        WriteError(new ErrorRecord(exc, "CounterExportSampleNotInInitialSet", ErrorCategory.InvalidResult, null));
-                    }
-                    else if (res != 0)
-                    {
-                        ReportPdhError(res, true);
-                    }
-                }
-
-                res = _pdhHelper.WriteRelogSample(set.Timestamp);
-                if (res != 0)
-                {
-                    ReportPdhError(res, true);
-                }
-
-                if (_stopping)
-                {
-                    break;
-                }
-            }
         }
 
         // Determines Log File Type based on FileFormat parameter
@@ -321,14 +272,11 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (_format.ToLowerInvariant())
             {
-                case "csv":
-                    _outputFormat = PdhLogFileType.PDH_LOG_TYPE_CSV;
-                    break;
                 case "tsv":
                     _outputFormat = PdhLogFileType.PDH_LOG_TYPE_TSV;
                     break;
-                default:  // By default file format is blg
-                    _outputFormat = PdhLogFileType.PDH_LOG_TYPE_BINARY;
+                default:
+                    _outputFormat = PdhLogFileType.PDH_LOG_TYPE_CSV;
                     break;
             }
         }
