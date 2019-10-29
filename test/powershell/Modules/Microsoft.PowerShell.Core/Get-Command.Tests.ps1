@@ -265,7 +265,7 @@ Describe "Get-Command Tests" -Tags "CI" {
     }
 
     It "Piping more than one CommandInfo works" {
-        $result = Get-Command Add-Content, Get-Content | Get-Command
+        $result = Get-Command -Name Add-Content, Get-Content | Get-Command
         $result.Count | Should -Be 2
         $result.Name | Should -Be "Add-Content","Get-Content"
     }
