@@ -34,29 +34,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
         private const string LibraryLoadDllName = "api-ms-win-core-libraryloader-l1-2-0.dll";
         private const string LocalizationDllName = "api-ms-win-core-localization-l1-2-1.dll";
-        private const string SysInfoDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct OSVERSIONINFOEX
-        {
-            public int OSVersionInfoSize;
-            public int MajorVersion;
-            public int MinorVersion;
-            public int BuildNumber;
-            public int PlatformId;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string CSDVersion;
-            public ushort ServicePackMajor;
-            public ushort ServicePackMinor;
-            public short SuiteMask;
-            public byte ProductType;
-            public byte Reserved;
-        }
-
-        [DllImport(SysInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
-
-        private const uint FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
         private const uint FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
         private const uint FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
         private const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
@@ -120,7 +98,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                 if (nChars == 0)
                 {
                     formatError = (uint)Marshal.GetLastWin32Error();
-                    //Console.WriteLine("Win32FormatMessage", String.Format(null, "Error formatting message: {0}", formatError));
                 }
                 else
                 {
@@ -140,7 +117,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
         public static ResourceManager GetResourceManager()
         {
-            // this naming pattern is dictated by the dotnet cli
             return new ResourceManager("Microsoft.PowerShell.Commands.Diagnostics.resources.GetEventResources", typeof(CommonUtilities).GetTypeInfo().Assembly);
         }
     }
