@@ -759,7 +759,14 @@ namespace System.Management.Automation.Runspaces
                                 $newline = [Environment]::Newline
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
-                                $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
+
+                                if ($null -ne $Host.PrivateData.FormatAccentColor) {
+                                    $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
+                                }
+                                else {
+                                    $accentColor = Get-VT100Color [Console]::ForegroundColor
+                                }
+
                                 $expandTypes = @(
                                     'Microsoft.Rest.HttpRequestMessageWrapper'
                                     'Microsoft.Rest.HttpResponseMessageWrapper'
@@ -1006,7 +1013,13 @@ namespace System.Management.Automation.Runspaces
                                         $accentColor = ''
                                         if ($Host.PrivateData) {
                                             $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
-                                            $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
+
+                                            if ($null -ne $Host.PrivateData.ErrorAccentColor) {
+                                                $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
+                                            }
+                                            else {
+                                                $accentColor = $errorColor
+                                            }
                                         }
 
                                         $posmsg = ''
