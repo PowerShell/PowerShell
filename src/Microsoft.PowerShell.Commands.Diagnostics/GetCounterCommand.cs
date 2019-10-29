@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Class that implements the Get-Counter cmdlet.
     ///
-    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138335")]
+    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109647")]
     public sealed class GetCounterCommand : PSCmdlet
     {
         //
@@ -211,7 +211,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
 
-#if CORECLR
             if (Platform.IsIoT)
             {
                 // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
@@ -221,9 +220,6 @@ namespace Microsoft.PowerShell.Commands
             // PowerShell 7 requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
-#else
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
-#endif
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             uint res = _pdhHelper.ConnectToDataSource();

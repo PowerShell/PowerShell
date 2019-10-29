@@ -266,7 +266,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Get-ComputerRestorePoint",         "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Get-Content",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ControlPanelItem",             "",                                 $($FullCLR                               ),     "",                     "",                     ""
-"Cmdlet",       "Get-Counter",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
+"Cmdlet",       "Get-Counter",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-Credential",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Culture",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Date",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
