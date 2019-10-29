@@ -987,8 +987,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidthsHint = tableHint.columnWidths;
                 }
 
-                _consoleHeight = GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber);
-                _consoleWidth = GetConsoleWindowWidth(this.InnerCommand._lo.ColumnNumber);
+                try
+                {
+                    _consoleHeight = GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber);
+                }
+                catch (Exception)
+                {
+                    // Some hosts may not implement getting the Rows so we default to 35
+                    _consoleHeight = 35;
+                }
+
+                try
+                {
+                    _consoleWidth = GetConsoleWindowWidth(this.InnerCommand._lo.ColumnNumber);
+                }
+                catch (Exception)
+                {
+                    // Some hosts may not implement getting the Cols so we default to 120
+                    _consoleHeight = 120;
+                }
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
