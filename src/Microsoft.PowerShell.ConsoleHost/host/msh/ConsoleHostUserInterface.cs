@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell
             object result = null;
             lock (_instanceLock)
             {
-                result = ReadLineSafe(false, printToken);
+                result = ReadLineSafe(false, _printToken);
             }
 
             StringBuilder resultSb = result as StringBuilder;
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell
             object result = null;
             lock (_instanceLock)
             {
-                result = ReadLineSafe(true, printToken);
+                result = ReadLineSafe(true, _printToken);
             }
 
             SecureString secureResult = result as SecureString;
