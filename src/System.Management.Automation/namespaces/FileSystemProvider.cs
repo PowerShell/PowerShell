@@ -3953,6 +3953,10 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                         }
                     }
+                    catch (IOException ioException)
+                    {
+                        WriteError(new ErrorRecord(ioException, "CopyFileInfoItemIOError", ErrorCategory.WriteError, file));
+                    }
                 }
             }
         }
