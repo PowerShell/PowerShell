@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// This is the char that is echoed to the console when the input is masked. This not localizable
         /// </summary>
-        private const char printToken = '*';
+        private const char _printToken = '*';
 
         /// <summary>
         /// Command completion implementation object.
