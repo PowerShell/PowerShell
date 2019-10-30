@@ -317,18 +317,21 @@ Describe "#requires warning emitting" -Tags "CI" {
         [system.management.automation.internal.internaltesthooks]::SetTestHook('SilenceRequiresWarning', $true)
     }
 
+    BeforeEach {
+        [system.management.automation.internal.internaltesthooks]::SetTestHook('RequiresWarningCount', 0)
+    }
+
     AfterEach {
         [system.management.automation.internal.internaltesthooks]::SetTestHook('RequiresWarningCount', 0)
     }
 
     AfterAll {
-        [system.management.automation.internal.internaltesthooks]::SetTestHook('RequiresWarningCount', 0)
         [system.management.automation.internal.internaltesthooks]::SetTestHook('SilenceRequiresWarning', $false)
     }
 
     It "Emits no warning with no requires statement" {
         $tokens = $errors = $null
-        $Statement = "`$foo = 1;"
+        $Statement = "`$foo = 1"
         [System.Management.Automation.Language.Parser]::ParseInput($Statement, [ref]$tokens, [ref]$errors)
         [system.management.automation.internal.internaltesthooks]::GetTestHookValue("RequiresWarningCount") | Should -BeExactly 0
         $errors.Count | Should -BeExactly 0
