@@ -78,9 +78,11 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Can use the user specified working directory parameter' {
-            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $TestDrive | Wait-Job
+            $path = Join-Path -Path $TestDrive -ChildPath "My Dir"
+            $null = New-Item -ItemType Directory -Path $path
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
-            $jobOutput | Should -BeExactly $TestDrive.ToString()
+            $jobOutput | Should -BeExactly $path.ToString()
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
