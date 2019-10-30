@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// This is the char that is echoed to the console when the input is masked. This not localizable
         /// </summary>
-        private const char _printToken = '*';
+        private const char PrintToken = '*';
 
         /// <summary>
         /// Command completion implementation object.
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell
             object result = null;
             lock (_instanceLock)
             {
-                result = ReadLineSafe(false, _printToken);
+                result = ReadLineSafe(false, PrintToken);
             }
 
             StringBuilder resultSb = result as StringBuilder;
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell
             object result = null;
             lock (_instanceLock)
             {
-                result = ReadLineSafe(true, _printToken);
+                result = ReadLineSafe(true, PrintToken);
             }
 
             SecureString secureResult = result as SecureString;
