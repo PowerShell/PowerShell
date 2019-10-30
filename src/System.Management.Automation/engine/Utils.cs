@@ -595,31 +595,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current PS Version is less than or equal to another PS version.
-        /// </summary>
-        /// <param name="version">Version to check.</param>
-        /// <returns>True if PS version less than or equal to Current PS version, false otherwise.</returns>
-        internal static bool IsLessThanCurrentPSVersion(Version version)
-        {
-            if (version.Major < PSVersionInfo.PSVersion.Major)
-            {
-                return true;
-            }
-
-            if (version.Major > PSVersionInfo.PSVersion.Major)
-            {
-                return false;
-            }
-
-            if (version.Minor < PSVersionInfo.PSVersion.Minor)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Checks whether the user's OS type is in a list of required types.
         /// </summary>
         /// <param name="requiredOSTypes">A list of required types.</param>
