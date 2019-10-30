@@ -1117,7 +1117,8 @@ namespace Microsoft.PowerShell.Commands
         private string _cultureName = CultureInfo.CurrentCulture.Name;
         private StringComparison _stringComparison  = StringComparison.CurrentCultureIgnoreCase;
         private CompareOptions _compareOptions  = CompareOptions.IgnoreCase;
-        private delegate int CultureInfoIndexOf(String source, String value, int startIndex, int count, CompareOptions options);
+
+        private delegate int CultureInfoIndexOf(string source, string value, int startIndex, int count, CompareOptions options);
 
         private CultureInfoIndexOf _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
 
@@ -1134,6 +1135,7 @@ namespace Microsoft.PowerShell.Commands
                     _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
                     break;
                 }
+
                 case "Invariant":
                 {
                     _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
@@ -1141,6 +1143,7 @@ namespace Microsoft.PowerShell.Commands
                     _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
                     break;
                 }
+
                 case "CurrentCulture":
                 {
                     _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
@@ -1148,6 +1151,7 @@ namespace Microsoft.PowerShell.Commands
                     _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
                     break;
                 }
+
                 default:
                 {
                     var _cultureInfo = CultureInfo.GetCultureInfo(_cultureName);
@@ -2073,7 +2077,7 @@ namespace Microsoft.PowerShell.Commands
         string[] IValidateSetValuesGenerator.GetValidValues()
         {
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-            var result = new List<string>(cultures.Length+3);
+            var result = new List<string>(cultures.Length + 3);
             result.Add("Ordinal");
             result.Add("Invariant");
             result.Add("CurrentCulture");
