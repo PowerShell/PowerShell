@@ -759,12 +759,10 @@ namespace System.Management.Automation.Runspaces
                                 $newline = [Environment]::Newline
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
+                                $accentColor = ''
 
-                                if ($null -ne $Host.PrivateData.FormatAccentColor) {
-                                    $accentColor = Get-VT100Color $Host.PrivateData.FormatAccentColor
-                                }
-                                else {
-                                    $accentColor = Get-VT100Color [Console]::ForegroundColor
+                                if ($null -ne $Host.PrivateData) {
+                                    $accentColor = Get-VT100Color ($Host.PrivateData.FormatAccentColor ?? $Host.PrivateData.ErrorForegroundColor)
                                 }
 
                                 $expandTypes = @(
@@ -1011,15 +1009,10 @@ namespace System.Management.Automation.Runspaces
 
                                         $errorColor = ''
                                         $accentColor = ''
-                                        if ($Host.PrivateData) {
-                                            $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
 
-                                            if ($null -ne $Host.PrivateData.ErrorAccentColor) {
-                                                $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
-                                            }
-                                            else {
-                                                $accentColor = $errorColor
-                                            }
+                                        if ($null -ne $Host.PrivateData) {
+                                            $errorColor = Get-VT100Color $Host.PrivateData.ErrorForegroundColor
+                                            $accentColor = Get-VT100Color ($Host.PrivateData.ErrorAccentColor ?? $errorColor)
                                         }
 
                                         $posmsg = ''
