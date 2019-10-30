@@ -422,55 +422,55 @@ namespace System.Management.Automation
             VerifyMaximumPSVersion(scriptInfo);
             VerifyPSEdition(scriptInfo);
             VerifyRequiredModules(scriptInfo, context);
-            VerifyOSVersions(scriptInfo);
+            VerifyOSTypes(scriptInfo);
         }
 
         internal static void VerifyMaximumPSVersion(ExternalScriptInfo scriptInfo)
         {
             Version requiresMaximumPSVersion = scriptInfo.RequiresMaximumPSVersion;
-            if (requiresMaximumPSVersion != null) 
+            // check if a maximum PS version is specified
+            if (requiresMaximumPSVersion == null)
             {
-                if (!Utils.IsPSVersionSupported(requiresMaximumPSVersion))
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            requiresMaximumPSVersion,
-                            PSVersionInfo.PSVersion.ToString(),
-                            "ScriptRequiresUnmatchedPSVersion");
-                    throw scriptRequiresException;
-                }
-
-                if (Utils.ComparePSVersionToCurrent(requiresMaximumPSVersion))
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            requiresMaximumPSVersion,
-                            PSVersionInfo.PSVersion.ToString(),
-                            "ScriptRequiresMaximumPSVersion");
-                    throw scriptRequiresException;
-                }
+                return;
             }
-        }
-
-        internal static void VerifyOSVersions(ExternalScriptInfo scriptInfo)
-        {
-            if (scriptInfo.RequiredOSVersions != null && scriptInfo.RequiredOSVersions.Any())
+            // check if the maximum version is a legit PS version.
+            if (!Utils.IsPSVersionSupported(requiresMaximumPSVersion))
             {
-                if (Utils.IsOSVersionValid(scriptInfo.RequiredOSVersions))
-                {
-                    return;
-                }
-                
                 ScriptRequiresException scriptRequiresException =
                     new ScriptRequiresException(
                         scriptInfo.Name,
-                        Utils.GetOSVersionString(),
-                        scriptInfo.RequiredOSVersions,
-                        "ScriptRequiresOSVersionInvalid");
+                        requiresMaximumPSVersion,
+                        PSVersionInfo.PSVersion.ToString(),
+                        "ScriptRequiresUnmatchedPSVersion");
                 throw scriptRequiresException;
             }
+            if (requiresMaximumPSVersion < PSVersionInfo.PSVersion)
+            {
+                ScriptRequiresException scriptRequiresException =
+                    new ScriptRequiresException(
+                        scriptInfo.Name,
+                        requiresMaximumPSVersion,
+                        PSVersionInfo.PSVersion.ToString(),
+                        "ScriptRequiresMaximumPSVersion");
+                throw scriptRequiresException;
+            }
+        }
+
+        internal static void VerifyOSTypes(ExternalScriptInfo scriptInfo)
+        {
+            if (scriptInfo.RequiredOSTypes == null || 
+                !scriptInfo.RequiredOSTypes.Any() ||
+                Utils.IsOSTypeValid(scriptInfo.RequiredOSTypes))
+            {
+                return;
+            }
+            ScriptRequiresException scriptRequiresException =
+                new ScriptRequiresException(
+                    scriptInfo.Name,
+                    Utils.GetOSTypeString(),
+                    scriptInfo.RequiredOSTypes,
+                    "ScriptRequiresOSTypeInvalid");
+            throw scriptRequiresException;
         }
 
         internal static void VerifyPSVersion(ExternalScriptInfo scriptInfo)

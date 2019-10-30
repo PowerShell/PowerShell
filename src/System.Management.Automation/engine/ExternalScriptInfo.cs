@@ -421,14 +421,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal Version RequiresMaximumPSVersion
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data == null ? null : data.RequiredMaximumPSVersion;
-            }
-        }
+        internal Version RequiresMaximumPSVersion => GetRequiresData()?.RequiredMaximumPSVersion;
 
         internal IEnumerable<string> RequiresPSEditions
         {
@@ -456,15 +449,7 @@ namespace System.Management.Automation
                 return data == null ? false : data.IsElevationRequired;
             }
         }
-
-        internal IEnumerable<string> RequiredOSVersions
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data == null ? null : data.RequiredOSVersions;
-            }
-        }
+        internal IEnumerable<string> RequiredOSTypes => GetRequiresData()?.RequiredOSTypes;
 
         internal uint PSVersionLineNumber
         {

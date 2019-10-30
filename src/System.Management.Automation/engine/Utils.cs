@@ -595,11 +595,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current PS Version is -leq another PS version.
+        /// Checks whether current PS Version is less than or equal to another PS version.
         /// </summary>
         /// <param name="version">Version to check.</param>
-        /// <returns>True if PS version -leq Current PS version, false otherwise.</returns>
-        internal static bool ComparePSVersionToCurrent(Version version)
+        /// <returns>True if PS version less than or equal to Current PS version, false otherwise.</returns>
+        internal static bool IsLessThanCurrentPSVersion(Version version)
         {
             if (version.Major < PSVersionInfo.PSVersion.Major)
             {
@@ -620,16 +620,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether the user's OS version is in a list of required versions.
+        /// Checks whether the user's OS type is in a list of required types.
         /// </summary>
-        /// <param name="requiredOSVersions">A list of required versions.</param>
-        /// <returns>True if the user's OS version is in the list of required versions, false otherwise.</returns>
-        internal static bool IsOSVersionValid(IEnumerable<string> requiredOSVersions)
+        /// <param name="requiredOSTypes">A list of required types.</param>
+        /// <returns>True if the user's OS type is in the list of required types, false otherwise.</returns>
+        internal static bool IsOSTypeValid(IEnumerable<string> requiredOSTypes)
         {
-            string currentOSName = GetOSVersionString();
-            foreach (string requiredOSVersion in requiredOSVersions) 
+            string currentOSName = GetOSTypeString();
+            foreach (string requiredOSType in requiredOSTypes) 
             {
-                if (requiredOSVersion.Equals(currentOSName, StringComparison.OrdinalIgnoreCase))
+                if (requiredOSType.Equals(currentOSName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -642,23 +642,22 @@ namespace System.Management.Automation
         /// Gets a string representation of the user's current OS version or null if unknown version.
         /// </summary>
         /// <returns>The string representation of the user's OS.</returns>
-        internal static string GetOSVersionString()
+        internal static string GetOSTypeString()
         {
-            string platformName = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) 
             {
-                platformName = "MacOS"; 
+                return "MacOS"; 
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                platformName = "Linux"; 
+                return "Linux"; 
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                platformName = "Windows";
+                return "Windows";
             }
 
-            return platformName;
+            return null;
         }
 
         /// <summary>
@@ -2135,6 +2134,9 @@ namespace System.Management.Automation.Internal
 
         internal static bool ShowMarkdownOutputBypass;
 
+        internal static int RequiresWarningCount = 0;
+        internal static bool SilenceRequiresWarning = false;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {
@@ -2143,6 +2145,13 @@ namespace System.Management.Automation.Internal
             {
                 fieldInfo.SetValue(null, value);
             }
+        }
+
+        /// <summary>This member is used for internal test purposes.</summary>
+        public static object GetTestHookValue(string property)
+        {
+            var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
+            return fieldInfo.GetValue(property);
         }
 
         /// <summary>

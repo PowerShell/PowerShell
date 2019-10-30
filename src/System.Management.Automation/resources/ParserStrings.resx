@@ -1509,4 +1509,12 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
     <value>Background operators can only be used at the end of a pipeline chain.</value>
   </data>
+  <data name="RequiresShouldBeAtTop" xml:space="preserve">
+    <value>
+Requires statement
+
++ {0} 
+
+on line {1} is not at the top of the script, but it will behave as if it was at the top of the script."</value>
+  </data>
 </root>

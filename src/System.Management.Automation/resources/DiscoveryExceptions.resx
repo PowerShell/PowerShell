@@ -169,7 +169,7 @@ The #requires statement must be in one of the following formats:
  "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
  "#requires -modules &lt;ModuleSpecification&gt;"
  "#requires -runasadministrator"
- "#requires -OS &lt;RequiredOSVersions&gt;"
+ "#requires -OS &lt;RequiredOSTypes&gt;"
  "#requires -MaximumPSVersion &lt;MaximumPSVersion&gt;"</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
@@ -193,8 +193,8 @@ The #requires statement must be in one of the following formats:
   <data name="RequiresElevation" xml:space="preserve">
     <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
   </data>
-  <data name="RequiresOSVersionInvalid" xml:space="preserve">
-    <value>The script '{0}' cannot be run because your current OS version {1} does not satisfy the "#requires" statement for running on OS versions: {2}.</value>
+  <data name="RequiresOSTypeInvalid" xml:space="preserve">
+    <value>The script '{0}' cannot be run because your current OS type {1} does not satisfy the "#requires" statement for running on OS types: {2}.</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
     <value>{0} (Version {1})</value>

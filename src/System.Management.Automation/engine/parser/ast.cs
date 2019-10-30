@@ -753,11 +753,11 @@ namespace System.Management.Automation.Language
         public bool IsElevationRequired { get; internal set; }
 
         /// <summary>
-        /// Gets the required specific OS versions, specified like:
-        ///     <code>#requires -RequiredOSVersions OSVersion</code>
-        ///     <code>#requires -RequiredOSVersions "OSVersion1,OSVersion2,OSVersion3"</code>
+        /// Gets the required specific OS types, specified like:
+        ///     <code>#requires -OS OSVersion</code>
+        ///     <code>#requires -OS "OSVersion1,OSVersion2,OSVersion3"</code>
         /// </summary>
-        public ReadOnlyCollection<string> RequiredOSVersions { get; internal set; }
+        public ReadOnlyCollection<string> RequiredOSTypes { get; internal set; }
 
         /// <summary>
         /// Gets the PowerShell maximum version this script requires, specified like:

@@ -320,10 +320,10 @@ namespace System.Management.Automation
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        /// <param name="currentOSVersion">
+        /// <param name="currentOSType">
         /// The users's current OS version.
         /// </param>
-        /// <param name="requiredOSVersions">
+        /// <param name="requiredOSTypes">
         /// The list of required OS versions.
         /// </param>
         /// <param name="errorId">
@@ -331,10 +331,10 @@ namespace System.Management.Automation
         /// </param>
         internal ScriptRequiresException(
             string commandName,
-            string currentOSVersion,
-            IEnumerable<string> requiredOSVersions,
+            string currentOSType,
+            IEnumerable<string> requiredOSTypes,
             string errorId)
-            : base(BuildMessage(commandName, requiredOSVersions, currentOSVersion))
+            : base(BuildMessage(commandName, requiredOSTypes, currentOSType))
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "commandName is null or empty when constructing ScriptRequiresException");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "errorId is null or empty when constructing ScriptRequiresException");
@@ -571,9 +571,9 @@ namespace System.Management.Automation
             return StringUtil.Format(resourceStr, commandName, first, second);
         }
 
-        private static string BuildMessage(string commandName, IEnumerable<string> requiredOSVersions, string currentOSVersion)
+        private static string BuildMessage(string commandName, IEnumerable<string> requiredOSTypes, string currentOSType)
         {
-            return StringUtil.Format(DiscoveryExceptions.RequiresOSVersionInvalid, commandName, currentOSVersion, string.Join(",", requiredOSVersions));
+            return StringUtil.Format(DiscoveryExceptions.RequiresOSTypeInvalid, commandName, currentOSType, string.Join(",", requiredOSTypes));
         }
 
         private static string BuildMessage(string commandName)

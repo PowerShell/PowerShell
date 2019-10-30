@@ -8,10 +8,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.ComponentModel;
-
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
@@ -1794,14 +1796,18 @@ namespace System.Management.Automation.Language
                     RequiresTokens = new List<Token>();
                 RequiresTokens.Add(token);
                 if (_requiresDeclarationsComplete) {
-                    string warningMessage = string.Format(@"
-Requires statement
-
-+ {0} 
-
-at char {1} is not at the top of the script, but it will behave as if it was at the top of the script.", token, _currentIndex);
-                    WarningException requiresWarning=new WarningException(warningMessage);        
-                    Console.WriteLine(requiresWarning.ToString());  
+                    PSHostUserInterface userInterface = Runspace.DefaultRunspace.ExecutionContext?.InternalHost?.UI;
+                    if (userInterface != null)
+                    {
+                        int RequiresWarningCount = (int) InternalTestHooks.GetTestHookValue("RequiresWarningCount");
+                        InternalTestHooks.SetTestHook("RequiresWarningCount", RequiresWarningCount + 1);
+                        bool SilenceRequiresWarning = (bool) InternalTestHooks.GetTestHookValue("SilenceRequiresWarning");
+                        if (!SilenceRequiresWarning)
+                        {
+                            string requiresWarning = string.Format(ParserStrings.RequiresShouldBeAtTop, token, token.Extent.StartLineNumber);
+                            userInterface.WriteWarningLine(requiresWarning);
+                        }
+                    } 
                 }
             }
         }
@@ -1908,7 +1914,7 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
             List<PSSnapInSpecification> requiredSnapins = null;
             List<string> requiredAssemblies = null;
             bool requiresElevation = false;
-            List<string> requiredOSVersions = null;
+            List<string> requiredOSTypes = null;
             foreach (var token in requiresTokens)
             {
                 var requiresExtent = new InternalScriptExtent(_positionHelper, token.Extent.StartOffset + 1, token.Extent.EndOffset);
@@ -1954,8 +1960,9 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                         if (parameter != null)
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
-                                ref i, ref snapinName, ref snapinVersion,
-                                ref requiredShellId, ref requiredVersion, ref requiredMaximumPSVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation, ref requiredOSVersions);
+                                ref i, ref snapinName, ref snapinVersion, ref requiredShellId, ref requiredVersion, 
+                                ref requiredMaximumPSVersion, ref requiredEditions, ref requiredModules, 
+                                ref requiredAssemblies, ref requiresElevation, ref requiredOSTypes);
                         }
                         else
                         {
@@ -1990,8 +1997,8 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                                                     ? new ReadOnlyCollection<ModuleSpecification>(requiredModules)
                                                     : ScriptRequirements.EmptyModuleCollection,
                 IsElevationRequired = requiresElevation,
-                RequiredOSVersions = requiredOSVersions != null
-                                                    ? new ReadOnlyCollection<string>(requiredOSVersions)
+                RequiredOSTypes = requiredOSTypes != null
+                                                    ? new ReadOnlyCollection<string>(requiredOSTypes)
                                                     : ScriptRequirements.EmptyEditionCollection
             };
         }
@@ -2003,7 +2010,7 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
         private const string assemblyToken = "assembly";
         private const string modulesToken = "modules";
         private const string elevationToken = "runasadministrator";
-        private const string osVersionsToken = "os";
+        private const string osTypesToken = "os";
         private const string maximumPSVersionToken = "maximumpsversion";
         private void HandleRequiresParameter(CommandParameterAst parameter,
                                              ReadOnlyCollection<CommandElementAst> commandElements,
@@ -2018,7 +2025,7 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                                              ref List<ModuleSpecification> requiredModules,
                                              ref List<string> requiredAssemblies,
                                              ref bool requiresElevation,
-                                             ref List<string> requiredOSVersions)
+                                             ref List<string> requiredOSTypes)
         {
             Ast argumentAst = parameter.Argument ?? (index + 1 < commandElements.Count ? commandElements[++index] : null);
 
@@ -2131,28 +2138,54 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                         requiredEditions = HandleRequiresPSEditionArgument(argumentAst, arg, ref requiredEditions);
                     }
                 }
-            } else if (osVersionsToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            } else if (osTypesToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (requiredOSVersions != null)
+                if (requiredOSTypes != null)
                 {
+                    object errorArg1 = null;
                     ReportError(parameter.Extent,
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
                         ParameterBinderStrings.ParameterAlreadyBound,
-                        null,
-                        osVersionsToken);
+                        errorArg1,
+                        osTypesToken);
                     return;
                 }
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+
+                switch(argumentValue)
                 {
-                    requiredOSVersions = HandleRequiresOSVersionsArgument(argumentAst, argumentValue, ref requiredOSVersions);
-                }
-                else
-                {
-                    foreach (var arg in (IEnumerable)argumentValue)
-                    {
-                        requiredOSVersions = HandleRequiresOSVersionsArgument(argumentAst, arg, ref requiredOSVersions);
-                    }
-                }                
+                    case string osName:
+                        HandleRequiresOSTypesArgument(argumentAst, osName, ref requiredOSTypes);
+                        break;
+
+                    case IEnumerable osNamesEnumerable:
+                        foreach (object osNameArg in osNamesEnumerable)
+                        {
+                            if (osNameArg is string enumeratedOSName)
+                            {
+                                HandleRequiresOSTypesArgument(argumentAst, enumeratedOSName, ref requiredOSTypes);
+                            }
+                            else
+                            {
+                                object paramValidationArg1 = null;
+                                ReportError(parameter.Extent,
+                                    nameof(ParameterBinderStrings.ParameterArgumentValidationError),
+                                    ParameterBinderStrings.ParameterArgumentValidationError,
+                                    paramValidationArg1,
+                                    osTypesToken);
+                                return;
+                            }
+                        }
+                        break;
+
+                    default:
+                        object errorArg1 = null;
+                        ReportError(parameter.Extent,
+                                nameof(ParameterBinderStrings.ParameterArgumentValidationError),
+                                ParameterBinderStrings.ParameterArgumentValidationError,
+                                errorArg1,
+                                osTypesToken);
+                        break;
+                }              
             }
             else if (versionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
@@ -2207,10 +2240,11 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                 }
                 if (requiredMaximumPSVersion != null && !requiredMaximumPSVersion.Equals(version))
                 {
+                    object errorArg1 = null;
                     ReportError(parameter.Extent,
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
                         ParameterBinderStrings.ParameterAlreadyBound,
-                        null,
+                        errorArg1,
                         maximumPSVersionToken);
                     return;
                 }
@@ -2258,7 +2292,9 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
                     }
 
                     if (requiredModules == null)
+                    {
                         requiredModules = new List<ModuleSpecification>();
+                    }
                     requiredModules.Add(moduleSpecification);
                 }
             }
@@ -2270,26 +2306,18 @@ at char {1} is not at the top of the script, but it will behave as if it was at 
             }
         }
 
-        private List<string> HandleRequiresOSVersionsArgument(Ast argumentAst, object arg, ref List<string> requiredOSVersions)
+        private void HandleRequiresOSTypesArgument(Ast argumentAst, string osType, ref List<string> requiredOSTypes)
         {
-            if (!(arg is string))
+            if (requiredOSTypes == null)
             {
-                ReportError(argumentAst.Extent,
-                    nameof(ParserStrings.RequiresInvalidStringArgument),
-                    ParserStrings.RequiresInvalidStringArgument,
-                    osVersionsToken);
+                requiredOSTypes = new List<string>{osType};
+                return;
             }
-            else
+            
+            if (!requiredOSTypes.Contains(osType, StringComparer.OrdinalIgnoreCase))
             {
-                if (requiredOSVersions == null)
-                    requiredOSVersions = new List<string>();
-
-                if (!requiredOSVersions.Contains((string)arg))
-                {
-                    requiredOSVersions.Add((string)arg);
-                }
+                requiredOSTypes.Add(osType);
             }
-            return requiredOSVersions;
         }
 
         private List<string> HandleRequiresAssemblyArgument(Ast argumentAst, object arg, List<string> requiredAssemblies)
