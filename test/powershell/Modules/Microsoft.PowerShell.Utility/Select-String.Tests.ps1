@@ -12,8 +12,10 @@ Describe "Select-String" -Tags "CI" {
     }
 
     Context "String actions" {
-        $testinputone = "hello","Hello","goodbye"
-        $testinputtwo = "hello","Hello"
+        BeforeAll {
+            $testinputone = "hello","Hello","goodbye"
+            $testinputtwo = "hello","Hello"
+        }
 
         it "Should be called without errors" {
             { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
@@ -249,6 +251,48 @@ Describe "Select-String" -Tags "CI" {
         It "Should ignore -Context parameter when -Raw is used." {
             $expected = "This is the second line"
             Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
+        }
+    }
+
+    Context "Culture parameter" {
+        It "Should throw if -Culture parameter is used without -SimpleMatch parameter" {
+            { "1" | Select-String -Pattern "hello" -Culture "ru-RU" } | Should -Throw -ErrorId "CannotSpecifyCultureWithoutSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"
+        }
+
+        It "Should accept a culture: '<culture>'" -TestCases: @(
+            @{ culture = "Ordinal"},
+            @{ culture = "Invariant"},
+            @{ culture = "CurrentCulture"},
+            @{ culture = "ru-RU"}
+        ) {
+            param ($culture)
+            { "1" | Select-String -Pattern "hello" -Culture $culture -SimpleMatch } | Should -Not -Throw
+        }
+
+        It "Should works if -Culture parameter is a culture name" {
+            # Turkish has lower-case and upper-case version of the dotted "i",
+            # so the upper case of "i" (U+0069) isn't "I" (U+0049) but rather U+0130.
+            "file" | Select-String -Pattern "file" -Culture "tr-TR" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "tr-TR" -SimpleMatch | Should -BeNullOrEmpty
+            "file" | Select-String -Pattern "fIle" -Culture "tr-TR" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
+
+            "file" | Select-String -Pattern "file" -Culture "en-US" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "en-US" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "en-US" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
+
+            "file" | Select-String -Pattern "file" -Culture "Ordinal" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "Ordinal" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "Ordinal" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
+
+            "file" | Select-String -Pattern "file" -Culture "Invariant" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "Invariant" -SimpleMatch | Should -BeExactly "file"
+            "file" | Select-String -Pattern "fIle" -Culture "Invariant" -SimpleMatch -CaseSensitive | Should  -BeNullOrEmpty
+
+            if ([CultureInfo]::CurrentCulture.Name -ne "tr-TR") {
+                "file" | Select-String -Pattern "file" -Culture "CurrentCulture" -SimpleMatch | Should -BeExactly "file"
+                "file" | Select-String -Pattern "fIle" -Culture "CurrentCulture" -SimpleMatch | Should -BeExactly "file"
+                "file" | Select-String -Pattern "fIle" -Culture "CurrentCulture" -SimpleMatch -CaseSensitive | Should  -BeNullOrEmpty
+            }
         }
     }
 }
