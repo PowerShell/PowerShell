@@ -62,4 +62,11 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
         @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
+
+    It "Should handle null" {
+        [pscustomobject] @{ prop=$null } | ConvertTo-Json -Compress | Should -BeExactly '{"prop":null}'
+        $null | ConvertTo-Json -Compress | Should -Be 'null'
+        ConvertTo-Json -Compress $null | Should -Be 'null'
+        1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
+    }
 }
