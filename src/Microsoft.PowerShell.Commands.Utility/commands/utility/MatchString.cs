@@ -1092,11 +1092,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return "Ordinal";
                     }
+
                     case StringComparison.InvariantCulture:
                     case StringComparison.InvariantCultureIgnoreCase:
                     {
                         return "Invariant";
                     }
+
                     case StringComparison.CurrentCulture:
                     case StringComparison.CurrentCultureIgnoreCase:
                     {
