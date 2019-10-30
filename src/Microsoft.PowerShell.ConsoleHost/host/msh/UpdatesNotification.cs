@@ -106,15 +106,15 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // If the host is not connect to a network, skip the rest of the check.
-            if (!NetworkInterface.GetIsNetworkAvailable())
+            // Daily builds do not support update notifications
+            string preReleaseLabel = PSVersionInfo.PSCurrentVersion.PreReleaseLabel;
+            if (preReleaseLabel != null && preReleaseLabel.StartsWith("daily"))
             {
                 return;
             }
 
-            // Daily builds do not support update notifications
-            if (PSVersionInfo.PSCurrentVersion.PreReleaseLabel != null
-                && PSVersionInfo.PSCurrentVersion.PreReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
+            // If the host is not connect to a network, skip the rest of the check.
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return;
             }
