@@ -65,7 +65,7 @@ Describe "Replace Operator" -Tags CI {
         }
     }
 
-    Describe "Culture-invariance tests for -split and -replace" {
+    Describe "Culture-invariance tests for -split and -replace" -Tags CI {
         BeforeAll {
             $prevCulture = [cultureinfo]::CurrentCulture
             # The French culture uses "," as the decimal mark.
