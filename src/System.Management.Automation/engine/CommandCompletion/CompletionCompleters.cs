@@ -1993,7 +1993,7 @@ namespace System.Management.Automation
             CompletionContext context,
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
-            var parameterName = parameter.Name;
+            string parameterName = parameter.Name;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
             // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
@@ -2003,7 +2003,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var parameterFullName = string.IsNullOrEmpty(commandName)
+            string parameterFullName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName() + ":" + parameterName
                         : commandName + ":" + parameterName;
 
