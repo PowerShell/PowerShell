@@ -78,8 +78,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
             d = [NullString]::Value
         } | ConvertTo-Json -Compress | Should -BeExactly '{"a":null,"b":null,"c":null,"d":null}'
 
-        ConvertTo-Json -Compress ([System.Management.Automation.Internal.AutomationNull]::Value) | Should -BeExactly 'null'
-        ConvertTo-Json -Compress ([NullString]::Value) | Should -BeExactly 'null'
+        ConvertTo-Json ([System.Management.Automation.Internal.AutomationNull]::Value) | Should -BeExactly 'null'
+        ConvertTo-Json ([NullString]::Value) | Should -BeExactly 'null'
 
         ConvertTo-Json -Compress @(
             $null,
