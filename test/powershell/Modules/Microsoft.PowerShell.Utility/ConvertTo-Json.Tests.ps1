@@ -88,4 +88,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
             [NullString]::Value
         ) | Should -BeExactly '[null,null,null,null]'
     }
+
+    It "Should handle the ETS properties added to 'DBNull.Value' and 'NullString.Value'" {
+        try
+        {
+            $p1 = Add-Member -InputObject ([System.DBNull]::Value) -MemberType NoteProperty -Name dbnull -Value 'dbnull' -PassThru
+            $p2 = Add-Member -InputObject ([NullString]::Value) -MemberType NoteProperty -Name nullstr -Value 'nullstr' -PassThru
+
+            $p1, $p2 | ConvertTo-Json -Compress | Should -BeExactly '[{"value":null,"dbnull":"dbnull"},{"value":null,"nullstr":"nullstr"}]'
+        }
+        finally
+        {
+            $p1.psobject.Properties.Remove('dbnull')
+            $p2.psobject.Properties.Remove('nullstr')
+        }
+    }
 }
