@@ -3,17 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Management.Automation;
-using System.Media;
-using System.Runtime.InteropServices;
 using Microsoft.PowerShell.Commands.Internal;
 
 namespace Microsoft.PowerShell.Commands
