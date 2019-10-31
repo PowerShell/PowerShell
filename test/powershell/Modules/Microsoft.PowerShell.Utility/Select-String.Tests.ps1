@@ -262,37 +262,36 @@ Describe "Select-String" -Tags "CI" {
         It "Should accept a culture: '<culture>'" -TestCases: @(
             @{ culture = "Ordinal"},
             @{ culture = "Invariant"},
-            @{ culture = "CurrentCulture"},
+            @{ culture = "Current"},
             @{ culture = "ru-RU"}
         ) {
             param ($culture)
             { "1" | Select-String -Pattern "hello" -Culture $culture -SimpleMatch } | Should -Not -Throw
         }
 
-        It "Should works if -Culture parameter is a culture name" {
-            # Turkish has lower-case and upper-case version of the dotted "i",
-            # so the upper case of "i" (U+0069) isn't "I" (U+0049) but rather U+0130.
-            "file" | Select-String -Pattern "file" -Culture "tr-TR" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "tr-TR" -SimpleMatch | Should -BeNullOrEmpty
-            "file" | Select-String -Pattern "fIle" -Culture "tr-TR" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
+        It "Should works if -Culture parameter is a culture name: '<culture>'-'<pattern>'-'CaseSensitive:<casesensitive>'" -TestCases: @(
+            @{pattern = 'file'; culture = 'tr-TR';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $true }
+            @{pattern = "f`u{0130}le"; culture = 'tr-TR';expected = 'file'; casesensitive = $false }
+            @{pattern = 'file'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = $null;  casesensitive = $true }
+        ) {
+            param ($pattern, $culture, $expected, $casesensitive)
 
-            "file" | Select-String -Pattern "file" -Culture "en-US" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "en-US" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "en-US" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
-
-            "file" | Select-String -Pattern "file" -Culture "Ordinal" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "Ordinal" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "Ordinal" -SimpleMatch -CaseSensitive | Should -BeNullOrEmpty
-
-            "file" | Select-String -Pattern "file" -Culture "Invariant" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "Invariant" -SimpleMatch | Should -BeExactly "file"
-            "file" | Select-String -Pattern "fIle" -Culture "Invariant" -SimpleMatch -CaseSensitive | Should  -BeNullOrEmpty
-
-            if ([CultureInfo]::CurrentCulture.Name -ne "tr-TR") {
-                "file" | Select-String -Pattern "file" -Culture "CurrentCulture" -SimpleMatch | Should -BeExactly "file"
-                "file" | Select-String -Pattern "fIle" -Culture "CurrentCulture" -SimpleMatch | Should -BeExactly "file"
-                "file" | Select-String -Pattern "fIle" -Culture "CurrentCulture" -SimpleMatch -CaseSensitive | Should  -BeNullOrEmpty
+            if ($culture -ne 'Current' -or [CultureInfo]::CurrentCulture.Name -ne "tr-TR") {
+                'file' | Select-String -Pattern $pattern -Culture $culture -SimpleMatch -CaseSensitive:$casesensitive | Should -BeExactly $expected
             }
-        }
+       }
     }
 }

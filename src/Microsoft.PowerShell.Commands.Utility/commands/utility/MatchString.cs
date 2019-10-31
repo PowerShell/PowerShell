@@ -1090,19 +1090,19 @@ namespace Microsoft.PowerShell.Commands
                     case StringComparison.Ordinal:
                     case StringComparison.OrdinalIgnoreCase:
                     {
-                        return "Ordinal";
+                        return OrdinalCultureName;
                     }
 
                     case StringComparison.InvariantCulture:
                     case StringComparison.InvariantCultureIgnoreCase:
                     {
-                        return "Invariant";
+                        return InvariantCultureName;
                     }
 
                     case StringComparison.CurrentCulture:
                     case StringComparison.CurrentCultureIgnoreCase:
                     {
-                        return "CurrentCulture";
+                        return CurrentCultureName;
                     }
                 }
 
@@ -1115,6 +1115,10 @@ namespace Microsoft.PowerShell.Commands
                 InitCulture();
             }
         }
+
+        internal const string OrdinalCultureName = "Ordinal";
+        internal const string InvariantCultureName = "Invariant";
+        internal const string CurrentCultureName = "Current";
 
         private string _cultureName = CultureInfo.CurrentCulture.Name;
         private StringComparison _stringComparison  = StringComparison.CurrentCultureIgnoreCase;
@@ -1130,7 +1134,7 @@ namespace Microsoft.PowerShell.Commands
 
             switch (_cultureName)
             {
-                case "Ordinal":
+                case OrdinalCultureName:
                 {
                     _stringComparison = CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
                     _compareOptions = CaseSensitive ? CompareOptions.Ordinal : CompareOptions.OrdinalIgnoreCase;
@@ -1138,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                case "Invariant":
+                case InvariantCultureName:
                 {
                     _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
                     _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
@@ -1146,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                case "CurrentCulture":
+                case CurrentCultureName:
                 {
                     _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
                     _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
@@ -2080,9 +2084,9 @@ namespace Microsoft.PowerShell.Commands
         {
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             var result = new List<string>(cultures.Length + 3);
-            result.Add("Ordinal");
-            result.Add("Invariant");
-            result.Add("CurrentCulture");
+            result.Add(SelectStringCommand.OrdinalCultureName);
+            result.Add(SelectStringCommand.InvariantCultureName);
+            result.Add(SelectStringCommand.CurrentCultureName);
             foreach (var cultureInfo in cultures)
             {
                 result.Add(cultureInfo.Name);
