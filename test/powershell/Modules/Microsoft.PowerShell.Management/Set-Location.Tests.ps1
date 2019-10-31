@@ -34,7 +34,7 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $startDirectory.Path
     }
 
-    It "Should be able to use the Path switch" {
+    It "Should be able to use the Path parameter" {
         { Set-Location -Path $target } | Should -Not -Throw
     }
 
