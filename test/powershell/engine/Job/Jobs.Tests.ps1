@@ -77,9 +77,17 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg[0].StatusDescription | Should -BeExactly 2
         }
 
-        It 'Can use the user specified working directory parameter' {
+        It 'Can use the user specified working directory parameter with whitespace' {
+            $path = Join-Path -Path $TestDrive -ChildPath "My Dir"
+            $null = New-Item -ItemType Directory -Path "$path"
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
+            $jobOutput = Receive-Job $job
+            $jobOutput | Should -BeExactly $path.ToString()
+        }
+
+        It 'Can use the user specified working directory parameter with quote' -Skip:($IsWindows) {
             $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
-            $null = New-Item -ItemType Directory -Path $path
+            $null = New-Item -ItemType Directory -Path "$path"
             $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
             $jobOutput | Should -BeExactly $path.ToString()
