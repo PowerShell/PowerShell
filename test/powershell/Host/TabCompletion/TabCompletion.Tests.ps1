@@ -895,6 +895,20 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 33
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
+
+        It "Test completion with common parameters" {
+            $inputStr = 'invoke-webrequest -out'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutVariable"
+        }
+
+        It "Test completion with exact match" {
+            $inputStr = 'get-content -wa'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
+        }
     }
 
     Context "Module completion for 'using module'" {
@@ -1322,7 +1336,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
-        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
         @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
