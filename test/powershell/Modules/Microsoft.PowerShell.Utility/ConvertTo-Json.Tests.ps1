@@ -69,4 +69,23 @@ Describe 'ConvertTo-Json' -tags "CI" {
         ConvertTo-Json -Compress $null | Should -Be 'null'
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
     }
+
+    It "Should handle 'AutomationNull.Value' and 'NullString.Value' correctly" {
+        [ordered]@{
+            a = $null;
+            b = [System.Management.Automation.Internal.AutomationNull]::Value;
+            c = [System.DBNull]::Value;
+            d = [NullString]::Value
+        } | ConvertTo-Json -Compress | Should -BeExactly '{"a":null,"b":null,"c":null,"d":null}'
+
+        ConvertTo-Json -Compress ([System.Management.Automation.Internal.AutomationNull]::Value) | Should -BeExactly 'null'
+        ConvertTo-Json -Compress ([NullString]::Value) | Should -BeExactly 'null'
+
+        ConvertTo-Json -Compress @(
+            $null,
+            [System.Management.Automation.Internal.AutomationNull]::Value,
+            [System.DBNull]::Value,
+            [NullString]::Value
+        ) | Should -BeExactly '[null,null,null,null]'
+    }
 }

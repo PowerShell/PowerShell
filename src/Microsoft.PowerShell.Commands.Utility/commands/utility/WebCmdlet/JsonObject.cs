@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -496,6 +497,11 @@ namespace Microsoft.PowerShell.Commands
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
+            if (LanguagePrimitives.IsNull(obj))
+            {
+                return null;
+            }
+
             PSObject pso = obj as PSObject;
 
             if (pso != null)
@@ -507,18 +513,21 @@ namespace Microsoft.PowerShell.Commands
             bool isPurePSObj = false;
             bool isCustomObj = false;
 
-            if (obj == null
-                || DBNull.Value.Equals(obj)
-                || obj is string
-                || obj is char
-                || obj is bool
-                || obj is DateTime
-                || obj is DateTimeOffset
-                || obj is Guid
-                || obj is Uri
-                || obj is double
-                || obj is float
-                || obj is decimal)
+            if (obj == NullString.Value
+                || obj == DBNull.Value)
+            {
+                rv = null;
+            }
+            else if (obj is string
+                    || obj is char
+                    || obj is bool
+                    || obj is DateTime
+                    || obj is DateTimeOffset
+                    || obj is Guid
+                    || obj is Uri
+                    || obj is double
+                    || obj is float
+                    || obj is decimal)
             {
                 rv = obj;
             }
