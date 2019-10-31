@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
+                if (path.EndsWith(StringLiterals.DefaultPathSeparator) && !exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
                 {
                     return exactPath + StringLiterals.DefaultPathSeparator;
                 }
