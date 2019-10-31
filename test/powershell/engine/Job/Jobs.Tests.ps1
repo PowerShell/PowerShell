@@ -78,7 +78,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Can use the user specified working directory parameter' {
-            $path = Join-Path -Path $TestDrive -ChildPath "My Dir"
+            $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
             $null = New-Item -ItemType Directory -Path $path
             $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
