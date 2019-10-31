@@ -64,4 +64,24 @@ Describe "Replace Operator" -Tags CI {
             $res | Should -BeExactly "ID XXXX123"
         }
     }
+
+    Describe "Culture-invariance tests for -split and -replace" {
+        BeforeAll {
+            $prevCulture = [cultureinfo]::CurrentCulture
+            # The French culture uses "," as the decimal mark.
+            [cultureinfo]::CurrentCulture = 'fr'
+        }
+
+        AfterAll {
+            [cultureinfo]::CurrentCulture = $prevCulture
+        }
+
+        It "-split: LHS stringification is not culture-sensitive" {
+          1.2 -split ',' | Should -Be '1.2'
+        }
+
+        It "-replace: LHS stringification is not culture-sensitive" {
+          1.2 -replace ',' | Should -Be '1.2'
+        }
+    }
 }
