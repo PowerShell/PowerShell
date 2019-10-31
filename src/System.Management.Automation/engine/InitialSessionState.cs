@@ -4011,8 +4011,8 @@ Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,
 
-    [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 1)]
-    [int] $cursorColumn,
+    [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
+    [int] $cursorColumn = $inputScript.Length,
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 0)]
     [System.Management.Automation.Language.Ast] $ast,
