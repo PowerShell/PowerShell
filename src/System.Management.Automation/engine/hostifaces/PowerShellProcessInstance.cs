@@ -58,7 +58,7 @@ namespace System.Management.Automation.Runspaces
                     CultureInfo.InvariantCulture,
                     "{0} -wd \"{1}\"",
                     processArguments,
-                    workingDirectory.Replace("\"","\"\""));
+                    workingDirectory.Replace("\"", "\"\""));
             }
 
             if (initializationScript != null)
