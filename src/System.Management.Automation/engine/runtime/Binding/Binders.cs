@@ -6674,7 +6674,6 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-
                 if (_nullConditional)
                 {
                     return new DynamicMetaObject(
