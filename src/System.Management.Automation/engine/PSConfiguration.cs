@@ -439,7 +439,7 @@ namespace System.Management.Automation.Configuration
 
             if (configData != emptyConfig && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
             {
-                return jToken.ToObject<T>(serializer);
+                return jToken.ToObject<T>(serializer) ?? defaultValue;
             }
 
             return defaultValue;
