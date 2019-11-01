@@ -32,6 +32,18 @@ namespace Microsoft.PowerShell
         /// </param>
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         {
+#if DEBUG
+            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Attach the debugger to continue...");
+                while (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    Thread.Sleep(100);
+                }
+
+                System.Diagnostics.Debugger.Break();
+            }
+#endif
             // Warm up some components concurrently on background threads.
             EarlyStartup.Init();
 
@@ -54,18 +66,6 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
-#if DEBUG
-            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Attach the debugger to continue...");
-                while (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    Thread.Sleep(100);
-                }
-
-                System.Diagnostics.Debugger.Break();
-            }
-#endif
             int exitCode = 0;
             try
             {
