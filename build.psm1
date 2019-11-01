@@ -466,6 +466,18 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
 
+            # Also build pwshw for Windows
+            if ($Options.Runtime -like 'win*') {
+                $OutputPath = Split-Path -Path $Options.Output -Parent
+                Push-Location ($Options.Top + "-w")
+                Start-NativeExecution { dotnet $Arguments }
+                # Copy the necessary binaries only
+                $SourcePath = (Split-Path -Path $Options.Output -Parent) -Replace "powershell-win-core","powershell-win-core-w"
+                Write-Log "Copying $SourcePath to $OutputPath"
+                Copy-Item -Path "$SourcePath\pwshw.*" -Destination $OutputPath -Force
+                Pop-Location
+            }
+
             if ($CrossGen) {
                 ## fxdependent package cannot be CrossGen'ed
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
@@ -624,6 +636,10 @@ function Restore-PSPackage
     if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+
+        if ($Options.RunTime -like "win*") {
+            $ProjectDirs += $Options.Top + "-w"
+        }
 
         if ($Options.Runtime -like 'fxdependent*') {
             $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
