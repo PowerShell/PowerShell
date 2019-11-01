@@ -49,7 +49,6 @@ Describe "Read-Host Test" -tag "CI" {
         {Read-Host -MaskInput -AsSecureString} | Should -Throw -ErrorId $errorId
     }
 
-
     It "Read-Host doesn't enter command prompt mode" {
         $result = "!1" | pwsh -NoProfile -c "Read-host -Prompt 'foo'"
         if ($IsWindows) {
