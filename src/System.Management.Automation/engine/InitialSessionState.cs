@@ -4594,7 +4594,6 @@ end {
                     new SessionStateAliasEntry("sc", "Set-Content", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("swmi", "Set-WMIInstance", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("trcm", "Trace-Command", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("lp", "Out-Printer"),
 #endif
                     // Aliases transferred from the profile
                     new SessionStateAliasEntry("h", "Get-History"),

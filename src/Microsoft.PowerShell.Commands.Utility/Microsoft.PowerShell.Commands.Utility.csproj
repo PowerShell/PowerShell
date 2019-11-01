@@ -16,18 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\out-printer\Out-Printer.cs" />
     <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
-    <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
     <Compile Remove="gen\ConvertFromStringResources.cs" />
     <Compile Remove="gen\ConvertStringResources.cs" />
     <Compile Remove="gen\FlashExtractStrings.cs" />
     <Compile Remove="gen\ImmutableStrings.cs" />
 
     <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
     <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
     <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
     <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
@@ -37,6 +33,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
     <PackageReference Include="System.Threading.AccessControl" Version="4.7.0-preview1.19504.10" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0-preview1.19504.10" />
     <PackageReference Include="NJsonSchema" Version="10.0.27" />
   </ItemGroup>
 
