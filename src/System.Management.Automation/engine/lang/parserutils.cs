@@ -1360,16 +1360,14 @@ namespace System.Management.Automation
             }
             else
             {
-                return subordinateRegexCache.GetOrAdd(patternString, key =>
+                if (subordinateRegexCache.Count > MaxRegexCache)
                 {
-                        if (subordinateRegexCache.Count > MaxRegexCache)
-                        {
-                            // TODO: it would be useful to get a notice (in telemetry?) if the cache is full.
-                            subordinateRegexCache.Clear();
-                        }
+                    // TODO: it would be useful to get a notice (in telemetry?) if the cache is full.
+                    subordinateRegexCache.Clear();
+                }
 
-                        return new Regex(patternString, options);
-                });
+                var regex = new Regex(patternString, options);
+                return subordinateRegexCache.GetOrAdd(patternString, regex);
             }
         }
 
