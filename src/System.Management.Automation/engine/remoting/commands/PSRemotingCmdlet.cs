@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         protected const string SessionParameterSet = "Session";
 
         /// <summary>
-        /// Custom pipe name parameter set.
+        /// Parameter set to use Windows PowerShell.
         /// </summary>
         protected const string UseWindowsPowerShellParameterSet = "UseWindowsPowerShellParameterSet";
 
