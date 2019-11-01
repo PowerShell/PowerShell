@@ -28,6 +28,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
+        
+        /// <summary>
+        /// Send telemetry when we load a module using Windows compatibility feature, only module names in the s_knownModules list
+        /// will be reported, otherwise it will be "anonymous".
+        /// </summary>
+        WinCompatModuleLoad,
 
         /// <summary>
         /// Send telemetry for experimental module feature activation.
@@ -157,6 +163,7 @@ namespace Microsoft.PowerShell.Telemetry
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
                     case TelemetryType.ModuleLoad:
+                    case TelemetryType.WinCompatModuleLoad:
                         string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, moduleName);
                         break;

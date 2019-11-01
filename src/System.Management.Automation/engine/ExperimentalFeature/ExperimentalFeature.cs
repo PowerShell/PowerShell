@@ -120,7 +120,10 @@ namespace System.Management.Automation
                     description: "New formatting for ErrorRecord"),
                 new ExperimentalFeature(
                     name: "PSUpdatesNotification",
-                    description: "Print notification message when new releases are available")
+                    description: "Print notification message when new releases are available"),
+                new ExperimentalFeature(
+                    name: "PSWinCompat",
+                    description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

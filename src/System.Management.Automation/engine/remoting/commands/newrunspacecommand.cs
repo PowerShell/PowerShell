@@ -163,20 +163,11 @@ namespace Microsoft.PowerShell.Commands
         public string ConfigurationName { get; set; }
     
         /// <summary>
-        /// Process Id of target PowerShell process.
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with `pwsh -CustomPipeName`.
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   Mandatory = true,
-                   ParameterSetName = NewPSSessionCommand.ProcessIdParameterSet)]
-        public int[] ProcessId { get; set; }
-
-        /// <summary>
-        /// AppDomain name in target PowerShell process.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   Mandatory = false,
-                   ParameterSetName = NewPSSessionCommand.ProcessIdParameterSet)]
-        public string AppDomainName { get; set; }
+        [Experimental("PSWinCompat", ExperimentAction.Show)]
+        [Parameter(Mandatory = true, ParameterSetName = NewPSSessionCommand.UseWindowsPowerShellParameterSet)]
+        public SwitchParameter UseWindowsPowerShell { get; set; }
 
         #endregion Parameters
 
@@ -273,9 +264,9 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
 
-                case NewPSSessionCommand.ProcessIdParameterSet:
+                case NewPSSessionCommand.UseWindowsPowerShellParameterSet:
                     {
-                        remoteRunspaces = CreateRunspacesForProcessIdParameterSet();
+                        remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
                     }
 
                     break;
@@ -1163,23 +1154,19 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to create remote runspace based on ProcessId parameter set.
         /// </summary>
         /// <returns>Remote runspace that was created.</returns>
-        private List<RemoteRunspace> CreateRunspacesForProcessIdParameterSet()
+        private List<RemoteRunspace> CreateRunspacesForUseWindowsPowerShellParameterSet()
         {
             var remoteRunspaces = new List<RemoteRunspace>();
-            int index = 0;
-            foreach (var pid in ProcessId)
-            {
-                var connectionInfo = new NamedPipeConnectionInfo(pid, AppDomainName);
-                var typeTable = TypeTable.LoadDefaultTypeFiles();
-                string rsName = GetRunspaceName(index, out int rsIdUnused);
-                index++;
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: connectionInfo,
-                                                                   host: this.Host,
-                                                                   typeTable: typeTable,
-                                                                   applicationArguments: null,
-                                                                   name: rsName) as RemoteRunspace);
-            }
 
+            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
+            connectionInfo.AuthenticationMechanism = this.Authentication;
+            connectionInfo.PSVersion = new Version(5, 1);
+
+            var typeTable = TypeTable.LoadDefaultTypeFiles();
+            string rsName = GetRunspaceName(0, out int rsIdUnused);
+            RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable, null, rsName);
+
+            remoteRunspaces.Add(remoteRunspace);
             return remoteRunspaces;
         }
 

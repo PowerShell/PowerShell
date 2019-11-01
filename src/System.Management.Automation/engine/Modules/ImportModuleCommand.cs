@@ -411,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter causes a module to be loaded into Windows PowerShell
         /// </summary>
+        [Experimental("PSWinCompat", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ParameterSet_Name, Mandatory = false, ValueFromPipeline = true)]
         [Alias("UseWinPS")]
         public SwitchParameter UseWindowsPowerShell { get; set; }
@@ -814,7 +815,8 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions importModuleOptions,
             IEnumerable<string> moduleNames,
             IEnumerable<ModuleSpecification> fullyQualifiedNames,
-            PSSession psSession)
+            PSSession psSession,
+            bool usingWinCompat = false)
         {
             var remotelyImportedModules = new List<PSModuleInfo>();
             if (moduleNames != null)
@@ -838,7 +840,14 @@ namespace Microsoft.PowerShell.Commands
             // Send telemetry on the imported modules
             foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
+                if (usingWinCompat)
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.WinCompatModuleLoad, moduleInfo.Name);
+                }
+                else
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
+                }
             }
 
             return remotelyImportedModules;
@@ -1797,16 +1806,19 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (this.ParameterSetName.Equals(ParameterSet_Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (this.UseWindowsPowerShell)
+                if (ExperimentalFeature.IsEnabled("PSWinCompat") && this.UseWindowsPowerShell)
                 {
                     CreateWindowsPowerShellCompatResources();
 
                     if (WindowsPowerShellCompatRemotingSession != null)
                     {
-                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, null, WindowsPowerShellCompatRemotingSession))
+                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, null, WindowsPowerShellCompatRemotingSession, true))
                         {
                             moduleProxy.IsWindowsPowerShellCompatModule = true;
                             System.Threading.Interlocked.Increment(ref WindowsPowerShellCompatUsageCounter);
+
+                            string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                            WriteWarning(message);
                         }
                     }
                 }
@@ -1820,10 +1832,14 @@ namespace Microsoft.PowerShell.Commands
                             SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
                             // Telemetry here - report module load
-                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+                            // avoid double-reporting for WinCompat modules
+                            if (!foundModule.IsWindowsPowerShellCompatModule)
+                            {
+                                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
     #if LEGACYTELEMETRY
-                            TelemetryAPI.ReportModuleLoad(foundModule);
+                                TelemetryAPI.ReportModuleLoad(foundModule);
     #endif
+                            }
                         }
                     }
                 }

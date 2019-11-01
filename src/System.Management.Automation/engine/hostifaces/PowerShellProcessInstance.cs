@@ -24,6 +24,7 @@ namespace System.Management.Automation.Runspaces
         private bool _processExited;
 
         internal static readonly string PwshExePath;
+        internal static readonly string WinPwshExePath;
 
         #endregion Fields
 
@@ -37,6 +38,7 @@ namespace System.Management.Automation.Runspaces
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
 #else
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
+            WinPwshExePath = Path.Combine(Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID), "powershell.exe");
 #endif
         }
 
@@ -50,7 +52,26 @@ namespace System.Management.Automation.Runspaces
         /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
-            string processArguments = " -s -NoLogo -NoProfile";
+            string exePath = PwshExePath;
+            string processArguments = String.Empty;
+
+#if !UNIX
+            // if requested PS version was "5.1" then we start Windows PS instead of PS Core
+            // Version parameter needs to go before all other parameters.
+            if (powerShellVersion != null)
+            {
+                if ((powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1))
+                {
+                    exePath = WinPwshExePath;
+                    processArguments = "-Version 5.1";
+                }
+            }
+#endif
+
+            processArguments = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0} -s -NoLogo -NoProfile",
+                    processArguments);
 
             if (!string.IsNullOrWhiteSpace(workingDirectory))
             {
@@ -80,7 +101,7 @@ namespace System.Management.Automation.Runspaces
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
             {
-                FileName = PwshExePath,
+                FileName = exePath,
                 Arguments = processArguments,
                 UseShellExecute = false,
                 RedirectStandardInput = true,

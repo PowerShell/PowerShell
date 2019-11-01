@@ -911,11 +911,6 @@ namespace System.Management.Automation
 
         internal static Collection<PSModuleInfo> AutoloadSpecifiedModule(string moduleName, ExecutionContext context, SessionStateEntryVisibility visibility, out Exception exception)
         {
-            return AutoloadSpecifiedModule(moduleName, context, visibility, false, out exception);
-        }
-
-        internal static Collection<PSModuleInfo> AutoloadSpecifiedModule(string moduleName, ExecutionContext context, SessionStateEntryVisibility visibility, bool IsWinModule, out Exception exception)
-        {
             exception = null;
             Collection<PSModuleInfo> matchingModules = null;
             CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, context);
@@ -937,10 +932,6 @@ namespace System.Management.Automation
                      .AddParameter("InformationAction", ActionPreference.Ignore)
                      .AddParameter("Verbose", false)
                      .AddParameter("Debug", false);
-                if (IsWinModule)
-                {
-                    ps = ps.AddParameter("UseWindowsPowerShell", true);
-                }
                 matchingModules = (Collection<PSModuleInfo>)ps.Invoke<PSModuleInfo>();
             }
             catch (Exception e)
@@ -1083,15 +1074,6 @@ namespace System.Management.Automation
                         // override system modules during auto-loading
                         if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStart();
                         var defaultAvailableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: true, context);
-                        string filepath = @"C:\Temp\modules.txt";
-                        using (StreamWriter sw = File.AppendText(filepath)) 
-                        {       
-                            foreach (string modulePath in defaultAvailableModuleFiles)
-                            {
-                                sw.WriteLine(modulePath);
-                            }
-                        }	
-                        
                         if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStop();
 
                         foreach (string modulePath in defaultAvailableModuleFiles)
@@ -1100,8 +1082,7 @@ namespace System.Management.Automation
                             // While the exportedCommands are cached, they are cached with the full path
                             string expandedModulePath = IO.Path.GetFullPath(modulePath);
                             string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(expandedModulePath);
-                            bool IsWinModule = false;
-                            var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context, out IsWinModule);
+                            var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
                             if (exportedCommands == null) { continue; }
 
@@ -1112,7 +1093,7 @@ namespace System.Management.Automation
                                 Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
                                 Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
-                                    cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private, IsWinModule,
+                                    cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
                                         out exception);
                                 lastError = exception;
                                 if ((matchingModule == null) || (matchingModule.Count == 0))

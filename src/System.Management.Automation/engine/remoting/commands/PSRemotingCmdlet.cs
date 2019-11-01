@@ -195,9 +195,9 @@ namespace Microsoft.PowerShell.Commands
         protected const string SessionParameterSet = "Session";
 
         /// <summary>
-        /// ProcessId parameter set.
+        /// Custom pipe name parameter set.
         /// </summary>
-        protected const string ProcessIdParameterSet = "ProcessId";
+        protected const string UseWindowsPowerShellParameterSet = "UseWindowsPowerShellParameterSet";
 
         /// <summary>
         /// Default shellname.
