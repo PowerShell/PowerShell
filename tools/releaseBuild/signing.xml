@@ -23,6 +23,7 @@
     <!-- ****Begin**** AuthenticodeFormer ************* -->
 
     <file src="__INPATHROOT__\pwsh.exe" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\pwsh.exe" />
+    <file src="__INPATHROOT__\pwshw.exe" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\pwshw.exe" />
 
 
     <!-- ****Begin**** AuthenticodeFormer - Authenticode SHA256 ************* -->

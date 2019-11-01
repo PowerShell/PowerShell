@@ -3111,6 +3111,24 @@
       <Component Id="cmp5485813EC16244898CB9A944AC2BC5E9">
         <File Id="fil6EA784763CF94299BC6E75DF068F05A3" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Pager.dll" />
       </Component>
+      <Component Id="cmpEF8ADE303C474061BD40F76A091700FC" Guid="{88d9794d-7eea-4512-a617-03875c8fe213}">
+        <File Id="filB1D7717F568A4180A604B27EBE7EDA6E" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.dll" />
+      </Component>
+      <Component Id="cmp809B0A86A84E44E8BDDBE8C10016FF7D" Guid="{0fc8e636-e3a3-4cc0-a5ad-fbfe7ca3e0b6}">
+        <File Id="fil94CCC692DAF84A5A8652780C9B06EB2F" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.xml" />
+      </Component>
+      <Component Id="cmp4FB327A8BE924E14BA996745EFD40325" Guid="{28552fa1-e433-4f2a-8305-502484f58fd4}">
+        <File Id="fil62FA4B5EAED14E25AAD82B5726505B35" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.pdb" />
+      </Component>
+      <Component Id="cmp690D406DC9F249B4AFFAFAEF0172086B" Guid="{b38ca8bc-b64a-4597-8351-4a878c2a538f}">
+        <File Id="fil9359A9F0F73B4192B4F81591DFA667F5" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.exe" />
+      </Component>
+      <Component Id="cmp463BE93A0EB34578B1B0758BEABE6726" Guid="{39943912-7ef5-40b9-9e20-9cc4e56deae2}">
+        <File Id="filB1D9DEF18C5D4E86B04966D436157DCE" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.deps.json" />
+      </Component>
+      <Component Id="cmp6CC991E0210642BDA9F3C3924A3E3A37" Guid="{fbff1c81-6f41-4d07-b956-93eb5341a495}">
+        <File Id="fil48355C46055740C79186A80975FE341A" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.runtimeconfig.json" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
