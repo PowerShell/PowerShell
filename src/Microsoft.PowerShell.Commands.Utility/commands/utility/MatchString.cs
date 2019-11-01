@@ -1104,6 +1104,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return CurrentCultureName;
                     }
+
+                    default:
+                    {
+                        break;
+                    }
                 }
 
                 return _cultureName;
