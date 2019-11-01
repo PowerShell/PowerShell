@@ -13,6 +13,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
@@ -524,6 +525,8 @@ namespace Microsoft.PowerShell
             }
 
             bool noexitSeen = false;
+            bool consoleAllocated = false;
+            bool consoleAttached = false;
             for (int i = 0; i < args.Length; ++i)
             {
                 (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, parser: null, ref noexitSeen);
@@ -542,7 +545,52 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
+                else if (MatchSwitch(switchKey, "windowstyle", "w"))
+                {
+#if UNIX
+                    break;
+#else
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        break;
+                    }
+
+                    try
+                    {
+                        ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
+                            args[i],
+                            typeof(ProcessWindowStyle),
+                            CultureInfo.InvariantCulture);
+
+                        if (style.HasFlag(ProcessWindowStyle.Hidden))
+                        {
+                            // Attach to parent process console.
+                            // AttachConsole(-1) returns false if we run pwsh from Win-R dialog.
+                            // In the case we haven't parent console so ignore error and always set the flag to true.
+                            consoleAttached = true;
+                            AttachConsole(-1);
+                        }
+                        else
+                        {
+                            consoleAllocated = AllocConsole();
+                            ConsoleControl.SetConsoleMode(style);
+                        }
+
+                    }
+                    catch (PSInvalidCastException)
+                    {
+                        break;
+                    }
+#endif
+                }
             }
+#if !UNIX
+            if (!consoleAttached && !consoleAllocated)
+            {
+                AllocConsole();
+            }
+#endif
         }
 
         /// <summary>
@@ -827,7 +875,6 @@ namespace Microsoft.PowerShell
                     {
                         ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
                             args[i], typeof(ProcessWindowStyle), CultureInfo.InvariantCulture);
-                        ConsoleControl.SetConsoleMode(style);
                     }
                     catch (PSInvalidCastException e)
                     {
@@ -1436,7 +1483,18 @@ namespace Microsoft.PowerShell
 
 #if !UNIX
         private bool _removeWorkingDirectoryTrailingCharacter = false;
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool AttachConsole(int dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError=true, ExactSpelling=true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool FreeConsole();
 #endif
     }
-}   // namespace
-
+}
