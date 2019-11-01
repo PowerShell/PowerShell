@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
     {
 
         /// <summary>
-        /// This is the char that is echoed to the console when the input is masked. This not localizable
+        /// This is the char that is echoed to the console when the input is masked. This not localizable.
         /// </summary>
         private const char PrintToken = '*';
 
@@ -181,25 +181,26 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// The characters typed by the user.
+        /// </returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
-        ///    Win32's setting input buffer mode to disregard window and mouse input failed
+        ///    Win32's setting input buffer mode to disregard window and mouse input failed.
         ///    OR
-        ///    Win32's ReadConsole failed
+        ///    Win32's ReadConsole failed.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        /// If Ctrl-C is entered by user
+        /// If Ctrl-C is entered by user.
         /// </exception>
         public override string ReadLineMaskedAsString()
         {
             HandleThrowOnReadAndPrompt();
 
             // we lock here so that multiple threads won't interleave the various reads and writes here.
-
             object result = null;
             lock (_instanceLock)
             {

@@ -46,7 +46,7 @@ Describe "Read-Host Test" -tag "CI" {
     It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {
         # Contrary to the rest of the tests this does not need to be invoked through a runspace since it is going to throw an error.
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"
-        {Read-Host -MaskInput -AsSecureString}| Should -Throw -ErrorId $errorId
+        {Read-Host -MaskInput -AsSecureString} | Should -Throw -ErrorId $errorId
     }
 
 

@@ -88,7 +88,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
-        ///     implemented by the external host
+        /// implemented by the external host
         /// </exception>
         public override
         string
