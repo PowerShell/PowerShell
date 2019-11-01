@@ -4011,8 +4011,8 @@ Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,
 
-    [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 1)]
-    [int] $cursorColumn,
+    [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
+    [int] $cursorColumn = $inputScript.Length,
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 0)]
     [System.Management.Automation.Language.Ast] $ast,
@@ -4599,6 +4599,8 @@ end {
                     new SessionStateAliasEntry("rmdir", "Remove-Item"),
                     new SessionStateAliasEntry("cnsn", "Connect-PSSession", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("dnsn", "Disconnect-PSSession", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
 #endif
                     // Bash built-ins we purposefully keep even if they override native commands
                     new SessionStateAliasEntry("cd", "Set-Location", string.Empty, AllScope),
@@ -4614,12 +4616,10 @@ end {
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("iwmi", "Invoke-WMIMethod", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ise", "powershell_ise.exe", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rwmi", "Remove-WMIObject", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sc", "Set-Content", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("swmi", "Set-WMIInstance", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("trcm", "Trace-Command", string.Empty, ReadOnly),
 #endif
                     // Aliases transferred from the profile

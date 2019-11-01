@@ -608,6 +608,17 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(errorRecord);
             }
 
+            if (WorkingDirectory == null)
+            {
+                try
+                {
+                    WorkingDirectory = SessionState.Internal.CurrentLocation.Path;
+                }
+                catch (PSInvalidOperationException)
+                {
+                }
+            }
+
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);
 
             if (ParameterSetName == DefinitionNameParameterSet)

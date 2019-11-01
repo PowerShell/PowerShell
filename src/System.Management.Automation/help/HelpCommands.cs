@@ -202,6 +202,32 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _showOnlineHelp;
 
+#if !UNIX
+        private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
+        private bool showWindow;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the help should be displayed in a separate window.
+        /// </summary>
+        [Parameter(ParameterSetName = "ShowWindow", Mandatory = true)]
+        public SwitchParameter ShowWindow
+        {
+            get
+            {
+                return showWindow;
+            }
+
+            set
+            {
+                showWindow = value;
+                if (showWindow)
+                {
+                    VerifyParameterForbiddenInRemoteRunspace(this, "ShowWindow");
+                }
+            }
+        }
+#endif
+
         // The following variable controls the view.
         private HelpView _viewTokenToAdd = HelpView.Default;
 
@@ -243,6 +269,12 @@ namespace Microsoft.PowerShell.Commands
             HelpSystem helpSystem = this.Context.HelpSystem;
             try
             {
+#if !UNIX
+                if (this.ShowWindow)
+                {
+                    this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
+                }
+#endif
                 helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
 
                 bool failed = false;
@@ -559,6 +591,12 @@ namespace Microsoft.PowerShell.Commands
                         throw PSTraceSource.NewInvalidOperationException(HelpErrors.NoURIFound);
                     }
                 }
+#if !UNIX
+                else if (showFullHelp && ShowWindow)
+                {
+                    graphicalHostReflectionWrapper.CallStaticMethod("ShowHelpWindow", helpInfo.FullHelp, this);
+                }
+#endif
                 else
                 {
                     // show inline help
