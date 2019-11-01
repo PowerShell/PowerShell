@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell
             }
 
             StringBuilder resultSb = result as StringBuilder;
-            System.Management.Automation.Diagnostics.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
+            Dbg.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
 
             return resultSb.ToString();
         }
