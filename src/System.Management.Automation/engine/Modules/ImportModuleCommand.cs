@@ -51,7 +51,8 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_ViaPsrpSession = "PSSession";
         private const string ParameterSet_ViaCimSession = "CimSession";
         private const string ParameterSet_FQName_ViaPsrpSession = "FullyQualifiedNameAndPSSession";
-        private const string ParameterSet_WindowsPSCompat = "WindowsPSCompat";
+        private const string ParameterSet_ViaWinCompat = "WinCompat";
+        private const string ParameterSet_FQName_ViaWinCompat = "FullyQualifiedNameAndWinCompat";
         
 
         /// <summary>
@@ -84,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name { set; get; } = Array.Empty<string>();
@@ -93,6 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_FQName, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaWinCompat, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public ModuleSpecification[] FullyQualifiedName { get; set; }
@@ -228,8 +231,15 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Skips the check on CompatiblePSEditions for modules loaded from the System32 module path.
+        /// This is mutually exclusive with UseWindowsPowerShell parameter.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSet_Name)]
+        [Parameter(ParameterSetName = ParameterSet_FQName)]
+        [Parameter(ParameterSetName = ParameterSet_ModuleInfo)]
+        [Parameter(ParameterSetName = ParameterSet_Assembly)]
+        [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession)]
         public SwitchParameter SkipEditionCheck
         {
             get { return (SwitchParameter)BaseSkipEditionCheck; }
@@ -265,6 +275,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         [Alias("Version")]
         public Version MinimumVersion
         {
@@ -279,6 +290,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         public string MaximumVersion
         {
             get
@@ -308,6 +320,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         public Version RequiredVersion
         {
             get { return BaseRequiredVersion; }
@@ -409,10 +422,12 @@ namespace Microsoft.PowerShell.Commands
         public string CimNamespace { get; set; }
 
         /// <summary>
-        /// This parameter causes a module to be loaded into Windows PowerShell
+        /// This parameter causes a module to be loaded into Windows PowerShell.
+        /// This is mutually exclusive with SkipEditionCheck parameter.
         /// </summary>
         [Experimental("PSWinCompat", ExperimentAction.Show)]
-        [Parameter(ParameterSetName = ParameterSet_Name, Mandatory = false, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat, Mandatory = true)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaWinCompat, Mandatory = true)]
         [Alias("UseWinPS")]
         public SwitchParameter UseWindowsPowerShell { get; set; }
 
@@ -840,14 +855,7 @@ namespace Microsoft.PowerShell.Commands
             // Send telemetry on the imported modules
             foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                if (usingWinCompat)
-                {
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.WinCompatModuleLoad, moduleInfo.Name);
-                }
-                else
-                {
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
-                }
+                ApplicationInsightsTelemetry.SendTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo.Name);
             }
 
             return remotelyImportedModules;
@@ -1806,40 +1814,21 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (this.ParameterSetName.Equals(ParameterSet_Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (ExperimentalFeature.IsEnabled("PSWinCompat") && this.UseWindowsPowerShell)
+                foreach (string name in Name)
                 {
-                    CreateWindowsPowerShellCompatResources();
-
-                    if (WindowsPowerShellCompatRemotingSession != null)
+                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
+                    if (foundModule != null)
                     {
-                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, null, WindowsPowerShellCompatRemotingSession, true))
-                        {
-                            moduleProxy.IsWindowsPowerShellCompatModule = true;
-                            System.Threading.Interlocked.Increment(ref WindowsPowerShellCompatUsageCounter);
+                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
-                            string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
-                            WriteWarning(message);
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (string name in Name)
-                    {
-                        PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                        if (foundModule != null)
+                        // Telemetry here - report module load;
+                        // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
+                        if (!foundModule.IsWindowsPowerShellCompatModule)
                         {
-                            SetModuleBaseForEngineModules(foundModule.Name, this.Context);
-
-                            // Telemetry here - report module load
-                            // avoid double-reporting for WinCompat modules
-                            if (!foundModule.IsWindowsPowerShellCompatModule)
-                            {
-                                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
-    #if LEGACYTELEMETRY
-                                TelemetryAPI.ReportModuleLoad(foundModule);
-    #endif
-                            }
+                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+#if LEGACYTELEMETRY
+                            TelemetryAPI.ReportModuleLoad(foundModule);
+#endif
                         }
                     }
                 }
@@ -1875,6 +1864,26 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ModuleSpecification modulespec in FullyQualifiedName)
                 {
                     ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
+                }
+            }
+            else if (this.ParameterSetName.Equals(ParameterSet_ViaWinCompat, StringComparison.OrdinalIgnoreCase)
+                  || this.ParameterSetName.Equals(ParameterSet_FQName_ViaWinCompat, StringComparison.OrdinalIgnoreCase))
+            {
+                if (ExperimentalFeature.IsEnabled("PSWinCompat") && this.UseWindowsPowerShell)
+                {
+                    CreateWindowsPowerShellCompatResources();
+
+                    if (WindowsPowerShellCompatRemotingSession != null)
+                    {
+                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, this.FullyQualifiedName, WindowsPowerShellCompatRemotingSession, true))
+                        {
+                            moduleProxy.IsWindowsPowerShellCompatModule = true;
+                            System.Threading.Interlocked.Increment(ref WindowsPowerShellCompatUsageCounter);
+
+                            string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                            WriteWarning(message);
+                        }
+                    }
                 }
             }
             else
