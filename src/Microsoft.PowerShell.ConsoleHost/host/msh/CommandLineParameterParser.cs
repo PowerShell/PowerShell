@@ -525,8 +525,10 @@ namespace Microsoft.PowerShell
             }
 
             bool noexitSeen = false;
+#if !UNIX
             bool consoleAllocated = false;
             bool consoleAttached = false;
+#endif
             for (int i = 0; i < args.Length; ++i)
             {
                 (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, parser: null, ref noexitSeen);
