@@ -123,6 +123,9 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
+        /// <returns>
+        /// The characters typed by the user.
+        /// </returns>
         /// <exception cref="HostException">
         /// If the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host.
