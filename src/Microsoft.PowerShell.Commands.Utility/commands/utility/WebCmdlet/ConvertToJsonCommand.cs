@@ -98,10 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
-            {
-                _inputObjects.Add(InputObject);
-            }
+            _inputObjects.Add(InputObject);
         }
 
         /// <summary>
