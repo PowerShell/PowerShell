@@ -35,8 +35,16 @@ namespace Microsoft.PowerShell
         internal
         ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
-            defaultForeground = ForegroundColor;
-            defaultBackground = BackgroundColor;
+            try
+            {
+                defaultForeground = ForegroundColor;
+                defaultBackground = BackgroundColor;
+            }
+            catch (HostException)
+            {
+                // Ignore this as it means we're running -WindowStyle Hidden
+            }
+
             parent = mshConsole;
             // cacheKeyEvent is a value type and initialized automatically
 
