@@ -578,7 +578,6 @@ namespace Microsoft.PowerShell
                             consoleAllocated = AllocConsole();
                             ConsoleControl.SetConsoleMode(style);
                         }
-
                     }
                     catch (PSInvalidCastException)
                     {
@@ -1486,7 +1485,7 @@ namespace Microsoft.PowerShell
 #if !UNIX
         private bool _removeWorkingDirectoryTrailingCharacter = false;
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AllocConsole();
 
@@ -1494,9 +1493,6 @@ namespace Microsoft.PowerShell
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AttachConsole(int dwProcessId);
 
-        [DllImport("kernel32.dll", SetLastError=true, ExactSpelling=true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool FreeConsole();
 #endif
     }
 }
