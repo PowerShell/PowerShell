@@ -1,6 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Describe "Validate Copy-Item locally" -Tags "CI" {
+    It "Copy-Item has non-terminating error if destination is in use" -Skip:(!$IsWindows) {
+        Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\
+        $cmd = Start-Process -FilePath TestDrive:\cmd.exe -PassThru
+        try {
+            { Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\ -ErrorAction SilentlyContinue } | Should -Not -Throw
+        }
+        finally {
+            $cmd | Stop-Process
+        }
+    }
+}
+
 # This is a Pester test suite to validate Copy-Item remotely using a remote session.
 
 # If PS Remoting is not available, do not run the suite.
