@@ -65,6 +65,12 @@ Describe 'ConvertTo-Json' -tags "CI" {
         @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
 
+    It "Should handle null" {
+        [pscustomobject] @{ prop=$null } | ConvertTo-Json -Compress | Should -BeExactly '{"prop":null}'
+        $null | ConvertTo-Json -Compress | Should -Be 'null'
+        ConvertTo-Json -Compress $null | Should -Be 'null'
+        1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
+
     It 'The result string should not contain null values when converting dictionary with IgnoreNullProperties.' {
         $dict = @{}
         $dict.Add('abc', "'def'")

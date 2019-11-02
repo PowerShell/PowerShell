@@ -129,6 +129,7 @@ try{
     if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent', 'fxdependent-win-desktop')
     {
         $pspackageParams['Type']='msix'
+        $pspackageParams['WindowsRuntime']=$Runtime
         Write-Verbose "Starting powershell packaging(msix)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }

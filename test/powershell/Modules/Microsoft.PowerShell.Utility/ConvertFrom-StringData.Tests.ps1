@@ -69,9 +69,9 @@ bazz = 2
 Describe "Delimiter parameter tests" -Tags "CI" {
     BeforeAll  {
         $TestCases = @(
-            @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ Values = 10 } }
-            @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ Values = 'b' } }
-            @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ Values = 'd' } }
+            @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ value = 10 } }
+            @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ a = 'b' } }
+            @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ c = 'd' } }
         )
     }
 
@@ -89,14 +89,17 @@ a:b
         { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
     }
 
-    It 'is able to parse <StringData> with delimiter "<Delimiter>"' -TestCases $TestCases {
+    It 'is able to parse <StringData> with delimiter "<Delimiter> with <stringdata>"' -TestCases $TestCases {
         param($Delimiter, $StringData, $ExpectedResult)
 
         $Result = ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter
 
-        foreach ($Key in $ExpectedResult.Keys) {
-            $Key | Should -BeIn $ExpectedResult.Keys
-            $Result.$Key | Should -Be $ExpectedResult.$Key
-        }
+        $key = $ExpectedResult.Keys
+
+        # validate the key in expected and result hashtables match
+        $Result.Keys | Should -BeExactly $ExpectedResult.Keys
+
+        # validate the values in expected and result hashtables match
+        $Result[$key] | Should -BeExactly $ExpectedResult.Values
     }
 }

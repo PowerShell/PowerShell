@@ -220,6 +220,10 @@ function Start-PSBuild {
         [switch]$NoPSModuleRestore,
         [switch]$CI,
 
+        # Skips the step where the pwsh that's been built is used to create a configuration
+        # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
+        [switch]$SkipExperimentalFeatureGeneration,
+
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
         [switch]$SMAOnly,
@@ -499,8 +503,13 @@ Fix steps:
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
     }
 
+    # When building preview, we want the configuration to enable all experiemental features by default
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+    if (-not $SkipExperimentalFeatureGeneration -and
+        (Test-IsPreview $psVersion) -and
+        -not $Runtime.Contains("arm") -and
+        -not ($Runtime -like 'fxdependent*')) {
+
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
@@ -651,8 +660,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp3.0")]
-        [string]$Framework = "netcoreapp3.0",
+        [ValidateSet("netcoreapp3.1")]
+        [string]$Framework = "netcoreapp3.1",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1560,7 +1569,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dot.net/v1"
+    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
@@ -2201,7 +2210,7 @@ function Start-CrossGen {
     $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
 
     $crossGenRequiredAssemblies += if ($Environment.IsWindows) {
-         "clrjit.dll"
+        "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
     } elseif ($Environment.IsMacOS) {
@@ -2260,6 +2269,7 @@ function Start-CrossGen {
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
+            "Microsoft.PowerShell.GraphicalHost.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )
     }

@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="commands\management\ClearRecycleBinCommand.cs" />
     <Compile Remove="commands\management\ControlPanelItemCommand.cs" />
     <Compile Remove="commands\management\CommitTransactionCommand.cs" />
     <Compile Remove="commands\management\Eventlog.cs" />
@@ -39,7 +38,6 @@
     <Compile Remove="gen\ControlPanelResources.cs" />
     <Compile Remove="gen\WmiResources.cs" />
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
-    <Compile Remove="gen\ClearRecycleBinResources.cs" />
     <Compile Remove="gen\ClipboardResources.cs" />
 
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
@@ -48,13 +46,12 @@
     <EmbeddedResource Remove="resources\ControlPanelResources.resx" />
     <EmbeddedResource Remove="resources\WmiResources.resx" />
     <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
-    <EmbeddedResource Remove="resources\ClearRecycleBinResources.resx" />
     <EmbeddedResource Remove="resources\ClipboardResources.resx" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.7.0-preview1.19504.10" />
   </ItemGroup>
 
 </Project>

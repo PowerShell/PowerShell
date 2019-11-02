@@ -4275,10 +4275,17 @@ namespace System.Management.Automation
                                                     continue;
 
                                                 var fileInfo = new FileInfo(entry);
-                                                if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                try
                                                 {
-                                                    PSObject wrapper = PSObject.AsPSObject(entry);
-                                                    psobjs.Add(wrapper);
+                                                    if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                    {
+                                                        PSObject wrapper = PSObject.AsPSObject(entry);
+                                                        psobjs.Add(wrapper);
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    // do nothing if can't get file attributes
                                                 }
                                             }
                                         }
@@ -6966,14 +6973,13 @@ namespace System.Management.Automation
 
         public object VisitUsingStatement(UsingStatementAst usingStatementAst) { return false; }
 
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return false; }
+
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst) { return false; }
+
         public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
             return configurationDefinitionAst.Body.Accept(this);
-        }
-
-        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst)
-        {
-            return false;
         }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
