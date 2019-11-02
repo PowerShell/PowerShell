@@ -146,7 +146,12 @@ namespace Microsoft.PowerShell.Commands
                     else if (string.IsNullOrEmpty(item))
                     {
                         // This handles the trailing slash case
-                        continue;
+                        if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
+                        {
+                            exactPath += StringLiterals.DefaultPathSeparator;
+                        }
+
+                        break;
                     }
                     else if (item.Contains('~'))
                     {
@@ -157,11 +162,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
                     }
-                }
-
-                if (path.EndsWith(StringLiterals.DefaultPathSeparator) && !exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
-                {
-                    return exactPath + StringLiterals.DefaultPathSeparator;
                 }
 
                 return exactPath;
