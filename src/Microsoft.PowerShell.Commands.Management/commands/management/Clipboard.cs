@@ -93,7 +93,10 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         public static void SetText(string text)
         {
-            if (string.IsNullOrEmpty(text)) return;
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
 
             if (_clipboardSupported == false)
             {
@@ -231,6 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             catch
             {
+                // Ignore exceptions
             }
             finally
             {
@@ -245,13 +249,19 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             try
             {
-                if (!OpenClipboard(IntPtr.Zero)) return false;
+                if (!OpenClipboard(IntPtr.Zero))
+                {
+                    return false;
+                }
+
                 EmptyClipboard();
 
                 foreach (var d in data)
                 {
                     if (!SetSingleClipboardData(d.Item1, d.Item2))
+                    {
                         return false;
+                    }
                 }
             }
             finally
@@ -287,13 +297,23 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return false;
                 }
 
-                if (data == IntPtr.Zero) return false;
+                if (data == IntPtr.Zero)
+                {
+                    return false;
+                }
 
                 hGlobal = GlobalAlloc(GHND, (UIntPtr) bytes);
-                if (hGlobal == IntPtr.Zero) return false;
+                if (hGlobal == IntPtr.Zero)
+                {
+                    return false;
+                }
 
                 IntPtr dataCopy = GlobalLock(hGlobal);
-                if (dataCopy == IntPtr.Zero) return false;
+                if (dataCopy == IntPtr.Zero)
+                {
+                    return false;
+                }
+
                 CopyMemory(dataCopy, data, bytes);
                 GlobalUnlock(hGlobal);
 
@@ -305,6 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             catch
             {
+                // Ignore failures
             }
             finally
             {
@@ -312,6 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 {
                     Marshal.FreeHGlobal(data);
                 }
+
                 if (hGlobal != IntPtr.Zero)
                 {
                     GlobalFree(hGlobal);
@@ -329,7 +351,10 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
                 while (tries++ < retryCount && !action())
-                    ;
+                {
+                    // wait until retryCount or action
+                }
+
                 return;
             }
 
@@ -339,7 +364,9 @@ namespace Microsoft.PowerShell.Commands.Internal
                 try
                 {
                     while (tries++ < retryCount && !action())
-                        ;
+                    {
+                        // wait until retryCount or action
+                    }
                 }
                 catch (Exception e)
                 {
