@@ -50,6 +50,11 @@ namespace Microsoft.PowerShell
         public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
+        /// False if running without a console like with pwshw.
+        /// </summary>
+        private static bool _consoleAvailable = true;
+
+        /// <summary>
         /// Constructs an instance.
         /// </summary>
         /// <param name="parent"></param>
@@ -708,8 +713,6 @@ namespace Microsoft.PowerShell
 
             if (_parent.IsRunningAsync)
             {
-                Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
-
                 _parent.OutputSerializer.Serialize(value);
 
                 if (newLine)
@@ -784,11 +787,25 @@ namespace Microsoft.PowerShell
             // Sync access so that we don't conflict on color settings if called from multiple threads.
             lock (_instanceLock)
             {
-                ConsoleColor fg = RawUI.ForegroundColor;
-                ConsoleColor bg = RawUI.BackgroundColor;
+                ConsoleColor fg = ConsoleColor.White;
+                ConsoleColor bg = ConsoleColor.Black;
 
-                RawUI.ForegroundColor = foregroundColor;
-                RawUI.BackgroundColor = backgroundColor;
+                if (_consoleAvailable)
+                {
+                    try
+                    {
+                        fg = RawUI.ForegroundColor;
+                        bg = RawUI.BackgroundColor;
+
+                        RawUI.ForegroundColor = foregroundColor;
+                        RawUI.BackgroundColor = backgroundColor;
+                    }
+                    catch
+                    {
+                        // fails if running without console like pwshw
+                        _consoleAvailable = false;
+                    }
+                }
 
                 try
                 {
@@ -796,8 +813,11 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-                    RawUI.ForegroundColor = fg;
-                    RawUI.BackgroundColor = bg;
+                    if (_consoleAvailable)
+                    {
+                        RawUI.ForegroundColor = fg;
+                        RawUI.BackgroundColor = bg;
+                    }
                 }
             }
         }

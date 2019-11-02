@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                 informationMessage.ForegroundColor = ForegroundColor;
                 informationMessage.BackgroundColor = BackgroundColor;
             }
-            catch (System.Management.Automation.Host.HostException)
+            catch
             {
                 // Expected if the host is not interactive, or doesn't have Foreground / Background
                 // colours.
