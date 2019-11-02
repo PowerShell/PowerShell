@@ -91,53 +91,50 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                     MetadataReader metadataReader = peReader.GetMetadataReader();
                     string strongAssemblyName = GetAssemblyStrongName(metadataReader);
 
-                    if (strongAssemblyName != null)
+                    foreach (TypeDefinitionHandle typeHandle in metadataReader.TypeDefinitions)
                     {
-                        foreach (TypeDefinitionHandle typeHandle in metadataReader.TypeDefinitions)
+                        // We only care about public types
+                        TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
+                        // The visibility mask is used to mask out the bits that contain the visibility.
+                        // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
+                        TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
+                        if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
                         {
-                            // We only care about public types
-                            TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
-                            // The visibility mask is used to mask out the bits that contain the visibility.
-                            // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
-                            TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
-                            if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
-                            {
-                                continue;
-                            }
+                            continue;
+                        }
 
-                            string fullName = GetTypeFullName(metadataReader, typeDefinition);
-                            bool isTypeObsolete = IsTypeObsolete(metadataReader, typeDefinition);
+                        string fullName = GetTypeFullName(metadataReader, typeDefinition);
+                        bool isTypeObsolete = IsTypeObsolete(metadataReader, typeDefinition);
 
-                            if (!typeNameToAssemblyMap.ContainsKey(fullName))
+                        if (!typeNameToAssemblyMap.ContainsKey(fullName))
+                        {
+                            // Add unique type.
+                            typeNameToAssemblyMap.Add(fullName, new TypeMetadata(strongAssemblyName, isTypeObsolete));
+                        }
+                        else if (typeNameToAssemblyMap[fullName].IsObsolete && !isTypeObsolete)
+                        {
+                            // Duplicate types found defined in different assemblies, but the previous one is obsolete while the current one is not.
+                            // Replace the existing type with the current one.
+                            if (printDebugMessage)
                             {
-                                // Add unique type.
-                                typeNameToAssemblyMap.Add(fullName, new TypeMetadata(strongAssemblyName, isTypeObsolete));
-                            }
-                            else if (typeNameToAssemblyMap[fullName].IsObsolete && !isTypeObsolete)
-                            {
-                                // Duplicate types found defined in different assemblies, but the previous one is obsolete while the current one is not.
-                                // Replace the existing type with the current one.
-                                if (printDebugMessage)
-                                {
-                                    var existingTypeMetadata = typeNameToAssemblyMap[fullName];
-                                    Console.WriteLine($@"
-    REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})
-    WITH '{strongAssemblyName}' (IsObsolete? {isTypeObsolete})");
-                                }
-
-                                typeNameToAssemblyMap[fullName] = new TypeMetadata(strongAssemblyName, isTypeObsolete);
-                            }
-                            else if (printDebugMessage)
-                            {
-                                // Duplicate types found defined in different assemblies, and fall into one of the following conditions:
-                                //  - both are obsolete
-                                //  - both are not obsolete
-                                //  - the existing type is not obsolete while the new one is obsolete
                                 var existingTypeMetadata = typeNameToAssemblyMap[fullName];
                                 Console.WriteLine($@"
-    DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsolete}).
-    -- Already exist in '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})");
+REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})
+  WITH '{strongAssemblyName}' (IsObsolete? {isTypeObsolete})");
                             }
+
+                            typeNameToAssemblyMap[fullName] = new TypeMetadata(strongAssemblyName, isTypeObsolete);
+                        }
+                        else if (printDebugMessage)
+                        {
+                            // Duplicate types found defined in different assemblies, and fall into one of the following conditions:
+                            //  - both are obsolete
+                            //  - both are not obsolete
+                            //  - the existing type is not obsolete while the new one is obsolete
+                            var existingTypeMetadata = typeNameToAssemblyMap[fullName];
+                            Console.WriteLine($@"
+DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsolete}).
+  -- Already exist in '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})");
                         }
                     }
                 }
@@ -245,30 +242,20 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                 case AssemblyHashAlgorithm.Sha512:
                     hashImpl = SHA512.Create();
                     break;
-                case AssemblyHashAlgorithm.None:
-                    Console.WriteLine($@"No HashAlgorithm skipping: {asmName}");
-                    break;
                 default:
                     throw new NotSupportedException();
             }
 
-            Span<byte> publicKeyTokenBytes = stackalloc byte[8];
-            if (hashImpl != null)
+            byte[] publicKeyHash = hashImpl.ComputeHash(publickey);
+            byte[] publicKeyTokenBytes = new byte[8];
+            // Note that, the low 8 bytes of the hash of public key in reverse order is the public key tokens.
+            for (int i = 1; i <= 8; i++)
             {
-                Span<byte> publicKeyHash = hashImpl.ComputeHash(publickey);
-                // Note that, the low 8 bytes of the hash of public key in reverse order is the public key tokens.
-                for (int i = 1; i <= 8; i++)
-                {
-                    publicKeyTokenBytes[i - 1] = publicKeyHash[publicKeyHash.Length - i];
-                }
-            }
-            else
-            {
-                return null;
+                publicKeyTokenBytes[i - 1] = publicKeyHash[publicKeyHash.Length - i];
             }
 
             // Convert bytes to hex format strings in lower case.
-            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes.ToArray()).Replace("-", string.Empty).ToLowerInvariant();
+            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
             string strongAssemblyName = string.Format(CultureInfo.InvariantCulture,
                                                       "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
                                                       asmName, asmVersion, asmCulture, publicKeyTokenString);

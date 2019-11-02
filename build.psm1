@@ -398,10 +398,7 @@ Fix steps:
         Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*') {
-            # Relative paths do not work well if cwd is not changed to project
-            Push-Location $Options.Top
-
-            if ($Options.Runtime -like 'win-arm*' -or $Options.Runtime -notlike 'win*') {
+            if ($Options.Runtime -like 'win-arm*') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } else {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
@@ -2213,7 +2210,7 @@ function Start-CrossGen {
     $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
 
     $crossGenRequiredAssemblies += if ($Environment.IsWindows) {
-         "clrjit.dll"
+        "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
     } elseif ($Environment.IsMacOS) {
@@ -2272,6 +2269,7 @@ function Start-CrossGen {
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
+            "Microsoft.PowerShell.GraphicalHost.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )
     }

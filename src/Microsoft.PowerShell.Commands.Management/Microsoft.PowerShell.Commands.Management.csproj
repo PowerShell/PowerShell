@@ -1,21 +1,9 @@
-﻿<Project ToolsVersion="15.0">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
-  </PropertyGroup>
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' != 'Microsoft.NET.Sdk.WindowsDesktop' " />
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
-
-  <PropertyGroup Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' ">
-    <UseWindowsForms>true</UseWindowsForms>
-    <DefineConstants>$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
