@@ -67,8 +67,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set the clipboard content.
         /// </summary>
-        /// <param name="contentList"></param>
-        /// <param name="append"></param>
+        /// <param name="contentList">The content to store into the clipboard.</param>
+        /// <param name="append">If true, appends to clipboard instead of overwriting.</param>
         private void SetClipboardContent(List<string> contentList, bool append)
         {
             string setClipboardShouldProcessTarget;

@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the clipboard content as text format.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Array of strings representing content from clipboard.</returns>
         private List<string> GetClipboardContentAsText()
         {
             var result = new List<string>();

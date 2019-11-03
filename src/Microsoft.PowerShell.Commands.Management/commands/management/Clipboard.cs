@@ -19,8 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = ""
-        )
+            string stdin = "" )
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.UseShellExecute = false;
@@ -41,14 +40,15 @@ namespace Microsoft.PowerShell.Commands.Internal
                 catch (System.ComponentModel.Win32Exception)
                 {
                     _clipboardSupported = false;
-                    return "";
+                    return string.Empty;
                 }
 
-                if (stdin != "")
+                if (!string.IsNullOrEmpty(stdin))
                 {
                     process.StandardInput.Write(stdin);
                     process.StandardInput.Close();
                 }
+
                 stdout = process.StandardOutput.ReadToEnd();
                 process.WaitForExit(250);
 
@@ -62,14 +62,14 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             if (_clipboardSupported == false)
             {
-                return _internalClipboard ?? "";
+                return _internalClipboard ?? string.Empty;
             }
 
-            string tool = "";
-            string args = "";
+            string tool = string.Empty;
+            string args = string.Empty;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                string clipboardText = "";
+                string clipboardText = string.Empty;
                 ExecuteOnStaThread(() => GetTextImpl(out clipboardText));
                 return clipboardText;
             }
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             else
             {
                 _clipboardSupported = false;
-                return "";
+                return string.Empty;
             }
 
             return StartProcess(tool, args);
@@ -104,8 +104,8 @@ namespace Microsoft.PowerShell.Commands.Internal
                 return;
             }
 
-            string tool = "";
-            string args = "";
+            string tool = string.Empty;
+            string args = string.Empty;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 ExecuteOnStaThread(() => SetClipboardData(Tuple.Create(text, CF_UNICODETEXT)));
@@ -140,22 +140,22 @@ namespace Microsoft.PowerShell.Commands.Internal
                 return;
             }
 
-            if (CF_RTF == 0)
+            if (cf_RTF == 0)
             {
-                CF_RTF = RegisterClipboardFormat("Rich Text Format");
+                cf_RTF = RegisterClipboardFormat("Rich Text Format");
             }
 
             ExecuteOnStaThread(() => SetClipboardData(
                 Tuple.Create(plainText, CF_UNICODETEXT),
-                Tuple.Create(rtfText, CF_RTF)));
+                Tuple.Create(rtfText, cf_RTF)));
         }
 
         private const uint GMEM_MOVEABLE = 0x0002;
         private const uint GMEM_ZEROINIT = 0x0040;
-        const uint GHND = GMEM_MOVEABLE | GMEM_ZEROINIT;
+        private const uint GHND = GMEM_MOVEABLE | GMEM_ZEROINIT;
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
+        private static extern IntPtr GlobalAlloc(uint flags, UIntPtr dwBytes);
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr GlobalFree(IntPtr hMem);
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         [DllImport("user32.dll", SetLastError = false)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsClipboardFormatAvailable(uint uFormat);
+        private static extern bool IsClipboardFormatAvailable(uint format);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -187,17 +187,17 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static extern bool EmptyClipboard();
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr GetClipboardData(uint uFormat);
+        private static extern IntPtr GetClipboardData(uint format);
 
         [DllImport("user32.dll")]
-        private static extern IntPtr SetClipboardData(uint uFormat, IntPtr data);
+        private static extern IntPtr SetClipboardData(uint format, IntPtr data);
 
-        [DllImport("user32.dll", SetLastError=true)]
-        static extern uint RegisterClipboardFormat(string lpszFormat);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint RegisterClipboardFormat(string lpszFormat);
 
         private const uint CF_TEXT = 1;
         private const uint CF_UNICODETEXT = 13;
-        private static uint CF_RTF;
+        private static uint cf_RTF;
 
         private static bool GetTextImpl(out string text)
         {
@@ -279,16 +279,15 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             try
             {
-
                 uint bytes;
-                if (format == CF_RTF || format == CF_TEXT)
+                if (format == cf_RTF || format == CF_TEXT)
                 {
                     bytes = (uint)(text.Length + 1);
                     data = Marshal.StringToHGlobalAnsi(text);
                 }
                 else if (format == CF_UNICODETEXT)
                 {
-                    bytes = (uint) ((text.Length + 1) * 2);
+                    bytes = (uint)((text.Length + 1) * 2);
                     data = Marshal.StringToHGlobalUni(text);
                 }
                 else
@@ -302,7 +301,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return false;
                 }
 
-                hGlobal = GlobalAlloc(GHND, (UIntPtr) bytes);
+                hGlobal = GlobalAlloc(GHND, (UIntPtr)bytes);
                 if (hGlobal == IntPtr.Zero)
                 {
                     return false;
@@ -345,14 +344,14 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private static void ExecuteOnStaThread(Func<bool> action)
         {
-            const int retryCount = 5;
+            const int RetryCount = 5;
             int tries = 0;
 
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
-                while (tries++ < retryCount && !action())
+                while (tries++ < RetryCount && !action())
                 {
-                    // wait until retryCount or action
+                    // wait until RetryCount or action
                 }
 
                 return;
@@ -363,9 +362,9 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 try
                 {
-                    while (tries++ < retryCount && !action())
+                    while (tries++ < RetryCount && !action())
                     {
-                        // wait until retryCount or action
+                        // wait until RetryCount or action
                     }
                 }
                 catch (Exception e)
