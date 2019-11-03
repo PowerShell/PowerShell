@@ -2,15 +2,15 @@
 
 ## Features of install-powershell.sh
 
-* can be called directly from git
-* optionally installs vs code and vs powershell extension (aka PowerShell IDE) using optional `-includeide` switch
-* defaults to completely automated operation (if appropriate permissions are available)
-* automatically looks up latest version via git tags
-* automatic selection of appropriate install sub-script
-* configures software installs for repositories when repositories are in place, otherwise pulls files from git releases.  As repository versions are made available, script will be updated to take advantage.
-* user permission checking
-* sub-installers called from local file system if they exist, otherwise pulled from git
-* sub-installers can be called directly if auto-selection is not needed
+* Can be called directly from git
+* Optionally installs vs code and vs powershell extension (aka PowerShell IDE) using optional `-includeide` switch
+* Defaults to completely automated operation (if appropriate permissions are available)
+* Automatically looks up latest version via git tags
+* Automatic selection of appropriate install sub-script
+* Configures software installs for repositories when repositories are in place, otherwise pulls files from git releases.  As repository versions are made available, script will be updated to take advantage.
+* User permission checking
+* Sub-installers called from local file system if they exist, otherwise pulled from git
+* Sub-installers can be called directly if auto-selection is not needed
 
 ## Minimum Requirements for install-powershell.sh
 
@@ -66,3 +66,29 @@ bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/
 ### Installation To do list
 
 * Detect and wait when package manager is busy/locked? - at least Ubuntu (CentOS does this internally)
+
+# install-powershell.ps1
+
+## Features of install-powershell.ps1
+
+* Can be called directly from git
+* Optionally allows install of the latest Preview build
+* Optionally allows install of the Daily build
+* Optionally installs using the latest MSI 
+* Automatically looks up latest version via git tags
+* Optionally installs silently
+* Optionally adds the install location to Path environment variable
+
+## Examples
+
+### Install PowerShell Core Daily Build
+
+```PowerShell
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
+```
+### Install PowerShell Core using the MSI installer
+
+```PowerShell
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -UseMSI"
+```
+
