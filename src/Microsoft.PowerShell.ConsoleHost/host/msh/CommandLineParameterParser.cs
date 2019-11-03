@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell
 
                 string switchKey = switchKeyResults.SwitchKey;
 
-                if (switchKey != null && MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
+                if (!string.IsNullOrEmpty(switchKey) && MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
                     if (!TryParseSettingFileHelper(args, ++i, parser: null))
