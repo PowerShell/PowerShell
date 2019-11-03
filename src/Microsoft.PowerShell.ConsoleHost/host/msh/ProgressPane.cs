@@ -171,7 +171,20 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(pendingProgress != null, "pendingProgress may not be null");
 
-            _bufSize = _rawui.BufferSize;
+            if (!_consoleAvailable)
+            {
+                return;
+            }
+
+            try
+            {
+                _bufSize = _rawui.BufferSize;
+            }
+            catch
+            {
+                _consoleAvailable = false;
+                return;
+            }
 
             // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer,
             // we use the full width of the buffer.
@@ -242,6 +255,7 @@ namespace Microsoft.PowerShell
         private BufferCell[,] _progressRegion;
         private PSHostRawUserInterface _rawui;
         private ConsoleHostUserInterface _ui;
+        private bool _consoleAvailable = true;
     }
 }   // namespace
 

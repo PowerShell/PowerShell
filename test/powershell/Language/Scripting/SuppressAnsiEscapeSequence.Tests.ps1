@@ -3,10 +3,17 @@
 
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if (Test-Path $env:__SuppressAnsiEscapeSequences) {
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
     }
 

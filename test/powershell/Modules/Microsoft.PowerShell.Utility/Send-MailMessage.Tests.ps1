@@ -22,6 +22,13 @@ $DefaultInputObject = @{
 
 Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
+            # these tests don't work correctly with pwshw
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
 
         function Read-Mail
@@ -44,6 +51,8 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
         if($server)
         {
             $server.Stop()

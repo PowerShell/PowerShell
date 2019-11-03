@@ -997,11 +997,11 @@ function Publish-PSTestTools {
             $objPath = Join-Path -Path $tool.Path -ChildPath "obj"
 
             if (Test-Path $toolPath) {
-                Remove-Item -Path $toolPath -Recurse -Force
+                Remove-Item -Path $toolPath -Recurse -Force -ErrorAction Ignore
             }
 
             if (Test-Path $objPath) {
-                Remove-Item -Path $objPath -Recurse -Force
+                Remove-Item -Path $objPath -Recurse -Force -ErrorAction Ignore
             }
 
             if (-not $runtime) {
@@ -1063,7 +1063,8 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
-        [switch]$SkipTestToolBuild
+        [switch]$SkipTestToolBuild,
+        [string]$TranscriptPath
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1136,7 +1137,7 @@ function Start-PSPester {
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
     # Disable telemetry for all startups of pwsh in tests
-    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes'; `$env:__SuppressAnsiEscapeSequences = 1; "
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1156,6 +1157,10 @@ function Start-PSPester {
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+    }
+
+    if ($PSBoundParameters.ContainsKey('TranscriptPath')) {
+        $command += "Start-Transcript -UseMinimalHeader -Path $TranscriptPath; "
     }
 
     $command += "Invoke-Pester "
@@ -1180,6 +1185,10 @@ function Start-PSPester {
     if ($Unelevate)
     {
         $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+    }
+
+    if ($PSBoundParameters.ContainsKey('TranscriptPath')) {
+        $command += "; Stop-Transcript; "
     }
 
     Write-Verbose $command
@@ -1343,13 +1352,18 @@ function Start-PSPester {
             }
             else
             {
+                $params = @{sb = [scriptblock]{& $powershell $PSFlags -c $command}}
+                if ($powershell.Contains("pwshw")) {
+                    $params += @{WaitForProcess = 'pwshw'}
+                }
+
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution @params | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command}
+                    Start-NativeExecution @params
                 }
             }
         }
@@ -2174,7 +2188,8 @@ function script:Start-NativeExecution
     param(
         [scriptblock]$sb,
         [switch]$IgnoreExitcode,
-        [switch]$VerboseOutputOnError
+        [switch]$VerboseOutputOnError,
+        [string]$WaitForProcess
     )
     $backupEAP = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
@@ -2185,7 +2200,26 @@ function script:Start-NativeExecution
         }
         else
         {
+            # check if process is already running, otherwise we wait forever
+            if ($null -ne (Get-Process $WaitForProcess -ErrorAction Ignore))
+            {
+                throw "'$WaitForProcess' is already running, stop it and try again"
+            }
+
             & $sb
+            if ($PSBoundParameters.ContainsKey('WaitForProcess'))
+            {
+                while ($null -eq (Get-Process $WaitForProcess -ErrorAction Ignore))
+                {
+                    Start-Sleep -Milliseconds 250
+                }
+
+                Write-Verbose -Verbose "Waiting on '$WaitForProcess' to complete..."
+                while ($null -ne (Get-Process $WaitForProcess -ErrorAction Ignore))
+                {
+                    Start-Sleep -Milliseconds 250
+                }
+            }
         }
 
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will

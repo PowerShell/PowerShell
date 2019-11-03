@@ -812,7 +812,7 @@ namespace StackTest {
 Describe "WindowStyle argument" -Tag Feature {
     BeforeAll {
         $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows -or [System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw'
 
         if ($IsWindows)
         {

@@ -39,8 +39,9 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             $result = @(ping.exe | findstr.exe count | findstr.exe ping)
             $result[0] | Should -Match "Usage: ping"
         } else {
-            $result = @(ps aux | grep pwsh | grep -v grep)
-            $result[0] | Should -Match "pwsh"
+            $pwsh = [System.AppDomain]::CurrentDomain.FriendlyName
+            $result = @(ps aux | grep $pwsh | grep -v grep)
+            $result[0] | Should -Match "$pwsh"
         }
     }
 }

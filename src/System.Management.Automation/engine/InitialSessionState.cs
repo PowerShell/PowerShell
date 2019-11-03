@@ -4162,11 +4162,16 @@ End
             {
                 // use $RawUI so this works over remoting where there isn't a physical console
                 return @"
-$RawUI = $Host.UI.RawUI
-$RawUI.CursorPosition = @{X=0;Y=0}
-$RawUI.SetBufferContents(
-    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
-    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
+try {
+    $RawUI = $Host.UI.RawUI
+    $RawUI.CursorPosition = @{X=0;Y=0}
+    $RawUI.SetBufferContents(
+        @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+        @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
+}
+catch {
+    # fails if there is no console at all
+}
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=2096480
 # .ExternalHelp System.Management.Automation.dll-help.xml
