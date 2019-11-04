@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
             }
 
             typesXmlConverter = TypeDescriptor.GetConverter(type);
-            if (typesXmlConverter != null)
+            if (typesXmlConverter != null && typesXmlConverter.GetType() != typeof(TypeConverter))
             {
                 s_tracer.WriteLine("Use intrinsic type converter");
                 return typesXmlConverter;
