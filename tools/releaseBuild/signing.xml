@@ -15,6 +15,7 @@
     <file src="__INPATHROOT__\Microsoft.WSMan.Runtime.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.WSMan.Runtime.dll" />
     <file src="__INPATHROOT__\System.Management.Automation.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\System.Management.Automation.dll" />
     <file src="__INPATHROOT__\pwsh.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\pwsh.dll" />
+    <file src="__INPATHROOT__\pwshw.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\pwshw.dll" />
 
     <!-- not actually a code file, don't sign for now
     <file src="__INPATHROOT__\Microsoft.PowerShell.SDK.dll" signType="BothDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.SDK.dll" />
