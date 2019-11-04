@@ -1331,9 +1331,6 @@
         <Component Id="cmpB2DC1821DBE648078AEA75AC0AB62408" Guid="{4242bbb5-81dd-481d-a46a-6397d5bce4a5}">
           <File Id="filA7C18F70F1814A08A63620BC16B1C4DC" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.IO.FileSystem.DriveInfo.dll" />
         </Component>
-        <Component Id="cmpD63D95DCAE9747E3A170CDD082EE4432" Guid="{8fb8d745-02e0-4ca3-b570-06981423b367}">
-          <File Id="filC57EEBC7B79642DF81737183462ABBE4" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Drawing.dll" />
-        </Component>
         <Component Id="cmp9C1983722FB842AEAAE7FE004439F7F5" Guid="{28fac38a-2d64-4651-b17d-822f689ad00f}">
           <File Id="fil3E3F9C4BC1D5493798264C5592B2D26B" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Security.Principal.dll" />
         </Component>
@@ -1642,6 +1639,9 @@
         </Component>
         <Component Id="cmpF1B0E6DCC3BD4797B206C879EF270062" Guid="{af38a3e7-6bc2-47c8-a83e-ee8bfd0cc8be}">
           <File Id="fil2694AE6F8EB8473CBDF0F73A4E55164B" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Text.Encoding.CodePages.dll" />
+        </Component>
+        <Component Id="cmp25A144CC34E545378735B06794A02F90" Guid="{35a3c141-1309-4277-9325-a97e177a9f09}">
+          <File Id="filFCE4A935DE1D4DD08E9A1D32A07E0266" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Drawing.dll" />
         </Component>
       </Directory>
       <Directory Id="dirC72EEAF9434D4AD066E0F4D20D8E816C" Name="en-US">
@@ -3919,6 +3919,7 @@
       <ComponentRef Id="cmp73A4CC8E2C9E4594A3D8258C9E00D7E6" />
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
+      <ComponentRef Id="cmp25A144CC34E545378735B06794A02F90" />
     </ComponentGroup>
   </Fragment>
 </Wix>
