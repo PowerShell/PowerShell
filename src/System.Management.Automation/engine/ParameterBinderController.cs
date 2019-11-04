@@ -300,6 +300,7 @@ namespace System.Management.Automation
                     {
                         yield return splattedCpi;
                     }
+
                     break;
 
                 case Array arrayArgument:
@@ -320,6 +321,7 @@ namespace System.Management.Automation
 
                         goto default;
                     }
+
                     break;
 
                 default:
