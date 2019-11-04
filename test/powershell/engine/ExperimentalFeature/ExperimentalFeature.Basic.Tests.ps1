@@ -11,7 +11,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
-            ## Common parameters are defined in the type 'CommonParameters' as public properties.
+            ## The common parameters currently available (based on experimental features) can only
+            ## be retrieved using Cmdlet.CommonParameters.
             $CommonParameterCount = [System.Management.Automation.Cmdlet]::CommonParameters.Count
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
@@ -184,8 +185,9 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
-            ## Common parameters are defined in the type 'CommonParameters' as public properties.
-            $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
+            ## The common parameters currently available (based on experimental features) can only
+            ## be retrieved using Cmdlet.CommonParameters.
+            $CommonParameterCount = [System.Management.Automation.Cmdlet]::CommonParameters.Count
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
             if (-not (Test-Path $AssemblyPath)) {
