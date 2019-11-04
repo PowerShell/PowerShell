@@ -2217,7 +2217,9 @@ function script:Start-NativeExecution
                 Write-Verbose -Verbose "Waiting on '$WaitForProcess' to complete..."
                 while ($null -ne (Get-Process $WaitForProcess -ErrorAction Ignore))
                 {
-                    Start-Sleep -Milliseconds 250
+                    # write some output so it doesn't timeout in CI
+                    Write-Host "." -NoNewline
+                    Start-Sleep -Seconds 60
                 }
             }
         }

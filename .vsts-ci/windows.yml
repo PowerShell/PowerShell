@@ -71,6 +71,11 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: PwshwPesterTests
+      tagSet: Others
+
   - template: templates/verify-xunit.yml
 
 - stage: PackagingWin
