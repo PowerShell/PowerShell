@@ -408,7 +408,7 @@ namespace System.Management.Automation
             }
         }
 
-        // This method verifies the following 5 elements of #Requires statement
+        // This method verifies the following 6 elements of #Requires statement
         // #Requires -RunAsAdministrator
         // #Requires -PSVersion
         // #Requires -MaximumPSVersion
