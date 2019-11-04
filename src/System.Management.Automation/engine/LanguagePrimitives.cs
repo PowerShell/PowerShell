@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
             }
 
             typesXmlConverter = TypeDescriptor.GetConverter(type);
-            if (typesXmlConverter != null && typesXmlConverter.GetType() != typeof(TypeConverter))
+            if (typesXmlConverter != null)
             {
                 s_tracer.WriteLine("Use intrinsic type converter");
                 return typesXmlConverter;
@@ -5534,11 +5534,25 @@ namespace System.Management.Automation
                 return true;
             }
 
-            var converter = TypeDescriptor.GetConverter(type);
+            return false;
+        }
+
+        private static bool TypeConverterPossiblyExists(Type fromType, Type toType)
+        {
+            var converter = TypeDescriptor.GetConverter(fromType);
 
             // Generic TypeConverter can convert all types to string
             // this violates specific type conversions so we exclude it.
-            if (converter.GetType() != typeof(TypeConverter))
+            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertTo(toType))
+            {
+                return true;
+            }
+
+            converter = TypeDescriptor.GetConverter(toType);
+
+            // Generic TypeConverter can convert all types to string
+            // this violates specific type conversions so we exclude it.
+            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertFrom(fromType))
             {
                 return true;
             }
@@ -5720,7 +5734,7 @@ namespace System.Management.Automation
             }
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
-                || (converter != null && valueDependentConversion != null))
+                || (converter != null && valueDependentConversion != null) || (converter == null && TypeConverterPossiblyExists(fromType, toType)))
             {
                 ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
                 customConverter.tryfirstConverter = valueDependentConversion;
