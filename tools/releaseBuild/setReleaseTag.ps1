@@ -19,7 +19,7 @@ function New-BuildInfoJson {
         [switch] $IsDaily
     )
 
-    $blobName = $ReleaseTag  -replace '\.', '-'
+    $blobName = $ReleaseTag -replace '\.', '-'
 
     $isPreview = $ReleaseTag -like '*-*'
 
@@ -33,8 +33,12 @@ function New-BuildInfoJson {
         $filename = 'daily.json'
     }
 
+    $dateTime = [datetime]::UtcNow
+    $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
+
     @{
         ReleaseTag = $ReleaseTag
+        ReleaseDate = $dateTime
         BlobName = $blobName
     } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
 
