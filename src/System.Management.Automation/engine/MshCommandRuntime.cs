@@ -135,6 +135,11 @@ namespace System.Management.Automation
             get { return (this.PipelineProcessor != null && this.PipelineProcessor.Stopping); }
         }
 
+        /// <summary>
+        /// Gets or sets the objects that will be splat into the invocation.
+        /// </summary>
+        internal IDictionary[] Splat { get; set; }
+
         #region Write
 
         // Trust: WriteObject needs to respect EmitTrustCategory

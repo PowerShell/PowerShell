@@ -147,6 +147,179 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
         }
     }
 
+    Context 'Splat' {
+        BeforeAll {
+            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCommonSplatParameter')
+            if ($skipTest) {
+                Write-Verbose "Test Suite Skipped: These tests require the PSCommonSplatParameter experimental feature to be enabled" -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+
+            function Test-Splat {
+                [CmdletBinding(DefaultParameterSetName = 'One')]
+                param(
+                    [Parameter(Position = 0, Mandatory, ParameterSetName = 'One')]
+                    [ValidateNotNullOrEmpty()]
+                    [string]
+                    $OneFish,
+
+                    [Parameter(Position = 0, Mandatory, ParameterSetName = 'Two')]
+                    [ValidateNotNullOrEmpty()]
+                    [string[]]
+                    $TwoFish,
+
+                    [Parameter()]
+                    [ValidateSet('Red', 'Blue')]
+                    [string]
+                    $Color
+                )
+
+                [pscustomobject]@{
+                    ParameterSetName = $PSCmdlet.ParameterSetName
+                    BoundParameters  = @{} + $PSCmdlet.MyInvocation.BoundParameters
+                }
+            }
+
+            $testParameterSetOneResults = {
+                $result.ParameterSetName | Should -BeExactly 'One'
+                $result.BoundParameters.Contains('OneFish') | Should -BeTrue
+                $result.BoundParameters.Contains('Color') | Should -BeTrue
+                $result.BoundParameters.OneFish | Should -Be 1
+                $result.BoundParameters.Color | Should -Be 'Red'
+            }
+
+            $testParameterSetTwoResults = {
+                $result.ParameterSetName | Should -BeExactly 'Two'
+                $result.BoundParameters.Contains('TwoFish') | Should -BeTrue
+                $result.BoundParameters.Contains('Color') | Should -BeTrue
+                $result.BoundParameters.TwoFish | Should -Be 2
+                $result.BoundParameters.Color | Should -Be 'Blue'
+            }
+        }
+
+        AfterAll {
+            if ($skipTest) {
+                $PSDefaultParameterValues = $originalDefaultParameterValues
+            }
+        }
+
+        It 'binds a single splatted inline hashtable correctly' {
+            $result = Test-Splat -Splat @{
+                OneFish = 1
+                Color = 'Red'
+            }
+            . $testParameterSetOneResults
+        }
+
+        It 'binds a splatted inline variable correctly' {
+            $parameters = @{
+                OneFish = 1
+                Color = 'Red'
+            }
+            $result = Test-Splat -Splat $parameters
+            . $testParameterSetOneResults
+        }
+
+        It 'binds a splatted property value correctly' {
+            $commandParameters = @{
+                'TestSplat' = @{
+                    OneFish = 1
+                    Color   = 'Red'
+                }
+            }
+            $result = Test-Splat -Splat $commandParameters.TestSplat
+            . $testParameterSetOneResults
+        }
+
+        It 'binds the splatted results of a command properly' {
+            function Get-ParameterSet {
+                @{
+                    OneFish = 1
+                    Color   = 'Red'
+                }
+            }
+            $result = Test-Splat -Splat (Get-ParameterSet)
+            . $testParameterSetOneResults
+        }
+
+        It 'binds mulitple splatted hashtables correctly' {
+            function Get-ErrorActionParameter {
+                @{ErrorAction = 'Continue'}
+            }
+            $commandParameters = @{
+                'TestSplat' = @{
+                    Color = 'Red'
+                }
+            }
+            $result = Test-Splat -Splat @{OneFish = 1 },$commandParameters.TestSplat,(Get-ErrorActionParameter)
+            . $testParameterSetOneResults
+            $result.BoundParameters.Contains('ErrorAction') | Should -BeTrue
+            $result.BoundParameters.ErrorAction | Should -Be 'Continue'
+        }
+
+        It 'supports invocation with -parameter:value syntax' {
+            $result = Test-Splat -Splat:@{
+                TwoFish = 2
+                Color = 'Blue'
+            }
+            . $testParameterSetTwoResults
+        }
+
+        It 'supports invocation with a shorthand parameter name' {
+            $result = Test-Splat -sp @{
+                TwoFish = 2
+                Color = 'Blue'
+            }
+            . $testParameterSetTwoResults
+        }
+
+        It 'supports invocation with -shorthandParameter:value syntax' {
+            $result = Test-Splat -sp:@{
+                TwoFish = 2
+                Color = 'Blue'
+            }
+            . $testParameterSetTwoResults
+        }
+
+        It 'can be used when splatting with the splat operator' {
+            $params = @{
+                'Splat' = @{
+                    TwoFish = 2
+                    Color   = 'Blue'
+                }
+            }
+            $result = Test-Splat @params
+            . $testParameterSetTwoResults
+        }
+
+        It 'only supports dictionaries' {
+            $errorRecord = $null
+            try { Test-Splat -Splat @(1, 'Red') } catch {$errorRecord = $_}
+            $errorRecord | Should -Not -BeNullOrEmpty
+            $errorRecord.FullyQualifiedErrorId | Should -BeExactly 'CannotConvertArgument,Test-Splat'
+            $errorRecord.Exception | Should -BeOfType System.Management.Automation.ParameterBindingException
+        }
+
+        It 'does not support splatting a "splat" parameter' {
+            $errorRecord = $null
+            try {
+                $result = Test-Splat -Splat @{
+                    OneFish = 1
+                    Splat   = @{
+                        Color = 'Red'
+                    }
+                }
+            } catch {
+                $errorRecord = $_
+            }
+            $errorRecord | Should -Not -BeNullOrEmpty
+            $errorRecord.FullyQualifiedErrorId | Should -BeExactly 'ParameterAlreadyBound,Test-Splat'
+            $errorRecord.Exception | Should -BeOfType System.Management.Automation.ParameterBindingException
+        }
+    }
+
     Context "SupportShouldprocess" {
         $script = '
                 function get-foo

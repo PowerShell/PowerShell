@@ -232,6 +232,26 @@ namespace System.Management.Automation.Internal
             set { _commandRuntime.PipelineVariable = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the Splat parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter allows scripters to splat mulitple parameters at once from one
+        /// or more IDictionary instances. These can be passed in inline, or referenced
+        /// from a property, or returned from a command, method invocation, or subexpression.
+        /// Some examples:
+        ///     Get-Date -splat @{Year=1971;Month=10;Day=20}
+        ///     Get-Date -splat $getDate.Parameters
+        ///     Get-Date -splat (Get-Parameters)
+        /// </remarks>
+        [Parameter]
+        [Experimental("PSCommonSplatParameter", ExperimentAction.Show)]
+        public IDictionary[] Splat
+        {
+            get { return _commandRuntime.Splat; }
+            set { _commandRuntime.Splat = value; }
+        }
+
         #endregion parameters
 
         private MshCommandRuntime _commandRuntime;

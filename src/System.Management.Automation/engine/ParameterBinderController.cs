@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Text;
 
@@ -138,48 +140,65 @@ namespace System.Management.Automation
             {
                 CommandParameterInternal argument = UnboundArguments[index];
 
-                // If the parameter name is not specified, or if it is specified _and_ there is an
-                // argument, we have nothing to reparse for this argument.
-                if (!argument.ParameterNameSpecified || argument.ArgumentSpecified)
+                // If the parameter name is not specified, we have nothing to reparse for this argument.
+                if (!argument.ParameterNameSpecified)
                 {
                     result.Add(argument);
+                    continue;
+                }
+
+                // Now check the parameter name with the binder.
+                MergedCompiledCommandParameter matchingParameter =
+                    _bindableParameters.GetMatchingParameter(
+                        argument.ParameterName,
+                        throwOnParameterNotFound: false,
+                        tryExactMatching: true,
+                        new InvocationInfo(InvocationInfo.MyCommand, argument.ParameterExtent));
+
+                // If we can't find a match, just add the argument as it was and continue.
+                if (matchingParameter == null)
+                {
+                    result.Add(argument);
+                    continue;
+                }
+
+                // Update the argument with its matching parameter name.
+                argument.ParameterName = matchingParameter.Parameter.Name;
+
+                // If there is an argument already, we have nothing to reparse.
+                if (argument.ArgumentSpecified)
+                {
+                    result.Add(argument);
+
+                    // If this is the "-splat" common parameter, splat the argument values into the
+                    // command as well.
+                    if (argument.ParameterName.Equals(nameof(CommonParameters.Splat)))
+                    {
+                        foreach (var splattedArgument in SplatCommonParameterValue(argument))
+                        {
+                            result.Add(splattedArgument);
+                        }
+                    }
+
                     continue;
                 }
 
                 Diagnostics.Assert(argument.ParameterNameSpecified && !argument.ArgumentSpecified,
                     "At this point, we only process parameters with no arguments");
 
-                // Now check the argument name with the binder.
+                // Now that we know we have a single match for the parameter name, but no
+                // argument, so let's see if we can figure out what the argument value for
+                // the parameter is.
 
-                string parameterName = argument.ParameterName;
-                MergedCompiledCommandParameter matchingParameter =
-                    _bindableParameters.GetMatchingParameter(
-                        parameterName,
-                        false,
-                        true,
-                        new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
-
-                if (matchingParameter == null)
+                // If its a switch parameter, then set the value to true and continue.
+                if (matchingParameter.Parameter.Type == typeof(SwitchParameter))
                 {
-                    // Since we couldn't find a match, just add the argument as it was
-                    // and continue
+                    argument.SetArgumentValue(null, SwitchParameter.Present);
                     result.Add(argument);
                     continue;
                 }
 
-                // Now that we know we have a single match for the parameter name,
-                // see if we can figure out what the argument value for the parameter is.
-
-                // If its a bool or switch parameter, then set the value to true and continue
-
-                if (IsSwitchAndSetValue(parameterName, argument, matchingParameter.Parameter))
-                {
-                    result.Add(argument);
-                    continue;
-                }
-
-                // Since it's not a bool or a SwitchParameter we need to check the next
-                // argument.
+                // Since it's not a SwitchParameter we need to check the next argument.
 
                 if (UnboundArguments.Count - 1 > index)
                 {
@@ -229,13 +248,24 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    // The next argument appears to be the value for this parameter. Set the value,
-                    // increment the index and continue
-
+                    // The next argument appears to be the value for this parameter, so increment
+                    // the counter and set the value in the argument.
                     ++index;
                     argument.ParameterName = matchingParameter.Parameter.Name;
                     argument.SetArgumentValue(nextArgument.ArgumentAst, nextArgument.ArgumentValue);
+
+                    // Bind the argument to the command.
                     result.Add(argument);
+
+                    // If this is the "-splat" common parameter, splat the argument values into the
+                    // command as well.
+                    if (argument.ParameterName.Equals(nameof(CommonParameters.Splat)))
+                    {
+                        foreach (var splattedArgument in SplatCommonParameterValue(argument))
+                        {
+                            result.Add(splattedArgument);
+                        }
+                    }
                 }
                 else
                 {
@@ -260,21 +290,53 @@ namespace System.Management.Automation
             UnboundArguments = result;
         }
 
-        private static bool IsSwitchAndSetValue(
-            string argumentName,
-            CommandParameterInternal argument,
-            CompiledCommandParameter matchingParameter)
+        private IEnumerable<CommandParameterInternal> SplatCommonParameterValue(CommandParameterInternal splatParameter)
         {
-            bool result = false;
-
-            if (matchingParameter.Type == typeof(SwitchParameter))
+            switch (splatParameter.ArgumentValue)
             {
-                argument.ParameterName = argumentName;
-                argument.SetArgumentValue(null, SwitchParameter.Present);
-                result = true;
-            }
+                case IDictionary dictionaryArgument:
+                    // If an IDictionary value was passed into the splat parameter, splat that value as is into the command.
+                    foreach (var splattedCpi in PipelineOps.Splat(dictionaryArgument, splatParameter.ArgumentAst))
+                    {
+                        yield return splattedCpi;
+                    }
+                    break;
 
-            return result;
+                case Array arrayArgument:
+                    // If an array was passed into the splat parameter, splat in the individual dictionaries in that array.
+                    int splatIndex = 0;
+                    var arrayLiteralAst = splatParameter.ArgumentAst as ArrayLiteralAst;
+                    foreach (var splattedValue in arrayArgument)
+                    {
+                        if (splattedValue is IDictionary)
+                        {
+                            foreach (var splattedCpi in PipelineOps.Splat(splattedValue, arrayLiteralAst?.Elements[splatIndex++] ?? splatParameter.ArgumentAst))
+                            {
+                                yield return splattedCpi;
+                            }
+
+                            continue;
+                        }
+
+                        goto default;
+                    }
+                    break;
+
+                default:
+                    ParameterBindingException exception = new ParameterBindingException(
+                        ErrorCategory.InvalidArgument,
+                        InvocationInfo,
+                        GetParameterErrorExtent(splatParameter),
+                        nameof(CommonParameters.Splat),
+                        typeof(IDictionary[]),
+                        splatParameter.ArgumentValue?.GetType(),
+                        ParameterBinderStrings.CannotConvertArgument,
+                        "CannotConvertArgument",
+                        splatParameter.ArgumentValue,
+                        string.Empty);
+
+                    throw exception;
+            }
         }
 
         /// <summary>

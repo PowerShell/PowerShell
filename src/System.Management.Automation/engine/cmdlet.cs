@@ -49,10 +49,26 @@ namespace System.Management.Automation
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
-                return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
-                    "ErrorVariable", "WarningVariable", "OutVariable",
-                    "OutBuffer", "PipelineVariable", "InformationVariable" };
+                if (!ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSCommonSplatParameter"))
+                {
+                    return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
+                        "ErrorVariable", "WarningVariable", "OutVariable",
+                        "OutBuffer", "PipelineVariable", "InformationVariable"
+                    };
+                }
+
+                // If you add new common parameters, please manually sort them into this list
+                // so that they appear in sorted order to anyone who wants to view the common
+                // parameters in PowerShell by invoking the following command:
+                //     [System.Management.Automation.Cmdlet]::CommonParameters
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "Debug", "ErrorAction", "ErrorVariable", "InformationAction",
+                    "InformationVariable", "OutBuffer", "OutVariable", "PipelineVariable",
+                    "Splat", "Verbose", "WarningAction", "WarningVariable"
+                };
             }
         );
 

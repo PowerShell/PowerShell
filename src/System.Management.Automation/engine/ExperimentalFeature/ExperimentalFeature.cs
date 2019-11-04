@@ -127,6 +127,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSPipelineChainOperators",
                     description: "Allow use of && and || as operators between pipeline invocations"),
+                new ExperimentalFeature(
+                    name: "PSCommonSplatParameter",
+                    description: "Add -splat common parameter to PowerShell for inline splatting"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

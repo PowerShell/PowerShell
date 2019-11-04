@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Management.Automation.Internal;
@@ -200,6 +201,7 @@ namespace System.Management.Automation
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutVariable"), (o, v) => ((CommonParameters)o).OutVariable = (string)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutBuffer"), (o, v) => ((CommonParameters)o).OutBuffer = (int)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "PipelineVariable"), (o, v) => ((CommonParameters)o).PipelineVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Splat"), (o, v) => ((CommonParameters)o).Splat = (IDictionary[])v);
         }
 
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> s_getterMethods
