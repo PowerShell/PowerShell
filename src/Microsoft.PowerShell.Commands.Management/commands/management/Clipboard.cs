@@ -140,14 +140,14 @@ namespace Microsoft.PowerShell.Commands.Internal
                 return;
             }
 
-            if (cf_RTF == 0)
+            if (s_CF_RTF == 0)
             {
-                cf_RTF = RegisterClipboardFormat("Rich Text Format");
+                s_CF_RTF = RegisterClipboardFormat("Rich Text Format");
             }
 
             ExecuteOnStaThread(() => SetClipboardData(
                 Tuple.Create(plainText, CF_UNICODETEXT),
-                Tuple.Create(rtfText, cf_RTF)));
+                Tuple.Create(rtfText, s_CF_RTF)));
         }
 
         private const uint GMEM_MOVEABLE = 0x0002;
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private const uint CF_TEXT = 1;
         private const uint CF_UNICODETEXT = 13;
-        private static uint cf_RTF;
+        private static uint s_CF_RTF;
 
         private static bool GetTextImpl(out string text)
         {
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 CloseClipboard();
             }
 
-            text = "";
+            text = string.Empty;
             return false;
         }
 
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             try
             {
                 uint bytes;
-                if (format == cf_RTF || format == CF_TEXT)
+                if (format == s_CF_RTF || format == CF_TEXT)
                 {
                     bytes = (uint)(text.Length + 1);
                     data = Marshal.StringToHGlobalAnsi(text);
