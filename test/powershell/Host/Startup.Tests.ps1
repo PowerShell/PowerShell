@@ -72,6 +72,7 @@ Describe "Validate start of console host" -Tag CI {
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
+                'System.Threading.Timer.dll'
             )
         }
         else {

@@ -202,6 +202,13 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
 
 Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
+            # these tests don't work correctly with pwshw
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         function Read-Mail
         {
             param()
@@ -212,6 +219,10 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             }
             return $null
         }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     BeforeEach {

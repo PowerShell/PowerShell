@@ -4,9 +4,9 @@
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (Test-Path $env:__SuppressAnsiEscapeSequences) {
+        if (Test-Path env:__SuppressAnsiEscapeSequences) {
             $PSDefaultParameterValues["it:skip"] = $true
-            return
+            $skipTest = $true
         }
 
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
@@ -20,7 +20,9 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
 
     Context 'Allow Escape Sequences' {
         BeforeAll {
-            Remove-Item env:__SuppressAnsiEscapeSequences -ErrorAction Ignore
+            if (!$skipTest) {
+                Remove-Item env:__SuppressAnsiEscapeSequences -ErrorAction Ignore
+            }
         }
 
         It 'Select-String emits VT' {
@@ -58,7 +60,9 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
 
     Context 'No Escape Sequences' {
         BeforeAll {
-            $env:__SuppressAnsiEscapeSequences = 1
+            if (!$skipTest) {
+                $env:__SuppressAnsiEscapeSequences = 1
+            }
         }
 
         It 'Select-String does not emit VT' {
