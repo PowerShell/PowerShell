@@ -1490,17 +1490,6 @@ namespace System.Management.Automation
                 return typesXmlConverter;
             }
 
-            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-            foreach (var typeConverter in typeConverters)
-            {
-                var attr = (TypeConverterAttribute)typeConverter;
-                string assemblyQualifiedtypeName = attr.ConverterTypeName;
-                typeConversion.WriteLine("{0}'s TypeConverterAttribute points to {1}.", type, assemblyQualifiedtypeName);
-
-                // The return statement makes sure we only process the first TypeConverterAttribute
-                return NewConverterInstance(assemblyQualifiedtypeName);
-            }
-
             typesXmlConverter = TypeDescriptor.GetConverter(type);
             if (typesXmlConverter != null && typesXmlConverter.GetType() != typeof(TypeConverter))
             {
@@ -1508,51 +1497,6 @@ namespace System.Management.Automation
                 return typesXmlConverter;
             }
 
-            return null;
-        }
-
-        private static object NewConverterInstance(string assemblyQualifiedTypeName)
-        {
-            int typeSeparator = assemblyQualifiedTypeName.IndexOf(',');
-            if (typeSeparator == -1)
-            {
-                typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
-                return null;
-            }
-
-            string assemblyName = assemblyQualifiedTypeName.Substring(typeSeparator + 2);
-            string typeName = assemblyQualifiedTypeName.Substring(0, typeSeparator);
-
-            foreach (Assembly assembly in ClrFacade.GetAssemblies(typeName))
-            {
-                if (assembly.FullName == assemblyName)
-                {
-                    Type converterType = null;
-                    try
-                    {
-                        converterType = assembly.GetType(typeName, false, false);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        typeConversion.WriteLine("Assembly \"{0}\" threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyName, typeName, e.Message);
-                        return null;
-                    }
-
-                    try
-                    {
-                        return Activator.CreateInstance(converterType);
-                    }
-                    catch (Exception e)
-                    {
-                        TargetInvocationException inner = e as TargetInvocationException;
-                        string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
-                        typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
-                        return null;
-                    }
-                }
-            }
-
-            typeConversion.WriteLine("Could not create an instance of type \"{0}\".", assemblyQualifiedTypeName);
             return null;
         }
 
