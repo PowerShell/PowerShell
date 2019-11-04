@@ -2201,7 +2201,7 @@ function script:Start-NativeExecution
         else
         {
             # check if process is already running, otherwise we wait forever
-            if ($null -ne (Get-Process $WaitForProcess -ErrorAction Ignore))
+            if ($PSBoundParameters.ContainsKey('WaitForProcess') -and $null -ne (Get-Process $WaitForProcess -ErrorAction Ignore))
             {
                 throw "'$WaitForProcess' is already running, stop it and try again"
             }
