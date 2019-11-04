@@ -167,8 +167,8 @@ namespace System.Management.Automation.Configuration
 
         internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
-            string valueName = GetExecutionPolicySettingKey(shellId);
-            WriteValueToFile<string>(scope, valueName, executionPolicy);
+            string key = GetExecutionPolicySettingKey(shellId);
+            WriteValueToFile<string>(scope, key, executionPolicy);
         }
 
         private string GetExecutionPolicySettingKey(string shellId)
