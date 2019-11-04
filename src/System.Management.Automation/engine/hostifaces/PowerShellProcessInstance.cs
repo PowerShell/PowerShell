@@ -43,7 +43,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
         /// <param name="powerShellVersion">Specifies the version of powershell.</param>
         /// <param name="credential">Specifies a user account credentials.</param>
@@ -77,9 +77,9 @@ namespace System.Management.Automation.Runspaces
             {
                 processArguments = string.Format(
                     CultureInfo.InvariantCulture,
-                    "{0} -wd {1}",
+                    "{0} -wd \"{1}\"",
                     processArguments,
-                    workingDirectory);
+                    workingDirectory.Replace("\"", "\"\""));
             }
 
             if (initializationScript != null)
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>

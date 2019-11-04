@@ -7,6 +7,10 @@ Describe "Select-String" -Tags "CI" {
         $currentDirectory = $pwd.Path
     }
 
+    AfterAll {
+        Push-Location $currentDirectory
+    }
+
     Context "String actions" {
         $testinputone = "hello","Hello","goodbye"
         $testinputtwo = "hello","Hello"
@@ -76,47 +80,47 @@ Describe "Select-String" -Tags "CI" {
         }
 
         it "Should output a string with the first match highlighted" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string with all matches highlighted when AllMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0m`e[7ml`e[0mo${nl}He`e[7ml`e[0m`e[7ml`e[0mo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string with the first match highlighted when SimpleMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string without highlighting when NoEmphasis is used" {
             $result = $testinputone | Select-String -Pattern "l" -NoEmphasis | Out-String
-            $result | Should -Be "`nhello`nHello`n`n"
+            $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
         }
 
         it "Should return an array of matching strings without virtual terminal sequences" {
@@ -246,9 +250,5 @@ Describe "Select-String" -Tags "CI" {
             $expected = "This is the second line"
             Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
         }
-    }
-
-    AfterAll {
-        Push-Location $currentDirectory
     }
 }

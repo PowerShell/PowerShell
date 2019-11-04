@@ -2405,7 +2405,6 @@ namespace System.Management.Automation.Runspaces
     /// ScriptMethodData represents a ScriptMethod definition.
     /// </summary>
     [DebuggerDisplay(@"ScriptMethod: {Name,nq}")]
-
     public sealed class ScriptMethodData : TypeMemberData
     {
         /// <summary>
@@ -2495,11 +2494,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("referencedProperties");
             }
 
-            ReferencedProperties = new Collection<string>();
-            foreach (string property in referencedProperties)
-            {
-                ReferencedProperties.Add(property);
-            }
+            ReferencedProperties = new Collection<string>(new List<string>(referencedProperties));
         }
 
         /// <summary>
@@ -2591,7 +2586,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// A class that keeps the information from types.ps1xml files in a cache table.
     /// </summary>
-    public sealed class TypeTable
+    public sealed partial class TypeTable
     {
         #region private
 
@@ -2680,6 +2675,11 @@ namespace System.Management.Automation.Runspaces
             InheritPropertySerializationSet,
             TargetTypeForDeserialization
         };
+
+        // Built-in type file paths.
+        internal static readonly string TypesFilePath;
+        internal static readonly string TypesV3FilePath;
+        internal static readonly string GetEventTypesFilePath;
 
         #endregion
 
@@ -3135,7 +3135,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // the node cardinality is OneToMany
-            Collection<string> referencedProperties = new Collection<string>();
+            var referencedProperties = new List<string>(propertySetData.ReferencedProperties.Count);
             foreach (string name in propertySetData.ReferencedProperties)
             {
                 if (string.IsNullOrEmpty(name))
@@ -3161,7 +3161,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessMemberSetData(ConcurrentBag<string> errors, string typeName, MemberSetData memberSetData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(memberSetData.Members.Count);
             foreach (var m in memberSetData.Members)
             {
                 m.Process(errors, typeName, memberSetMembers, isOverride);
@@ -3175,12 +3175,19 @@ namespace System.Management.Automation.Runspaces
             AddMember(errors, typeName, memberSet, membersCollection, isOverride);
         }
 
-        private static void ProcessStandardMembers(ConcurrentBag<string> errors, string typeName, IEnumerable<TypeMemberData> standardMembers, IEnumerable<PropertySetData> propertySets, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        private static void ProcessStandardMembers(
+            ConcurrentBag<string> errors,
+            string typeName,
+            IEnumerable<TypeMemberData> standardMembers,
+            IEnumerable<PropertySetData> propertySets,
+            PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
+            bool isOverride)
         {
+            int newMemberCount = standardMembers.Count() + propertySets.Count();
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
             if (membersCollection[PSStandardMembers] == null)
             {
-                var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(newMemberCount);
 
                 ProcessMembersData(errors, typeName, standardMembers, memberSetMembers, false);
                 foreach (PropertySetData propertySet in propertySets)
@@ -3203,8 +3210,9 @@ namespace System.Management.Automation.Runspaces
             var psStandardMemberSet = (PSMemberSet)membersCollection[PSStandardMembers];
 
             // Copy existing internal PSStandard members
-            var existingMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
-            var oldMembersCopy = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            int totalMemberCount = psStandardMemberSet.InternalMembers.Count + newMemberCount;
+            var existingMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
+            var oldMembersCopy = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
             foreach (var existingMember in psStandardMemberSet.InternalMembers)
             {
                 existingMembers.Add(existingMember.Copy());
@@ -3251,6 +3259,149 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        private static void ProcessStandardMembers(
+            ConcurrentBag<string> errors,
+            string typeName,
+            PSMemberInfoInternalCollection<PSMemberInfo> memberSetMembers,
+            PSMemberInfoInternalCollection<PSMemberInfo> typeMemberCollection,
+            bool isOverride)
+        {
+            // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
+            if (typeMemberCollection[PSStandardMembers] == null)
+            {
+                CheckStandardMembers(errors, typeName, memberSetMembers);
+                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
+                {
+                    inheritMembers = true,
+                    IsHidden = true,
+                    ShouldSerialize = false
+                };
+                AddMember(errors, typeName, standardMemberSet, typeMemberCollection, false);
+                return;
+            }
+
+            // StandardMembers exist
+            var psStandardMemberSet = (PSMemberSet)typeMemberCollection[PSStandardMembers];
+
+            // Copy existing internal PSStandard members
+            int totalMemberCount = psStandardMemberSet.InternalMembers.Count + memberSetMembers.Count;
+            var existingMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
+            var oldMembersCopy = new PSMemberInfoInternalCollection<PSMemberInfo>(totalMemberCount);
+            foreach (var existingMember in psStandardMemberSet.InternalMembers)
+            {
+                existingMembers.Add(existingMember.Copy());
+                oldMembersCopy.Add(existingMember.Copy());
+            }
+
+            // Process the Members directly into the 'existingMembers' collection
+            foreach (PSMemberInfo member in memberSetMembers)
+            {
+                AddMember(errors, typeName, member, existingMembers, isOverride);
+            }
+
+            if (CheckStandardMembers(errors, typeName, existingMembers))
+            {
+                // No conflict in serialization settings, replace the old StandardMembers with the new one
+                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, existingMembers)
+                {
+                    inheritMembers = true,
+                    IsHidden = true,
+                    ShouldSerialize = false
+                };
+                AddMember(errors, typeName, standardMemberSet, typeMemberCollection, isOverride: true);
+            }
+            else
+            {
+                // There are conflicts in serialization settings, add non-serializationSetting configurations
+                // into the original member collection. Replace the old StandardMembers with the new one
+                foreach (PSMemberInfo member in existingMembers)
+                {
+                    if (oldMembersCopy[member.name] == null)
+                    {
+                        oldMembersCopy.Add(member);
+                    }
+                }
+
+                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
+                {
+                    inheritMembers = true,
+                    IsHidden = true,
+                    ShouldSerialize = false
+                };
+                AddMember(errors, typeName, standardMemberSet, typeMemberCollection, isOverride: true);
+            }
+        }
+
+        private static void ProcessTypeConverter(
+            ConcurrentBag<string> errors,
+            string typeName,
+            Type converterType,
+            ConcurrentDictionary<string, object> typeConverters,
+            bool isOverride)
+        {
+            if (CreateInstance(errors, typeName, converterType, TypesXmlStrings.UnableToInstantiateTypeConverter, out object instance))
+            {
+                if ((instance is TypeConverter) || (instance is PSTypeConverter))
+                {
+                    LanguagePrimitives.UpdateTypeConvertFromTypeTable(typeName);
+                }
+                else
+                {
+                    AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeConverter, converterType.FullName);
+                }
+            }
+
+            if (instance != null && !typeConverters.TryAdd(typeName, instance))
+            {
+                if (!isOverride)
+                {
+                    AddError(errors, typeName, TypesXmlStrings.TypeConverterAlreadyPresent);
+                }
+
+                // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
+            }
+        }
+
+        private static void ProcessTypeAdapter(
+            ConcurrentBag<string> errors,
+            string typeName,
+            Type adapterType,
+            ConcurrentDictionary<string, PSObject.AdapterSet> typeAdapters,
+            bool isOverride)
+        {
+            PSObject.AdapterSet adapterSet = null;
+            if (CreateInstance(errors, typeName, adapterType, TypesXmlStrings.UnableToInstantiateTypeAdapter, out object instance))
+            {
+                PSPropertyAdapter psPropertyAdapter = instance as PSPropertyAdapter;
+
+                if (psPropertyAdapter == null)
+                {
+                    AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeAdapter, adapterType.FullName);
+                }
+                else
+                {
+                    if (LanguagePrimitives.TryConvertTo(typeName, out Type adaptedType))
+                    {
+                        adapterSet = PSObject.CreateThirdPartyAdapterSet(adaptedType, psPropertyAdapter);
+                    }
+                    else
+                    {
+                        AddError(errors, typeName, TypesXmlStrings.InvalidAdaptedType, typeName);
+                    }
+                }
+            }
+
+            if (adapterSet != null && !typeAdapters.TryAdd(typeName, adapterSet))
+            {
+                if (!isOverride)
+                {
+                    AddError(errors, typeName, TypesXmlStrings.TypeAdapterAlreadyPresent);
+                }
+
+                // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
+            }
+        }
+
         private void ProcessTypeDataToAdd(ConcurrentBag<string> errors, TypeData typeData)
         {
             string typeName = typeData.TypeName;
@@ -3281,9 +3432,12 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
+            bool hasStandardMembers = typeData.StandardMembers.Count > 0 || propertySets.Count > 0;
+            int collectionSize = typeData.Members.Count + (hasStandardMembers ? 1 : 0);
+
             if (typeData.Members.Count > 0)
             {
-                typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(collectionSize));
                 ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
@@ -3292,11 +3446,11 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (typeData.StandardMembers.Count > 0 || propertySets.Count > 0)
+            if (hasStandardMembers)
             {
                 if (typeMembers == null)
                 {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
                 }
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
@@ -3304,67 +3458,17 @@ namespace System.Management.Automation.Runspaces
 
             if (typeData.TypeConverter != null)
             {
-                object instance = null;
-                if (CreateInstance(errors, typeName, typeData.TypeConverter, TypesXmlStrings.UnableToInstantiateTypeConverter, out instance))
-                {
-                    if ((instance is TypeConverter) || (instance is PSTypeConverter))
-                    {
-                        LanguagePrimitives.UpdateTypeConvertFromTypeTable(typeName);
-                    }
-                    else
-                    {
-                        AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeConverter, typeData.TypeConverter.FullName);
-                    }
-                }
-
-                if (instance != null && !_typeConverters.TryAdd(typeName, instance))
-                {
-                    if (!typeData.IsOverride)
-                    {
-                        AddError(errors, typeName, TypesXmlStrings.TypeConverterAlreadyPresent);
-                    }
-                    // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
-                }
+                ProcessTypeConverter(errors, typeName, typeData.TypeConverter, _typeConverters, typeData.IsOverride);
             }
 
             if (typeData.TypeAdapter != null)
             {
-                object instance;
-                PSObject.AdapterSet adapterSet = null;
-                if (CreateInstance(errors, typeName, typeData.TypeAdapter, TypesXmlStrings.UnableToInstantiateTypeAdapter, out instance))
-                {
-                    PSPropertyAdapter psPropertyAdapter = instance as PSPropertyAdapter;
-
-                    if (psPropertyAdapter == null)
-                    {
-                        AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeAdapter, typeData.TypeAdapter.FullName);
-                    }
-                    else
-                    {
-                        Type adaptedType = null;
-                        if (LanguagePrimitives.TryConvertTo(typeName, out adaptedType))
-                        {
-                            adapterSet = PSObject.CreateThirdPartyAdapterSet(adaptedType, psPropertyAdapter);
-                        }
-                        else
-                        {
-                            AddError(errors, typeName, TypesXmlStrings.InvalidAdaptedType, typeName);
-                        }
-                    }
-                }
-
-                if (adapterSet != null && !_typeAdapters.TryAdd(typeName, adapterSet))
-                {
-                    if (!typeData.IsOverride)
-                    {
-                        AddError(errors, typeName, TypesXmlStrings.TypeAdapterAlreadyPresent);
-                    }
-                    // If IsOverride == true, eat the TypeConverterAlreadyPresent failure.
-                }
+                ProcessTypeAdapter(errors, typeName, typeData.TypeAdapter, _typeAdapters, typeData.IsOverride);
             }
+
             // Record the information that this typedata was removed from the typetable
             // The next time the typetable is updated, we will need to exclude this typedata from the typetable
-            typesInfo.Add(new SessionStateTypeEntry(typeData, false));
+            typesInfo.Add(new SessionStateTypeEntry(typeData, isRemove: false));
         }
 
         #endregion add members from TypeData
@@ -3389,15 +3493,13 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            object unused1;
-            if (_typeConverters.TryRemove(typeName, out unused1))
+            if (_typeConverters.TryRemove(typeName, out _))
             {
                 typeExist = true;
                 LanguagePrimitives.UpdateTypeConvertFromTypeTable(typeName);
             }
 
-            PSObject.AdapterSet unused2;
-            if (_typeAdapters.TryRemove(typeName, out unused2))
+            if (_typeAdapters.TryRemove(typeName, out _))
             {
                 typeExist = true;
             }
@@ -3456,6 +3558,8 @@ namespace System.Management.Automation.Runspaces
 
         static TypeTable()
         {
+            s_valueFactoryCache = new Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[ValueFactoryCacheCount];
+
             // Rather than set these members every time we process the standard members, do it
             // just once at startup.
             foreach (var sm in s_standardMembers)
@@ -3464,6 +3568,12 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSGetMemberBinder.TypeTableMemberAdded(PSStandardMembers);
+
+            // Set the built-in type file paths.
+            var psHome = Utils.DefaultPowerShellAppBase;
+            TypesFilePath = Path.Combine(psHome, "types.ps1xml");
+            TypesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
+            GetEventTypesFilePath = Path.Combine(psHome, "GetEvent.types.ps1xml");
         }
 
         /// <summary>
@@ -3514,17 +3624,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>List of type files.</returns>
         public static List<string> GetDefaultTypeFiles()
         {
-            string typesFilePath = string.Empty;
-            string typesV3FilePath = string.Empty;
-
-            var psHome = Utils.DefaultPowerShellAppBase;
-            if (!string.IsNullOrEmpty(psHome))
-            {
-                typesFilePath = Path.Combine(psHome, "types.ps1xml");
-                typesV3FilePath = Path.Combine(psHome, "typesv3.ps1xml");
-            }
-
-            return new List<string>() { typesFilePath, typesV3FilePath };
+            return new List<string>() { TypesFilePath, TypesV3FilePath };
         }
 
         /// <summary>
@@ -4256,7 +4356,6 @@ namespace System.Management.Automation.Runspaces
             bool isProductCode,
             ConcurrentBag<string> errors)
         {
-            typesInfo.Add(new SessionStateTypeEntry(fileToLoad));
             LoadContext loadContext = new LoadContext(moduleName, fileToLoad, errors)
             {
                 IsFullyTrusted = isFullyTrusted,
@@ -4269,20 +4368,6 @@ namespace System.Management.Automation.Runspaces
                 loadContext.reader = reader;
                 Update(loadContext);
                 reader.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Removes the <paramref name="typeFile"/> from the current TypeTable's type file list.
-        /// The TypeTable will not reflect the change until Update is called.
-        /// </summary>
-        /// <param name="typeFile"></param>
-        internal void Remove(string typeFile)
-        {
-            lock (_typeFileList)
-            {
-                _typeFileList.Remove(typeFile);
-                typesInfo.Remove(typeFile, null);
             }
         }
 
@@ -4335,79 +4420,6 @@ namespace System.Management.Automation.Runspaces
             StandardMembersUpdated();
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, FormatAndTypeDataHelper.Category.Types);
-        }
-
-        /// <summary>
-        /// Update typetable from psSnapinTypes, this method will always rebuild the typetable.
-        /// The psSnapinTypes contain files and strong type data.
-        /// </summary>
-        /// <param name="psSnapinTypes"></param>
-        /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
-        /// </param>
-        /// <param name="host">
-        /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
-        /// </param>
-        /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated because the TypeTable might have
-        /// been created outside of the Runspace.
-        /// </exception>
-        internal void Update(
-            Collection<PSSnapInTypeAndFormatErrors> psSnapinTypes,
-            AuthorizationManager authorizationManager,
-            PSHost host
-            )
-        {
-            if (isShared)
-            {
-                throw PSTraceSource.NewInvalidOperationException(TypesXmlStrings.SharedTypeTableCannotBeUpdated);
-            }
-
-            // Always rebuild the whole TypeTable
-            Clear();
-
-            foreach (PSSnapInTypeAndFormatErrors snapin in psSnapinTypes)
-            {
-                // FullPath is not null, then it is a type xml file
-                if (snapin.FullPath != null)
-                {
-                    Initialize(snapin.PSSnapinName, snapin.FullPath, snapin.Errors, authorizationManager, host,
-                        out snapin.FailToLoadFile);
-                }
-                // FullPath is null, then it is a TypeData
-                else
-                {
-                    Update(snapin.Errors, snapin.TypeData, snapin.IsRemove);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Entry created to make reflection-based test suites happy. DO NOT USE THIS ENTRY.
-        /// </summary>
-        /// <param name="filePath">The path to the file to load.</param>
-        /// <param name="errors">A place to put the errors...</param>
-        /// <param name="clearTable">If true, reset the table to empty...</param>
-        /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
-        /// </param>
-        /// <param name="host">
-        /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
-        /// </param>
-        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to the security reason.</param>
-        /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated because the TypeTable might have
-        /// been created outside of the Runspace.
-        /// </exception>
-        internal void Update(
-            string filePath,
-            ConcurrentBag<string> errors,
-            bool clearTable,
-            AuthorizationManager authorizationManager,
-            PSHost host,
-            out bool failToLoadFile)
-        {
-            Update(filePath, filePath, errors, authorizationManager, host, out failToLoadFile);
         }
 
         /// <summary>
@@ -4467,38 +4479,24 @@ namespace System.Management.Automation.Runspaces
             if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStop(filePath);
         }
 
-        private void ProcessTypeData(string filePath, ConcurrentBag<string> errors, IEnumerable<TypeData> types)
-        {
-            typesInfo.Add(new SessionStateTypeEntry(filePath));
-
-            // TODO - use parallel foreach without causing any contention
-            // Parallel.ForEach(types, typeData =>
-            foreach (var typeData in types)
-            {
-                ProcessTypeDataToAdd(errors, typeData);
-            }
-            // });
-        }
-
         private bool ProcessIsBuiltIn(string filePath, ConcurrentBag<string> errors, out bool failToLoadFile)
         {
             var result = false;
             var errorCount = errors.Count;
 
-            var psHome = Utils.DefaultPowerShellAppBase;
-            if (string.Equals(Path.Combine(psHome, "types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(TypesFilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                ProcessTypeData(filePath, errors, Types_Ps1Xml.Get());
+                Process_Types_Ps1Xml(filePath, errors);
                 result = true;
             }
-            else if (string.Equals(Path.Combine(psHome, "typesv3.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(TypesV3FilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                ProcessTypeData(filePath, errors, TypesV3_Ps1Xml.Get());
+                Process_TypesV3_Ps1Xml(filePath, errors);
                 result = true;
             }
-            else if (string.Equals(Path.Combine(psHome, "GetEvent.types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(GetEventTypesFilePath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                ProcessTypeData(filePath, errors, GetEvent_Types_Ps1Xml.Get());
+                Process_GetEvent_Types_Ps1Xml(filePath, errors);
                 result = true;
             }
 

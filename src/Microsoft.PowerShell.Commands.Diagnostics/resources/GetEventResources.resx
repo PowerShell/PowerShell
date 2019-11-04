@@ -253,7 +253,7 @@ The defined template is following:
     <value>The following value is not in a valid DateTime format: {0}.</value>
   </data>
   <data name="LogInfoUnavailable" xml:space="preserve">
-    <value>Could not retrieve information about the {0} log. Error: {1}.</value>
+    <value>To access the '{0}' log start PowerShell with elevated user rights.  Error: {1}</value>
   </data>
   <data name="NoEventMessage" xml:space="preserve">
     <value>Cannot retrieve event message text.</value>
@@ -282,5 +282,7 @@ The defined template is following:
   <data name="Counter1FileLimit" xml:space="preserve">
     <value>You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file in each command.</value>
   </data>
-
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Log count ({0}) is exceeded Windows Event Log API limit ({1}). Adjust filter to return less log names.</value>
+  </data>
 </root>
