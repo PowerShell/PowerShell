@@ -47,7 +47,8 @@ namespace System.Management.Automation.Configuration
     /// </remarks>
     internal sealed class PowerShellConfig
     {
-        private const string configFileName = "powershell.config.json";
+        private const string ConfigFileName = "powershell.config.json";
+        private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
 
         // Provide a singleton
         internal static readonly PowerShellConfig Instance = new PowerShellConfig();
@@ -79,13 +80,13 @@ namespace System.Management.Automation.Configuration
         {
             // Sets the system-wide configuration file.
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
-            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, configFileName);
+            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
             perUserConfigDirectory = Platform.ConfigDirectory;
-            perUserConfigFile = Path.Combine(perUserConfigDirectory, configFileName);
+            perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
@@ -153,49 +154,28 @@ namespace System.Management.Automation.Configuration
         /// <returns>The execution policy if found. Null otherwise.</returns>
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
-            string execPolicy = null;
-
-            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
-            string rawExecPolicy = ReadValueFromFile<string>(scope, valueName);
-
-            if (!string.IsNullOrEmpty(rawExecPolicy))
-            {
-                execPolicy = rawExecPolicy;
-            }
-
-            return execPolicy;
+            string key = GetExecutionPolicySettingKey(shellId);
+            string execPolicy = ReadValueFromFile<string>(scope, key);
+            return string.IsNullOrEmpty(execPolicy) ? null : execPolicy;
         }
 
         internal void RemoveExecutionPolicy(ConfigScope scope, string shellId)
         {
-            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
-            RemoveValueFromFile<string>(scope, valueName);
+            string key = GetExecutionPolicySettingKey(shellId);
+            RemoveValueFromFile<string>(scope, key);
         }
 
         internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
-            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
+            string valueName = GetExecutionPolicySettingKey(shellId);
             WriteValueToFile<string>(scope, valueName, executionPolicy);
         }
 
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
-        /// Proposed value = existing default. Probably "1"
-        ///
-        /// Schema:
-        /// {
-        ///     "ConsolePrompting" : bool
-        /// }
-        /// </summary>
-        /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
-        internal bool GetConsolePrompting()
+        private string GetExecutionPolicySettingKey(string shellId)
         {
-            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "ConsolePrompting");
-        }
-
-        internal void SetConsolePrompting(bool shouldPrompt)
-        {
-            WriteValueToFile<bool>(ConfigScope.AllUsers, "ConsolePrompting", shouldPrompt);
+            return shellId == Utils.DefaultPowerShellShellID
+                ? ExecutionPolicyDefaultShellKey
+                : string.Concat(shellId, ":", "ExecutionPolicy");
         }
 
         /// <summary>
