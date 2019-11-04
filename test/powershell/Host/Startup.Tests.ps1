@@ -68,7 +68,6 @@ Describe "Validate start of console host" -Tag CI {
             $allowedAssemblies += @(
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
                 'System.DirectoryServices.dll'
-                'System.Drawing.Primitives.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
