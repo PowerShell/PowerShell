@@ -513,7 +513,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (filteredParameters.Count == 1)
+                if (tryExactMatching && filteredParameters.Count == 1)
                 {
                     matchingParameters = filteredParameters;
                 }

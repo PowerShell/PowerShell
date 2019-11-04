@@ -909,7 +909,7 @@ namespace System.Management.Automation
             WildcardPatternParser.Parse(wildcardPattern, parser);
             try
             {
-                return new Regex(parser._regexPattern.ToString(), parser._regexOptions);
+                return ParserOps.NewRegex(parser._regexPattern.ToString(), parser._regexOptions);
             }
             catch (ArgumentException)
             {
@@ -1258,7 +1258,7 @@ namespace System.Management.Automation
             protected override void EndBracketExpression()
             {
                 _bracketExpressionBuilder.Append(']');
-                Regex regex = new Regex(_bracketExpressionBuilder.ToString(), _regexOptions);
+                Regex regex = ParserOps.NewRegex(_bracketExpressionBuilder.ToString(), _regexOptions);
                 _patternElements.Add(new BracketExpressionElement(regex));
             }
         }
