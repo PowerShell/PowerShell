@@ -17,7 +17,7 @@ Describe "Out-Host Tests" -Tag CI {
         $rs.Dispose()
         $ps.Dispose()
     }
-    It "Out-Host writes to host output" {
+    It "Out-Host writes to host output" -Skip:([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
         $stringToWrite = "thing to write"
         $stringExpected = "::$($stringToWrite):NewLine"
         $result = $ps.AddScript("Out-Host -inputobject '$stringToWrite'").Invoke()

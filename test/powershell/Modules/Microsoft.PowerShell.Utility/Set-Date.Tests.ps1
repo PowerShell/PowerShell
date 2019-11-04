@@ -21,7 +21,14 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
 }
 
 Describe "Set-Date" -Tag 'CI' {
-    It "Set-Date should produce an error in a non-elevated context" {
+    BeforeAll {
+        $IsAdmin = $false
+        if ($IsWindows) {
+            $IsAdmin = ([Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+        }
+    }
+
+    It "Set-Date should produce an error in a non-elevated context" -Skip:($IsAdmin) {
         { Get-Date | Set-Date } | Should -Throw -ErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
     }
 }

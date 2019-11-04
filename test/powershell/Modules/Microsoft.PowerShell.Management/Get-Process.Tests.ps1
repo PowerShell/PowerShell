@@ -44,6 +44,10 @@ Describe "Get-Process" -Tags "CI" {
     BeforeAll {
         $ps = Get-Process
         $idleProcessPid = 0
+        $IsAdmin = $false
+        if ($IsWindows) {
+            $IsAdmin = ([Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+        }
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
         ,$ps | Should -BeOfType System.Object[]
@@ -79,15 +83,15 @@ Describe "Get-Process" -Tags "CI" {
         (Get-Process -Id $PID).Id | Should -BeExactly $PID
     }
 
-    It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows)  {
+    It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows -or $IsAdmin)  {
         { Get-Process -IncludeUserName } | Should -Throw -ErrorId "IncludeUserNameRequiresElevation,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
-    It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows) {
+    It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows -or $IsAdmin) {
         { Get-Process -Module -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
-    It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
+    It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows -or $IsAdmin) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 

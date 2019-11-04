@@ -278,16 +278,18 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     Context "Validate behavior when access is denied" {
         BeforeAll {
             $powershell = Join-Path $PSHOME "pwsh"
+            $IsAdmin = $false
             if ($IsWindows)
             {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
                 $shouldSkip = -not (Test-Path $protectedPath)
+                $IsAdmin = ([Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
             }
         }
 
-        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
+        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip -or $IsAdmin) -TestCases @(
             # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
             # The following test does not consistently work on windows
             # @{cmdline = "Get-Item $protectedPath2 -ErrorAction Stop"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}

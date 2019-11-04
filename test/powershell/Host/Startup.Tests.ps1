@@ -69,6 +69,7 @@ Describe "Validate start of console host" -Tag CI {
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
+                'System.Reflection.Emit.dll'
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
