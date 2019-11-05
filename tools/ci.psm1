@@ -339,7 +339,7 @@ function Invoke-CITest
             OutputFile = $testResultsPwshwFile
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
-            PowerShell = $env:CoreOutput.Replace("pwsh.exe","pwshw.exe")
+            PowerShell = Join-Path -Path $env:CoreOutput -ChildPath 'pwshw.exe'
         }
 
         Start-PSPester @arguments -Title "Pwshw Elevated - $TagSet"
