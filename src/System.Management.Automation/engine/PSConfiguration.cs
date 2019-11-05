@@ -173,7 +173,7 @@ namespace System.Management.Automation.Configuration
 
         private string GetExecutionPolicySettingKey(string shellId)
         {
-            return shellId == Utils.DefaultPowerShellShellID
+            return string.Equals(shellId, Utils.DefaultPowerShellShellID, StringComparison.Ordinal)
                 ? ExecutionPolicyDefaultShellKey
                 : string.Concat(shellId, ":", "ExecutionPolicy");
         }
