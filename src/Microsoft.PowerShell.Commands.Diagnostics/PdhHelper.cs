@@ -194,13 +194,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
     internal class PdhHelper : IDisposable
     {
-        private bool _isPreVista = false;
-
-        public PdhHelper(bool isPreVista)
-        {
-            _isPreVista = isPreVista;
-        }
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS
         {
@@ -271,7 +264,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             public UInt32 SampleCount;
         }
 
-        /*
         //
         // This is the structure returned by PdhGetCounterInfo().
         // We only need dwType and lDefaultScale fields from this structure.
@@ -298,7 +290,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             [FieldOffset(96)] public string szExplainText;
             [FieldOffset(104)]public IntPtr DataBuffer;
-        }*/
+        }
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhBindInputDataSource(out PdhSafeDataSourceHandle phDataSource, string szLogFileNameList);
@@ -380,10 +372,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhValidatePath(string szFullPathBuffer);
-
-        // not available on XP
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, PreserveSig = true)] // private export
-        private static extern IntPtr PdhGetExplainText(string szMachineName, string szObjectName, string szCounterName);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)]bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
@@ -490,10 +478,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, bufCounterInfo);
                 if (res == 0 && bufCounterInfo != IntPtr.Zero)
                 {
-                    // PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
-
-                    counterType = (uint)Marshal.ReadInt32(bufCounterInfo, 4);
-                    defaultScale = (uint)Marshal.ReadInt32(bufCounterInfo, 20);
+                    PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
+                    counterType = pdhCounterInfo.dwType;
+                    defaultScale = pdhCounterInfo.lDefaultScale;
                 }
             }
             finally
@@ -824,14 +811,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
 
-                    if (!_isPreVista)
-                    {
-                        ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
-                    }
-                    else
-                    {
-                        ret = (PdhValidatePath(outPath) == 0);
-                    }
+                    ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
                 }
             }
             finally
@@ -844,17 +824,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public bool IsPathValid(string path)
         {
-            if (!_isPreVista)
-            {
-                return (PdhValidatePathEx(_hDataSource, path) == 0);
-            }
-            else
-            {
-                //
-                // Note: this assumes the paths already contain machine names
-                //
-                return (PdhValidatePath(path) == 0);
-            }
+            return (PdhValidatePathEx(_hDataSource, path) == 0);
         }
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
@@ -1170,168 +1140,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public string GetCounterSetHelp(string szMachineName, string szObjectName)
         {
-            if (_isPreVista)
-            {
-                return string.Empty;
-            }
-
-            IntPtr retString = PdhGetExplainText(szMachineName, szObjectName, null);
-            return Marshal.PtrToStringUni(retString);
-        }
-
-        public uint ReadNextSetPreVista(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
-        {
-            uint res = 0;
-            nextSet = null;
-
-            res = PdhCollectQueryData(_hQuery);
-            if (bSkipReading)
-            {
-                return res;
-            }
-
-            if (res != 0 && res != PdhResults.PDH_NO_DATA)
-            {
-                return res;
-            }
-
-            PerformanceCounterSample[] samplesArr = new PerformanceCounterSample[_consumerPathToHandleAndInstanceMap.Count];
-            uint sampleIndex = 0;
-            uint numInvalidDataSamples = 0;
-            uint lastErr = 0;
-
-            DateTime sampleTimeStamp = DateTime.Now;
-
-            foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
-            {
-                IntPtr counterTypePtr = new IntPtr(0);
-                UInt32 counterType = (UInt32)PerformanceCounterType.RawBase;
-                UInt32 defaultScale = 0;
-                UInt64 timeBase = 0;
-
-                IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
-                Debug.Assert(hCounter != null);
-
-                res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
-                if (res != 0)
-                {
-                    // Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
-                }
-
-                PDH_RAW_COUNTER rawValue;
-                res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out rawValue);
-                if (res == PdhResults.PDH_INVALID_DATA || res == PdhResults.PDH_NO_DATA)
-                {
-                    // Console.WriteLine ("PdhGetRawCounterValue returned " + res);
-                    samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                           0,
-                                           (ulong)0,
-                                           (ulong)0,
-                                           0,
-                                           PerformanceCounterType.RawBase,
-                                           defaultScale,
-                                           timeBase,
-                                           DateTime.Now,
-                                           (UInt64)DateTime.Now.ToFileTime(),
-                                           rawValue.CStatus);
-
-                    numInvalidDataSamples++;
-                    lastErr = res;
-                    continue;
-                }
-                else if (res != 0)
-                {
-                    return res;
-                }
-
-                long dtFT = (((long)rawValue.TimeStamp.dwHighDateTime) << 32) +
-                                     (uint)rawValue.TimeStamp.dwLowDateTime;
-
-                //
-                // NOTE: PDH returns the filetime as local time, therefore
-                // we need to call FromFileTimUtc() to avoid .NET applying the timezone adjustment.
-                // However, that would result in the DateTime object having Kind.Utc.
-                // We have to copy it once more to correct that (Kind is a read-only property).
-                //
-                sampleTimeStamp = new DateTime(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
-
-                PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble;
-                res = PdhGetFormattedCounterValue(hCounter,
-                                                  PdhFormat.PDH_FMT_DOUBLE | PdhFormat.PDH_FMT_NOCAP100,
-                                                  out counterTypePtr,
-                                                  out fmtValueDouble);
-                if (res == PdhResults.PDH_INVALID_DATA || res == PdhResults.PDH_NO_DATA)
-                {
-                    // Console.WriteLine ("PdhGetFormattedCounterValue returned " + res);
-                    samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                           0,
-                                           (ulong)rawValue.FirstValue,
-                                           (ulong)rawValue.SecondValue,
-                                           rawValue.MultiCount,
-                                           (PerformanceCounterType)counterType,
-                                           defaultScale,
-                                           timeBase,
-                                           sampleTimeStamp,
-                                           (UInt64)dtFT,
-                                           fmtValueDouble.CStatus);
-
-                    numInvalidDataSamples++;
-                    lastErr = res;
-                    continue;
-                }
-                else if (res != 0)
-                {
-                    // Console.WriteLine ("PdhGetFormattedCounterValue returned " + res);
-                    return res;
-                }
-
-                samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                                           fmtValueDouble.doubleValue,
-                                                           (ulong)rawValue.FirstValue,
-                                                           (ulong)rawValue.SecondValue,
-                                                           rawValue.MultiCount,
-                                                           (PerformanceCounterType)counterTypePtr.ToInt32(),
-                                                           defaultScale,
-                                                           timeBase,
-                                                           sampleTimeStamp,
-                                                           (UInt64)dtFT,
-                                                           fmtValueDouble.CStatus);
-            }
-
-            //
-            // Prior to Vista, PdhCollectQueryDataWithTime() was not available,
-            // so we could not collect a timestamp for the entire sample set.
-            // We will use the last sample's timestamp instead.
-            //
-            nextSet = new PerformanceCounterSampleSet(sampleTimeStamp, samplesArr, _firstReading);
-            _firstReading = false;
-
-            if (numInvalidDataSamples == samplesArr.Length)
-            {
-                res = lastErr;
-            }
-            else
-            {
-                //
-                // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
-                //
-                res = 0;
-            }
-
-            return res;
+            // API not available to retrieve
+            return string.Empty;
         }
 
         public uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            if (_isPreVista)
-            {
-                return ReadNextSetPreVista(out nextSet, bSkipReading);
-            }
 
             uint res = 0;
             nextSet = null;

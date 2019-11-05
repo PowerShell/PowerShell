@@ -217,9 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell 7 requires at least Windows 7,
-            // so no version test is needed
-            _pdhHelper = new PdhHelper(false);
+            _pdhHelper = new PdhHelper();
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             uint res = _pdhHelper.ConnectToDataSource();
@@ -566,12 +564,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-#if CORECLR
-                // CoreCLR has no overload of WaitOne with (interval, exitContext)
-                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000);
-#else
                 bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
-#endif
                 if (cancelled)
                 {
                     break;
@@ -662,11 +655,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static CultureInfo GetCurrentCulture()
         {
-#if CORECLR
-            return CultureInfo.CurrentCulture;
-#else
             return Thread.CurrentThread.CurrentUICulture;
-#endif
         }
     }
 }
