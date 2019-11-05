@@ -1821,7 +1821,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
-                        // Telemetry here - report module load;
+                        // report loading of the module in telemetry
                         // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
                         if (!foundModule.IsWindowsPowerShellCompatModule)
                         {
