@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe 'Basic Job Tests' -Tags 'CI' {
     BeforeAll {
         # Make sure we do not have any jobs running
@@ -77,16 +78,33 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg[0].StatusDescription | Should -BeExactly 2
         }
 
-        It 'Can use the user specified working directory parameter' {
-            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $TestDrive | Wait-Job
+        It 'Can use the user specified working directory parameter with whitespace' {
+            $path = Join-Path -Path $TestDrive -ChildPath "My Dir"
+            $null = New-Item -ItemType Directory -Path "$path"
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
-            $jobOutput | Should -BeExactly $TestDrive.ToString()
+            $jobOutput | Should -BeExactly $path.ToString()
+        }
+
+        It 'Can use the user specified working directory parameter with quote' -Skip:($IsWindows) {
+            $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
+            $null = New-Item -ItemType Directory -Path "$path"
+            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
+            $jobOutput = Receive-Job $job
+            $jobOutput | Should -BeExactly $path.ToString()
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
             param($path, $case, $expectedErrorId)
 
             {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $expectedErrorId
+        }
+
+        It 'Verifies that the current working directory is preserved' {
+            $job = Start-Job -ScriptBlock { $pwd }
+            $location = $job | Wait-Job | Receive-Job
+            $job | Remove-Job
+            $location.Path | Should -BeExactly $pwd.Path
         }
 
         It "Create job with native command" {
