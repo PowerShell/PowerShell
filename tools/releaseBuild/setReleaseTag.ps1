@@ -33,6 +33,7 @@ function New-BuildInfoJson {
         $filename = 'daily.json'
     }
 
+    ## Get the UTC time and round up to the second.
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
