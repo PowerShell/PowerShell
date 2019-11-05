@@ -38,6 +38,7 @@ jobs:
       $authenticodefiles = @(
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
@@ -70,7 +71,6 @@ jobs:
     parameters:
       architecture: x86
       version: $(version)
-      msix: no
 
   - template: upload.yml
     parameters:
