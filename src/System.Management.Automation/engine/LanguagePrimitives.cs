@@ -5556,25 +5556,31 @@ namespace System.Management.Automation
         {
             convertViaTypeConverter = null;
 
-            var converter = TypeDescriptor.GetConverter(fromType);
+            var typeConverter = TypeDescriptor.GetConverter(fromType);
 
             // Generic TypeConverter can convert all types to string
             // this violates specific type conversions so we exclude it.
-            if (converter != null && converter.GetType() != typeof(TypeConverter) && converter.CanConvertTo(toType))
+            if (typeConverter != null && typeConverter.GetType() != typeof(TypeConverter) && typeConverter.CanConvertTo(toType))
             {
-                convertViaTypeConverter = new ConvertViaTypeConverter();
-                convertViaTypeConverter.convertTo = true;
+                convertViaTypeConverter = new ConvertViaTypeConverter()
+                {
+                    converter = typeConverter,
+                    convertTo = true
+                };
                 return true;
             }
 
-            converter = TypeDescriptor.GetConverter(toType);
+            typeConverter = TypeDescriptor.GetConverter(toType);
 
             // Generic TypeConverter can convert all types to string
             // this violates specific type conversions so we exclude it.
-            if (converter != null && converter.GetType() != typeof(TypeConverter) && converter.CanConvertFrom(fromType))
+            if (typeConverter != null && typeConverter.GetType() != typeof(TypeConverter) && typeConverter.CanConvertFrom(fromType))
             {
-                convertViaTypeConverter = new ConvertViaTypeConverter();
-                convertViaTypeConverter.convertTo = false;
+                convertViaTypeConverter = new ConvertViaTypeConverter()
+                {
+                    converter = typeConverter,
+                    convertTo = false
+                };
                 return true;
             }
 
