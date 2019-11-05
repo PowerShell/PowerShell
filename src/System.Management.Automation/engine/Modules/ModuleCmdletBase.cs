@@ -284,9 +284,24 @@ namespace Microsoft.PowerShell.Commands
             "Desktop"
         };
 
+        /// <summary>
+        /// A remoting session that is used to invoke commands that are compartible with Windows PS but not PS Core
+        /// </summary>
         internal static PSSession WindowsPowerShellCompatRemotingSession = null;
+        
+        /// <summary>
+        /// A counter for modules that are loaded using WindowsPS compat session
+        /// </summary>
         internal static int WindowsPowerShellCompatUsageCounter = 0;
+
+        /// <summary>
+        /// User name for WindowsPS compat remoting session
+        /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
+        
+        /// <summary>
+        /// Synchronization object for creation/cleanup of WindowsPS compat remoting session
+        /// </summary>
         internal static object WindowsPowerShellCompatSyncObject = new object();
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
@@ -2358,21 +2373,23 @@ namespace Microsoft.PowerShell.Commands
                     if (importingModule)
                     {
                         var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                        var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                        .AddCommand(commandInfo)
-                        .AddParameter("PassThru", true)
-                        .AddParameter("Name", moduleManifestPath)
-                        .AddParameter("UseWindowsPowerShell", true);
-                        
-                        var moduleProxies = ps.Invoke<PSModuleInfo>();
-                        // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0) 
+                        using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                            .AddCommand(commandInfo)
+                            .AddParameter("PassThru", true)
+                            .AddParameter("Name", moduleManifestPath)
+                            .AddParameter("UseWindowsPowerShell", true))
                         {
-                            return moduleProxies[0];
-                        }
-                        else
-                        {
-                            return null;
+                            var moduleProxies = ps.Invoke<PSModuleInfo>();
+
+                            // we are loading by a single ManifestPath so expect max of 1
+                            if(moduleProxies.Count > 0) 
+                            {
+                                return moduleProxies[0];
+                            }
+                            else
+                            {
+                                return null;
+                            }
                         }
                     }
                 }
@@ -4807,18 +4824,16 @@ namespace Microsoft.PowerShell.Commands
                 if (WindowsPowerShellCompatRemotingSession == null)
                 {
                     var commandInfo = new CmdletInfo("New-PSSession", typeof(NewPSSessionCommand));
-                    var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                    using(var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
                         .AddCommand(commandInfo)
                         .AddParameter("UseWindowsPowerShell", true)
-                        .AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
-
-                    var results = ps.Invoke<PSSession>();
-                    if (results.Count > 0)
+                        .AddParameter("Name", WindowsPowerShellCompatRemotingSessionName))
                     {
-                        WindowsPowerShellCompatRemotingSession = results[0];
-
-                        var sb = ScriptBlock.Create(string.Format("Remove-PSSession -Name {0}", WindowsPowerShellCompatRemotingSessionName));
-                        Events.SubscribeEvent(null, null, PSEngineEvent.Exiting, null, sb, false, false);
+                        var results = ps.Invoke<PSSession>();
+                        if (results.Count > 0)
+                        {
+                            WindowsPowerShellCompatRemotingSession = results[0];
+                        }
                     }
                 }
             }
@@ -4831,11 +4846,13 @@ namespace Microsoft.PowerShell.Commands
                 if (WindowsPowerShellCompatRemotingSession != null)
                 {
                     var commandInfo = new CmdletInfo("Remove-PSSession", typeof(RemovePSSessionCommand));
-                    var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                    using(var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
                     .AddCommand(commandInfo)
-                    .AddParameter("Session", WindowsPowerShellCompatRemotingSession);
-                    ps.Invoke();
-                    WindowsPowerShellCompatRemotingSession = null;
+                    .AddParameter("Session", WindowsPowerShellCompatRemotingSession))
+                    {
+                        ps.Invoke();
+                        WindowsPowerShellCompatRemotingSession = null;
+                    }
                 }
             }
         }
@@ -4934,15 +4951,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWinCompat"))
+                    if (ExperimentalFeature.IsEnabled("PSWinCompat") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref WindowsPowerShellCompatUsageCounter) == 0))
                     {
-                        if (module.IsWindowsPowerShellCompatModule)
-                        {
-                            if (System.Threading.Interlocked.Decrement(ref WindowsPowerShellCompatUsageCounter) == 0)
-                            {
-                                CleanupWindowsPowerShellCompatResources();
-                            }
-                        }
+                        CleanupWindowsPowerShellCompatResources();
                     }
 
                     // First remove cmdlets from the session state

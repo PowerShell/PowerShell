@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Helper method to create remote runspace based on ProcessId parameter set.
+        /// Helper method to create remote runspace based on UseWindowsPowerShell parameter set.
         /// </summary>
         /// <returns>Remote runspace that was created.</returns>
         private List<RemoteRunspace> CreateRunspacesForUseWindowsPowerShellParameterSet()
@@ -1163,10 +1163,12 @@ namespace Microsoft.PowerShell.Commands
             connectionInfo.PSVersion = new Version(5, 1);
 
             var typeTable = TypeTable.LoadDefaultTypeFiles();
-            string rsName = GetRunspaceName(0, out int rsIdUnused);
-            RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable, null, rsName);
-
-            remoteRunspaces.Add(remoteRunspace);
+            string runspaceName = GetRunspaceName(0, out int runspaceIdUnused);
+            remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: connectionInfo,
+                                                               host: this.Host,
+                                                               typeTable: typeTable,
+                                                               applicationArguments: null,
+                                                               name: runspaceName) as RemoteRunspace);
             return remoteRunspaces;
         }
 

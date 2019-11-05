@@ -1869,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_ViaWinCompat, StringComparison.OrdinalIgnoreCase)
                   || this.ParameterSetName.Equals(ParameterSet_FQName_ViaWinCompat, StringComparison.OrdinalIgnoreCase))
             {
-                if (ExperimentalFeature.IsEnabled("PSWinCompat") && this.UseWindowsPowerShell)
+                if (this.UseWindowsPowerShell)
                 {
                     CreateWindowsPowerShellCompatResources();
 
