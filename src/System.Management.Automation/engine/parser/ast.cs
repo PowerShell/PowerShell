@@ -7852,6 +7852,38 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Construct an ast to reference a property.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
+        /// membername or expression naming the member.
+        /// </param>
+        /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
+        /// <param name="member">The name or expression naming the member to access.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' is used.
+        /// <param name="nullConditionalAccess">True if the operator used is ?. or ?[]</param>
+        /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
+        /// </param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
+        /// </exception>
+        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditionalAccess)
+            : base(extent)
+        {
+            if (expression == null || member == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "member");
+            }
+
+            this.Expression = expression;
+            SetParent(expression);
+            this.Member = member;
+            SetParent(member);
+            this.Static = @static;
+            this.NullConditionalAccess = nullConditionalAccess;
+        }
+
+        /// <summary>
         /// The expression that produces the value to retrieve the member from.  This property is never null.
         /// </summary>
         public ExpressionAst Expression { get; private set; }
@@ -7865,6 +7897,11 @@ namespace System.Management.Automation.Language
         /// True if the member to return is static, false if the member is an instance member.
         /// </summary>
         public bool Static { get; private set; }
+
+        /// <summary>
+        /// True if the operator used is ?. or ?[].
+        /// </summary>
+        public bool NullConditionalAccess { get; private set; }
 
         /// <summary>
         /// Copy the MemberExpressionAst instance.
@@ -7904,36 +7941,6 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that represents the usage of null conditional member access operator ?.
-    /// </summary>
-    public class NullConditionalMemberExpressionAst : MemberExpressionAst, ISupportsAssignment
-    {
-        /// <summary>
-        /// Construct an ast to reference a property.
-        /// </summary>
-        /// <param name="extent">
-        /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
-        /// membername or expression naming the member.
-        /// </param>
-        /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
-        /// <param name="member">The name or expression naming the member to access.</param>
-        /// <param name="static">True if the '::' operator was used, false if '.' is used.
-        /// <param name="isNullConditional">True if the operator used is ?. or ?[]</param>
-        /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
-        /// </param>
-        public NullConditionalMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool isNullConditional)
-            : base(extent, expression, member, @static)
-        {
-            this.NullConditionalAccess = isNullConditional;
-        }
-
-        /// <summary>
-        /// True if the operator used is ?. or ?[].
-        /// </summary>
-        public bool NullConditionalAccess { get; private set; }
-    }
-
-    /// <summary>
     /// The ast that represents the invocation of a method, e.g. <c>$sb.Append('abc')</c> or <c>[math]::Sign($i)</c>.
     /// </summary>
     public class InvokeMemberExpressionAst : MemberExpressionAst, ISupportsAssignment
@@ -7956,6 +7963,33 @@ namespace System.Management.Automation.Language
         /// </exception>
         public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static)
             : base(extent, expression, method, @static)
+        {
+            if (arguments != null && arguments.Any())
+            {
+                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
+                SetParents(Arguments);
+            }
+        }
+
+        /// <summary>
+        /// Construct an instance of a method invocation expression.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// <param name="nullConditionalAccess">True if the operator used is ?.</param>
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
+        /// </param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditionalAccess)
+            : base(extent, expression, method, @static, nullConditionalAccess)
         {
             if (arguments != null && arguments.Any())
             {
@@ -8022,45 +8056,11 @@ namespace System.Management.Automation.Language
             return new InvokeMemberAssignableValue { InvokeMemberExpressionAst = this };
         }
     }
-
+    
     /// <summary>
-    /// The ast that represents the invocation of a method, e.g. <c>${sb}?.Append('abc')</c>.
+    /// The ast that represents the invocation of a base ctor method from PS class instance ctor, e.g. <c>class B : A{ B() : base() {} }</c>.
     /// </summary>
-    public class NullConditionalInvokeMemberExpressionAst : InvokeMemberExpressionAst, ISupportsAssignment
-    {
-        /// <summary>
-        /// Construct an instance of a method invocation expression.
-        /// </summary>
-        /// <param name="extent">
-        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
-        /// closing paren after the arguments.
-        /// </param>
-        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
-        /// <param name="method">The method to invoke.</param>
-        /// <param name="arguments">The arguments to pass to the method.</param>
-        /// <param name="static">
-        /// <param name="isNullConditional">True if the operator used is ?.</param>
-        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
-        /// </param>
-        /// <exception cref="PSArgumentNullException">
-        /// If <paramref name="extent"/> is null.
-        /// </exception>
-        public NullConditionalInvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool isNullConditional)
-            : base(extent, expression, method, arguments, @static)
-        {
-            this.NullConditionalAccess = isNullConditional;
-        }
-
-        /// <summary>
-        /// True if the operator used is ?. or ?[].
-        /// </summary>
-        public bool NullConditionalAccess { get; private set; }
-    }
-
-        /// <summary>
-        /// The ast that represents the invocation of a base ctor method from PS class instance ctor, e.g. <c>class B : A{ B() : base() {} }</c>.
-        /// </summary>
-        public class BaseCtorInvokeMemberExpressionAst : InvokeMemberExpressionAst
+    public class BaseCtorInvokeMemberExpressionAst : InvokeMemberExpressionAst
     {
         /// <summary>
         /// Construct an instance of a base ctor invocation expression.

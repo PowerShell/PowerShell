@@ -7772,23 +7772,12 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (operatorToken.Kind == TokenKind.QuestionDot)
-            {
-                return new NullConditionalMemberExpressionAst(
+            return new MemberExpressionAst(
                     ExtentOf(targetExpr, member),
                     targetExpr,
                     member,
-                    operatorToken.Kind == TokenKind.ColonColon,
-                    isNullConditional: true);
-            }
-            else
-            {
-                return new MemberExpressionAst(
-                    ExtentOf(targetExpr, member),
-                    targetExpr,
-                    member,
-                    operatorToken.Kind == TokenKind.ColonColon);
-            }
+                    @static: operatorToken.Kind == TokenKind.ColonColon,
+                    nullConditionalAccess: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
@@ -7816,25 +7805,13 @@ namespace System.Management.Automation.Language
                 lastExtent = argument.Extent;
             }
 
-            if (operatorToken.Kind == TokenKind.QuestionDot)
-            {
-                return new NullConditionalInvokeMemberExpressionAst(
-                    ExtentOf(targetExpr, lastExtent),
-                    targetExpr,
-                    member,
-                    arguments,
-                    operatorToken.Kind == TokenKind.ColonColon,
-                    isNullConditional: true);
-            }
-            else
-            {
-                return new InvokeMemberExpressionAst(
-                    ExtentOf(targetExpr, lastExtent),
-                    targetExpr,
-                    member,
-                    arguments,
-                    operatorToken.Kind == TokenKind.ColonColon);
-            }
+            return new InvokeMemberExpressionAst(
+                ExtentOf(targetExpr, lastExtent),
+                targetExpr,
+                member,
+                arguments,
+                operatorToken.Kind == TokenKind.ColonColon,
+                operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private List<ExpressionAst> InvokeParamParenListRule(Token lParen, out IScriptExtent lastExtent)

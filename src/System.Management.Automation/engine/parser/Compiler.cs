@@ -6175,10 +6175,8 @@ namespace System.Management.Automation.Language
 
             var target = CompileExpressionOperand(memberExpressionAst.Expression);
 
-            if(memberExpressionAst is NullConditionalMemberExpressionAst nullCheckMemberExpressionAst)
-            {
-                target = nullCheckMemberExpressionAst.NullConditionalAccess ? NullConditionalExpression(target) : target;
-            }
+            // If the ?. operator is used for null conditional check, add the null conditional expression.
+            target = memberExpressionAst.NullConditionalAccess ? NullConditionalExpression(target) : target;
 
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
             if (memberNameAst != null)
@@ -6242,9 +6240,21 @@ namespace System.Management.Automation.Language
             var classScope = _memberFunctionType != null ? _memberFunctionType.Type : null;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
-                : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope, nullConditional);
+                : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
 
-            return DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
+            var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
+
+            if (nullConditional)
+            {
+                return Expression.IfThenElse(
+                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, target.Cast(typeof(object))),
+                    ExpressionCache.NullConstant,
+                    dynamicExprFromBinder);
+            }
+            else
+            {
+                return dynamicExprFromBinder;
+            }
         }
 
         private Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
@@ -6276,13 +6286,6 @@ namespace System.Management.Automation.Language
             var memberNameAst = invokeMemberExpressionAst.Member as StringConstantExpressionAst;
             if (memberNameAst != null)
             {
-                bool isNullConditional = false;
-
-                if(invokeMemberExpressionAst is NullConditionalInvokeMemberExpressionAst nullCondExpr && nullCondExpr.NullConditionalAccess)
-                {
-                    isNullConditional = true;
-                }
-
                 return InvokeMember(
                     memberNameAst.Value,
                     constraints,
@@ -6290,7 +6293,7 @@ namespace System.Management.Automation.Language
                     args,
                     invokeMemberExpressionAst.Static,
                     propertySet: false,
-                    isNullConditional
+                    invokeMemberExpressionAst.NullConditionalAccess
                     );
             }
 
