@@ -55,6 +55,7 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
+        private const string pwshwHost = "pwshw";
         private const uint SPI_GETSCREENREADER = 0x0046;
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -1225,6 +1226,11 @@ namespace Microsoft.PowerShell
                         StopTranscribing();
                     }
 
+                    if (_outputLogWriter != null)
+                    {
+                        _outputLogWriter.Close();
+                    }
+
                     if (_outputSerializer != null)
                     {
                         _outputSerializer.End();
@@ -1304,6 +1310,15 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal string OutputLog { get; private set; }
+        internal StreamWriter OutputLogWriter
+        {
+            get
+            {
+                return _outputLogWriter;
+            }
+        }
+
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
 
         internal bool OutputFormatSpecified { get; private set; }
@@ -1375,9 +1390,9 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // we're running interactive if we're in a prompt loop, and we're not reading keyboard input from stdin.
+                // we're running interactive if we're in a prompt loop, we're not reading keyboard input from stdin, and not running pwshw which doens't have a console
 
-                return _isRunningPromptLoop && !ui.ReadFromStdin;
+                return _isRunningPromptLoop && !ui.ReadFromStdin && !(string.Equals(AppDomain.CurrentDomain.FriendlyName, pwshwHost, StringComparison.InvariantCultureIgnoreCase));
             }
         }
 
@@ -1427,6 +1442,12 @@ namespace Microsoft.PowerShell
                     s_tracer.WriteLine("processing of cmdline args failed, exiting");
                     exitCode = cpp.ExitCode;
                     break;
+                }
+
+                OutputLog = cpp.OutputLog;
+                if (!string.IsNullOrEmpty(OutputLog) && _outputLogWriter == null)
+                {
+                    _outputLogWriter = new StreamWriter(OutputLog, append: false);
                 }
 
                 OutputFormat = cpp.OutputFormat;
@@ -2942,6 +2963,7 @@ namespace Microsoft.PowerShell
         private bool _shouldEndSession;
         private int _beginApplicationNotifyCount;
 
+        private StreamWriter _outputLogWriter;
         private ConsoleTextWriter _consoleWriter;
         private WrappedSerializer _outputSerializer;
         private WrappedSerializer _errorSerializer;

@@ -6,8 +6,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
             # these tests don't work correctly with pwshw since we use transcription when running the tests
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
+            $PSDefaultParameterValues["it:skip"] = $false
         }
 
         function ValidateTranscription {

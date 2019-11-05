@@ -567,20 +567,33 @@ namespace Microsoft.PowerShell
         private void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult, bool newLine)
         {
 #if !UNIX
-            ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
+            ConsoleHandle handle = null;
 
-            // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
-            // attempt to set the mode from multiple threads at once.
-            ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
-
-            const ConsoleControl.ConsoleModes DesiredMode =
-                ConsoleControl.ConsoleModes.ProcessedOutput
-                | ConsoleControl.ConsoleModes.WrapEndOfLine;
-
-            if ((m & DesiredMode) != DesiredMode)
+            if (_consoleAvailable)
             {
-                m |= DesiredMode;
-                ConsoleControl.SetMode(handle, m);
+                try
+                {
+                    handle = ConsoleControl.GetActiveScreenBufferHandle();
+
+                    // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
+                    // attempt to set the mode from multiple threads at once.
+                    ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
+
+                    const ConsoleControl.ConsoleModes DesiredMode =
+                        ConsoleControl.ConsoleModes.ProcessedOutput
+                        | ConsoleControl.ConsoleModes.WrapEndOfLine;
+
+                    if ((m & DesiredMode) != DesiredMode)
+                    {
+                        m |= DesiredMode;
+                        ConsoleControl.SetMode(handle, m);
+                    }
+                }
+                catch (HostException)
+                {
+                    // No console available
+                    _consoleAvailable = false;
+                }
             }
 #endif
 
@@ -588,7 +601,14 @@ namespace Microsoft.PowerShell
 
             // This is atomic, so we don't lock here...
 #if !UNIX
-            ConsoleControl.WriteConsole(handle, value, newLine);
+            if (handle != null)
+            {
+                ConsoleControl.WriteConsole(handle, value, newLine);
+            }
+            else
+            {
+                ConsoleOutWriteHelper(value, newLine);
+            }
 #else
             ConsoleOutWriteHelper(value, newLine);
 #endif
@@ -710,6 +730,18 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
+
+            if (_parent.OutputLogWriter != null)
+            {
+                if (newLine)
+                {
+                    _parent.OutputLogWriter.WriteLine(value);
+                }
+                else
+                {
+                    _parent.OutputLogWriter.Write(value);
+                }
+            }
 
             if (_parent.IsRunningAsync)
             {
@@ -1206,6 +1238,11 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
+            if (_parent.OutputLogWriter != null)
+            {
+                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+            }
+
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1262,6 +1299,11 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
+            if (_parent.OutputLogWriter != null)
+            {
+                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+            }
+
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1299,6 +1341,11 @@ namespace Microsoft.PowerShell
             // don't lock here as WriteLine is already protected.
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+
+            if (_parent.OutputLogWriter != null)
+            {
+                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+            }
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1361,6 +1408,11 @@ namespace Microsoft.PowerShell
             TextWriter writer = (!Console.IsErrorRedirected || _parent.IsInteractive)
                 ? _parent.ConsoleTextWriter
                 : Console.Error;
+
+            if (_parent.OutputLogWriter != null)
+            {
+                    _parent.OutputLogWriter.WriteLine(value);
+            }
 
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {

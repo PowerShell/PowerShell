@@ -135,6 +135,9 @@
   <data name="StdinNotRedirected" xml:space="preserve">
     <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
   </data>
+  <data name="MissingOutputLogParameter" xml:space="preserve">
+    <value>The command cannot be run because no argument has been supplied for the OutputLog parameter.</value>
+  </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
     <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
 Specify one of the following formats for this parameter:

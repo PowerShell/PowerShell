@@ -187,6 +187,7 @@ namespace Microsoft.PowerShell
             "nologo",
             "noninteractive",
             "noprofile",
+            "outputlog",
             "outputformat",
             "removeworkingdirectorytrailingcharacter",
             "settingsfile",
@@ -408,6 +409,13 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal string OutputLog
+        {
+            get
+            {
+                return _outputLog;
+            }
+        }
         internal Serialization.DataFormat OutputFormat
         {
             get
@@ -871,6 +879,18 @@ namespace Microsoft.PowerShell
                     // Just toss this option, it was processed earlier in 'ManagedEntrance.Start()'.
                 }
 #endif
+                else if (MatchSwitch(switchKey, "outputlog", "outputl") || MatchSwitch(switchKey, "ol", "ol"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingOutputLogParameter);
+                        break;
+                    }
+
+                    _outputLog = args[i];
+                }
                 else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
@@ -1330,6 +1350,7 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
+        private string _outputLog;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;

@@ -1063,8 +1063,7 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
-        [switch]$SkipTestToolBuild,
-        [string]$TranscriptPath
+        [switch]$SkipTestToolBuild
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1159,10 +1158,6 @@ function Start-PSPester {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
 
-    if ($PSBoundParameters.ContainsKey('TranscriptPath')) {
-        $command += "Start-Transcript -UseMinimalHeader -Path $TranscriptPath; "
-    }
-
     $command += "Invoke-Pester "
 
     $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -1185,10 +1180,6 @@ function Start-PSPester {
     if ($Unelevate)
     {
         $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
-    }
-
-    if ($PSBoundParameters.ContainsKey('TranscriptPath')) {
-        $command += "; Stop-Transcript; "
     }
 
     Write-Verbose $command
@@ -1352,6 +1343,8 @@ function Start-PSPester {
             }
             else
             {
+                $PSFlags += "-OutputLog","c:\users\slee\out.txt"
+
                 $params = @{sb = [scriptblock]{& $powershell $PSFlags -c $command}}
                 if ($powershell.Contains("pwshw")) {
                     $params += @{WaitForProcess = 'pwshw'}
