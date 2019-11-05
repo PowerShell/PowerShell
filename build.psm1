@@ -1343,8 +1343,6 @@ function Start-PSPester {
             }
             else
             {
-                $PSFlags += "-OutputLog","c:\users\slee\out.txt"
-
                 $params = @{sb = [scriptblock]{& $powershell $PSFlags -c $command}}
                 if ($powershell.Contains("pwshw")) {
                     $params += @{WaitForProcess = 'pwshw'}
