@@ -6558,20 +6558,8 @@ namespace System.Management.Automation.Language
             return Get(memberName, classScope, callInfo, @static, propertySetter, nonEnumerating: false, constraints: constraints);
         }
 
-        public static PSInvokeMemberBinder Get(
-            string memberName,
-            CallInfo callInfo,
-            bool @static,
-            bool propertySetter,
-            PSMethodInvocationConstraints constraints,
-            Type classScope,
-            bool nullConditional)
-        {
-            return Get(memberName, classScope, callInfo, @static, propertySetter, nonEnumerating: false, constraints: constraints, nullConditional);
-        }
-
         private static PSInvokeMemberBinder Get(string memberName, Type classScope, CallInfo callInfo, bool @static, bool propertySetter,
-                                                bool nonEnumerating, PSMethodInvocationConstraints constraints, bool nullConditional = false)
+                                                bool nonEnumerating, PSMethodInvocationConstraints constraints)
         {
             PSInvokeMemberBinder result;
 
@@ -6580,7 +6568,7 @@ namespace System.Management.Automation.Language
                 var key = Tuple.Create(memberName, callInfo, propertySetter, nonEnumerating, constraints, @static, classScope);
                 if (!s_binderCache.TryGetValue(key, out result))
                 {
-                    result = new PSInvokeMemberBinder(memberName, true, @static, propertySetter, nonEnumerating, callInfo, constraints, classScope, nullConditional);
+                    result = new PSInvokeMemberBinder(memberName, true, @static, propertySetter, nonEnumerating, callInfo, constraints, classScope);
                     s_binderCache.Add(key, result);
                 }
             }
@@ -6592,7 +6580,6 @@ namespace System.Management.Automation.Language
         private readonly bool _propertySetter;
         private readonly bool _nonEnumerating;
         private readonly Type _classScope;
-        private readonly bool _nullConditional;
 
         private PSInvokeMemberBinder(string name,
                                      bool ignoreCase,
@@ -6601,8 +6588,7 @@ namespace System.Management.Automation.Language
                                      bool nonEnumerating,
                                      CallInfo callInfo,
                                      PSMethodInvocationConstraints invocationConstraints,
-                                     Type classScope,
-                                     bool nullConditional)
+                                     Type classScope)
             : base(name, ignoreCase, callInfo)
         {
             _static = @static;
@@ -6610,7 +6596,6 @@ namespace System.Management.Automation.Language
             _nonEnumerating = nonEnumerating;
             this._invocationConstraints = invocationConstraints;
             _classScope = classScope;
-            _nullConditional = nullConditional;
             this._getMemberBinder = PSGetMemberBinder.Get(name, classScope, @static);
         }
 
@@ -6672,14 +6657,6 @@ namespace System.Management.Automation.Language
                     {
                         return InvokeForEachOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
-                }
-
-                if (_nullConditional)
-                {
-                    return new DynamicMetaObject(
-                        ExpressionCache.NullConstant,
-                        BindingRestrictions.GetInstanceRestriction(ExpressionCache.NullConstant, null));
-                    ;
                 }
 
                 return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "InvokeMethodOnNull", ParserStrings.InvokeMethodOnNull).WriteToDebugLog(this);
