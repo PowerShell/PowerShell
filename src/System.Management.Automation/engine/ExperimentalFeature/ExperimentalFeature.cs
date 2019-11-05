@@ -122,6 +122,12 @@ namespace System.Management.Automation
                     name: "PSUpdatesNotification",
                     description: "Print notification message when new releases are available"),
                 new ExperimentalFeature(
+                    name: "PSCoalescingOperators",
+                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSPipelineChainOperators",
+                    description: "Allow use of && and || as operators between pipeline invocations"),
+                new ExperimentalFeature(
                     name: "PSWinCompat",
                     description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting")
             };

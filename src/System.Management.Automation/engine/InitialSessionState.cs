@@ -1212,26 +1212,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Special add for TypeTable type entries that removes redundant file entries.
-        /// </summary>
-        internal void AddTypeTableTypesInfo(IEnumerable<T> items)
-        {
-            if (typeof(T) != typeof(SessionStateTypeEntry)) { throw new PSInvalidOperationException(); }
-
-            lock (_syncObject)
-            {
-                foreach (var element in items)
-                {
-                    if (element is SessionStateTypeEntry typeEntry && typeEntry.TypeData != null)
-                    {
-                        // Skip type file entries.
-                        _internalCollection.Add(element);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Get enumerator for this collection.
         /// </summary>
         /// <returns></returns>
@@ -3460,12 +3440,7 @@ namespace System.Management.Automation.Runspaces
                     context.TypeTable = typeTable;
 
                     Types.Clear();
-
-                    // A TypeTable contains types info along with type file references used to create the types info,
-                    // which is redundant information.  When resused in a runspace the ISS unpacks the file types again
-                    // resulting in duplicate types and duplication errors when processed.
-                    // So use this special Add method to filter all types files found in the TypeTable.
-                    Types.AddTypeTableTypesInfo(typeTable.typesInfo);
+                    Types.Add(typeTable.typesInfo);
 
                     return;
                 }
@@ -3482,7 +3457,6 @@ namespace System.Management.Automation.Runspaces
             ConcurrentDictionary<string, string> filesProcessed
                 = new ConcurrentDictionary<string, string>(/*concurrencyLevel*/3, /*capacity*/3, StringComparer.OrdinalIgnoreCase);
             Parallel.ForEach(Types, sste =>
-            //            foreach (var sste in Types)
             {
                 if (sste.FileName != null)
                 {
@@ -3510,7 +3484,6 @@ namespace System.Management.Automation.Runspaces
                     context.TypeTable.Update(sste.TypeData, errors, sste.IsRemove);
                 }
             });
-            //            }
 
             context.TypeTable.ClearConsolidatedMembers();
 
@@ -4011,8 +3984,8 @@ Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,
 
-    [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 1)]
-    [int] $cursorColumn,
+    [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
+    [int] $cursorColumn = $inputScript.Length,
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 0)]
     [System.Management.Automation.Language.Ast] $ast,
@@ -4557,6 +4530,7 @@ end {
                     new SessionStateAliasEntry("rp", "Remove-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rmo", "Remove-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rv", "Remove-Variable", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("gerr", "Get-Error", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rvpa", "Resolve-Path", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sal", "Set-Alias", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", string.Empty, ReadOnly),
@@ -4598,6 +4572,8 @@ end {
                     new SessionStateAliasEntry("rmdir", "Remove-Item"),
                     new SessionStateAliasEntry("cnsn", "Connect-PSSession", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("dnsn", "Disconnect-PSSession", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
 #endif
                     // Bash built-ins we purposefully keep even if they override native commands
                     new SessionStateAliasEntry("cd", "Set-Location", string.Empty, AllScope),
@@ -4613,14 +4589,11 @@ end {
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("iwmi", "Invoke-WMIMethod", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ise", "powershell_ise.exe", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("rwmi", "Remove-WMIObject", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("sc", "Set-Content", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("swmi", "Set-WMIInstance", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("trcm", "Trace-Command", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("lp", "Out-Printer"),
 #endif
                     // Aliases transferred from the profile
                     new SessionStateAliasEntry("h", "Get-History"),

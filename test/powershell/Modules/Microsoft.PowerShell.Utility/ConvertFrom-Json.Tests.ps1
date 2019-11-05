@@ -106,6 +106,17 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
+
+    It 'Can convert null' {
+        'null' | ConvertFrom-Json | Should -Be $null
+        $out = '[1, null, 2]' | ConvertFrom-Json
+        $out.Length | Should -Be 3
+
+        # can't compare directly to array as Pester doesn't handle the $null
+        $out[0] | Should -Be 1
+        $out[1] | Should -Be $null
+        $out[2] | Should -Be 2
+    }
 }
 
 Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {

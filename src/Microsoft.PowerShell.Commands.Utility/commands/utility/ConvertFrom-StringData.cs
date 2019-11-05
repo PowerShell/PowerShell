@@ -38,6 +38,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets the delimiter.
+        /// </summary>
+        [Parameter(Position = 1)]
+        public char Delimiter { get; set; } = '=';
+
+        /// <summary>
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -58,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.IsNullOrEmpty(s) || s[0] == '#')
                     continue;
 
-                int index = s.IndexOf('=');
+                int index = s.IndexOf(Delimiter);
                 if (index <= 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(

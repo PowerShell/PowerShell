@@ -108,11 +108,13 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = !Utils.GetOptOutEnvVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             if (CanSendTelemetry)
             {
-                s_telemetryClient = new TelemetryClient();
-                TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
+                TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+                configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
+                configuration.TelemetryChannel.DeveloperMode = false;
+
+                s_telemetryClient = new TelemetryClient(configuration);
                 s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
