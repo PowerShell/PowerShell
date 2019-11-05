@@ -569,31 +569,27 @@ namespace Microsoft.PowerShell
 #if !UNIX
             ConsoleHandle handle = null;
 
-            if (_consoleAvailable)
+            try
             {
-                try
+                handle = ConsoleControl.GetActiveScreenBufferHandle();
+
+                // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
+                // attempt to set the mode from multiple threads at once.
+                ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
+
+                const ConsoleControl.ConsoleModes DesiredMode =
+                    ConsoleControl.ConsoleModes.ProcessedOutput
+                    | ConsoleControl.ConsoleModes.WrapEndOfLine;
+
+                if ((m & DesiredMode) != DesiredMode)
                 {
-                    handle = ConsoleControl.GetActiveScreenBufferHandle();
-
-                    // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
-                    // attempt to set the mode from multiple threads at once.
-                    ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
-
-                    const ConsoleControl.ConsoleModes DesiredMode =
-                        ConsoleControl.ConsoleModes.ProcessedOutput
-                        | ConsoleControl.ConsoleModes.WrapEndOfLine;
-
-                    if ((m & DesiredMode) != DesiredMode)
-                    {
-                        m |= DesiredMode;
-                        ConsoleControl.SetMode(handle, m);
-                    }
+                    m |= DesiredMode;
+                    ConsoleControl.SetMode(handle, m);
                 }
-                catch (HostException)
-                {
-                    // No console available
-                    _consoleAvailable = false;
-                }
+            }
+            catch (HostException)
+            {
+                // No console available
             }
 #endif
 
