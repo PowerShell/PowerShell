@@ -70,6 +70,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $null | ConvertTo-Json -Compress | Should -Be 'null'
         ConvertTo-Json -Compress $null | Should -Be 'null'
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
+    }
 
     It 'The result string should not contain null values when converting dictionary with IgnoreNullProperties.' {
         $dict = @{}
