@@ -52,7 +52,7 @@ namespace System.Management.Automation
     ///     - There is no ITypeDescriptorContext.
     ///     - This class is abstract
     /// </remarks>
-    public abstract class PSTypeConverter
+    public abstract class PSTypeConverter : TypeConverter
     {
         private static object GetSourceValueAsObject(PSObject sourceValue)
         {
@@ -1491,7 +1491,7 @@ namespace System.Management.Automation
             }
 
             typesXmlConverter = TypeDescriptor.GetConverter(type);
-            if (typesXmlConverter != null && typesXmlConverter.GetType() != typeof(TypeConverter))
+            if (typesXmlConverter != null && typesXmlConverter.GetType() != typeof(TypeConverter) && typesXmlConverter.GetType() != typeof(StringConverter))
             {
                 s_tracer.WriteLine("Use intrinsic type converter");
                 return typesXmlConverter;
@@ -2531,12 +2531,17 @@ namespace System.Management.Automation
         /// Used by Remoting Rehydration Logic. While Deserializing a remote object,
         /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
-        private static bool IsCustomTypeConversion(object valueToConvert,
-                                                   Type resultType,
-                                                   IFormatProvider formatProvider,
-                                                   out object result,
-                                                   TypeTable backupTypeTable)
+        ///
+        /// The method method never throws an exception to allow a fallback type convertion.
+        private static bool IsCustomTypeConversion(
+            object valueToConvert,
+            Type resultType,
+            IFormatProvider formatProvider,
+            TypeTable backupTypeTable,
+            out object result,
+            out Exception exc)
         {
+            exc = null;
             using (typeConversion.TraceScope("Custom type conversion."))
             {
                 object baseValueToConvert = PSObject.Base(valueToConvert);
@@ -2562,9 +2567,12 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Original type's TypeConverter: \"{0}\".", e.Message);
-                                throw new PSInvalidCastException("InvalidCastTypeConvertersConvertTo", e,
+                                exc = new PSInvalidCastException(
+                                    "InvalidCastTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
+                                result = null;
+                                return false;
                             }
                         }
                         else
@@ -2589,9 +2597,12 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Original type's PSTypeConverter: \"{0}\".", e.Message);
-                                throw new PSInvalidCastException("InvalidCastPSTypeConvertersConvertTo", e,
+                                exc = new PSInvalidCastException(
+                                    "InvalidCastPSTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
+                                result = null;
+                                return false;
                             }
                         }
                         else
@@ -2622,9 +2633,11 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Destination type's TypeConverter: \"{0}\".", e.Message);
-                                throw new PSInvalidCastException("InvalidCastTypeConvertersConvertFrom", e,
+                                exc = new PSInvalidCastException("InvalidCastTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
+                                result = null;
+                                return false;
                             }
                         }
                         else
@@ -2649,9 +2662,11 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Destination type's PSTypeConverter: \"{0}\".", e.Message);
-                                throw new PSInvalidCastException("InvalidCastPSTypeConvertersConvertFrom", e,
+                                exc = new PSInvalidCastException("InvalidCastPSTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
+                                result = null;
+                                return false;
                             }
                         }
                         else
@@ -4074,7 +4089,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (IsCustomTypeConversion(originalValueToConvert ?? valueToConvert, resultType, formatProvider, out result, backupTable))
+                if (IsCustomTypeConversion(originalValueToConvert ?? valueToConvert, resultType, formatProvider, backupTable, out result, out Exception exc))
                 {
                     typeConversion.WriteLine("Custom Type Conversion succeeded.");
                     return result;
@@ -4085,11 +4100,67 @@ namespace System.Management.Automation
                     return fallbackConverter(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable);
                 }
 
-                throw new PSInvalidCastException("ConvertToFinalInvalidCastException", null,
+                exc = exc ?? throw new PSInvalidCastException(
+                    "ConvertToFinalInvalidCastException",
+                    null,
                     ExtendedTypeSystem.InvalidCastException,
                     valueToConvert.ToString(), ObjectToTypeNameString(valueToConvert), resultType.ToString());
+                throw exc;
             }
         }
+
+        private class ConvertViaTypeConverter
+        {
+            internal TypeConverter converter = null;
+            internal bool convertTo;
+
+            internal object Convert(object valueToConvert,
+                                    Type resultType,
+                                    bool recursion,
+                                    PSObject originalValueToConvert,
+                                    IFormatProvider formatProvider,
+                                    TypeTable backupTable)
+            {
+                var value  = originalValueToConvert ?? valueToConvert;
+                InvalidCastException exc = null;
+                if (converter != null && convertTo)
+                {
+                    try
+                    {
+                        var result = converter.ConvertTo(null, GetCultureFromFormatProvider(formatProvider), value, resultType);
+                        typeConversion.WriteLine("TypeConvert ConvertTo Conversion succeeded.");
+                        return result;
+                    }
+                    catch (InvalidCastException e)
+                    {
+                        exc = e;
+                    }
+                }
+
+                if (converter != null)
+                {
+                    try
+                    {
+                        var result = converter.ConvertFrom(null, GetCultureFromFormatProvider(formatProvider), value);
+                        typeConversion.WriteLine("TypeConvert ConvertFrom Conversion succeeded.");
+                        return result;
+                    }
+                    catch (InvalidCastException e)
+                    {
+                        exc = e;
+                    }
+                }
+
+                throw new PSInvalidCastException(
+                    "ConvertToFinalInvalidCastException",
+                    exc,
+                    ExtendedTypeSystem.InvalidCastException,
+                    value.ToString(),
+                    ObjectToTypeNameString(value),
+                    resultType.ToString());
+            }
+        }
+
 
         #region Delegates converting null
         private static object ConvertNullToNumeric(object valueToConvert,
@@ -5481,14 +5552,18 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool TypeConverterPossiblyExists(Type fromType, Type toType)
+        private static bool TryGetTypeConverter(Type fromType, Type toType, out ConvertViaTypeConverter convertViaTypeConverter)
         {
+            convertViaTypeConverter = null;
+
             var converter = TypeDescriptor.GetConverter(fromType);
 
             // Generic TypeConverter can convert all types to string
             // this violates specific type conversions so we exclude it.
-            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertTo(toType))
+            if (converter != null && converter.GetType() != typeof(TypeConverter) && converter.CanConvertTo(toType))
             {
+                convertViaTypeConverter = new ConvertViaTypeConverter();
+                convertViaTypeConverter.convertTo = true;
                 return true;
             }
 
@@ -5496,8 +5571,10 @@ namespace System.Management.Automation
 
             // Generic TypeConverter can convert all types to string
             // this violates specific type conversions so we exclude it.
-            if (converter.GetType() != typeof(TypeConverter) && converter.CanConvertFrom(fromType))
+            if (converter != null && converter.GetType() != typeof(TypeConverter) && converter.CanConvertFrom(fromType))
             {
+                convertViaTypeConverter = new ConvertViaTypeConverter();
+                convertViaTypeConverter.convertTo = false;
                 return true;
             }
 
@@ -5677,8 +5754,15 @@ namespace System.Management.Automation
                 converter = FigurePropertyConversion(fromType, toType, ref rank);
             }
 
-            if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
-                || (converter != null && valueDependentConversion != null) || (converter == null && TypeConverterPossiblyExists(fromType, toType)))
+            if ((converter == null && TryGetTypeConverter(fromType, toType, out ConvertViaTypeConverter convertViaTypeConverter)))
+            {
+                // converter is null so no fallback converter exists and we can directly use the found converter 'convertViaTypeConverter'
+                converter = convertViaTypeConverter.Convert;
+                rank = ConversionRank.Language;
+            }
+            else if (TypeConverterPossiblyExists(fromType)
+                    || TypeConverterPossiblyExists(toType)
+                    || (converter != null && valueDependentConversion != null))
             {
                 ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
                 customConverter.tryfirstConverter = valueDependentConversion;
