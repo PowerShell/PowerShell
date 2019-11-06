@@ -74,6 +74,16 @@ stages:
   - template: templates/windows-test.yml
     parameters:
       purpose: PwshwElevatedPesterTests
+      tagSet: CI
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: PwshwUnelevatedPesterTests
+      tagSet: CI
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: PwshwElevatedPesterTests
       tagSet: Others
 
   - template: templates/windows-test.yml
