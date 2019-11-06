@@ -4123,31 +4123,34 @@ namespace System.Management.Automation
             {
                 var value  = originalValueToConvert ?? valueToConvert;
                 InvalidCastException exc = null;
-                if (converter != null && convertTo)
-                {
-                    try
-                    {
-                        var result = converter.ConvertTo(null, GetCultureFromFormatProvider(formatProvider), value, resultType);
-                        typeConversion.WriteLine("TypeConvert ConvertTo Conversion succeeded.");
-                        return result;
-                    }
-                    catch (InvalidCastException e)
-                    {
-                        exc = e;
-                    }
-                }
 
                 if (converter != null)
                 {
-                    try
+                    if (convertTo)
                     {
-                        var result = converter.ConvertFrom(null, GetCultureFromFormatProvider(formatProvider), value);
-                        typeConversion.WriteLine("TypeConvert ConvertFrom Conversion succeeded.");
-                        return result;
+                        try
+                        {
+                            var result = converter.ConvertTo(null, GetCultureFromFormatProvider(formatProvider), value, resultType);
+                            typeConversion.WriteLine("TypeConvert ConvertTo Conversion succeeded.");
+                            return result;
+                        }
+                        catch (InvalidCastException e)
+                        {
+                            exc = e;
+                        }
                     }
-                    catch (InvalidCastException e)
+                    else
                     {
-                        exc = e;
+                        try
+                        {
+                            var result = converter.ConvertFrom(null, GetCultureFromFormatProvider(formatProvider), value);
+                            typeConversion.WriteLine("TypeConvert ConvertFrom Conversion succeeded.");
+                            return result;
+                        }
+                        catch (InvalidCastException e)
+                        {
+                            exc = e;
+                        }
                     }
                 }
 
