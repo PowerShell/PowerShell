@@ -3,12 +3,6 @@
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
-            # these tests don't work correctly with pwshw since we use transcription when running the tests
-            $PSDefaultParameterValues["it:skip"] = $false
-        }
-
         function ValidateTranscription {
             param (
                 [string] $scriptToExecute,
@@ -227,15 +221,24 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
-            Write-Information -Message $message -InformationAction Inquire
-            Stop-Transcript
+            try {
+                Write-Information -Message $message -InformationAction Inquire
+            }
+            finally {
+                Stop-Transcript
+            }
         }
 
-        & $script
+        if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
+            { & $script } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.WriteInformationCommand"
+        }
+        else {
+            & $script
 
-        $transcriptFilePath | Should -Exist
-        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
-        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+            $transcriptFilePath | Should -Exist
+            $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+            $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+        }
     }
 
     It "Transcription should record Write-Host output when InformationAction is set to Continue" {
@@ -287,14 +290,23 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
-            Write-Host -Message $message -InformationAction Inquire
-            Stop-Transcript
+            try {
+                Write-Host -Message $message -InformationAction Inquire
+            }
+            finally {
+                Stop-Transcript
+            }
         }
 
-        & $script
+        if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
+            { & $script } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.WriteHostCommand"
+        }
+        else {
+            & $script
 
-        $transcriptFilePath | Should -Exist
-        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+            $transcriptFilePath | Should -Exist
+            $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+        }
     }
 
     It "UseMinimalHeader should reduce length of transcript header" {

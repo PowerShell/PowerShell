@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
-        private const string PwshwHost = "pwshw";
+        internal const string PwshwHost = "pwshw";
         private const uint SPI_GETSCREENREADER = 0x0046;
 
         [DllImport("user32.dll", SetLastError = true)]

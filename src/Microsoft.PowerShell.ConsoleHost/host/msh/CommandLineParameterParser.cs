@@ -995,6 +995,26 @@ namespace Microsoft.PowerShell
                 }
             }
 
+            if (_showHelp)
+            {
+                ShowHelp();
+            }
+
+            if (_showBanner && !_showHelp)
+            {
+                DisplayBanner();
+
+                if (UpdatesNotification.CanNotifyUpdates)
+                {
+                    UpdatesNotification.ShowUpdateNotification(_hostUI);
+                }
+            }
+
+            if (string.Equals(AppDomain.CurrentDomain.FriendlyName, ConsoleHost.PwshwHost, StringComparison.InvariantCultureIgnoreCase))
+            {
+                _noInteractive = true;
+            }
+
             Dbg.Assert(
                     ((_exitCode == ConsoleHost.ExitCodeBadCommandLineParameter) && _abortStartup)
                 || (_exitCode == ConsoleHost.ExitCodeSuccess),

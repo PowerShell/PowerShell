@@ -585,6 +585,7 @@ namespace Microsoft.PowerShell
             catch (HostException)
             {
                 // No console available
+                return;
             }
 #endif
 
