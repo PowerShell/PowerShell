@@ -211,8 +211,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compare source parametermodel is equal like target parametermodel.
         /// </summary>
-        /// <param name="source">the source of parametermodel.</param>
-        /// <param name="target">the target of parametermodel.</param>
+        /// <param name="source">The source of parametermodel.</param>
+        /// <param name="target">The target of parametermodel.</param>
         /// <returns>Return compare result</returns>
         internal static int Compare(ParameterViewModel source, ParameterViewModel target)
         {
@@ -234,9 +234,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Gets the delimited poarameter if it needs delimitation and is not delimited.
         /// </summary>
-        /// <param name="parameterValue">value needing delimitation.</param>
-        /// <param name="openDelimiter">open delimitation.</param>
-        /// <param name="closeDelimiter">close delimitation.</param>
+        /// <param name="parameterValue">Value needing delimitation.</param>
+        /// <param name="openDelimiter">Open delimitation.</param>
+        /// <param name="closeDelimiter">Close delimitation.</param>
         /// <returns>the delimited poarameter if it needs delimitation and is not delimited</returns>
         private static string GetDelimitedParameter(string parameterValue, string openDelimiter, string closeDelimiter)
         {
@@ -264,8 +264,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Returns '0' if the <paramref name="parameterValue"/> does not need delimitation, '1' if it does, and a quote character if it needs to be delimited with a quote.
         /// </summary>
-        /// <param name="parameterValue">parameter value to check.</param>
-        /// <param name="requireScriptblock">true if the parameter value should be a scriptblock.</param>
+        /// <param name="parameterValue">Parameter value to check.</param>
+        /// <param name="requireScriptblock">True if the parameter value should be a scriptblock.</param>
         /// <returns>'0' if the parameter does not need delimitation, '1' if it needs, '\'' if it needs to be delimited with single quote and '\"' if it needs to be delimited with double quotes</returns>
         private static char ParameterNeedsDelimitation(string parameterValue, bool requireScriptblock)
         {
@@ -379,8 +379,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Used to track changes to parameter values in order to verify the enabled state of buttons.
         /// </summary>
-        /// <param name="sender">event arguments.</param>
-        /// <param name="e">event sender.</param>
+        /// <param name="sender">Event arguments.</param>
+        /// <param name="e">Event sender.</param>
         private void MandatoryParameter_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (!e.PropertyName.Equals("Value", StringComparison.Ordinal))

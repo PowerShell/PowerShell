@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Initializes a new instance of the ParagraphBuilder class.
         /// </summary>
-        /// <param name="paragraph">paragraph we will be adding lines to in BuildParagraph.</param>
+        /// <param name="paragraph">Paragraph we will be adding lines to in BuildParagraph.</param>
         internal ParagraphBuilder(Paragraph paragraph)
         {
             if (paragraph == null)
@@ -131,9 +131,9 @@ namespace Microsoft.Management.UI.Internal
         /// Highlights all ocurrences of <paramref name="search"/>.
         /// This is called after all calls to AddText have been made
         /// </summary>
-        /// <param name="search">search string.</param>
-        /// <param name="caseSensitive">true if search should be case sensitive.</param>
-        /// <param name="wholeWord">true if we should search whole word only.</param>
+        /// <param name="search">Search string.</param>
+        /// <param name="caseSensitive">True if search should be case sensitive.</param>
+        /// <param name="wholeWord">True if we should search whole word only.</param>
         internal void HighlightAllInstancesOf(string search, bool caseSensitive, bool wholeWord)
         {
             this.highlightedSpans.Clear();
@@ -181,8 +181,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Adds text to the paragraph later build with BuildParagraph.
         /// </summary>
-        /// <param name="str">text to be added.</param>
-        /// <param name="bold">true if the text should be bold.</param>
+        /// <param name="str">Text to be added.</param>
+        /// <param name="bold">True if the text should be bold.</param>
         internal void AddText(string str, bool bold)
         {
             if (str == null)
@@ -217,10 +217,10 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Adds an inline to <paramref name="currentParagraph"/> based on the remaining parameters.
         /// </summary>
-        /// <param name="currentParagraph">paragraph to add Inline to.</param>
-        /// <param name="currentBold">true if text should be added in bold.</param>
-        /// <param name="currentHighlighted">true if the text should be added with highlight.</param>
-        /// <param name="sequence">the text to add and clear.</param>
+        /// <param name="currentParagraph">Paragraph to add Inline to.</param>
+        /// <param name="currentBold">True if text should be added in bold.</param>
+        /// <param name="currentHighlighted">True if the text should be added with highlight.</param>
+        /// <param name="sequence">The text to add and clear.</param>
         private static void AddInline(Paragraph currentParagraph, bool currentBold, bool currentHighlighted, StringBuilder sequence)
         {
             if (sequence.Length == 0)
@@ -247,10 +247,10 @@ namespace Microsoft.Management.UI.Internal
         /// propper span in <paramref name="allSpans"/> according to the <paramref name="caracterPosition"/>
         /// This is an auxiliar method in BuildParagraph.
         /// </summary>
-        /// <param name="currentSpanIndex">current index within <paramref name="allSpans"/>.</param>
-        /// <param name="currentSpan">current span within <paramref name="allSpans"/>.</param>
-        /// <param name="caracterPosition">caracter position. This comes from a position within this.textBuilder.</param>
-        /// <param name="allSpans">the collection of spans. This is either this.boldSpans or this.highlightedSpans.</param>
+        /// <param name="currentSpanIndex">Current index within <paramref name="allSpans"/>.</param>
+        /// <param name="currentSpan">Current span within <paramref name="allSpans"/>.</param>
+        /// <param name="caracterPosition">Caracter position. This comes from a position within this.textBuilder.</param>
+        /// <param name="allSpans">The collection of spans. This is either this.boldSpans or this.highlightedSpans.</param>
         private static void MoveSpanToPosition(ref int currentSpanIndex, ref TextSpan? currentSpan, int caracterPosition, List<TextSpan> allSpans)
         {
             if (currentSpan == null || caracterPosition <= currentSpan.Value.End)
@@ -278,8 +278,8 @@ namespace Microsoft.Management.UI.Internal
         /// Adds one individual text highlight
         /// This is called after all calls to AddText have been made
         /// </summary>
-        /// <param name="start">highlight start.</param>
-        /// <param name="length">highlight length.</param>
+        /// <param name="start">Highlight start.</param>
+        /// <param name="length">Highlight length.</param>
         private void AddHighlight(int start, int length)
         {
             if (start < 0)
@@ -298,7 +298,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Called internally to notify when a proiperty changed.
         /// </summary>
-        /// <param name="propertyName">property name.</param>
+        /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
@@ -366,7 +366,7 @@ namespace Microsoft.Management.UI.Internal
             /// <summary>
             /// Returns true if the <paramref name="position"/> is between start and end (inclusive).
             /// </summary>
-            /// <param name="position">position to verify if is in the span.</param>
+            /// <param name="position">Position to verify if is in the span.</param>
             /// <returns>true if the <paramref name="position"/> is between start and end (inclusive)</returns>
             internal bool Contains(int position)
             {

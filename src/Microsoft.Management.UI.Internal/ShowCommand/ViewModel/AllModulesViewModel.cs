@@ -75,8 +75,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the AllModulesViewModel class.
         /// </summary>
-        /// <param name="importedModules">the loaded modules.</param>
-        /// <param name="commands">commands to show.</param>
+        /// <param name="importedModules">The loaded modules.</param>
+        /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
             if (commands == null || !commands.GetEnumerator().MoveNext())
@@ -90,9 +90,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the AllModulesViewModel class.
         /// </summary>
-        /// <param name="importedModules">the loaded modules.</param>
+        /// <param name="importedModules">The loaded modules.</param>
         /// <param name="commands">All PowerShell commands.</param>
-        /// <param name="noCommonParameter">true not to show common parameters.</param>
+        /// <param name="noCommonParameter">True not to show common parameters.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter)
         {
             if (commands == null)
@@ -423,8 +423,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         ///     SetCanRun for IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues
         ///     SetCanCopy for SetCanCopy
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues")
@@ -576,8 +576,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called when the SelectedCommandNeedsHelp event is triggered in the Selected Module.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_SelectedCommandNeedsHelp(object sender, HelpNeededEventArgs e)
         {
             this.OnSelectedCommandInSelectedModuleNeedsHelp(e);
@@ -586,8 +586,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called when the SelectedCommandNeedsImportModule event is triggered in the Selected Module.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_SelectedCommandNeedsImportModule(object sender, ImportModuleEventArgs e)
         {
             this.OnSelectedCommandInSelectedModuleNeedsImportModule(e);
@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Triggers SelectedCommandInSelectedModuleNeedsHelp.
         /// </summary>
-        /// <param name="e">event arguments.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnSelectedCommandInSelectedModuleNeedsHelp(HelpNeededEventArgs e)
         {
             EventHandler<HelpNeededEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsHelp;
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Triggers SelectedCommandInSelectedModuleNeedsImportModule.
         /// </summary>
-        /// <param name="e">event arguments.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnSelectedCommandInSelectedModuleNeedsImportModule(ImportModuleEventArgs e)
         {
             EventHandler<ImportModuleEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsImportModule;
@@ -622,8 +622,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called when the RunSelectedCommand is triggered in the selected module.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_RunSelectedCommand(object sender, CommandEventArgs e)
         {
             this.OnRunSelectedCommandInSelectedModule(e);
@@ -632,7 +632,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Triggers RunSelectedCommandInSelectedModule.
         /// </summary>
-        /// <param name="e">event arguments.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnRunSelectedCommandInSelectedModule(CommandEventArgs e)
         {
             EventHandler<CommandEventArgs> handler = this.RunSelectedCommandInSelectedModule;

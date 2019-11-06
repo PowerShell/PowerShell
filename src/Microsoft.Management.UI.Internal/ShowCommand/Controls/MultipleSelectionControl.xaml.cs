@@ -25,8 +25,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Show more items in new dialog.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)
         {
             MultipleSelectionDialog multipleSelectionDialog = new MultipleSelectionDialog();

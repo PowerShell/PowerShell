@@ -422,7 +422,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Sets the text in the clipboard
         /// </summary>
-        /// <param name="text">text to set the clipboard to.</param>
+        /// <param name="text">Text to set the clipboard to.</param>
         internal static void SetClipboardText(string text)
         {
             try
@@ -492,7 +492,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the command to be run to in order to import a module and refresh the command data
         /// </summary>
-        /// <param name="module">module we want to import.</param>
+        /// <param name="module">Module we want to import.</param>
         /// <param name="isRemoteRunspace">Boolean flag determining whether Show-Command is queried in the local or remote runspace scenario.</param>
         /// <param name="isFirstChance">Boolean flag to indicate that it is the second attempt to query Show-Command data.</param>
         /// <returns>the command to be run to in order to import a module and refresh the command data</returns>
@@ -523,7 +523,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// gets the command to be run in order to show help for a command
         /// </summary>
-        /// <param name="command">command we want to get help from.</param>
+        /// <param name="command">Command we want to get help from.</param>
         /// <returns>the command to be run in order to show help for a command</returns>
         internal static string GetHelpCommand(string command)
         {
@@ -533,7 +533,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Constructs a dictionary of imported modules based on the module names
         /// </summary>
-        /// <param name="moduleObjects">the imported modules.</param>
+        /// <param name="moduleObjects">The imported modules.</param>
         /// <returns>a dictionary of imported modules based on the module names</returns>
         internal static Dictionary<string, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
         {
@@ -565,7 +565,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Constructs a list of commands out of <paramref name="commandObjects"/>
         /// </summary>
-        /// <param name="commandObjects">the results of a get-command command.</param>
+        /// <param name="commandObjects">The results of a get-command command.</param>
         /// <returns>a list of commands out of <paramref name="commandObjects"/></returns>
         internal static List<ShowCommandCommandInfo> GetCommandList(object[] commandObjects)
         {
@@ -613,12 +613,12 @@ Function PSGetSerializedShowCommandInfo
         /// The new ViewModel will have the command selected according to <paramref name="selectedModuleNeedingImportModule"/>,
         /// <paramref name="parentModuleNeedingImportModule"/> and <paramref name="commandNeedingImportModule"/>.
         /// </summary>
-        /// <param name="oldViewModel">the viewModel before the module was imported.</param>
-        /// <param name="importedModules">the list of imported modules.</param>
-        /// <param name="commands">the list of commands.</param>
-        /// <param name="selectedModuleNeedingImportModule">the name of the module that was selected in <paramref name="oldViewModel"/>.</param>
-        /// <param name="parentModuleNeedingImportModule">the name of the module that was imported.</param>
-        /// <param name="commandNeedingImportModule">the name of the command that was selected in <paramref name="oldViewModel"/>.</param>
+        /// <param name="oldViewModel">The viewModel before the module was imported.</param>
+        /// <param name="importedModules">The list of imported modules.</param>
+        /// <param name="commands">The list of commands.</param>
+        /// <param name="selectedModuleNeedingImportModule">The name of the module that was selected in <paramref name="oldViewModel"/>.</param>
+        /// <param name="parentModuleNeedingImportModule">The name of the module that was imported.</param>
+        /// <param name="commandNeedingImportModule">The name of the command that was selected in <paramref name="oldViewModel"/>.</param>
         /// <returns>The new ViewModel based on <paramref name="importedModules"/> and <paramref name="commands"/>.</returns>
         internal static AllModulesViewModel GetNewAllModulesViewModel(AllModulesViewModel oldViewModel, Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, string selectedModuleNeedingImportModule, string parentModuleNeedingImportModule, string commandNeedingImportModule)
         {
@@ -676,9 +676,9 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets an error message to be displayed when failed to import a module
         /// </summary>
-        /// <param name="command">command belongiong to the module to import.</param>
-        /// <param name="module">module to import.</param>
-        /// <param name="error">error importing the module.</param>
+        /// <param name="command">Command belongiong to the module to import.</param>
+        /// <param name="module">Module to import.</param>
+        /// <param name="error">Error importing the module.</param>
         /// <returns>an error message to be displayed when failed to import a module</returns>
         internal static string GetImportModuleFailedMessage(string command, string module, string error)
         {
@@ -693,7 +693,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Single quotes <paramref name="str"/>
         /// </summary>
-        /// <param name="str">string to quote.</param>
+        /// <param name="str">String to quote.</param>
         /// <returns><paramref name="str"/> single quoted</returns>
         internal static string SingleQuote(string str)
         {
@@ -710,7 +710,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the host window, if it is present or null if it is not
         /// </summary>
-        /// <param name="cmdlet">cmdlet calling this method.</param>
+        /// <param name="cmdlet">Cmdlet calling this method.</param>
         /// <returns>the host window, if it is present or null if it is not</returns>
         internal static Window GetHostWindow(PSCmdlet cmdlet)
         {
@@ -736,10 +736,10 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets a property value using reflection
         /// </summary>
-        /// <param name="type">type containing the property.</param>
-        /// <param name="obj">object containing the property (null for a static property).</param>
-        /// <param name="propertyName">name of property to get.</param>
-        /// <param name="bindingFlags">flags passed to reflection.</param>
+        /// <param name="type">Type containing the property.</param>
+        /// <param name="obj">Object containing the property (null for a static property).</param>
+        /// <param name="propertyName">Name of property to get.</param>
+        /// <param name="bindingFlags">Flags passed to reflection.</param>
         /// <returns>
         /// property value or null if it was not able to retrieve it. This method is not suitable to return a property value that might be null.
         /// </returns>
@@ -781,11 +781,11 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Sets a property value using reflection
         /// </summary>
-        /// <param name="type">type containing the property.</param>
-        /// <param name="obj">object containing the property (null for a static property).</param>
-        /// <param name="propertyName">name of property to set.</param>
-        /// <param name="value">value to set the property with.</param>
-        /// <param name="bindingFlags">flags passed to reflection.</param>
+        /// <param name="type">Type containing the property.</param>
+        /// <param name="obj">Object containing the property (null for a static property).</param>
+        /// <param name="propertyName">Name of property to set.</param>
+        /// <param name="value">Value to set the property with.</param>
+        /// <param name="bindingFlags">Flags passed to reflection.</param>
         /// <returns>true if it was able to set</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
         private static bool SetPropertyValue(Type type, object obj, string propertyName, object value, BindingFlags bindingFlags)
@@ -839,8 +839,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the command to be run when calling show-command for a particular command
         /// </summary>
-        /// <param name="commandName">the particular command we are running show-command on.</param>
-        /// <param name="includeAliasAndModules">true if we want to include aliases and retrieve modules.</param>
+        /// <param name="commandName">The particular command we are running show-command on.</param>
+        /// <param name="includeAliasAndModules">True if we want to include aliases and retrieve modules.</param>
         /// <returns>the command to be run when calling show-command for a particular command</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private static string GetShowCommandCommand(string commandName, bool includeAliasAndModules)
@@ -854,9 +854,9 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets a CommandViewModel of a CommandInfo
         /// </summary>
-        /// <param name="command">command we want to get a CommandViewModel of.</param>
-        /// <param name="noCommonParameter">true if we do not want common parameters.</param>
-        /// <param name="importedModules">the loaded modules.</param>
+        /// <param name="command">Command we want to get a CommandViewModel of.</param>
+        /// <param name="noCommonParameter">True if we do not want common parameters.</param>
+        /// <param name="importedModules">The loaded modules.</param>
         /// <param name="moduleQualify">True to qualify command with module name in GetScript.</param>
         /// <returns>a CommandViewModel of a CommandInfo</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
@@ -870,7 +870,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Dispatches a message to the window for it to activate
         /// </summary>
-        /// <param name="window">window to be activated.</param>
+        /// <param name="window">Window to be activated.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from ActivateWindow() which is called using reflection")]
         private static void ActivateWindow(Window window)
         {
@@ -886,13 +886,13 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Shows the window listing cmdlets
         /// </summary>
-        /// <param name="cmdlet">cmdlet calling this method.</param>
+        /// <param name="cmdlet">Cmdlet calling this method.</param>
         /// <param name="importedModules">All loaded modules.</param>
-        /// <param name="commands">commands to be listed.</param>
-        /// <param name="noCommonParameter">true if we should not show common parameters.</param>
-        /// <param name="windowWidth">window width.</param>
-        /// <param name="windowHeight">window height.</param>
-        /// <param name="passThrough">true if the GUI should mention ok instead of run.</param>
+        /// <param name="commands">Commands to be listed.</param>
+        /// <param name="noCommonParameter">True if we should not show common parameters.</param>
+        /// <param name="windowWidth">Window width.</param>
+        /// <param name="windowHeight">Window height.</param>
+        /// <param name="passThrough">True if the GUI should mention ok instead of run.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowAllModulesWindow(PSCmdlet cmdlet, Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter, double windowWidth, double windowHeight, bool passThrough)
         {
@@ -924,7 +924,7 @@ Function PSGetSerializedShowCommandInfo
         /// Calls ShowsDialog on methodThatReturnsDialog either in a separate thread or dispatched
         /// to the hostWindow thread if there is a hostWindow
         /// </summary>
-        /// <param name="cmdlet">cmdlet used to retrieve the host window.</param>
+        /// <param name="cmdlet">Cmdlet used to retrieve the host window.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
         private void CallShowDialog(PSCmdlet cmdlet)
         {
@@ -959,11 +959,11 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Shows the window for the cmdlet
         /// </summary>
-        /// <param name="cmdlet">cmdlet calling this method.</param>
-        /// <param name="commandViewModelObj">command to show in the window.</param>
-        /// <param name="windowWidth">window width.</param>
-        /// <param name="windowHeight">window height.</param>
-        /// <param name="passThrough">true if the GUI should mention ok instead of run.</param>
+        /// <param name="cmdlet">Cmdlet calling this method.</param>
+        /// <param name="commandViewModelObj">Command to show in the window.</param>
+        /// <param name="windowWidth">Window width.</param>
+        /// <param name="windowHeight">Window height.</param>
+        /// <param name="passThrough">True if the GUI should mention ok instead of run.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowCommandWindow(PSCmdlet cmdlet, object commandViewModelObj, double windowWidth, double windowHeight, bool passThrough)
         {
@@ -997,8 +997,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Called when the module importation is done
         /// </summary>
-        /// <param name="importedModules">all modules currently imported.</param>
-        /// <param name="commands">commands to be displayed.</param>
+        /// <param name="importedModules">All modules currently imported.</param>
+        /// <param name="commands">Commands to be displayed.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ImportModuleDone(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
@@ -1025,7 +1025,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Called when the module importation has failed
         /// </summary>
-        /// <param name="reason">reason why the module importation failed.</param>
+        /// <param name="reason">Reason why the module importation failed.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ImportModuleFailed(Exception reason)
         {
@@ -1049,7 +1049,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Called when the results or get-help are ready in order to display the help window for a command
         /// </summary>
-        /// <param name="getHelpResults">results of a get-help call.</param>
+        /// <param name="getHelpResults">Results of a get-help call.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void DisplayHelp(Collection<PSObject> getHelpResults)
         {
@@ -1099,7 +1099,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Sets up window settings common between the two flavors of show-command
         /// </summary>
-        /// <param name="commandWindow">the window being displayed.</param>
+        /// <param name="commandWindow">The window being displayed.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from ShowAllModulesWindow and ShowCommandWindow which are called with reflection")]
         private void SetupWindow(Window commandWindow)
         {
@@ -1111,8 +1111,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Handles the SelectedCommandInSelectedModuleNeedsImportModule event
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void CommandNeedsImportModule(object sender, ImportModuleEventArgs e)
         {
             this.commandNeedingImportModule = e.CommandName;
@@ -1125,8 +1125,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Handles the SelectedCommandInSelectedModuleNeedsHelp event
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void CommandNeedsHelp(object sender, HelpNeededEventArgs e)
         {
             this.commandNeedingHelp = e.CommandName;
@@ -1136,8 +1136,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Called when the window is closed to set this.dialogCanceled
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Window_Closed(object sender, EventArgs e)
         {
             if (this.hostWindow != null)
@@ -1152,8 +1152,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Called when the window is loaded to set this.Window_Loaded
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.window.Loaded -= new RoutedEventHandler(this.Window_Loaded);
@@ -1163,10 +1163,10 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Sets up event listening on the buttons
         /// </summary>
-        /// <param name="run">button to run command.</param>
-        /// <param name="copy">button to copy command code.</param>
-        /// <param name="cancel">button to close window.</param>
-        /// <param name="passThrough">true to change the text of Run to OK.</param>
+        /// <param name="run">Button to run command.</param>
+        /// <param name="copy">Button to copy command code.</param>
+        /// <param name="cancel">Button to close window.</param>
+        /// <param name="passThrough">True to change the text of Run to OK.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from methods called using reflection")]
         private void SetupButtonEvents(Button run, Button copy, Button cancel, bool passThrough)
         {
@@ -1193,8 +1193,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Copies the script into the clipboard
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Buttons_CopyClick(object sender, RoutedEventArgs e)
         {
             string script = this.InternalGetScript();
@@ -1209,8 +1209,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Sets a succesfull dialog result and then closes the window
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Buttons_RunClick(object sender, RoutedEventArgs e)
         {
             this.dialogCanceled = false;
@@ -1220,8 +1220,8 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Closes the window.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Buttons_CancelClick(object sender, RoutedEventArgs e)
         {
             this.CloseWindow();
@@ -1288,7 +1288,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Implements IDisposable logic
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose.</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)

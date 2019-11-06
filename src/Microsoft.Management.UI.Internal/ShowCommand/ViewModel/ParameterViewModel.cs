@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// Initializes a new instance of the ParameterViewModel class.
         /// </summary>
         /// <param name="parameter">The parameter information for this parameter.</param>
-        /// <param name="parameterSetName">the name of the parameter set this parameter is in.</param>
+        /// <param name="parameterSetName">The name of the parameter set this parameter is in.</param>
         public ParameterViewModel(ShowCommandParameterInfo parameter, string parameterSetName)
         {
             if (parameter == null)
@@ -221,11 +221,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Evaluates the tooltip based on the parameters.
         /// </summary>
-        /// <param name="typeName">parameter type name.</param>
-        /// <param name="position">parameter position.</param>
-        /// <param name="mandatory">true if the parameter is mandatory.</param>
-        /// <param name="shared">true if the parameter is shared by parameter sets.</param>
-        /// <param name="valueFromPipeline">true if the parameter takes value from the pipeline.</param>
+        /// <param name="typeName">Parameter type name.</param>
+        /// <param name="position">Parameter position.</param>
+        /// <param name="mandatory">True if the parameter is mandatory.</param>
+        /// <param name="shared">True if the parameter is shared by parameter sets.</param>
+        /// <param name="valueFromPipeline">True if the parameter takes value from the pipeline.</param>
         /// <returns> the tooltip based on the parameters</returns>
         internal static string EvaluateTooltip(string typeName, int position, bool mandatory, bool shared, bool valueFromPipeline)
         {

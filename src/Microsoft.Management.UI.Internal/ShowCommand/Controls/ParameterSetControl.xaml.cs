@@ -233,8 +233,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called for a newly created multiline text box to increase its height and.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private static void MultiLineTextBox_Loaded(object sender, RoutedEventArgs e)
         {
             TextBox senderTextBox = (TextBox)sender;

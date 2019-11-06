@@ -34,8 +34,8 @@ namespace Microsoft.Management.UI
         /// <summary>
         /// Called when the OK button has been clicked
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             HelpWindowSettings.Default.HelpDescriptionDisplayed = this.Description.IsChecked == true;

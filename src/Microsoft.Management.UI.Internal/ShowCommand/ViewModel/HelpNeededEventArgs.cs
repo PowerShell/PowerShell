@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the HelpNeededEventArgs class.
         /// </summary>
-        /// <param name="commandName">the name for the command needing help.</param>
+        /// <param name="commandName">The name for the command needing help.</param>
         public HelpNeededEventArgs(string commandName)
         {
             this.commandName = commandName;

@@ -29,8 +29,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the ImportModuleEventArgs class.
         /// </summary>
-        /// <param name="commandName">the name for the command needing help.</param>
-        /// <param name="parentModuleName">the name of the module containing the command.</param>
+        /// <param name="commandName">The name for the command needing help.</param>
+        /// <param name="parentModuleName">The name of the module containing the command.</param>
         /// <param name="selectedModuleName">
         /// the name of the module that is selected, which can be different from parentModuleName
         /// if "All" is selected

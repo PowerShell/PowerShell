@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Saves the user settings.
         /// </summary>
-        /// <param name="e">event arguments.</param>
+        /// <param name="e">Event arguments.</param>
         protected override void OnClosed(System.EventArgs e)
         {
             ShowCommandSettings.Default.Save();
@@ -105,8 +105,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Sets the focus on the CommandName control.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ShowAllModulesWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.AllModulesControl.CommandName.Focus();
@@ -115,8 +115,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Saves size changes in user settings.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ShowAllModulesWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ShowCommandSettings.Default.ShowCommandsWidth = this.Width;
@@ -126,8 +126,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Saves position changes in user settings.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ShowAllModulesWindow_LocationChanged(object sender, System.EventArgs e)
         {
             ShowCommandSettings.Default.ShowCommandsTop = this.Top;
@@ -137,8 +137,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Updates the user setting with window state.
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ShowAllModulesWindow_StateChanged(object sender, System.EventArgs e)
         {
             ShowCommandSettings.Default.ShowCommandsWindowMaximized = this.WindowState == WindowState.Maximized;
