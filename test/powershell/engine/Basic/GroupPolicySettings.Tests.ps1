@@ -137,7 +137,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             TestFeature -KeyPath $WinKeyPath
         }
 
-        It 'Transcription policy test' -Skip:([System.Appdomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
+        It 'Transcription policy test' -Skip:(!$IsWindows -or [System.Appdomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
 
             function TestFeature
             {
