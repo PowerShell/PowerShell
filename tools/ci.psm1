@@ -209,7 +209,7 @@ function Invoke-CITest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests', 'PwshwPesterTests')]
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests', 'PwshwUnelevatedPesterTests', 'PwshwElevatedPesterTests')]
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
         [string] $TagSet
