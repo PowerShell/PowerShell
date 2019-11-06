@@ -50,11 +50,6 @@ namespace Microsoft.PowerShell
         public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
-        /// False if running without a console like with pwshw.
-        /// </summary>
-        private static bool _consoleAvailable = true;
-
-        /// <summary>
         /// Constructs an instance.
         /// </summary>
         /// <param name="parent"></param>
