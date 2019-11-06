@@ -97,6 +97,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     isHidden = ToBoolean(_reader.Value);
                 }
+
                 // Unknown attributes are ignored.
             }
 
@@ -114,11 +115,18 @@ namespace System.Management.Automation.Runspaces
         private void ReadEndElement()
         {
             while (_reader.NodeType == XmlNodeType.Whitespace)
+            {
                 _reader.Skip();
+            }
+
             if (_reader.NodeType == XmlNodeType.None)
+            {
                 _reader.Skip();
+            }
             else
+            {
                 _reader.ReadEndElement();
+            }
         }
 
         private void UnknownNode(string node, string expectedNodes)
@@ -139,7 +147,7 @@ namespace System.Management.Automation.Runspaces
         {
             while (_reader.Read())
             {
-                if ((_reader.IsStartElement()) && _reader.LocalName.Equals(nodeName))
+                if (_reader.IsStartElement() && _reader.LocalName.Equals(nodeName))
                 {
                     SkipUntillNodeEnd(nodeName);
                 }
@@ -163,7 +171,9 @@ namespace System.Management.Automation.Runspaces
         private ScriptBlock GetScriptBlock(string text, int initialLine)
         {
             if (text == null)
+            {
                 return null;
+            }
 
             ScriptBlock scriptBlock;
             try
@@ -209,9 +219,15 @@ namespace System.Management.Automation.Runspaces
         {
             value = value.Trim();
             if (string.Equals(value, "true", StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
+
             if (string.Equals(value, "false", StringComparison.OrdinalIgnoreCase))
+            {
                 return false;
+            }
+
             _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.ValueShouldBeTrueOrFalse, value);
             return false;
         }
@@ -230,9 +246,10 @@ namespace System.Management.Automation.Runspaces
 
         private bool BoolConverter(object value, string name)
         {
-            var s = value as string;
-            if (s != null)
+            if (value is string s)
+            {
                 return ToBoolean(s);
+            }
 
             return Converter<bool>(value, name);
         }
@@ -360,22 +377,38 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idType);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idType);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idMembers)
                         {
-                            if (members != null) NotMoreThanOnce(_idMembers, _idType);
+                            if (members != null)
+                            {
+                                NotMoreThanOnce(_idMembers, _idType);
+                            }
+
                             members = Read_Members(out standardMembers);
                         }
                         else if ((object)_reader.LocalName == (object)_idTypeConverter)
                         {
-                            if (typeConverter != null) NotMoreThanOnce(_idTypeConverter, _idType);
+                            if (typeConverter != null)
+                            {
+                                NotMoreThanOnce(_idTypeConverter, _idType);
+                            }
+
                             typeConverter = Read_TypeX(_idTypeConverter);
                         }
                         else if ((object)_reader.LocalName == (object)_idTypeAdapter)
                         {
-                            if (typeAdapter != null) NotMoreThanOnce(_idTypeAdapter, _idType);
+                            if (typeAdapter != null)
+                            {
+                                NotMoreThanOnce(_idTypeAdapter, _idType);
+                            }
+
                             typeAdapter = Read_TypeX(_idTypeAdapter);
                         }
                         else
@@ -511,7 +544,11 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idTypeName)
                         {
-                            if (typeName != null) NotMoreThanOnce(_idTypeName, elementName);
+                            if (typeName != null)
+                            {
+                                NotMoreThanOnce(_idTypeName, elementName);
+                            }
+
                             typeLineNumber = _readerLineInfo.LineNumber;
                             typeName = ReadElementString(_idTypeName);
                         }
@@ -568,37 +605,58 @@ namespace System.Management.Automation.Runspaces
                         if ((object)_reader.LocalName == (object)_idNoteProperty)
                         {
                             var p = Read_NoteProperty();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idAliasProperty)
                         {
                             var p = Read_AliasProperty();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idScriptProperty)
                         {
                             var p = Read_ScriptProperty();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idCodeProperty)
                         {
                             var p = Read_CodeProperty();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idScriptMethod)
                         {
                             var p = Read_ScriptMethod();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idCodeMethod)
                         {
                             var p = Read_CodeMethod();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idPropertySet)
                         {
                             var p = Read_PropertySet();
-                            if (p != null) members.Add(p);
+                            if (p != null)
+                            {
+                                members.Add(p);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idMemberSet)
                         {
@@ -659,17 +717,29 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idMemberSet);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idMemberSet);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idInheritMembers)
                         {
-                            if (inheritMembers.HasValue) NotMoreThanOnce(_idInheritMembers, _idMemberSet);
+                            if (inheritMembers.HasValue)
+                            {
+                                NotMoreThanOnce(_idInheritMembers, _idMemberSet);
+                            }
+
                             inheritMembers = ToBoolean(ReadElementString(_idMemberSet));
                         }
                         else if ((object)_reader.LocalName == (object)_idMembers)
                         {
-                            if (members != null) NotMoreThanOnce(_idMembers, _idMemberSet);
+                            if (members != null)
+                            {
+                                NotMoreThanOnce(_idMembers, _idMemberSet);
+                            }
+
                             MemberSetData standardMembers;
                             members = Read_Members(out standardMembers);
                             if (standardMembers != null)
@@ -696,18 +766,26 @@ namespace System.Management.Automation.Runspaces
             }
 
             if (string.IsNullOrWhiteSpace(name))
+            {
                 NodeNotFound(lineNumber, _idName, _idMemberSet);
+            }
+
             // Somewhat pointlessly (backcompat), we allow a missing Member node
             if (members == null)
+            {
                 members = new Collection<TypeMemberData>();
+            }
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             var result = new MemberSetData(name, members)
             {
                 IsHidden = isHidden.GetValueOrDefault()
             };
+
             if (inheritMembers.HasValue)
             {
                 result.InheritMembers = inheritMembers.Value;
@@ -740,12 +818,16 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idPropertySet);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idPropertySet);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idReferencedProperties)
                         {
-                            if ((_reader.IsEmptyElement))
+                            if (_reader.IsEmptyElement)
                             {
                                 _reader.Skip();
                             }
@@ -759,7 +841,11 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null) referencedProperties = new List<string>(8);
+                                            if (referencedProperties == null)
+                                            {
+                                                referencedProperties = new List<string>(8);
+                                            }
+
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
                                         else
@@ -800,7 +886,9 @@ namespace System.Management.Automation.Runspaces
                 NodeNotFound(lineNumber, _idReferencedProperties, _idPropertySet);
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new PropertySetData(referencedProperties)
             {
@@ -834,12 +922,20 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idCodeMethod);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idCodeMethod);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idCodeReference)
                         {
-                            if (codeReference != null) NotMoreThanOnce(_idCodeReference, _idCodeMethod);
+                            if (codeReference != null)
+                            {
+                                NotMoreThanOnce(_idCodeReference, _idCodeMethod);
+                            }
+
                             methodLineNumber = _readerLineInfo.LineNumber;
                             codeReference = Read_CodeReference();
                             if (codeReference == null)
@@ -869,7 +965,9 @@ namespace System.Management.Automation.Runspaces
                 _context.AddError(methodLineNumber, ExtendedTypeSystem.CodeMethodMethodFormat);
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new CodeMethodData(name, codeReference);
         }
@@ -900,13 +998,21 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idTypeName)
                         {
-                            if (typeName != null) NotMoreThanOnce(_idTypeName, _idCodeReference);
+                            if (typeName != null)
+                            {
+                                NotMoreThanOnce(_idTypeName, _idCodeReference);
+                            }
+
                             typeLineNumber = _readerLineInfo.LineNumber;
                             typeName = ReadElementString(_idTypeName);
                         }
                         else if ((object)_reader.LocalName == (object)_idMethodName)
                         {
-                            if (methodName != null) NotMoreThanOnce(_idMethodName, _idCodeReference);
+                            if (methodName != null)
+                            {
+                                NotMoreThanOnce(_idMethodName, _idCodeReference);
+                            }
+
                             methodLineNumber = _readerLineInfo.LineNumber;
                             methodName = ReadElementString(_idMethodName);
                         }
@@ -932,7 +1038,9 @@ namespace System.Management.Automation.Runspaces
                 NodeNotFound(lineNumber, _idMethodName, _idCodeReference);
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             MethodInfo member = null;
             var type = ResolveType(typeName, typeLineNumber);
@@ -976,12 +1084,20 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idScriptMethod);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idScriptMethod);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idScript)
                         {
-                            if (script != null) NotMoreThanOnce(_idScript, _idScriptMethod);
+                            if (script != null)
+                            {
+                                NotMoreThanOnce(_idScript, _idScriptMethod);
+                            }
+
                             scriptLineNumber = _readerLineInfo.LineNumber;
                             script = ReadElementString(_idScript);
                         }
@@ -1014,7 +1130,9 @@ namespace System.Management.Automation.Runspaces
             ScriptBlock scriptBlock = GetScriptBlock(script, scriptLineNumber);
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new ScriptMethodData(name, scriptBlock);
         }
@@ -1046,24 +1164,40 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idCodeProperty);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idCodeProperty);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idGetCodeReference)
                         {
-                            if (getter != null) NotMoreThanOnce(_idGetCodeReference, _idCodeProperty);
+                            if (getter != null)
+                            {
+                                NotMoreThanOnce(_idGetCodeReference, _idCodeProperty);
+                            }
+
                             getterLineNumber = _readerLineInfo.LineNumber;
                             getter = Read_CodeReference();
                             if (getter == null)
+                            {
                                 _context.AddError(getterLineNumber, ExtendedTypeSystem.CodePropertyGetterAndSetterNull);
+                            }
                         }
                         else if ((object)_reader.LocalName == (object)_idSetCodeReference)
                         {
-                            if (setter != null) NotMoreThanOnce(_idSetCodeReference, _idCodeProperty);
+                            if (setter != null)
+                            {
+                                NotMoreThanOnce(_idSetCodeReference, _idCodeProperty);
+                            }
+
                             setterLineNumber = _readerLineInfo.LineNumber;
                             setter = Read_CodeReference();
                             if (setter == null)
+                            {
                                 _context.AddError(setterLineNumber, ExtendedTypeSystem.CodePropertyGetterAndSetterNull);
+                            }
                         }
                         else
                         {
@@ -1082,16 +1216,29 @@ namespace System.Management.Automation.Runspaces
             }
 
             if (string.IsNullOrEmpty(name))
+            {
                 NodeNotFound(lineNumber, _idName, _idCodeProperty);
+            }
+
             if (getter == null && setter == null && getterLineNumber == 0 && setterLineNumber == 0)
+            {
                 _context.AddError(lineNumber, TypesXmlStrings.CodePropertyShouldHaveGetterOrSetter);
+            }
+
             if (getter != null && !PSCodeProperty.CheckGetterMethodInfo(getter))
+            {
                 _context.AddError(getterLineNumber, ExtendedTypeSystem.CodePropertyGetterFormat);
+            }
+
             if (setter != null && !PSCodeProperty.CheckSetterMethodInfo(setter, getter))
+            {
                 _context.AddError(setterLineNumber, ExtendedTypeSystem.CodePropertySetterFormat);
+            }
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new CodePropertyData(name, getter, setter)
             {
@@ -1126,18 +1273,30 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idScriptProperty);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idScriptProperty);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idGetScriptBlock)
                         {
-                            if (getScriptBlock != null) NotMoreThanOnce(_idGetScriptBlock, _idScriptProperty);
+                            if (getScriptBlock != null)
+                            {
+                                NotMoreThanOnce(_idGetScriptBlock, _idScriptProperty);
+                            }
+
                             getterInitialLine = _readerLineInfo.LineNumber;
                             getScriptBlock = ReadElementString(_idGetScriptBlock);
                         }
                         else if ((object)_reader.LocalName == (object)_idSetScriptBlock)
                         {
-                            if (setScriptBlock != null) NotMoreThanOnce(_idSetScriptBlock, _idScriptProperty);
+                            if (setScriptBlock != null)
+                            {
+                                NotMoreThanOnce(_idSetScriptBlock, _idScriptProperty);
+                            }
+
                             setterInitialLine = _readerLineInfo.LineNumber;
                             setScriptBlock = ReadElementString(_idSetScriptBlock);
                         }
@@ -1171,7 +1330,9 @@ namespace System.Management.Automation.Runspaces
             ScriptBlock setter = GetScriptBlock(setScriptBlock, setterInitialLine);
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new ScriptPropertyData(name, getter, setter)
             {
@@ -1205,17 +1366,29 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idAliasProperty);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idAliasProperty);
+                            }
+
                             name = ReadElementString(_idAliasProperty);
                         }
                         else if ((object)_reader.LocalName == (object)_idReferencedMemberName)
                         {
-                            if (referencedMemberName != null) NotMoreThanOnce(_idReferencedMemberName, _idAliasProperty);
+                            if (referencedMemberName != null)
+                            {
+                                NotMoreThanOnce(_idReferencedMemberName, _idAliasProperty);
+                            }
+
                             referencedMemberName = ReadElementString(_idReferencedMemberName);
                         }
                         else if ((object)_reader.LocalName == (object)_idTypeName)
                         {
-                            if (typeName != null) NotMoreThanOnce(_idTypeName, _idAliasProperty);
+                            if (typeName != null)
+                            {
+                                NotMoreThanOnce(_idTypeName, _idAliasProperty);
+                            }
+
                             typeLineNumber = _readerLineInfo.LineNumber;
                             typeName = ReadElementString(_idTypeName);
                         }
@@ -1247,7 +1420,10 @@ namespace System.Management.Automation.Runspaces
 
             Type convertToType = (typeName != null) ? ResolveType(typeName, typeLineNumber) : null;
 
-            if (_context.errors.Count != errorCount) return null;
+            if (_context.errors.Count != errorCount)
+            {
+                return null;
+            }
 
             return new AliasPropertyData(name, referencedMemberName, convertToType)
             {
@@ -1281,17 +1457,29 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idNoteProperty);
+                            if (name != null)
+                            {
+                                NotMoreThanOnce(_idName, _idNoteProperty);
+                            }
+
                             name = ReadElementString(_idName);
                         }
                         else if ((object)_reader.LocalName == (object)_idValue)
                         {
-                            if (valueAsString != null) NotMoreThanOnce(_idValue, _idNoteProperty);
+                            if (valueAsString != null)
+                            {
+                                NotMoreThanOnce(_idValue, _idNoteProperty);
+                            }
+
                             valueAsString = ReadElementString(_idValue);
                         }
                         else if ((object)_reader.LocalName == (object)_idTypeName)
                         {
-                            if (typeName != null) NotMoreThanOnce(_idTypeName, _idNoteProperty);
+                            if (typeName != null)
+                            {
+                                NotMoreThanOnce(_idTypeName, _idNoteProperty);
+                            }
+
                             typeLineNumber = _readerLineInfo.LineNumber;
                             typeName = ReadElementString(_idTypeName);
                         }
@@ -1336,7 +1524,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             if (_context.errors.Count != errorCount)
+            {
                 return null;
+            }
 
             return new NotePropertyData(name, value)
             {
@@ -1543,19 +1733,17 @@ namespace System.Management.Automation.Runspaces
         internal void AddError(int errorLineNumber, string resourceString, params object[] formatArguments)
         {
             string errorMsg = StringUtil.Format(resourceString, formatArguments);
-            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineError,
-                            this.PSSnapinName, this.fileName, errorLineNumber, errorMsg);
+            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineError, this.PSSnapinName, this.fileName, errorLineNumber, errorMsg);
             this.errors.Add(errorLine);
         }
 
         internal void AddError(string typeName, int errorLineNumber, string resourceString, params object[] formatArguments)
         {
             string errorMsg = StringUtil.Format(resourceString, formatArguments);
-            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineTypeError,
-                            this.PSSnapinName, this.fileName, errorLineNumber, typeName, errorMsg);
+            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineTypeError, this.PSSnapinName, this.fileName, errorLineNumber, typeName, errorMsg);
             this.errors.Add(errorLine);
         }
-    };
+    }
 
     /// <summary>
     /// This exception is used by TypeTable constructor to indicate errors
@@ -1741,7 +1929,10 @@ namespace System.Management.Automation.Runspaces
         public TypeData(Type type) : this()
         {
             if (type == null)
+            {
                 throw PSTraceSource.NewArgumentNullException("type");
+            }
+
             this.TypeName = type.FullName;
         }
 
@@ -1782,7 +1973,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string SerializationMethod
         {
-            get { return _serializationMethod; }
+            get
+            {
+                return _serializationMethod;
+            }
 
             set
             {
@@ -1811,7 +2005,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Type TargetTypeForDeserialization
         {
-            get { return _targetTypeForDeserialization; }
+            get
+            {
+                return _targetTypeForDeserialization;
+            }
 
             set
             {
@@ -1840,7 +2037,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public uint SerializationDepth
         {
-            get { return _serializationDepth; }
+            get
+            {
+                return _serializationDepth;
+            }
 
             set
             {
@@ -1864,7 +2064,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string DefaultDisplayProperty
         {
-            get { return _defaultDisplayProperty; }
+            get
+            {
+                return _defaultDisplayProperty;
+            }
 
             set
             {
@@ -1893,7 +2096,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public bool InheritPropertySerializationSet
         {
-            get { return _inheritPropertySerializationSet; }
+            get
+            {
+                return _inheritPropertySerializationSet;
+            }
 
             set
             {
@@ -1916,7 +2122,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string StringSerializationSource
         {
-            get { return _stringSerializationSource; }
+            get
+            {
+                return _stringSerializationSource;
+            }
 
             set
             {
@@ -1961,7 +2170,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public TypeMemberData StringSerializationSourceProperty
         {
-            get { return _stringSerializationSourceProperty; }
+            get
+            {
+                return _stringSerializationSourceProperty;
+            }
 
             set
             {
@@ -1999,7 +2211,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PropertySetData DefaultDisplayPropertySet
         {
-            get { return _defaultDisplayPropertySet; }
+            get
+            {
+                return _defaultDisplayPropertySet;
+            }
 
             set
             {
@@ -2016,7 +2231,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PropertySetData DefaultKeyPropertySet
         {
-            get { return _defaultKeyPropertySet; }
+            get
+            {
+                return _defaultKeyPropertySet;
+            }
 
             set
             {
@@ -2033,7 +2251,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PropertySetData PropertySerializationSet
         {
-            get { return _propertySerializationSet; }
+            get
+            {
+                return _propertySerializationSet;
+            }
 
             set
             {
@@ -2050,11 +2271,13 @@ namespace System.Management.Automation.Runspaces
         private Type _targetTypeForDeserialization;
         private uint _serializationDepth;
         private string _defaultDisplayProperty;
+
         // InheritPropertySerializationSet should be true or false
         private bool _inheritPropertySerializationSet;
 
         // It is of AliasProperty
         private string _stringSerializationSource;
+
         // Except when it's not
         private TypeMemberData _stringSerializationSourceProperty;
 
@@ -2143,7 +2366,9 @@ namespace System.Management.Automation.Runspaces
         internal TypeMemberData(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
+            {
                 throw PSTraceSource.NewArgumentException("name");
+            }
 
             Name = name;
         }
@@ -2604,6 +2829,7 @@ namespace System.Management.Automation.Runspaces
         internal const string DefaultDisplayPropertySet = "DefaultDisplayPropertySet";
         internal const string DefaultKeyPropertySet = "DefaultKeyPropertySet";
         internal const string DefaultDisplayProperty = "DefaultDisplayProperty";
+
         // this is used for extended properties like Note,Alias,Script,Code
         internal const string IsHiddenAttribute = "IsHidden";
 
@@ -2616,35 +2842,35 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> _consolidatedMembers =
             new ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>>(
-                /*concurrency*/1, /*capacity*/256, StringComparer.OrdinalIgnoreCase);
+                concurrencyLevel: 1, capacity: 256, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Table from type name list into Collection of strings.
         /// </summary>
         private readonly ConcurrentDictionary<string, Collection<string>> _consolidatedSpecificProperties =
             new ConcurrentDictionary<string, Collection<string>>(
-                /*concurrency*/1, /*capacity*/10, StringComparer.OrdinalIgnoreCase);
+                concurrencyLevel: 1, capacity: 10, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Table from type name into PSMemberInfoInternalCollection.
         /// </summary>
         private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> _extendedMembers =
             new ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>>(
-                /*concurrency*/3, /*capacity*/300, StringComparer.OrdinalIgnoreCase);
+                concurrencyLevel: 3, capacity: 300, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Points to a Hashtable from type name to type converter.
         /// </summary>
         private readonly ConcurrentDictionary<string, object> _typeConverters
             = new ConcurrentDictionary<string, object>(
-                /*concurrency*/1, /*capacity*/5, StringComparer.OrdinalIgnoreCase);
+                concurrencyLevel: 1, capacity: 5, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Points to a Hashtable from type name to type adapter.
         /// </summary>
         private readonly ConcurrentDictionary<string, PSObject.AdapterSet> _typeAdapters =
             new ConcurrentDictionary<string, PSObject.AdapterSet>(
-                /*concurrency*/1, /*capacity*/5, StringComparer.OrdinalIgnoreCase);
+                concurrencyLevel: 1, capacity: 5, StringComparer.OrdinalIgnoreCase);
 
         // this is used to throw errors when updating a shared TypeTable.
         internal readonly bool isShared;
@@ -2660,11 +2886,12 @@ namespace System.Management.Automation.Runspaces
         internal InitialSessionStateEntryCollection<SessionStateTypeEntry> typesInfo =
             new InitialSessionStateEntryCollection<SessionStateTypeEntry>();
 
-        internal const SerializationMethod defaultSerializationMethod = SerializationMethod.AllPublicProperties;
+        internal const SerializationMethod DefaultSerializationMethod = SerializationMethod.AllPublicProperties;
 
-        internal const bool defaultInheritPropertySerializationSet = true;
+        internal const bool DefaultInheritPropertySerializationSet = true;
 
-        private static readonly string[] s_standardMembers = new string[] {
+        private static readonly string[] s_standardMembers = new string[]
+        {
             DefaultDisplayProperty,
             DefaultDisplayPropertySet,
             DefaultKeyPropertySet,
@@ -2863,7 +3090,10 @@ namespace System.Management.Automation.Runspaces
             {
                 PSNoteProperty serializationMethodNote;
                 serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationMethodNode, typeof(SerializationMethod), out serializationMethodNote);
-                if (!serializationSettingsOk) break;
+                if (!serializationSettingsOk)
+                {
+                    break;
+                }
                 SerializationMethod serializationMethod = SerializationMethod.AllPublicProperties;
                 if (serializationMethodNote != null)
                 {
@@ -2873,52 +3103,89 @@ namespace System.Management.Automation.Runspaces
                 if (serializationMethod == SerializationMethod.String)
                 {
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, InheritPropertySerializationSet);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, PropertySerializationSet);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, SerializationDepth);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                 }
                 else if (serializationMethod == SerializationMethod.SpecificProperties)
                 {
                     PSNoteProperty inheritPropertiesNote;
                     serializationSettingsOk = GetCheckNote(errors, typeName, members, InheritPropertySerializationSet, typeof(bool), out inheritPropertiesNote);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
 
                     PSMemberInfo propertySerializationSet;
                     serializationSettingsOk = GetCheckMemberType(errors, typeName, members,
                         PropertySerializationSet, typeof(PSPropertySet),
                         out propertySerializationSet);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
+
                     if (inheritPropertiesNote != null && inheritPropertiesNote.Value.Equals(false) && propertySerializationSet == null)
                     {
-                        AddError(errors, typeName, TypesXmlStrings.MemberMustBePresent,
-                            PropertySerializationSet, SerializationMethodNode,
+                        AddError(
+                            errors,
+                            typeName,
+                            TypesXmlStrings.MemberMustBePresent,
+                            PropertySerializationSet,
+                            SerializationMethodNode,
                             SerializationMethod.SpecificProperties.ToString(),
-                            InheritPropertySerializationSet, "false");
+                            InheritPropertySerializationSet,
+                            "false");
                         serializationSettingsOk = false;
                         break;
                     }
 
                     PSNoteProperty noteProperty;
                     serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                 }
                 else if (serializationMethod == SerializationMethod.AllPublicProperties)
                 {
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, InheritPropertySerializationSet);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, PropertySerializationSet);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                     PSNoteProperty noteProperty;
                     serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
-                    if (!serializationSettingsOk) break;
+                    if (!serializationSettingsOk)
+                    {
+                        break;
+                    }
                 }
 
                 PSMemberInfo serializationSource;
                 serializationSettingsOk = GetCheckMemberType(errors, typeName, members, StringSerializationSource, typeof(PSPropertyInfo), out serializationSource);
-                if (!serializationSettingsOk) break;
-            } while (false);
+                if (!serializationSettingsOk)
+                {
+                    break;
+                }
+            }
+            while (false);
 
             if (serializationSettingsOk == false)
             {
@@ -2931,28 +3198,24 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSMemberInfo otherMember;
-            if (!GetCheckMemberType(errors, typeName, members,
-                DefaultDisplayPropertySet, typeof(PSPropertySet), out otherMember))
+            if (!GetCheckMemberType(errors, typeName, members, DefaultDisplayPropertySet, typeof(PSPropertySet), out otherMember))
             {
                 members.Remove(DefaultDisplayPropertySet);
             }
 
-            if (!GetCheckMemberType(errors, typeName, members,
-                DefaultKeyPropertySet, typeof(PSPropertySet), out otherMember))
+            if (!GetCheckMemberType(errors, typeName, members, DefaultKeyPropertySet, typeof(PSPropertySet), out otherMember))
             {
                 members.Remove(DefaultKeyPropertySet);
             }
 
             PSNoteProperty defaultDisplayProperty;
-            if (!GetCheckNote(errors, typeName, members,
-                DefaultDisplayProperty, typeof(string), out defaultDisplayProperty))
+            if (!GetCheckNote(errors, typeName, members, DefaultDisplayProperty, typeof(string), out defaultDisplayProperty))
             {
                 members.Remove(DefaultDisplayProperty);
             }
 
             PSNoteProperty targetTypeForDeserialization;
-            if (!GetCheckNote(errors, typeName, members,
-                TargetTypeForDeserialization, typeof(Type), out targetTypeForDeserialization))
+            if (!GetCheckNote(errors, typeName, members, TargetTypeForDeserialization, typeof(Type), out targetTypeForDeserialization))
             {
                 members.Remove(TargetTypeForDeserialization);
             }
@@ -2991,7 +3254,10 @@ namespace System.Management.Automation.Runspaces
             {
                 instance = Activator.CreateInstance(type);
             }
-            catch (TargetInvocationException e) { instanceException = e.InnerException ?? e; }
+            catch (TargetInvocationException e)
+            {
+                instanceException = e.InnerException ?? e;
+            }
             catch (Exception e)
             {
                 instanceException = e;
@@ -3184,6 +3450,7 @@ namespace System.Management.Automation.Runspaces
             bool isOverride)
         {
             int newMemberCount = standardMembers.Count() + propertySets.Count();
+
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
             if (membersCollection[PSStandardMembers] == null)
             {
@@ -3610,7 +3877,7 @@ namespace System.Management.Automation.Runspaces
         /// Load types.ps1xml, typesv3.ps1xml into the typetable.
         /// </summary>
         /// <exception cref="System.Security.SecurityException">
-        /// if caller doesn't have permission to read the PowerShell registry key
+        /// If caller doesn't have permission to read the PowerShell registry key.
         /// </exception>
         /// <returns>TypeTable.</returns>
         public static TypeTable LoadDefaultTypeFiles()
@@ -3694,18 +3961,29 @@ namespace System.Management.Automation.Runspaces
                 foreach (string type in types)
                 {
                     if (!_extendedMembers.TryGetValue(type, out var typeMembers))
+                    {
                         continue;
+                    }
+
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
                     PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
                     if (typeProperties == null)
+                    {
                         continue;
+                    }
+
                     foreach (string reference in typeProperties.ReferencedPropertyNames)
                     {
                         retValueTable.Add(reference);
                     }
 
-                    bool inherit = (bool)PSObject.GetNoteSettingValue(settings, InheritPropertySerializationSet,
-                        defaultInheritPropertySerializationSet, typeof(bool), false, null);
+                    bool inherit = (bool)PSObject.GetNoteSettingValue(
+                        settings,
+                        InheritPropertySerializationSet,
+                        DefaultInheritPropertySerializationSet,
+                        expectedType: typeof(bool),
+                        shouldReplicateInstance: false,
+                        ownerObject: null);
                     if (!inherit)
                     {
                         break;
@@ -3762,6 +4040,7 @@ namespace System.Management.Automation.Runspaces
                 foreach (PSMemberInfo typeMember in typeMembers)
                 {
                     PSMemberInfo currentMember = retValue[typeMember.Name];
+
                     // If the member was not present, we add it
                     if (currentMember == null)
                     {
@@ -3772,6 +4051,7 @@ namespace System.Management.Automation.Runspaces
                     // There was a currentMember with the same name as typeMember
                     PSMemberSet currentMemberAsMemberSet = currentMember as PSMemberSet;
                     PSMemberSet typeMemberAsMemberSet = typeMember as PSMemberSet;
+
                     // if we are not in a memberset inherit members situation we just replace
                     // the current member with the new more specific member
                     if (currentMemberAsMemberSet == null || typeMemberAsMemberSet == null ||
@@ -3794,7 +4074,8 @@ namespace System.Management.Automation.Runspaces
                         }
 
                         // there is a name conflict, the new member wins.
-                        Diagnostics.Assert(!typeMemberAsMemberSetMember.IsHidden,
+                        Diagnostics.Assert(
+                            !typeMemberAsMemberSetMember.IsHidden,
                             "new member in types.xml cannot be hidden");
                         currentMemberAsMemberSet.InternalMembers.Replace(typeMemberAsMemberSetMember);
                     }
@@ -4259,7 +4540,9 @@ namespace System.Management.Automation.Runspaces
             out bool failToLoadFile)
         {
             if (ProcessIsBuiltIn(fileToLoad, errors, out failToLoadFile))
+            {
                 return;
+            }
 
             bool isFullyTrusted;
             bool isProductCode;
@@ -4392,6 +4675,7 @@ namespace System.Management.Automation.Runspaces
 
             Update(errors, typeData, false);
             StandardMembersUpdated();
+
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, FormatAndTypeDataHelper.Category.Types);
         }
@@ -4405,7 +4689,9 @@ namespace System.Management.Automation.Runspaces
         public void RemoveType(string typeName)
         {
             if (string.IsNullOrEmpty(typeName))
+            {
                 throw PSTraceSource.NewArgumentNullException("typeName");
+            }
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
 
@@ -4418,6 +4704,7 @@ namespace System.Management.Automation.Runspaces
 
             Update(errors, typeData, true);
             StandardMembersUpdated();
+
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, FormatAndTypeDataHelper.Category.Types);
         }
@@ -4448,10 +4735,14 @@ namespace System.Management.Automation.Runspaces
             out bool failToLoadFile)
         {
             if (filePath == null)
+            {
                 throw new ArgumentNullException("filePath");
+            }
 
             if (errors == null)
+            {
                 throw new ArgumentNullException("errors");
+            }
 
             if (isShared)
             {
@@ -4459,7 +4750,10 @@ namespace System.Management.Automation.Runspaces
             }
 
             var etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStart(filePath);
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.ProcessTypeFileStart(filePath);
+            }
 
             if (!ProcessIsBuiltIn(filePath, errors, out failToLoadFile))
             {
@@ -4476,7 +4770,10 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStop(filePath);
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.ProcessTypeFileStop(filePath);
+            }
         }
 
         private bool ProcessIsBuiltIn(string filePath, ConcurrentBag<string> errors, out bool failToLoadFile)
