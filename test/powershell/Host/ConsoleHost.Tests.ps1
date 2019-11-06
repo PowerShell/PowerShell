@@ -244,6 +244,23 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             & $powershell -noprofile -c ' ' | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
+
+        It "Invalid path to -OutputLog should return error" {
+            $invalidPath = Join-Path -Path (New-Guid) -ChildPath "test.log"
+            & $powershell -noprofile -outputlog $invalidPath -command 'hello' 2> $testdrive/stderr.log
+            $LASTEXITCODE | Should -Be 70
+            Get-Content $testdrive/stderr.log | Should -Not -BeNullOrEmpty
+        }
+
+        It "-OutputLog logs output to file" {
+            & $powershell -outputlog $testdrive/test.log -noprofile -command "write-host 'myHost'; write-verbose -verbose 'myVerbose'; write-debug -debug 'myDebug'; write-error 'myError'"
+
+            $LASTEXITCODE | Should -Be 1
+            "$testdrive/test.log" | Should -FileContentMatch 'myHost'
+            "$testdrive/test.log" | Should -FileContentMatch 'VERBOSE: myVerbose'
+            "$testdrive/test.log" | Should -FileContentMatch 'DEBUG: myDebug'
+            "$testdrive/test.log" | Should -FileContentMatch 'myError'
+        }
     }
 
     Context "-Login pwsh switch" {

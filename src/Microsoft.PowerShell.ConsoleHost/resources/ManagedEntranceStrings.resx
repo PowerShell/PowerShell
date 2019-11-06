@@ -153,7 +153,8 @@ Type 'help' to get help.</value>
                   [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
+                  [-OutputFormat {Text | XML}] [-OutputLog &lt;filepath&gt;]
+                  [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
                   [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
@@ -351,6 +352,10 @@ Hides the copyright banner at startup.
     (text strings) or "XML" (serialized CLIXML format).
 
     Example: "pwsh -o XML -c Get-Date"
+
+-OutputLog | -ol
+
+    Writes output that would be sent to the console to this log file.
 
 -SettingsFile | -settings
 

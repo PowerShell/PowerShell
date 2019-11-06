@@ -126,6 +126,11 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
+#if !UNIX
+                new ExperimentalFeature(
+                    name: "PSConsoleLessHost",
+                    description: "'pwshw.exe' allows running scripts without a console ever attached"),
+#endif
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

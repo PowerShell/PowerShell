@@ -1452,10 +1452,10 @@ namespace Microsoft.PowerShell
                     {
                         _outputLogWriter = new StreamWriter(OutputLog, append: false);
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        s_tracer.TraceError("Could not create log file \"{0}\"", OutputLog);
-                        string msg = StringUtil.Format(ConsoleHostStrings.CreatingOutputLogFailed, OutputLog);
+                        s_tracer.TraceError("Could not create log file \"{0}\": {1}", OutputLog, e.Message);
+                        string msg = StringUtil.Format(ConsoleHostStrings.CreatingOutputLogFailed, OutputLog, e.Message);
                         ui.WriteErrorLine(msg);
                         exitCode = ExitCodeInitFailure;
                         break;

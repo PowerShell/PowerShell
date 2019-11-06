@@ -11,4 +11,12 @@ Describe 'PowerShell WinExe tests' -Tags CI {
 
         "$TestDrive\out.txt" | Should -FileContentMatch 'hello'
     }
+
+    It 'pwshw.exe is non-interactive' -Skip:(!$IsWindows) {
+        pwshw -outputlog $TestDrive\test.log -interactive -noprofile -command "read-host"
+        # since pwshw runs async, we wait til it's gone
+        Wait-UntilTrue -sb { $null -eq (Get-Process pwshw) }
+
+        "$TestDrive\test.log" | Should -FileContentMatch 'Read-Host:'
+    }
 }

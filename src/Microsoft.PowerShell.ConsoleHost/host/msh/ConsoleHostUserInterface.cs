@@ -1228,11 +1228,6 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
-            if (_parent.OutputLogWriter != null)
-            {
-                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
-            }
-
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1289,11 +1284,6 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
-            if (_parent.OutputLogWriter != null)
-            {
-                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
-            }
-
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1331,11 +1321,6 @@ namespace Microsoft.PowerShell
             // don't lock here as WriteLine is already protected.
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
-
-            if (_parent.OutputLogWriter != null)
-            {
-                _parent.OutputLogWriter.WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
-            }
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1399,11 +1384,6 @@ namespace Microsoft.PowerShell
                 ? _parent.ConsoleTextWriter
                 : Console.Error;
 
-            if (_parent.OutputLogWriter != null)
-            {
-                    _parent.OutputLogWriter.WriteLine(value);
-            }
-
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 Dbg.Assert(writer == _parent.ErrorSerializer.textWriter, "writers should be the same");
@@ -1413,9 +1393,18 @@ namespace Microsoft.PowerShell
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
+                {
                     WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
+                }
                 else
+                {
+                    if (_parent.OutputLogWriter != null)
+                    {
+                            _parent.OutputLogWriter.WriteLine(value);
+                    }
+
                     Console.Error.WriteLine(value);
+                }
             }
         }
 

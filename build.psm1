@@ -1136,7 +1136,7 @@ function Start-PSPester {
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
     # Disable telemetry for all startups of pwsh in tests
-    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes'; `$env:__SuppressAnsiEscapeSequences = 1; "
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
