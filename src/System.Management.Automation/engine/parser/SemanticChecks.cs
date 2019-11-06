@@ -1036,7 +1036,10 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
         {
-            if (variableExpressionAst.Splatted && !(variableExpressionAst.Parent is CommandAst) && !(variableExpressionAst.Parent is UsingExpressionAst))
+            if (variableExpressionAst.Splatted &&
+                !(variableExpressionAst.Parent is CommandAst) &&
+                !(variableExpressionAst.Parent is MemberExpressionAst) &&
+                !(variableExpressionAst.Parent is UsingExpressionAst))
             {
                 if (variableExpressionAst.Parent is ArrayLiteralAst && variableExpressionAst.Parent.Parent is CommandAst)
                 {

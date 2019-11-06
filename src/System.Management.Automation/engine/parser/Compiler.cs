@@ -4034,8 +4034,12 @@ namespace System.Management.Automation.Language
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
-                    if (variableExpression != null)
+                    while (splatTest is MemberExpressionAst memberExpression)
+                    {
+                        splatTest = memberExpression.Expression;
+                    }
+
+                    if (splatTest is VariableExpressionAst variableExpression)
                     {
                         splatted = variableExpression.Splatted;
                     }
