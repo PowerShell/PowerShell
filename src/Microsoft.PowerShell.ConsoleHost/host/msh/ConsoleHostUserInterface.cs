@@ -817,22 +817,20 @@ namespace Microsoft.PowerShell
             {
                 ConsoleColor fg = ConsoleColor.White;
                 ConsoleColor bg = ConsoleColor.Black;
+                bool consoleAvailable = true;
 
-                if (_consoleAvailable)
+                try
                 {
-                    try
-                    {
-                        fg = RawUI.ForegroundColor;
-                        bg = RawUI.BackgroundColor;
+                    fg = RawUI.ForegroundColor;
+                    bg = RawUI.BackgroundColor;
 
-                        RawUI.ForegroundColor = foregroundColor;
-                        RawUI.BackgroundColor = backgroundColor;
-                    }
-                    catch
-                    {
-                        // fails if running without console like pwshw
-                        _consoleAvailable = false;
-                    }
+                    RawUI.ForegroundColor = foregroundColor;
+                    RawUI.BackgroundColor = backgroundColor;
+                }
+                catch
+                {
+                    // fails if running without console like pwshw
+                    consoleAvailable = false;
                 }
 
                 try
@@ -841,7 +839,7 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-                    if (_consoleAvailable)
+                    if (consoleAvailable)
                     {
                         RawUI.ForegroundColor = fg;
                         RawUI.BackgroundColor = bg;
