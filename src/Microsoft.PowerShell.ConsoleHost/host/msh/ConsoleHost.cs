@@ -1448,7 +1448,18 @@ namespace Microsoft.PowerShell
                 OutputLog = cpp.OutputLog;
                 if (!string.IsNullOrEmpty(OutputLog) && _outputLogWriter == null)
                 {
-                    _outputLogWriter = new StreamWriter(OutputLog, append: false);
+                    try
+                    {
+                        _outputLogWriter = new StreamWriter(OutputLog, append: false);
+                    }
+                    catch
+                    {
+                        s_tracer.TraceError("Could not create log file \"{0}\"", OutputLog);
+                        string msg = StringUtil.Format(ConsoleHostStrings.CreatingOutputLogFailed, OutputLog);
+                        ui.WriteErrorLine(msg);
+                        exitCode = ExitCodeInitFailure;
+                        break;
+                    }
                 }
 
                 OutputFormat = cpp.OutputFormat;
