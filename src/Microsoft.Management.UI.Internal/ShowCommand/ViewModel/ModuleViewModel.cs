@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="filterPattern">Pattern corresponding to filter.</param>
         /// <param name="commandName">Command name string.</param>
         /// <param name="filter">Filter string.</param>
-        /// <returns>true if coparisonText matches str or pattern.</returns>
+        /// <returns>True if coparisonText matches str or pattern.</returns>
         private static bool Matches(WildcardPattern filterPattern, string commandName, string filter)
         {
             if (filterPattern != null)
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="commandName">Command name string.</param>
         /// <param name="filter">Filter string.</param>
-        /// <returns>return match result.</returns>
+        /// <returns>Return match result.</returns>
         private static bool MatchesEvenIfInPlural(string commandName, string filter)
         {
             if (commandName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1)
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="source">Source commandmodule.</param>
         /// <param name="target">Target commandmodule.</param>
-        /// <returns>return compare result.</returns>
+        /// <returns>Return compare result.</returns>
         private int Compare(CommandViewModel source, CommandViewModel target)
         {
             return string.Compare(source.Name, target.Name, StringComparison.OrdinalIgnoreCase);

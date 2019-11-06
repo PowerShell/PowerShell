@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="forward">True for next false for previous.</param>
         /// <param name="caretPosition">Caret position.</param>
-        /// <returns>the next highlight starting at the <paramref name="caretPosition"/>.</returns>
+        /// <returns>The next highlight starting at the <paramref name="caretPosition"/>.</returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
             Debug.Assert(caretPosition != null, "a caret position is allways valid");
@@ -105,7 +105,7 @@ namespace Microsoft.Management.UI.Internal
         /// Returns true if <paramref name="run"/> is highlighted.
         /// </summary>
         /// <param name="run">Run to check if is highlighted.</param>
-        /// <returns>true if <paramref name="run"/> is highlighted.</returns>
+        /// <returns>True if <paramref name="run"/> is highlighted.</returns>
         private static bool Ishighlighted(Run run)
         {
             if (run == null)
@@ -127,7 +127,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="currentRun">The current run.</param>
         /// <param name="forward">True for next false for previous.</param>
-        /// <returns>the next or previous run according to <paramref name="forward"/>.</returns>
+        /// <returns>The next or previous run according to <paramref name="forward"/>.</returns>
         private static Run GetNextRun(Run currentRun, bool forward)
         {
             Bold parentBold = currentRun.Parent as Bold;
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI.Internal
         /// which contains a Run
         /// </summary>
         /// <param name="inline">Inline to get the run from.</param>
-        /// <returns>the run of the inline.</returns>
+        /// <returns>The run of the inline.</returns>
         private static Run GetRun(Inline inline)
         {
             Bold inlineBold = inline as Bold;
@@ -192,7 +192,7 @@ namespace Microsoft.Management.UI.Internal
         /// Gets the run's paragraph.
         /// </summary>
         /// <param name="run">Run to get the paragraph from.</param>
-        /// <returns>the run's paragraph.</returns>
+        /// <returns>The run's paragraph.</returns>
         private static Paragraph GetParagraph(Run run)
         {
             Bold parentBold = run.Parent as Bold;
@@ -205,7 +205,7 @@ namespace Microsoft.Management.UI.Internal
         /// Returns true if the run is the fiorst run of the paragraph.
         /// </summary>
         /// <param name="run">Run to check.</param>
-        /// <returns>true if the run is the fiorst run of the paragraph.</returns>
+        /// <returns>True if the run is the fiorst run of the paragraph.</returns>
         private static bool IsFirstRun(Run run)
         {
             Paragraph paragraph = GetParagraph(run);
@@ -218,7 +218,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="caretRun">Run containing the caret.</param>
         /// <param name="forward">True for first false for last.</param>
-        /// <returns>the first or last run in the paragraph containing <paramref name="caretRun"/>.</returns>
+        /// <returns>The first or last run in the paragraph containing <paramref name="caretRun"/>.</returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {
             Debug.Assert(caretRun != null, "a caret run is allways valid");

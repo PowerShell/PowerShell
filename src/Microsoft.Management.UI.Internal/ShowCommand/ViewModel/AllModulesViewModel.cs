@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Returns the selected script.
         /// </summary>
-        /// <returns>the selected script.</returns>
+        /// <returns>The selected script.</returns>
         public string GetScript()
         {
             if (this.SelectedModule == null)

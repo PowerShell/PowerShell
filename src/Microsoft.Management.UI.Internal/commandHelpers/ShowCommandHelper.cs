@@ -448,7 +448,7 @@ Function PSGetSerializedShowCommandInfo
         /// </summary>
         /// <param name="isRemoteRunspace">Boolean flag determining whether Show-Command is queried in the local or remote runspace scenario.</param>
         /// <param name="isFirstChance">Boolean flag to indicate that it is the second attempt to query Show-Command data.</param>
-        /// <returns>the command to be run to get commands and imported modules.</returns>
+        /// <returns>The command to be run to get commands and imported modules.</returns>
         internal static string GetShowAllModulesCommand(bool isRemoteRunspace = false, bool isFirstChance = true)
         {
             string scriptBase;
@@ -495,7 +495,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="module">Module we want to import.</param>
         /// <param name="isRemoteRunspace">Boolean flag determining whether Show-Command is queried in the local or remote runspace scenario.</param>
         /// <param name="isFirstChance">Boolean flag to indicate that it is the second attempt to query Show-Command data.</param>
-        /// <returns>the command to be run to in order to import a module and refresh the command data.</returns>
+        /// <returns>The command to be run to in order to import a module and refresh the command data.</returns>
         internal static string GetImportModuleCommand(string module, bool isRemoteRunspace = false, bool isFirstChance = true)
         {
             string scriptBase = "Import-Module " + ShowCommandHelper.SingleQuote(module);
@@ -524,7 +524,7 @@ Function PSGetSerializedShowCommandInfo
         /// gets the command to be run in order to show help for a command.
         /// </summary>
         /// <param name="command">Command we want to get help from.</param>
-        /// <returns>the command to be run in order to show help for a command.</returns>
+        /// <returns>The command to be run in order to show help for a command.</returns>
         internal static string GetHelpCommand(string command)
         {
             return "Get-Help " + ShowCommandHelper.SingleQuote(command);
@@ -679,7 +679,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="command">Command belongiong to the module to import.</param>
         /// <param name="module">Module to import.</param>
         /// <param name="error">Error importing the module.</param>
-        /// <returns>an error message to be displayed when failed to import a module.</returns>
+        /// <returns>An error message to be displayed when failed to import a module.</returns>
         internal static string GetImportModuleFailedMessage(string command, string module, string error)
         {
             return string.Format(
@@ -711,7 +711,7 @@ Function PSGetSerializedShowCommandInfo
         /// Gets the host window, if it is present or null if it is not.
         /// </summary>
         /// <param name="cmdlet">Cmdlet calling this method.</param>
-        /// <returns>the host window, if it is present or null if it is not.</returns>
+        /// <returns>The host window, if it is present or null if it is not.</returns>
         internal static Window GetHostWindow(PSCmdlet cmdlet)
         {
             PSPropertyInfo windowProperty = cmdlet.Host.PrivateData.Properties["Window"];
@@ -786,7 +786,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="propertyName">Name of property to set.</param>
         /// <param name="value">Value to set the property with.</param>
         /// <param name="bindingFlags">Flags passed to reflection.</param>
-        /// <returns>true if it was able to set.</returns>
+        /// <returns>True if it was able to set.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
         private static bool SetPropertyValue(Type type, object obj, string propertyName, object value, BindingFlags bindingFlags)
         {
@@ -827,7 +827,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the suffix that adds imported modules to a command.
         /// </summary>
-        /// <returns>the suffix that adds imported modules to a command.</returns>
+        /// <returns>The suffix that adds imported modules to a command.</returns>
         private static string GetGetModuleSuffix()
         {
             return ",@(get-module)";
@@ -841,7 +841,7 @@ Function PSGetSerializedShowCommandInfo
         /// </summary>
         /// <param name="commandName">The particular command we are running show-command on.</param>
         /// <param name="includeAliasAndModules">True if we want to include aliases and retrieve modules.</param>
-        /// <returns>the command to be run when calling show-command for a particular command.</returns>
+        /// <returns>The command to be run when calling show-command for a particular command.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private static string GetShowCommandCommand(string commandName, bool includeAliasAndModules)
         {
@@ -1082,7 +1082,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// returns the script to execute if dialog has not been canceled.
         /// </summary>
-        /// <returns>the script to execute if dialog has not been canceled.</returns>
+        /// <returns>The script to execute if dialog has not been canceled.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private string GetScript()
         {
@@ -1269,7 +1269,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// returns the script to execute.
         /// </summary>
-        /// <returns>the script to execute.</returns>
+        /// <returns>The script to execute.</returns>
         private string InternalGetScript()
         {
             if (this.allModulesViewModel != null)
