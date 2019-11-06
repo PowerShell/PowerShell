@@ -332,11 +332,11 @@ function Invoke-CITest
     }
 
 
-    if ($Purpose -eq 'PwshwPesterTests') {
+    if ($Purpose -eq 'PwshwElevatedPesterTests') {
         $arguments = @{
             Terse = $false
             Bindir = $env:CoreOutput
-            OutputFile = $testResultsPwshwFile
+            OutputFile = $testResultsAdminPwshwFile
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
             PowerShell = Join-Path -Path $env:CoreOutput -ChildPath 'pwshw.exe'
@@ -345,7 +345,7 @@ function Invoke-CITest
         Start-PSPester @arguments -Title "Pwshw Elevated - $TagSet"
 
         # Fail the build, if tests failed
-        Test-PSPesterResults -TestResultsFile $testResultsPwshwFile
+        Test-PSPesterResults -TestResultsFile $testResultsAdminPwshwFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
@@ -368,6 +368,46 @@ function Invoke-CITest
                 $arguments['Path'] = $testFiles
             }
             Start-PSPester @arguments -Title "Pwshw Experimental Elevated - $featureName"
+
+            # Fail the build, if tests failed
+            Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
+        }
+    }
+
+    if ($Purpose -eq 'PwshwUnelevatedPesterTests') {
+        $arguments = @{
+            Bindir = $env:CoreOutput
+            OutputFile = $testResultsNonAdminPwshwFile
+            Unelevate = $true
+            Terse = $true
+            Tag = @()
+            ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+            PowerShell = Join-Path -Path $env:CoreOutput -ChildPath 'pwshw.exe'
+        }
+
+        Start-PSPester @arguments -Title "Pwshw Unelevated - $TagSet"
+        # Fail the build, if tests failed
+        Test-PSPesterResults -TestResultsFile $testResultsNonAdminPwshwFile
+
+        # Run tests with specified experimental features enabled
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
+        {
+            $featureName = $entry.Key
+            $testFiles = $entry.Value
+
+            $expFeatureTestResultFile = "$pwd\TestsResultsNonAdmin.$featureName.xml"
+            $arguments['OutputFile'] = $expFeatureTestResultFile
+            $arguments['ExperimentalFeatureName'] = $featureName
+            if ($testFiles.Count -eq 0) {
+                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+                # This allows us to prevent regressions to a critical engine experimental feature.
+                $arguments.Remove('Path')
+            } else {
+                # If a non-empty string or array is specified for the feature name, we only run those test files.
+                $arguments['Path'] = $testFiles
+            }
+
+            Start-PSPester @arguments -Title "Pwshw Experimental Unelevated - $featureName"
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile

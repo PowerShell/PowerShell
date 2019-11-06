@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
-        private const string pwshwHost = "pwshw";
+        private const string PwshwHost = "pwshw";
         private const uint SPI_GETSCREENREADER = 0x0046;
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -1311,6 +1311,7 @@ namespace Microsoft.PowerShell
         }
 
         internal string OutputLog { get; private set; }
+
         internal StreamWriter OutputLogWriter
         {
             get
@@ -1392,7 +1393,7 @@ namespace Microsoft.PowerShell
             {
                 // we're running interactive if we're in a prompt loop, we're not reading keyboard input from stdin, and not running pwshw which doens't have a console
 
-                return _isRunningPromptLoop && !ui.ReadFromStdin && !(string.Equals(AppDomain.CurrentDomain.FriendlyName, pwshwHost, StringComparison.InvariantCultureIgnoreCase));
+                return _isRunningPromptLoop && !ui.ReadFromStdin && !string.Equals(AppDomain.CurrentDomain.FriendlyName, PwshwHost, StringComparison.InvariantCultureIgnoreCase);
             }
         }
 

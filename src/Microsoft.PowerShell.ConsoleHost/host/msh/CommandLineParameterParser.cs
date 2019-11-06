@@ -416,6 +416,7 @@ namespace Microsoft.PowerShell
                 return _outputLog;
             }
         }
+
         internal Serialization.DataFormat OutputFormat
         {
             get
