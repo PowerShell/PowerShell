@@ -11,7 +11,7 @@ namespace Microsoft.Management.UI.Internal
     /// The CustomTypeComparer is responsible for holding custom comparers
     /// for different types, which are in turn used to perform comparison
     /// operations instead of the default IComparable comparison.
-    /// with a custom comparer
+    /// with a custom comparer.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public static class CustomTypeComparer

@@ -106,7 +106,7 @@ namespace Microsoft.Management.UI
 
         /// <summary>
         /// Handles key down to fix the Page/Douwn going to end of help issue
-        /// And to implement some additional shortcuts like Ctrl+F and ZoomIn/ZoomOut
+        /// And to implement some additional shortcuts like Ctrl+F and ZoomIn/ZoomOut.
         /// </summary>
         /// <param name="e">Event arguments.</param>
         protected override void OnPreviewKeyDown(KeyEventArgs e)

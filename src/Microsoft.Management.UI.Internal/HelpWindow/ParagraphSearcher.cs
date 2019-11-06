@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// Moves through search highlights built in a ParagraphBuilder
-    /// changing the color of the current highlight
+    /// changing the color of the current highlight.
     /// </summary>
     internal class ParagraphSearcher
     {
@@ -148,7 +148,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets the run of an inline. Inlines in a ParagrahBuilder are either a Run or a Bold
-        /// which contains a Run
+        /// which contains a Run.
         /// </summary>
         /// <param name="inline">Inline to get the run from.</param>
         /// <returns>The run of the inline.</returns>
@@ -165,13 +165,13 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets the next highlighted run starting and including <paramref name="currentRun"/>
-        /// according to the direction specified in <paramref name="forward"/>
+        /// according to the direction specified in <paramref name="forward"/>.
         /// </summary>
         /// <param name="currentRun">The current run.</param>
         /// <param name="forward">True for next false for previous.</param>
         /// <returns>
         /// the next highlighted run starting and including <paramref name="currentRun"/>
-        /// according to the direction specified in <paramref name="forward"/>
+        /// according to the direction specified in <paramref name="forward"/>.
         /// </returns>
         private static Run GetNextMatch(Run currentRun, bool forward)
         {

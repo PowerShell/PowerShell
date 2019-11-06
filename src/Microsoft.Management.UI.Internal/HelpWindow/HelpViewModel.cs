@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     /// ViewModel for the Help Dialog used to:
     ///     build the help document
     ///     search the help document
-    ///     offer text for labels
+    ///     offer text for labels.
     /// </summary>
     internal class HelpViewModel : INotifyPropertyChanged
     {

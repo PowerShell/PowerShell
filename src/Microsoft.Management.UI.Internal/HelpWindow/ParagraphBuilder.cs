@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Highlights all ocurrences of <paramref name="search"/>.
-        /// This is called after all calls to AddText have been made
+        /// This is called after all calls to AddText have been made.
         /// </summary>
         /// <param name="search">Search string.</param>
         /// <param name="caseSensitive">True if search should be case sensitive.</param>
@@ -205,7 +205,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Called before a derived class starts adding text
-        /// to reset the current content
+        /// to reset the current content.
         /// </summary>
         internal void ResetAllText()
         {
@@ -276,7 +276,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Adds one individual text highlight
-        /// This is called after all calls to AddText have been made
+        /// This is called after all calls to AddText have been made.
         /// </summary>
         /// <param name="start">Highlight start.</param>
         /// <param name="length">Highlight length.</param>

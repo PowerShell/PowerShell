@@ -521,7 +521,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// gets the command to be run in order to show help for a command.
+        /// Gets the command to be run in order to show help for a command.
         /// </summary>
         /// <param name="command">Command we want to get help from.</param>
         /// <returns>The command to be run in order to show help for a command.</returns>
@@ -741,7 +741,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="propertyName">Name of property to get.</param>
         /// <param name="bindingFlags">Flags passed to reflection.</param>
         /// <returns>
-        /// property value or null if it was not able to retrieve it. This method is not suitable to return a property value that might be null.
+        /// Property value or null if it was not able to retrieve it. This method is not suitable to return a property value that might be null.
         /// </returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
         private static object GetPropertyValue(Type type, object obj, string propertyName, BindingFlags bindingFlags)
@@ -858,7 +858,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="noCommonParameter">True if we do not want common parameters.</param>
         /// <param name="importedModules">The loaded modules.</param>
         /// <param name="moduleQualify">True to qualify command with module name in GetScript.</param>
-        /// <returns>a CommandViewModel of a CommandInfo.</returns>
+        /// <returns>A CommandViewModel of a CommandInfo.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private static object GetCommandViewModel(ShowCommandCommandInfo command, bool noCommonParameter, Dictionary<string, ShowCommandModuleInfo> importedModules, bool moduleQualify)
         {
@@ -1080,7 +1080,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// returns the script to execute if dialog has not been canceled.
+        /// Returns the script to execute if dialog has not been canceled.
         /// </summary>
         /// <returns>The script to execute if dialog has not been canceled.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
@@ -1228,7 +1228,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// closes the window.
+        /// Closes the window.
         /// </summary>
         private void CloseWindow()
         {
@@ -1267,7 +1267,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// returns the script to execute.
+        /// Returns the script to execute.
         /// </summary>
         /// <returns>The script to execute.</returns>
         private string InternalGetScript()
