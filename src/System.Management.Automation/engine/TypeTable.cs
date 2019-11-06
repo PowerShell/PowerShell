@@ -3094,6 +3094,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     break;
                 }
+
                 SerializationMethod serializationMethod = SerializationMethod.AllPublicProperties;
                 if (serializationMethodNote != null)
                 {
@@ -3107,11 +3108,13 @@ namespace System.Management.Automation.Runspaces
                     {
                         break;
                     }
+
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, PropertySerializationSet);
                     if (!serializationSettingsOk)
                     {
                         break;
                     }
+
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, SerializationDepth);
                     if (!serializationSettingsOk)
                     {
@@ -3165,11 +3168,13 @@ namespace System.Management.Automation.Runspaces
                     {
                         break;
                     }
+
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, PropertySerializationSet);
                     if (!serializationSettingsOk)
                     {
                         break;
                     }
+
                     PSNoteProperty noteProperty;
                     serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
                     if (!serializationSettingsOk)
