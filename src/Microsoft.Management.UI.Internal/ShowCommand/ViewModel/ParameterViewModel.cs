@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="mandatory">True if the parameter is mandatory.</param>
         /// <param name="shared">True if the parameter is shared by parameter sets.</param>
         /// <param name="valueFromPipeline">True if the parameter takes value from the pipeline.</param>
-        /// <returns> the tooltip based on the parameters</returns>
+        /// <returns> the tooltip based on the parameters.</returns>
         internal static string EvaluateTooltip(string typeName, int position, bool mandatory, bool shared, bool valueFromPipeline)
         {
             StringBuilder returnValue = new StringBuilder(string.Format(

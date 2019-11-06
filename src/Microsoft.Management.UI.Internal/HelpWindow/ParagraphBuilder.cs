@@ -367,7 +367,7 @@ namespace Microsoft.Management.UI.Internal
             /// Returns true if the <paramref name="position"/> is between start and end (inclusive).
             /// </summary>
             /// <param name="position">Position to verify if is in the span.</param>
-            /// <returns>true if the <paramref name="position"/> is between start and end (inclusive)</returns>
+            /// <returns>true if the <paramref name="position"/> is between start and end (inclusive).</returns>
             internal bool Contains(int position)
             {
                 return (position >= this.start) && (position <= this.end);

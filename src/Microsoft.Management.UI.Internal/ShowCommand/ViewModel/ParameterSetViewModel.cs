@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Creates script according parameters of this parameterset.
         /// </summary>
-        /// <returns>Return script of this parameterset parameters</returns>
+        /// <returns>Return script of this parameterset parameters.</returns>
         public string GetScript()
         {
             if (this.Parameters == null || this.Parameters.Count == 0)
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Gets the individual parameter count of this parameterset.
         /// </summary>
-        /// <returns>Return individual parameter count of this parameterset</returns>
+        /// <returns>Return individual parameter count of this parameterset.</returns>
         public int GetIndividualParameterCount()
         {
             if (this.Parameters == null || this.Parameters.Count == 0)
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="source">The source of parametermodel.</param>
         /// <param name="target">The target of parametermodel.</param>
-        /// <returns>Return compare result</returns>
+        /// <returns>Return compare result.</returns>
         internal static int Compare(ParameterViewModel source, ParameterViewModel target)
         {
             if (source.Parameter.IsMandatory && !target.Parameter.IsMandatory)
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="parameterValue">Value needing delimitation.</param>
         /// <param name="openDelimiter">Open delimitation.</param>
         /// <param name="closeDelimiter">Close delimitation.</param>
-        /// <returns>the delimited poarameter if it needs delimitation and is not delimited</returns>
+        /// <returns>the delimited poarameter if it needs delimitation and is not delimited.</returns>
         private static string GetDelimitedParameter(string parameterValue, string openDelimiter, string closeDelimiter)
         {
             string parameterValueTrimmed = parameterValue.Trim();
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="parameterValue">Parameter value to check.</param>
         /// <param name="requireScriptblock">True if the parameter value should be a scriptblock.</param>
-        /// <returns>'0' if the parameter does not need delimitation, '1' if it needs, '\'' if it needs to be delimited with single quote and '\"' if it needs to be delimited with double quotes</returns>
+        /// <returns>'0' if the parameter does not need delimitation, '1' if it needs, '\'' if it needs to be delimited with single quote and '\"' if it needs to be delimited with double quotes.</returns>
         private static char ParameterNeedsDelimitation(string parameterValue, bool requireScriptblock)
         {
             Token[] tokens;

@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="targetType"><paramref name="targetType"/> is not used.</param>
         /// <param name="parameter"><paramref name="parameter"/> is not used.</param>
         /// <param name="culture"><paramref name="culture"/> is not used.</param>
-        /// <returns>The resulting object obtained from retrieving the property value in <paramref name="parameter"/> (or property values if <paramref name="parameter"/> contains dots) out of <paramref name="value"/>. </returns>
+        /// <returns>The resulting object obtained from retrieving the property value in <paramref name="parameter"/> (or property values if <paramref name="parameter"/> contains dots) out of <paramref name="value"/>. .</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             ImageButtonBase imageButtonBase = value as ImageButtonBase;

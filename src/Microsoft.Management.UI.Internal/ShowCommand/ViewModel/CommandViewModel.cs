@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Gets the builded PowerShell script.
         /// </summary>
-        /// <returns>Return script as string</returns>
+        /// <returns>Return script as string.</returns>
         public string GetScript()
         {
             StringBuilder builder = new StringBuilder();
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// are retrieved:
         /// function CrashMe ([I.Am.A.Type.That.Does.Not.Exist]$name) {}
         /// </exception>
-        /// <returns>The CommandViewModel corresponding to commandInfo</returns>
+        /// <returns>The CommandViewModel corresponding to commandInfo.</returns>
         internal static CommandViewModel GetCommandViewModel(ModuleViewModel module, ShowCommandCommandInfo commandInfo, bool noCommonParameters)
         {
             if (commandInfo == null)
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="source">Source paremeterset.</param>
         /// <param name="target">Target parameterset.</param>
-        /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger</returns>
+        /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger.</returns>
         private int Compare(ParameterSetViewModel source, ParameterSetViewModel target)
         {
             if (this.defaultParameterSetName != null)

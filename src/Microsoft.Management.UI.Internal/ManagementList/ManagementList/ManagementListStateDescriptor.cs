@@ -142,7 +142,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="subject">Target ManagementList.</param>
         /// <param name="callback">RetryActionAfterLoaded callback method.</param>
-        /// <returns>true iff columns restorable</returns>
+        /// <returns>true iff columns restorable.</returns>
         /// <exception cref="InvalidOperationException">
         /// ManagementList.AutoGenerateColumns not supported.
         /// </exception>

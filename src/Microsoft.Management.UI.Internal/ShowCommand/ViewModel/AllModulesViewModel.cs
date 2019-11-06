@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Returns the selected script.
         /// </summary>
-        /// <returns>the selected script</returns>
+        /// <returns>the selected script.</returns>
         public string GetScript()
         {
             if (this.SelectedModule == null)
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="source">The source ModuleViewModel.</param>
         /// <param name="target">The target ModuleViewModel.</param>
-        /// <returns>Compare result</returns>
+        /// <returns>Compare result.</returns>
         private int Compare(ModuleViewModel source, ModuleViewModel target)
         {
             if (AllModulesViewModel.IsAll(source.Name) && !AllModulesViewModel.IsAll(target.Name))

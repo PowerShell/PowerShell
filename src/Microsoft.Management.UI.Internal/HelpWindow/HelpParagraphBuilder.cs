@@ -57,7 +57,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">Object with the property.</param>
         /// <param name="propertyName">Property name.</param>
-        /// <returns>the string value of a property or null if it could not be retrieved</returns>
+        /// <returns>the string value of a property or null if it could not be retrieved.</returns>
         internal static string GetPropertyString(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -135,7 +135,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">Object with the property.</param>
         /// <param name="propertyName">Property name.</param>
-        /// <returns>the object property or null if it could not be retrieved</returns>
+        /// <returns>the object property or null if it could not be retrieved.</returns>
         private static PSPropertyInfo GetProperty(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -148,7 +148,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="psObj">PSObject that contains another PSObject as a property.</param>
         /// <param name="psObjectName">Property name that contains the PSObject.</param>
         /// <param name="propertyName">Property name in thye inner PSObject.</param>
-        /// <returns>the string from the inner psObject property or null if it could not be retrieved</returns>
+        /// <returns>the string from the inner psObject property or null if it could not be retrieved.</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -174,7 +174,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">Object with the property.</param>
         /// <param name="propertyName">Property name.</param>
-        /// <returns>the value of a property or null if the value could not be retrieved</returns>
+        /// <returns>the value of a property or null if the value could not be retrieved.</returns>
         private static object GetPropertyObject(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -202,7 +202,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">Objhect to get text from.</param>
         /// <param name="propertyText">Property with PSObject[] containing text.</param>
-        /// <returns>the text from a property of type PSObject[] where the first object has a text property</returns>
+        /// <returns>the text from a property of type PSObject[] where the first object has a text property.</returns>
         private static string GetTextFromArray(PSObject psObj, string propertyText)
         {
             PSObject[] introductionObjects = HelpParagraphBuilder.GetPropertyObject(psObj, propertyText) as PSObject[];
@@ -218,7 +218,7 @@ namespace Microsoft.Management.UI.Internal
         /// Returns the largest size of a group of strings.
         /// </summary>
         /// <param name="strs">Strings to evaluate the largest size from.</param>
-        /// <returns>the largest size of a group of strings</returns>
+        /// <returns>the largest size of a group of strings.</returns>
         private static int LargestSize(params string[] strs)
         {
             int returnValue = 0;
@@ -238,7 +238,7 @@ namespace Microsoft.Management.UI.Internal
         /// Splits the string adding indentation before each line.
         /// </summary>
         /// <param name="str">String to add indentation to.</param>
-        /// <returns>the string indented</returns>
+        /// <returns>the string indented.</returns>
         private static string AddIndent(string str)
         {
             return HelpParagraphBuilder.AddIndent(str, 1);
@@ -249,7 +249,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="str">String to add indentation to.</param>
         /// <param name="numberOfIdents">Number of indentations.</param>
-        /// <returns>the string indented</returns>
+        /// <returns>the string indented.</returns>
         private static string AddIndent(string str, int numberOfIdents)
         {
             StringBuilder indent = new StringBuilder();
@@ -262,7 +262,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="str">String to add indentation to.</param>
         /// <param name="indentString">Indentation string.</param>
-        /// <returns>the string indented</returns>
+        /// <returns>the string indented.</returns>
         private static string AddIndent(string str, string indentString)
         {
             if (str == null)
@@ -293,7 +293,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="obj">Object containing the property.</param>
         /// <param name="propertyName">Property with the array value.</param>
-        /// <returns>the object array value of a property</returns>
+        /// <returns>the object array value of a property.</returns>
         private static object[] GetPropertyObjectArray(PSObject obj, string propertyName)
         {
             object innerObject;

@@ -57,7 +57,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private AutoResetEvent gridViewWindowLoaded;
 
-        /// <summary> Is used to store any Management list calls exceptions. </summary>
+        /// <summary>Is used to store any Management list calls exceptions.</summary>
         private Exception exception = null;
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Microsoft.Management.UI.Internal
         /// Creates a new ManagementList.
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
-        /// <returns>A new ManagementList</returns>
+        /// <returns>A new ManagementList.</returns>
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();
@@ -263,7 +263,7 @@ namespace Microsoft.Management.UI.Internal
         /// Creates a new main grid for window.
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
-        /// <returns>A new mainGrid</returns>
+        /// <returns>A new mainGrid.</returns>
         private Grid CreateMainGrid(string outputMode)
         {
             Grid mainGrid = new Grid();
@@ -287,7 +287,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a OK button.
         /// </summary>
-        /// <returns>A new buttonGrid</returns>
+        /// <returns>A new buttonGrid.</returns>
         private Grid CreateButtonGrid()
         {
             Grid buttonGrid = new Grid();
@@ -313,7 +313,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a OK button.
         /// </summary>
-        /// <returns>A new OK button</returns>
+        /// <returns>A new OK button.</returns>
         private Button CreateOKButton()
         {
             Button ok = new Button();
@@ -330,7 +330,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a Cancel button.
         /// </summary>
-        /// <returns>A new Cancel button</returns>
+        /// <returns>A new Cancel button.</returns>
         private Button CreateCancelButton()
         {
             Button cancel = new Button();
@@ -376,7 +376,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets selected items from List.
         /// </summary>
-        /// <returns>Selected items of the list</returns>
+        /// <returns>Selected items of the list.</returns>
         private List<PSObject> SelectedItems()
         {
             return this.selectedItems;

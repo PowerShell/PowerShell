@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
-        /// <returns>a CheckBox for switch parameters</returns>
+        /// <returns>a CheckBox for switch parameters.</returns>
         private static CheckBox CreateCheckBox(ParameterViewModel parameterViewModel, int rowNumber)
         {
             CheckBox checkBox = new CheckBox();
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
         /// <param name="itemsSource">Control data source.</param>
-        /// <returns>Return a ComboBox control</returns>
+        /// <returns>Return a ComboBox control.</returns>
         private static ComboBox CreateComboBoxControl(ParameterViewModel parameterViewModel, int rowNumber, IEnumerable itemsSource)
         {
             ComboBox comboBox = new ComboBox();
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
         /// <param name="itemsSource">Control data source.</param>
-        /// <returns>Return a MultiSelectCombo control</returns>
+        /// <returns>Return a MultiSelectCombo control.</returns>
         private static MultipleSelectionControl CreateMultiSelectComboControl(ParameterViewModel parameterViewModel, int rowNumber, IEnumerable itemsSource)
         {
             MultipleSelectionControl multiControls = new MultipleSelectionControl();
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
-        /// <returns>Return a TextBox control</returns>
+        /// <returns>Return a TextBox control.</returns>
         private static TextBox CreateTextBoxControl(ParameterViewModel parameterViewModel, int rowNumber)
         {
             TextBox textBox = new TextBox();
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Creates a RowDefinition for MainGrid.
         /// </summary>
-        /// <returns>Return a RowDefinition object</returns>
+        /// <returns>Return a RowDefinition object.</returns>
         private RowDefinition CreateNewRow()
         {
             RowDefinition row = new RowDefinition();
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
-        /// <returns>Return a Label control</returns>
+        /// <returns>Return a Label control.</returns>
         private Label CreateLabel(ParameterViewModel parameterViewModel, int rowNumber)
         {
             Label label = new Label();
