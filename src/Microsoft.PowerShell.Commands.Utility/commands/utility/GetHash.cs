@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Init a hash algorithm.
         /// </summary>
-        protected void InitHasher(String Algorithm)
+        protected void InitHasher(string Algorithm)
         {
             try
             {

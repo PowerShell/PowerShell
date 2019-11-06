@@ -48,7 +48,7 @@ namespace System.Management.Automation.Remoting
             PSRemotingCryptoHelper cryptoHelper)
             : base(fragmentSize, cryptoHelper)
         {
-            _syncObject = new Object();
+            _syncObject = new object();
             _activeCmdTransportManagers = new Dictionary<Guid, WSManPluginServerTransportManager>();
             _waitHandle = new ManualResetEvent(false);
         }

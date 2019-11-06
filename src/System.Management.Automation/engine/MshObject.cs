@@ -1674,7 +1674,7 @@ namespace System.Management.Automation
             // This ReferenceEquals is not just an optimization.
             // It is necessary so that mshObject.Equals(mshObject) returns 0.
             // Please see the comments inside the Equals implementation.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return 0;
             }
@@ -1705,7 +1705,7 @@ namespace System.Management.Automation
             // BaseObject returns the MshCustomBaseObject.
             // Because we have to call BaseObject here, and LP.Compare uses PSObject.Base
             // we need the reference equals below so that mshObject.Equals(mshObject) returns true.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
             // The above check validates if we are comparing with the same object references
             // This check "shortcuts" the comparison if the first object is a CustomObject
             // since 2 custom objects are not equal.
-            if (Object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
+            if (object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
             {
                 return false;
             }

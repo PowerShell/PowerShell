@@ -171,7 +171,7 @@ namespace System.Management.Automation
             get { return _replacementItems; }
         }
 
-        private Collection<Object> _replacementItems;
+        private Collection<object> _replacementItems;
 
         /// <summary>
         /// Update the given collection with the items in Add and Remove.

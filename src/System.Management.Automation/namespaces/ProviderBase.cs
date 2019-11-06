@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteInformation" />
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {

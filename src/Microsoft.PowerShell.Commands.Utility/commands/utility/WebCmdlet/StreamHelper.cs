@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static byte[] EncodeToBytes(String str, Encoding encoding)
+        internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
             if (encoding == null)
             {
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
-        internal static byte[] EncodeToBytes(String str)
+        internal static byte[] EncodeToBytes(string str)
         {
             return EncodeToBytes(str, null);
         }

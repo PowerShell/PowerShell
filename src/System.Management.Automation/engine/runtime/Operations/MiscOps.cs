@@ -2584,7 +2584,7 @@ namespace System.Management.Automation
                     return rest.ToArray();
                 }
 
-                object[] first = new System.Object[numberToReturn];
+                object[] first = new object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);

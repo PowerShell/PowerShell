@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ComCreateInfo createInfo;
 
-        private void STAComCreateThreadProc(Object createstruct)
+        private void STAComCreateThreadProc(object createstruct)
         {
             ComCreateInfo info = (ComCreateInfo)createstruct;
             try

@@ -146,7 +146,7 @@ namespace System.Management.Automation.Remoting
         internal WSManPluginInstance()
         {
             _activeShellSessions = new Dictionary<IntPtr, WSManPluginShellSession>();
-            _syncObject = new System.Object();
+            _syncObject = new object();
         }
 
         /// <summary>
