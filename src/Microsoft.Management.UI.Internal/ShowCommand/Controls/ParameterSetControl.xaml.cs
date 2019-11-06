@@ -17,7 +17,7 @@ using Microsoft.PowerShell.Commands.ShowCommandExtension;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Interaction logic for ParameterSetControl.xaml
+    /// Interaction logic for ParameterSetControl.xaml.
     /// </summary>
     public partial class ParameterSetControl : UserControl
     {
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Construction and Destructor
         /// <summary>
-        /// Initializes a new instance of the ParameterSetControl class
+        /// Initializes a new instance of the ParameterSetControl class.
         /// </summary>
         public ParameterSetControl()
         {
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Creates a CheckBox for switch parameters
+        /// Creates a CheckBox for switch parameters.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a ComboBox control for input type field
+        /// Creates a ComboBox control for input type field.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a MultiSelectCombo control for input type field
+        /// Creates a MultiSelectCombo control for input type field.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a TextBox control for input type field
+        /// Creates a TextBox control for input type field.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called for a newly created multiline text box to increase its height and
+        /// Called for a newly created multiline text box to increase its height and.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region Private Method
 
         /// <summary>
-        /// Creates a RowDefinition for MainGrid
+        /// Creates a RowDefinition for MainGrid.
         /// </summary>
         /// <returns>Return a RowDefinition object</returns>
         private RowDefinition CreateNewRow()
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Adds a control to MainGrid;
+        /// Adds a control to MainGrid;.
         /// </summary>
         /// <param name="uiControl">Will adding UIControl</param>
         private void AddControlToMainGrid(UIElement uiControl)
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Lable control and add it to MainGrid
+        /// Creates a Lable control and add it to MainGrid.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Label control for input type field
+        /// Creates a Label control for input type field.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object</param>
         /// <param name="rowNumber">Row number</param>

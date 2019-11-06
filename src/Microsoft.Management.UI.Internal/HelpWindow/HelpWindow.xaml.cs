@@ -12,12 +12,12 @@ using Microsoft.Management.UI.Internal;
 namespace Microsoft.Management.UI
 {
     /// <summary>
-    /// A window displaying help content and allowing search
+    /// A window displaying help content and allowing search.
     /// </summary>
     public partial class HelpWindow : Window
     {
         /// <summary>
-        /// Minimum zoom in the slider
+        /// Minimum zoom in the slider.
         /// </summary>
         public static double MinimumZoom
         {
@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Maximum zoom in the slider
+        /// Maximum zoom in the slider.
         /// </summary>
         public static double MaximumZoom
         {
@@ -39,7 +39,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Zoom interval
+        /// Zoom interval.
         /// </summary>
         public static double ZoomInterval
         {
@@ -50,12 +50,12 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// The ViewModel for the dialog
+        /// The ViewModel for the dialog.
         /// </summary>
         private readonly HelpViewModel viewModel;
 
         /// <summary>
-        /// Initializes a new instance of the HelpWindow class
+        /// Initializes a new instance of the HelpWindow class.
         /// </summary>
         /// <param name="helpObject">the object with help information</param>
         public HelpWindow(PSObject helpObject)
@@ -82,7 +82,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Handles the mouse wheel to zoom in/out
+        /// Handles the mouse wheel to zoom in/out.
         /// </summary>
         /// <param name="e">event arguments</param>
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Reads the zoom part of the user settings
+        /// Reads the zoom part of the user settings.
         /// </summary>
         private void ReadZoomUserSetting()
         {
@@ -164,7 +164,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Handles Zoom in and Zoom out keys
+        /// Handles Zoom in and Zoom out keys.
         /// </summary>
         /// <param name="e">event arguments</param>
         private void HandleZoomInAndZoomOut(KeyEventArgs e)
@@ -183,7 +183,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Listens to changes in the zoom in order to update the user settings
+        /// Listens to changes in the zoom in order to update the user settings.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -196,7 +196,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves the user settings
+        /// Saves the user settings.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -206,7 +206,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Updates the user setting with window state
+        /// Updates the user setting with window state.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -216,7 +216,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Sets the positions from user settings and start monitoring position changes
+        /// Sets the positions from user settings and start monitoring position changes.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -228,7 +228,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves size changes in user settings
+        /// Saves size changes in user settings.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -239,7 +239,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves position changes in user settings
+        /// Saves position changes in user settings.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -250,7 +250,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the settings button is clicked
+        /// Called when the settings button is clicked.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -269,7 +269,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the Previous button is clicked
+        /// Called when the Previous button is clicked.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -279,7 +279,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the Next button is clicked
+        /// Called when the Next button is clicked.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -289,7 +289,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Moves to the previous or next match
+        /// Moves to the previous or next match.
         /// </summary>
         /// <param name="forward">true for forward false for backwards</param>
         private void MoveToNextMatch(bool forward)
@@ -300,7 +300,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Moves to the caret and brings the view to the <paramref name="run"/>
+        /// Moves to the caret and brings the view to the <paramref name="run"/>.
         /// </summary>
         /// <param name="run">run to move to</param>
         private void MoveToRun(Run run)

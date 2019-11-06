@@ -6,7 +6,7 @@ using System.Windows;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Interaction logic for MultipleSelectionDialog.xaml
+    /// Interaction logic for MultipleSelectionDialog.xaml.
     /// </summary>
     public partial class MultipleSelectionDialog : Window
     {
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// OK Click event function
+        /// OK Click event function.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Cancel Click event function
+        /// Cancel Click event function.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>

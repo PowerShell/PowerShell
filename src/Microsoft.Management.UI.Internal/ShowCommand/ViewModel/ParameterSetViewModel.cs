@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private string name;
 
         /// <summary>
-        /// value indicating all mandatory parameters have values
+        /// value indicating all mandatory parameters have values.
         /// </summary>
         private bool allMandatoryParametersHaveValues;
 
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region INotifyPropertyChanged Members
 
         /// <summary>
-        /// PropertyChanged Event
+        /// PropertyChanged Event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Public Property
         /// <summary>
-        /// Gets the ParameterSet Name
+        /// Gets the ParameterSet Name.
         /// </summary>
         public string Name
         {
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the Parameters of this parameterset
+        /// Gets the Parameters of this parameterset.
         /// </summary>
         public List<ParameterViewModel> Parameters
         {
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether all mandatory parameters have values
+        /// Gets or sets a value indicating whether all mandatory parameters have values.
         /// </summary>
         public bool AllMandatoryParametersHaveValues
         {
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Public Method
         /// <summary>
-        /// Creates script according parameters of this parameterset
+        /// Creates script according parameters of this parameterset.
         /// </summary>
         /// <returns>Return script of this parameterset parameters</returns>
         public string GetScript()
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the individual parameter count of this parameterset
+        /// Gets the individual parameter count of this parameterset.
         /// </summary>
         /// <returns>Return individual parameter count of this parameterset</returns>
         public int GetIndividualParameterCount()
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region Internal Method
 
         /// <summary>
-        /// Compare source parametermodel is equal like target parametermodel
+        /// Compare source parametermodel is equal like target parametermodel.
         /// </summary>
         /// <param name="source">the source of parametermodel</param>
         /// <param name="target">the target of parametermodel</param>
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Gets the delimited poarameter if it needs delimitation and is not delimited
+        /// Gets the delimited poarameter if it needs delimitation and is not delimited.
         /// </summary>
         /// <param name="parameterValue">value needing delimitation</param>
         /// <param name="openDelimiter">open delimitation</param>
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Returns '0' if the <paramref name="parameterValue"/> does not need delimitation, '1' if it does, and a quote character if it needs to be delimited with a quote
+        /// Returns '0' if the <paramref name="parameterValue"/> does not need delimitation, '1' if it does, and a quote character if it needs to be delimited with a quote.
         /// </summary>
         /// <param name="parameterValue">parameter value to check</param>
         /// <param name="requireScriptblock">true if the parameter value should be a scriptblock</param>
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called to evaluate the value of AllMandatoryParametersHaveValues
+        /// Called to evaluate the value of AllMandatoryParametersHaveValues.
         /// </summary>
         private void EvaluateAllMandatoryParametersHaveValues()
         {
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// If property changed will be notify
+        /// If property changed will be notify.
         /// </summary>
         /// <param name="propertyName">The changed property</param>
         private void OnNotifyPropertyChanged(string propertyName)
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Used to track changes to parameter values in order to verify the enabled state of buttons
+        /// Used to track changes to parameter values in order to verify the enabled state of buttons.
         /// </summary>
         /// <param name="sender">event arguments</param>
         /// <param name="e">event sender</param>

@@ -17,25 +17,25 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     public class ImageButtonBase : Grid
     {
         /// <summary>
-        /// Command associated with this button
+        /// Command associated with this button.
         /// </summary>
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register("Command", typeof(RoutedUICommand), typeof(ImageButton));
 
         /// <summary>
-        /// Image to be used for the enabled state
+        /// Image to be used for the enabled state.
         /// </summary>
         public static readonly DependencyProperty EnabledImageSourceProperty =
             DependencyProperty.Register("EnabledImageSource", typeof(ImageSource), typeof(ImageButton));
 
         /// <summary>
-        /// Image to be used for the disabled state
+        /// Image to be used for the disabled state.
         /// </summary>
         public static readonly DependencyProperty DisabledImageSourceProperty =
             DependencyProperty.Register("DisabledImageSource", typeof(ImageSource), typeof(ImageButton));
 
         /// <summary>
-        /// Gets or sets the image to be used for the enabled state
+        /// Gets or sets the image to be used for the enabled state.
         /// </summary>
         public ImageSource EnabledImageSource
         {
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the image to be used for the disabled state
+        /// Gets or sets the image to be used for the disabled state.
         /// </summary>
         public ImageSource DisabledImageSource
         {
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the command associated with this button
+        /// Gets or sets the command associated with this button.
         /// </summary>
         public RoutedUICommand Command
         {

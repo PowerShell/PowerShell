@@ -6,17 +6,17 @@ using System;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Arguments for the event triggered when it is necessary to display help for a command
+    /// Arguments for the event triggered when it is necessary to display help for a command.
     /// </summary>
     public class ImportModuleEventArgs : EventArgs
     {
         /// <summary>
-        /// the name for the command belonging to the module to be imported
+        /// the name for the command belonging to the module to be imported.
         /// </summary>
         private string commandName;
 
         /// <summary>
-        /// the module path or name for the module we want to import
+        /// the module path or name for the module we want to import.
         /// </summary>
         private string parentModuleName;
 
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the name for the command belonging to the module to be imported
+        /// Gets the name for the command belonging to the module to be imported.
         /// </summary>
         public string CommandName
         {
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the module path or name for the module we want to import
+        /// Gets the module path or name for the module we want to import.
         /// </summary>
         public string ParentModuleName
         {

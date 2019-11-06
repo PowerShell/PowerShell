@@ -8,13 +8,13 @@ using System.Windows.Automation;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Toggle button with images to represent enabled and disabled states
+    /// Toggle button with images to represent enabled and disabled states.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Required by XAML")]
     public partial class ImageToggleButton : ImageButtonBase
     {
         /// <summary>
-        /// Value indicating the button is checked
+        /// Value indicating the button is checked.
         /// </summary>
         public static readonly DependencyProperty IsCheckedProperty =
             DependencyProperty.Register("IsChecked", typeof(bool), typeof(ImageToggleButton));
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the button is checked
+        /// Gets or sets a value indicating whether the button is checked.
         /// </summary>
         public bool IsChecked
         {
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Copies the automation id and name from the parent control to the inner button
+        /// Copies the automation id and name from the parent control to the inner button.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>

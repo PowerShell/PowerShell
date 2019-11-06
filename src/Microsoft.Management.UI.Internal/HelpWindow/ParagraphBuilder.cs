@@ -18,27 +18,27 @@ namespace Microsoft.Management.UI.Internal
     internal class ParagraphBuilder : INotifyPropertyChanged
     {
         /// <summary>
-        /// The text spans that should be bold
+        /// The text spans that should be bold.
         /// </summary>
         private readonly List<TextSpan> boldSpans;
 
         /// <summary>
-        /// The text spans that should be highlighted
+        /// The text spans that should be highlighted.
         /// </summary>
         private readonly List<TextSpan> highlightedSpans;
 
         /// <summary>
-        /// The text displayed
+        /// The text displayed.
         /// </summary>
         private readonly StringBuilder textBuilder;
 
         /// <summary>
-        /// Paragraph built in BuildParagraph
+        /// Paragraph built in BuildParagraph.
         /// </summary>
         private readonly Paragraph paragraph;
 
         /// <summary>
-        /// Initializes a new instance of the ParagraphBuilder class
+        /// Initializes a new instance of the ParagraphBuilder class.
         /// </summary>
         /// <param name="paragraph">paragraph we will be adding lines to in BuildParagraph</param>
         internal ParagraphBuilder(Paragraph paragraph)
@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
 
         #region INotifyPropertyChanged Members
         /// <summary>
-        /// Used to notify of property changes
+        /// Used to notify of property changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the paragraph built in BuildParagraph
+        /// Gets the paragraph built in BuildParagraph.
         /// </summary>
         internal Paragraph Paragraph
         {
@@ -179,7 +179,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds text to the paragraph later build with BuildParagraph
+        /// Adds text to the paragraph later build with BuildParagraph.
         /// </summary>
         /// <param name="str">text to be added</param>
         /// <param name="bold">true if the text should be bold</param>
@@ -296,7 +296,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called internally to notify when a proiperty changed
+        /// Called internally to notify when a proiperty changed.
         /// </summary>
         /// <param name="propertyName">property name</param>
         private void OnNotifyPropertyChanged(string propertyName)
@@ -309,22 +309,22 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// A text span used to mark bold and highlighed segments
+        /// A text span used to mark bold and highlighed segments.
         /// </summary>
         internal struct TextSpan
         {
             /// <summary>
-            /// Index of the first character in the span
+            /// Index of the first character in the span.
             /// </summary>
             private readonly int start;
 
             /// <summary>
-            /// Index of the last character in the span
+            /// Index of the last character in the span.
             /// </summary>
             private readonly int end;
 
             /// <summary>
-            /// Initializes a new instance of the TextSpan struct
+            /// Initializes a new instance of the TextSpan struct.
             /// </summary>
             /// <param name="start">Index of the first character in the span</param>
             /// <param name="length">Index of the last character in the span</param>
@@ -345,7 +345,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             /// <summary>
-            /// Gets the index of the first character in the span
+            /// Gets the index of the first character in the span.
             /// </summary>
             internal int Start
             {
@@ -353,7 +353,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             /// <summary>
-            /// Gets the index of the first character in the span
+            /// Gets the index of the first character in the span.
             /// </summary>
             internal int End
             {
@@ -364,7 +364,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             /// <summary>
-            /// Returns true if the <paramref name="position"/> is between start and end (inclusive)
+            /// Returns true if the <paramref name="position"/> is between start and end (inclusive).
             /// </summary>
             /// <param name="position">position to verify if is in the span</param>
             /// <returns>true if the <paramref name="position"/> is between start and end (inclusive)</returns>

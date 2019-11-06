@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Control taht shows cmdlets in a module and details for a selected cmdlet
+    /// Control taht shows cmdlets in a module and details for a selected cmdlet.
     /// </summary>
     public partial class ShowModuleControl : UserControl
     {
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private Window owner;
 
         /// <summary>
-        /// Initializes a new instance of the ShowModuleControl class
+        /// Initializes a new instance of the ShowModuleControl class.
         /// </summary>
         public ShowModuleControl()
         {

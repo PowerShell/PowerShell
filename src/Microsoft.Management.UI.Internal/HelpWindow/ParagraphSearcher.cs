@@ -14,29 +14,29 @@ namespace Microsoft.Management.UI.Internal
     internal class ParagraphSearcher
     {
         /// <summary>
-        /// Highlight for all matches except the current
+        /// Highlight for all matches except the current.
         /// </summary>
         internal static readonly Brush HighlightBrush = Brushes.Yellow;
 
         /// <summary>
-        /// Highlight for the current match
+        /// Highlight for the current match.
         /// </summary>
         private static readonly Brush CurrentHighlightBrush = Brushes.Cyan;
 
         /// <summary>
-        /// Current match being highlighted in search
+        /// Current match being highlighted in search.
         /// </summary>
         private Run currentHighlightedMatch;
 
         /// <summary>
-        /// Initializes a new instance of the ParagraphSearcher class
+        /// Initializes a new instance of the ParagraphSearcher class.
         /// </summary>
         internal ParagraphSearcher()
         {
         }
 
         /// <summary>
-        /// Move to the next highlight starting at the <paramref name="caretPosition"/>
+        /// Move to the next highlight starting at the <paramref name="caretPosition"/>.
         /// </summary>
         /// <param name="forward">true for next false for previous</param>
         /// <param name="caretPosition">caret position</param>
@@ -94,7 +94,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Resets the search for fresh calls to MoveAndHighlightNextNextMatch
+        /// Resets the search for fresh calls to MoveAndHighlightNextNextMatch.
         /// </summary>
         internal void ResetSearch()
         {
@@ -102,7 +102,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if <paramref name="run"/> is highlighted
+        /// Returns true if <paramref name="run"/> is highlighted.
         /// </summary>
         /// <param name="run">run to check if is highlighted</param>
         /// <returns>true if <paramref name="run"/> is highlighted</returns>
@@ -123,7 +123,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Get the next or previous run according to <paramref name="forward"/>
+        /// Get the next or previous run according to <paramref name="forward"/>.
         /// </summary>
         /// <param name="currentRun">the current run</param>
         /// <param name="forward">true for next false for previous</param>
@@ -189,7 +189,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the run's paragraph
+        /// Gets the run's paragraph.
         /// </summary>
         /// <param name="run">run to get the paragraph from</param>
         /// <returns>the run's paragraph</returns>
@@ -202,7 +202,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if the run is the fiorst run of the paragraph
+        /// Returns true if the run is the fiorst run of the paragraph.
         /// </summary>
         /// <param name="run">run to check</param>
         /// <returns>true if the run is the fiorst run of the paragraph</returns>
@@ -214,7 +214,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>
+        /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>.
         /// </summary>
         /// <param name="caretRun">run containing the caret</param>
         /// <param name="forward">true for first false for last</param>

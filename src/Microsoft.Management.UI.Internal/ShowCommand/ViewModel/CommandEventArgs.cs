@@ -6,12 +6,12 @@ using System;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Arguments for the event triggered when something happens at the cmdlet level
+    /// Arguments for the event triggered when something happens at the cmdlet level.
     /// </summary>
     public class CommandEventArgs : EventArgs
     {
         /// <summary>
-        /// the command targeted by the event
+        /// the command targeted by the event.
         /// </summary>
         private CommandViewModel command;
 
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the command targeted by the event
+        /// Gets the command targeted by the event.
         /// </summary>
         public CommandViewModel Command
         {

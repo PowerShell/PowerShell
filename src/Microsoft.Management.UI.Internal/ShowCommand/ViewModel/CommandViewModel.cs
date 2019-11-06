@@ -28,22 +28,22 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     {
         #region Private Fields
         /// <summary>
-        /// The name of the AllParameterSets
+        /// The name of the AllParameterSets.
         /// </summary>
         private const string SharedParameterSetName = "__AllParameterSets";
 
         /// <summary>
-        /// Grid length constant
+        /// Grid length constant.
         /// </summary>
         private static readonly GridLength star = new GridLength(1, GridUnitType.Star);
 
         /// <summary>
-        /// The module containing this cmdlet in the gui
+        /// The module containing this cmdlet in the gui.
         /// </summary>
         private ModuleViewModel parentModule;
 
         /// <summary>
-        /// The name of the default ParameterSet
+        /// The name of the default ParameterSet.
         /// </summary>
         private string defaultParameterSetName;
 
@@ -73,28 +73,28 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private ParameterSetViewModel comonParameters;
 
         /// <summary>
-        /// The ShowCommandCommandInfo this model is based on
+        /// The ShowCommandCommandInfo this model is based on.
         /// </summary>
         private ShowCommandCommandInfo commandInfo;
 
         /// <summary>
-        ///  value indicating whether the selected parameter set has all mandatory parameters valid
+        ///  value indicating whether the selected parameter set has all mandatory parameters valid.
         /// </summary>
         private bool selectedParameterSetAllMandatoryParametersHaveValues;
 
         /// <summary>
-        /// value indicating whether the command name should be qualified by the module in GetScript
+        /// value indicating whether the command name should be qualified by the module in GetScript.
         /// </summary>
         private bool moduleQualifyCommandName;
 
         /// <summary>
-        /// The height for common parameters that will depend on CommonParameterVisibility
+        /// The height for common parameters that will depend on CommonParameterVisibility.
         /// </summary>
         private GridLength commonParametersHeight;
         #endregion
 
         /// <summary>
-        /// Prevents a default instance of the CommandViewModel class from being created
+        /// Prevents a default instance of the CommandViewModel class from being created.
         /// </summary>
         private CommandViewModel()
         {
@@ -103,25 +103,25 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region INotifyPropertyChanged Members
 
         /// <summary>
-        /// PropertyChanged Event
+        /// PropertyChanged Event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         /// <summary>
-        /// Indicates the command needs to display the help for a command
+        /// Indicates the command needs to display the help for a command.
         /// </summary>
         public event EventHandler<HelpNeededEventArgs> HelpNeeded;
 
         /// <summary>
-        /// Indicates a module needs to be imported
+        /// Indicates a module needs to be imported.
         /// </summary>
         public event EventHandler<EventArgs> ImportModule;
 
         #region Public Properties
         /// <summary>
-        /// Gets or sets a value indicating whether the command name should be qualified by the module in GetScript
+        /// Gets or sets a value indicating whether the command name should be qualified by the module in GetScript.
         /// </summary>
         public bool ModuleQualifyCommandName
         {
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the common parameters are expanded
+        /// Gets or sets a value indicating whether the common parameters are expanded.
         /// </summary>
         public bool AreCommonParametersExpanded
         {
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the visibility for the single ParameterSetControl displayed when there is only 1 parameter set
+        /// Gets the visibility for the single ParameterSetControl displayed when there is only 1 parameter set.
         /// </summary>
         public Visibility SingleParameterSetControlVisibility
         {
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the height for common parameters that will depend on CommonParameterVisibility
+        /// Gets or sets the height for common parameters that will depend on CommonParameterVisibility.
         /// </summary>
         public GridLength CommonParametersHeight
         {
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the visibility for the control displayed when the module is not imported
+        /// Gets the visibility for the control displayed when the module is not imported.
         /// </summary>
         public Visibility NotImportedVisibility
         {
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the visibility for the control displayed when there are no parameters
+        /// Gets the visibility for the control displayed when there are no parameters.
         /// </summary>
         public Visibility NoParameterVisibility
         {
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether the cmdlet comes from a module which is imported
+        /// Gets a value indicating whether the cmdlet comes from a module which is imported.
         /// </summary>
         public bool IsImported
         {
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the module path if it is not null or empty, or the name otherwise
+        /// Gets the module path if it is not null or empty, or the name otherwise.
         /// </summary>
         public string ModuleName
         {
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets Tooltip string for the cmdlet
+        /// Gets Tooltip string for the cmdlet.
         /// </summary>
         public string ToolTip
         {
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the message to be displayed when the cmdlet belongs to a module that is not imported
+        /// Gets the message to be displayed when the cmdlet belongs to a module that is not imported.
         /// </summary>
         public string ImportModuleMessage
         {
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the title for the cmdlet details
+        /// Gets the title for the cmdlet details.
         /// </summary>
         public string DetailsTitle
         {
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Gets a Grid length constant
+        /// Gets a Grid length constant.
         /// </summary>
         internal static GridLength Star
         {
@@ -554,7 +554,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called to trigger the event fired when help is needed for the command
+        /// Called to trigger the event fired when help is needed for the command.
         /// </summary>
         internal void OnHelpNeeded()
         {
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called to trigger the event fired when a module needs to be imported
+        /// Called to trigger the event fired when a module needs to be imported.
         /// </summary>
         internal void OnImportModule()
         {
@@ -579,7 +579,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Private Methods
         /// <summary>
-        /// Called to set the height for common parameters initially or when the AreCommonParametersExpanded changes
+        /// Called to set the height for common parameters initially or when the AreCommonParametersExpanded changes.
         /// </summary>
         private void SetCommonParametersHeight()
         {
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Compares source and target by being the default parameter set and then by name
+        /// Compares source and target by being the default parameter set and then by name.
         /// </summary>
         /// <param name="source">source paremeterset</param>
         /// <param name="target">target parameterset</param>
@@ -616,7 +616,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// If property changed will be notify
+        /// If property changed will be notify.
         /// </summary>
         /// <param name="propertyName">The changed property</param>
         private void OnNotifyPropertyChanged(string propertyName)
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called when the PropertyChanged event is triggered on the SelectedParameterSet
+        /// Called when the PropertyChanged event is triggered on the SelectedParameterSet.
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>

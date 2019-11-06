@@ -9,7 +9,7 @@ using System.Windows.Data;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Converts a an ImageButtonBase to its corresponding ToolTip
+    /// Converts a an ImageButtonBase to its corresponding ToolTip.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed for XAML")]
     public class ImageButtonToolTipConverter : IValueConverter

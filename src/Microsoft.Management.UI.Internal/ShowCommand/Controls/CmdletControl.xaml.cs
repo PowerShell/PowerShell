@@ -7,7 +7,7 @@ using System.Windows.Controls;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Interaction logic for CmdletControl.xaml
+    /// Interaction logic for CmdletControl.xaml.
     /// </summary>
     public partial class CmdletControl : UserControl
     {
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Construction and Destructor
         /// <summary>
-        /// Initializes a new instance of the CmdletControl class
+        /// Initializes a new instance of the CmdletControl class.
         /// </summary>
         public CmdletControl()
         {
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Import Module Button event
+        /// Import Module Button event.
         /// </summary>
         /// <param name="sender">Event sender</param>
         /// <param name="e">Event args</param>

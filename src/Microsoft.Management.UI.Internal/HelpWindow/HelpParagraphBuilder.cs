@@ -11,27 +11,27 @@ using System.Windows.Documents;
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
-    /// Builds a help paragraph for a cmdlet
+    /// Builds a help paragraph for a cmdlet.
     /// </summary>
     internal class HelpParagraphBuilder : ParagraphBuilder
     {
         /// <summary>
-        /// Indentation size
+        /// Indentation size.
         /// </summary>
         internal const int IndentSize = 4;
 
         /// <summary>
-        /// new line separators
+        /// new line separators.
         /// </summary>
         private static readonly string[] Separators = new[] { "\r\n", "\n" };
 
         /// <summary>
-        /// Object with the cmdelt
+        /// Object with the cmdelt.
         /// </summary>
         private readonly PSObject psObj;
 
         /// <summary>
-        /// Initializes a new instance of the HelpParagraphBuilder class
+        /// Initializes a new instance of the HelpParagraphBuilder class.
         /// </summary>
         /// <param name="paragraph">paragraph being built</param>
         /// <param name="psObj">object with help information</param>
@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the string value of a property or null if it could not be retrieved
+        /// Gets the string value of a property or null if it could not be retrieved.
         /// </summary>
         /// <param name="psObj">object with the property</param>
         /// <param name="propertyName">property name</param>
@@ -72,7 +72,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help text to the paragraph
+        /// Adds the help text to the paragraph.
         /// </summary>
         internal void AddTextToParagraphBuilder()
         {
@@ -131,7 +131,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the object property or null if it could not be retrieved
+        /// Gets the object property or null if it could not be retrieved.
         /// </summary>
         /// <param name="psObj">object with the property</param>
         /// <param name="propertyName">property name</param>
@@ -143,7 +143,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a PSObject and then a value from it or null if the value could not be retrieved
+        /// Gets a PSObject and then a value from it or null if the value could not be retrieved.
         /// </summary>
         /// <param name="psObj">PSObject that contains another PSObject as a property</param>
         /// <param name="psObjectName">property name that contains the PSObject</param>
@@ -170,7 +170,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the value of a property or null if the value could not be retrieved
+        /// Gets the value of a property or null if the value could not be retrieved.
         /// </summary>
         /// <param name="psObj">object with the property</param>
         /// <param name="propertyName">property name</param>
@@ -198,7 +198,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the text from a property of type PSObject[] where the first object has a text property
+        /// Gets the text from a property of type PSObject[] where the first object has a text property.
         /// </summary>
         /// <param name="psObj">objhect to get text from</param>
         /// <param name="propertyText">property with PSObject[] containing text</param>
@@ -215,7 +215,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns the largest size of a group of strings
+        /// Returns the largest size of a group of strings.
         /// </summary>
         /// <param name="strs">strings to evaluate the largest size from</param>
         /// <returns>the largest size of a group of strings</returns>
@@ -235,7 +235,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
         /// <param name="str">string to add indentation to</param>
         /// <returns>the string indented</returns>
@@ -245,7 +245,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
         /// <param name="str">string to add indentation to</param>
         /// <param name="numberOfIdents">number of indentations</param>
@@ -258,7 +258,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
         /// <param name="str">string to add indentation to</param>
         /// <param name="indentString">indentation string</param>
@@ -289,7 +289,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Get the object array value of a property
+        /// Get the object array value of a property.
         /// </summary>
         /// <param name="obj">object containing the property</param>
         /// <param name="propertyName">property with the array value</param>
@@ -312,7 +312,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds a section that contains only a string
+        /// Adds a section that contains only a string.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionName">name of the section to add</param>
@@ -332,7 +332,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help syntax segment
+        /// Adds the help syntax segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -446,7 +446,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help description segment
+        /// Adds the help description segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -475,7 +475,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help examples segment
+        /// Adds the help examples segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -713,7 +713,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help parameters segment
+        /// Adds the help parameters segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -860,7 +860,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help navigation links segment
+        /// Adds the help navigation links segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -907,7 +907,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help input or output segment
+        /// Adds the help input or output segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
@@ -961,7 +961,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help notes segment
+        /// Adds the help notes segment.
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
