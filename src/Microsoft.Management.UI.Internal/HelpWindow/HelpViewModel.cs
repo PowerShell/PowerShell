@@ -51,8 +51,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Initializes a new instance of the HelpViewModel class.
         /// </summary>
-        /// <param name="psObj">object containing help</param>
-        /// <param name="documentParagraph">paragraph in which help text is built/searched</param>
+        /// <param name="psObj">object containing help.</param>
+        /// <param name="documentParagraph">paragraph in which help text is built/searched.</param>
         internal HelpViewModel(PSObject psObj, Paragraph documentParagraph)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -224,8 +224,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Called to update the matches label.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void HelpBuilder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "HighlightCount")
@@ -270,7 +270,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Called internally to notify when a proiperty changed.
         /// </summary>
-        /// <param name="propertyName">property name</param>
+        /// <param name="propertyName">property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;

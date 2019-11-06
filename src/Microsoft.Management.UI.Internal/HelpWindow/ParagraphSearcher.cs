@@ -38,8 +38,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Move to the next highlight starting at the <paramref name="caretPosition"/>.
         /// </summary>
-        /// <param name="forward">true for next false for previous</param>
-        /// <param name="caretPosition">caret position</param>
+        /// <param name="forward">true for next false for previous.</param>
+        /// <param name="caretPosition">caret position.</param>
         /// <returns>the next highlight starting at the <paramref name="caretPosition"/></returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
@@ -104,7 +104,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Returns true if <paramref name="run"/> is highlighted.
         /// </summary>
-        /// <param name="run">run to check if is highlighted</param>
+        /// <param name="run">run to check if is highlighted.</param>
         /// <returns>true if <paramref name="run"/> is highlighted</returns>
         private static bool Ishighlighted(Run run)
         {
@@ -125,8 +125,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Get the next or previous run according to <paramref name="forward"/>.
         /// </summary>
-        /// <param name="currentRun">the current run</param>
-        /// <param name="forward">true for next false for previous</param>
+        /// <param name="currentRun">the current run.</param>
+        /// <param name="forward">true for next false for previous.</param>
         /// <returns>the next or previous run according to <paramref name="forward"/></returns>
         private static Run GetNextRun(Run currentRun, bool forward)
         {
@@ -150,7 +150,7 @@ namespace Microsoft.Management.UI.Internal
         /// Gets the run of an inline. Inlines in a ParagrahBuilder are either a Run or a Bold
         /// which contains a Run
         /// </summary>
-        /// <param name="inline">inline to get the run from</param>
+        /// <param name="inline">inline to get the run from.</param>
         /// <returns>the run of the inline</returns>
         private static Run GetRun(Inline inline)
         {
@@ -167,8 +167,8 @@ namespace Microsoft.Management.UI.Internal
         /// Gets the next highlighted run starting and including <paramref name="currentRun"/>
         /// according to the direction specified in <paramref name="forward"/>
         /// </summary>
-        /// <param name="currentRun">the current run</param>
-        /// <param name="forward">true for next false for previous</param>
+        /// <param name="currentRun">the current run.</param>
+        /// <param name="forward">true for next false for previous.</param>
         /// <returns>
         /// the next highlighted run starting and including <paramref name="currentRun"/>
         /// according to the direction specified in <paramref name="forward"/>
@@ -191,7 +191,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets the run's paragraph.
         /// </summary>
-        /// <param name="run">run to get the paragraph from</param>
+        /// <param name="run">run to get the paragraph from.</param>
         /// <returns>the run's paragraph</returns>
         private static Paragraph GetParagraph(Run run)
         {
@@ -204,7 +204,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Returns true if the run is the fiorst run of the paragraph.
         /// </summary>
-        /// <param name="run">run to check</param>
+        /// <param name="run">run to check.</param>
         /// <returns>true if the run is the fiorst run of the paragraph</returns>
         private static bool IsFirstRun(Run run)
         {
@@ -216,8 +216,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>.
         /// </summary>
-        /// <param name="caretRun">run containing the caret</param>
-        /// <param name="forward">true for first false for last</param>
+        /// <param name="caretRun">run containing the caret.</param>
+        /// <param name="forward">true for first false for last.</param>
         /// <returns>the first or last run in the paragraph containing <paramref name="caretRun"/></returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {

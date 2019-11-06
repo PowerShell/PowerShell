@@ -21,8 +21,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// OK Click event function.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
@@ -32,8 +32,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Cancel Click event function.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;

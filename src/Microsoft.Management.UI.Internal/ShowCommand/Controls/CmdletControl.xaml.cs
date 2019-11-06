@@ -45,8 +45,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// DataContextChanged event.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void ParameterSetTabControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.DataContext == null)
@@ -68,8 +68,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Key down event for user press F1 button.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void CmdletControl_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.F1)
@@ -81,8 +81,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Help button event.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
             this.CurrentCommandViewModel.OpenHelpWindow();
@@ -91,8 +91,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Import Module Button event.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void ImportModuleButton_Click(object sender, RoutedEventArgs e)
         {
             this.CurrentCommandViewModel.OnImportModule();

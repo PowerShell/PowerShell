@@ -120,8 +120,8 @@ namespace Microsoft.Management.UI.Internal
         /// Start a new thread as STA for gridView Window.
         /// </summary>
         /// <param name="invocation">commands of the PowerShell.</param>
-        /// <param name="outputModeOptions">selection mode of the list</param>
-        /// <param name="closedEvent">closedEvent</param>
+        /// <param name="outputModeOptions">selection mode of the list.</param>
+        /// <param name="closedEvent">closedEvent.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
         private void StartWindow(string invocation, string outputModeOptions, AutoResetEvent closedEvent)
         {
@@ -202,8 +202,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Implements ZoomIn
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">.</param>
+        /// <param name="e">.</param>
         private void ZoomEventHandlerPlus(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.zoomLevel == 0)
@@ -226,8 +226,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Implements ZoomOut
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">.</param>
+        /// <param name="e">.</param>
         private void ZoomEventHandlerMinus(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.zoomLevel >= ZOOM_MIN)
@@ -244,7 +244,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a new ManagementList.
         /// </summary>
-        /// <param name="outputMode">Output mode of the out-gridview</param>
+        /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new ManagementList</returns>
         private ManagementList CreateManagementList(string outputMode)
         {
@@ -262,7 +262,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a new main grid for window.
         /// </summary>
-        /// <param name="outputMode">Output mode of the out-gridview</param>
+        /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new mainGrid</returns>
         private Grid CreateMainGrid(string outputMode)
         {
@@ -347,8 +347,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Store the selected items for use in EndProcessing
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             if (this.managementList.List.SelectedItems.Count != 0)
@@ -366,8 +366,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Closes the window
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.gridViewWindow.Close();

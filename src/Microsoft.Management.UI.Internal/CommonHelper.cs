@@ -16,14 +16,14 @@ namespace Microsoft.Management.UI
         /// <summary>
         /// Restore the values from the settings to the actual window position, size and state.
         /// </summary>
-        /// <param name="target">the window we are setting position and size of</param>
-        /// <param name="userSettingTop">the value for top from the user settings</param>
-        /// <param name="userSettingLeft">the value for left from the user settings</param>
-        /// <param name="userSettingWidth">the value for width from the user settings</param>
-        /// <param name="userSettingHeight">the value for height from the user settings</param>
-        /// <param name="defaultWidth">the with used if <paramref name="userSettingWidth"/> is not valid</param>
-        /// <param name="defaultHeight">the height used if <paramref name="userSettingHeight"/> is not valid</param>
-        /// <param name="userSettingMaximized">true if the window is maximized in the user setting</param>
+        /// <param name="target">the window we are setting position and size of.</param>
+        /// <param name="userSettingTop">the value for top from the user settings.</param>
+        /// <param name="userSettingLeft">the value for left from the user settings.</param>
+        /// <param name="userSettingWidth">the value for width from the user settings.</param>
+        /// <param name="userSettingHeight">the value for height from the user settings.</param>
+        /// <param name="defaultWidth">the with used if <paramref name="userSettingWidth"/> is not valid.</param>
+        /// <param name="defaultHeight">the height used if <paramref name="userSettingHeight"/> is not valid.</param>
+        /// <param name="userSettingMaximized">true if the window is maximized in the user setting.</param>
         internal static void SetStartingPositionAndSize(Window target, double userSettingTop, double userSettingLeft, double userSettingWidth, double userSettingHeight, double defaultWidth, double defaultHeight, bool userSettingMaximized)
         {
             bool leftInvalid = userSettingLeft < System.Windows.SystemParameters.VirtualScreenLeft ||

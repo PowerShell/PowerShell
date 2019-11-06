@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the CommandEventArgs class.
         /// </summary>
-        /// <param name="command">the command targeted by the event</param>
+        /// <param name="command">the command targeted by the event.</param>
         public CommandEventArgs(CommandViewModel command)
         {
             this.command = command;

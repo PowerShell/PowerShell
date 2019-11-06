@@ -20,8 +20,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <summary>
         /// Shows the help window
         /// </summary>
-        /// <param name="helpObj">object with help information</param>
-        /// <param name="cmdlet">cmdlet calling this method</param>
+        /// <param name="helpObj">object with help information.</param>
+        /// <param name="cmdlet">cmdlet calling this method.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from methods called using reflection")]
         private static void ShowHelpWindow(PSObject helpObj, PSCmdlet cmdlet)
         {

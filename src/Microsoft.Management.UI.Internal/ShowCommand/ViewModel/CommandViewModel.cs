@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Determins whether current command name and a specifed ParameterSetName have same name.
         /// </summary>
-        /// <param name="name">The name of ShareParameterSet</param>
+        /// <param name="name">The name of ShareParameterSet.</param>
         /// <returns>Return true is ShareParameterSet. Else return false.</returns>
         internal static bool IsSharedParameterSetName(string name)
         {
@@ -477,9 +477,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Creates a new CommandViewModel out the <paramref name="commandInfo"/>.
         /// </summary>
-        /// <param name="module">Module to which the CommandViewModel will belong to</param>
-        /// <param name="commandInfo">Will showing command</param>
-        /// <param name="noCommonParameters">true to ommit displaying common parameter</param>
+        /// <param name="module">Module to which the CommandViewModel will belong to.</param>
+        /// <param name="commandInfo">Will showing command.</param>
+        /// <param name="noCommonParameters">true to ommit displaying common parameter.</param>
         /// <exception cref="ArgumentNullException">If commandInfo is null</exception>
         /// <exception cref="RuntimeException">
         /// If could not create the CommandViewModel. For instance the ShowCommandCommandInfo corresponding to
@@ -589,8 +589,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compares source and target by being the default parameter set and then by name.
         /// </summary>
-        /// <param name="source">source paremeterset</param>
-        /// <param name="target">target parameterset</param>
+        /// <param name="source">source paremeterset.</param>
+        /// <param name="target">target parameterset.</param>
         /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger</returns>
         private int Compare(ParameterSetViewModel source, ParameterSetViewModel target)
         {
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// If property changed will be notify.
         /// </summary>
-        /// <param name="propertyName">The changed property</param>
+        /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
@@ -631,8 +631,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called when the PropertyChanged event is triggered on the SelectedParameterSet.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void SelectedParameterSet_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (!e.PropertyName.Equals("AllMandatoryParametersHaveValues"))

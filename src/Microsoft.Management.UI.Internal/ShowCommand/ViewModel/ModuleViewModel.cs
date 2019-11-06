@@ -63,8 +63,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the ModuleViewModel class.
         /// </summary>
-        /// <param name="name">Module name</param>
-        /// <param name="importedModules">All loaded modules</param>
+        /// <param name="name">Module name.</param>
+        /// <param name="importedModules">All loaded modules.</param>
         public ModuleViewModel(string name, Dictionary<string, ShowCommandModuleInfo> importedModules)
         {
             if (name == null)
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Sets the AllModulesViewModel containing this.
         /// </summary>
-        /// <param name="parentAllModules">the AllModulesViewModel containing this</param>
+        /// <param name="parentAllModules">the AllModulesViewModel containing this.</param>
         internal void SetAllModules(AllModulesViewModel parentAllModules)
         {
             this.allModules = parentAllModules;
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Sorts commands and optionally sets ModuleQualifyCommandName.
         /// </summary>
-        /// <param name="markRepeatedCmdlets">true to mark repeated commands with a flag that will produce a module qualified name in GetScript</param>
+        /// <param name="markRepeatedCmdlets">true to mark repeated commands with a flag that will produce a module qualified name in GetScript.</param>
         internal void SortCommands(bool markRepeatedCmdlets)
         {
             this.commands.Sort(this.Compare);
@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// According commandNameFilter to filter command,and added the filter commands into filteredCommands property.
         /// </summary>
-        /// <param name="filter">current filter</param>
+        /// <param name="filter">current filter.</param>
         internal void RefreshFilteredCommands(string filter)
         {
             this.filteredCommands.Clear();
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Triggers the SelectedCommandNeedsHelp event.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">event arguments.</param>
         internal void OnSelectedCommandNeedsHelp(HelpNeededEventArgs e)
         {
             EventHandler<HelpNeededEventArgs> handler = this.SelectedCommandNeedsHelp;
@@ -413,9 +413,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Uses pattern matching if pattern is not null or calls MatchesEvenIfInPlural otherwise.
         /// </summary>
-        /// <param name="filterPattern">pattern corresponding to filter</param>
-        /// <param name="commandName">command name string</param>
-        /// <param name="filter">filter string</param>
+        /// <param name="filterPattern">pattern corresponding to filter.</param>
+        /// <param name="commandName">command name string.</param>
+        /// <param name="filter">filter string.</param>
         /// <returns>true if coparisonText matches str or pattern</returns>
         private static bool Matches(WildcardPattern filterPattern, string commandName, string filter)
         {
@@ -430,8 +430,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Returns true if filter matches commandName, even when filter is in the plural.
         /// </summary>
-        /// <param name="commandName">command name string</param>
-        /// <param name="filter">filter string</param>
+        /// <param name="commandName">command name string.</param>
+        /// <param name="filter">filter string.</param>
         /// <returns>return match result</returns>
         private static bool MatchesEvenIfInPlural(string commandName, string filter)
         {
@@ -458,8 +458,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Handles the HelpNeeded event in the selected command and triggers the SelectedCommandNeedsHelp event.
         /// </summary>
-        /// <param name="sender">HelpNeeded event sender</param>
-        /// <param name="e">HelpNeeded event argument</param>
+        /// <param name="sender">HelpNeeded event sender.</param>
+        /// <param name="e">HelpNeeded event argument.</param>
         private void SelectedCommand_HelpNeeded(object sender, HelpNeededEventArgs e)
         {
             this.OnSelectedCommandNeedsHelp(e);
@@ -468,8 +468,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Handles the ImportModule event in the selected command and triggers the SelectedCommandNeedsImportModule event.
         /// </summary>
-        /// <param name="sender">HelpNeeded event sender</param>
-        /// <param name="e">HelpNeeded event argument</param>
+        /// <param name="sender">HelpNeeded event sender.</param>
+        /// <param name="e">HelpNeeded event argument.</param>
         private void SelectedCommand_ImportModule(object sender, EventArgs e)
         {
             this.OnSelectedCommandNeedsImportModule();
@@ -478,8 +478,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Called when the SelectedCommand property changes to update IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">event sender.</param>
+        /// <param name="e">event arguments.</param>
         private void SelectedCommand_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (!e.PropertyName.Equals("SelectedParameterSetAllMandatoryParametersHaveValues"))
@@ -506,8 +506,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compare source commandmodule is equal like target commandmodule.
         /// </summary>
-        /// <param name="source">source commandmodule </param>
-        /// <param name="target">target commandmodule</param>
+        /// <param name="source">source commandmodule.</param>
+        /// <param name="target">target commandmodule.</param>
         /// <returns>return compare result</returns>
         private int Compare(CommandViewModel source, CommandViewModel target)
         {
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// If property changed will be notify.
         /// </summary>
-        /// <param name="propertyName">The changed property</param>
+        /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
