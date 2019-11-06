@@ -23,17 +23,17 @@ namespace Microsoft.Management.UI.Internal
         #region private Fields
 
         /// <summary>
-        /// Zoom Increments
+        /// Zoom Increments.
         /// </summary>
         private const double ZOOM_INCREMENT = 0.2;
 
         /// <summary>
-        /// Max ZoomLevel
+        /// Max ZoomLevel.
         /// </summary>
         private const double ZOOM_MAX = 3.0;
 
         /// <summary>
-        /// Min ZoomLevel
+        /// Min ZoomLevel.
         /// </summary>
         private const double ZOOM_MIN = 0.5;
 
@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
         private ObservableCollection<PSObject> listItems;
 
         /// <summary>
-        /// Event used for the thread gridViewWindows signaling main thread after Windows loaded
+        /// Event used for the thread gridViewWindows signaling main thread after Windows loaded.
         /// </summary>
         private AutoResetEvent gridViewWindowLoaded;
 
@@ -76,17 +76,17 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string CancelButtonContent = XamlLocalizableResources.OutGridView_Button_Cancel;
 
         /// <summary>
-        /// Used to store selected items in the ok processing
+        /// Used to store selected items in the ok processing.
         /// </summary>
         private List<PSObject> selectedItems;
 
         /// <summary>
-        /// The GUI thread of Out-GridView
+        /// The GUI thread of Out-GridView.
         /// </summary>
         private Thread guiThread;
 
         /// <summary>
-        /// private constants for ZoomLevel
+        /// private constants for ZoomLevel.
         /// </summary>
         private double zoomLevel = 1.0;
 
@@ -200,7 +200,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Implements ZoomIn
+        /// Implements ZoomIn.
         /// </summary>
         /// <param name="sender">.</param>
         /// <param name="e">.</param>
@@ -224,7 +224,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Implements ZoomOut
+        /// Implements ZoomOut.
         /// </summary>
         /// <param name="sender">.</param>
         /// <param name="e">.</param>
@@ -345,7 +345,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Store the selected items for use in EndProcessing
+        /// Store the selected items for use in EndProcessing.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -364,7 +364,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Closes the window
+        /// Closes the window.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -383,7 +383,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Closes the window
+        /// Closes the window.
         /// </summary>
         public void CloseWindow()
         {

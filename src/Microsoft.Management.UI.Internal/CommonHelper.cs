@@ -9,7 +9,7 @@ using System.Windows;
 namespace Microsoft.Management.UI
 {
     /// <summary>
-    /// Utilities in common in this assembly
+    /// Utilities in common in this assembly.
     /// </summary>
     internal static class CommonHelper
     {
