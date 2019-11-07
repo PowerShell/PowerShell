@@ -2,6 +2,45 @@
 # Licensed under the MIT License.
 
 Describe 'Tests for splatting' -Tags 'CI' {
+    Context 'Basic splatting' {
+        BeforeAll {
+            function Test-Splat {
+                [CmdletBinding(DefaultParameterSetName = 'Default')]
+                param(
+                    [Parameter(Position = 0, ParameterSetName = 'Value')]
+                    [ValidateNotNullOrEmpty()]
+                    [string]
+                    $Value,
+
+                    [Parameter(Position = 0, ParameterSetName = 'Value2')]
+                    [ValidateNotNullOrEmpty()]
+                    [int]
+                    $Value2
+                )
+                $PSCmdlet.ParameterSetName
+            }
+        }
+
+        It 'Should splat hashtables properly' {
+            $testObject = @{
+                Value2 = 42
+            }
+            Test-Splat @testObject | Should -BeExactly 'Value2'
+        }
+
+        It 'Should splat arrays properly' {
+            $testObject = @(
+                'Does it splat?'
+            )
+            Test-Splat @testObject | Should -BeExactly 'Value'
+        }
+
+        It 'Should splat values properly' {
+            $testObject = 42
+            Test-Splat @testObject | Should -BeExactly 'Value2'
+        }
+    }
+
     Context 'Splatting members and indexed data' {
         BeforeAll {
             function Test-Splat {
@@ -22,26 +61,26 @@ Describe 'Tests for splatting' -Tags 'CI' {
         }
 
         It 'Should splat property values properly' {
-            $o = [pscustomobject]@{
+            $testObject = [pscustomobject]@{
                 Parameters = @{
                     Value = 'Does it splat?'
                 }
             }
-            Test-Splat @o.Parameters | Should -BeExactly 'Value'
+            Test-Splat @testObject.Parameters | Should -BeExactly 'Value'
         }
 
         It 'Should splat method results properly' {
-            $o = [pscustomobject]@{
+            $testObject = [pscustomobject]@{
                 Parameters = @{
                     Value = 'Does it splat?'
                 }
             }
-            Add-Member -InputObject $o -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
-            Test-Splat @o.GetParams() | Should -BeExactly 'Value'
+            Add-Member -InputObject $testObject -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
+            Test-Splat @testObject.GetParams() | Should -BeExactly 'Value'
         }
 
         It 'Should splat indexed method results properly' {
-            $o = [pscustomobject]@{
+            $testObject = [pscustomobject]@{
                 Parameters = @(
                     @{
                         Value = 'Will this splat?'
@@ -51,12 +90,12 @@ Describe 'Tests for splatting' -Tags 'CI' {
                     }
                 )
             }
-            Add-Member -InputObject $o -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
-            Test-Splat @o.GetParams()[1] | Should -BeExactly 'Value2'
+            Add-Member -InputObject $testObject -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
+            Test-Splat @testObject.GetParams()[1] | Should -BeExactly 'Value2'
         }
 
         It 'Should splat indexed data properly' {
-            $o = @(
+            $testObject = @(
                 @{
                     Value = 'Will this splat?'
                 }
@@ -64,19 +103,19 @@ Describe 'Tests for splatting' -Tags 'CI' {
                     Value2 = 'Or this?'
                 }
             )
-            Test-Splat @o[1] | Should -BeExactly 'Value2'
+            Test-Splat @testObject[1] | Should -BeExactly 'Value2'
         }
 
         It 'Should splat multiple members properly' {
-            $o = [pscustomobject]@{
+            $testObject = [pscustomobject]@{
                 Parameters = @{
                     Nested = @{
                         Value = 'Does it splat?'
                     }
                 }
             }
-            Add-Member -InputObject $o -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
-            Test-Splat @o.GetParams().Nested | Should -BeExactly 'Value'
+            Add-Member -InputObject $testObject -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters }
+            Test-Splat @testObject.GetParams().Nested | Should -BeExactly 'Value'
         }
 
         It 'Should splat $PSCmdlet.MyInvocation.BoundParameters properly' {
@@ -107,7 +146,7 @@ Describe 'Tests for splatting' -Tags 'CI' {
         }
 
         It 'Should splat indexed data and using: properly' {
-            $o = @(
+            $testObject = @(
                 @{
                     InputObject = 'First'
                 }
@@ -115,12 +154,12 @@ Describe 'Tests for splatting' -Tags 'CI' {
                     InputObject = 'Second'
                 }
             )
-            Add-Member -InputObject $o -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters[$args[0]] }
-            1..1 | ForEach-Object -Parallel { Write-Output @using:o[1] } | Should -BeExactly 'Second'
+            Add-Member -InputObject $testObject -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters[$args[0]] }
+            1..1 | ForEach-Object -Parallel { Write-Output @using:testObject[1] } | Should -BeExactly 'Second'
         }
 
         It 'Should splat with properties and indexed data and using: properly' {
-            $o = [pscustomobject]@{
+            $testObject = [pscustomobject]@{
                 Parameters = @(
                     @{
                         InputObject = 'First'
@@ -130,8 +169,8 @@ Describe 'Tests for splatting' -Tags 'CI' {
                     }
                 )
             }
-            Add-Member -InputObject $o -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters[$args[0]] }
-            1..1 | ForEach-Object -Parallel { Write-Output @using:o.Parameters[1] } | Should -BeExactly 'Second'
+            Add-Member -InputObject $testObject -Name GetParams -MemberType ScriptMethod -Value { $this.Parameters[$args[0]] }
+            1..1 | ForEach-Object -Parallel { Write-Output @using:testObject.Parameters[1] } | Should -BeExactly 'Second'
         }
     }
 }
