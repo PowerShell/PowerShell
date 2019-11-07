@@ -170,6 +170,28 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
     }
 
+    Context "Execute scripts by literal file name only via `$env:PATH." {
+        BeforeAll {
+            $originalPath = $env:PATH
+            $dir = Convert-Path TestDrive:
+            "'hi1'" | Set-Content -LiteralPath $dir/script.ps1
+            "'hi2'" | Set-Content -LiteralPath $dir/script[1].ps1
+            $env:PATH += [IO.Path]::PathSeparator + $dir
+        }
+
+        AfterAll {
+            $env:PATH = $originalPath
+        }
+
+        It "Finds and executes a script with a vanilla file name." {
+            script.ps1 | Should -Be 'hi1'
+        }
+
+        It "Finds and executes a script whose file name looks like a wildcard." {
+            script[1].ps1 | Should -Be 'hi2'
+        }
+    }
+
     Context "Get-Command should use globbing first for scripts" {
         BeforeAll {
             $firstResult = '[first script]'
