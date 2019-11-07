@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (string.Equals(AppDomain.CurrentDomain.FriendlyName, ConsoleHost.PwshwHost, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(AppDomain.CurrentDomain.FriendlyName, ConsoleHost.PwshwHost, StringComparison.OrdinalIgnoreCase))
             {
                 _noInteractive = true;
             }
