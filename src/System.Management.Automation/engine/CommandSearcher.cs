@@ -1436,15 +1436,6 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                // If the command name contains any wildcard characters
-                // we can't do the path lookup
-
-                if (WildcardPattern.ContainsWildcardCharacters(possiblePath))
-                {
-                    result = CanDoPathLookupResult.WildcardCharacters;
-                    break;
-                }
-
                 try
                 {
                     if (Path.IsPathRooted(possiblePath))
