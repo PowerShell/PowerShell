@@ -178,27 +178,6 @@ namespace System.Management.Automation.Configuration
                 : string.Concat(shellId, ":", "ExecutionPolicy");
         }
 
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
-        /// Proposed value = Existing default. Probably "0"
-        ///
-        /// Schema:
-        /// {
-        ///     "DisablePromptToUpdateHelp" : bool
-        /// }
-        /// </summary>
-        /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
-        internal bool GetDisablePromptToUpdateHelp()
-        {
-            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp");
-        }
-
-        internal void SetDisablePromptToUpdateHelp(bool prompt)
-        {
-            WriteValueToFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp", prompt);
-        }
-
-        /// <summary>
         /// Get the names of experimental features enabled in the config file.
         /// </summary>
         internal string[] GetExperimentalFeatures()
