@@ -47,10 +47,8 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Activity shows up correctly for scriptblocks" {
-            $e = pwsh -noprofile -command "1;2;Write-Error 'myError'"
-            $e[0] | Should -Be 1
-            $e[1] | Should -Be 2
-            $e[2] | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
+            $e = pwsh -noprofile -command 'Write-Error 'myError' -ErrorAction SilentlyContinue; $error[0] | Out-String'
+            [string]::Join('', $e).Trim() | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
         }
     }
 }
