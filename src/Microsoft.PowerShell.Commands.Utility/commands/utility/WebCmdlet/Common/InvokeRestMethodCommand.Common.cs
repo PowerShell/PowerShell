@@ -75,6 +75,12 @@ namespace Microsoft.PowerShell.Commands
         [Alias("RHV")]
         public string ResponseHeadersVariable { get; set; }
 
+        /// <summary>
+        /// Gets or sets the variable name to use for storing the status code from the response.
+        /// </summary>
+        [Parameter]
+        public string StatusCodeVariable { get; set; }
+
         #endregion Parameters
 
         #region Helper Methods
@@ -452,6 +458,12 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldSaveToOutFile)
                 {
                     StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
+                }
+
+                if (!string.IsNullOrEmpty(StatusCodeVariable))
+                {
+                    PSVariableIntrinsics vi = SessionState.PSVariable;
+                    vi.Set(StatusCodeVariable, (int)response.StatusCode);
                 }
 
                 if (!string.IsNullOrEmpty(ResponseHeadersVariable))
