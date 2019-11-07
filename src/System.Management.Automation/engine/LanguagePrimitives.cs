@@ -4101,62 +4101,6 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaTypeConverter
-        {
-            internal TypeConverter converter = null;
-            internal bool convertTo;
-
-            internal object Convert(object valueToConvert,
-                                    Type resultType,
-                                    bool recursion,
-                                    PSObject originalValueToConvert,
-                                    IFormatProvider formatProvider,
-                                    TypeTable backupTable)
-            {
-                var value  = originalValueToConvert ?? valueToConvert;
-                InvalidCastException exc = null;
-
-                if (converter != null)
-                {
-                    if (convertTo)
-                    {
-                        try
-                        {
-                            var result = converter.ConvertTo(null, GetCultureFromFormatProvider(formatProvider), value, resultType);
-                            typeConversion.WriteLine("TypeConvert ConvertTo Conversion succeeded.");
-                            return result;
-                        }
-                        catch (InvalidCastException e)
-                        {
-                            exc = e;
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var result = converter.ConvertFrom(null, GetCultureFromFormatProvider(formatProvider), value);
-                            typeConversion.WriteLine("TypeConvert ConvertFrom Conversion succeeded.");
-                            return result;
-                        }
-                        catch (InvalidCastException e)
-                        {
-                            exc = e;
-                        }
-                    }
-                }
-
-                throw new PSInvalidCastException(
-                    "ConvertToFinalInvalidCastException",
-                    exc,
-                    ExtendedTypeSystem.InvalidCastException,
-                    value.ToString(),
-                    ObjectToTypeNameString(value),
-                    resultType.ToString());
-            }
-        }
-
-
         #region Delegates converting null
         private static object ConvertNullToNumeric(object valueToConvert,
                                                    Type resultType,
@@ -5546,41 +5490,6 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool TryGetTypeConverter(Type fromType, Type toType, out ConvertViaTypeConverter convertViaTypeConverter)
-        {
-            convertViaTypeConverter = null;
-
-            var typeConverter = TypeDescriptor.GetConverter(fromType);
-
-            // Generic TypeConverter can convert all types to string
-            // this violates specific type conversions so we exclude it.
-            if (typeConverter != null && typeConverter.GetType() != typeof(TypeConverter) && typeConverter.CanConvertTo(toType))
-            {
-                convertViaTypeConverter = new ConvertViaTypeConverter()
-                {
-                    converter = typeConverter,
-                    convertTo = true
-                };
-                return true;
-            }
-
-            typeConverter = TypeDescriptor.GetConverter(toType);
-
-            // Generic TypeConverter can convert all types to string
-            // this violates specific type conversions so we exclude it.
-            if (typeConverter != null && typeConverter.GetType() != typeof(TypeConverter) && typeConverter.CanConvertFrom(fromType))
-            {
-                convertViaTypeConverter = new ConvertViaTypeConverter()
-                {
-                    converter = typeConverter,
-                    convertTo = false
-                };
-                return true;
-            }
-
-            return false;
-        }
-
         private static Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
 
         // This is the internal dummy type used when an IDictionary is converted to a pscustomobject
@@ -5754,13 +5663,7 @@ namespace System.Management.Automation
                 converter = FigurePropertyConversion(fromType, toType, ref rank);
             }
 
-            if ((converter == null && TryGetTypeConverter(fromType, toType, out ConvertViaTypeConverter convertViaTypeConverter)))
-            {
-                // converter is null so no fallback converter exists and we can directly use the found converter 'convertViaTypeConverter'
-                converter = convertViaTypeConverter.Convert;
-                rank = ConversionRank.Language;
-            }
-            else if (TypeConverterPossiblyExists(fromType)
+            if (TypeConverterPossiblyExists(fromType)
                     || TypeConverterPossiblyExists(toType)
                     || (converter != null && valueDependentConversion != null))
             {
