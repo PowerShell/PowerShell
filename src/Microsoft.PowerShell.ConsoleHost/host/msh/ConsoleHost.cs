@@ -1393,7 +1393,7 @@ namespace Microsoft.PowerShell
             {
                 // we're running interactive if we're in a prompt loop, we're not reading keyboard input from stdin, and not running pwshw which doens't have a console
 
-                return _isRunningPromptLoop && !ui.ReadFromStdin && !string.Equals(AppDomain.CurrentDomain.FriendlyName, PwshwHost, StringComparison.InvariantCultureIgnoreCase);
+                return _isRunningPromptLoop && !ui.ReadFromStdin && !string.Equals(AppDomain.CurrentDomain.FriendlyName, PwshwHost, StringComparison.OrdinalIgnoreCase);
             }
         }
 
