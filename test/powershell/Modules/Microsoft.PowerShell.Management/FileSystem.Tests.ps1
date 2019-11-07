@@ -279,6 +279,23 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
     }
 
+    Context "Appx path" {
+        BeforeAll {
+            $skipTest = $true
+            if ($IsWindows -and (Get-Command -Name Get-AppxPackage) -and (Get-AppxPackage Microsoft.WindowsCalculator)) {
+                $skipTest = $false
+            }
+        }
+
+        It "Can get an appx package item" -Skip:$skipTest {
+            $pkgDir = (Get-AppxPackage Microsoft.WindowsCalculator).InstallLocation
+
+            Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType [System.IO.FileInfo]
+            Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType [System.IO.DirectoryInfo]
+            Get-ChildItem -Path $pkgDir -ErrorAction Stop | Should -Not -BeNullOrEmpty
+        }
+    }
+
     Context "Validate basic host navigation functionality" {
         BeforeAll {
             #build semi-complex directory structure to test navigation within
