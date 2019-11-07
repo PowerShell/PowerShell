@@ -106,7 +106,7 @@ Describe 'Tests for splatting' -Tags 'CI' {
             }
         }
 
-        It 'Should splat indexed data and using: properly' {
+        It 'Should splat indexed data and 'using:' properly' {
             $o = @(
                 @{
                     InputObject = 'First'
