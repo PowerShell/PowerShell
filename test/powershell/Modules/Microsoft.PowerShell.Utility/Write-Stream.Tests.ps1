@@ -30,7 +30,7 @@ Describe "Stream writer tests" -Tags "CI" {
         It "Should write error messages to the error stream" {
             Write-Error "Testing Error" 2>&1 > $targetfile
             # The contents of the error stream should contain the expected text
-            $targetfile | Should -FileContentMatch ": Testing Error"
+            $targetfile | Should -FileContentMatch "Testing Error"
         }
 
         It "Should write debug messages to the debug stream" {
