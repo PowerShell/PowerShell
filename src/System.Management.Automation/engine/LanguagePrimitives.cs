@@ -2571,8 +2571,6 @@ namespace System.Management.Automation
                                     "InvalidCastTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
-                                result = null;
-                                return false;
                             }
                         }
                         else
@@ -2601,8 +2599,6 @@ namespace System.Management.Automation
                                     "InvalidCastPSTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
-                                result = null;
-                                return false;
                             }
                         }
                         else
@@ -2636,8 +2632,6 @@ namespace System.Management.Automation
                                 exc = new PSInvalidCastException("InvalidCastTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
-                                result = null;
-                                return false;
                             }
                         }
                         else
@@ -2665,8 +2659,6 @@ namespace System.Management.Automation
                                 exc = new PSInvalidCastException("InvalidCastPSTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
-                                result = null;
-                                return false;
                             }
                         }
                         else
