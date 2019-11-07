@@ -38,10 +38,6 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $result | Should -BeOfType [System.Drawing.Point]
         $result.X | Should -Be 2
         $result.Y | Should -Be 3
-
-        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('http://test.site.com', [System.Uri])
-        $result | Should -BeOfType [System.Uri]
-        $result.AbsoluteUri | Should -Be 'http://test.site.com'
     }
 
     It "Convertion with 'TypeConverterAttribute' should be before convertion with .Net Core intrinsic type convertor" {

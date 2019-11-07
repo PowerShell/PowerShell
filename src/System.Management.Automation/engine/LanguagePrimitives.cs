@@ -2811,6 +2811,36 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// We need to add this built-in converter because in FullCLR, System.Uri has a TypeConverter attribute
+        /// declared: [TypeConverter(typeof(UriTypeConverter))], so the conversion from 'string' to 'Uri' is
+        /// actually taken care of by 'UriTypeConverter'. However, the type 'UriTypeConverter' is not available
+        /// in CoreCLR, and thus the conversion from 'string' to 'Uri' would show a different behavior.
+        ///
+        /// Therefore, we just add this built-in string-to-uri converter using the same logic 'UriTypeConverter'
+        /// is using in FullCLR, so the conversion behavior will be the same on desktop powershell and powershell core.
+        /// </summary>
+        private static Uri ConvertStringToUri(object valueToConvert,
+                                              Type resultType,
+                                              bool recursion,
+                                              PSObject originalValueToConvert,
+                                              IFormatProvider formatProvider,
+                                              TypeTable backupTable)
+        {
+            try
+            {
+                Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
+                return new Uri((string)valueToConvert, UriKind.RelativeOrAbsolute);
+            }
+            catch (Exception uriException)
+            {
+                typeConversion.WriteLine("Exception in Uri constructor: \"{0}\".", uriException.Message);
+                throw new PSInvalidCastException("InvalidCastFromStringToUri", uriException,
+                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                    valueToConvert.ToString(), resultType.ToString(), uriException.Message);
+            }
+        }
+
+        /// <summary>
         /// Attempts to use Parser.ScanNumber to get the value of a numeric string.
         /// </summary>
         /// <param name="strToConvert">The string to convert to a number.</param>
@@ -4495,6 +4525,7 @@ namespace System.Management.Automation
                 CacheConversion<Regex>(typeofString, typeof(Regex), LanguagePrimitives.ConvertStringToRegex, ConversionRank.Language);
                 CacheConversion<char[]>(typeofString, typeof(char[]), LanguagePrimitives.ConvertStringToCharArray, ConversionRank.StringToCharArray);
                 CacheConversion<Type>(typeofString, typeof(Type), LanguagePrimitives.ConvertStringToType, ConversionRank.Language);
+                CacheConversion<Uri>(typeofString, typeof(Uri), LanguagePrimitives.ConvertStringToUri, ConversionRank.Language);
                 CacheConversion<object>(typeofString, typeofDecimal, LanguagePrimitives.ConvertStringToDecimal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofFloat, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofDouble, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
