@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeTable == null)
             {
-                throw PSTraceSource.NewArgumentException(nameof(typeTable));
+                throw PSTraceSource.NewArgumentNullException(nameof(typeTable));
             }
 
             TypeTable = typeTable;
@@ -219,7 +219,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeData == null)
             {
-                throw PSTraceSource.NewArgumentException(nameof(typeData));
+                throw PSTraceSource.NewArgumentNullException(nameof(typeData));
             }
 
             TypeData = typeData;
@@ -3584,8 +3584,7 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
             // Use at most 3 locks (we don't expect contention on that many cores anyways,
             // and typically we'll be processing just 2 or 3 files anyway, hence capacity=3.
-            ConcurrentDictionary<string, string> filesProcessed
-                = new ConcurrentDictionary<string, string>(
+            ConcurrentDictionary<string, string> filesProcessed  = new ConcurrentDictionary<string, string>(
                     concurrencyLevel: 3,
                     capacity: 3,
                     StringComparer.OrdinalIgnoreCase);
