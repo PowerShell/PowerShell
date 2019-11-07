@@ -4010,6 +4010,11 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
 function Test-WinRMQuickConfigNeeded
 {{
+    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
+    # 1) currently this function always returns $True
+    # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting
+    return $True
+
 # Checking the following items
 #1. Starting or restarting (if already started) the WinRM service
 #2. Setting the WinRM service startup type to Automatic
