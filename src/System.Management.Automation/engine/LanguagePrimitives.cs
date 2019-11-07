@@ -5545,9 +5545,8 @@ namespace System.Management.Automation
                 }
             }
 
-            // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
-            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-            if (typeConverters.Any())
+            var typeAttr = (TypeConverterAttribute)TypeDescriptor.GetAttributes(type)[typeof(TypeConverterAttribute)];
+            if (typeAttr != null)
             {
                 return true;
             }
