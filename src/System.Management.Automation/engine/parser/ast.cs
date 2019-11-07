@@ -5348,7 +5348,7 @@ namespace System.Management.Automation.Language
     public abstract class ChainableAst : PipelineBaseAst
     {
         /// <summary>
-        ///  Initializes a new instance of the new chainable AST with the given extent.
+        /// Initializes a new instance of the new chainable AST with the given extent.
         /// </summary>
         /// <param name="extent">The script extent of the AST.</param>
         protected ChainableAst(IScriptExtent extent) : base(extent)
@@ -5363,7 +5363,7 @@ namespace System.Management.Automation.Language
     public class PipelineChainAst : ChainableAst
     {
         /// <summary>
-        ///  Initializes a new instance of the new statement chain AST from two statements and an operator.
+        /// Initializes a new instance of the new statement chain AST from two statements and an operator.
         /// </summary>
         /// <param name="extent">The extent of the chained statement.</param>
         /// <param name="lhsChain">The pipeline or pipeline chain to the left of the operator.</param>
