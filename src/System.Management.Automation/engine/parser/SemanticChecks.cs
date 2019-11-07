@@ -1039,6 +1039,7 @@ namespace System.Management.Automation.Language
             if (variableExpressionAst.Splatted &&
                 !(variableExpressionAst.Parent is CommandAst) &&
                 !(variableExpressionAst.Parent is MemberExpressionAst) &&
+                !(variableExpressionAst.Parent is IndexExpressionAst) &&
                 !(variableExpressionAst.Parent is UsingExpressionAst))
             {
                 if (variableExpressionAst.Parent is ArrayLiteralAst && variableExpressionAst.Parent.Parent is CommandAst)

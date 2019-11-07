@@ -4028,16 +4028,29 @@ namespace System.Management.Automation.Language
                     var splatTest = element;
                     bool splatted = false;
 
-                    UsingExpressionAst usingExpression = element as UsingExpressionAst;
-                    if (usingExpression != null)
+                    if (splatTest is UsingExpressionAst usingExpression)
                     {
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    while (splatTest is MemberExpressionAst memberExpression)
+                    var done = false;
+                    do
                     {
-                        splatTest = memberExpression.Expression;
-                    }
+                        switch (splatTest)
+                        {
+                            case MemberExpressionAst memberExpression:
+                                splatTest = memberExpression.Expression;
+                                break;
+
+                            case IndexExpressionAst indexExpression:
+                                splatTest = indexExpression.Target;
+                                break;
+
+                            default:
+                                done = true;
+                                break;
+                        }
+                    } while (!done);
 
                     if (splatTest is VariableExpressionAst variableExpression)
                     {
