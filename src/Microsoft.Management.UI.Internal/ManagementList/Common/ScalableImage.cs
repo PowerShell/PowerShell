@@ -79,7 +79,7 @@ namespace Microsoft.Management.UI.Internal
         /// Make this control to respect the ClipToBounds attribute value.
         /// </summary>
         /// <param name="layoutSlotSize">An instance of <see cref="System.Windows.Size"/> used for calculating an additional clip.</param>
-        /// <returns>Geometry to use as an additional clip in case when element is larger than available space</returns>
+        /// <returns>Geometry to use as an additional clip in case when element is larger than available space.</returns>
         protected override Geometry GetLayoutClip(Size layoutSlotSize)
         {
             return ClipToBounds ? base.GetLayoutClip(layoutSlotSize) : null;

@@ -11,30 +11,30 @@ using System.Windows.Documents;
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
-    /// Builds a help paragraph for a cmdlet
+    /// Builds a help paragraph for a cmdlet.
     /// </summary>
     internal class HelpParagraphBuilder : ParagraphBuilder
     {
         /// <summary>
-        /// Indentation size
+        /// Indentation size.
         /// </summary>
         internal const int IndentSize = 4;
 
         /// <summary>
-        /// new line separators
+        /// new line separators.
         /// </summary>
         private static readonly string[] Separators = new[] { "\r\n", "\n" };
 
         /// <summary>
-        /// Object with the cmdelt
+        /// Object with the cmdelt.
         /// </summary>
         private readonly PSObject psObj;
 
         /// <summary>
-        /// Initializes a new instance of the HelpParagraphBuilder class
+        /// Initializes a new instance of the HelpParagraphBuilder class.
         /// </summary>
-        /// <param name="paragraph">paragraph being built</param>
-        /// <param name="psObj">object with help information</param>
+        /// <param name="paragraph">Paragraph being built.</param>
+        /// <param name="psObj">Object with help information.</param>
         internal HelpParagraphBuilder(Paragraph paragraph, PSObject psObj)
             : base(paragraph)
         {
@@ -53,11 +53,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the string value of a property or null if it could not be retrieved
+        /// Gets the string value of a property or null if it could not be retrieved.
         /// </summary>
-        /// <param name="psObj">object with the property</param>
-        /// <param name="propertyName">property name</param>
-        /// <returns>the string value of a property or null if it could not be retrieved</returns>
+        /// <param name="psObj">Object with the property.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <returns>The string value of a property or null if it could not be retrieved.</returns>
         internal static string GetPropertyString(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -72,7 +72,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help text to the paragraph
+        /// Adds the help text to the paragraph.
         /// </summary>
         internal void AddTextToParagraphBuilder()
         {
@@ -131,11 +131,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the object property or null if it could not be retrieved
+        /// Gets the object property or null if it could not be retrieved.
         /// </summary>
-        /// <param name="psObj">object with the property</param>
-        /// <param name="propertyName">property name</param>
-        /// <returns>the object property or null if it could not be retrieved</returns>
+        /// <param name="psObj">Object with the property.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <returns>The object property or null if it could not be retrieved.</returns>
         private static PSPropertyInfo GetProperty(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -143,12 +143,12 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a PSObject and then a value from it or null if the value could not be retrieved
+        /// Gets a PSObject and then a value from it or null if the value could not be retrieved.
         /// </summary>
-        /// <param name="psObj">PSObject that contains another PSObject as a property</param>
-        /// <param name="psObjectName">property name that contains the PSObject</param>
-        /// <param name="propertyName">property name in thye inner PSObject</param>
-        /// <returns>the string from the inner psObject property or null if it could not be retrieved</returns>
+        /// <param name="psObj">PSObject that contains another PSObject as a property.</param>
+        /// <param name="psObjectName">Property name that contains the PSObject.</param>
+        /// <param name="propertyName">Property name in thye inner PSObject.</param>
+        /// <returns>The string from the inner psObject property or null if it could not be retrieved.</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -170,11 +170,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the value of a property or null if the value could not be retrieved
+        /// Gets the value of a property or null if the value could not be retrieved.
         /// </summary>
-        /// <param name="psObj">object with the property</param>
-        /// <param name="propertyName">property name</param>
-        /// <returns>the value of a property or null if the value could not be retrieved</returns>
+        /// <param name="psObj">Object with the property.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <returns>The value of a property or null if the value could not be retrieved.</returns>
         private static object GetPropertyObject(PSObject psObj, string propertyName)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -198,11 +198,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the text from a property of type PSObject[] where the first object has a text property
+        /// Gets the text from a property of type PSObject[] where the first object has a text property.
         /// </summary>
-        /// <param name="psObj">objhect to get text from</param>
-        /// <param name="propertyText">property with PSObject[] containing text</param>
-        /// <returns>the text from a property of type PSObject[] where the first object has a text property</returns>
+        /// <param name="psObj">Objhect to get text from.</param>
+        /// <param name="propertyText">Property with PSObject[] containing text.</param>
+        /// <returns>The text from a property of type PSObject[] where the first object has a text property.</returns>
         private static string GetTextFromArray(PSObject psObj, string propertyText)
         {
             PSObject[] introductionObjects = HelpParagraphBuilder.GetPropertyObject(psObj, propertyText) as PSObject[];
@@ -215,10 +215,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns the largest size of a group of strings
+        /// Returns the largest size of a group of strings.
         /// </summary>
-        /// <param name="strs">strings to evaluate the largest size from</param>
-        /// <returns>the largest size of a group of strings</returns>
+        /// <param name="strs">Strings to evaluate the largest size from.</param>
+        /// <returns>The largest size of a group of strings.</returns>
         private static int LargestSize(params string[] strs)
         {
             int returnValue = 0;
@@ -235,21 +235,21 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
-        /// <param name="str">string to add indentation to</param>
-        /// <returns>the string indented</returns>
+        /// <param name="str">String to add indentation to.</param>
+        /// <returns>The string indented.</returns>
         private static string AddIndent(string str)
         {
             return HelpParagraphBuilder.AddIndent(str, 1);
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
-        /// <param name="str">string to add indentation to</param>
-        /// <param name="numberOfIdents">number of indentations</param>
-        /// <returns>the string indented</returns>
+        /// <param name="str">String to add indentation to.</param>
+        /// <param name="numberOfIdents">Number of indentations.</param>
+        /// <returns>The string indented.</returns>
         private static string AddIndent(string str, int numberOfIdents)
         {
             StringBuilder indent = new StringBuilder();
@@ -258,11 +258,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Splits the string adding indentation before each line
+        /// Splits the string adding indentation before each line.
         /// </summary>
-        /// <param name="str">string to add indentation to</param>
-        /// <param name="indentString">indentation string</param>
-        /// <returns>the string indented</returns>
+        /// <param name="str">String to add indentation to.</param>
+        /// <param name="indentString">Indentation string.</param>
+        /// <returns>The string indented.</returns>
         private static string AddIndent(string str, string indentString)
         {
             if (str == null)
@@ -289,11 +289,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Get the object array value of a property
+        /// Get the object array value of a property.
         /// </summary>
-        /// <param name="obj">object containing the property</param>
-        /// <param name="propertyName">property with the array value</param>
-        /// <returns>the object array value of a property</returns>
+        /// <param name="obj">Object containing the property.</param>
+        /// <param name="propertyName">Property with the array value.</param>
+        /// <returns>The object array value of a property.</returns>
         private static object[] GetPropertyObjectArray(PSObject obj, string propertyName)
         {
             object innerObject;
@@ -312,11 +312,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds a section that contains only a string
+        /// Adds a section that contains only a string.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionName">name of the section to add</param>
-        /// <param name="sectionTitle">title of the section</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionName">Name of the section to add.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
         private void AddStringSection(bool setting, string sectionName, string sectionTitle)
         {
             string propertyValue;
@@ -332,10 +332,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help syntax segment
+        /// Adds the help syntax segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
         private void AddSyntax(bool setting, string sectionTitle)
         {
             PSObject syntaxObject;
@@ -446,11 +446,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help description segment
+        /// Adds the help description segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
-        /// <param name="propertyName">propertyName that has description</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
+        /// <param name="propertyName">PropertyName that has description.</param>
         private void AddDescription(bool setting, string sectionTitle, string propertyName)
         {
             PSObject[] descriptionObjects;
@@ -475,10 +475,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help examples segment
+        /// Adds the help examples segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
         private void AddExamples(bool setting, string sectionTitle)
         {
             if (!setting)
@@ -713,12 +713,12 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help parameters segment
+        /// Adds the help parameters segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
-        /// <param name="paramPropertyName">name of the property which has properties</param>
-        /// <param name="helpCategory">category of help</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
+        /// <param name="paramPropertyName">Name of the property which has properties.</param>
+        /// <param name="helpCategory">Category of help.</param>
         private void AddParameters(bool setting, string sectionTitle, string paramPropertyName, HelpCategory helpCategory)
         {
             if (!setting)
@@ -860,10 +860,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help navigation links segment
+        /// Adds the help navigation links segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
         private void AddNavigationLink(bool setting, string sectionTitle)
         {
             if (!setting)
@@ -907,12 +907,12 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help input or output segment
+        /// Adds the help input or output segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
-        /// <param name="inputOrOutputProperty">property with the outter object</param>
-        /// <param name="inputOrOutputInnerProperty">property with the inner object</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
+        /// <param name="inputOrOutputProperty">Property with the outter object.</param>
+        /// <param name="inputOrOutputInnerProperty">Property with the inner object.</param>
         private void AddInputOrOutputEntries(bool setting, string sectionTitle, string inputOrOutputProperty, string inputOrOutputInnerProperty)
         {
             if (!setting)
@@ -961,10 +961,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Adds the help notes segment
+        /// Adds the help notes segment.
         /// </summary>
-        /// <param name="setting">true if it should add the segment</param>
-        /// <param name="sectionTitle">title of the section</param>
+        /// <param name="setting">True if it should add the segment.</param>
+        /// <param name="sectionTitle">Title of the section.</param>
         private void AddNotes(bool setting, string sectionTitle)
         {
             if (!setting)
