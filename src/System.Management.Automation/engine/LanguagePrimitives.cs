@@ -5006,11 +5006,13 @@ namespace System.Management.Automation
                 return CacheConversion<StringCollection>(fromType, toType, LanguagePrimitives.ConvertToStringCollection, rank);
             }
 
+#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
             if (toType == typeof(System.Configuration.CommaDelimitedStringCollection))
             {
                 ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
                 return CacheConversion<System.Configuration.CommaDelimitedStringCollection>(fromType, toType, LanguagePrimitives.ConvertToCommaDelimitedStringCollection, rank);
             }
+#endif
 
             if (toType.IsSubclassOf(typeof(System.Delegate))
                 && (fromType == typeof(ScriptBlock) || fromType.IsSubclassOf(typeof(ScriptBlock))))
