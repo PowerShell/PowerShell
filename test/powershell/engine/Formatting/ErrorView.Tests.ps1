@@ -50,7 +50,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = pwsh -noprofile -command "1;2;Write-Error 'myError'"
             $e[0] | Should -Be 1
             $e[1] | Should -Be 2
-            $e[2] | Should -BeLike "*Write-Error: *myError*" # wildcard due to VT100
+            $e[2] | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
         }
     }
 }
