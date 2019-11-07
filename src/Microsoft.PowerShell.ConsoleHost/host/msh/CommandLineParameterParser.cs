@@ -885,7 +885,7 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i >= args.Length)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MissingOutputLogParameter);
                         break;
                     }
@@ -992,21 +992,6 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
-                }
-            }
-
-            if (_showHelp)
-            {
-                ShowHelp();
-            }
-
-            if (_showBanner && !_showHelp)
-            {
-                DisplayBanner();
-
-                if (UpdatesNotification.CanNotifyUpdates)
-                {
-                    UpdatesNotification.ShowUpdateNotification(_hostUI);
                 }
             }
 
@@ -1371,7 +1356,7 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
-        private string _outputLog;
+        private string _outputLog = String.Empty;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;

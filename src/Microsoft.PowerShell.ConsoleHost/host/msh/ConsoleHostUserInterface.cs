@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell
                     ConsoleControl.ConsoleModes.ProcessedOutput
                     | ConsoleControl.ConsoleModes.WrapEndOfLine;
 
-                if ((m & DesiredMode) != DesiredMode)
+                if (!m.HasFlag(DesiredMode))
                 {
                     m |= DesiredMode;
                     ConsoleControl.SetMode(handle, m);
