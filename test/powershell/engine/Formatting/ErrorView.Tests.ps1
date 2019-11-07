@@ -45,5 +45,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
             Start-Job -ScriptBlock { get-item (new-guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             ($e | Out-String).Trim().Count | Should -Be 1
         }
+
+        It "Activity shows up correctly for scriptblocks" {
+            $e = pwsh -noprofile -command "1;2;Write-Error 'myError'"
+            $e[0] | Should -Be 1
+            $e[1] | Should -Be 2
+            $e[2] | Should -BeLike "*Write-Error: *myError*" # wildcard due to VT100
+        }
     }
 }
