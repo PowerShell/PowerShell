@@ -2373,23 +2373,22 @@ namespace Microsoft.PowerShell.Commands
                     if (importingModule)
                     {
                         var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                        using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                            .AddCommand(commandInfo)
-                            .AddParameter("PassThru", true)
-                            .AddParameter("Name", moduleManifestPath)
-                            .AddParameter("UseWindowsPowerShell", true))
-                        {
-                            var moduleProxies = ps.Invoke<PSModuleInfo>();
+                        using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                        ps.AddCommand(commandInfo);
+                        ps.AddParameter("PassThru", true);
+                        ps.AddParameter("Name", moduleManifestPath);
+                        ps.AddParameter("UseWindowsPowerShell", true);
 
-                            // we are loading by a single ManifestPath so expect max of 1
-                            if(moduleProxies.Count > 0) 
-                            {
-                                return moduleProxies[0];
-                            }
-                            else
-                            {
-                                return null;
-                            }
+                        var moduleProxies = ps.Invoke<PSModuleInfo>();
+
+                        // we are loading by a single ManifestPath so expect max of 1
+                        if(moduleProxies.Count > 0) 
+                        {
+                            return moduleProxies[0];
+                        }
+                        else
+                        {
+                            return null;
                         }
                     }
                 }
@@ -4824,16 +4823,14 @@ namespace Microsoft.PowerShell.Commands
                 if (WindowsPowerShellCompatRemotingSession == null)
                 {
                     var commandInfo = new CmdletInfo("New-PSSession", typeof(NewPSSessionCommand));
-                    using(var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                        .AddCommand(commandInfo)
-                        .AddParameter("UseWindowsPowerShell", true)
-                        .AddParameter("Name", WindowsPowerShellCompatRemotingSessionName))
+                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("UseWindowsPowerShell", true);
+                    ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+                    var results = ps.Invoke<PSSession>();
+                    if (results.Count > 0)
                     {
-                        var results = ps.Invoke<PSSession>();
-                        if (results.Count > 0)
-                        {
-                            WindowsPowerShellCompatRemotingSession = results[0];
-                        }
+                        WindowsPowerShellCompatRemotingSession = results[0];
                     }
                 }
             }
@@ -4846,13 +4843,11 @@ namespace Microsoft.PowerShell.Commands
                 if (WindowsPowerShellCompatRemotingSession != null)
                 {
                     var commandInfo = new CmdletInfo("Remove-PSSession", typeof(RemovePSSessionCommand));
-                    using(var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                    .AddCommand(commandInfo)
-                    .AddParameter("Session", WindowsPowerShellCompatRemotingSession))
-                    {
-                        ps.Invoke();
-                        WindowsPowerShellCompatRemotingSession = null;
-                    }
+                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("Session", WindowsPowerShellCompatRemotingSession);
+                    ps.Invoke();
+                    WindowsPowerShellCompatRemotingSession = null;
                 }
             }
         }
