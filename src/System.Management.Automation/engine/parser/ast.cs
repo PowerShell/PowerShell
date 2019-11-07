@@ -10285,6 +10285,33 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Construct an ast for an index expression.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="target">The expression being indexed.</param>
+        /// <param name="index">The index expression.</param>
+        /// <param name="nullConditionalAccess">Access the index only if the target is not null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="target"/>, or <paramref name="index"/> is null.
+        /// </exception>
+        public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditionalAccess)
+            : base(extent)
+        {
+            if (target == null || index == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(target == null ? "target" : "index");
+            }
+
+            this.Target = target;
+            SetParent(target);
+            this.Index = index;
+            SetParent(index);
+            this.NullConditionalAccess = nullConditionalAccess;
+        }
+
+
+
+        /// <summary>
         /// Return the ast for the expression being indexed.  This value is never null.
         /// </summary>
         public ExpressionAst Target { get; private set; }
@@ -10295,13 +10322,18 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
+        /// Access the index only if the target is not null.
+        /// </summary>
+        public bool NullConditionalAccess { get; private set; }
+
+        /// <summary>
         /// Copy the IndexExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newTarget = CopyElement(this.Target);
             var newIndex = CopyElement(this.Index);
-            return new IndexExpressionAst(this.Extent, newTarget, newIndex);
+            return new IndexExpressionAst(this.Extent, newTarget, newIndex, this.NullConditionalAccess);
         }
 
         #region Visitors

@@ -6460,15 +6460,39 @@ namespace System.Management.Automation.Language
             // expression.
             if (arrayLiteral != null && arrayLiteral.Elements.Count > 1)
             {
-                return DynamicExpression.Dynamic(
-                                            PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
-                                            typeof(object),
-                                            arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr));
+                var dynamicExprArrayLiteral = DynamicExpression.Dynamic(
+                    PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
+                    typeof(object),
+                    arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr));
+
+                if (indexExpressionAst.NullConditionalAccess)
+                {
+                    return Expression.IfThenElse(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
+                        ExpressionCache.NullConstant,
+                        dynamicExprArrayLiteral);
+                }
+                else
+                {
+                    return dynamicExprArrayLiteral;
+                }
             }
 
-            return DynamicExpression.Dynamic(PSGetIndexBinder.Get(1, constraints), typeof(object), targetExpr, CompileExpressionOperand(index));
-        }
+            var dynamicExprFromBinder = DynamicExpression.Dynamic(PSGetIndexBinder.Get(1, constraints), typeof(object), targetExpr, CompileExpressionOperand(index));
 
+            if (indexExpressionAst.NullConditionalAccess)
+            {
+                return Expression.IfThenElse(
+                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
+                    ExpressionCache.NullConstant,
+                    dynamicExprFromBinder);
+            }
+            else
+            {
+                return dynamicExprFromBinder;
+            }
+        }
+        
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
         {
             return attributedExpressionAst.Child.Accept(this);

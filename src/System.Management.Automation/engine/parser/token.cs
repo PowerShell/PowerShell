@@ -425,6 +425,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional member access operator '?.'./// </summary>
         QuestionDot = 103,
 
+        /// <summary>The null conditional index access operator '?[]'./// </summary>
+        QuestionLBracket = 104,
+
         #endregion Operators
 
         #region Keywords
@@ -871,7 +874,7 @@ namespace System.Management.Automation.Language
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 6  */ TokenFlags.None,
+            /*     QuestionLBracket */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,

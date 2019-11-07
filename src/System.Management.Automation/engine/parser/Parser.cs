@@ -7351,7 +7351,7 @@ namespace System.Management.Automation.Language
                 {
                     expr = MemberAccessRule(expr, token);
                 }
-                else if (token.Kind == TokenKind.LBracket)
+                else if (token.Kind == TokenKind.LBracket || token.Kind == TokenKind.QuestionLBracket)
                 {
                     expr = ElementAccessRule(expr, token);
                 }
@@ -7933,7 +7933,7 @@ namespace System.Management.Automation.Language
                 rBracket = null;
             }
 
-            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr);
+            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr, lBracket.Kind == TokenKind.QuestionLBracket);
         }
 
         #endregion Expressions

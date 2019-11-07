@@ -4217,7 +4217,8 @@ namespace System.Management.Automation.Language
                 return NewToken(TokenKind.LBracket);
             }
 
-            if (c == '?')
+
+            if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
             {
                 _tokenStart = _currentIndex;
                 SkipChar();
@@ -4226,6 +4227,11 @@ namespace System.Management.Automation.Language
                 {
                     SkipChar();
                     return NewToken(TokenKind.QuestionDot);
+                }
+                else if (c == '[' && allowLBracket)
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionLBracket);
                 }
 
                 UngetChar();
@@ -5027,10 +5033,19 @@ namespace System.Management.Automation.Language
                             return this.NewToken(TokenKind.QuestionQuestion);
                         }
 
-                        if (c1 == '.')
+                        if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators"))
                         {
-                            SkipChar();
-                            return this.NewToken(TokenKind.QuestionDot);
+                            if (c1 == '.')
+                            {
+                                SkipChar();
+                                return this.NewToken(TokenKind.QuestionDot);
+                            }
+
+                            if (c1 == '[')
+                            {
+                                SkipChar();
+                                return this.NewToken(TokenKind.QuestionLBracket);
+                            }
                         }
                     }
 
