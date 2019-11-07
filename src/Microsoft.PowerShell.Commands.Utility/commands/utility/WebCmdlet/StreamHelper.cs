@@ -381,6 +381,13 @@ namespace Microsoft.PowerShell.Commands
 
                     // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
                     byteIndex += bytesUsed;
+
+                    // The behavior of decoder.Convert changed start .NET 3.1-preview2.
+                    // The change was made in https://github.com/dotnet/coreclr/pull/27229
+                    // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
+                    // Break out of the loop if all bytes have been read.
+                    if(!flush && bytesRead == byteIndex)
+                        break;
                 }
             } while (bytesRead != 0);
 
