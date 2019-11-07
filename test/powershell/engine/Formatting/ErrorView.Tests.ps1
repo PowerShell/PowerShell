@@ -50,5 +50,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = pwsh -noprofile -command 'Write-Error 'myError' -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
         }
+
+        It "Function shows up correctly" {
+            function test-myerror { [cmdletbinding()] param() write-error 'myError' }
+
+            $e = pwsh -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
+            [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
+        }
     }
 }
