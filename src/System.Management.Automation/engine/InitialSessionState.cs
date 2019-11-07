@@ -3592,7 +3592,7 @@ namespace System.Management.Automation.Runspaces
                 Types,
                 sste =>
             {
-                //   foreach (var sste in Types)
+                // foreach (var sste in Types)
                 if (sste.FileName != null)
                 {
                     if (filesProcessed.TryAdd(sste.FileName, null))
