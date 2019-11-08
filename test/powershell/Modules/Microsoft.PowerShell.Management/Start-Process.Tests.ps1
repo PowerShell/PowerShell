@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
+Describe "Start-Process" -Tag "CI" {
 
     BeforeAll {
         $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
@@ -144,6 +144,22 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $process = Start-Process $pingCommand -ArgumentList '' -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
+    }
+
+    It "Should handle arguments with whitespace" {
+        Start-Process -Wait -NoNewWindow testexe.exe -ArgumentList '-echoargs', 'a b', 'c' -RedirectStandardOutput $testdrive/out.txt
+        $output = Get-Content -Path $testdrive/out.txt
+        $output.Count | Should -Be 2
+        $output[0] | Should -BeExactly 'Arg 0 is <a b>'
+        $output[1] | Should -BeExactly 'Arg 1 is <c>'
+    }
+
+    It "Should handle arguments with embedded quotes" {
+        Start-Process -Wait -NoNewWindow testexe.exe -ArgumentList '-echoargs', '"a"', 'c' -RedirectStandardOutput $testdrive/out.txt
+        $output = Get-Content -Path $testdrive/out.txt
+        $output.Count | Should -Be 2
+        $output[0] | Should -BeExactly 'Arg 0 is <"a">'
+        $output[1] | Should -BeExactly 'Arg 1 is <c>'
     }
 }
 
