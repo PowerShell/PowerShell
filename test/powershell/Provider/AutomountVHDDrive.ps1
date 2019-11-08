@@ -3,7 +3,7 @@
 
 # Precondition: start from fresh PS session, do not have the media mounted
 param([switch]$useModule, [string]$VHDPath)
-$script:WarningPreference = 'SilentlyContinue'
+
 function CreateVHD ($VHDPath, $Size)
 {
   $drive = (New-VHD -path $vhdpath -SizeBytes $size -Dynamic   | `
