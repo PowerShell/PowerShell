@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process class
@@ -1876,7 +1877,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (ArgumentList != null)
             {
-                startInfo.Arguments = string.Join(' ', ArgumentList);
+                foreach (var arg in ArgumentList)
+                {
+                    startInfo.ArgumentList.Add(arg);
+                }
             }
 
             if (WorkingDirectory != null)
@@ -2294,7 +2298,7 @@ namespace Microsoft.PowerShell.Commands
             return sf;
         }
 
-        private static StringBuilder BuildCommandLine(string executableFileName, string arguments)
+        private static StringBuilder BuildCommandLine(string executableFileName, Collection<string> arguments)
         {
             StringBuilder builder = new StringBuilder();
             string str = executableFileName.Trim();
@@ -2310,10 +2314,11 @@ namespace Microsoft.PowerShell.Commands
                 builder.Append('"');
             }
 
-            if (!string.IsNullOrEmpty(arguments))
+            foreach (var arg in arguments)
             {
-                builder.Append(' ');
-                builder.Append(arguments);
+                builder.Append(" \"");
+                builder.Append(arg.Replace("\"","\\\""));
+                builder.Append('"');
             }
 
             return builder;
@@ -2360,7 +2365,7 @@ namespace Microsoft.PowerShell.Commands
             string message = string.Empty;
 
             // building the cmdline with the file name given and it's arguments
-            StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
+            StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.ArgumentList);
 
             try
             {
