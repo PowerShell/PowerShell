@@ -7932,16 +7932,18 @@ namespace System.Management.Automation.Language
 
         private void SaveError(ParseError error)
         {
-            if (ErrorList.Any())
+            if (ErrorList.Count > 0)
             {
-                // Avoiding adding duplicate errors - can happen when the tokenizer resyncs.
-                if (ErrorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
-                                          && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
-                                          && err.Extent.EndLineNumber == error.Extent.EndLineNumber
-                                          && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
-                                          && err.Extent.StartLineNumber == error.Extent.StartLineNumber))
+                foreach (ParseError err in ErrorList)
                 {
-                    return;
+                    if (err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
+                        && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
+                        && err.Extent.EndLineNumber == error.Extent.EndLineNumber
+                        && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
+                        && err.Extent.StartLineNumber == error.Extent.StartLineNumber)
+                    {
+                        return;
+                    }
                 }
             }
 
