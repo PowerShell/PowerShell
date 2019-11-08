@@ -325,7 +325,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeDefinition == null)
             {
-                throw PSTraceSource.NewArgumentException(nameof(typeDefinition));
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
             }
 
             FormatData = typeDefinition;
