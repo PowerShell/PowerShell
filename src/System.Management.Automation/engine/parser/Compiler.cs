@@ -6465,34 +6465,29 @@ namespace System.Management.Automation.Language
                     typeof(object),
                     arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr));
 
-                if (indexExpressionAst.NullConditionalAccess)
-                {
-                    return Expression.IfThenElse(
-                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
-                        ExpressionCache.NullConstant,
-                        dynamicExprArrayLiteral);
-                }
-                else
-                {
-                    return dynamicExprArrayLiteral;
-                }
+                return indexExpressionAst.NullConditionalAccess ? GetNullCheckExpressionBlock(targetExpr, dynamicExprArrayLiteral) : dynamicExprArrayLiteral;
+
             }
 
             var dynamicExprFromBinder = DynamicExpression.Dynamic(PSGetIndexBinder.Get(1, constraints), typeof(object), targetExpr, CompileExpressionOperand(index));
-
-            if (indexExpressionAst.NullConditionalAccess)
-            {
-                return Expression.IfThenElse(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
-                    ExpressionCache.NullConstant,
-                    dynamicExprFromBinder);
-            }
-            else
-            {
-                return dynamicExprFromBinder;
-            }
+            return indexExpressionAst.NullConditionalAccess ? GetNullCheckExpressionBlock(targetExpr, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
-        
+
+        private static object GetNullCheckExpressionBlock(Expression targetExpr, DynamicExpression dynamicExprFromBinder)
+        {
+            ParameterExpression varExpr = Expression.Variable(typeof(object));
+
+            ConditionalExpression nullCheckExpression = Expression.IfThenElse(
+                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
+                Expression.Assign(varExpr, ExpressionCache.NullConstant),
+                Expression.Assign(varExpr, dynamicExprFromBinder));
+
+            return Expression.Block(
+                new ParameterExpression[] { varExpr },
+                nullCheckExpression,
+                varExpr);
+        }
+
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
         {
             return attributedExpressionAst.Child.Accept(this);
