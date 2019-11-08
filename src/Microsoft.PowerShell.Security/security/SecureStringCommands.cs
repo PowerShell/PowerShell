@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!Force)
                     {
-                        String error =
+                        string error =
                             SecureStringCommands.ForceRequired;
                         Exception e = new ArgumentException(error);
                         WriteError(new ErrorRecord(e, "ImportSecureString_ForceRequired", ErrorCategory.InvalidArgument, null));

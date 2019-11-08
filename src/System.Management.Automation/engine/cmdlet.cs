@@ -674,7 +674,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {

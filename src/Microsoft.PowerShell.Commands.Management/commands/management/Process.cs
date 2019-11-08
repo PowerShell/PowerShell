@@ -2597,7 +2597,7 @@ namespace Microsoft.PowerShell.Commands
         /// Checks to see if the JobObject is empty (has no assigned processes).
         /// If job is empty the auto reset event supplied as input would be set.
         /// </summary>
-        internal void CheckJobStatus(Object stateInfo)
+        internal void CheckJobStatus(object stateInfo)
         {
             ManualResetEvent emptyJobAutoEvent = (ManualResetEvent)stateInfo;
             int dwSize = 0;

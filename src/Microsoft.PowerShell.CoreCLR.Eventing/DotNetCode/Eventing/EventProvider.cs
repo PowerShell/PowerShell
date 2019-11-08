@@ -404,13 +404,6 @@ namespace System.Diagnostics.Eventing
                 *decimalptr = (decimal)data;
                 dataDescriptor->DataPointer = (ulong)decimalptr;
             }
-            else if (data is Boolean)
-            {
-                dataDescriptor->Size = (uint)sizeof(bool);
-                Boolean* booleanptr = (Boolean*)dataBuffer;
-                *booleanptr = (bool)data;
-                dataDescriptor->DataPointer = (ulong)booleanptr;
-            }
             else
             {
                 // To our eyes, everything else is a just a string

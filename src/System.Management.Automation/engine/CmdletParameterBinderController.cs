@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                if (parameterType == typeof(Object))
+                if (parameterType == typeof(object))
                 {
                     result = true;
                     break;

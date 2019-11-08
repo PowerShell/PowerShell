@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Control taht shows cmdlets in a module and details for a selected cmdlet
+    /// Control taht shows cmdlets in a module and details for a selected cmdlet.
     /// </summary>
     public partial class ShowModuleControl : UserControl
     {
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private Window owner;
 
         /// <summary>
-        /// Initializes a new instance of the ShowModuleControl class
+        /// Initializes a new instance of the ShowModuleControl class.
         /// </summary>
         public ShowModuleControl()
         {
@@ -56,8 +56,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// WPF sets up this behavior by using a mouse capture. We undo the behavior in the handler below
         /// which removes the behavior.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void CommandList_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (this.CommandList.IsMouseCaptured)
@@ -70,8 +70,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// Ensures the selected item is scrolled into view and that the list is focused.
         /// An item could be out of the view if the selection was changed in the object model
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void CommandList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.CommandList.SelectedItem == null)

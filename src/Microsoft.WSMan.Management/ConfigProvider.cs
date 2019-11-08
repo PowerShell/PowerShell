@@ -1340,7 +1340,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                foreach (String warnings in warningMessage)
+                foreach (string warnings in warningMessage)
                 {
                     WriteWarning(warnings);
                 }
