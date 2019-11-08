@@ -288,7 +288,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Can get an appx package item" -Skip:$skipTest {
-            $pkgDir = (Get-AppxPackage Microsoft.WindowsCalculator).InstallLocation
+            $pkgDir = (Get-AppxPackage)[0].InstallLocation
 
             Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType [System.IO.FileInfo]
             Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType [System.IO.DirectoryInfo]
