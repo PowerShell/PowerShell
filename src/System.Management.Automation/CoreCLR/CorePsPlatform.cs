@@ -562,7 +562,7 @@ namespace System.Management.Automation
         // No manual mapping is required. .NET Core maps the Linux errno
         // to a PAL value and calls strerror_r underneath to generate the message.
         /// <summary>Unix Class</summary>
-        public static class Unix
+        internal static class Unix
         {
             private static Dictionary<int,string> UsernameCache = new Dictionary<int,string>();
             private static Dictionary<int,string> GroupnameCache = new Dictionary<int,string>();
@@ -926,7 +926,7 @@ namespace System.Management.Automation
             }
 
                 /// <summary>x</summary>
-            public static class NativeMethods
+            internal static class NativeMethods
             {
                 private const string psLib = "libpsl-native";
 
