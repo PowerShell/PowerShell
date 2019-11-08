@@ -127,6 +127,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSPipelineChainOperators",
                     description: "Allow use of && and || as operators between pipeline invocations"),
+                new ExperimentalFeature(
+                    name: "PSUnixFileStat",
+                    description: "Provide unix permission information for files and directories"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
