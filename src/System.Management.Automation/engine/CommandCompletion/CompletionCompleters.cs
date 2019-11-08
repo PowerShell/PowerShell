@@ -2007,7 +2007,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            string parameterFullName = actualCommandName + ":" + parameterName;
+            string parameterFullName = $"{actualCommandName}:{parameterName}";
 
             ScriptBlock customCompleter = GetCustomArgumentCompleter(
                 "CustomArgumentCompleters",
