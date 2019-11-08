@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell
                         // assigned to an array
 
                         // if the field is an array, the element type can be found; else, use Object
-                        Type elementType = typeof(Object);
+                        Type elementType = typeof(object);
                         if (fieldType.IsArray)
                         {
                             elementType = fieldType.GetElementType();

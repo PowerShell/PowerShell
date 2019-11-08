@@ -50,4 +50,4 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
+  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))

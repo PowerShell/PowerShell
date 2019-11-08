@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object s_syncObject = new Object();
+        private static object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;

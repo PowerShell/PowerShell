@@ -9,7 +9,7 @@ PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
 FunctionsToExport = @()
-AliasesToExport = @("gtz")
+AliasesToExport = @("gcb", "gtz", "scb")
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
     "Clear-ItemProperty",
@@ -17,6 +17,8 @@ CmdletsToExport=@("Add-Content",
     "Convert-Path",
     "Copy-ItemProperty",
     "Get-ChildItem",
+    "Get-Clipboard",
+    "Set-Clipboard",
     "Get-Content",
     "Get-ItemProperty",
     "Get-ItemPropertyValue",

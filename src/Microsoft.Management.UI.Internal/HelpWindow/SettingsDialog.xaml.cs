@@ -7,12 +7,12 @@ namespace Microsoft.Management.UI
     using Microsoft.Management.UI.Internal;
 
     /// <summary>
-    /// Dialog with settings for the help dialog
+    /// Dialog with settings for the help dialog.
     /// </summary>
     public partial class SettingsDialog : Window
     {
         /// <summary>
-        /// Initializes a new instance of the SettingsDialog class
+        /// Initializes a new instance of the SettingsDialog class.
         /// </summary>
         public SettingsDialog()
         {
@@ -32,10 +32,10 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the OK button has been clicked
+        /// Called when the OK button has been clicked.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             HelpWindowSettings.Default.HelpDescriptionDisplayed = this.Description.IsChecked == true;

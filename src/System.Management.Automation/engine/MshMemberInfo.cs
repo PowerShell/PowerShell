@@ -3277,7 +3277,7 @@ namespace System.Management.Automation
     /// </remarks>
     internal class PSInternalMemberSet : PSMemberSet
     {
-        private readonly object _syncObject = new Object();
+        private readonly object _syncObject = new object();
         private readonly PSObject _psObject;
 
         #region Constructor

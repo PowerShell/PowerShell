@@ -448,12 +448,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     instanceId = (Guid)psObject.Properties[instanceidPropName].Value;
                 }
 
-                if (psObject.Properties[namePropName].Value is String)
+                if (psObject.Properties[namePropName].Value is string)
                 {
                     name = (string)psObject.Properties[namePropName].Value;
                 }
 
-                if (psObject.Properties[computernamePropName].Value is String)
+                if (psObject.Properties[computernamePropName].Value is string)
                 {
                     computerName = (string)psObject.Properties[computernamePropName].Value;
                 }
@@ -637,7 +637,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 bool foundSession = false;
                 WildcardPattern pattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-                foreach (KeyValuePair<String, HashSet<CimSessionWrapper>> kvp in this.curCimSessionsByName)
+                foreach (KeyValuePair<string, HashSet<CimSessionWrapper>> kvp in this.curCimSessionsByName)
                 {
                     if (pattern.IsMatch(kvp.Key))
                     {

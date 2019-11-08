@@ -43,7 +43,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((SByte)frame.Pop()) != ((SByte)frame.Pop()));
+                frame.Push(((sbyte)frame.Pop()) != ((sbyte)frame.Pop()));
                 return +1;
             }
         }
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Byte)frame.Pop()) != ((Byte)frame.Pop()));
+                frame.Push(((byte)frame.Pop()) != ((byte)frame.Pop()));
                 return +1;
             }
         }
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Double)frame.Pop()) != ((Double)frame.Pop()));
+                frame.Push(((double)frame.Pop()) != ((double)frame.Pop()));
                 return +1;
             }
         }

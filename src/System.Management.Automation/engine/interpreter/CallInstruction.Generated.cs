@@ -115,23 +115,23 @@ namespace System.Management.Automation.Interpreter {
                         goto default;
                     }
 
-                    return FastCreate<Object>(target, pi);
+                    return FastCreate<object>(target, pi);
                 }
                 case TypeCode.Int16: return FastCreate<Int16>(target, pi);
                 case TypeCode.Int32: return FastCreate<Int32>(target, pi);
                 case TypeCode.Int64: return FastCreate<Int64>(target, pi);
-                case TypeCode.Boolean: return FastCreate<Boolean>(target, pi);
-                case TypeCode.Char: return FastCreate<Char>(target, pi);
-                case TypeCode.Byte: return FastCreate<Byte>(target, pi);
+                case TypeCode.Boolean: return FastCreate<bool>(target, pi);
+                case TypeCode.Char: return FastCreate<char>(target, pi);
+                case TypeCode.Byte: return FastCreate<byte>(target, pi);
                 case TypeCode.Decimal: return FastCreate<Decimal>(target, pi);
                 case TypeCode.DateTime: return FastCreate<DateTime>(target, pi);
-                case TypeCode.Double: return FastCreate<Double>(target, pi);
+                case TypeCode.Double: return FastCreate<double>(target, pi);
                 case TypeCode.Single: return FastCreate<Single>(target, pi);
                 case TypeCode.UInt16: return FastCreate<UInt16>(target, pi);
                 case TypeCode.UInt32: return FastCreate<UInt32>(target, pi);
                 case TypeCode.UInt64: return FastCreate<UInt64>(target, pi);
-                case TypeCode.String: return FastCreate<String>(target, pi);
-                case TypeCode.SByte: return FastCreate<SByte>(target, pi);
+                case TypeCode.String: return FastCreate<string>(target, pi);
+                case TypeCode.SByte: return FastCreate<sbyte>(target, pi);
                 default: return SlowCreate(target, pi);
             }
         }
@@ -154,14 +154,14 @@ namespace System.Management.Automation.Interpreter {
                         goto default;
                     }
 
-                    return FastCreate<T0, Object>(target, pi);
+                    return FastCreate<T0, object>(target, pi);
                 }
                 case TypeCode.Int16: return FastCreate<T0, Int16>(target, pi);
                 case TypeCode.Int32: return FastCreate<T0, Int32>(target, pi);
                 case TypeCode.Int64: return FastCreate<T0, Int64>(target, pi);
-                case TypeCode.Boolean: return FastCreate<T0, Boolean>(target, pi);
-                case TypeCode.Char: return FastCreate<T0, Char>(target, pi);
-                case TypeCode.Byte: return FastCreate<T0, Byte>(target, pi);
+                case TypeCode.Boolean: return FastCreate<T0, bool>(target, pi);
+                case TypeCode.Char: return FastCreate<T0, char>(target, pi);
+                case TypeCode.Byte: return FastCreate<T0, byte>(target, pi);
                 case TypeCode.Decimal: return FastCreate<T0, Decimal>(target, pi);
                 case TypeCode.DateTime: return FastCreate<T0, DateTime>(target, pi);
                 case TypeCode.Double: return FastCreate<T0, Double>(target, pi);
@@ -169,8 +169,8 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.UInt16: return FastCreate<T0, UInt16>(target, pi);
                 case TypeCode.UInt32: return FastCreate<T0, UInt32>(target, pi);
                 case TypeCode.UInt64: return FastCreate<T0, UInt64>(target, pi);
-                case TypeCode.String: return FastCreate<T0, String>(target, pi);
-                case TypeCode.SByte: return FastCreate<T0, SByte>(target, pi);
+                case TypeCode.String: return FastCreate<T0, string>(target, pi);
+                case TypeCode.SByte: return FastCreate<T0, sbyte>(target, pi);
                 default: return SlowCreate(target, pi);
             }
         }
@@ -191,14 +191,14 @@ namespace System.Management.Automation.Interpreter {
                     Debug.Assert(pi.Length == 2);
                     if (t.IsValueType) goto default;
 
-                    return new FuncCallInstruction<T0, T1, Object>(target);
+                    return new FuncCallInstruction<T0, T1, object>(target);
                 }
                 case TypeCode.Int16: return new FuncCallInstruction<T0, T1, Int16>(target);
                 case TypeCode.Int32: return new FuncCallInstruction<T0, T1, Int32>(target);
                 case TypeCode.Int64: return new FuncCallInstruction<T0, T1, Int64>(target);
-                case TypeCode.Boolean: return new FuncCallInstruction<T0, T1, Boolean>(target);
-                case TypeCode.Char: return new FuncCallInstruction<T0, T1, Char>(target);
-                case TypeCode.Byte: return new FuncCallInstruction<T0, T1, Byte>(target);
+                case TypeCode.Boolean: return new FuncCallInstruction<T0, T1, bool>(target);
+                case TypeCode.Char: return new FuncCallInstruction<T0, T1, char>(target);
+                case TypeCode.Byte: return new FuncCallInstruction<T0, T1, byte>(target);
                 case TypeCode.Decimal: return new FuncCallInstruction<T0, T1, Decimal>(target);
                 case TypeCode.DateTime: return new FuncCallInstruction<T0, T1, DateTime>(target);
                 case TypeCode.Double: return new FuncCallInstruction<T0, T1, Double>(target);
@@ -206,8 +206,8 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.UInt16: return new FuncCallInstruction<T0, T1, UInt16>(target);
                 case TypeCode.UInt32: return new FuncCallInstruction<T0, T1, UInt32>(target);
                 case TypeCode.UInt64: return new FuncCallInstruction<T0, T1, UInt64>(target);
-                case TypeCode.String: return new FuncCallInstruction<T0, T1, String>(target);
-                case TypeCode.SByte: return new FuncCallInstruction<T0, T1, SByte>(target);
+                case TypeCode.String: return new FuncCallInstruction<T0, T1, string>(target);
+                case TypeCode.SByte: return new FuncCallInstruction<T0, T1, sbyte>(target);
                 default: return SlowCreate(target, pi);
             }
         }

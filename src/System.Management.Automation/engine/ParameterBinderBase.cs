@@ -1130,8 +1130,8 @@ namespace System.Management.Automation
                             }
                             else if (LanguagePrimitives.IsNumeric(boType.GetTypeCode()))
                             {
-                                Double currentValueAsDouble = (Double)LanguagePrimitives.ConvertTo(
-                                                                        currentValue, typeof(Double), CultureInfo.InvariantCulture);
+                                double currentValueAsDouble = (double)LanguagePrimitives.ConvertTo(
+                                                                        currentValue, typeof(double), CultureInfo.InvariantCulture);
 
                                 if (currentValueAsDouble != 0)
                                 {
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
                             // the parameter type is Object or PSObject or enum.
 
                             if (GetIList(currentValue) != null &&
-                                toType != typeof(Object) &&
+                                toType != typeof(object) &&
                                 toType != typeof(PSObject) &&
                                 toType != typeof(PSListModifier) &&
                                 (!toType.IsGenericType || toType.GetGenericTypeDefinition() != typeof(PSListModifier<>)) &&
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation
                         // If System.Array is the type we are encoding to, then
                         // the element type should be System.Object.
 
-                        collectionElementType = typeof(System.Object);
+                        collectionElementType = typeof(object);
                     }
 
                     bindingTracer.WriteLine(

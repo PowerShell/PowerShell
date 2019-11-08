@@ -2604,7 +2604,7 @@ namespace System.Management.Automation.Language
             bool boolToDecimal = false;
             if (arg.LimitType.IsNumericOrPrimitive() && !arg.LimitType.IsEnum)
             {
-                if (!(targetType == typeof(Decimal) && arg.LimitType == typeof(bool)))
+                if (!(targetType == typeof(decimal) && arg.LimitType == typeof(bool)))
                 {
                     return arg;
                 }
@@ -5419,8 +5419,8 @@ namespace System.Management.Automation.Language
             {
                 // Unbox value types (or use Nullable<T>.Value) to avoid a copy in case the value is mutated.
                 // In case that castToType is System.Object and expr.Type is Nullable<ValueType>, expr.Cast(System.Object) will
-                // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(Object))" is actually the same as
-                // "GetTargetExpr(target, typeof(Object))".
+                // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(object))" is actually the same as
+                // "GetTargetExpr(target, typeof(object))".
                 expr = type.IsValueType
                            ? (Nullable.GetUnderlyingType(expr.Type) != null
                                   ? (Expression)Expression.Property(expr, "Value")
@@ -5505,7 +5505,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        internal static bool IsAllowedInConstrainedLanguage(Object targetValue, string name, bool isStatic)
+        internal static bool IsAllowedInConstrainedLanguage(object targetValue, string name, bool isStatic)
         {
             // ToString allowed on any type
             if (string.Equals(name, "ToString", StringComparison.OrdinalIgnoreCase))

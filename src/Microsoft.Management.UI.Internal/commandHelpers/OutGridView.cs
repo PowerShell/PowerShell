@@ -23,17 +23,17 @@ namespace Microsoft.Management.UI.Internal
         #region private Fields
 
         /// <summary>
-        /// Zoom Increments
+        /// Zoom Increments.
         /// </summary>
         private const double ZOOM_INCREMENT = 0.2;
 
         /// <summary>
-        /// Max ZoomLevel
+        /// Max ZoomLevel.
         /// </summary>
         private const double ZOOM_MAX = 3.0;
 
         /// <summary>
-        /// Min ZoomLevel
+        /// Min ZoomLevel.
         /// </summary>
         private const double ZOOM_MIN = 0.5;
 
@@ -53,11 +53,11 @@ namespace Microsoft.Management.UI.Internal
         private ObservableCollection<PSObject> listItems;
 
         /// <summary>
-        /// Event used for the thread gridViewWindows signaling main thread after Windows loaded
+        /// Event used for the thread gridViewWindows signaling main thread after Windows loaded.
         /// </summary>
         private AutoResetEvent gridViewWindowLoaded;
 
-        /// <summary> Is used to store any Management list calls exceptions. </summary>
+        /// <summary>Is used to store any Management list calls exceptions.</summary>
         private Exception exception = null;
 
         /// <summary>
@@ -76,17 +76,17 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string CancelButtonContent = XamlLocalizableResources.OutGridView_Button_Cancel;
 
         /// <summary>
-        /// Used to store selected items in the ok processing
+        /// Used to store selected items in the ok processing.
         /// </summary>
         private List<PSObject> selectedItems;
 
         /// <summary>
-        /// The GUI thread of Out-GridView
+        /// The GUI thread of Out-GridView.
         /// </summary>
         private Thread guiThread;
 
         /// <summary>
-        /// private constants for ZoomLevel
+        /// private constants for ZoomLevel.
         /// </summary>
         private double zoomLevel = 1.0;
 
@@ -119,9 +119,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Start a new thread as STA for gridView Window.
         /// </summary>
-        /// <param name="invocation">commands of the PowerShell.</param>
-        /// <param name="outputModeOptions">selection mode of the list</param>
-        /// <param name="closedEvent">closedEvent</param>
+        /// <param name="invocation">Commands of the PowerShell.</param>
+        /// <param name="outputModeOptions">Selection mode of the list.</param>
+        /// <param name="closedEvent">ClosedEvent.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
         private void StartWindow(string invocation, string outputModeOptions, AutoResetEvent closedEvent)
         {
@@ -200,10 +200,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Implements ZoomIn
+        /// Implements ZoomIn.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">.</param>
+        /// <param name="e">.</param>
         private void ZoomEventHandlerPlus(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.zoomLevel == 0)
@@ -224,10 +224,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Implements ZoomOut
+        /// Implements ZoomOut.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">.</param>
+        /// <param name="e">.</param>
         private void ZoomEventHandlerMinus(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.zoomLevel >= ZOOM_MIN)
@@ -244,8 +244,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a new ManagementList.
         /// </summary>
-        /// <param name="outputMode">Output mode of the out-gridview</param>
-        /// <returns>A new ManagementList</returns>
+        /// <param name="outputMode">Output mode of the out-gridview.</param>
+        /// <returns>A new ManagementList.</returns>
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();
@@ -262,8 +262,8 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a new main grid for window.
         /// </summary>
-        /// <param name="outputMode">Output mode of the out-gridview</param>
-        /// <returns>A new mainGrid</returns>
+        /// <param name="outputMode">Output mode of the out-gridview.</param>
+        /// <returns>A new mainGrid.</returns>
         private Grid CreateMainGrid(string outputMode)
         {
             Grid mainGrid = new Grid();
@@ -287,7 +287,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a OK button.
         /// </summary>
-        /// <returns>A new buttonGrid</returns>
+        /// <returns>A new buttonGrid.</returns>
         private Grid CreateButtonGrid()
         {
             Grid buttonGrid = new Grid();
@@ -313,7 +313,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a OK button.
         /// </summary>
-        /// <returns>A new OK button</returns>
+        /// <returns>A new OK button.</returns>
         private Button CreateOKButton()
         {
             Button ok = new Button();
@@ -330,7 +330,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a Cancel button.
         /// </summary>
-        /// <returns>A new Cancel button</returns>
+        /// <returns>A new Cancel button.</returns>
         private Button CreateCancelButton()
         {
             Button cancel = new Button();
@@ -345,10 +345,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Store the selected items for use in EndProcessing
+        /// Store the selected items for use in EndProcessing.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             if (this.managementList.List.SelectedItems.Count != 0)
@@ -364,10 +364,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Closes the window
+        /// Closes the window.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.gridViewWindow.Close();
@@ -376,14 +376,14 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets selected items from List.
         /// </summary>
-        /// <returns>Selected items of the list</returns>
+        /// <returns>Selected items of the list.</returns>
         private List<PSObject> SelectedItems()
         {
             return this.selectedItems;
         }
 
         /// <summary>
-        /// Closes the window
+        /// Closes the window.
         /// </summary>
         public void CloseWindow()
         {
