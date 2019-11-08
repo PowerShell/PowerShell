@@ -5032,20 +5032,22 @@ namespace System.Management.Automation.Language
 
                             return this.NewToken(TokenKind.QuestionQuestion);
                         }
+                    }
 
-                        if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators"))
+                    if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators"))
+                    {
+                        c1 = PeekChar();
+
+                        if (c1 == '.')
                         {
-                            if (c1 == '.')
-                            {
-                                SkipChar();
-                                return this.NewToken(TokenKind.QuestionDot);
-                            }
+                            SkipChar();
+                            return this.NewToken(TokenKind.QuestionDot);
+                        }
 
-                            if (c1 == '[')
-                            {
-                                SkipChar();
-                                return this.NewToken(TokenKind.QuestionLBracket);
-                            }
+                        if (c1 == '[')
+                        {
+                            SkipChar();
+                            return this.NewToken(TokenKind.QuestionLBracket);
                         }
                     }
 
