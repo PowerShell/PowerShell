@@ -6189,7 +6189,7 @@ namespace System.Management.Automation.Language
             return DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, memberNameExpr);
         }
 
-        private static Expression NullConditionalExpression(Expression target)
+        internal static Expression NullConditionalExpression(Expression target)
         {
             Expression targetObj = target.Cast(typeof(object));
 
@@ -6473,14 +6473,14 @@ namespace System.Management.Automation.Language
             return indexExpressionAst.NullConditionalAccess ? GetNullCheckExpressionBlock(targetExpr, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
-        private static object GetNullCheckExpressionBlock(Expression targetExpr, DynamicExpression dynamicExprFromBinder)
+        internal static Expression GetNullCheckExpressionBlock(Expression targetExpr, Expression memberAccessExpression)
         {
             ParameterExpression varExpr = Expression.Variable(typeof(object));
 
             ConditionalExpression nullCheckExpression = Expression.IfThenElse(
                 Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
                 Expression.Assign(varExpr, ExpressionCache.NullConstant),
-                Expression.Assign(varExpr, dynamicExprFromBinder));
+                Expression.Assign(varExpr, memberAccessExpression.Cast(typeof(object))));
 
             return Expression.Block(
                 new ParameterExpression[] { varExpr },
@@ -6547,17 +6547,25 @@ namespace System.Management.Automation.Language
             if (memberNameAst != null)
             {
                 string name = memberNameAst.Value;
-                return DynamicExpression.Dynamic(
+                var expr = DynamicExpression.Dynamic(
                                             PSSetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static),
                                             typeof(object),
                                             CachedTarget ?? GetTargetExpr(compiler), rhs);
+
+                return MemberExpression.NullConditionalAccess ?
+                    Compiler.GetNullCheckExpressionBlock(CachedTarget ?? GetTargetExpr(compiler), expr)
+                    : expr;
             }
 
-            return DynamicExpression.Dynamic(
+            var exprNameNull = DynamicExpression.Dynamic(
                                         PSSetDynamicMemberBinder.Get(compiler._memberFunctionType, MemberExpression.Static),
                                         typeof(object),
                                         CachedTarget ?? GetTargetExpr(compiler),
                                         CachedPropertyExpr ?? GetPropertyExpr(compiler), rhs);
+
+            return MemberExpression.NullConditionalAccess ?
+                    Compiler.GetNullCheckExpressionBlock(CachedTarget ?? GetTargetExpr(compiler), exprNameNull)
+                    : exprNameNull;
         }
     }
 
@@ -6632,11 +6640,13 @@ namespace System.Management.Automation.Language
             var args = GetArgumentExprs(compiler);
             if (memberNameAst != null)
             {
-                return compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
+                var expr = compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
+                return InvokeMemberExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(target, expr) : expr;
             }
 
             var memberNameExpr = GetMemberNameExpr(compiler);
-            return compiler.InvokeDynamicMember(memberNameExpr, constraints, target, args.Append(rhs), @static: false, propertySet: true);
+            var exprNullName = compiler.InvokeDynamicMember(memberNameExpr, constraints, target, args.Append(rhs), @static: false, propertySet: true);
+            return InvokeMemberExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(target, exprNullName) : exprNullName;
         }
     }
 
@@ -6726,7 +6736,9 @@ namespace System.Management.Automation.Language
                                                 temp);
             }
 
-            return Expression.Block(new[] { temp }, Expression.Assign(temp, rhs), setExpr, temp);
+            var retExpr = Expression.Block(new[] { temp }, Expression.Assign(temp, rhs), setExpr, temp);
+
+            return IndexExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(targetExpr, retExpr) : retExpr;
         }
     }
 
