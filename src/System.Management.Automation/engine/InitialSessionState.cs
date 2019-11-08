@@ -310,7 +310,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (formattable == null)
             {
-                throw PSTraceSource.NewArgumentException(nameof(formattable));
+                throw PSTraceSource.NewArgumentNullException(nameof(formattable));
             }
 
             Formattable = formattable;
