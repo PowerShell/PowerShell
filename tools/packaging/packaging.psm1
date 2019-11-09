@@ -6,7 +6,8 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9")
+$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9", "debian.10", "debian.11")
+$RedhatDistributions = @("rhel.7","centos.8")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -426,18 +427,20 @@ function Start-PSPackage {
                     }
                 }
             }
-            default {
+            'rpm' {
                 $Arguments = @{
-                    Type = $_
+                    Type = 'rpm'
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
                 }
-
-                if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
-                    New-UnixPackage @Arguments
+                foreach ($Distro in $Script:RedhatDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
                 }
             }
         }
@@ -659,11 +662,18 @@ function New-UnixPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "deb") {
+        if ($Type -eq "deb" -or $Type -eq 'rpm') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
-            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:DebianDistributions
+            if($type -eq 'deb')
+            {
+                $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:DebianDistributions
+            }
+            else
+            {
+                $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:RedHatDistributions
+            }
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
             $Attributes.Add($ParameterAttr) > $null
             $Attributes.Add($ValidateSetAttr) > $null
@@ -706,6 +716,15 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
+                if ($PSBoundParameters.ContainsKey('Distribution')) {
+                    $DebDistro = $PSBoundParameters['Distribution']
+
+                } elseif ($Environment.IsRedHatFamily) {
+                    $DebDistro = "rhel.7"
+                } else {
+                    throw "The current distribution is not supported."
+                }
+
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
                     throw ($ErrorMessage -f "Redhat or SUSE Family")
@@ -764,7 +783,7 @@ function New-UnixPackage {
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
-            $AfterScriptInfo = New-AfterScripts -Link $Link
+            $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -830,6 +849,7 @@ function New-UnixPackage {
             -LinkSource $LinkSource `
             -LinkDestination $Link `
             -AppsFolder $AppsFolder `
+            -Distribution $DebDistro `
             -ErrorAction Stop
 
         # Build package
@@ -1033,7 +1053,8 @@ function Get-FpmArguments
             }
             return $true
         })]
-        [String]$AppsFolder
+        [String]$AppsFolder,
+        [String]$Distribution = 'rhel.7'
     )
 
     $Arguments = @(
@@ -1051,7 +1072,7 @@ function Get-FpmArguments
         "-s", "dir"
     )
     if ($Environment.IsRedHatFamily) {
-        $Arguments += @("--rpm-dist", "rhel.7")
+        $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
     }
 
@@ -1097,10 +1118,16 @@ function Test-Distribution
         throw "$Distribution is required for a Debian based distribution."
     }
 
-    if ($Script:DebianDistributions -notcontains $Distribution)
+    if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and $Script:DebianDistributions -notcontains $Distribution)
     {
         throw "$Distribution should be one of the following: $Script:DebianDistributions"
     }
+
+    if ( ($Environment.IsRedHatFamil) -and $Script:RedHatDistributions -notcontains $Distribution)
+    {
+        throw "$Distribution should be one of the following: $Script:RedHatDistributions"
+    }
+
     return $true
 }
 function Get-PackageDependencies
@@ -1178,16 +1205,57 @@ function New-AfterScripts
     param(
         [Parameter(Mandatory)]
         [string]
-        $Link
+        $Link,
+
+        [Parameter(Mandatory)]
+        [string]
+        $Distribution
     )
+    if ($Environment.IsUbuntu -or $Environment.IsDebian) {
+        $Dependencies = @(
+            "libc6",
+            "libgcc1",
+            "libgssapi-krb5-2",
+            "liblttng-ust0",
+            "libstdc++6",
+            "zlib1g"
+        )
+
+        switch ($Distribution) {
+            "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
+            "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
+            "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
+            "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+            default { throw "Debian distro '$Distribution' is not supported." }
+        }
+    } elseif ($Environment.IsRedHatFamily) {
+        $Dependencies = @(
+            "openssl-libs",
+            "libicu"
+        )
+    } elseif ($Environment.IsSUSEFamily) {
+        $Dependencies = @(
+            "libopenssl1_0_0",
+            "libicu"
+        )
+    }
 
     if ($Environment.IsRedHatFamily) {
-        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-        # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and macOS builds for itself
-        # against the correct versions.
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+        switch -regex ($Distribution)
+        {
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This is the only set of platforms needed for this currently
+            # as Ubuntu has these specific library files in the platform and macOS builds for itself
+            # against the correct versions.
+            'centos\.8' {
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.1.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+            default {
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+        }
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
@@ -1200,12 +1268,19 @@ function New-AfterScripts
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
 
-        if ($Environment.IsDebian9) {
+        switch -regex ($Distribution)
+        {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            'debian\.(9|10)' {
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+            'debian\.11' {
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
         }
     }
     elseif ($Environment.IsMacOS) {
