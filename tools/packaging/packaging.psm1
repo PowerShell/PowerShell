@@ -1165,11 +1165,10 @@ function Get-PackageDependencies
                 "zlib1g"
             )
 
-            switch ($Distribution) {
-                "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
-                "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+            switch -regex ($Distribution) {
+                "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
+                "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
+                "debian\.(9|10|11)" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
         } elseif ($Environment.IsRedHatFamily) {
