@@ -518,7 +518,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (AsHashTable)
                 {
-                    Hashtable hashtable = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    Hashtable hashtable;
+                    if (CaseSensitive.IsPresent)
+                    {
+                        hashtable = new Hashtable();
+                    }
+                    else
+                    {
+                        hashtable = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    }
+
                     try
                     {
                         if (AsString)
