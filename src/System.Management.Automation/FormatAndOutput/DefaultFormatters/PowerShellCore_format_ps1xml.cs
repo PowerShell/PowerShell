@@ -1104,6 +1104,15 @@ namespace System.Management.Automation.Runspaces
                                         if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
                                             $reason = 'Exception'
                                         }
+                                        # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
+                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        {
+                                            $reason = $myinv.MyCommand
+                                        }
+                                        # If it's a scriptblock, better to show the command in the scriptblock that had the error
+                                        elseif ($_.CategoryInfo.Activity) {
+                                            $reason = $_.CategoryInfo.Activity
+                                        }
                                         elseif ($myinv.MyCommand) {
                                             $reason = $myinv.MyCommand
                                         }
