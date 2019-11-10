@@ -177,19 +177,16 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
     }
 
     It 'should not throw a key duplication error with -CaseSensitive -AsHashtable' {
-        $script = {
-            $capitonyms = @(
-                [PSCustomObject]@{
-                    Capitonym = 'Bill'
-                }
-                [PSCustomObject]@{
-                    Capitonym = 'bill'
-                }
-            )
+        $capitonyms = @(
+            [PSCustomObject]@{
+                Capitonym = 'Bill'
+            }
+            [PSCustomObject]@{
+                Capitonym = 'bill'
+            }
+        )
 
-            $capitonyms | Group-Object Capitonym -AsHashTable -CaseSensitive
-        }
-
-        $script | Should -Not -Throw
+        [hashtable] $Result = $capitonyms | Group-Object -Property Capitonym -AsHashTable -CaseSensitive
+        $Result.Keys | Should -BeIn @( 'Bill', 'bill' )
     }
 }
