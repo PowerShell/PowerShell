@@ -749,6 +749,8 @@ function New-UnixPackage {
                 if (!$Environment.IsMacOS) {
                     throw ($ErrorMessage -f "macOS")
                 }
+
+                $DebDistro = 'macOS'
             }
         }
 
