@@ -7343,6 +7343,9 @@ namespace Microsoft.PowerShell.Commands
             [PSExtensionMember]
             public ProviderInfo PSProvider => _provider.ProviderInfo;
 
+            [PSExtensionMember]
+            public PSDriveInfo PSDrive => _driveInfo;
+
             T IPSObjectExtendedMemberInfo.GetFirstOrDefault<T>(MemberNamePredicate predicate)
             {
                 string GetMatchedPropertyName(MemberNamePredicate pred)
@@ -7357,6 +7360,8 @@ namespace Microsoft.PowerShell.Commands
                         return nameof(PSIsContainer);
                     if (pred(nameof(PSProvider)))
                         return nameof(PSProvider);
+                    if (pred(nameof(PSDrive)))
+                        return nameof(PSDrive);
                     return null;
                 }
 

@@ -4196,6 +4196,9 @@ namespace Microsoft.PowerShell.Commands
             public ProviderInfo PSProvider => _driveInfo.Provider;
 
             [PSExtensionMember]
+            public PSDriveInfo PSDrive => _driveInfo;
+
+            [PSExtensionMember]
             public string[] Property => _properties;
 
             T IPSObjectExtendedMemberInfo.GetFirstOrDefault<T>(MemberNamePredicate predicate)
@@ -4212,6 +4215,8 @@ namespace Microsoft.PowerShell.Commands
                         return nameof(PSIsContainer);
                     if (pred(nameof(PSProvider)))
                         return nameof(PSProvider);
+                    if (pred(nameof(PSDrive)))
+                        return nameof(PSDrive);
                     return null;
                 }
 
