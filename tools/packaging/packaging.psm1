@@ -1137,7 +1137,7 @@ function Test-Distribution
         throw "$Distribution should be one of the following: $Script:DebianDistributions"
     }
 
-    if ( ($Environment.IsRedHatFamil) -and $Script:RedHatDistributions -notcontains $Distribution)
+    if ( ($Environment.IsRedHatFamily) -and $Script:RedHatDistributions -notcontains $Distribution)
     {
         throw "$Distribution should be one of the following: $Script:RedHatDistributions"
     }
