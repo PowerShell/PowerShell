@@ -933,7 +933,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // serialize only Extended and Adapted properties..
+                // serialize only Extended and Adapted properties.
                 PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
                     new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                         source,
@@ -1059,7 +1059,6 @@ namespace Microsoft.PowerShell.Commands
                 // If value is null, assume property is not present and skip it.
                 if (value != null)
                 {
-
                     if (_quoteFields != null)
                     {
                         if (_quoteFields.TryGetValue(propertyName, out _))
