@@ -443,6 +443,20 @@ function Start-PSPackage {
                     }
                 }
             }
+            default {
+                $Arguments = @{
+                    Type = $_
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
+                    New-UnixPackage @Arguments
+                }
+            }
         }
 
         if ($IncludeSymbols.IsPresent)
