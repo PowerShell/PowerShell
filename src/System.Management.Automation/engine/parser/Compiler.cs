@@ -3217,37 +3217,74 @@ namespace System.Management.Automation.Language
             var expr = Compile(stmt);
             exprList.Add(expr);
 
-            var pipeAst = stmt as PipelineAst;
-            if (pipeAst != null)
+            if (MustSetSuccessAfterEvaluating(stmt))
             {
-                if (pipeAst.PipelineElements.Count == 1 && pipeAst.PipelineElements[0] is CommandExpressionAst)
-                {
-                    // A single expression - must set $? after the expression.
-                    exprList.Add(s_setDollarQuestionToTrue);
-                }
+                exprList.Add(s_setDollarQuestionToTrue);
             }
-            else
-            {
-                var assignmentStatementAst = stmt as AssignmentStatementAst;
-                if (assignmentStatementAst != null)
-                {
-                    Ast right = null;
-                    var assignAst = assignmentStatementAst;
-                    while (assignAst != null)
-                    {
-                        right = assignAst.Right;
-                        assignAst = right as AssignmentStatementAst;
-                    }
+        }
 
-                    pipeAst = right as PipelineAst;
-                    if (right is CommandExpressionAst ||
-                        (pipeAst != null && pipeAst.PipelineElements.Count == 1 &&
-                         pipeAst.PipelineElements[0] is CommandExpressionAst))
-                    {
-                        // If the RHS of the assign was an expression,
-                        exprList.Add(s_setDollarQuestionToTrue);
-                    }
-                }
+        private bool MustSetSuccessAfterEvaluating(StatementAst statementAst)
+        {
+            switch (statementAst)
+            {
+                case PipelineAst pipelineAst:
+                    return MustSetSuccessAfterEvaluating(pipelineAst);
+                case AssignmentStatementAst assignmentStatementAst:
+                    return MustSetSuccessAfterEvaluating(assignmentStatementAst);
+                default:
+                    return false;
+            }
+        }
+
+        private bool MustSetSuccessAfterEvaluating(PipelineAst pipelineAst)
+        {
+            ExpressionAst expressionAst = pipelineAst.GetPureExpression();
+
+            if (expressionAst == null)
+            {
+                return false;
+            }
+
+            return MustSetSuccessAfterEvaluating(expressionAst);
+        }
+
+        private bool MustSetSuccessAfterEvaluating(AssignmentStatementAst assignmentStatementAst)
+        {
+            // Get right-most RHS in cases like $x = $y = <expr>
+            StatementAst innerRhsStatementAst = assignmentStatementAst.Right;
+            while (innerRhsStatementAst is AssignmentStatementAst rhsAssignmentAst)
+            {
+                innerRhsStatementAst = rhsAssignmentAst.Right;
+            }
+
+            switch (innerRhsStatementAst)
+            {
+                case CommandExpressionAst commandExpression:
+                    return MustSetSuccessAfterEvaluating(commandExpression.Expression);
+
+                case PipelineAst rhsPipelineAst:
+                    return MustSetSuccessAfterEvaluating(rhsPipelineAst);
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool MustSetSuccessAfterEvaluating(ExpressionAst expressionAst)
+        {
+            switch (expressionAst)
+            {
+                case ParenExpressionAst parenExpression:
+                    return MustSetSuccessAfterEvaluating(parenExpression.Pipeline);
+
+                case SubExpressionAst subExpressionAst:
+                    // SubExpressionAsts contain statement blocks.
+                    // The compiler already adds the needed $? = $true when compiling the statement block,
+                    // so no need to add extra runtime overhead here.
+                    return false;
+
+                default:
+                    return true;
             }
         }
 
@@ -3558,9 +3595,8 @@ namespace System.Management.Automation.Language
         /// <returns>The compiled expression to execute the pipeline.</returns>
         private Expression CompilePipelineChainElement(PipelineAst pipelineAst)
         {
-            if (pipelineAst.PipelineElements.Count == 1 && pipelineAst.PipelineElements[0] is CommandExpressionAst)
+            if (MustSetSuccessAfterEvaluating(pipelineAst))
             {
-                // A single expression - must set $? after the expression.
                 return Expression.Block(Compile(pipelineAst), s_setDollarQuestionToTrue);
             }
 
