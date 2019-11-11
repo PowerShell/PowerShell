@@ -22,6 +22,11 @@ Describe 'Tests for setting $? for execution success' -Tag 'CI' {
             @{ Script = '$("Hi"); Hook $?'; Results = @($true) }
             @{ Script = '(Write-Error "Bad"); Hook $?; Hook $?'; Results = @($false, $true) }
             @{ Script = '$(Write-Error "Bad"); Hook $?; Hook $?'; Results = @($false, $true) }
+            @{ Script = 'testexe -returncode 0; Hook $?'; Results = @($true) }
+            @{ Script = 'testexe -returncode 1; Hook $?; Hook $?'; Results = @($false, $true) }
+            @{ Script = '(testexe -returncode 0); Hook $?'; Results = @($true) }
+            @{ Script = '(testexe -returncode 1); Hook $?; Hook $?'; Results = @($false, $true) }
+            @{ Script = '$(testexe -returncode 1); Hook $?; Hook $?'; Results = @($false, $true) }
         )
     }
 
