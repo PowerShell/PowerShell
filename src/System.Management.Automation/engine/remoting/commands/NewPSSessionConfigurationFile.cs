@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// See Declarative Initial Session State (DISC)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
+    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096791")]
     public class NewPSSessionConfigurationFileCommand : PSCmdlet
     {
         #region Parameters

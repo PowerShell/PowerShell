@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
     /// then an error message will result.
     /// </summary>
     [Cmdlet(VerbsCommon.Enter, "PSHostProcess", DefaultParameterSetName = EnterPSHostProcessCommand.ProcessIdParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403736")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096580")]
     public sealed class EnterPSHostProcessCommand : PSCmdlet
     {
         #region Members
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet exits an interactive session with a local process.
     /// </summary>
     [Cmdlet(VerbsCommon.Exit, "PSHostProcess",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403737")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096583")]
     public sealed class ExitPSHostProcessCommand : PSCmdlet
     {
         #region Overrides

@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113308")]
+    [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096492")]
     public class GetChildItemCommand : CoreCommandBase
     {
         /// <summary>

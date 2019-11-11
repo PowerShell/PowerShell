@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Save-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210612")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096794")]
     public sealed class SaveHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor

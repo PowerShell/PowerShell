@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097144")]
     [OutputType(typeof(PingStatus), ParameterSetName = new string[] { DefaultPingParameterSet })]
     [OutputType(typeof(PingStatus), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
     [OutputType(typeof(bool), ParameterSetName = new string[] { DefaultPingParameterSet, RepeatPingParameterSet, TcpPortParameterSet })]
