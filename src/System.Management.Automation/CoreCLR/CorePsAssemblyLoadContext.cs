@@ -556,7 +556,7 @@ namespace System.Management.Automation
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                folderName = "osx";
+                folderName = "osx-x64";
             }
 
             return folderName;
