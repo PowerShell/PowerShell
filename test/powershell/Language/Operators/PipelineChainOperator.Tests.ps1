@@ -89,6 +89,13 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '0,1 | % { testexe -returncode $_ } && testexe -returncode 0'; Output = @('0','1','0') }
             @{ Statement = '1,2 | % { testexe -returncode $_ } && testexe -returncode 0'; Output = @('1','2','0') }
 
+            # Subpipeline and subexpression cases
+            @{ Statement = '(testexe -returncode 0 && testexe -returncode 1) && "Hi"'; Output = @('0','1') }
+            @{ Statement = '$(testexe -returncode 0 && testexe -returncode 1) && "Hi"'; Output = @('0','1') }
+            @{ Statement = '(testexe -returncode 0 && testexe -returncode 1) || "Bad"'; Output = @('0','1','Bad') }
+            @{ Statement = '$(testexe -returncode 0 && testexe -returncode 1) && "Bad"'; Output = @('0','1') }
+            @{ Statement = '(testexe -returncode 1 || testexe -returncode 1) && "Hi"'; Output = @('1','1') }
+
             # Control flow statements
             @{ Statement = 'foreach ($v in 0,1,2) { testexe -returncode $v || $(break) }'; Output = @('0', '1') }
             @{ Statement = 'foreach ($v in 0,1,2) { testexe -returncode $v || $(continue); $v + 1 }'; Output = @('0', 1, '1', '2') }
