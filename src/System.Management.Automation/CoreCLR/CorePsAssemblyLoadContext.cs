@@ -1,18 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#if CORECLR
-
 using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
-using System.Text;
 using System.Linq;
 
 namespace System.Management.Automation
@@ -46,7 +41,16 @@ namespace System.Management.Automation
             lock (s_syncObj)
             {
                 if (Instance != null)
+                {
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
+                }
+
+                // Add last resort native dll resolver.
+                // Default order:
+                //      1. AssemblyLoadContext.LoadUnmanagedDll()
+                //      2. System.Runtime.InteropServices.DllImportResolver callbacks
+                //      3. AssemblyLoadContext.Default.ResolvingUnmanagedDll handlers
+                AssemblyLoadContext.Default.ResolvingUnmanagedDll += NativeDllHandler;
 
                 Instance = new PowerShellAssemblyLoadContext(basePaths);
                 return Instance;
@@ -192,6 +196,50 @@ namespace System.Management.Automation
 
             // Otherwise, we return null
             return null;
+        }
+
+        /// <summary>
+        /// If a managed dll has native dependencies the handler will try to find these native dlls.
+        ///     1. Gets the managed.dll location (folder)
+        ///     2. Based on OS name and architecture name builds subfolder name where it is expected the native dll resides:
+        ///     3. Loads the native dll
+        ///
+        ///     managed.dll folder
+        ///                     |
+        ///                     |--- 'win-x64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-x86' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-arm' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-arm64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'linux-x64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'linux-x86' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'linux-arm' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'linux-arm64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'osx' subfolder
+        ///                     |       |--- native.dll
+        /// </summary>
+        internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
+        {
+            System.Diagnostics.Debugger.Break();
+            var folder = Path.GetDirectoryName(assembly.Location);
+            var searchPath = Path.Combine(folder, NativeSubFolderName,libraryName);
+
+            return NativeLibrary.Load(searchPath, assembly, null);
         }
 
         #endregion Internal_Methods
@@ -483,6 +531,37 @@ namespace System.Management.Automation
             throw new FileNotFoundException(message);
         }
 
+        private static string s_nativeDllSubFolder = null;
+
+        private static string NativeSubFolderName => s_nativeDllSubFolder ?? (s_nativeDllSubFolder = GetNativeDllSubFolderName());
+        private static string GetNativeDllSubFolderName()
+        {
+            string folderName = string.Empty;
+            var processArch = RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.Arm => "arm",
+                Architecture.Arm64 => "arm64",
+                Architecture.X64 => "x64",
+                Architecture.X86 => "x86",
+                _ => ""
+            };
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                folderName = "win-" + processArch;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                folderName = "linux-" + processArch;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                folderName = "osx";
+            }
+
+            return folderName;
+        }
+
         #endregion Private_Methods
     }
 
@@ -512,6 +591,3 @@ namespace System.Management.Automation
         }
     }
 }
-
-#endif
-
