@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
                     addressIsValid = !(discoveryReply.Address.Equals(IPAddress.Any)
                         || discoveryReply.Address.Equals(IPAddress.IPv6Any));
                 }
-                while (discoveryAttempts <= 3 && addressIsValid);
+                while (discoveryAttempts <= DefaultTraceRoutePingCount && addressIsValid);
 
                 // If we aren't able to get a valid address, just re-target the final destination of the trace.
                 hopAddress = addressIsValid ? discoveryReply.Address : targetAddress;
@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
                     WriteDebug(StringUtil.Format(
-                                    "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
+                        "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
                         LowMTUSize,
                         CurrentMTUSize,
                         HighMTUSize));
