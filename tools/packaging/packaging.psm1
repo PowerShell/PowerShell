@@ -1226,33 +1226,6 @@ function New-AfterScripts
         [string]
         $Distribution
     )
-    if ($Environment.IsUbuntu -or $Environment.IsDebian) {
-        $Dependencies = @(
-            "libc6",
-            "libgcc1",
-            "libgssapi-krb5-2",
-            "liblttng-ust0",
-            "libstdc++6",
-            "zlib1g"
-        )
-
-        switch -regex ($Distribution) {
-            "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-            "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-            "debian\.(9|10|11)" { $Dependencies += @("libssl1.0.2", "libicu57") }
-            default { throw "Debian distro '$Distribution' is not supported." }
-        }
-    } elseif ($Environment.IsRedHatFamily) {
-        $Dependencies = @(
-            "openssl-libs",
-            "libicu"
-        )
-    } elseif ($Environment.IsSUSEFamily) {
-        $Dependencies = @(
-            "libopenssl1_0_0",
-            "libicu"
-        )
-    }
 
     if ($Environment.IsRedHatFamily) {
         switch -regex ($Distribution)
