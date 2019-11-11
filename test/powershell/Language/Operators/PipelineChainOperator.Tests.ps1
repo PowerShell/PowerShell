@@ -264,7 +264,8 @@ function Test-FullyTerminatingError
     It "Gets the correct output with statement '<Statement>'" -TestCases $simpleTestCases {
         param($Statement, $Output)
 
-        Invoke-Expression -Command $Statement 2>$null | Should -Be $Output
+        $result = Invoke-Expression -Command $Statement 2>$null
+        $result | Should -Be $Output
     }
 
     It "Sets the variable correctly with statement '<Statement>'" -TestCases $variableTestCases {
