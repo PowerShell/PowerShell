@@ -149,6 +149,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
+        $environment += @{'IsDebianFamily' = $Environment.IsDebian -or $Environment.IsUbuntu}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}

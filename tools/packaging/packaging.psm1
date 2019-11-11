@@ -1129,17 +1129,17 @@ function Test-Distribution
         $Distribution
     )
 
-    if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and !$Distribution )
+    if ( $Environment.IsDebianFamily -and !$Distribution )
     {
         throw "$Distribution is required for a Debian based distribution."
     }
 
-    if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and $Script:DebianDistributions -notcontains $Distribution)
+    if ( $Environment.IsDebianFamily -and $Script:DebianDistributions -notcontains $Distribution)
     {
         throw "$Distribution should be one of the following: $Script:DebianDistributions"
     }
 
-    if ( ($Environment.IsRedHatFamily) -and $Script:RedHatDistributions -notcontains $Distribution)
+    if ( $Environment.IsRedHatFamily -and $Script:RedHatDistributions -notcontains $Distribution)
     {
         throw "$Distribution should be one of the following: $Script:RedHatDistributions"
     }
@@ -1157,7 +1157,7 @@ function Get-PackageDependencies
     End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
-        if ($Environment.IsUbuntu -or $Environment.IsDebian) {
+        if ($Environment.IsDebianFamily) {
             $Dependencies = @(
                 "libc6",
                 "libgcc1",
@@ -1249,7 +1249,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsUbuntu -or $Environment.IsDebian -or $Environment.IsSUSEFamily) {
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
