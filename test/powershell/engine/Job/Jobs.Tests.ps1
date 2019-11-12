@@ -95,14 +95,8 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
 
         It 'Verifies the working directory parameter path with trailing backslash' -Skip:(! $IsWindows) {
-            $path = 'C:\'
-            if (! (Test-Path -Path $path))
-            {
-                Write-Warning "Test skipped because there is no prerequisite 'C:\' file system root."
-                return
-            }
-            $location = Start-Job { $pwd } -WorkingDirectory $path | Receive-Job -Wait -AutoRemoveJob
-            $location.Path | Should -BeExactly $path
+            $job = Start-Job { $pwd } -WorkingDirectory '\' | Wait-Job
+            $job.JobStateInfo.State | Should -BeExactly 'Completed'
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
