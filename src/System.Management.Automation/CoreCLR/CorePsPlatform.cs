@@ -554,14 +554,14 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-        // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
-        // works *correctly* on Linux in that it creates an exception with
-        // the string perror would give you for the last set value of errno.
-        // No manual mapping is required. .NET Core maps the Linux errno
-        // to a PAL value and calls strerror_r underneath to generate the message.
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
+            // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
+            // works *correctly* on Linux in that it creates an exception with
+            // the string perror would give you for the last set value of errno.
+            // No manual mapping is required. .NET Core maps the Linux errno
+            // to a PAL value and calls strerror_r underneath to generate the message.
             private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
             private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
@@ -780,6 +780,7 @@ namespace System.Management.Automation
                 /// Get the user name. This is used in formatting, but we shouldn't
                 /// do the pinvoke this unless we're going to use it.
                 /// </summary>
+                /// <returns>The user name.</returns>
                 public string GetUserName()
                 {
                     string username;
