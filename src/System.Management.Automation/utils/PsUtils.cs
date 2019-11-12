@@ -24,8 +24,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class PsUtils
     {
-        internal static string ArmArchitecture = "ARM";
-
         /// <summary>
         /// Safely retrieves the MainModule property of a
         /// process. Version 2.0 and below of the .NET Framework are
@@ -140,26 +138,23 @@ namespace System.Management.Automation
         /// If powershell is running inside Wow64, then <see cref="ProcessorArchitecture.X86"/> is returned.
         /// </summary>
         /// <returns>Processor architecture for the current process.</returns>
-        internal static ProcessorArchitecture GetProcessorArchitecture(out bool isRunningOnArm)
+        internal static ProcessorArchitecture GetProcessorArchitecture()
         {
-            var sysInfo = new NativeMethods.SYSTEM_INFO();
-            NativeMethods.GetSystemInfo(ref sysInfo);
+            Architecture architecture = RuntimeInformation.ProcessArchitecture;
             ProcessorArchitecture result;
-            isRunningOnArm = false;
-            switch (sysInfo.wProcessorArchitecture)
+            switch (architecture)
             {
-                case NativeMethods.PROCESSOR_ARCHITECTURE_IA64:
-                    result = ProcessorArchitecture.IA64;
-                    break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_AMD64:
-                    result = ProcessorArchitecture.Amd64;
-                    break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_INTEL:
+                case Architecture.X86:
                     result = ProcessorArchitecture.X86;
                     break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_ARM:
-                    result = ProcessorArchitecture.None;
-                    isRunningOnArm = true;
+
+                case Architecture.X64:
+                    result = ProcessorArchitecture.Amd64;
+                    break;
+
+                case Architecture.Arm:
+                case Architecture.Arm64:
+                    result = ProcessorArchitecture.Arm;
                     break;
 
                 default:
