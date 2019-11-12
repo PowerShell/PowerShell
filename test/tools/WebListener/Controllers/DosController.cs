@@ -40,11 +40,11 @@ namespace mvc.Controllers
             {
                 case "img":
                     contentType = "text/html; charset=utf8";
-                    body = "<img" + (new String(' ', dosLength));
+                    body = "<img" + (new string(' ', dosLength));
                     break;
                 case "charset":
                     contentType = "text/html; charset=melon";
-                    body = "<meta " + (new String('.', dosLength));
+                    body = "<meta " + (new string('.', dosLength));
                     break;
                 default:
                     throw new InvalidOperationException("Invalid dosType: "+dosType);

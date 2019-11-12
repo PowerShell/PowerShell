@@ -626,6 +626,13 @@ namespace System.Management.Automation
             throw new PSNotImplementedException();
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>  
+            throw new PSNotImplementedException();
+
+        /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
         public virtual List<Breakpoint> GetBreakpoints() =>
@@ -2581,6 +2588,31 @@ namespace System.Management.Automation
         #region Breakpoints
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints"></param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            foreach (Breakpoint bp in breakpoints)
+            {
+                switch (bp)
+                {
+                    case CommandBreakpoint commandBreakpoint:
+                        AddCommandBreakpoint(commandBreakpoint);
+                        continue;
+
+                    case LineBreakpoint lineBreakpoint:
+                        AddLineBreakpoint(lineBreakpoint);
+                        continue;
+
+                    case VariableBreakpoint variableBreakpoint:
+                        AddVariableBreakpoint(variableBreakpoint);
+                        continue;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
@@ -4049,6 +4081,13 @@ namespace System.Management.Automation
         #region Overrides
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
+            _wrappedDebugger.SetBreakpoints(breakpoints);
+
+        /// <summary>
         /// Process debugger or PowerShell command/script.
         /// </summary>
         /// <param name="command">PowerShell command.</param>
@@ -4712,7 +4751,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(Object runningCmd)
+        private void RestoreRemoteOutput(object runningCmd)
         {
             if (runningCmd == null) { return; }
 

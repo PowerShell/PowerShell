@@ -20,8 +20,8 @@ namespace TestExe
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;
-                    // Used to test functionality depending on $LASTEXITCODE, like &&/|| operators
                     case "-returncode":
+                        // Used to test functionality depending on $LASTEXITCODE, like &&/|| operators
                         Console.WriteLine(args[1]);
                         return int.Parse(args[1]);
                     default:

@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
 
-        private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
+        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(
             TerminatingErrorContext errorContext,

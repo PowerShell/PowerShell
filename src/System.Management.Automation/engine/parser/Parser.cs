@@ -5725,7 +5725,6 @@ namespace System.Management.Automation.Language
             // First look for assignment, since PipelineRule once handled that and this supercedes that.
             // We may end up with an expression here as a result,
             // in which case we hang on to it to pass it into the first pipeline rule call.
-
             Token assignToken = null;
             ExpressionAst expr;
 
@@ -5764,7 +5763,6 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
                     // pipeline, so just keep parsing.
-
                     IScriptExtent errorExtent = After(assignToken);
                     ReportIncompleteInput(
                         errorExtent,
@@ -5941,7 +5939,7 @@ namespace System.Management.Automation.Language
             // G
             // G  pipeline-tail:
             // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
-
+            //
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
 
@@ -5989,7 +5987,6 @@ namespace System.Management.Automation.Language
                     if (pipelineElements.Count > 0)
                     {
                         // ErrorRecovery: this is a semantic error, so just keep parsing.
-
                         ReportError(
                             expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
@@ -6008,7 +6005,6 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery:
                             // We are likely at EOF, since almost anything else should result in a pipeline,
                             // so just keep parsing
-
                             IScriptExtent errorExtent = After(assignToken);
                             ReportIncompleteInput(
                                 errorExtent,
@@ -7936,16 +7932,18 @@ namespace System.Management.Automation.Language
 
         private void SaveError(ParseError error)
         {
-            if (ErrorList.Any())
+            if (ErrorList.Count > 0)
             {
-                // Avoiding adding duplicate errors - can happen when the tokenizer resyncs.
-                if (ErrorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
-                                          && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
-                                          && err.Extent.EndLineNumber == error.Extent.EndLineNumber
-                                          && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
-                                          && err.Extent.StartLineNumber == error.Extent.StartLineNumber))
+                foreach (ParseError err in ErrorList)
                 {
-                    return;
+                    if (err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
+                        && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
+                        && err.Extent.EndLineNumber == error.Extent.EndLineNumber
+                        && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
+                        && err.Extent.StartLineNumber == error.Extent.StartLineNumber)
+                    {
+                        return;
+                    }
                 }
             }
 

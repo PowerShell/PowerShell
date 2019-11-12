@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
-    [OutputType(typeof(Byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
+    [OutputType(typeof(byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
@@ -146,7 +146,12 @@ namespace Microsoft.PowerShell.Commands
                     else if (string.IsNullOrEmpty(item))
                     {
                         // This handles the trailing slash case
-                        continue;
+                        if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
+                        {
+                            exactPath += StringLiterals.DefaultPathSeparator;
+                        }
+
+                        break;
                     }
                     else if (item.Contains('~'))
                     {
@@ -155,13 +160,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
+                        // Use GetFileSystemEntries to get the correct casing of this element
+                        var entries = Directory.GetFileSystemEntries(exactPath, item);
+                        if (entries.Length > 0)
+                        {
+                            exactPath = entries.First();
+                        }
+                        else
+                        {
+                            // If previous call didn't return anything, something failed so we just return the path we were given
+                            return path;
+                        }
                     }
-                }
-
-                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
-                {
-                    return exactPath + StringLiterals.DefaultPathSeparator;
                 }
 
                 return exactPath;
@@ -3952,6 +3962,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                         }
+                    }
+                    catch (IOException ioException)
+                    {
+                        WriteError(new ErrorRecord(ioException, "CopyFileInfoItemIOError", ErrorCategory.WriteError, file));
                     }
                 }
             }

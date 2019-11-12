@@ -16,16 +16,16 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.11.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.DirectoryServices" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Management" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Security.Permissions" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0-preview1.19504.10" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.DirectoryServices" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Management" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Security.Permissions" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0-preview2.19523.17" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0-preview.2" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0-preview.3" />
@@ -109,7 +109,6 @@
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
     <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
     <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />

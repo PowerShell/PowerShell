@@ -337,6 +337,7 @@ function Start-PSPackage {
                     ProductNameSuffix = $NameSuffix
                     ProductSourcePath = $Source
                     ProductVersion = $Version
+                    Architecture = $WindowsRuntime.Split('-')[1]
                     Force = $Force
                 }
 
@@ -2780,6 +2781,11 @@ function New-MSIXPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductSourcePath,
 
+        # Processor Architecture
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('x64','x86','arm','arm64')]
+        [string] $Architecture,
+
         # Force overwrite of package
         [Switch] $Force
     )
@@ -2810,6 +2816,16 @@ function New-MSIXPackage
         $packageName += "-$ProductNameSuffix"
     }
 
+    $displayName = $productName
+
+    if ($packageName.Contains('preview')) {
+        $ProductName += 'Preview'
+        $displayName += ' Preview'
+    }
+
+    Write-Verbose -Verbose "ProductName: $productName"
+    Write-Verbose -Verbose "DisplayName: $displayName"
+
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
     if (([Version]$ProductVersion).Revision -eq -1) {
         $ProductVersion += ".0"
@@ -2828,7 +2844,7 @@ function New-MSIXPackage
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion)
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName)
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(
