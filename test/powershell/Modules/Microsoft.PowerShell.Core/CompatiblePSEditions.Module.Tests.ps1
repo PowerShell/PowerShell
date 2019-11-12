@@ -276,12 +276,11 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             & "Test-$ModuleName" | Should -Be $Result
         }
 
-        It "Fails to import incompatible modules from the module path with PSEdition <Editions>" -TestCases $failCases -Skip:(-not $IsWindows) {
+        It "Successfully imports incompatible modules from the module path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
-            {
-                Import-Module $ModuleName -Force -ErrorAction 'Stop'; & "Test-$ModuleName"
-            } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            Import-Module $ModuleName -Force -ErrorAction 'Stop'
+            & "Test-$ModuleName" | Should -Be $Result
         }
 
         It "Imports an incompatible module from the module path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
@@ -302,14 +301,13 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             & "Test-$ModuleName" | Should -Be $Result
         }
 
-        It "Fails to import incompatible modules from an absolute path with PSEdition <Editions>" -TestCases $failCases -Skip:(-not $IsWindows) {
+        It "Successfully imports incompatible modules from an absolute path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
             $path = Join-Path -Path $basePath -ChildPath $ModuleName
 
-            {
-                Import-Module $path -Force -ErrorAction 'Stop'; & "Test-$ModuleName"
-            } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            Import-Module $path -Force -ErrorAction 'Stop'
+            & "Test-$ModuleName" | Should -Be $Result
         }
 
         It "Imports an incompatible module from an absolute path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
