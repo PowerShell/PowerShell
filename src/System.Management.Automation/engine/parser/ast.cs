@@ -7852,7 +7852,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MemberExpressionAst"/> class.
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
@@ -7899,7 +7899,7 @@ namespace System.Management.Automation.Language
         public bool Static { get; private set; }
 
         /// <summary>
-        /// Gets a value indication true if the operator used is ?. or ?[].
+        /// Gets a value indicating true if the operator used is ?. or ?[].
         /// </summary>
         public bool NullConditionalAccess { get; private set; }
 
@@ -7972,7 +7972,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="InvokeMemberExpressionAst"/> class.
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
@@ -10285,7 +10285,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="IndexExpressionAst"/> class.
+        /// Initializes a new instance of the <see cref="IndexExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="target">The expression being indexed.</param>
@@ -10320,7 +10320,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
-        /// Gets a value indication whether ?[] operator is being used.
+        /// Gets a value indicating whether ?[] operator is being used.
         /// </summary>
         public bool NullConditionalAccess { get; private set; }
 
