@@ -554,41 +554,39 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-        // Unix specific implementations of required functionality
-        //
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
         // the string perror would give you for the last set value of errno.
         // No manual mapping is required. .NET Core maps the Linux errno
         // to a PAL value and calls strerror_r underneath to generate the message.
-        /// <summary>Unix Class</summary>
+        /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int,string> UsernameCache = new Dictionary<int,string>();
-            private static Dictionary<int,string> GroupnameCache = new Dictionary<int,string>();
+            private static Dictionary<int, string> UsernameCache = new Dictionary<int, string>();
+            private static Dictionary<int, string> GroupnameCache = new Dictionary<int, string>();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
             {
-                /// <summary>Directory</summary>
+                /// <summary>The item is a Directory.</summary>
                 Directory,
 
-                /// <summary>File</summary>
+                /// <summary>The item is a File.</summary>
                 File,
 
-                /// <summary>Symbolic Link</summary>
+                /// <summary>The item is a Symbolic Link.</summary>
                 SymbolicLink,
 
-                /// <summary>Block Device</summary>
+                /// <summary>The item is a Block Device.</summary>
                 BlockDevice,
 
-                /// <summary>Character Device</summary>
+                /// <summary>The item is a Character Device.</summary>
                 CharacterDevice,
 
-                /// <summary>Named Pipe</summary>
+                /// <summary>The item is a Named Pipe.</summary>
                 NamedPipe,
 
-                /// <summary>Socket</summary>
+                /// <summary>The item is a Socket.</summary>
                 Socket,
             }
 
@@ -597,37 +595,51 @@ namespace System.Management.Automation
             {
                 /// <summary>The mask to collect the owner mode.</summary>
                 OwnerModeMask  = 0x1C0,
+
                 /// <summary>The mask to get the owners read bit.</summary>
                 OwnerRead      = 0x100,
+                
                 /// <summary>The mask to get the owners write bit.</summary>
                 OwnerWrite     = 0x080,
+                
                 /// <summary>The mask to get the owners execute bit.</summary>
                 OwnerExecute   = 0x040,
+                
                 /// <summary>The mask to get the group mode.</summary>
                 GroupModeMask  = 0x038,
+                
                 /// <summary>The mask to get the group mode.</summary>
                 GroupRead      = 0x20,
+                
                 /// <summary>The mask to get the group mode.</summary>
                 GroupWrite     = 0x10,
+                
                 /// <summary>The mask to get the group mode.</summary>
                 GroupExecute   = 0x8,
+                
                 /// <summary>The mask to get the "other" mode.</summary>
                 OtherModeMask  = 0x007,
+                
                 /// <summary>The mask to get the "other" read bit.</summary>
                 OtherRead      = 0x004,
+                
                 /// <summary>The mask to get the "other" write bit.</summary>
                 OtherWrite     = 0x002,
+                
                 /// <summary>The mask to get the "other" execute bit.</summary>
                 OtherExecute   = 0x001,
-                /// <summary>The mask to retrieve the sticky bit</summary>
+
+                /// <summary>The mask to retrieve the sticky bit.</summary>
                 SetStickyMask  = 0x200,
-                /// <summary>The mask to retrieve the setgid bit</summary>
+                
+                /// <summary>The mask to retrieve the setgid bit.</summary>
                 SetGidMask     = 0x400,
-                /// <summary>The mask to retrieve the setuid bit</summary>
+
+                /// <summary>The mask to retrieve the setuid bit.</summary>
                 SetUidMask     = 0x800,
             }
 
-            /// <summary>The Common Stat class</summary>
+            /// <summary>The Common Stat class.</summary>
             public class CommonStat
             {
                 /// <summary>The inode of the filesystem item.</summary>
@@ -692,7 +704,7 @@ namespace System.Management.Automation
                         { StatMask.OtherExecute, "x" },
                 };
 
-                /// <summary>Convert the mode to a string which is usable in our formatting</summary>
+                /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 public string GetModeString()
                 {
                     StatMask[] permissions = new StatMask[] {
@@ -709,7 +721,8 @@ namespace System.Management.Automation
 
                     // start the mode string with the ItemType
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    switch ( ItemType ) {
+                    switch (ItemType)
+                    {
                         case ItemType.Directory:
                             sb.Append("d");
                             break;
@@ -733,23 +746,27 @@ namespace System.Management.Automation
                             break;
                     }
                     
-                    foreach(StatMask permission in permissions )
+                    foreach (StatMask permission in permissions)
                     {
                         if ((Mode & (int)permission) == (int)permission)
                         {
-                            // Check for setuid
-                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid)) {
+                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
+                            {
+                                // Check for setuid and add 's'
                                 sb.Append("s");
                             }
-                            // Directories are sticky, rather than setuid
-                            else if ( permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory)) {
+                            else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
+                            {
+                                // Directories are sticky, rather than setuid
                                 sb.Append("t");
                             }
-                            else {
+                            else
+                            {
                                 sb.Append(modeMap[permission]);
                             }
                         }
-                        else {
+                        else
+                        {
                             sb.Append("-");
                         }
                     }
@@ -764,7 +781,8 @@ namespace System.Management.Automation
                 public string GetUserName()
                 {
                     string username;
-                    if ( UsernameCache.TryGetValue(UserId, out username)) {
+                    if (UsernameCache.TryGetValue(UserId, out username))
+                    {
                         return username;
                     }
 
@@ -783,7 +801,8 @@ namespace System.Management.Automation
                 public string GetGroupName()
                 {
                     string groupname;
-                    if ( GroupnameCache.TryGetValue(GroupId, out groupname)) {
+                    if (GroupnameCache.TryGetValue(GroupId, out groupname))
+                    {
                         return groupname;
                     }
 
@@ -802,14 +821,18 @@ namespace System.Management.Automation
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
             }
 
-            /// <summary>Is this a hardlink</summary>
+            /// <summary>Is this a hardlink.</summary>
+            /// <param name="handle">The handle to a file.</param>
+            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
             public static bool IsHardLink(ref IntPtr handle)
             {
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
                 return false;
             }
 
-            /// <summary>Determine if the item is a hardlink</summary>
+            /// <summary>Determine if the item is a hardlink.</summary>
+            /// <param name="fs">A FileSystemInfo to check to determine if it is a hardlink.</param>
+            /// <returns>A boolean</returns>
             public static bool IsHardLink(FileSystemInfo fs)
             {
                 if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -831,6 +854,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Create a managed replica of the native stat structure.
             /// </summary>
+            /// <param name="css">The common stat structure from which we copy.</param>
+            /// <returns>A managed common stat class instance.</returns>
             private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
             {
                     CommonStat cs = new CommonStat();
@@ -847,22 +872,28 @@ namespace System.Management.Automation
                     cs.DeviceId = css.DeviceId;
                     cs.NumberOfBlocks = css.NumberOfBlocks;
 
-                    if ( css.IsDirectory == 1 ) {
+                    if (css.IsDirectory == 1)
+                    {
                         cs.ItemType = ItemType.Directory;
                     }
-                    else if ( css.IsFile == 1) {
+                    else if (css.IsFile == 1)
+                    {
                         cs.ItemType = ItemType.File;
                     }
-                    else if ( css.IsSymbolicLink == 1) {
+                    else if (css.IsSymbolicLink == 1)
+                    {
                         cs.ItemType = ItemType.SymbolicLink;
                     }
-                    else if ( css.IsBlockDevice == 1) {
+                    else if (css.IsBlockDevice == 1)
+                    {
                         cs.ItemType = ItemType.BlockDevice;
                     }
-                    else if ( css.IsCharacterDevice == 1) {
+                    else if (css.IsCharacterDevice == 1)
+                    {
                         cs.ItemType = ItemType.CharacterDevice;
                     }
-                    else if ( css.IsNamedPipe == 1) {
+                    else if (css.IsNamedPipe == 1)
+                    {
                         cs.ItemType = ItemType.NamedPipe;
                     }
                     else {
@@ -877,29 +908,37 @@ namespace System.Management.Automation
 
             }
 
-            /// <summary>Get the lstat info from a path</summary>
+            /// <summary>Get the lstat info from a path.</summary>
+            /// <param name="path">The path to the lstat information.</param>
+            /// <returns>An instance of the CommonStat for the path.</returns>
             public static CommonStat GetLStat(string path)
             {
                 NativeMethods.CommonStatStruct css;
-                if ( NativeMethods.GetCommonLStat(path, out css) == 0 ) {
+                if (NativeMethods.GetCommonLStat(path, out css) == 0)
+                {
                     return CopyStatStruct(css);
                 }
 
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-            /// <summary>Get the stat info from a path</summary>
+            /// <summary>Get the stat info from a path.</summary>
+            /// <param name="path">The path to the stat information.</param>
+            /// <returns>An instance of the CommonStat for the path.</returns>
             public static CommonStat GetStat(string path)
             {
                 NativeMethods.CommonStatStruct css;
-                if ( NativeMethods.GetCommonStat(path, out css) == 0 ) {
+                if (NativeMethods.GetCommonStat(path, out css) == 0)
+                {
                     return CopyStatStruct(css);
                 }
 
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-            /// <summary>Read the /proc file system for information about the parent</summary>
+            /// <summary>Read the /proc file system for information about the parent.</summary>
+            /// <param name="pid">The process id used to get the parent process.</param>
+            /// <returns>The process id.</returns>
             public static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
@@ -925,7 +964,7 @@ namespace System.Management.Automation
                 }
             }
 
-                /// <summary>x</summary>
+            /// <summary>The native methods class.</summary>
             internal static class NativeMethods
             {
                 private const string psLib = "libpsl-native";
@@ -950,27 +989,27 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
 
-                // This is a struct tm from <time.h>
+                // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
                 internal unsafe struct UnixTm
                 {
-                    /// <summary>Seconds (0-60)</summary>
+                    /// <summary>Seconds (0-60).</summary>
                     internal int tm_sec;
-                    /// <summary>Minutes (0-59)</summary>
+                    /// <summary>Minutes (0-59).</summary>
                     internal int tm_min;
-                    /// <summary>Hours (0-23)</summary>
+                    /// <summary>Hours (0-23).</summary>
                     internal int tm_hour;
-                    /// <summary>Day of the month (1-31)</summary>
+                    /// <summary>Day of the month (1-31).</summary>
                     internal int tm_mday;
-                    /// <summary>Month (0-11)</summary>
+                    /// <summary>Month (0-11).</summary>
                     internal int tm_mon;
-                    /// <summary>The year - 1900</summary>
+                    /// <summary>The year - 1900.</summary>
                     internal int tm_year;
-                    /// <summary>Day of the week (0-6, Sunday = 0)</summary>
+                    /// <summary>Day of the week (0-6, Sunday = 0).</summary>
                     internal int tm_wday;
-                    /// <summary>Day in the year (0-365, 1 Jan = 0)</summary>
+                    /// <summary>Day in the year (0-365, 1 Jan = 0).</summary>
                     internal int tm_yday;
-                    /// <summary>Daylight saving time</summary>
+                    /// <summary>Daylight saving time.</summary>
                     internal int tm_isdst;
                 }
 
@@ -1017,7 +1056,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)]string path,
                                                         out UInt64 device, out UInt64 inode);
-
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library. It's a synthetic construct of the Unix stat
