@@ -87,6 +87,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
     Context "Other properties of UnixStat object" {
         BeforeAll {
+            if ( $IsWindows ) {
+                return
+            }
+
             $testDir  = "${TestDrive}/TestDir"
             $testFile = "${testDir}/TestFile"
 
