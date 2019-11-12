@@ -35,6 +35,22 @@ Describe 'Formatting out of band data tests' -Tags 'CI' {
                 }
             }
 
+            # This function writes information to one of the supported streams in the middle
+            # of outputting process objects. The information written to the stream is chosen
+            # based on the value passed into OobType. It is used to test out of band formatting
+            # in PowerShell, verifying that out of band data shows up as out of band with
+            # custom formatting when it is used in the middle of output of other data. Below
+            # is a table showing the stream that will receive out of band data for each of
+            # the OobType parameter values.
+            # OobType     | Stream      | Value
+            # ------------|-------------|---------------------------------------------
+            # Error       | Error       | This is an out of band error message.
+            # Warning     | Warning     | This is an out of band warning message.
+            # Verbose     | Verbose     | This is an out of band verbose message.
+            # Debug       | Debug       | This is an out of band debug message.
+            # Information | Information | This is an out of band information message.
+            # Number      | stdout      | 42
+            # String      | stdout      | Made it
             function Test-OutOfBandFormatting {
                 [CmdletBinding()]
                 [OutputType([System.Diagnostics.Process])]
