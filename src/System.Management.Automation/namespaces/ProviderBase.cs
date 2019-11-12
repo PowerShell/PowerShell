@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteInformation" />
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
@@ -1862,9 +1862,10 @@ namespace System.Management.Automation.Provider
 
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-
 #if UNIX
-                if (ExperimentalFeature.IsEnabled("PSUnixFileStat")) {
+
+                if (ExperimentalFeature.IsEnabled("PSUnixFileStat"))
+                {
                     // Add a commonstat structure to file system objects
                     if (ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
                     {
@@ -1882,7 +1883,6 @@ namespace System.Management.Automation.Provider
                     }
                 }
 #endif
-
             }
 
             // PSDriveInfo

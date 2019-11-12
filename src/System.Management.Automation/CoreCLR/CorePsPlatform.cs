@@ -562,8 +562,8 @@ namespace System.Management.Automation
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int, string> UsernameCache = new Dictionary<int, string>();
-            private static Dictionary<int, string> GroupnameCache = new Dictionary<int, string>();
+            private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
+            private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
@@ -705,9 +705,11 @@ namespace System.Management.Automation
                 };
 
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
+                /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    StatMask[] permissions = new StatMask[] {
+                    StatMask[] permissions = new StatMask[]
+                    {
                         StatMask.OwnerRead,
                         StatMask.OwnerWrite,
                         StatMask.OwnerExecute,
@@ -781,7 +783,7 @@ namespace System.Management.Automation
                 public string GetUserName()
                 {
                     string username;
-                    if (UsernameCache.TryGetValue(UserId, out username))
+                    if (usernameCache.TryGetValue(UserId, out username))
                     {
                         return username;
                     }
@@ -789,7 +791,7 @@ namespace System.Management.Automation
                     // Get and add the user name to the cache so we don't need to 
                     // have a pinvoke for each file.
                     username = NativeMethods.GetPwUid(UserId);
-                    UsernameCache.Add(UserId, username);
+                    usernameCache.Add(UserId, username);
 
                     return username;
                 }
@@ -798,10 +800,11 @@ namespace System.Management.Automation
                 /// Get the group name. This is used in formatting, but we shouldn't
                 /// do the pinvoke this unless we're going to use it.
                 /// </summary>
+                /// <returns>The name of the group.</returns>
                 public string GetGroupName()
                 {
                     string groupname;
-                    if (GroupnameCache.TryGetValue(GroupId, out groupname))
+                    if (groupnameCache.TryGetValue(GroupId, out groupname))
                     {
                         return groupname;
                     }
@@ -809,7 +812,7 @@ namespace System.Management.Automation
                     // Get and add the group name to the cache so we don't need to 
                     // have a pinvoke for each file.
                     groupname = NativeMethods.GetGrGid(GroupId);
-                    GroupnameCache.Add(GroupId, groupname);
+                    groupnameCache.Add(GroupId, groupname);
 
                     return groupname;
                 }
@@ -832,7 +835,7 @@ namespace System.Management.Automation
 
             /// <summary>Determine if the item is a hardlink.</summary>
             /// <param name="fs">A FileSystemInfo to check to determine if it is a hardlink.</param>
-            /// <returns>A boolean</returns>
+            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
             public static bool IsHardLink(FileSystemInfo fs)
             {
                 if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -896,7 +899,8 @@ namespace System.Management.Automation
                     {
                         cs.ItemType = ItemType.NamedPipe;
                     }
-                    else {
+                    else
+                    {
                         cs.ItemType = ItemType.Socket;
                     }
 
@@ -905,7 +909,6 @@ namespace System.Management.Automation
                     cs.IsSticky = css.IsSticky == 1;
 
                     return cs;
-
             }
 
             /// <summary>Get the lstat info from a path.</summary>
@@ -942,10 +945,10 @@ namespace System.Management.Automation
             public static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
+
                 // read /proc/<pid>/stat
                 // 4th column will contain the ppid, 92 in the example below
                 // ex: 93 (bash) S 92 93 2 4294967295 ...
-
                 var path = $"/proc/{pid}/stat";
                 try
                 {
@@ -970,7 +973,6 @@ namespace System.Management.Automation
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-
                 // C bools are 1 byte and so must be marshaled as I1
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
@@ -995,20 +997,28 @@ namespace System.Management.Automation
                 {
                     /// <summary>Seconds (0-60).</summary>
                     internal int tm_sec;
+
                     /// <summary>Minutes (0-59).</summary>
                     internal int tm_min;
+
                     /// <summary>Hours (0-23).</summary>
                     internal int tm_hour;
+
                     /// <summary>Day of the month (1-31).</summary>
                     internal int tm_mday;
+
                     /// <summary>Month (0-11).</summary>
                     internal int tm_mon;
+
                     /// <summary>The year - 1900.</summary>
                     internal int tm_year;
+
                     /// <summary>Day of the week (0-6, Sunday = 0).</summary>
                     internal int tm_wday;
+
                     /// <summary>Day in the year (0-365, 1 Jan = 0).</summary>
                     internal int tm_yday;
+
                     /// <summary>Daylight saving time.</summary>
                     internal int tm_isdst;
                 }
