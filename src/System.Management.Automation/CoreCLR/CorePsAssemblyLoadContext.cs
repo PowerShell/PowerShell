@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Linq;
 
 namespace System.Management.Automation
 {
@@ -531,7 +531,7 @@ namespace System.Management.Automation
             throw new FileNotFoundException(message);
         }
 
-        private static string s_nativeDllSubFolder = null;
+        private static string s_nativeDllSubFolder;
 
         private static string NativeSubFolderName => s_nativeDllSubFolder ?? (s_nativeDllSubFolder = GetNativeDllSubFolderName());
         private static string GetNativeDllSubFolderName()
