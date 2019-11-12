@@ -46,6 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool Enabled { get; private set; }
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
         /// </summary>
@@ -127,6 +128,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSPipelineChainOperators",
                     description: "Allow use of && and || as operators between pipeline invocations"),
+                new ExperimentalFeature(
+                    name: "PSOptimizedProviderObjects",
+                    description: "Low memory usage and CPU cost for FileSystem and Registry PSProperties"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

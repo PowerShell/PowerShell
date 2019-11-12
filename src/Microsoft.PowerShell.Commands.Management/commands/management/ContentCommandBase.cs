@@ -139,98 +139,110 @@ namespace Microsoft.PowerShell.Commands
                 context != null,
                 "The caller should verify the context.");
 
-            PSObject result = PSObject.AsPSObject(content);
-
-            Dbg.Diagnostics.Assert(
-                result != null,
-                "A PSObject should always be constructed.");
-
-            // Use the cached notes if the cache exists and the path is still the same
-            PSNoteProperty note;
-
-            if (_currentContentItem != null &&
-                ((_currentContentItem.PathInfo == pathInfo) ||
-                 (
-                    string.Compare(
-                        pathInfo.Path,
-                        _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase) == 0)
-                    )
+            if (_currentContentItem == null
+                || (_currentContentItem.PathInfo != pathInfo
+                    &&
+                    string.Compare(pathInfo.Path,_currentContentItem.PathInfo.Path, StringComparison.OrdinalIgnoreCase) != 0)
                 )
             {
-                result = _currentContentItem.AttachNotes(result);
-            }
-            else
-            {
                 // Generate a new cache item and cache the notes
-
-                _currentContentItem = new ContentPathsCache(pathInfo);
-
-                // Construct a provider qualified path as the Path note
-                string psPath = pathInfo.Path;
-                note = new PSNoteProperty("PSPath", psPath);
-                result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSPath", psPath);
-                _currentContentItem.PSPath = psPath;
-
+                string parentPath = null;
+                string childName = null;
                 try
                 {
-                    // Now get the parent path and child name
+                    var root = pathInfo.Drive != null ? pathInfo.Drive.Root : string.Empty;
+                    parentPath = SessionState.Path.ParseParent(pathInfo.Path, root, context);
+                    childName = SessionState.Path.ParseChildName(pathInfo.Path, context);
 
-                    string parentPath = null;
-
-                    if (pathInfo.Drive != null)
-                    {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, pathInfo.Drive.Root, context);
-                    }
-                    else
-                    {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
-                    }
-
-                    note = new PSNoteProperty("PSParentPath", parentPath);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
-                    _currentContentItem.ParentPath = parentPath;
-
-                    // Get the child name
-
-                    string childName = SessionState.Path.ParseChildName(pathInfo.Path, context);
-                    note = new PSNoteProperty("PSChildName", childName);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-                    _currentContentItem.ChildName = childName;
                 }
                 catch (NotSupportedException)
                 {
                     // Ignore. The object just won't have ParentPath or ChildName set.
                 }
 
-                // PSDriveInfo
-
-                if (pathInfo.Drive != null)
-                {
-                    PSDriveInfo drive = pathInfo.Drive;
-                    note = new PSNoteProperty("PSDrive", drive);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSDrive", drive);
-                    _currentContentItem.Drive = drive;
-                }
-
-                // ProviderInfo
-
-                ProviderInfo provider = pathInfo.Provider;
-                note = new PSNoteProperty("PSProvider", provider);
-                result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSProvider", provider);
-                _currentContentItem.Provider = provider;
+                _currentContentItem = new ContentPathsCache(pathInfo)
+                  {
+                      PSPath = pathInfo.Path,
+                      ParentPath = parentPath,
+                      ChildName = childName,
+                      Drive = pathInfo.Drive,
+                      Provider = pathInfo.Provider
+                  };
             }
 
-            // Add the ReadCount note
-            note = new PSNoteProperty("ReadCount", readCount);
-            result.Properties.Add(note, true);
+            if (ExperimentalFeature.IsEnabled("PSOptimizedProviderObjects"))
+            {
+                WriteObject(new ContentPSObject(content, pathInfo, _currentContentItem.ParentPath, _currentContentItem.ChildName, readCount));
+                return;
+            }
 
+            PSObject result = PSObject.AsPSObject(content);
+            Dbg.Diagnostics.Assert(
+                result != null,
+                "A PSObject should always be constructed.");
+
+            // Use the cached notes if the cache exists and the path is still the same
+            _currentContentItem.AttachNotes(result);
             WriteObject(result);
+        }
+
+        internal class ContentPSObject : PSObject, IPSObjectExtendedMemberInfo
+        {
+            private readonly PathInfo _pathInfo;
+            private readonly string _parentPath;
+            private readonly string _childName;
+            private readonly long _readCount;
+
+            public ContentPSObject(object obj, PathInfo pathInfo, string parentPath, string childName, long readCount) : base(obj)
+            {
+                _pathInfo = pathInfo;
+                _parentPath = parentPath;
+                _childName = childName;
+                _readCount = readCount;
+            }
+
+            [PSExtensionMember]
+            public PSDriveInfo PSDrive => _pathInfo.Drive;
+
+            [PSExtensionMember]
+            public string PSParentPath => _parentPath;
+
+            [PSExtensionMember]
+            public string PSPath => LocationGlobber.GetProviderQualifiedPath(_pathInfo.Path, _pathInfo.Provider);
+
+            [PSExtensionMember]
+            public string PSChildName => _childName;
+
+            [PSExtensionMember]
+            public long ReadCount => _readCount;
+
+            [PSExtensionMember]
+            public ProviderInfo PSProvider => _pathInfo.Provider;
+
+            public T GetFirstOrDefault<T>(MemberNamePredicate predicate) where T : PSMemberInfo
+            {
+                string GetMatchedPropertyName(MemberNamePredicate pred)
+                {
+                    if (pred(nameof(PSParentPath)))
+                        return nameof(PSParentPath);
+                    if (pred(nameof(PSPath)))
+                        return nameof(PSPath);
+                    if (pred(nameof(PSChildName)))
+                        return nameof(PSChildName);
+                    if (pred(nameof(ReadCount)))
+                        return nameof(ReadCount);
+                    if (pred(nameof(PSProvider)))
+                        return nameof(PSProvider);
+                    return null;
+                }
+
+                var propertyName = GetMatchedPropertyName(predicate);
+                return propertyName == null ? null : DotNetInstanceAdapter.GetDotNetProperty<T>(this, propertyName);
+            }
+
+            T IPSObjectExtendedMemberInfo.GetMember<T>(string name) => DotNetInstanceAdapter.GetDotNetProperty<T>(this, name);
+
+            void IPSObjectExtendedMemberInfo.AddExtensionMembers<T>(PSMemberInfoInternalCollection<T> returnValue) => DotNetInstanceAdapter.AddExtensionProperties(this, returnValue);
         }
 
         /// <summary>

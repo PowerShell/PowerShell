@@ -92,7 +92,7 @@ namespace System.Management.Automation.Provider
         /// The provider information that is stored by the Monad engine.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="providerInformation"/> is null.
+        /// If <paramref name="providerInfoToSet"/> is null.
         /// </exception>
         internal void SetProviderInformation(ProviderInfo providerInfoToSet)
         {
@@ -1794,7 +1794,8 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException("item");
             }
 
-            if (TryGetProviderPSObject(item, PSDriveInfo, out var providerResult))
+            if (ExperimentalFeature.IsEnabled("PSOptimizedProviderObjects")
+                && TryGetProviderPSObject(item, PSDriveInfo, out var providerResult))
             {
                 return providerResult;
             }
