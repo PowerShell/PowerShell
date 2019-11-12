@@ -264,7 +264,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob Runspaces should be cleaned up at completion' {
 
         $script = $WaitForCountFnScript + @'
-
+        $WarningPreference = 'SilentlyContinue'
         try
         {
             Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
@@ -296,7 +296,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob Runspaces should be cleaned up after job removal' {
 
     $script = $WaitForCountFnScript + @'
-
+        $WarningPreference = 'SilentlyContinue'
         try {
             Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
             $rsStartCount = @(Get-Runspace).Count
