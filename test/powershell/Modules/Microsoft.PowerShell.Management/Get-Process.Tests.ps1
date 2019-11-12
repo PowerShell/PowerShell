@@ -92,7 +92,15 @@ Describe "Get-Process" -Tags "CI" {
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {
-    It "Should not have Handle in table format header" {
+    BeforeAll {
+        $skip = $false
+        if ($IsWindows)
+        {
+            # on Windows skip this test until issue #11016 is resolved
+            $skip = $true
+        }
+    }
+    It "Should not have Handle in table format header" -Skip:$skip{
         $types = "System.Diagnostics.Process","System.Diagnostics.Process#IncludeUserName"
 
         foreach ($type in $types) {
