@@ -285,17 +285,12 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// A remoting session that is used to invoke commands that are compartible with Windows PS but not PS Core
-        /// </summary>
-        internal static PSSession WindowsPowerShellCompatRemotingSession = null;
-        
-        /// <summary>
         /// A counter for modules that are loaded using WindowsPS compat session
         /// </summary>
         internal static int WindowsPowerShellCompatUsageCounter = 0;
 
         /// <summary>
-        /// User name for WindowsPS compat remoting session
+        /// Session name for WindowsPS compat remoting session
         /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
         
@@ -4816,11 +4811,28 @@ namespace Microsoft.PowerShell.Commands
             return filePaths;
         }
 
-        internal void CreateWindowsPowerShellCompatResources()
+        internal PSSession GetWindowsPowerShellCompatRemotingSession()
         {
+            PSSession result = null;
+            var commandInfo = new CmdletInfo("Get-PSSession", typeof(GetPSSessionCommand));
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+            ps.AddCommand(commandInfo);
+            ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+            var results = ps.Invoke<PSSession>();
+            if (results.Count > 0)
+            {
+                result = results[0];
+            }
+            return result;
+        }
+
+        internal PSSession CreateWindowsPowerShellCompatResources()
+        {
+            PSSession compatSession = null;
             lock(WindowsPowerShellCompatSyncObject)
             {
-                if (WindowsPowerShellCompatRemotingSession == null)
+                compatSession = GetWindowsPowerShellCompatRemotingSession();
+                if (compatSession == null)
                 {
                     var commandInfo = new CmdletInfo("New-PSSession", typeof(NewPSSessionCommand));
                     using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
@@ -4830,24 +4842,27 @@ namespace Microsoft.PowerShell.Commands
                     var results = ps.Invoke<PSSession>();
                     if (results.Count > 0)
                     {
-                        WindowsPowerShellCompatRemotingSession = results[0];
+                        compatSession = results[0];
+                        System.Threading.Interlocked.Exchange(ref WindowsPowerShellCompatUsageCounter, 0);
                     }
                 }
             }
+
+            return compatSession;
         }
 
         internal void CleanupWindowsPowerShellCompatResources()
         {
             lock(WindowsPowerShellCompatSyncObject)
             {
-                if (WindowsPowerShellCompatRemotingSession != null)
+                var compatSession = GetWindowsPowerShellCompatRemotingSession();
+                if (compatSession != null)
                 {
                     var commandInfo = new CmdletInfo("Remove-PSSession", typeof(RemovePSSessionCommand));
                     using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                     ps.AddCommand(commandInfo);
-                    ps.AddParameter("Session", WindowsPowerShellCompatRemotingSession);
+                    ps.AddParameter("Session", compatSession);
                     ps.Invoke();
-                    WindowsPowerShellCompatRemotingSession = null;
                 }
             }
         }

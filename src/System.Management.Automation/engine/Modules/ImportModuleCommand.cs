@@ -1871,8 +1871,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.UseWindowsPowerShell)
                 {
-                    CreateWindowsPowerShellCompatResources();
-
+                    var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
                     if (WindowsPowerShellCompatRemotingSession != null)
                     {
                         foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, this.FullyQualifiedName, WindowsPowerShellCompatRemotingSession, true))
