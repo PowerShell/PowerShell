@@ -6244,17 +6244,7 @@ namespace System.Management.Automation.Language
 
             var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
 
-            if (nullConditional)
-            {
-                return Expression.IfThenElse(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, target.Cast(typeof(object))),
-                    ExpressionCache.NullConstant,
-                    dynamicExprFromBinder);
-            }
-            else
-            {
-                return dynamicExprFromBinder;
-            }
+            return nullConditional ? GetNullCheckExpressionBlock(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
         private Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
