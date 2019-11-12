@@ -161,14 +161,22 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
-                        var entries = Directory.GetFileSystemEntries(exactPath, item);
-                        if (entries.Length > 0)
+                        try
                         {
-                            exactPath = entries.First();
+                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            if (entries.Length > 0)
+                            {
+                                exactPath = entries.First();
+                            }
+                            else
+                            {
+                                // If previous call didn't return anything, something failed so we just return the path we were given
+                                return path;
+                            }
                         }
-                        else
+                        catch
                         {
-                            // If previous call didn't return anything, something failed so we just return the path we were given
+                            // If we can't enumerate, we stop and just return the original path
                             return path;
                         }
                     }
