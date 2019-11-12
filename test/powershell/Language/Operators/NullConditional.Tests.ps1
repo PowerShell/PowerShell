@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'NullConditionalOperations' -Tags 'CI' {
+Describe 'NullCoalesceOperations' -Tags 'CI' {
     BeforeAll {
 
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCoalescingOperators')
@@ -232,6 +232,57 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
         }
     }
 
+    Context 'Combined usage of null conditional operators' {
+
+        BeforeAll {
+            function GetNull {
+                return $null
+            }
+
+            function GetHello {
+                return "Hello"
+            }
+        }
+
+        BeforeEach {
+            $x = $null
+        }
+
+        It '?? and ??= used together' {
+            $x ??= 100 ?? 200
+            $x | Should -Be 100
+        }
+
+        It '?? and ??= chaining' {
+            $x ??= $x ?? (GetNull) ?? (GetHello)
+            $x | Should -BeExactly 'Hello'
+        }
+
+        It 'First two are null' {
+            $z ??= $null ?? 100
+            $z | Should -Be 100
+        }
+    }
+}
+
+Describe 'NullConditionalMemberAccess' -Tag 'CI' {
+
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
     Context '?. operator tests' {
         BeforeAll {
             $psObj = [psobject]::new()
@@ -285,7 +336,8 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
             $x.name | Should -BeExactly 'newValue'
 
             ${x}?.doesnotexist = 'newValue'
-            $x.doesnotexist | Should -BeExactly 'newValue'        }
+            $x.doesnotexist | Should -BeExactly 'newValue'
+        }
     }
 
     Context '?[] operator tests' {
@@ -333,38 +385,6 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
 
             ${x}?[-1] = 100
             $x[-1] | Should -Be 100
-        }
-    }
-
-    Context 'Combined usage of null conditional operators' {
-
-        BeforeAll {
-            function GetNull {
-                return $null
-            }
-
-            function GetHello {
-                return "Hello"
-            }
-        }
-
-        BeforeEach {
-            $x = $null
-        }
-
-        It '?? and ??= used together' {
-            $x ??= 100 ?? 200
-            $x | Should -Be 100
-        }
-
-        It '?? and ??= chaining' {
-            $x ??= $x ?? (GetNull) ?? (GetHello)
-            $x | Should -BeExactly 'Hello'
-        }
-
-        It 'First two are null' {
-            $z ??= $null ?? 100
-            $z | Should -Be 100
         }
     }
 }
