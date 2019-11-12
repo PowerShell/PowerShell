@@ -1180,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
             string relPath = _path;
             if (!relPath.Equals(inputStream))
             {
-                if (relPath.StartsWith(directory, StringComparison.CurrentCultureIgnoreCase))
+                if (relPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase))
                 {
                     int offset = directory.Length;
                     if (offset < relPath.Length)
