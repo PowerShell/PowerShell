@@ -73,13 +73,13 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
         It "Should retrieve the user name for the file" -skip:$skipTest {
             $i = Get-Item ${testFile}
-            $user = (/bin/ls -ld /tmp/foo).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[2]
+            $user = (/bin/ls -ld $testFile).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[2]
             $i.User | Should -Be $user
         }
 
         It "Should retrieve the group name for the file" -skip:$skipTest {
             $i = Get-Item ${testFile}
-            $group = (/bin/ls -ld /tmp/foo).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[3]
+            $group = (/bin/ls -ld $testFile).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[3]
             $i.Group | Should -Be $Group
         }
 
