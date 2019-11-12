@@ -690,90 +690,84 @@ namespace System.Management.Automation
                 /// <summary>Whether the filesystem item has the sticky bit enabled. This is only available for directories.</summary>
                 public bool IsSticky;
 
+                private const char read = 'r';
+                private const char write = 'w';
+                private const char execute = 'x';
                 // helper for getting unix mode
-                private Dictionary<StatMask, string> modeMap = new Dictionary<StatMask, string>()
+                private Dictionary<StatMask, char> modeMap = new Dictionary<StatMask, char>()
                 {
-                        { StatMask.OwnerRead, "r" },
-                        { StatMask.OwnerWrite, "w" },
-                        { StatMask.OwnerExecute, "x" },
-                        { StatMask.GroupRead, "r" },
-                        { StatMask.GroupWrite, "w" },
-                        { StatMask.GroupExecute, "x" },
-                        { StatMask.OtherRead, "r" },
-                        { StatMask.OtherWrite, "w" },
-                        { StatMask.OtherExecute, "x" },
+                        { StatMask.OwnerRead, read },
+                        { StatMask.OwnerWrite, write },
+                        { StatMask.OwnerExecute, execute },
+                        { StatMask.GroupRead, read },
+                        { StatMask.GroupWrite, write },
+                        { StatMask.GroupExecute, execute },
+                        { StatMask.OtherRead, read },
+                        { StatMask.OtherWrite, write },
+                        { StatMask.OtherExecute, execute },
+                };
+
+                private StatMask[] permissions = new StatMask[]
+                {
+                    StatMask.OwnerRead,
+                    StatMask.OwnerWrite,
+                    StatMask.OwnerExecute,
+                    StatMask.GroupRead,
+                    StatMask.GroupWrite,
+                    StatMask.GroupExecute,
+                    StatMask.OtherRead,
+                    StatMask.OtherWrite,
+                    StatMask.OtherExecute
+                };
+
+                // The item type and the character representation for the first element in the stat string
+                private Dictionary<ItemType, char> itemTypeTable = new Dictionary<ItemType, char>()
+                {
+                    { ItemType.BlockDevice, 'b' },
+                    { ItemType.CharacterDevice, 'c' },
+                    { ItemType.Directory, 'd' },
+                    { ItemType.File, '-' },
+                    { ItemType.NamedPipe, 'p' },
+                    { ItemType.Socket, 's' },
+                    { ItemType.SymbolicLink, 'l' },
                 };
 
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    StatMask[] permissions = new StatMask[]
-                    {
-                        StatMask.OwnerRead,
-                        StatMask.OwnerWrite,
-                        StatMask.OwnerExecute,
-                        StatMask.GroupRead,
-                        StatMask.GroupWrite,
-                        StatMask.GroupExecute,
-                        StatMask.OtherRead,
-                        StatMask.OtherWrite,
-                        StatMask.OtherExecute
-                    };
+                    int offset = 0;
+                    char[] modeCharacters = new char[10];
+                    modeCharacters[offset++] = itemTypeTable[ItemType];
 
-                    // start the mode string with the ItemType
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    switch (ItemType)
-                    {
-                        case ItemType.Directory:
-                            sb.Append("d");
-                            break;
-                        case ItemType.BlockDevice:
-                            sb.Append("b");
-                            break;
-                        case ItemType.CharacterDevice:
-                            sb.Append("c");
-                            break;
-                        case ItemType.SymbolicLink:
-                            sb.Append("l");
-                            break;
-                        case ItemType.Socket:
-                            sb.Append("s");
-                            break;
-                        case ItemType.NamedPipe:
-                            sb.Append("p");
-                            break;
-                        default:
-                            sb.Append("-");
-                            break;
-                    }
-                    
                     foreach (StatMask permission in permissions)
                     {
+                        // determine whether we are setuid, sticky, or the usual rwx.
                         if ((Mode & (int)permission) == (int)permission)
                         {
                             if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
                             {
                                 // Check for setuid and add 's'
-                                sb.Append("s");
+                                modeCharacters[offset] = 's';
                             }
                             else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
                             {
                                 // Directories are sticky, rather than setuid
-                                sb.Append("t");
+                                modeCharacters[offset] = 't';
                             }
                             else
                             {
-                                sb.Append(modeMap[permission]);
+                                modeCharacters[offset] = modeMap[permission];
                             }
                         }
                         else
                         {
-                            sb.Append("-");
+                            modeCharacters[offset] = '-';
                         }
+                        offset++;
                     }
 
-                    return sb.ToString();
+                    return new string(modeCharacters);
                 }
                 
                 /// <summary>
@@ -1024,7 +1018,7 @@ namespace System.Management.Automation
                     internal int tm_isdst;
                 }
 
-                // We need a way to convert a DateTime to a unix date.j
+                // We need a way to convert a DateTime to a unix date.
                 internal static UnixTm DateTimeToUnixTm(DateTime date)
                 {
                     UnixTm tm;

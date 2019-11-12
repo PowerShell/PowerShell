@@ -4,10 +4,7 @@ Describe "UnixFileSystem additions" -Tag "CI" {
     # if PSUnixFileStat is converted from an experimental feature, these tests will need to be changed
     BeforeAll {
         $experimentalFeatureName = "PSUnixFileStat"
-        $skipTest = $true
-        if ( Get-ExperimentalFeature -Name $experimentalFeatureName ) {
-            $skipTest = $false
-        }
+        $skipTest = -not $EnabledExperimentalFeatures.Contains($experimentalFeatureName)
     }
     Context "Basic Validation" {
 
@@ -122,6 +119,5 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
         }
     }
-
 
 }
