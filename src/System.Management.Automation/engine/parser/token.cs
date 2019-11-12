@@ -422,10 +422,10 @@ namespace System.Management.Automation.Language
         /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 102,
 
-        /// <summary>The null conditional member access operator '?.'./// </summary>
+        /// <summary>The null conditional member access operator '?.'.</summary>
         QuestionDot = 103,
 
-        /// <summary>The null conditional index access operator '?[]'./// </summary>
+        /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
         #endregion Operators

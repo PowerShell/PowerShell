@@ -7852,7 +7852,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Construct an ast to reference a property.
+        /// Initializes a new instance of <see cref="MemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
@@ -7861,9 +7861,9 @@ namespace System.Management.Automation.Language
         /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
         /// <param name="member">The name or expression naming the member to access.</param>
         /// <param name="static">True if the '::' operator was used, false if '.' is used.
-        /// <param name="nullConditionalAccess">True if the operator used is ?. or ?[]</param>
         /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
         /// </param>
+        /// <param name="nullConditionalAccess">True if the operator used is ?. or ?[].</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
         /// </exception>
@@ -7899,7 +7899,7 @@ namespace System.Management.Automation.Language
         public bool Static { get; private set; }
 
         /// <summary>
-        /// True if the operator used is ?. or ?[].
+        /// Gets a value indication true if the operator used is ?. or ?[].
         /// </summary>
         public bool NullConditionalAccess { get; private set; }
 
@@ -7972,7 +7972,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Construct an instance of a method invocation expression.
+        /// Initializes a new instance of <see cref="InvokeMemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
@@ -7982,9 +7982,9 @@ namespace System.Management.Automation.Language
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
-        /// <param name="nullConditionalAccess">True if the operator used is ?.</param>
         /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
         /// </param>
+        /// <param name="nullConditionalAccess">True if the operator used is ?.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
@@ -10285,7 +10285,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Construct an ast for an index expression.
+        /// Initializes a new instance of <see cref="IndexExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="target">The expression being indexed.</param>
@@ -10309,8 +10309,6 @@ namespace System.Management.Automation.Language
             this.NullConditionalAccess = nullConditionalAccess;
         }
 
-
-
         /// <summary>
         /// Return the ast for the expression being indexed.  This value is never null.
         /// </summary>
@@ -10322,7 +10320,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
-        /// Access the index only if the target is not null.
+        /// Gets a value indication whether ?[] operator is being used.
         /// </summary>
         public bool NullConditionalAccess { get; private set; }
 
