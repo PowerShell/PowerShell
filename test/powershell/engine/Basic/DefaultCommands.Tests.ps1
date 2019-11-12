@@ -545,7 +545,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $currentDisplayNameAliasList = $currentAliasList | Select-Object -ExpandProperty DisplayName
         $aliasDisplayNameAliasList  = $aliasFullList | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
 
-        $result = Compare-Object -ReferenceObject $get-module -DifferenceObject $aliasDisplayNameAliasList
+        $result = Compare-Object -ReferenceObject $currentDisplayNameAliasList -DifferenceObject $aliasDisplayNameAliasList
 
         # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
         # if all aliases is Ok we output nothing
