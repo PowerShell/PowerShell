@@ -255,6 +255,8 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
 
             (Get-Process -Id $pid)?.Name | Should -BeLike "pwsh*"
             (Get-Item $TestDrive)?.EnumerateFiles()?.Name | Should -BeExactly 'testfile.txt'
+
+            [int32]::MaxValue?.ToString() | Should -BeExactly '2147483647'
         }
 
         It 'Can get null when variable is null' {
