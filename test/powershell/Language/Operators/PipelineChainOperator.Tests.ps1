@@ -221,7 +221,6 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
                     continue
                 }
 
-
                 $file | Should -FileContentMatchMultiline $expectedValue
             }
         }
