@@ -248,16 +248,16 @@ try
         }
 
         AfterAll {
-            Remove-Module $sriptModuleNameA -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameB -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameC -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameD -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameE -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameF -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameG -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameH -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameI -Force -ErrorAction SilentlyContinue
-            Remove-Module $sriptModuleNameJ -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameA -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameB -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameC -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameD -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameE -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameF -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameG -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameH -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameI -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameJ -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies that importing trusted module in system lockdown which dot sources a ps1 file while exporting all functions with wildcard throws expected error" {
@@ -1075,7 +1075,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-                Remove-Module ImportTrustedManifestWithCmdletExport_System32 -Force -ErrorAction ImportTrustedManifestWithCmdletExport_System32
+                Remove-Module ImportTrustedManifestWithCmdletExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -1554,7 +1554,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-                Remove-Module -ModuleInfo UntrustedScriptFoo -Force -ErrorAction SilentlyContinue
+                Remove-Module UntrustedScriptFoo -Force -ErrorAction SilentlyContinue
             }
 
             $result | Should -BeExactly "ConstrainedLanguage"
