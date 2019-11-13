@@ -1269,6 +1269,7 @@ namespace System.Management.Automation
                 {
                     insertIndex += personalModulePath.Length + 1;
                 }
+
                 currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
 
                 insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath);
@@ -1276,6 +1277,7 @@ namespace System.Management.Automation
                 {
                     insertIndex += sharedModulePath.Length + 1;
                 }
+
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
@@ -1296,17 +1298,16 @@ namespace System.Management.Automation
 #if !UNIX
         /// <summary>
         /// Returns a PSModulePath suiteable for Windows PowerShell by removing this PowerShell's specific
-        /// paths from current PSModulePath and appending it to fresh PSModulePath from registry removing
-        /// any paths the user may have removed explicitly.
+        /// paths from current PSModulePath.
         /// </summary>
+        /// <returns>
+        /// Returns appropriate PSModulePath for Windows PowerShell.
+        /// </returns>
         internal static string GetWindowsPowerShellModulePath()
         {
             string currentModulePath = GetModulePath();
 
-            currentModulePath = currentModulePath.
-                Replace(GetPersonalModulePath(), "").
-                Replace(GetSharedModulePath(), "").
-                Replace(GetPSHomeModulePath(), "");
+            currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
 
             var modulePathList = new List<string>();
             foreach (var path in currentModulePath.Split(';'))
