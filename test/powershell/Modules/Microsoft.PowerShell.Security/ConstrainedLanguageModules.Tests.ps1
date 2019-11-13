@@ -236,8 +236,8 @@ try
             "@{ ModuleVersion='1.0'; RootModule='$moduleFilePathI' }" | Out-File $moduleManifestPathI
 
             # Module with using directive
-            $sriptModuleNameJ = "ModuleWithUsing_System32"
-            $moduleFilePathJ = Join-Path $TestModulePath ($sriptModuleNameJ + ".psm1")
+            $scriptModuleNameJ = "ModuleWithUsing_System32"
+            $moduleFilePathJ = Join-Path $TestModulePath ($scriptModuleNameJ + ".psm1")
             @'
             using module {0}
             function PublicUsingFn {{ [Class1]::GetMessage() }}
