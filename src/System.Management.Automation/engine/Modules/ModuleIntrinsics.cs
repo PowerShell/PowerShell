@@ -1309,19 +1309,24 @@ namespace System.Management.Automation
         {
             string currentModulePath = GetModulePath();
 
-            currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
-
-            var modulePathList = new List<string>();
-            foreach (var path in currentModulePath.Split(';'))
+            if (currentModulePath != null)
             {
-                // skip empty paths we removed
-                if (!string.IsNullOrEmpty(path))
+                currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
+
+                var modulePathList = new List<string>();
+                foreach (var path in currentModulePath.Split(';'))
                 {
-                    modulePathList.Add(path);
+                    // skip empty paths we removed
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        modulePathList.Add(path);
+                    }
                 }
+
+                return string.Join(Path.PathSeparator, modulePathList.ToArray());
             }
 
-            return string.Join(Path.PathSeparator, modulePathList.ToArray());
+            return null;
         }
 #endif
 

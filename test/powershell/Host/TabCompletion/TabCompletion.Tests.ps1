@@ -17,9 +17,10 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete abbreviated function' {
-        $res = (TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        function Test-AbbreviatedFunctionExpansion {}
+        $res = (TabExpansion2 -inputScript 't-afe' -cursorColumn 't-afe'.Length).CompletionMatches.CompletionText
         $res.Count | Should -BeGreaterOrEqual 1
-        $res | Should -BeExactly 'PSConsoleHostReadLine'
+        $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {

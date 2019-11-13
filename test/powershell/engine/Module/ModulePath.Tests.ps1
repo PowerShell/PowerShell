@@ -74,7 +74,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "ignore pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
+    It "works with pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
@@ -88,14 +88,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
             $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
-            if ($IsWindows)
-            {
-                $paths.Count | Should -Be 4
-            }
-            else
-            {
-                $paths.Count | Should -Be 3
-            }
+            $paths.Count | Should -Be 4
 
             $paths[0] | Should -Be $expectedUserPath
             $paths[1] | Should -Be $expectedSharedPath
@@ -157,7 +150,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It 'Windows PowerShell does not inherit PowerShell paths' -Skip:(!$IsWindows) {
         $out = powershell.exe -noprofile -command '$env:PSModulePath'
-        $out | Should -Not -BeLike '*\powershell\*'
+        $out | Should -Not -Contain $expectedUserPath
+        $out | Should -Not -Contain $expectedSharedPath
+        $out | Should -Not -Contain $expectedSystemPath
     }
 
     It 'Windows PowerShell inherits user added paths' -Skip:(!$IsWindows) {
