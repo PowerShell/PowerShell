@@ -1835,8 +1835,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                StringComparison compareOption = CaseSensitive ?
-                    StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
                 while (patternIndex < Pattern.Length)
                 {
                     string pat = Pattern[patternIndex];
