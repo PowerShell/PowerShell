@@ -72,7 +72,7 @@ namespace System.Management.Automation.Runspaces
             if (!string.IsNullOrWhiteSpace(workingDirectory))
             {
                 _startInfo.ArgumentList.Add("-wd");
-                _startInfo.ArgumentList.Add(workingDirectory.Replace("\"", "\"\""));
+                _startInfo.ArgumentList.Add(workingDirectory);
             }
 
             if (initializationScript != null)
