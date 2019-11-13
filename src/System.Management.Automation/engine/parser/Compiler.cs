@@ -3270,6 +3270,31 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private bool MustSetSuccessAfterEvaluating(StatementBlockAst statementBlockAst)
+        {
+            if (statementBlockAst.Traps != null && statementBlockAst.Traps.Count > 0)
+            {
+                return false;
+            }
+
+            if (statementBlockAst.Statements == null)
+            {
+                return true;
+            }
+
+            switch (statementBlockAst.Statements.Count)
+            {
+                case 0:
+                    return true;
+
+                case 1:
+                    return MustSetSuccessAfterEvaluating(statementBlockAst.Statements[0]);
+
+                default:
+                    return false;
+            }
+        }
+
         private bool MustSetSuccessAfterEvaluating(ExpressionAst expressionAst)
         {
             switch (expressionAst)
@@ -3282,6 +3307,12 @@ namespace System.Management.Automation.Language
                     // The compiler already adds the needed $? = $true when compiling the statement block,
                     // so no need to add extra runtime overhead here.
                     return false;
+
+                case ArrayExpressionAst arrayExpressionAst:
+                    // ArrayExpressionAsts can contain statement blocks,
+                    // but may still be optimised when the underlying expression is pure.
+                    // So we must check here.
+                    return MustSetSuccessAfterEvaluating(arrayExpressionAst.SubExpression);
 
                 default:
                     return true;
