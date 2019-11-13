@@ -3223,8 +3223,15 @@ namespace System.Management.Automation.Language
             }
         }
 
+        /// <summary>
+        /// Determines whether a statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="statementAst">The statement to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool MustSetSuccessAfterEvaluating(StatementAst statementAst)
         {
+            // Simple overload fan out
             switch (statementAst)
             {
                 case PipelineAst pipelineAst:
@@ -3236,18 +3243,32 @@ namespace System.Management.Automation.Language
             }
         }
 
+        /// <summary>
+        /// Determines whether a pipeline must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="pipelineAst">The pipeline to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool MustSetSuccessAfterEvaluating(PipelineAst pipelineAst)
         {
             ExpressionAst expressionAst = pipelineAst.GetPureExpression();
 
+            // If the pipeline is not a simple expression, it will set $?
             if (expressionAst == null)
             {
                 return false;
             }
 
+            // Expressions may still set $? themselves, so dig deeper
             return MustSetSuccessAfterEvaluating(expressionAst);
         }
 
+        /// <summary>
+        /// Determines whether an assignment statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="assignmentStatementAst">The assignment statement to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool MustSetSuccessAfterEvaluating(AssignmentStatementAst assignmentStatementAst)
         {
             // Get right-most RHS in cases like $x = $y = <expr>
@@ -3257,6 +3278,7 @@ namespace System.Management.Automation.Language
                 innerRhsStatementAst = rhsAssignmentAst.Right;
             }
 
+            // Simple assignments to pure expressions may need $? set, so examine the RHS statement for pure expressions
             switch (innerRhsStatementAst)
             {
                 case CommandExpressionAst commandExpression:
@@ -3270,26 +3292,40 @@ namespace System.Management.Automation.Language
             }
         }
 
+        /// <summary>
+        /// Determines whether an expression in a statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="expressionAst">The expression to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool MustSetSuccessAfterEvaluating(ExpressionAst expressionAst)
         {
             switch (expressionAst)
             {
                 case ParenExpressionAst parenExpression:
+                    // Pipelines in paren expressions that are just pure expressions will need $? set
+                    // e.g. ("Hi"), vs (Test-Path ./here.txt)
                     return MustSetSuccessAfterEvaluating(parenExpression.Pipeline);
 
                 case SubExpressionAst subExpressionAst:
+                    // Subexpressions generally set $? since they encapsulate a statement block
+                    // But $() requires an explicit setting
                     return subExpressionAst.SubExpression.Statements.Count == 0;
 
                 case ArrayExpressionAst arrayExpressionAst:
                     switch (arrayExpressionAst.SubExpression.Statements.Count)
                     {
                         case 0:
+                            // @() needs $? set
                             return true;
 
                         case 1:
+                            // Pure, single statement expressions need $? set
+                            // For example @("One") and @("One", "Two")
                             return MustSetSuccessAfterEvaluating(arrayExpressionAst.SubExpression.Statements[0]);
 
                         default:
+                            // Arrays with multiple statements in them will have $? set
                             return false;
                     }
 
