@@ -1249,9 +1249,11 @@ namespace System.Management.Automation
                     currentProcessModulePath += hklmMachineModulePath; // += EVT.Machine
                 }
 
+#if !UNIX
                 // Add Windows Modules path
                 currentProcessModulePath += Path.PathSeparator;
                 currentProcessModulePath += GetWindowsPowerShellPSHomeModulePath();
+#endif
             }
             // EVT.Process exists
             // Now handle the case where the environment variable is already set.
