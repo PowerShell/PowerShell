@@ -40,6 +40,8 @@ Describe 'Tests for setting $? for execution success' -Tag 'CI' {
             @{ Script = 'Write-Error "Bad"; $(); Hook $?'; Results = @($true) }
             @{ Script = '$(Write-Error "Bad"); Hook $?; Hook $?'; Results = @($false, $true) }
             @{ Script = '$(testexe -returncode 1); Hook $?; Hook $?'; Results = @($false, $true) }
+            @{ Script = 'Write-Error "Bad"; $(trap { continue }); Hook $?'; Results = @($true) }
+            @{ Script = 'Write-Error "Bad"; $(trap { continue } "Hi"); Hook $?'; Results = @($true) }
 
             # Array expressions
             @{ Script = '@("Hi"); Hook $?'; Results = @($true) }
@@ -48,6 +50,9 @@ Describe 'Tests for setting $? for execution success' -Tag 'CI' {
             @{ Script = 'Write-Error "Bad"; @(); Hook $?'; Results = @($true) }
             @{ Script = 'Write-Error "Bad"; @("Hi", "There"); Hook $?'; Results = @($true) }
             @{ Script = 'Write-Error "Bad"; @("Hi"; "There"); Hook $?'; Results = @($true) }
+            @{ Script = 'Write-Error "Bad"; @(trap { continue }); Hook $?'; Results = @($true) }
+            @{ Script = 'Write-Error "Bad"; @(trap { continue } "Hi"); Hook $?'; Results = @($true) }
+            @{ Script = 'Write-Error "Bad"; @(trap { continue } "Hi", "There"); Hook $?'; Results = @($true) }
             @{ Script = '@(Write-Error "Bad"); Hook $?; Hook $?'; Results = @($false, $true) }
             @{ Script = '@(Write-Error "Bad"; "Hi"); Hook $?; Hook $?'; Results = @($true, $true) }
             @{ Script = '@("Hi"; Write-Error "Bad"); Hook $?; Hook $?'; Results = @($false, $true) }
