@@ -41,7 +41,7 @@ function New-EditionCompatibleModule
 
     New-Item -Path $modulePath -ItemType Directory
 
-    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true }"
+    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true } function Test-$($ModuleName)PSEdition { `$PSVersionTable.PSEdition }" -Force
 
     if ($CompatiblePSEditions)
     {
@@ -117,11 +117,11 @@ function New-TestNestedModule
     if ($UseRootModule)
     {
         $newManifestCmd += "-RootModule $RootModuleFilename "
-        $newManifestCmd += "-FunctionsToExport @('Test-RootModule') "
+        $newManifestCmd += "-FunctionsToExport @('Test-RootModule','Test-RootModulePSEdition') "
     }
     else
     {
-        $newManifestCmd += "-FunctionsToExport @('Test-ScriptModule') "
+        $newManifestCmd += "-FunctionsToExport @('Test-ScriptModule','Test-ScriptModulePSEdition') "
     }
 
     $newManifestCmd += "-CmdletsToExport @() -VariablesToExport @() -AliasesToExport @() "
@@ -248,6 +248,10 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
         $allModules = ($successCases + $failCases).ModuleName
 
+        # make sure there are no ImplicitRemoting leftovers from previous tests
+        Get-Module | Where-Object {$_.PrivateData.ImplicitRemoting} | Remove-Module -Force
+        Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
+
         # Emulate the System32 module path for tests
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $basePath)
     }
@@ -289,6 +293,13 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             Import-Module $ModuleName -SkipEditionCheck -Force
             & "Test-$ModuleName" | Should -Be $Result
         }
+
+        It "Imports any module using WinCompat from the module path with -UseWindowsPowerShell with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            Import-Module $ModuleName -UseWindowsPowerShell -Force
+            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
+        }
     }
 
     Context "Imports from absolute path" {
@@ -317,6 +328,37 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
             Import-Module $path -SkipEditionCheck -Force
             & "Test-$ModuleName" | Should -Be $Result
+        }
+
+        It "Imports any module using WinCompat from an absolute path with -UseWindowsPowerShell with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            $path = Join-Path -Path $basePath -ChildPath $ModuleName
+
+            Import-Module $path -UseWindowsPowerShell -Force
+            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
+        }
+    }
+
+    Context "Imports using CommandDiscovery\ModuleAutoload" {
+        BeforeAll {
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Successfully auto-imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            & "Test-$ModuleName" | Should -Be $Result
+        }
+
+        It "Successfully auto-imports incompatible modules from the module path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
         }
     }
 }
@@ -671,6 +713,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             UseRootModule = @($true, $false)
             UseAbsolutePath = @($true, $false)
             MarkedEdition = @($null, "Desktop", "Core", @("Desktop","Core"))
+            UseWindowsPowerShell = @($true, $false)
         }
 
         # Combine all the test conditions into a list of test cases
@@ -691,12 +734,12 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
         # Define nested script module
         $scriptModuleName = "NestedScriptModule"
         $scriptModuleFile = "$scriptModuleName.psm1"
-        $scriptModuleContent = 'function Test-ScriptModule { return $true }'
+        $scriptModuleContent = 'function Test-ScriptModule { return $true } function Test-ScriptModulePSEdition { $PSVersionTable.PSEdition }'
 
         # Define root module definition
         $rootModuleName = "RootModule"
         $rootModuleFile = "$rootModuleName.psm1"
-        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule }'
+        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule } function Test-RootModulePSEdition { Test-ScriptModulePSEdition }'
 
         # Module directory structure: $TestDrive/$compatibility/$guid/$moduleName/{module parts}
         $compatibleDir = "Compatible"
@@ -708,6 +751,10 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
         {
             New-Item -Path $basePath -ItemType Directory
         }
+
+        # make sure there are no ImplicitRemoting leftovers from previous tests
+        Get-Module | Where-Object {$_.PrivateData.ImplicitRemoting} | Remove-Module -Force
+        Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
     }
 
     Context "Modules ON the System32 test path" {
@@ -735,8 +782,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             Restore-ModulePath
         }
 
-        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows) {
-            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $testCases -Skip:(-not $IsWindows) {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
 
             New-TestNestedModule `
                 -ModuleBase $moduleBase `
@@ -758,9 +805,18 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                     return
                 }
 
-                if ($SkipEditionCheck)
+                if ($SkipEditionCheck -and $UseWindowsPowerShell)
+                {
+                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                    return
+                }
+                elseif ($SkipEditionCheck)
                 {
                     Import-Module $moduleBase -SkipEditionCheck
+                }
+                elseif ($UseWindowsPowerShell)
+                {
+                    Import-Module $moduleBase -UseWindowsPowerShell
                 }
                 else
                 {
@@ -771,11 +827,21 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 {
                     Test-RootModule | Should -BeTrue
                     { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                    if ($UseWindowsPowerShell)
+                    {
+                        Test-RootModulePSEdition | Should -Be 'Desktop'
+                        { Test-ScriptModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+                    }
                     return
                 }
 
                 Test-ScriptModule | Should -BeTrue
                 { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                if ($UseWindowsPowerShell)
+                {
+                    Test-ScriptModulePSEdition | Should -Be 'Desktop'
+                    { Test-RootModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+                }
                 return
             }
 
@@ -787,9 +853,19 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 return
             }
 
-            if ($SkipEditionCheck)
+
+            if ($SkipEditionCheck -and $UseWindowsPowerShell)
+            {
+                 { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                return
+            }
+            elseif ($SkipEditionCheck)
             {
                 Import-Module $moduleName -SkipEditionCheck
+            }
+            elseif ($UseWindowsPowerShell)
+            {
+                Import-Module $moduleName -UseWindowsPowerShell
             }
             else
             {
@@ -800,11 +876,21 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             {
                 Test-RootModule | Should -BeTrue
                 { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                if ($UseWindowsPowerShell)
+                {
+                    Test-RootModulePSEdition | Should -Be 'Desktop'
+                    { Test-ScriptModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+                }
                 return
             }
 
             Test-ScriptModule | Should -BeTrue
             { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+            if ($UseWindowsPowerShell)
+            {
+                Test-ScriptModulePSEdition | Should -Be 'Desktop'
+                { Test-RootModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+            }
         }
     }
 
@@ -825,8 +911,13 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             Restore-ModulePath
         }
 
-        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases {
-            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $testCases {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
+
+            if ($UseWindowsPowerShell -and (-not $IsWindows))
+            {
+                Set-ItResult -Skipped -Because 'UseWindowsPowerShell parameter is supported only on Windows'
+            }
 
             New-TestNestedModule `
                 -ModuleBase $moduleBase `
@@ -840,18 +931,36 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 
             if ($UseAbsolutePath)
             {
-                if ($SkipEditionCheck)
+                if ($SkipEditionCheck -and $UseWindowsPowerShell)
+                {
+                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                    return
+                }
+                elseif ($SkipEditionCheck)
                 {
                     Import-Module $moduleBase -SkipEditionCheck
+                }
+                elseif ($UseWindowsPowerShell)
+                {
+                    Import-Module $moduleBase -UseWindowsPowerShell
                 }
                 else
                 {
                     Import-Module $moduleBase
                 }
             }
+            elseif ($SkipEditionCheck -and $UseWindowsPowerShell)
+            {
+                { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                return
+            }
             elseif ($SkipEditionCheck)
             {
                 Import-Module $moduleName -SkipEditionCheck
+            }
+            elseif ($UseWindowsPowerShell)
+            {
+                Import-Module $moduleName -UseWindowsPowerShell
             }
             else
             {
@@ -862,11 +971,21 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             {
                 Test-RootModule | Should -BeTrue
                 { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                if ($UseWindowsPowerShell)
+                {
+                    Test-RootModulePSEdition | Should -Be 'Desktop'
+                    { Test-ScriptModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+                }
                 return
             }
 
             Test-ScriptModule | Should -BeTrue
             { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+            if ($UseWindowsPowerShell)
+            {
+                Test-ScriptModulePSEdition | Should -Be 'Desktop'
+                { Test-RootModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
+            }
         }
     }
 }
