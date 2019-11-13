@@ -6185,16 +6185,6 @@ namespace System.Management.Automation.Language
             return GetNullConditionalWrappedExpression(target, memberAccessExpr);
         }
 
-        internal static Expression NullConditionalExpression(Expression target)
-        {
-            Expression targetObj = target.Cast(typeof(object));
-
-            return Expression.Condition(
-                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetObj),
-                ExpressionCache.NullConstant,
-                target);
-        }
-
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(InvokeMemberExpressionAst invokeMemberExpressionAst)
         {
             var arguments = invokeMemberExpressionAst.Arguments;

@@ -326,13 +326,13 @@ Describe 'null conditional member acces statement parsing' -Tag 'CI' {
     }
 
     ShouldBeParseError '[datetime]?::now' ExpectedValueExpression,UnexpectedToken 11,11
-    ShouldBeParseError '$x ?.name' UnexpectedToken 3
+    ShouldBeParseError '$x ?.name' ExpectedValueExpression,UnexpectedToken 4,4
     ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
     ShouldBeParseError '${x}?.' MissingPropertyName 6
     ShouldBeParseError '${x}?.name = "value"' MemberAssignmentNotSupported 0
 
-    ShouldBeParseError '[datetime]?[0]' UnexpectedToken 10
-    ShouldBeParseError '${x} ?[1]' UnexpectedToken 5
+    ShouldBeParseError '[datetime]?[0]' MissingTypename,ExpectedValueExpression,UnexpectedToken 12,11,11
+    ShouldBeParseError '${x} ?[1]' MissingTypename,ExpectedValueExpression,UnexpectedToken 7,6,6
     ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
     ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
     ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
