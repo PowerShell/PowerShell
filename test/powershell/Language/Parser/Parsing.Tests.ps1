@@ -308,6 +308,35 @@ Describe 'null coalescing statement parsing' -Tag "CI" {
     ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 9,17
 }
 
+Describe 'null conditional member acces statement parsing' -Tag 'CI' {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
+    ShouldBeParseError '[datetime]?::now' ExpectedValueExpression,UnexpectedToken 11,11
+    ShouldBeParseError '$x ?.name' UnexpectedToken 3
+    ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
+    ShouldBeParseError '${x}?.' MissingPropertyName 6
+
+    ShouldBeParseError '[datetime]?[0]' UnexpectedToken 10
+    ShouldBeParseError '${x} ?[1]' UnexpectedToken 5
+    ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
+    ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+}
+
 Describe 'splatting parsing' -Tags "CI" {
     ShouldBeParseError '@a' SplattingNotPermitted 0
     ShouldBeParseError 'foreach (@a in $b) {}' SplattingNotPermitted 9
