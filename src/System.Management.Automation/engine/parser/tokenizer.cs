@@ -5034,23 +5034,6 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators"))
-                    {
-                        c1 = PeekChar();
-
-                        if (c1 == '.')
-                        {
-                            SkipChar();
-                            return this.NewToken(TokenKind.QuestionDot);
-                        }
-
-                        if (c1 == '[')
-                        {
-                            SkipChar();
-                            return this.NewToken(TokenKind.QuestionLBracket);
-                        }
-                    }
-
                     return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
