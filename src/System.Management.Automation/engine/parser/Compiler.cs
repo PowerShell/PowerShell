@@ -6176,17 +6176,13 @@ namespace System.Management.Automation.Language
             var target = CompileExpressionOperand(memberExpressionAst.Expression);
 
             // If the ?. operator is used for null conditional check, add the null conditional expression.
-            target = memberExpressionAst.NullConditionalAccess ? NullConditionalExpression(target) : target;
-
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
-            {
-                string name = memberNameAst.Value;
-                return DynamicExpression.Dynamic(PSGetMemberBinder.Get(name, _memberFunctionType, memberExpressionAst.Static), typeof(object), target);
-            }
+            Expression memberAccessExpr = memberNameAst != null
+                ? DynamicExpression.Dynamic(
+                    PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
+                : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
 
-            var memberNameExpr = Compile(memberExpressionAst.Member);
-            return DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, memberNameExpr);
+            return GetNullConditionalWrappedExpression(target, memberAccessExpr);
         }
 
         internal static Expression NullConditionalExpression(Expression target)
@@ -6244,7 +6240,7 @@ namespace System.Management.Automation.Language
 
             var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
 
-            return nullConditional ? GetNullCheckExpressionBlock(target, dynamicExprFromBinder) : dynamicExprFromBinder;
+            return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
         private Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
@@ -6283,7 +6279,7 @@ namespace System.Management.Automation.Language
                     args,
                     invokeMemberExpressionAst.Static,
                     propertySet: false,
-                    invokeMemberExpressionAst.NullConditionalAccess
+                    invokeMemberExpressionAst.NullConditional
                     );
             }
 
@@ -6448,22 +6444,21 @@ namespace System.Management.Automation.Language
             // In the former case, the user is requesting an array slice.  In the latter case, they index expression is likely
             // an array (dynamically determined) and they don't want an array slice, they want to use the array as the index
             // expression.
-            if (arrayLiteral != null && arrayLiteral.Elements.Count > 1)
-            {
-                var dynamicExprArrayLiteral = DynamicExpression.Dynamic(
+            Expression indexingExpr = arrayLiteral != null && arrayLiteral.Elements.Count > 1
+                ? DynamicExpression.Dynamic(
                     PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
                     typeof(object),
-                    arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr));
+                    arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr))
+                : DynamicExpression.Dynamic(
+                    PSGetIndexBinder.Get(1, constraints),
+                    typeof(object),
+                    targetExpr,
+                    CompileExpressionOperand(index));
 
-                return indexExpressionAst.NullConditionalAccess ? GetNullCheckExpressionBlock(targetExpr, dynamicExprArrayLiteral) : dynamicExprArrayLiteral;
-
-            }
-
-            var dynamicExprFromBinder = DynamicExpression.Dynamic(PSGetIndexBinder.Get(1, constraints), typeof(object), targetExpr, CompileExpressionOperand(index));
-            return indexExpressionAst.NullConditionalAccess ? GetNullCheckExpressionBlock(targetExpr, dynamicExprFromBinder) : dynamicExprFromBinder;
+            return indexExpressionAst.NullConditional ? GetNullConditionalWrappedExpression(targetExpr, indexingExpr) : indexingExpr;
         }
 
-        internal static Expression GetNullCheckExpressionBlock(Expression targetExpr, Expression memberAccessExpression)
+        private static Expression GetNullConditionalWrappedExpression(Expression targetExpr, Expression memberAccessExpression)
         {
             ParameterExpression varExpr = Expression.Variable(typeof(object));
 
@@ -6537,25 +6532,17 @@ namespace System.Management.Automation.Language
             if (memberNameAst != null)
             {
                 string name = memberNameAst.Value;
-                var expr = DynamicExpression.Dynamic(
+                return DynamicExpression.Dynamic(
                                             PSSetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static),
                                             typeof(object),
                                             CachedTarget ?? GetTargetExpr(compiler), rhs);
-
-                return MemberExpression.NullConditionalAccess ?
-                    Compiler.GetNullCheckExpressionBlock(CachedTarget ?? GetTargetExpr(compiler), expr)
-                    : expr;
             }
 
-            var exprNameNull = DynamicExpression.Dynamic(
+            return DynamicExpression.Dynamic(
                                         PSSetDynamicMemberBinder.Get(compiler._memberFunctionType, MemberExpression.Static),
                                         typeof(object),
                                         CachedTarget ?? GetTargetExpr(compiler),
                                         CachedPropertyExpr ?? GetPropertyExpr(compiler), rhs);
-
-            return MemberExpression.NullConditionalAccess ?
-                    Compiler.GetNullCheckExpressionBlock(CachedTarget ?? GetTargetExpr(compiler), exprNameNull)
-                    : exprNameNull;
         }
     }
 
@@ -6630,13 +6617,11 @@ namespace System.Management.Automation.Language
             var args = GetArgumentExprs(compiler);
             if (memberNameAst != null)
             {
-                var expr = compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
-                return InvokeMemberExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(target, expr) : expr;
+                return compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
             }
 
             var memberNameExpr = GetMemberNameExpr(compiler);
-            var exprNullName = compiler.InvokeDynamicMember(memberNameExpr, constraints, target, args.Append(rhs), @static: false, propertySet: true);
-            return InvokeMemberExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(target, exprNullName) : exprNullName;
+            return compiler.InvokeDynamicMember(memberNameExpr, constraints, target, args.Append(rhs), @static: false, propertySet: true);
         }
     }
 
@@ -6726,9 +6711,7 @@ namespace System.Management.Automation.Language
                                                 temp);
             }
 
-            var retExpr = Expression.Block(new[] { temp }, Expression.Assign(temp, rhs), setExpr, temp);
-
-            return IndexExpressionAst.NullConditionalAccess ? Compiler.GetNullCheckExpressionBlock(targetExpr, retExpr) : retExpr;
+            return Expression.Block(new[] { temp }, Expression.Assign(temp, rhs), setExpr, temp);
         }
     }
 

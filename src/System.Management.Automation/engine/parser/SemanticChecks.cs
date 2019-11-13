@@ -1168,6 +1168,19 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
+        public override AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst)
+        {
+            if (indexExpressionAst.NullConditional && indexExpressionAst.Parent is AssignmentStatementAst)
+            {
+                _parser.ReportError(
+                    indexExpressionAst.Extent,
+                    nameof(ParserStrings.MemberAssignmentNotSupported),
+                    ParserStrings.MemberAssignmentNotSupported);
+            }
+
+            return AstVisitAction.Continue;
+        }
+
         private void CheckMemberAccess(MemberExpressionAst ast)
         {
             // If the member access is not constant, it may be considered suspicious
@@ -1182,6 +1195,14 @@ namespace System.Management.Automation.Language
             if (ast.Static && (typeExpression == null))
             {
                 MarkAstParentsAsSuspicious(ast);
+            }
+
+            if (ast.NullConditional && ast.Parent is AssignmentStatementAst)
+            {
+                _parser.ReportError(
+                    ast.Extent,
+                    nameof(ParserStrings.MemberAssignmentNotSupported),
+                    ParserStrings.MemberAssignmentNotSupported);
             }
         }
 

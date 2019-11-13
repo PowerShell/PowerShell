@@ -7863,24 +7863,14 @@ namespace System.Management.Automation.Language
         /// <param name="static">True if the '::' operator was used, false if '.' is used.
         /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
         /// </param>
-        /// <param name="nullConditionalAccess">True if the operator used is ?. or ?[].</param>
+        /// <param name="nullConditionalAccess">True if '?.' used.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
         /// </exception>
         public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditionalAccess)
-            : base(extent)
+            : this(extent, expression, member, @static)
         {
-            if (expression == null || member == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "member");
-            }
-
-            this.Expression = expression;
-            SetParent(expression);
-            this.Member = member;
-            SetParent(member);
-            this.Static = @static;
-            this.NullConditionalAccess = nullConditionalAccess;
+            this.NullConditional = nullConditionalAccess;
         }
 
         /// <summary>
@@ -7901,7 +7891,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets a value indicating true if the operator used is ?. or ?[].
         /// </summary>
-        public bool NullConditionalAccess { get; private set; }
+        public bool NullConditional { get; internal set; }
 
         /// <summary>
         /// Copy the MemberExpressionAst instance.
@@ -7910,7 +7900,7 @@ namespace System.Management.Automation.Language
         {
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
-            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditionalAccess);
+            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -7989,13 +7979,9 @@ namespace System.Management.Automation.Language
         /// If <paramref name="extent"/> is null.
         /// </exception>
         public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditionalAccess)
-            : base(extent, expression, method, @static, nullConditionalAccess)
+            : this(extent, expression, method, arguments, @static)
         {
-            if (arguments != null && arguments.Any())
-            {
-                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
-                SetParents(Arguments);
-            }
+            this.NullConditional = nullConditionalAccess;
         }
 
         /// <summary>
@@ -8011,7 +7997,7 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
             var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditionalAccess);
+            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -10295,18 +10281,9 @@ namespace System.Management.Automation.Language
         /// If <paramref name="extent"/>, <paramref name="target"/>, or <paramref name="index"/> is null.
         /// </exception>
         public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditionalAccess)
-            : base(extent)
+            : this(extent, target, index)
         {
-            if (target == null || index == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(target == null ? "target" : "index");
-            }
-
-            this.Target = target;
-            SetParent(target);
-            this.Index = index;
-            SetParent(index);
-            this.NullConditionalAccess = nullConditionalAccess;
+            this.NullConditional = nullConditionalAccess;
         }
 
         /// <summary>
@@ -10322,7 +10299,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets a value indicating whether ?[] operator is being used.
         /// </summary>
-        public bool NullConditionalAccess { get; private set; }
+        public bool NullConditional { get; private set; }
 
         /// <summary>
         /// Copy the IndexExpressionAst instance.
@@ -10331,7 +10308,7 @@ namespace System.Management.Automation.Language
         {
             var newTarget = CopyElement(this.Target);
             var newIndex = CopyElement(this.Index);
-            return new IndexExpressionAst(this.Extent, newTarget, newIndex, this.NullConditionalAccess);
+            return new IndexExpressionAst(this.Extent, newTarget, newIndex, this.NullConditional);
         }
 
         #region Visitors

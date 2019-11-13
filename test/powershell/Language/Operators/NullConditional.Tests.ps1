@@ -329,15 +329,6 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         It 'Should throw error when method does not exist' {
             { ${psObj}?.nestedMethod?.NonExistent() } | Should -Throw -ErrorId 'MethodNotFound'
         }
-
-        It 'Should be able to assign value' {
-            $x = @{ name = 'test'}
-            ${x}?.name = 'newValue'
-            $x.name | Should -BeExactly 'newValue'
-
-            ${x}?.doesnotexist = 'newValue'
-            $x.doesnotexist | Should -BeExactly 'newValue'
-        }
     }
 
     Context '?[] operator tests' {
@@ -376,15 +367,6 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         It 'Calling a method on nonexistent item give null' {
             ${dateArray}?[1234]?.ToLongDateString() | Should -BeNullOrEmpty
             ${doesNotExist}?[0]?.MyGetMethod() | Should -BeNullOrEmpty
-        }
-
-        It 'Can set values' {
-            $x = 1..4
-            ${x}?[0] = 5
-            $x[0] | Should -Be 5
-
-            ${x}?[-1] = 100
-            $x[-1] | Should -Be 100
         }
     }
 }

@@ -1072,7 +1072,7 @@ namespace System.Management.Automation.Language
           /* QuestionQuestionEquals */ "??=",
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
-            /*    Reserved slot 6   */ string.Empty,
+            /*     QuestionLBracket */ "?[",
             /*    Reserved slot 7   */ string.Empty,
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,

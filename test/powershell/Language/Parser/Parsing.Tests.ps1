@@ -329,12 +329,14 @@ Describe 'null conditional member acces statement parsing' -Tag 'CI' {
     ShouldBeParseError '$x ?.name' UnexpectedToken 3
     ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
     ShouldBeParseError '${x}?.' MissingPropertyName 6
+    ShouldBeParseError '${x}?.name = "value"' MemberAssignmentNotSupported 0
 
     ShouldBeParseError '[datetime]?[0]' UnexpectedToken 10
     ShouldBeParseError '${x} ?[1]' UnexpectedToken 5
     ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
     ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
     ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[0] = 1' MemberAssignmentNotSupported 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {
