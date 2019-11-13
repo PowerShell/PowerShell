@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 
 using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -1163,40 +1164,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if the current powershell is likely running in following scenarios:
-        ///  - PSCore started on windows [machine-wide env:PSModulePath will influence]
-        ///  - PSCore started from full ps
-        ///  - PSCore started from inbox nano/iot ps
-        /// If it's likely one of them, then we need to clear the current process module path.
-        /// </summary>
-        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath)
-        {
-#if UNIX
-            return false;
-#else
-            Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure personalModulePath not null or empty");
-            Dbg.Assert(sharedModulePath != null, "caller makes sure sharedModulePath is not null");
-
-            const string winSxSModuleDirectory = @"PowerShell\Modules";
-            const string winLegacyModuleDirectory = @"WindowsPowerShell\Modules";
-
-            // The machine-wide and user-wide environment variables are only meaningful for full ps,
-            // so if the current process module path contains any of them, it's likely that the sxs
-            // ps was started directly on windows, or from full ps. The same goes for the legacy personal
-            // and shared module paths.
-            string hklmModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
-            string hkcuModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
-            string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
-            string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
-
-            return (!string.IsNullOrEmpty(hklmModulePath) && currentProcessModulePath.IndexOf(hklmModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
-                   (!string.IsNullOrEmpty(hkcuModulePath) && currentProcessModulePath.IndexOf(hkcuModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
-                   currentProcessModulePath.IndexOf(legacyPersonalModulePath, StringComparison.OrdinalIgnoreCase) != -1 ||
-                   currentProcessModulePath.IndexOf(legacyProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
-#endif
-        }
-
-        /// <summary>
         /// When sxs ps instance B got started from sxs ps instance A, A's pshome module path might
         /// show up in current process module path. It doesn't make sense for B to load modules from
         /// A's pshome module path, so remove it in such case.
@@ -1259,16 +1226,6 @@ namespace System.Management.Automation
             string sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
 
-            if (!string.IsNullOrEmpty(currentProcessModulePath) &&
-                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath))
-            {
-                // Clear the current process module path in the following cases
-                //  - start PSCore on windows [machine-wide env:PSModulePath will influence]
-                //  - start PSCore from full ps
-                //  - start PSCore from inbox nano/iot ps
-                currentProcessModulePath = null;
-            }
-
             // If the variable isn't set, then set it to the default value
             if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
             {
@@ -1291,38 +1248,36 @@ namespace System.Management.Automation
                 {
                     currentProcessModulePath += hklmMachineModulePath; // += EVT.Machine
                 }
+
+                // Add Windows Modules path
+                currentProcessModulePath += Path.PathSeparator;
+                currentProcessModulePath += GetWindowsPowerShellPSHomeModulePath();
             }
             // EVT.Process exists
             // Now handle the case where the environment variable is already set.
             else
             {
-                // When SxS PS instance A starts SxS PS instance B, A's PSHome module path might be inherited by B. We need to remove that path from B
-                currentProcessModulePath = RemoveSxSPsHomeModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, psHomeModulePath);
-
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
 
                 int insertIndex = -1;
-#if !UNIX
-                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
-                // If the Windows PowerShell Module path is already present, insert the system module path
-                // ($PSHOME/Modules) before it.
-                insertIndex = PathContainsSubstring(currentProcessModulePath, windowsPowerShellModulePath);
-#endif
+
+                insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePath);
+                if (insertIndex >= 0)
+                {
+                    insertIndex += personalModulePath.Length + 1;
+                }
+                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+
+                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath);
+                if (insertIndex >= 0)
+                {
+                    insertIndex += sharedModulePath.Length + 1;
+                }
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
-
-            // if we reached this point - always add <Program Files> location to EVT.Process
-            // everything below is the same behaviour as WMF 4 code
-
-            // index of $PSHome\Modules in currentProcessModulePath
-            int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
-
-            // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
-            // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
-            currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
 
             return currentProcessModulePath;
         }
@@ -1337,6 +1292,35 @@ namespace System.Management.Automation
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             return currentModulePath;
         }
+
+#if !UNIX
+        /// <summary>
+        /// Returns a PSModulePath suiteable for Windows PowerShell by removing this PowerShell's specific
+        /// paths from current PSModulePath and appending it to fresh PSModulePath from registry removing
+        /// any paths the user may have removed explicitly.
+        /// </summary>
+        internal static string GetWindowsPowerShellModulePath()
+        {
+            string currentModulePath = GetModulePath();
+
+            currentModulePath = currentModulePath.
+                Replace(GetPersonalModulePath(), "").
+                Replace(GetSharedModulePath(), "").
+                Replace(GetPSHomeModulePath(), "");
+
+            var modulePathList = new List<string>();
+            foreach (var path in currentModulePath.Split(';'))
+            {
+                // skip empty paths we removed
+                if (!string.IsNullOrEmpty(path))
+                {
+                    modulePathList.Add(path);
+                }
+            }
+
+            return string.Join(Path.PathSeparator, modulePathList.ToArray());
+        }
+#endif
 
         /// <summary>
         /// Checks if $env:PSModulePath is not set and sets it as appropriate. Note - because these
@@ -1353,17 +1337,6 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
-#if !UNIX
-                // If on Windows, we want to add the System32 Windows PowerShell module directory
-                // so that Windows modules are discoverable
-                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
-                if (!newModulePathString.Contains(windowsPowerShellModulePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    newModulePathString += Path.PathSeparator + windowsPowerShellModulePath;
-                }
-#endif
-
-                // Set the environment variable...
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }
 

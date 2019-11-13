@@ -102,7 +102,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $paths[2] | Should -Be $expectedSystemPath
             if ($IsWindows)
             {
-                $paths[3].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedWindowsPowerShellPSHomePath
+                $expectedWindowsPowerShellPSHomePath | Should -Not -BeIn $paths
             }
 
         } finally {
@@ -120,15 +120,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath = $fakePSHomeModuleDir, $customeModules -join ([System.IO.Path]::PathSeparator)
         $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $paths = $newModulePath -split [System.IO.Path]::PathSeparator
-
-        if ($IsWindows)
-        {
-            $paths.Count | Should -Be 6
-        }
-        else
-        {
-            $paths.Count | Should -Be 5
-        }
+        $paths.Count | Should -Be 5
         $paths -contains $fakePSHomeModuleDir | Should -BeTrue
         $paths -contains $customeModules | Should -BeTrue
     }
@@ -161,5 +153,16 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $pwshIndex | Should -Not -Be -1
         $wpshIndex | Should -Not -Be -1
         $pwshIndex | Should -BeLessThan $wpshIndex
+    }
+
+    It 'Windows PowerShell does not inherit PowerShell paths' -Skip:(!$IsWindows) {
+        $out = powershell.exe -noprofile -command '$env:PSModulePath'
+        $out | Should -Not -BeLike '*\powershell\*'
+    }
+
+    It 'Windows PowerShell inherits user added paths' -Skip:(!$IsWindows) {
+        $env:PSModulePath += ";myPath"
+        $out = powershell.exe -noprofile -command '$env:PSModulePath'
+        $out | Should -BeLike '*;myPath'
     }
 }
