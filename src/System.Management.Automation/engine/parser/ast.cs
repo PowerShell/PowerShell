@@ -7855,22 +7855,20 @@ namespace System.Management.Automation.Language
         /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
-        /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
+        /// The extent of the expression, starting with the expression before the operator '.', '::' or '?.' and ending after
         /// membername or expression naming the member.
         /// </param>
-        /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
+        /// <param name="expression">The expression before the member access operator '.', '::' or '?.'.</param>
         /// <param name="member">The name or expression naming the member to access.</param>
-        /// <param name="static">True if the '::' operator was used, false if '.' is used.
-        /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
-        /// </param>
-        /// <param name="nullConditionalAccess">True if '?.' used.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' or '?.' is used.</param>
+        /// <param name="nullConditional">True if '?.' used.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
         /// </exception>
-        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditionalAccess)
+        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditional)
             : this(extent, expression, member, @static)
         {
-            this.NullConditional = nullConditionalAccess;
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -7891,7 +7889,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets a value indicating true if the operator used is ?. or ?[].
         /// </summary>
-        public bool NullConditional { get; internal set; }
+        public bool NullConditional { get; protected set; }
 
         /// <summary>
         /// Copy the MemberExpressionAst instance.
@@ -7942,7 +7940,7 @@ namespace System.Management.Automation.Language
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
         /// closing paren after the arguments.
         /// </param>
-        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::').</param>
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
@@ -7968,20 +7966,20 @@ namespace System.Management.Automation.Language
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
         /// closing paren after the arguments.
         /// </param>
-        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::' or '?.').</param>
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
-        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.' or '?.'.
         /// </param>
-        /// <param name="nullConditionalAccess">True if the operator used is ?.</param>
+        /// <param name="nullConditional">True if the operator used is '?.'.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditionalAccess)
+        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditional)
             : this(extent, expression, method, arguments, @static)
         {
-            this.NullConditional = nullConditionalAccess;
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8042,7 +8040,7 @@ namespace System.Management.Automation.Language
             return new InvokeMemberAssignableValue { InvokeMemberExpressionAst = this };
         }
     }
-    
+
     /// <summary>
     /// The ast that represents the invocation of a base ctor method from PS class instance ctor, e.g. <c>class B : A{ B() : base() {} }</c>.
     /// </summary>
@@ -10276,14 +10274,14 @@ namespace System.Management.Automation.Language
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="target">The expression being indexed.</param>
         /// <param name="index">The index expression.</param>
-        /// <param name="nullConditionalAccess">Access the index only if the target is not null.</param>
+        /// <param name="nullConditional">Access the index only if the target is not null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="target"/>, or <paramref name="index"/> is null.
         /// </exception>
-        public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditionalAccess)
+        public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditional)
             : this(extent, target, index)
         {
-            this.NullConditional = nullConditionalAccess;
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>

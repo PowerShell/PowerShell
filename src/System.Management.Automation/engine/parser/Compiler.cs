@@ -6178,8 +6178,7 @@ namespace System.Management.Automation.Language
             // If the ?. operator is used for null conditional check, add the null conditional expression.
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
             Expression memberAccessExpr = memberNameAst != null
-                ? DynamicExpression.Dynamic(
-                    PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
+                ? DynamicExpression.Dynamic(PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
                 : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
 
             return memberExpressionAst.NullConditional ? GetNullConditionalWrappedExpression(target, memberAccessExpr) : memberAccessExpr;
@@ -6269,8 +6268,7 @@ namespace System.Management.Automation.Language
                     args,
                     invokeMemberExpressionAst.Static,
                     propertySet: false,
-                    invokeMemberExpressionAst.NullConditional
-                    );
+                    invokeMemberExpressionAst.NullConditional);
             }
 
             var memberNameExpr = Compile(invokeMemberExpressionAst.Member);
@@ -6440,7 +6438,7 @@ namespace System.Management.Automation.Language
                     typeof(object),
                     arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr))
                 : DynamicExpression.Dynamic(
-                    PSGetIndexBinder.Get(1, constraints),
+                    PSGetIndexBinder.Get(argCount: 1, constraints),
                     typeof(object),
                     targetExpr,
                     CompileExpressionOperand(index));

@@ -7777,7 +7777,7 @@ namespace System.Management.Automation.Language
                     targetExpr,
                     member,
                     @static: operatorToken.Kind == TokenKind.ColonColon,
-                    nullConditionalAccess: operatorToken.Kind == TokenKind.QuestionDot);
+                    nullConditional: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
