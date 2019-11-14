@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
-        internal static object WindowsPowerShellCompatSyncObject = new object();
+        internal static object s_WindowsPowerShellCompatSyncObject = new object();
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
@@ -4829,7 +4829,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSSession CreateWindowsPowerShellCompatResources()
         {
             PSSession compatSession = null;
-            lock(WindowsPowerShellCompatSyncObject)
+            lock(s_WindowsPowerShellCompatSyncObject)
             {
                 compatSession = GetWindowsPowerShellCompatRemotingSession();
                 if (compatSession == null)
@@ -4853,7 +4853,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CleanupWindowsPowerShellCompatResources()
         {
-            lock(WindowsPowerShellCompatSyncObject)
+            lock(s_WindowsPowerShellCompatSyncObject)
             {
                 var compatSession = GetWindowsPowerShellCompatRemotingSession();
                 if (compatSession != null)

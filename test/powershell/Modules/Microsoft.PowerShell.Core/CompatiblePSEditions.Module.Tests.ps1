@@ -41,7 +41,7 @@ function New-EditionCompatibleModule
 
     New-Item -Path $modulePath -ItemType Directory
 
-    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true } function Test-$($ModuleName)PSEdition { `$PSVersionTable.PSEdition }" -Force
+    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true } function Test-${ModuleName}PSEdition { `$PSVersionTable.PSEdition }" -Force
 
     if ($CompatiblePSEditions)
     {
@@ -298,7 +298,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             param($Editions, $ModuleName, $Result)
 
             Import-Module $ModuleName -UseWindowsPowerShell -Force
-            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
+            & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
     }
 
@@ -336,7 +336,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             $path = Join-Path -Path $basePath -ChildPath $ModuleName
 
             Import-Module $path -UseWindowsPowerShell -Force
-            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
+            & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
     }
 
@@ -358,7 +358,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
         It "Successfully auto-imports incompatible modules from the module path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
-            & "Test-$($ModuleName)PSEdition" | Should -Be 'Desktop'
+            & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
     }
 }
