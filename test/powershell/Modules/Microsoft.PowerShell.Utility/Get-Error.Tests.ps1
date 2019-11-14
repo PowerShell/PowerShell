@@ -90,4 +90,16 @@ Describe 'Get-Error tests' -Tag CI {
         $out | Should -BeLikeExactly '*ExpectedValueExpression*'
         $out | Should -BeLikeExactly '*UnexpectedToken*'
     }
+
+    It 'Get-Error adds ExceptionType for Exceptions' {
+        try {
+            [System.Net.DNS]::GetHostByName((New-Guid))
+        }
+        catch {
+        }
+
+        $out = Get-Error | Out-String
+        $out | Should -BeLikeExactly '*ExceptionType*'
+        $out | Should -BeLikeExactly '*System.Net.Internals.SocketExceptionFactory+ExtendedSocketException*'
+    }
 }

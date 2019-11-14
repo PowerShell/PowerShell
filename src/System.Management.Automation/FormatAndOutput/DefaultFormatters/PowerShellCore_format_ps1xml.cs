@@ -771,6 +771,11 @@ namespace System.Management.Automation.Runspaces
                                     'System.Management.Automation.InvocationInfo'
                                 )
 
+                                # if object is an Exception, add an ExceptionType property
+                                if ($obj -is [Exception]) {
+                                    $obj | Add-Member -NotePropertyName ExceptionType -NotePropertyValue $obj.GetType().FullName -ErrorAction Ignore
+                                }
+
                                 # first find the longest property so we can indent properly
                                 $propLength = 0
                                 foreach ($prop in $obj.PSObject.Properties) {
