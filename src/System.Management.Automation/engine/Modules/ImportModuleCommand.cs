@@ -1877,7 +1877,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, this.FullyQualifiedName, WindowsPowerShellCompatRemotingSession, true))
                         {
                             moduleProxy.IsWindowsPowerShellCompatModule = true;
-                            System.Threading.Interlocked.Increment(ref WindowsPowerShellCompatUsageCounter);
+                            System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
 
                             string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
                             WriteWarning(message);

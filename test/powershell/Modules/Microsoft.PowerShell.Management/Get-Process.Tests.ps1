@@ -100,7 +100,7 @@ Describe "Get-Process Formatting" -Tags "Feature" {
             $skip = $true
         }
     }
-    It "Should not have Handle in table format header" -Skip:$skip{
+    It "Should not have Handle in table format header" -Skip:$skip {
         $types = "System.Diagnostics.Process","System.Diagnostics.Process#IncludeUserName"
 
         foreach ($type in $types) {

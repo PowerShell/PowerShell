@@ -285,17 +285,17 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// A counter for modules that are loaded using WindowsPS compat session
+        /// A counter for modules that are loaded using WindowsPS compat session.
         /// </summary>
-        internal static int WindowsPowerShellCompatUsageCounter = 0;
+        internal static int s_WindowsPowerShellCompatUsageCounter = 0;
 
         /// <summary>
-        /// Session name for WindowsPS compat remoting session
+        /// Session name for WindowsPS compat remoting session.
         /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
         
         /// <summary>
-        /// Synchronization object for creation/cleanup of WindowsPS compat remoting session
+        /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
         internal static object WindowsPowerShellCompatSyncObject = new object();
 
@@ -4843,7 +4843,7 @@ namespace Microsoft.PowerShell.Commands
                     if (results.Count > 0)
                     {
                         compatSession = results[0];
-                        System.Threading.Interlocked.Exchange(ref WindowsPowerShellCompatUsageCounter, 0);
+                        System.Threading.Interlocked.Exchange(ref s_WindowsPowerShellCompatUsageCounter, 0);
                     }
                 }
             }
@@ -4944,8 +4944,6 @@ namespace Microsoft.PowerShell.Commands
                             input: AutomationNull.Value,
                             scriptThis: AutomationNull.Value,
                             args: new object[] { module });
-
-
                     }
 
                     if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
@@ -4961,7 +4959,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWinCompat") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref WindowsPowerShellCompatUsageCounter) == 0))
+                    if (ExperimentalFeature.IsEnabled("PSWinCompat") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
                     {
                         CleanupWindowsPowerShellCompatResources();
                     }

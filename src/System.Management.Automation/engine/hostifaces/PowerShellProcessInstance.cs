@@ -53,7 +53,7 @@ namespace System.Management.Automation.Runspaces
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
             string exePath = PwshExePath;
-            string processArguments = String.Empty;
+            string processArguments = string.Empty;
 
 #if !UNIX
             // if requested PS version was "5.1" then we start Windows PS instead of PS Core

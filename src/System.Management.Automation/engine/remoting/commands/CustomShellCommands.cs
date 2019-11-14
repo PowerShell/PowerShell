@@ -4012,7 +4012,7 @@ function Test-WinRMQuickConfigNeeded
 {{
     # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
     # 1) currently this function always returns $True
-    # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting
+    # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting; maybe change to Get-CimInstance -ClassName MSFT_NetFirewallRule
     return $True
 
 # Checking the following items

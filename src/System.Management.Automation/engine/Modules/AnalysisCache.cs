@@ -103,13 +103,10 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
-                    if (!ExperimentalFeature.IsEnabled("PSWinCompat"))
+                    if (!ExperimentalFeature.IsEnabled("PSWinCompat") && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
-                        if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
-                        {
-                            ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
-                            return null;
-                        }
+                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        return null;
                     }
 
                     Version version;
@@ -494,15 +491,12 @@ namespace System.Management.Automation
         {
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
 
-            if (!ExperimentalFeature.IsEnabled("PSWinCompat"))
+            // Don't cache incompatible modules on the system32 module path even if loaded with
+            // -SkipEditionCheck, since it will break subsequent sessions.
+            if (!ExperimentalFeature.IsEnabled("PSWinCompat") && !module.IsConsideredEditionCompatible)
             {
-                // Don't cache incompatible modules on the system32 module path even if loaded with
-                // -SkipEditionCheck, since it will break subsequent sessions.
-                if (!module.IsConsideredEditionCompatible)
-                {
-                    ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
-                    return;
-                }
+                ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
+                return;
             }
 
             DateTime lastWriteTime;
