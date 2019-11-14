@@ -6451,17 +6451,11 @@ namespace System.Management.Automation.Language
 
         private static Expression GetNullConditionalWrappedExpression(Expression targetExpr, Expression memberAccessExpression)
         {
-            ParameterExpression varExpr = Expression.Variable(typeof(object));
-
-            ConditionalExpression nullCheckExpression = Expression.IfThenElse(
+            return Expression.Condition(
                 Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
-                Expression.Assign(varExpr, ExpressionCache.NullConstant),
-                Expression.Assign(varExpr, memberAccessExpression.Cast(typeof(object))));
-
-            return Expression.Block(
-                new ParameterExpression[] { varExpr },
-                nullCheckExpression,
-                varExpr);
+                ExpressionCache.NullConstant,
+                memberAccessExpression
+                );
         }
 
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
