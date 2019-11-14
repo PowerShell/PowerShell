@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets parameter value that creates connection to a Windows PowerShell process.
         /// </summary>
-        [Experimental("PSWinCompat", ExperimentAction.Show)]
+        [Experimental("PSWindowsPowerShellCompatibility", ExperimentAction.Show)]
         [Parameter(Mandatory = true, ParameterSetName = NewPSSessionCommand.UseWindowsPowerShellParameterSet)]
         public SwitchParameter UseWindowsPowerShell { get; set; }
 

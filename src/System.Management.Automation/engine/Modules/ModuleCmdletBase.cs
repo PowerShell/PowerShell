@@ -2363,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                if (ExperimentalFeature.IsEnabled("PSWinCompat"))
+                if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility"))
                 {
                     if (importingModule)
                     {
@@ -4959,7 +4959,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWinCompat") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
+                    if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
                     {
                         CleanupWindowsPowerShellCompatResources();
                     }

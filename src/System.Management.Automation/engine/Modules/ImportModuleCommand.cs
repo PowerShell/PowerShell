@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter causes a module to be loaded into Windows PowerShell.
         /// This is mutually exclusive with SkipEditionCheck parameter.
         /// </summary>
-        [Experimental("PSWinCompat", ExperimentAction.Show)]
+        [Experimental("PSWindowsPowerShellCompatibility", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ParameterSet_ViaWinCompat, Mandatory = true)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaWinCompat, Mandatory = true)]
         [Alias("UseWinPS")]
