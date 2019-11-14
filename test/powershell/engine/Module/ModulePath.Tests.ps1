@@ -93,6 +93,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $paths[0] | Should -Be $expectedUserPath
             $paths[1] | Should -Be $expectedSharedPath
             $paths[2] | Should -Be $expectedSystemPath
+            $paths[3] | Should -Be $fakePSHomeModuleDir
             if ($IsWindows)
             {
                 $expectedWindowsPowerShellPSHomePath | Should -Not -BeIn $paths

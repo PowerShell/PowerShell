@@ -1164,58 +1164,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// When sxs ps instance B got started from sxs ps instance A, A's pshome module path might
-        /// show up in current process module path. It doesn't make sense for B to load modules from
-        /// A's pshome module path, so remove it in such case.
-        /// </summary>
-        private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, string psHomeModulePath)
-        {
-#if UNIX
-            const string powershellExeName = "pwsh";
-#else
-            const string powershellExeName = "pwsh.exe";
-#endif
-            const string powershellDepsName = "pwsh.deps.json";
-
-            StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
-            char[] invalidPathChars = Path.GetInvalidPathChars();
-
-            foreach (var path in currentProcessModulePath.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-            {
-                string trimedPath = path.Trim().TrimEnd(Path.DirectorySeparatorChar);
-                if (trimedPath.IndexOfAny(invalidPathChars) != -1 || !Path.IsPathRooted(trimedPath))
-                {
-                    // Path contains invalid characters or it's not an absolute path. Ignore it.
-                    continue;
-                }
-
-                if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    !trimedPath.Equals(sharedModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    !trimedPath.Equals(psHomeModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    trimedPath.EndsWith("Modules", StringComparison.OrdinalIgnoreCase))
-                {
-                    string parentDir = Path.GetDirectoryName(trimedPath);
-                    string psExePath = Path.Combine(parentDir, powershellExeName);
-                    string psDepsPath = Path.Combine(parentDir, powershellDepsName);
-                    if ((File.Exists(psExePath) && File.Exists(psDepsPath)))
-                    {
-                        // Path is a PSHome module path from a different PowerShell instance. Ignore it.
-                        continue;
-                    }
-                }
-
-                if (modulePathString.Length > 0)
-                {
-                    modulePathString.Append(Path.PathSeparator);
-                }
-
-                modulePathString.Append(trimedPath);
-            }
-
-            return modulePathString.ToString();
-        }
-
-        /// <summary>
         /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate. Note - because these
         /// strings go through the provider, we need to escape any wildcards before passing them
         /// along.
@@ -1251,8 +1199,8 @@ namespace System.Management.Automation
 
 #if !UNIX
                 // Add Windows Modules path
-                currentProcessModulePath += Path.PathSeparator;
-                currentProcessModulePath += GetWindowsPowerShellPSHomeModulePath();
+                string windowsPowerShellModulePath = GetExpandedEnvironmentVariable("SystemDrive", EnvironmentVariableTarget.Process) + @"\WINDOWS\system32\WindowsPowerShell\v1.0\Modules";
+                currentProcessModulePath = $"{currentProcessModulePath}{Path.PathSeparator}{windowsPowerShellModulePath}";
 #endif
             }
             // EVT.Process exists
@@ -1309,24 +1257,24 @@ namespace System.Management.Automation
         {
             string currentModulePath = GetModulePath();
 
-            if (currentModulePath != null)
+            if (currentModulePath == null)
             {
-                currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
-
-                var modulePathList = new List<string>();
-                foreach (var path in currentModulePath.Split(';'))
-                {
-                    // skip empty paths we removed
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        modulePathList.Add(path);
-                    }
-                }
-
-                return string.Join(Path.PathSeparator, modulePathList.ToArray());
+                return null;
             }
 
-            return null;
+            currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
+
+            var modulePathList = new List<string>();
+            foreach (var path in currentModulePath.Split(';'))
+            {
+                // skip empty paths we removed
+                if (!string.IsNullOrEmpty(path))
+                {
+                    modulePathList.Add(path);
+                }
+            }
+
+            return string.Join(Path.PathSeparator, modulePathList.ToArray());
         }
 #endif
 
