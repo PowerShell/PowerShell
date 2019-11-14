@@ -690,21 +690,22 @@ namespace System.Management.Automation
                 /// <summary>Whether the filesystem item has the sticky bit enabled. This is only available for directories.</summary>
                 public bool IsSticky;
 
-                private const char read = 'r';
-                private const char write = 'w';
-                private const char execute = 'x';
+                private const char CanRead = 'r';
+                private const char CanWrite = 'w';
+                private const char CanExecute = 'x';
+
                 // helper for getting unix mode
                 private Dictionary<StatMask, char> modeMap = new Dictionary<StatMask, char>()
                 {
-                        { StatMask.OwnerRead, read },
-                        { StatMask.OwnerWrite, write },
-                        { StatMask.OwnerExecute, execute },
-                        { StatMask.GroupRead, read },
-                        { StatMask.GroupWrite, write },
-                        { StatMask.GroupExecute, execute },
-                        { StatMask.OtherRead, read },
-                        { StatMask.OtherWrite, write },
-                        { StatMask.OtherExecute, execute },
+                        { StatMask.OwnerRead, CanRead },
+                        { StatMask.OwnerWrite, CanWrite },
+                        { StatMask.OwnerExecute, CanExecute },
+                        { StatMask.GroupRead, CanRead },
+                        { StatMask.GroupWrite, CanWrite },
+                        { StatMask.GroupExecute, CanExecute },
+                        { StatMask.OtherRead, CanRead },
+                        { StatMask.OtherWrite, CanWrite },
+                        { StatMask.OtherExecute, CanExecute },
                 };
 
                 private StatMask[] permissions = new StatMask[]
@@ -764,6 +765,7 @@ namespace System.Management.Automation
                         {
                             modeCharacters[offset] = '-';
                         }
+
                         offset++;
                     }
 
