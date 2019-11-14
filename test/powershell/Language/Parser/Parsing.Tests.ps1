@@ -308,7 +308,7 @@ Describe 'null coalescing statement parsing' -Tag "CI" {
     ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 9,17
 }
 
-Describe 'null conditional member acces statement parsing' -Tag 'CI' {
+Describe 'null conditional member access statement parsing' -Tag 'CI' {
     BeforeAll {
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
 
@@ -329,14 +329,14 @@ Describe 'null conditional member acces statement parsing' -Tag 'CI' {
     ShouldBeParseError '$x ?.name' ExpectedValueExpression,UnexpectedToken 4,4
     ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
     ShouldBeParseError '${x}?.' MissingPropertyName 6
-    ShouldBeParseError '${x}?.name = "value"' MemberAssignmentNotSupported 0
+    ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
 
     ShouldBeParseError '[datetime]?[0]' MissingTypename,ExpectedValueExpression,UnexpectedToken 12,11,11
     ShouldBeParseError '${x} ?[1]' MissingTypename,ExpectedValueExpression,UnexpectedToken 7,6,6
     ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
     ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
     ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
-    ShouldBeParseError '${x}?[0] = 1' MemberAssignmentNotSupported 0
+    ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {

@@ -762,6 +762,14 @@ namespace System.Management.Automation.Language
                 {
                     errorAst = ast;
                 }
+                else if (ast is MemberExpressionAst memberExprAst && memberExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
+                else if (ast is IndexExpressionAst indexExprAst && indexExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
                 else if (ast is AttributedExpressionAst)
                 {
                     // Check for multiple types combined with [ref].
@@ -1170,14 +1178,6 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
-            if (indexExpressionAst.NullConditional && indexExpressionAst.Parent is AssignmentStatementAst)
-            {
-                _parser.ReportError(
-                    indexExpressionAst.Extent,
-                    nameof(ParserStrings.MemberAssignmentNotSupported),
-                    ParserStrings.MemberAssignmentNotSupported);
-            }
-
             return AstVisitAction.Continue;
         }
 
@@ -1195,14 +1195,6 @@ namespace System.Management.Automation.Language
             if (ast.Static && (typeExpression == null))
             {
                 MarkAstParentsAsSuspicious(ast);
-            }
-
-            if (ast.NullConditional && ast.Parent is AssignmentStatementAst)
-            {
-                _parser.ReportError(
-                    ast.Extent,
-                    nameof(ParserStrings.MemberAssignmentNotSupported),
-                    ParserStrings.MemberAssignmentNotSupported);
             }
         }
 

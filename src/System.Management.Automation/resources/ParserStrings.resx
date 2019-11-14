@@ -1509,7 +1509,4 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
     <value>Background operators can only be used at the end of a pipeline chain.</value>
   </data>
-  <data name="MemberAssignmentNotSupported" xml:space="preserve">
-    <value>Member cannot be assigned when null conditional operator is used.</value>
-  </data>
 </root>
