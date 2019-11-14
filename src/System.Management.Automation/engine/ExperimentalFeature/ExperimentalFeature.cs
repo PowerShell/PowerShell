@@ -126,9 +126,9 @@ namespace System.Management.Automation
                     description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
                 new ExperimentalFeature(
                     name: "PSPipelineChainOperators",
-                    description: "Allow use of && and || as operators between pipeline invocations")
+                    description: "Allow use of && and || as operators between pipeline invocations"),
 #if !UNIX
-                ,new ExperimentalFeature(
+                new ExperimentalFeature(
                     name: "PSWindowsPowerShellCompatibility",
                     description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting")
 #endif
