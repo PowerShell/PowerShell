@@ -326,6 +326,11 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             ${psObj}?.nestedMethod?.GetHello() | Should -BeExactly 'hello'
         }
 
+        it 'Use ?. on a dynamic method name' {
+            $methodName = 'ToLongDateString'
+            (Get-Date '11/11/2019').$methodName()
+        }
+
         It 'Should throw error when method does not exist' {
             { ${psObj}?.nestedMethod?.NonExistent() } | Should -Throw -ErrorId 'MethodNotFound'
         }

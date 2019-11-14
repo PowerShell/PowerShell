@@ -6245,10 +6245,13 @@ namespace System.Management.Automation.Language
             Expression target,
             IEnumerable<Expression> args,
             bool @static,
-            bool propertySet)
+            bool propertySet,
+            bool nullConditional = false)
         {
             var binder = PSInvokeDynamicMemberBinder.Get(new CallInfo(args.Count()), _memberFunctionType, @static, propertySet, constraints);
-            return DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(memberNameExpr).Prepend(target));
+            var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(memberNameExpr).Prepend(target));
+
+            return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6272,7 +6275,7 @@ namespace System.Management.Automation.Language
             }
 
             var memberNameExpr = Compile(invokeMemberExpressionAst.Member);
-            return InvokeDynamicMember(memberNameExpr, constraints, target, args, invokeMemberExpressionAst.Static, false);
+            return InvokeDynamicMember(memberNameExpr, constraints, target, args, invokeMemberExpressionAst.Static, propertySet: false, invokeMemberExpressionAst.NullConditional);
         }
 
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
