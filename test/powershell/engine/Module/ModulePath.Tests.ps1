@@ -74,7 +74,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "works with pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
+    It "Works with pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
