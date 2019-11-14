@@ -40,7 +40,7 @@ namespace System.Management.Automation
             '#', ',', '(', ')', '{', '}', '[', ']', '&', '/', '\\', '$', '^', ';', ':',
             '"', '\'', '<', '>', '|', '?', '@', '`', '*', '%', '+', '=', '~'
         };
-        
+
         internal static ConcurrentDictionary<string, CommandTypes> GetExportedCommands(string modulePath, bool testOnly, ExecutionContext context)
         {
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
