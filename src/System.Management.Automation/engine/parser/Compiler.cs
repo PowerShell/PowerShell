@@ -3217,37 +3217,133 @@ namespace System.Management.Automation.Language
             var expr = Compile(stmt);
             exprList.Add(expr);
 
-            var pipeAst = stmt as PipelineAst;
-            if (pipeAst != null)
+            if (ShouldSetExecutionStatusToSuccess(stmt))
             {
-                if (pipeAst.PipelineElements.Count == 1 && pipeAst.PipelineElements[0] is CommandExpressionAst)
-                {
-                    // A single expression - must set $? after the expression.
-                    exprList.Add(s_setDollarQuestionToTrue);
-                }
+                exprList.Add(s_setDollarQuestionToTrue);
             }
-            else
+        }
+
+        /// <summary>
+        /// Determines whether a statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="statementAst">The statement to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
+        private bool ShouldSetExecutionStatusToSuccess(StatementAst statementAst)
+        {
+            // Simple overload fan out
+            switch (statementAst)
             {
-                var assignmentStatementAst = stmt as AssignmentStatementAst;
-                if (assignmentStatementAst != null)
-                {
-                    Ast right = null;
-                    var assignAst = assignmentStatementAst;
-                    while (assignAst != null)
+                case PipelineAst pipelineAst:
+                    return ShouldSetExecutionStatusToSuccess(pipelineAst);
+                case AssignmentStatementAst assignmentStatementAst:
+                    return ShouldSetExecutionStatusToSuccess(assignmentStatementAst);
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether a pipeline must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="pipelineAst">The pipeline to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
+        private bool ShouldSetExecutionStatusToSuccess(PipelineAst pipelineAst)
+        {
+            ExpressionAst expressionAst = pipelineAst.GetPureExpression();
+
+            // If the pipeline is not a simple expression, it will set $?
+            if (expressionAst == null)
+            {
+                return false;
+            }
+
+            // Expressions may still set $? themselves, so dig deeper
+            return ShouldSetExecutionStatusToSuccess(expressionAst);
+        }
+
+        /// <summary>
+        /// Determines whether an assignment statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="assignmentStatementAst">The assignment statement to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
+        private bool ShouldSetExecutionStatusToSuccess(AssignmentStatementAst assignmentStatementAst)
+        {
+            // Get right-most RHS in cases like $x = $y = <expr>
+            StatementAst innerRhsStatementAst = assignmentStatementAst.Right;
+            while (innerRhsStatementAst is AssignmentStatementAst rhsAssignmentAst)
+            {
+                innerRhsStatementAst = rhsAssignmentAst.Right;
+            }
+
+            // Simple assignments to pure expressions may need $? set, so examine the RHS statement for pure expressions
+            switch (innerRhsStatementAst)
+            {
+                case CommandExpressionAst commandExpression:
+                    return ShouldSetExecutionStatusToSuccess(commandExpression.Expression);
+
+                case PipelineAst rhsPipelineAst:
+                    return ShouldSetExecutionStatusToSuccess(rhsPipelineAst);
+
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether an expression in a statement must have an explicit setting
+        /// for $? = $true after it by the compiler.
+        /// </summary>
+        /// <param name="expressionAst">The expression to examine.</param>
+        /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
+        private bool ShouldSetExecutionStatusToSuccess(ExpressionAst expressionAst)
+        {
+            switch (expressionAst)
+            {
+                case ParenExpressionAst parenExpression:
+                    // Pipelines in paren expressions that are just pure expressions will need $? set
+                    // e.g. ("Hi"), vs (Test-Path ./here.txt)
+                    return ShouldSetExecutionStatusToSuccess(parenExpression.Pipeline);
+
+              case SubExpressionAst subExpressionAst:
+                    // Subexpressions generally set $? since they encapsulate a statement block
+                    // But $() requires an explicit setting
+                    return subExpressionAst.SubExpression.Statements.Count == 0;
+
+                case ArrayExpressionAst arrayExpressionAst:
+                    // ArrayExpressionAsts and SubExpressionAsts must be treated differently,
+                    // since they are optimised for a single expression differently.
+                    // A SubExpressionAst with a single expression in it has the $? = $true added,
+                    // but the optimisation drills deeper for ArrayExpressionAsts,
+                    // meaning we must inspect the expression itself in these cases
+
+                    switch (arrayExpressionAst.SubExpression.Statements.Count)
                     {
-                        right = assignAst.Right;
-                        assignAst = right as AssignmentStatementAst;
+                        case 0:
+                            // @() needs $? set
+                            return true;
+
+                        case 1:
+                            // Single expressions with a trap are handled as statements
+                            // For example: @(trap { continue } "Value")
+                            if (arrayExpressionAst.SubExpression.Traps != null)
+                            {
+                                return false;
+                            }
+
+                            // Pure, single statement expressions need $? set
+                            // For example @("One") and @("One", "Two")
+                            return ShouldSetExecutionStatusToSuccess(arrayExpressionAst.SubExpression.Statements[0]);
+
+                        default:
+                            // Arrays with multiple statements in them will have $? set
+                            return false;
                     }
 
-                    pipeAst = right as PipelineAst;
-                    if (right is CommandExpressionAst ||
-                        (pipeAst != null && pipeAst.PipelineElements.Count == 1 &&
-                         pipeAst.PipelineElements[0] is CommandExpressionAst))
-                    {
-                        // If the RHS of the assign was an expression,
-                        exprList.Add(s_setDollarQuestionToTrue);
-                    }
-                }
+                default:
+                    return true;
             }
         }
 
@@ -3558,9 +3654,8 @@ namespace System.Management.Automation.Language
         /// <returns>The compiled expression to execute the pipeline.</returns>
         private Expression CompilePipelineChainElement(PipelineAst pipelineAst)
         {
-            if (pipelineAst.PipelineElements.Count == 1 && pipelineAst.PipelineElements[0] is CommandExpressionAst)
+            if (ShouldSetExecutionStatusToSuccess(pipelineAst))
             {
-                // A single expression - must set $? after the expression.
                 return Expression.Block(Compile(pipelineAst), s_setDollarQuestionToTrue);
             }
 
