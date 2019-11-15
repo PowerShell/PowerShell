@@ -54,16 +54,32 @@ namespace System.Management.Automation.Runspaces
         {
             string exePath = PwshExePath;
             string processArguments = string.Empty;
+            bool startingWindowsPowerShell51 = false;
 
 #if !UNIX
             // if requested PS version was "5.1" then we start Windows PS instead of PS Core
             // Version parameter needs to go before all other parameters.
-            if (powerShellVersion != null)
+            startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
+            if (startingWindowsPowerShell51)
             {
-                if ((powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1))
+                exePath = WinPwshExePath;
+                processArguments = "-Version 5.1";
+
+                if (useWow64)
                 {
-                    exePath = WinPwshExePath;
-                    processArguments = "-Version 5.1";
+                    string procArch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+
+                    if ((!string.IsNullOrEmpty(procArch)) && (procArch.Equals("amd64", StringComparison.OrdinalIgnoreCase) ||
+                        procArch.Equals("ia64", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        exePath = WinPwshExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
+
+                        if (!File.Exists(exePath))
+                        {
+                            string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WowComponentNotPresent,exePath);
+                            throw new PSInvalidOperationException(message);
+                        }
+                    }
                 }
             }
 #endif
@@ -73,7 +89,7 @@ namespace System.Management.Automation.Runspaces
                     "{0} -s -NoLogo -NoProfile",
                     processArguments);
 
-            if (!string.IsNullOrWhiteSpace(workingDirectory))
+            if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell51)
             {
                 processArguments = string.Format(
                     CultureInfo.InvariantCulture,
