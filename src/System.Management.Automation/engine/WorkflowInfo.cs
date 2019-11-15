@@ -7,7 +7,7 @@ namespace System.Management.Automation
     /// Deprecated. Do not use.
     /// </summary>
     /// <remarks>
-    /// This class must not be deleted. Existing modules depend on this public
+    /// This class must not be deleted. Existing modules may depend on this public
     /// interface being present in PowerShell 7 to function properly, even if
     /// they do not use workflows.
     /// </remarks>
