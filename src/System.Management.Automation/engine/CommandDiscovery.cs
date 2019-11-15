@@ -446,6 +446,7 @@ namespace System.Management.Automation
                         "ScriptRequiresUnmatchedPSVersion");
                 throw scriptRequiresException;
             }
+
             if (requiresMaximumPSVersion < PSVersionInfo.PSVersion)
             {
                 ScriptRequiresException scriptRequiresException =
