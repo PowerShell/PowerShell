@@ -140,29 +140,7 @@ namespace System.Management.Automation
         /// <returns>Processor architecture for the current process.</returns>
         internal static ProcessorArchitecture GetProcessorArchitecture()
         {
-            Architecture architecture = RuntimeInformation.ProcessArchitecture;
-            ProcessorArchitecture result;
-            switch (architecture)
-            {
-                case Architecture.X86:
-                    result = ProcessorArchitecture.X86;
-                    break;
-
-                case Architecture.X64:
-                    result = ProcessorArchitecture.Amd64;
-                    break;
-
-                case Architecture.Arm:
-                case Architecture.Arm64:
-                    result = ProcessorArchitecture.Arm;
-                    break;
-
-                default:
-                    result = ProcessorArchitecture.None;
-                    break;
-            }
-
-            return result;
+            return typeof(object).Assembly.GetName().ProcessorArchitecture;
         }
 
         /// <summary>
