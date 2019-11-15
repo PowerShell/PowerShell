@@ -467,6 +467,7 @@ namespace System.Management.Automation
             {
                 return;
             }
+
             ScriptRequiresException scriptRequiresException =
                 new ScriptRequiresException(
                     scriptInfo.Name,
