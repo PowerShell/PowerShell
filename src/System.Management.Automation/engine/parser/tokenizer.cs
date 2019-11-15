@@ -2228,7 +2228,8 @@ namespace System.Management.Automation.Language
                     requiredVersion = version;
                 }
             }
-            else if (maximumPSVersionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)) {
+            else if (maximumPSVersionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            {
                 var argumentText = argumentValue as string ?? argumentAst.Extent.Text;
                 var version = Utils.StringToVersion(argumentText);
                 if (version == null)
