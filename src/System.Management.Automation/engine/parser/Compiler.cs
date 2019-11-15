@@ -6454,8 +6454,7 @@ namespace System.Management.Automation.Language
             return Expression.Condition(
                 Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
                 ExpressionCache.NullConstant,
-                memberAccessExpression
-                );
+                memberAccessExpression);
         }
 
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)

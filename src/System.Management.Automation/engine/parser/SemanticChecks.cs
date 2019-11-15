@@ -1176,11 +1176,6 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        public override AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst)
-        {
-            return AstVisitAction.Continue;
-        }
-
         private void CheckMemberAccess(MemberExpressionAst ast)
         {
             // If the member access is not constant, it may be considered suspicious

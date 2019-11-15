@@ -326,9 +326,28 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             ${psObj}?.nestedMethod?.GetHello() | Should -BeExactly 'hello'
         }
 
-        it 'Use ?. on a dynamic method name' {
+        It 'Use ?. on a dynamic method name' {
             $methodName = 'ToLongDateString'
-            (Get-Date '11/11/2019').$methodName()
+            (Get-Date '11/11/2019')?.$methodName() | Should -BeExactly 'Monday, November 11, 2019'
+
+            ${doesNotExist}?.$methodName() | Should -BeNullOrEmpty
+        }
+
+        It 'Use ?. on a dynamic method name that does not exist' {
+            $methodName = 'DoesNotExist'
+            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+
+        It 'Use ?. on a dynamic method name that does not exist' {
+            $methodName = $null
+            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'Argument'
+        }
+
+        It 'Use ?. on a dynamic property name' {
+            $propName = 'Name'
+            (Get-Process -Id $pid)?.$propName | Should -BeLike 'pwsh*'
+
+            ${doesNotExist}?.$propName() | Should -BeNullOrEmpty
         }
 
         It 'Should throw error when method does not exist' {
