@@ -1876,7 +1876,10 @@ namespace System.Management.Automation.Provider
                     }
                     catch
                     {
-                        result.AddOrSetProperty("UnixStat", null);
+                        // If there is *any* problem in retrieving the stat information
+                        // set the property to null. There is no specific exception which
+                        // would result in different behavior.
+                        result.AddOrSetProperty("UnixStat", value: null);
                     }
                 }
 #endif

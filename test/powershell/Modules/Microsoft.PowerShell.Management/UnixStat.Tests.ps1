@@ -5,10 +5,14 @@ Describe "UnixFileSystem additions" -Tag "CI" {
     BeforeAll {
         $experimentalFeatureName = "PSUnixFileStat"
         $skipTest = -not $EnabledExperimentalFeatures.Contains($experimentalFeatureName)
+        $PSDefaultParameterValues.Add('It:Skip', $skipTest)
+    }
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
     }
     Context "Basic Validation" {
 
-        It "Should be an experimental feature on non-Windows systems" -skip:$skipTest {
+        It "Should be an experimental feature on non-Windows systems" {
             $feature = Get-ExperimentalFeature -Name $experimentalFeatureName
             if ( $IsWindows ) {
                 $feature | Should -BeNullOrEmpty
@@ -18,12 +22,12 @@ Describe "UnixFileSystem additions" -Tag "CI" {
             }
         }
 
-        It "Should include a UnixStat property" -skip:$skipTest {
+        It "Should include a UnixStat property" {
             $i = Get-Item ${TestDrive}
             $i.UnixStat | Should -Not -BeNullOrEmpty
         }
 
-        It "The UnixStat property should be the correct type" -skip:$skipTest {
+        It "The UnixStat property should be the correct type" {
             $expected = "System.Management.Automation.Platform+Unix+CommonStat"
             $i = (get-item /).psobject.properties['UnixStat'].TypeNameOfValue
             $i | Should -Be $expected
@@ -61,25 +65,24 @@ Describe "UnixFileSystem additions" -Tag "CI" {
             Remove-Item -Path "${testDir}"  -Recurse -Force
         }
 
-        It "Should present filemode '<Mode>' string correctly as '<Perm>'" -testCase $testCase -skip:$skipTest {
+        It "Should present filemode '<Mode>' string correctly as '<Perm>'" -testCase $testCase {
             param ($Mode, $Perm, $Item )
             chmod "$Mode" "${Item}"
             $i = Get-Item $Item
             $i.UnixMode | Should -Be $Perm
         }
 
-        It "Should retrieve the user name for the file" -skip:$skipTest {
+        It "Should retrieve the user name for the file" {
             $i = Get-Item ${testFile}
             $user = (/bin/ls -ld $testFile).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[2]
             $i.User | Should -Be $user
         }
 
-        It "Should retrieve the group name for the file" -skip:$skipTest {
+        It "Should retrieve the group name for the file" {
             $i = Get-Item ${testFile}
             $group = (/bin/ls -ld $testFile).split(" ",[System.StringSplitOptions]"RemoveEmptyEntries")[3]
             $i.Group | Should -Be $Group
         }
-
     }
 
     Context "Other properties of UnixStat object" {
@@ -112,7 +115,7 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                 @{ Expected = $expectedDirSize; Observed = $Dir.UnixStat.Size; Title = "DirSize" }
         }
 
-        It "Should have correct values in UnixStat property for '<Title>'" -TestCases $testCases -skip:$skipTest {
+        It "Should have correct values in UnixStat property for '<Title>'" -TestCases $testCases {
             param ( $Title, $expected, $observed )
 
             $observed | Should -Be $expected
