@@ -434,6 +434,7 @@ namespace System.Management.Automation
                 return;
             }
 
+
             // check if the maximum version is a legit PS version.
             if (!Utils.IsPSVersionSupported(requiresMaximumPSVersion))
             {
