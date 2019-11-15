@@ -1199,8 +1199,7 @@ namespace System.Management.Automation
 
 #if !UNIX
                 // Add Windows Modules path
-                string windowsPowerShellModulePath = GetExpandedEnvironmentVariable("SystemDrive", EnvironmentVariableTarget.Process) + @"\WINDOWS\system32\WindowsPowerShell\v1.0\Modules";
-                currentProcessModulePath = $"{currentProcessModulePath}{Path.PathSeparator}{windowsPowerShellModulePath}";
+                currentProcessModulePath = $"{currentProcessModulePath}{Path.PathSeparator}{s_windowsPowerShellPSHomeModulePath}";
 #endif
             }
             // EVT.Process exists
@@ -1215,23 +1214,9 @@ namespace System.Management.Automation
                 // sharedModulePath
                 // systemModulePath
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-
-                int insertIndex = -1;
-
-                insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePath);
-                if (insertIndex >= 0)
-                {
-                    insertIndex += personalModulePath.Length + 1;
-                }
-
+                int insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
                 currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-
-                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath);
-                if (insertIndex >= 0)
-                {
-                    insertIndex += sharedModulePath.Length + 1;
-                }
-
+                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
@@ -1266,8 +1251,8 @@ namespace System.Management.Automation
                 return null;
             }
 
-            // Remove any PowerShell specific paths including if set in powershell.config.json file
-            string[] modulePaths = new string[] {
+            // PowerShell specific paths including if set in powershell.config.json file we want to exclude
+            var excludeModulePaths = new HashSet<string> {
                 GetPersonalModulePath(),
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),
@@ -1275,19 +1260,10 @@ namespace System.Management.Automation
                 PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser)
             };
 
-            foreach (var modulePath in modulePaths)
-            {
-                if (modulePath != null)
-                {
-                    currentModulePath = currentModulePath.Replace(modulePath, string.Empty);
-                }
-            }
-
             var modulePathList = new List<string>();
             foreach (var path in currentModulePath.Split(';'))
             {
-                // skip empty paths we removed
-                if (!string.IsNullOrEmpty(path))
+                if (!excludeModulePaths.Contains(path))
                 {
                     modulePathList.Add(path);
                 }
