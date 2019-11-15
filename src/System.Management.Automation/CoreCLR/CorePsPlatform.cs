@@ -554,14 +554,15 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
+        // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
+        // works *correctly* on Linux in that it creates an exception with
+        // the string perror would give you for the last set value of errno.
+        // No manual mapping is required. .NET Core maps the Linux errno
+        // to a PAL value and calls strerror_r underneath to generate the message.
+
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
-            // works *correctly* on Linux in that it creates an exception with
-            // the string perror would give you for the last set value of errno.
-            // No manual mapping is required. .NET Core maps the Linux errno
-            // to a PAL value and calls strerror_r underneath to generate the message.
             private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
             private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
@@ -779,8 +780,7 @@ namespace System.Management.Automation
                 /// <returns>The user name.</returns>
                 public string GetUserName()
                 {
-                    string username;
-                    if (usernameCache.TryGetValue(UserId, out username))
+                    if (usernameCache.TryGetValue(UserId, out string username))
                     {
                         return username;
                     }
@@ -800,8 +800,7 @@ namespace System.Management.Automation
                 /// <returns>The name of the group.</returns>
                 public string GetGroupName()
                 {
-                    string groupname;
-                    if (groupnameCache.TryGetValue(GroupId, out groupname))
+                    if (groupnameCache.TryGetValue(GroupId, out string groupname))
                     {
                         return groupname;
                     }
@@ -865,9 +864,9 @@ namespace System.Management.Automation
                     cs.GroupId = css.GroupId;
                     cs.HardlinkCount = css.HardlinkCount;
                     cs.Size = css.Size;
-                    cs.AccessTime = new DateTime(1970, 1, 1).AddSeconds(css.AccessTime).ToLocalTime();
-                    cs.ModifiedTime = new DateTime(1970, 1, 1).AddSeconds(css.ModifiedTime).ToLocalTime();
-                    cs.StatusChangeTime = new DateTime(1970, 1, 1).AddSeconds(css.StatusChangeTime).ToLocalTime();
+                    cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
+                    cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
+                    cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
                     cs.BlockSize = css.BlockSize;
                     cs.DeviceId = css.DeviceId;
                     cs.NumberOfBlocks = css.NumberOfBlocks;
@@ -1065,10 +1064,10 @@ namespace System.Management.Automation
                                                         out UInt64 device, out UInt64 inode);
 
                 /// <summary>
-                /// This is a struct from getcommonstat.h in the native library. It's a synthetic construct of the Unix stat
-                /// structure, which presents the type of the member as the largest type of the member across all stat
-                /// structures on the platforms I could find. This allows us to present a useful stat structure for all of
-                /// our currently supported platforms.
+                /// This is a struct from getcommonstat.h in the native library.
+                /// It presents each member of the stat structure as the largest type of that member across 
+                /// all stat structures on the platforms we support. This allows us to present a common 
+                /// stat structure for all our platforms.
                 /// </summary>
                 [StructLayout(LayoutKind.Sequential)]
                 internal struct CommonStatStruct
