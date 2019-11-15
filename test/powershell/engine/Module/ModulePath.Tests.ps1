@@ -3,7 +3,6 @@
 Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     BeforeAll {
-
         if ($IsWindows)
         {
             $powershell = "$PSHOME\pwsh.exe"
@@ -14,13 +13,22 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             }
             $expectedUserPath = Join-Path -Path $HOME -ChildPath "Documents\$ProductName\Modules"
             $expectedSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "$ProductName\Modules"
+            $userConfigPath = "~/Documents/powershell/powershell.config.json"
         }
         else
         {
             $powershell = "$PSHOME/pwsh"
             $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
+            $userConfigPath = "~/.config/powershell/powershell.config.json"
         }
+
+        $userConfigExists = $false
+        if (Test-Path $userConfigPath) {
+            $userConfigExists = $true
+            Copy-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction Ignore
+        }
+
         $expectedSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
 
         # Skip these tests in cases when there is no 'pwsh' executable (e.g. when framework dependent PS package is used)
@@ -39,6 +47,15 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         New-Item -Path $fakePSHome -ItemType Directory > $null
         New-Item -Path $fakePSHomeModuleDir -ItemType Directory > $null
+    }
+
+    AfterAll {
+        if ($userConfigExists) {
+            Move-Item "$userConfigPath.backup" $userConfigPath -Force -ErrorAction Ignore
+        }
+        else {
+            Remove-Item "$userConfigPath" -Force -ErrorAction Ignore
+        }
     }
 
     BeforeEach {
@@ -160,5 +177,12 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath += ";myPath"
         $out = powershell.exe -noprofile -command '$env:PSModulePath'
         $out | Should -BeLike '*;myPath'
+    }
+
+    It 'Windows PowerShell does not inherit path defined in powershell.config.json' -Skip:(!$IsWindows) {
+        $userConfig = '{ "PSModulePath": "myUserPath" }'
+        Set-Content -Path $userConfigPath -Value $userConfig -Force
+        $out = pwsh -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+        $out | Should -Not -BeLike 'myUserPath;*'
     }
 }

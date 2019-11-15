@@ -1210,6 +1210,10 @@ namespace System.Management.Automation
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
+                // Maintain order of the paths, but ahead of any existing paths:
+                // personalModulePath
+                // sharedModulePath
+                // systemModulePath
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
 
                 int insertIndex = -1;
@@ -1262,7 +1266,22 @@ namespace System.Management.Automation
                 return null;
             }
 
-            currentModulePath = currentModulePath.Replace(GetPersonalModulePath(), string.Empty).Replace(GetSharedModulePath(), string.Empty).Replace(GetPSHomeModulePath(), string.Empty);
+            // Remove any PowerShell specific paths including if set in powershell.config.json file
+            string[] modulePaths = new string[] {
+                GetPersonalModulePath(),
+                GetSharedModulePath(),
+                GetPSHomeModulePath(),
+                PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers),
+                PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser)
+            };
+
+            foreach (var modulePath in modulePaths)
+            {
+                if (modulePath != null)
+                {
+                    currentModulePath = currentModulePath.Replace(modulePath, string.Empty);
+                }
+            }
 
             var modulePathList = new List<string>();
             foreach (var path in currentModulePath.Split(';'))

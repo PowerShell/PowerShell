@@ -62,7 +62,7 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
 
     $dataEnciphermentCert = $dataEnciphermentCert -replace '\s',''
     $certBytes = [Convert]::FromBase64String($dataEnciphermentCert)
-    $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) "ProtectedEventLogging.pfx"
+    $certLocation = Join-Path $TestDrive "ProtectedEventLogging.pfx"
     [IO.File]::WriteAllBytes($certLocation, $certBytes)
 
     return $certLocation
@@ -127,7 +127,7 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 
     $codeSigningCert = $codeSigningCert -replace '\s',''
     $certBytes = [Convert]::FromBase64String($codeSigningCert)
-    $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) "CMSTestBadCert"
+    $certLocation = Join-Path $TestDrive "CMSTestBadCert"
     [IO.File]::WriteAllBytes($certLocation, $certBytes)
 
     return $certLocation
@@ -146,15 +146,22 @@ function Install-TestCertificates
         # PKI module is not available for PowerShell, so we need to use Windows PowerShell to import the cert
         $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
 
-        $command = @"
-(Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My).PSPath
-(Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My).PSPath
-"@
-        $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-        $certPaths.Count | Should -Be 2 | Out-Null
+        try {
+            $modulePathCopy = $env:PSModulePath
+            $env:PSModulePath = $null
 
-        $script:importedCert = Get-ChildItem $certPaths[0]
-        $script:testBadCert  = Get-ChildItem $certPaths[1]
+            $command = @"
+Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
+Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
+"@
+            $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
+            $certPaths.Count | Should -Be 2 | Out-Null
+
+            $script:importedCert = Get-ChildItem $certPaths[0]
+            $script:testBadCert  = Get-ChildItem $certPaths[1]
+        } finally {
+            $env:PSModulePath = $modulePathCopy
+        }
     }
     elseif($IsWindows)
     {
