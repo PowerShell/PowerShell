@@ -340,7 +340,7 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
 
         It 'Use ?. on a dynamic method name that does not exist' {
             $methodName = $null
-            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'Argument'
+            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
         It 'Use ?. on a dynamic property name' {
