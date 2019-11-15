@@ -1839,7 +1839,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 ProcessorArchitecture currentArchitecture = PsUtils.GetProcessorArchitecture();
 
-                // For ARM Architectures, we need to do additional string-level comparison
                 if (currentArchitecture != requiredProcessorArchitecture)
                 {
                     containedErrors = true;
