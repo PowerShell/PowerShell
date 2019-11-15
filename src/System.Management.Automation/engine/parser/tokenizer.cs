@@ -2138,7 +2138,9 @@ namespace System.Management.Automation.Language
                         requiredEditions = HandleRequiresPSEditionArgument(argumentAst, arg, ref requiredEditions);
                     }
                 }
-            } else if (osTypesToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            } 
+            
+            else if (osTypesToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
                 if (requiredOSTypes != null)
                 {
@@ -2231,7 +2233,7 @@ namespace System.Management.Automation.Language
             else if (maximumPSVersionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
                 var argumentText = argumentValue as string ?? argumentAst.Extent.Text;
-                var version = Utils.StringToVersion(argumentText);
+                Version version = Utils.StringToVersion(argumentText);
                 if (version == null)
                 {
                     ReportError(argumentAst.Extent,
@@ -2239,6 +2241,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.RequiresVersionInvalid);
                     return;
                 }
+
                 if (requiredMaximumPSVersion != null && !requiredMaximumPSVersion.Equals(version))
                 {
                     object errorArg1 = null;
@@ -2249,6 +2252,7 @@ namespace System.Management.Automation.Language
                         maximumPSVersionToken);
                     return;
                 }
+                
                 requiredMaximumPSVersion = version;
             }
             else if (assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))

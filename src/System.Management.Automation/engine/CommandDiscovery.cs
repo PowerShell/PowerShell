@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Tracing;
@@ -438,13 +439,11 @@ namespace System.Management.Automation
             // check if the maximum version is a legit PS version.
             if (!Utils.IsPSVersionSupported(requiresMaximumPSVersion))
             {
-                ScriptRequiresException scriptRequiresException =
-                    new ScriptRequiresException(
+                    throw new ScriptRequiresException(
                         scriptInfo.Name,
                         requiresMaximumPSVersion,
                         PSVersionInfo.PSVersion.ToString(),
                         "ScriptRequiresUnmatchedPSVersion");
-                throw scriptRequiresException;
             }
 
             if (requiresMaximumPSVersion < PSVersionInfo.PSVersion)

@@ -623,11 +623,13 @@ namespace System.Management.Automation
             {
                 return "MacOS"; 
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return "Linux"; 
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return "Windows";
             }
@@ -2123,10 +2125,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>This member is used for internal test purposes.</summary>
-        public static object GetTestHookValue(string property)
+        public static object GetTestHookValue(string field)
         {
-            var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-            return fieldInfo.GetValue(property);
+            var fieldInfo = typeof(InternalTestHooks).GetField(field, BindingFlags.Static | BindingFlags.NonPublic);
+            return fieldInfo.GetValue(null);
         }
 
         /// <summary>
