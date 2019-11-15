@@ -3326,6 +3326,12 @@ namespace System.Management.Automation.Language
                             return true;
 
                         case 1:
+                            // Single expressions with a trap are handled as statements
+                            if (arrayExpressionAst.SubExpression.Traps != null)
+                            {
+                                return false;
+                            }
+
                             // Pure, single statement expressions need $? set
                             // For example @("One") and @("One", "Two")
                             return ShouldSetExecutionStatusToSuccess(arrayExpressionAst.SubExpression.Statements[0]);
