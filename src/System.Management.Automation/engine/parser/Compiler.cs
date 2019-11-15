@@ -3327,6 +3327,7 @@ namespace System.Management.Automation.Language
 
                         case 1:
                             // Single expressions with a trap are handled as statements
+                            // For example: @(trap { continue } "Value")
                             if (arrayExpressionAst.SubExpression.Traps != null)
                             {
                                 return false;
