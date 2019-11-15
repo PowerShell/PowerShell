@@ -100,6 +100,14 @@ Describe 'Get-Error tests' -Tag CI {
 
         $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*ExceptionType*'
-        $out | Should -BeLikeExactly '*System.Net.Internals.SocketExceptionFactory+ExtendedSocketException*'
+
+        if ($IsWindows) {
+            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
+        }
+        else {
+            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
+        }
+
+        $out | Should -BeLikeExactly "*$expectedExceptionType*"
     }
 }
