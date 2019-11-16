@@ -12,8 +12,10 @@ Describe "Select-String" -Tags "CI" {
     }
 
     Context "String actions" {
-        $testinputone = "hello","Hello","goodbye"
-        $testinputtwo = "hello","Hello"
+        BeforeAll {
+            $testinputone = "hello","Hello","goodbye"
+            $testinputtwo = "hello","Hello"
+        }
 
         it "Should be called without errors" {
             { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
@@ -250,5 +252,46 @@ Describe "Select-String" -Tags "CI" {
             $expected = "This is the second line"
             Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
         }
+    }
+
+    Context "Culture parameter" {
+        It "Should throw if -Culture parameter is used without -SimpleMatch parameter" {
+            { "1" | Select-String -Pattern "hello" -Culture "ru-RU" } | Should -Throw -ErrorId "CannotSpecifyCultureWithoutSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"
+        }
+
+        It "Should accept a culture: '<culture>'" -TestCases: @(
+            @{ culture = "Ordinal"},
+            @{ culture = "Invariant"},
+            @{ culture = "Current"},
+            @{ culture = "ru-RU"}
+        ) {
+            param ($culture)
+            { "1" | Select-String -Pattern "hello" -Culture $culture -SimpleMatch } | Should -Not -Throw
+        }
+
+        It "Should works if -Culture parameter is a culture name: '<culture>'-'<pattern>'-'CaseSensitive:<casesensitive>'" -TestCases: @(
+            @{pattern = 'file'; culture = 'tr-TR';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $true }
+            @{pattern = "f`u{0130}le"; culture = 'tr-TR';expected = 'file'; casesensitive = $false }
+            @{pattern = 'file'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = $null;  casesensitive = $true }
+        ) {
+            param ($pattern, $culture, $expected, $casesensitive)
+
+            if ($culture -ne 'Current' -or [CultureInfo]::CurrentCulture.Name -ne "tr-TR") {
+                'file' | Select-String -Pattern $pattern -Culture $culture -SimpleMatch -CaseSensitive:$casesensitive | Should -BeExactly $expected
+            }
+       }
     }
 }
