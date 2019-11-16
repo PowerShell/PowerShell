@@ -627,4 +627,63 @@ Describe 'get-help other tests' -Tags "CI" {
             (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
         }
     }
+
+    Context 'get-help -Examples multi-line code block should be handled' {
+        function foo {
+            <#
+              .EXAMPLE
+              $a = Get-Service
+              $a | group Status
+
+              .EXAMPLE
+              PS> $a = Get-Service
+              PS> $a | group Status
+
+              Explanation.
+
+              .EXAMPLE
+
+              PS> Get-Service
+              Output
+
+              .EXAMPLE
+              PS> Get-Service
+              Output
+
+              Explanation.
+              Second line.
+
+              .EXAMPLE
+              PS> Get-Service
+              Output
+
+              Explanation.
+
+              Next section.
+            #>
+              param()
+        }
+
+        $x = get-help foo
+        It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly "PS > " }
+        It '$x.examples.example[0].code' { $x.examples.example[0].code | Should -BeExactly "`$a = Get-Service`n`$a | group Status" }
+        It '$x.examples.example[0].remarks[0].text' { $x.examples.example[0].remarks[0].text | Should -BeNullOrEmpty }
+        It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -Be 5 }
+        It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly "PS>" }
+        It '$x.examples.example[1].code' { $x.examples.example[1].code | Should -BeExactly "`$a = Get-Service`nPS> `$a | group Status" }
+        It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly "Explanation." }
+        It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -Be 5 }
+        It '$x.examples.example[2].introduction[0].text' { $x.examples.example[2].introduction[0].text | Should -BeExactly "PS>" }
+        It '$x.examples.example[2].code' { $x.examples.example[2].code | Should -BeExactly "Get-Service`nOutput" }
+        It '$x.examples.example[2].remarks[0].text' { $x.examples.example[2].remarks[0].text | Should -BeNullOrEmpty }
+        It '$x.examples.example[2].remarks.length' { $x.examples.example[2].remarks.length | Should -Be 5 }
+        It '$x.examples.example[3].introduction[0].text' { $x.examples.example[3].introduction[0].text | Should -BeExactly "PS>" }
+        It '$x.examples.example[3].code' { $x.examples.example[3].code | Should -BeExactly "Get-Service`nOutput" }
+        It '$x.examples.example[3].remarks[0].text' { $x.examples.example[3].remarks[0].text | Should -BeExactly "Explanation.`nSecond line." }
+        It '$x.examples.example[3].remarks.length' { $x.examples.example[3].remarks.length | Should -Be 5 }
+        It '$x.examples.example[4].introduction[0].text' { $x.examples.example[4].introduction[0].text | Should -BeExactly "PS>" }
+        It '$x.examples.example[4].code' { $x.examples.example[4].code | Should -BeExactly "Get-Service`nOutput" }
+        It '$x.examples.example[4].remarks[0].text' { $x.examples.example[4].remarks[0].text | Should -BeExactly "Explanation.`n`nNext section." }
+        It '$x.examples.example[4].remarks.length' { $x.examples.example[4].remarks.length | Should -Be 5 }
+    }
 }
