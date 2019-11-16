@@ -7852,6 +7852,26 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the operator '.', '::' or '?.' and ending after
+        /// membername or expression naming the member.
+        /// </param>
+        /// <param name="expression">The expression before the member access operator '.', '::' or '?.'.</param>
+        /// <param name="member">The name or expression naming the member to access.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' or '?.' is used.</param>
+        /// <param name="nullConditional">True if '?.' used.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
+        /// </exception>
+        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditional)
+            : this(extent, expression, member, @static)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// The expression that produces the value to retrieve the member from.  This property is never null.
         /// </summary>
         public ExpressionAst Expression { get; private set; }
@@ -7867,13 +7887,18 @@ namespace System.Management.Automation.Language
         public bool Static { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating true if the operator used is ?. or ?[].
+        /// </summary>
+        public bool NullConditional { get; protected set; }
+
+        /// <summary>
         /// Copy the MemberExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
-            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static);
+            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -7915,7 +7940,7 @@ namespace System.Management.Automation.Language
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
         /// closing paren after the arguments.
         /// </param>
-        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::').</param>
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
@@ -7935,6 +7960,29 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::' or '?.').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.' or '?.'.
+        /// </param>
+        /// <param name="nullConditional">True if the operator used is '?.'.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditional)
+            : this(extent, expression, method, arguments, @static)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// The non-empty collection of arguments to pass when invoking the method, or null if no arguments were specified.
         /// </summary>
         public ReadOnlyCollection<ExpressionAst> Arguments { get; private set; }
@@ -7947,7 +7995,7 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
             var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static);
+            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -10221,6 +10269,22 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="IndexExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="target">The expression being indexed.</param>
+        /// <param name="index">The index expression.</param>
+        /// <param name="nullConditional">Access the index only if the target is not null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="target"/>, or <paramref name="index"/> is null.
+        /// </exception>
+        public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditional)
+            : this(extent, target, index)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// Return the ast for the expression being indexed.  This value is never null.
         /// </summary>
         public ExpressionAst Target { get; private set; }
@@ -10231,13 +10295,18 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether ?[] operator is being used.
+        /// </summary>
+        public bool NullConditional { get; private set; }
+
+        /// <summary>
         /// Copy the IndexExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newTarget = CopyElement(this.Target);
             var newIndex = CopyElement(this.Index);
-            return new IndexExpressionAst(this.Extent, newTarget, newIndex);
+            return new IndexExpressionAst(this.Extent, newTarget, newIndex, this.NullConditional);
         }
 
         #region Visitors

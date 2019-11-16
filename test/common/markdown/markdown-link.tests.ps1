@@ -106,10 +106,10 @@ Describe "Verify Markdown Links" {
                         Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
-                            # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
+                            # If invoke-WebRequest can handle the URL, re-verify, with 6 retries
                             try
                             {
-                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
+                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
                             catch
                             {
