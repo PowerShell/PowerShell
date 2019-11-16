@@ -50,38 +50,11 @@ namespace System.Management.Automation.Runspaces
         /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
-            string processArguments = " -s -NoLogo -NoProfile";
-
-            if (!string.IsNullOrWhiteSpace(workingDirectory))
-            {
-                processArguments = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0} -wd \"{1}\"",
-                    processArguments,
-                    workingDirectory.Replace("\"", "\"\""));
-            }
-
-            if (initializationScript != null)
-            {
-                string scripBlockAsString = initializationScript.ToString();
-                if (!string.IsNullOrEmpty(scripBlockAsString))
-                {
-                    string encodedCommand =
-                        Convert.ToBase64String(Encoding.Unicode.GetBytes(scripBlockAsString));
-                    processArguments = string.Format(
-                        CultureInfo.InvariantCulture,
-                        "{0} -EncodedCommand {1}",
-                        processArguments,
-                        encodedCommand);
-                }
-            }
-
             // 'WindowStyle' is used only if 'UseShellExecute' is 'true'. Since 'UseShellExecute' is set
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
             {
                 FileName = PwshExePath,
-                Arguments = processArguments,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
@@ -91,6 +64,27 @@ namespace System.Management.Automation.Runspaces
                 LoadUserProfile = true,
 #endif
             };
+
+            _startInfo.ArgumentList.Add("-s");
+            _startInfo.ArgumentList.Add("-NoLogo");
+            _startInfo.ArgumentList.Add("-NoProfile");
+
+            if (!string.IsNullOrWhiteSpace(workingDirectory))
+            {
+                _startInfo.ArgumentList.Add("-wd");
+                _startInfo.ArgumentList.Add(workingDirectory);
+            }
+
+            if (initializationScript != null)
+            {
+                var scriptBlockString = initializationScript.ToString();
+                if (!string.IsNullOrEmpty(scriptBlockString))
+                {
+                    var encodedCommand = Convert.ToBase64String(Encoding.Unicode.GetBytes(scriptBlockString));
+                    _startInfo.ArgumentList.Add("-EncodedCommand");
+                    _startInfo.ArgumentList.Add(encodedCommand);
+                }
+            }
 
             if (credential != null)
             {
