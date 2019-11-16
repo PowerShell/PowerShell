@@ -17,6 +17,12 @@
     On Windows, add the absolute destination path to the 'User' scope environment variable 'Path';
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
+.EXAMPLE
+    Install the daily build
+    .\install-powershell.ps1 -Daily
+.EXAMPLE
+    Invoke this script directly from GitHub
+    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 #>
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(

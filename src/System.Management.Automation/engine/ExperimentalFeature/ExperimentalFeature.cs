@@ -132,6 +132,9 @@ namespace System.Management.Automation
                     name: "PSUnixFileStat",
                     description: "Provide unix permission information for files and directories"),
 #endif
+                new ExperimentalFeature(
+                    name: "PSNullConditionalOperators",
+                    description: "Support the null conditional member access operators in PowerShell language")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
