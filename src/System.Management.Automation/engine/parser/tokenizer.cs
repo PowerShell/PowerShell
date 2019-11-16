@@ -4217,6 +4217,27 @@ namespace System.Management.Automation.Language
                 return NewToken(TokenKind.LBracket);
             }
 
+
+            if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
+            {
+                _tokenStart = _currentIndex;
+                SkipChar();
+                c = PeekChar();
+                if (c == '.')
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionDot);
+                }
+                else if (c == '[' && allowLBracket)
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionLBracket);
+                }
+
+                UngetChar();
+                return null;
+            }
+
             return null;
         }
 

@@ -32,6 +32,16 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
     }
 
+    It 'Should complete dotnet method with null conditional operator' {
+        $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator without first letter' {
+        $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
+    }
+
     It 'Should complete Magic foreach' {
         $res = TabExpansion2 -inputScript '(1..10).Fo' -cursorColumn '(1..10).Fo'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ForEach('

@@ -7347,11 +7347,11 @@ namespace System.Management.Automation.Language
                 // To support fluent style programming, allow newlines after the member access operator.
                 SkipNewlines();
 
-                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon)
+                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon || token.Kind == TokenKind.QuestionDot)
                 {
                     expr = MemberAccessRule(expr, token);
                 }
-                else if (token.Kind == TokenKind.LBracket)
+                else if (token.Kind == TokenKind.LBracket || token.Kind == TokenKind.QuestionLBracket)
                 {
                     expr = ElementAccessRule(expr, token);
                 }
@@ -7772,8 +7772,12 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            return new MemberExpressionAst(ExtentOf(targetExpr, member),
-                targetExpr, member, operatorToken.Kind == TokenKind.ColonColon);
+            return new MemberExpressionAst(
+                    ExtentOf(targetExpr, member),
+                    targetExpr,
+                    member,
+                    @static: operatorToken.Kind == TokenKind.ColonColon,
+                    nullConditional: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
@@ -7801,7 +7805,13 @@ namespace System.Management.Automation.Language
                 lastExtent = argument.Extent;
             }
 
-            return new InvokeMemberExpressionAst(ExtentOf(targetExpr, lastExtent), targetExpr, member, arguments, operatorToken.Kind == TokenKind.ColonColon);
+            return new InvokeMemberExpressionAst(
+                ExtentOf(targetExpr, lastExtent),
+                targetExpr,
+                member,
+                arguments,
+                operatorToken.Kind == TokenKind.ColonColon,
+                operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private List<ExpressionAst> InvokeParamParenListRule(Token lParen, out IScriptExtent lastExtent)
@@ -7923,7 +7933,7 @@ namespace System.Management.Automation.Language
                 rBracket = null;
             }
 
-            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr);
+            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr, lBracket.Kind == TokenKind.QuestionLBracket);
         }
 
         #endregion Expressions
