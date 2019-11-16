@@ -1269,7 +1269,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return string.Join(Path.PathSeparator, modulePathList.ToArray());
+            return string.Join(Path.PathSeparator, modulePathList);
         }
 #endif
 
