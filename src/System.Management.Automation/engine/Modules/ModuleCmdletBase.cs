@@ -1837,7 +1837,7 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                ProcessorArchitecture currentArchitecture = PsUtils.GetProcessorArchitecture();
+                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
 
                 if (currentArchitecture != requiredProcessorArchitecture)
                 {

@@ -134,16 +134,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns processor architecture for the current process.
-        /// If powershell is running inside Wow64, then <see cref="ProcessorArchitecture.X86"/> is returned.
-        /// </summary>
-        /// <returns>Processor architecture for the current process.</returns>
-        internal static ProcessorArchitecture GetProcessorArchitecture()
-        {
-            return typeof(object).Assembly.GetName().ProcessorArchitecture;
-        }
-
-        /// <summary>
         /// Return true/false to indicate whether the processor architecture is ARM.
         /// </summary>
         /// <returns></returns>
