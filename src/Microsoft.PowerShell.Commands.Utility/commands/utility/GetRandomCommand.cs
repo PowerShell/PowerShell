@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         #region Shuffle parameter
 
         /// <summary>
-        /// If specified, then the command will return all input objects in randomized order
+        /// If specified, then the command will return all input objects in randomized order.
         /// </summary>
         [Parameter(ParameterSetName = ShuffleSet, Mandatory = true)]
         public SwitchParameter Shuffle { get; set; }
