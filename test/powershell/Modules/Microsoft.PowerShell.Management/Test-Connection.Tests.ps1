@@ -66,8 +66,7 @@ Describe "Test-Connection" -tags "CI" {
             # Error code = 11001 - Host not found.
             if (!$isWindows) {
                 $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
-            }
-            else {
+            } else {
                 $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
             }
         }
@@ -84,7 +83,8 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with explicit PingOptions" {
+        # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
+        It "Force IPv4 with explicit PingOptions" -Pending {
             $result1 = Test-Connection $hostName -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
@@ -98,8 +98,7 @@ Describe "Test-Connection" -tags "CI" {
                 $result1.Reply.Options.DontFragment | Should -BeFalse
                 # Depending on the network configuration any of the following should be returned
                 $result2.Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
-            }
-            else {
+            } else {
                 $result1.Reply.Options.DontFragment | Should -BeTrue
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
@@ -257,8 +256,7 @@ Describe "Test-Connection" -tags "CI" {
             $result[0].Status | Should -BeExactly "Success"
             if (!$isWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
-            }
-            else {
+            } else {
                 $result[0].Reply.Buffer.Count | Should -Be 32
             }
         }
