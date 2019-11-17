@@ -128,6 +128,18 @@ Describe "Native Command Processor" -tags "Feature" {
             $ps.Dispose()
         }
     }
+
+    It "OutputEncoding should be used" -Skip:(!$IsWindows -or !(Get-Command sfc.exe)) {
+
+        $originalOutputEncoding = [Console]::OutputEncoding
+        try {
+            [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
+            sfc | Out-String | Should -Not -Match "`0"
+        }
+        finally {
+            [Console]::OutputEncoding = $originalOutputEncoding
+        }
+    }
 }
 
 Describe "Open a text file with NativeCommandProcessor" -tags @("Feature", "RequireAdminOnWindows") {

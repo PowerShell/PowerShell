@@ -9,9 +9,11 @@ PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
 FunctionsToExport = @()
-AliasesToExport = @("gin", "gtz", "stz")
+AliasesToExport = @("gcb", "gin", "gtz", "scb", "stz")
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
+    "Get-Clipboard",
+    "Set-Clipboard",
     "Clear-ItemProperty",
     "Join-Path",
     "Convert-Path",
@@ -67,5 +69,6 @@ CmdletsToExport=@("Add-Content",
     "Get-ComputerInfo",
     "Get-TimeZone",
     "Set-TimeZone",
-    "Get-HotFix")
+    "Get-HotFix",
+    "Clear-RecycleBin")
 }

@@ -234,7 +234,7 @@ namespace System.Management.Automation
                     var cvv = new ConstantValueVisitor { AttributeArgument = true };
                     for (int i = 0; i < attributeAst.PositionalArguments.Count; i++)
                     {
-                        yield return Compiler._attrArgToStringConverter.Target(Compiler._attrArgToStringConverter,
+                        yield return Compiler.s_attrArgToStringConverter.Target(Compiler.s_attrArgToStringConverter,
                             attributeAst.PositionalArguments[i].Accept(cvv));
                     }
                 }

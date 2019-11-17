@@ -247,6 +247,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed = echo hello | pwsh -noprofile $testFilePath e -
             $observed | Should -BeExactly "h-llo"
         }
+
+        It "Empty command should fail" {
+            pwsh -noprofile -c ''
+            $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Whitespace command should succeed" {
+            pwsh -noprofile -c ' ' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
     }
 
     Context "-Login pwsh switch" {

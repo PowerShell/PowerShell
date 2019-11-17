@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str, offset);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(character);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
                 }
-                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+                catch
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return raw.WindowSize.Height;
                 }
-                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+                catch
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.

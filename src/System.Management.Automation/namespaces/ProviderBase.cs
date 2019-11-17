@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteInformation" />
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
@@ -1862,6 +1862,27 @@ namespace System.Management.Automation.Provider
 
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
+#if UNIX
+
+                // Add a commonstat structure to file system objects
+                if (ExperimentalFeature.IsEnabled("PSUnixFileStat") && ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
+                {
+                    try
+                    {
+                        // Use LStat because if you get a link, you want the information about the 
+                        // link, not the file.
+                        var commonStat = Platform.Unix.GetLStat(path);
+                        result.AddOrSetProperty("UnixStat", commonStat);
+                    }
+                    catch
+                    {
+                        // If there is *any* problem in retrieving the stat information
+                        // set the property to null. There is no specific exception which
+                        // would result in different behavior.
+                        result.AddOrSetProperty("UnixStat", value: null);
+                    }
+                }
+#endif
             }
 
             // PSDriveInfo

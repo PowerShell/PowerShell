@@ -21,7 +21,7 @@ jobs:
       CreateJson: yes
 
   - task: AzureFileCopy@1
-    displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+    displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
     inputs:
       SourcePath: '$(BuildInfoPath)'
       azureSubscription: '$(AzureFileCopySubscription)'

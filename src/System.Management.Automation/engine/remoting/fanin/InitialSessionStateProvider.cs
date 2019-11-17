@@ -1765,7 +1765,7 @@ namespace System.Management.Automation.Remoting
                 DISCUtils.ValidateRoleDefinitions(roleEntry);
 
                 // Go through the Roles hashtable
-                foreach (Object role in roleEntry.Keys)
+                foreach (object role in roleEntry.Keys)
                 {
                     // Check if this role applies to the connected user
                     if (roleVerifier(role.ToString()))
@@ -1854,7 +1854,7 @@ namespace System.Management.Automation.Remoting
         // Merge a role / role capability hashtable into the master configuration hashtable
         private void MergeConfigHashIntoConfigHash(IDictionary childConfigHash)
         {
-            foreach (Object customization in childConfigHash.Keys)
+            foreach (object customization in childConfigHash.Keys)
             {
                 string customizationString = customization.ToString();
 
@@ -2458,7 +2458,7 @@ namespace System.Management.Automation.Remoting
                 commandModuleNames.Add(moduleSpec.Name);
             }
 
-            foreach (Object commandObject in commands)
+            foreach (object commandObject in commands)
             {
                 if (commandObject == null)
                 {
