@@ -156,6 +156,18 @@ Describe "Get-Random" -Tags "CI" {
         $randomNumber[6] | Should -BeNullOrEmpty
     }
 
+    It "Should return all the numbers for array of 1,2,3,5,8,13 in randomized order when the Shuffle switch is used" {
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Shuffle
+        $randomNumber.Count | Should -Be 6
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[3] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[4] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[5] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[6] | Should -BeNullOrEmpty
+    }
+
     It "Should return for a string collection " {
         $randomNumber = Get-Random -InputObject "red", "yellow", "blue"
         $randomNumber | Should -Be ("red" -or "yellow" -or "blue")
@@ -173,7 +185,7 @@ Describe "Get-Random" -Tags "CI" {
         $firstRandomNumber | Should -Not -Be $secondRandomNumber
     }
 
-    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed it used " {
+    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed is used " {
         $firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
         $secondRandomNumber = Get-Random 34359738367 -SetSeed 20
         $firstRandomNumber | Should -Be @secondRandomNumber
