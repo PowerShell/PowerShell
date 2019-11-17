@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 using (FileStream output = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                 {
-                    WriteToStream(stream, output, cmdlet,cts);
+                    WriteToStream(stream, output, cmdlet, cts);
                 }
             }
         }
