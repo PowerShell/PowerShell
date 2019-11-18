@@ -89,7 +89,8 @@ namespace Microsoft.PowerShell.Commands
                         obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
                     }
                 }
-                else if (obj.TypeNames.Contains("System.Exception"))
+
+                if (obj.TypeNames.Contains("System.Exception"))
                 {
                     if (!obj.TypeNames.Contains(ExceptionPSExtendedError))
                     {

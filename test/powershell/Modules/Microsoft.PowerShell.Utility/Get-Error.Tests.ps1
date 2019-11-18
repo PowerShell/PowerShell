@@ -32,7 +32,7 @@ Describe 'Get-Error tests' -Tag CI {
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord'
         $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
 
-        # need to exercise the formatter
+        # need to exercise the formatter to validate that the internal types are removed from the error object
         $null = $err | Out-String
         $err | Should -BeOfType [System.Management.Automation.ErrorRecord]
         $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord'
@@ -102,7 +102,7 @@ Describe 'Get-Error tests' -Tag CI {
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception'
         $err.PSObject.TypeNames | Should -Contain 'System.Exception#PSExtendedError'
 
-        # need to exercise the formatter
+        # need to exercise the formatter to validate that the internal types are removed from the error object
         $null = $err | Out-String
         $err | Should -BeOfType [System.Exception]
         $err.PSObject.TypeNames | Should -Contain 'System.Exception'
