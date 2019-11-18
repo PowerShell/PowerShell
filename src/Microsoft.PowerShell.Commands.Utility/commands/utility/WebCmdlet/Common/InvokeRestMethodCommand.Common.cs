@@ -382,10 +382,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (response == null) { throw new ArgumentNullException("response"); }
 
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            var baseResponseStream = StreamHelper.GetResponseStream(response);
 
             if (ShouldWriteToPipeline)
             {
+                using (BufferingStreamReader responseStream = new BufferingStreamReader(baseResponseStream))
+
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
                 if (TryProcessFeedStream(responseStream))
@@ -454,10 +456,9 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(obj);
                 }
             }
-
-            if (ShouldSaveToOutFile)
+            else if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, _cancelToken);
+                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, _cancelToken);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))
