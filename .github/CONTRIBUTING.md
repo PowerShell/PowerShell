@@ -27,7 +27,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 * Review [Issue Management][issue-management].
 * Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
 * If you can't find your issue already,
-  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
+  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new/choose),
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell Maintainers are looking for help with the issue.
