@@ -369,3 +369,35 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
     }
 }
+
+Describe 'Select-Object behaviour with hashtable entries and actual members' {
+
+    It 'can retrieve a hashtable entry as a property' {
+        $hashtable = @{ Entry = 100 }
+
+        $result = $hashtable | Select-Object -Property Entry
+        $result.Entry | Should -Be 100
+
+        $hashtable |
+            Select-Object -ExpandProperty Entry |
+            Should -Be 100
+    }
+
+    It 'can retrieve true hashtable members' {
+        $hashtable = @{ Value = 10 }
+        $result = $hashtable | Select-Object -Property Keys
+        $result.Keys | Should -Be 'Value'
+
+        $hashtable |
+            Select-Object -ExpandProperty Keys |
+            Should -Be 'Value'
+    }
+
+    It 'should prioritise hashtable entries where available' {
+        $hashtable = @{ Keys = 10 }
+        $result = $hashtable | Select-Object -Property Keys
+        $result.Keys | Should -Be 10
+
+        $hashtable | Select-Object -ExpandProperty Keys | Should -Be 10
+    }
+}
