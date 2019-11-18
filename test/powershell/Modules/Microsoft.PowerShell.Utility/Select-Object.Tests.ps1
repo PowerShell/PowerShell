@@ -128,7 +128,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "Select-Object with empty script block property should throw" {
-        $e = { "bar" | Select-Object -Prop { } -ErrorAction Stop } |
+        $e = { "bar" | Select-Object -Prop {} -ErrorAction Stop } |
             Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
