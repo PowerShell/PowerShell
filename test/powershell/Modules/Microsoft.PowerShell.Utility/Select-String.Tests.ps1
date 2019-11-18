@@ -107,6 +107,10 @@ Describe "Select-String" -Tags "CI" {
             }
         }
 
+        It "Should throw if -AllMatches parameter is used with -SimpleMatch parameter" {
+            { "1" | Select-String -Pattern "hello" -AllMatches -SimpleMatch } | Should -Throw -ErrorId "CannotSpecifyAllMatchesWithSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"
+        }
+
         it "Should output a string with the first match highlighted when SimpleMatch is used" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {

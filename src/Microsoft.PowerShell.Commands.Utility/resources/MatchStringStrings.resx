@@ -132,4 +132,7 @@
   <data name="CannotSpecifyCultureWithoutSimpleMatch" xml:space="preserve">
     <value>You must specify -Culture parameter only with -SimpleMatch parameter.</value>
   </data>
+  <data name="CannotSpecifyAllMatchesWithSimpleMatch" xml:space="preserve">
+    <value>Cmdlet parameters AllMatches and SimpleMatch are mutually exclusive.</value>
+  </data>
 </root>
