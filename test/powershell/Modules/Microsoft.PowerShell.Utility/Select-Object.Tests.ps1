@@ -370,7 +370,7 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
     }
 }
 
-Describe 'Select-Object behaviour with hashtable entries and actual members' {
+Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags CI {
 
     It 'can retrieve a hashtable entry as a property' {
         $hashtable = @{ Entry = 100 }
