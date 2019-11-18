@@ -1427,7 +1427,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
-            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(AllMatches)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(AllMatches)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
             {
                 InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyAllMatchesWithSimpleMatch);
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyAllMatchesWithSimpleMatch", ErrorCategory.InvalidData, null);
