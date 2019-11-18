@@ -296,19 +296,16 @@ namespace Microsoft.PowerShell.Commands
                 return retVal;
             }
 
-            foreach (PSPropertyExpression resolvedName in ResolveNames(wrappedTarget, expand))
+            foreach (PSPropertyExpression resolvedName in ResolveNames(target, expand))
             {
                 PSPropertyExpressionResult result = resolvedName.GetValue(wrappedTarget, eatExceptions);
-                retVal.Add(result);
-            }
 
-            if (retVal.Count == 0 && wasHashtable)
-            {
-                foreach (PSPropertyExpression resolvedName in ResolveNames(target, expand))
+                if (result.Result == null && wasHashtable)
                 {
-                    PSPropertyExpressionResult result = resolvedName.GetValue(target, eatExceptions);
-                    retVal.Add(result);
+                    result = resolvedName.GetValue(target, eatExceptions);
                 }
+
+                retVal.Add(result);
             }
 
             return retVal;
@@ -372,8 +369,8 @@ namespace Microsoft.PowerShell.Commands
             // that property expressions can work on it.
             if (PSObject.Base(target) is Hashtable targetAsHash)
             {
-                target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
                 wrapped = true;
+                return (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
             }
 
             return target;
