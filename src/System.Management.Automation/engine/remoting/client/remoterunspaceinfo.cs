@@ -297,6 +297,10 @@ namespace System.Management.Automation.Runspaces
                     ConfigurationName = "DefaultShell";
                     break;
 
+                case NewProcessConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    break;
+
                 default:
                     Dbg.Assert(false, "Invalid Runspace");
                     break;

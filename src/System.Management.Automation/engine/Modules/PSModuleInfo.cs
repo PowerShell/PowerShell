@@ -282,6 +282,8 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string HelpInfoUri { get; private set; }
 
+        internal bool IsWindowsPowerShellCompatModule { get; set; }
+
         internal void SetHelpInfoUri(string uri)
         {
             HelpInfoUri = uri;

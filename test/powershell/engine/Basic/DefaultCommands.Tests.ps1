@@ -124,7 +124,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "npssc",                            "New-PSSessionConfigurationFile",   $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "nsn",                              "New-PSSession",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "nv",                               "New-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "nwsn",                             "New-PSWorkflowSession",            $($FullCLR                               ),     "ReadOnly",             "",                     ""
+"Alias",        "nwsn",                             "New-PSWorkflowSession",            $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "ogv",                              "Out-GridView",                     $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Alias",        "oh",                               "Out-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "popd",                             "Pop-Location",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""

@@ -195,6 +195,11 @@ namespace Microsoft.PowerShell.Commands
         protected const string SessionParameterSet = "Session";
 
         /// <summary>
+        /// Parameter set to use Windows PowerShell.
+        /// </summary>
+        protected const string UseWindowsPowerShellParameterSet = "UseWindowsPowerShellParameterSet";
+
+        /// <summary>
         /// Default shellname.
         /// </summary>
         protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";

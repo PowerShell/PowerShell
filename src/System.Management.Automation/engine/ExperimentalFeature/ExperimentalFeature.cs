@@ -134,7 +134,12 @@ namespace System.Management.Automation
 #endif
                 new ExperimentalFeature(
                     name: "PSNullConditionalOperators",
-                    description: "Support the null conditional member access operators in PowerShell language")
+                    description: "Support the null conditional member access operators in PowerShell language"),
+#if !UNIX
+                new ExperimentalFeature(
+                    name: "PSWindowsPowerShellCompatibility",
+                    description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting")
+#endif
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
