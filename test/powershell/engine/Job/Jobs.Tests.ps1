@@ -94,6 +94,11 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $jobOutput | Should -BeExactly $path.ToString()
         }
 
+        It 'Verifies the working directory parameter path with trailing backslash' -Skip:(! $IsWindows) {
+            $job = Start-Job { $pwd } -WorkingDirectory '\' | Wait-Job
+            $job.JobStateInfo.State | Should -BeExactly 'Completed'
+        }
+
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
             param($path, $case, $expectedErrorId)
 
