@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
-        private const string ShuffleSet = "ShuffleSet";
+        private const string ShuffleParameterSet = "ShuffleParameterSet";
         private static readonly object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
@@ -51,8 +51,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
-                    else if (ParameterSetName.Equals(GetRandomCommand.RandomListItemParameterSet, StringComparison.OrdinalIgnoreCase) ||
-                             ParameterSetName.Equals(GetRandomCommand.ShuffleSet, StringComparison.OrdinalIgnoreCase))
+                    else if (ParameterSetName == GetRandomCommand.RandomListItemParameterSet
+                        || ParameterSetName == GetRandomCommand.ShuffleParameterSet)
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         /// List from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
-        [Parameter(ParameterSetName = ShuffleSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [Parameter(ParameterSetName = ShuffleParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [System.Management.Automation.AllowNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] InputObject { get; set; }
@@ -296,9 +296,9 @@ namespace Microsoft.PowerShell.Commands
         #region Shuffle parameter
 
         /// <summary>
-        /// If specified, then the command will return all input objects in randomized order.
+        /// Gets or sets whether the command should return all input objects in randomized order.
         /// </summary>
-        [Parameter(ParameterSetName = ShuffleSet, Mandatory = true)]
+        [Parameter(ParameterSetName = ShuffleParameterSet, Mandatory = true)]
         public SwitchParameter Shuffle { get; set; }
 
         #endregion
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                if (ParameterSetName == ShuffleSet)
+                if (ParameterSetName == ShuffleParameterSet)
                 {
                     // this allows for $null to be in an array passed to InputObject
                     foreach (object item in InputObject ?? _nullInArray)
