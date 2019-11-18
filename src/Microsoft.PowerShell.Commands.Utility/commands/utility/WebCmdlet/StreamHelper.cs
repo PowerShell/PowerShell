@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            var copyTask = input.CopyToAsync(output, cts.Token);
+            Task copyTask = input.CopyToAsync(output, cts.Token);
 
             ProgressRecord record = new ProgressRecord(
                 ActivityId,
@@ -302,27 +302,16 @@ namespace Microsoft.PowerShell.Commands
         /// Saves content from stream into filePath.
         /// Caller need to ensure <paramref name="stream"/> position is properly set.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="filePath"></param>
-        /// <param name="cmdlet"></param>
-        /// <param name="cts"></param>
+        /// <param name="stream">Input stream.</param>
+        /// <param name="filePath">Output file name.</param>
+        /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
+        /// <param name="cts">CancellationTokenSource to track the cmdlet cancellation.</param>
         internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationTokenSource cts)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
-            if (cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)
-            {
-                using (FileStream output = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
-                {
-                    WriteToStream(stream, output, cmdlet, cts);
-                }
-            }
-            else
-            {
-                using (FileStream output = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-                {
-                    WriteToStream(stream, output, cmdlet, cts);
-                }
-            }
+            FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
+            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            WriteToStream(stream, output, cmdlet, cts);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
