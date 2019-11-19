@@ -99,7 +99,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*ExceptionType*'
+        $out | Should -BeLikeExactly '*Type*'
 
         if ($IsWindows) {
             $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
