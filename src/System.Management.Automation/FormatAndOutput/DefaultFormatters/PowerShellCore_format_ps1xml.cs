@@ -1087,15 +1087,8 @@ namespace System.Management.Automation.Runspaces
 
                                             if ($useTargetObject) {
                                                 $line = $_.TargetObject.LineText.Trim()
-                                                $indexOfShould = $line.IndexOf('should',[System.StringComparison]::OrdinalIgnoreCase)
-                                                if ($indexOfShould -ge 0) {
-                                                    $offsetLength = 'should'.Length
-                                                    $offsetInLine = $indexOfShould
-                                                }
-                                                else {
-                                                    $offsetLength = 0
-                                                    $offsetInLine = 0
-                                                }
+                                                $offsetLength = 0
+                                                $offsetInLine = 0
                                             }
                                             else {
                                                 $line = $myinv.Line
