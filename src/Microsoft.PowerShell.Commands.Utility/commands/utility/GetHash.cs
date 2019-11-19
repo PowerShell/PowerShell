@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (FileNotFoundException ex)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         ex,
                         "FileNotFound",
                         ErrorCategory.ObjectNotFound,
