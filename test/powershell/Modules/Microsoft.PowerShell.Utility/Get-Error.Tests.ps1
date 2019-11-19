@@ -26,6 +26,17 @@ Describe 'Get-Error tests' -Tag CI {
 
         $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*InnerException*'
+
+        $err = Get-Error
+        $err | Should -BeOfType [System.Management.Automation.ErrorRecord]
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
+
+        # need to exercise the formatter to validate that the internal types are removed from the error object
+        $null = $err | Out-String
+        $err | Should -BeOfType [System.Management.Automation.ErrorRecord]
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
     }
 
     It 'Get-Error -Newest `<count>` works: <scenario>' -TestCases @(
@@ -80,14 +91,21 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error will handle Exceptions' {
-        try {
-            Invoke-Expression '1/d'
-        }
-        catch {
-        }
+        $e = [Exception]::new('myexception')
+        $error.Insert(0, $e)
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*ExpectedValueExpression*'
-        $out | Should -BeLikeExactly '*UnexpectedToken*'
+        $out | Should -BeLikeExactly '*myexception*'
+
+        $err = Get-Error
+        $err | Should -BeOfType [System.Exception]
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception'
+        $err.PSObject.TypeNames | Should -Contain 'System.Exception#PSExtendedError'
+
+        # need to exercise the formatter to validate that the internal types are removed from the error object
+        $null = $err | Out-String
+        $err | Should -BeOfType [System.Exception]
+        $err.PSObject.TypeNames | Should -Contain 'System.Exception'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception#PSExtendedError'
     }
 }
