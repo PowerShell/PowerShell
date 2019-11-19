@@ -146,6 +146,14 @@ namespace Microsoft.PowerShell.Commands
                         path);
                     WriteError(errorRecord);
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    ErrorRecord errorRecord = new ErrorRecord(ex,
+                        "UnauthorizedAccessError",
+                        ErrorCategory.InvalidData,
+                        path);
+                    WriteError(errorRecord);
+                }
                 finally
                 {
                     openfilestream?.Dispose();
