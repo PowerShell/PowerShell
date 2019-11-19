@@ -1870,6 +1870,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.UseWindowsPowerShell)
                 {
+                    string winPSVersionString = string.Empty;
+#if !UNIX
+                    winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
+#endif
+                    if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
+                        throw new InvalidOperationException(errorMessage);
+                    }
+
                     var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
                     if (WindowsPowerShellCompatRemotingSession != null)
                     {
