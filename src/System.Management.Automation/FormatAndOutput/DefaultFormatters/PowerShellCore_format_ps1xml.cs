@@ -1052,8 +1052,8 @@ namespace System.Management.Automation.Runspaces
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
                                             $useTargetObject = $false
 
-                                            # Use TargetObject if it's available
-                                            if ($_.TargetObject -and $_.TargetObject.Line -and $_.TargetObject.LineText) {
+                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
+                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
                                                 $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
                                                 $useTargetObject = $true
                                             }
