@@ -476,6 +476,31 @@ namespace System.Management.Automation
 
             return null;
         }
+
+        private static string s_windowsPowerShellVersion = null;
+
+        /// <summary>
+        /// Get the Windows PowerShell version from registry.
+        /// </summary>
+        internal static string GetWindowsPowerShellVersionFromRegistry()
+        {
+            if (s_windowsPowerShellVersion != null)
+                return s_windowsPowerShellVersion;
+
+            string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
+                PSVersionInfo.RegistryVersionKey + "\\" + RegistryStrings.MonadEngineKey;
+
+            using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
+            {
+                if (engineKey != null)
+                {
+                    s_windowsPowerShellVersion = engineKey.GetValue(RegistryStrings.MonadEngine_MonadVersion) as string;
+                    return s_windowsPowerShellVersion;
+                }
+            }
+
+            return null;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);

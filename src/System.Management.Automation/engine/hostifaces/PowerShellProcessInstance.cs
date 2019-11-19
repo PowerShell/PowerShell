@@ -53,11 +53,11 @@ namespace System.Management.Automation.Runspaces
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
             string exePath = PwshExePath;
-            bool startingWindowsPowerShell51 = false;
+            bool startingWindowsPowerShell = false;
 #if !UNIX
-            // if requested PS version was "5.1" then we start Windows PS instead of PS Core
-            startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
-            if (startingWindowsPowerShell51)
+            // if requested PS version was "5" or lower then we start Windows PS instead of PS Core
+            startingWindowsPowerShell = (powerShellVersion != null) && (powerShellVersion.Major <= 5);
+            if (startingWindowsPowerShell)
             {
                 exePath = WinPwshExePath;
 
@@ -94,17 +94,17 @@ namespace System.Management.Automation.Runspaces
 #endif
             };
 
-            if (startingWindowsPowerShell51)
+            if (startingWindowsPowerShell)
             {
                 _startInfo.ArgumentList.Add("-Version");
-                _startInfo.ArgumentList.Add("5.1");
+                _startInfo.ArgumentList.Add(string.Format("{0}.{1}", powerShellVersion.Major, powerShellVersion.Minor));
             }
 
             _startInfo.ArgumentList.Add("-s");
             _startInfo.ArgumentList.Add("-NoLogo");
             _startInfo.ArgumentList.Add("-NoProfile");
 
-            if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell51)
+            if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell)
             {
                 _startInfo.ArgumentList.Add("-wd");
                 _startInfo.ArgumentList.Add(workingDirectory);
