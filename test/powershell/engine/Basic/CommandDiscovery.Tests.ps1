@@ -224,7 +224,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It 'Can discover a native command with extension on Windows' -skip:(-not $IsWindows) {
-            (Get-Command -Name "pingG.exe" -CommandType Application).Name | Should -Match "ping.exe"
+            (Get-Command -Name "ping.exe" -CommandType Application).Name | Should -Match "ping.exe"
         }
     }
 }
