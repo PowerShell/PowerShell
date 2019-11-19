@@ -773,7 +773,7 @@ namespace System.Management.Automation.Runspaces
 
                                 # if object is an Exception, add an ExceptionType property
                                 if ($obj -is [Exception]) {
-                                    $obj | Add-Member -NotePropertyName ExceptionType -NotePropertyValue $obj.GetType().FullName -ErrorAction Ignore
+                                    $obj | Add-Member -NotePropertyName Type -NotePropertyValue $obj.GetType().FullName -ErrorAction Ignore
                                 }
 
                                 # first find the longest property so we can indent properly
