@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         ex,
                         "UnauthorizedAccessError",
                         ErrorCategory.InvalidData,
