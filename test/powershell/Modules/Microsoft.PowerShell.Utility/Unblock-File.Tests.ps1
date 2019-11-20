@@ -155,11 +155,11 @@ Describe "Unblock-File" -Tags "CI" {
 
 
         It "With '-Path': no file exist" {
-            { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
         }
 
         It "With '-LiteralPath': no file exist" {
-            { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
         }
 
         It "With '-LiteralPath': file exist" {
