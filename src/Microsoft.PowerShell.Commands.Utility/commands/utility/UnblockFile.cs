@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#if !UNIX
-
 #region Using directives
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -23,6 +24,12 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217450")]
     public sealed class UnblockFileCommand : PSCmdlet
     {
+
+#if UNIX
+        private const string MacBlockAttribute = "com.apple.quarantine";
+        private const int RemovexattrFollowSymLink = 0;
+#endif
+
         /// <summary>
         /// The path of the file to unblock.
         /// </summary>
@@ -67,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if !UNIX
             List<string> pathsToProcess = new List<string>();
             ProviderInfo provider = null;
 
@@ -128,8 +136,30 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#else
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                string errorMessage = UnblockFileStrings.LinuxNotSupported;
+                Exception e = new NotImplementedException(errorMessage);
+                ThrowTerminatingError(new ErrorRecord(e, "LinuxNotSupported", ErrorCategory.NotImplemented,null));
+                return;
+            }
+
+            foreach (string path in _paths)
+            {
+                UInt32 result = removexattr(path,MacBlockAttribute,RemovexattrFollowSymLink);
+                if(result != 0)
+                {
+                    string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
+                    Exception e = new InvalidOperationException(errorMessage);
+                    WriteError(new ErrorRecord(e, "UnblockError", ErrorCategory.InvalidResult,path));
+                }
+            }
+
+#endif
         }
 
+#if !UNIX
         /// <summary>
         /// IsValidFileForUnblocking is a helper method used to validate if
         /// the supplied file path has to be considered for unblocking.
@@ -163,6 +193,21 @@ namespace Microsoft.PowerShell.Commands
 
             return isValidUnblockableFile;
         }
+#else
+        // Ansi means UTF8 on Unix
+        // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/removexattr.2.html
+        [DllImport("libc", SetLastError = true, EntryPoint = "removexattr", CharSet = CharSet.Ansi)]
+        private static extern UInt32 removexattr(string path, string name, int options);
+#endif
+        private ErrorRecord NewError(string errorId, string resourceId, object targetObject, ErrorCategory category = ErrorCategory.InvalidOperation, params object[] args)
+        {
+            ErrorDetails details = new ErrorDetails(this.GetType().Assembly, "UnblockFileStrings", resourceId, args);
+            ErrorRecord errorRecord = new ErrorRecord(
+                new InvalidOperationException(details.Message),
+                errorId,
+                category,
+                targetObject);
+            return errorRecord;
+        }
     }
 }
-#endif
