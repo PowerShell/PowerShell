@@ -74,7 +74,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-#if !UNIX
             List<string> pathsToProcess = new List<string>();
             ProviderInfo provider = null;
 
@@ -120,6 +119,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#if !UNIX
 
             // Unblock files
             foreach (string path in pathsToProcess)
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            foreach (string path in _paths)
+            foreach (string path in pathsToProcess)
             {
                 UInt32 result = removexattr(path,MacBlockAttribute,RemovexattrFollowSymLink);
                 if(result != 0)
@@ -159,7 +159,6 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-#if !UNIX
         /// <summary>
         /// IsValidFileForUnblocking is a helper method used to validate if
         /// the supplied file path has to be considered for unblocking.
@@ -193,7 +192,8 @@ namespace Microsoft.PowerShell.Commands
 
             return isValidUnblockableFile;
         }
-#else
+
+#if UNIX
         // Ansi means UTF8 on Unix
         // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/removexattr.2.html
         [DllImport("libc", SetLastError = true, EntryPoint = "removexattr", CharSet = CharSet.Ansi)]
