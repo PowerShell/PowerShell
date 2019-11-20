@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217450")]
     public sealed class UnblockFileCommand : PSCmdlet
     {
-
 #if UNIX
         private const string MacBlockAttribute = "com.apple.quarantine";
         private const int RemovexattrFollowSymLink = 0;
@@ -147,12 +146,15 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                UInt32 result = removexattr(path,MacBlockAttribute,RemovexattrFollowSymLink);
-                if(result != 0)
+                if(IsBlocked(path))
                 {
-                    string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
-                    Exception e = new InvalidOperationException(errorMessage);
-                    WriteError(new ErrorRecord(e, "UnblockError", ErrorCategory.InvalidResult,path));
+                    UInt32 result = RemoveXattr(path,MacBlockAttribute,RemovexattrFollowSymLink);
+                    if(result != 0)
+                    {
+                        string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
+                        Exception e = new InvalidOperationException(errorMessage);
+                        WriteError(new ErrorRecord(e, "UnblockError", ErrorCategory.InvalidResult,path));
+                    }
                 }
             }
 
@@ -194,10 +196,40 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if UNIX
+        private bool IsBlocked(string path)
+        {
+            uint valueSize = 1024;
+            IntPtr value = Marshal.AllocHGlobal(1024);
+            string valueStr = string.Empty;
+            try {
+                var resultSize = GetXattr(path, MacBlockAttribute, value, valueSize, 0, RemovexattrFollowSymLink);
+
+                if(resultSize != -1)
+                {
+                    valueStr = Marshal.PtrToStringUTF8(value, (int)resultSize);
+                }
+
+                return resultSize !=-1;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(value);
+            }
+        }
+
         // Ansi means UTF8 on Unix
-        // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/removexattr.2.html
+        // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/RemoveXattr.2.html
         [DllImport("libc", SetLastError = true, EntryPoint = "removexattr", CharSet = CharSet.Ansi)]
-        private static extern UInt32 removexattr(string path, string name, int options);
+        private static extern UInt32 RemoveXattr(string path, string name, int options);
+
+        [DllImport("libc", EntryPoint = "getxattr", CharSet = CharSet.Ansi)]
+        private static extern long GetXattr(
+            [MarshalAs(UnmanagedType.LPStr)] string path,
+            [MarshalAs(UnmanagedType.LPStr)] string name,
+            IntPtr value,
+            ulong size,
+            uint position,
+            int options);
 #endif
         private ErrorRecord NewError(string errorId, string resourceId, object targetObject, ErrorCategory category = ErrorCategory.InvalidOperation, params object[] args)
         {
