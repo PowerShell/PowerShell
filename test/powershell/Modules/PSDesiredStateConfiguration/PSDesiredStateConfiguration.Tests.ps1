@@ -429,7 +429,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Should -Throw -ErrorId 'InvalidResourceSpecification,Invoke-DscResource' -ExpectedMessage 'Invalid Resource Name ''Script'' or module specification.'
             }
 
-            it "Resource with embedded resource not supported and a warning should be produced"  {
+            it "Resource with embedded resource not supported and a warning should be produced" -Pending  {
 
                 if (!(Test-IsInvokeDscResourceEnable)) {
                     Set-ItResult -Skipped -Because "Feature not enabled"
