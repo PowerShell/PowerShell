@@ -225,15 +225,5 @@ namespace Microsoft.PowerShell.Commands
             uint position,
             int options);
 #endif
-        private ErrorRecord NewError(string errorId, string resourceId, object targetObject, ErrorCategory category = ErrorCategory.InvalidOperation, params object[] args)
-        {
-            ErrorDetails details = new ErrorDetails(this.GetType().Assembly, "UnblockFileStrings", resourceId, args);
-            ErrorRecord errorRecord = new ErrorRecord(
-                new InvalidOperationException(details.Message),
-                errorId,
-                category,
-                targetObject);
-            return errorRecord;
-        }
     }
 }
