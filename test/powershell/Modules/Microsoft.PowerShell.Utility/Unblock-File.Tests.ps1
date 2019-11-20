@@ -95,7 +95,7 @@ Describe "Unblock-File" -Tags "CI" {
 
         BeforeEach {
             if ( $IsMacOS ){
-                xattr -w com.apple.quarantine test $testfilepath
+                xattr -w com.apple.quarantine '0081;5dd5c373;Microsoft Edge;1A9A933D-619A-4036-BAF3-17A7966A1BA8' $testfilepath
             }
         }
 
@@ -109,7 +109,7 @@ Describe "Unblock-File" -Tags "CI" {
 
         # the error code in not unique
         # cannot suppress the error if it's already unblocked.
-        It "With '-Path': file exist" -Pending {
+        It "With '-Path': file exist" {
             Unblock-File -Path $testfilepath
             Test-UnblockFile
 
@@ -125,7 +125,7 @@ Describe "Unblock-File" -Tags "CI" {
         It "Write an error if a file is read only" {
             $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
             Set-Content -Path $TestFile -value 'test'
-            xattr -w com.apple.quarantine test $TestFile
+            xattr -w com.apple.quarantine '0081;5dd5c373;Microsoft Edge;1A9A933D-619A-4036-BAF3-17A7966A1BA8' $TestFile
             Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $True
 
             $TestFileCreated = Get-ChildItem $TestFile
