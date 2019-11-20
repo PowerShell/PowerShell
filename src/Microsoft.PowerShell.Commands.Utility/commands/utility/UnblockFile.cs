@@ -203,12 +203,6 @@ namespace Microsoft.PowerShell.Commands
             string valueStr = string.Empty;
             try {
                 var resultSize = GetXattr(path, MacBlockAttribute, value, valueSize, 0, RemovexattrFollowSymLink);
-
-                if(resultSize != -1)
-                {
-                    valueStr = Marshal.PtrToStringUTF8(value, (int)resultSize);
-                }
-
                 return resultSize !=-1;
             }
             finally
