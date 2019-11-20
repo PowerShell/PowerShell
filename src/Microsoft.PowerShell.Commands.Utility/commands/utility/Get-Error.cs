@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (object errorRecord in errorRecords)
             {
-                PSObject obj = PSObject.AsPSObject(errorRecord, storeTypeNameAndInstanceMembersLocally: true);
+                var obj = PSObject.AsPSObject(errorRecord, storeTypeNameAndInstanceMembersLocally: true);
 
                 if (obj.TypeNames.Contains("System.Management.Automation.ErrorRecord"))
                 {
