@@ -140,9 +140,19 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (FileNotFoundException ex)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(ex,
+                    var errorRecord = new ErrorRecord(
+                        ex,
                         "FileNotFound",
                         ErrorCategory.ObjectNotFound,
+                        path);
+                    WriteError(errorRecord);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    var errorRecord = new ErrorRecord(
+                        ex,
+                        "UnauthorizedAccessError",
+                        ErrorCategory.InvalidData,
                         path);
                     WriteError(errorRecord);
                 }
