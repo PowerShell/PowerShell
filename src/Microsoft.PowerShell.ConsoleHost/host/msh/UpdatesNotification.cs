@@ -21,6 +21,9 @@ namespace Microsoft.PowerShell
     internal static class UpdatesNotification
     {
         private const string UpdateCheckEnvVar = "POWERSHELL_UPDATECHECK";
+        private const string LTSBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/lts.json";
+        private const string StableBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/stable.json";
+        private const string PreviewBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/preview.json";
 
         private static readonly string s_cacheDirectory;
         private static readonly string s_sentinelFileName;
@@ -209,8 +212,8 @@ namespace Microsoft.PowerShell
                     // Do the real update check:
                     //  - Send HTTP request to query for the new release/pre-release;
                     //  - If there is a valid new release that should be reported to the user,
-                    //    create the file `<NotificationType>Update_<tag>_<publish-date>` when no `update` file exists,
-                    //    or rename the existing file to `<NotificationType>Update_<new-version>_<new-publish-date>`.
+                    //    create the file `update<NotificationType>_<tag>_<publish-date>` when no `update` file exists,
+                    //    or rename the existing file to `update<NotificationType>_<new-version>_<new-publish-date>`.
                     SemanticVersion baselineVersion = lastUpdateVersion ?? PSVersionInfo.PSCurrentVersion;
                     Release release = await QueryNewReleaseAsync(baselineVersion);
 
@@ -325,10 +328,10 @@ namespace Microsoft.PowerShell
             bool isStableRelease = string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel);
             string[] queryUris = s_notificationType switch
             {
-                NotificationType.LTS => new[] { "https://pscoretestdata.blob.core.windows.net/buildinfo/lts.json" },
+                NotificationType.LTS => new[] { LTSBuildInfoURL },
                 NotificationType.Default => isStableRelease
-                    ? new[] { "https://pscoretestdata.blob.core.windows.net/buildinfo/stable.json" }
-                    : new[] { "https://pscoretestdata.blob.core.windows.net/buildinfo/stable.json", "https://pscoretestdata.blob.core.windows.net/buildinfo/preview.json" },
+                    ? new[] { StableBuildInfoURL }
+                    : new[] { StableBuildInfoURL, PreviewBuildInfoURL },
                 _ => Array.Empty<string>()
             };
 
