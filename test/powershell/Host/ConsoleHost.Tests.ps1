@@ -1004,7 +1004,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 
     It 'pwsh starts even if PATH is not defined' {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
-        Remove-Item Env:\Path
+        Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
         $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
     }
