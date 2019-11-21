@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Switch to get the secure string as plain text.
+        /// Gets or sets a switch to get the secure string as plain text.
         /// </summary>
         [Parameter(ParameterSetName = "AsPlainText")]
         public SwitchParameter AsPlainText { get; set; }
