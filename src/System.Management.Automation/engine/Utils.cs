@@ -484,6 +484,11 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetWindowsPowerShellVersionFromRegistry()
         {
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellVersionString))
+            {
+                return InternalTestHooks.TestWindowsPowerShellVersionString;
+            }
+
             if (s_windowsPowerShellVersion != null)
                 return s_windowsPowerShellVersion;
 
@@ -499,7 +504,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return null;
+            return string.Empty;
         }
 #endif
 
@@ -2090,6 +2095,8 @@ namespace System.Management.Automation.Internal
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
+        // A version of Windows PS that is installed on the system; normally this is retrieved from a reg key that is write-protected.
+        internal static string TestWindowsPowerShellVersionString;
 
         internal static bool ShowMarkdownOutputBypass;
 

@@ -1870,10 +1870,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.UseWindowsPowerShell)
                 {
-                    string winPSVersionString = string.Empty;
 #if !UNIX
-                    winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
-#endif
+                    var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
                     if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
                     {
                         string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
@@ -1892,6 +1890,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteWarning(message);
                         }
                     }
+#endif
                 }
             }
             else
