@@ -11,6 +11,7 @@ Describe "Unblock-File" -Tags "CI" {
                     { Get-Content -Path $testfilepath -Stream Zone.Identifier -ErrorAction Stop | Out-Null } |
                     Should -Throw -ErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand"
                 }
+
                 function Block-File {
                     param($path)
                     Set-Content -Value "[ZoneTransfer]`r`nZoneId=4" -Path $path -Stream Zone.Identifier
@@ -21,6 +22,7 @@ Describe "Unblock-File" -Tags "CI" {
                     $result = (xattr $testfilepath | Select-String 'com.apple.com.quarantine')
                     $result | Should -BeNullOrEmpty
                 }
+
                 function Block-File {
                     param($path)
                     Set-Content -Path $path -value 'test'
@@ -97,7 +99,7 @@ Describe "Unblock-File" -Tags "CI" {
 
             } else {
                 $testfilepath = Join-Path -Path $TestDrive -ChildPath testunblockfile.ttt
-                New-Item -Path $testfilepath -ItemType File
+                $null = New-Item -Path $testfilepath -ItemType File
             }
         }
 

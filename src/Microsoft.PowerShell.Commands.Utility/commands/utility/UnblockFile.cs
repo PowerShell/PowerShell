@@ -136,11 +136,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 #else
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 string errorMessage = UnblockFileStrings.LinuxNotSupported;
                 Exception e = new NotImplementedException(errorMessage);
-                ThrowTerminatingError(new ErrorRecord(e, "LinuxNotSupported", ErrorCategory.NotImplemented,null));
+                ThrowTerminatingError(new ErrorRecord(e, "LinuxNotSupported", ErrorCategory.NotImplemented, null));
                 return;
             }
 
@@ -199,11 +199,11 @@ namespace Microsoft.PowerShell.Commands
         private bool IsBlocked(string path)
         {
             uint valueSize = 1024;
-            IntPtr value = Marshal.AllocHGlobal(1024);
-            string valueStr = string.Empty;
-            try {
+            IntPtr value = Marshal.AllocHGlobal(valueSize);
+            try
+            {
                 var resultSize = GetXattr(path, MacBlockAttribute, value, valueSize, 0, RemovexattrFollowSymLink);
-                return resultSize !=-1;
+                return resultSize != -1;
             }
             finally
             {
