@@ -178,7 +178,7 @@ function Get-EnvironmentInformation
             $environment.IsSUSEFamily -or
             $environment.IsAlpine)
         ) {
-            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
     }
 
