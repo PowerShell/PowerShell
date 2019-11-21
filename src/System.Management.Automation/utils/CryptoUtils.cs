@@ -13,6 +13,8 @@ using System.Threading;
 using Microsoft.Win32.SafeHandles;
 
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace System.Management.Automation.Internal
 {
@@ -539,12 +541,304 @@ namespace System.Management.Automation.Internal
         #endregion ISerializable Overrides
     }
 
+    ///<summary>
+    /// Handles public and session key management for remote session key exchange.
+    ///</summary>
+    internal interface IPSRSACryptoServiceProvider : IDisposable
+    {
+        bool CanEncrypt { get; }
+        string GetPublicKeyAsBase64EncodedString();
+        void GenerateSessionKey();
+        string SafeExportSessionKey();
+        void ImportPublicKeyFromBase64EncodedString(string publicKey);
+        void ImportSessionKeyFromBase64EncodedString(string sessionKey);
+        byte[] EncryptWithSessionKey(byte[] data);
+        byte[] DecryptWithSessionKey(byte[] data);
+        void GenerateKeyPair();
+    }
+
+    /// <summary>
+    /// A x-platform compatible re-implementation of <see cref="Win32PSRSACryptoServiceProvider" />.
+    /// </summary>
+    internal class CorePSRSACryptoServiceProvider : IPSRSACryptoServiceProvider
+    {
+        #region Private Members
+
+        private RSA _rsa;
+        // handle session key encryption/decryption
+        private Aes _aes;
+        // handle to the AES provider object (houses session key and iv)
+        private bool _canEncrypt = false;            // this flag indicates that this class has a key
+        // imported from the remote end and so can be
+        // used for encryption
+        private bool _sessionKeyGenerated = false;
+        // bool indicating if session key was generated before
+
+        // private static bool s_keyPairGenerated = false;
+        private static object s_syncObject = new object();
+
+        #endregion Private Members
+
+        #region Constructors
+
+        /// <summary>
+        /// Private constructor.
+        /// </summary>
+        /// <param name="serverMode">indicates if this service
+        /// provider is operating in server mode</param>
+        private CorePSRSACryptoServiceProvider(bool serverMode)
+        {
+            if (serverMode)
+            {
+                GenerateKeyPair();
+            }
+
+            _aes = Aes.Create();
+            _aes.IV = new byte[16];  // iv should be 0
+        }
+
+        #endregion Constructors
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Get the public key, in CAPI-compatible form, as a base64 encoded string.
+        /// </summary>
+        /// <returns>Public key as base64 encoded string.</returns>
+        public string GetPublicKeyAsBase64EncodedString()
+        {
+            Dbg.Assert(_rsa != null, "No public key available.");
+
+            RSAParameters rsaParams = _rsa.ExportParameters(false);
+            byte[] capiPublicKeyBlob = CryptoConvert.ToCapiPublicKeyBlob(_rsa);
+
+            return Convert.ToBase64String(capiPublicKeyBlob);
+        }
+
+        /// <summary>
+        /// Generates an AEX-256 session key if one is not already generated.
+        /// </summary>
+        public void GenerateSessionKey()
+        {
+            if (_sessionKeyGenerated)
+                return;
+
+            lock (s_syncObject)
+            {
+                if (!_sessionKeyGenerated)
+                {
+                    // Aes object gens key automatically on construction, so this is somewhat redundant, 
+                    // but at least the actionable key will not be in-memory until it's requested fwiw.
+                    _aes.GenerateKey();  
+                    _sessionKeyGenerated = true;
+                    _canEncrypt = true;  // we can encrypt and decrypt once session key is available
+                }
+            }
+        }
+
+        /// <summary>
+        /// 1. Generate a AES-256 session key
+        /// 2. Encrypt the session key with the Imported
+        ///    RSA public key
+        /// 3. Encode result above as base 64 string and export.
+        /// </summary>
+        /// <returns>Session key encrypted with receivers public key
+        /// and encoded as a base 64 string.</returns>
+        public string SafeExportSessionKey()
+        {
+            Dbg.Assert(_rsa != null, "No public key available.");
+
+            // generate one if not already done.
+            GenerateSessionKey();
+
+            // encrypt it
+            byte[] encryptedKey = _rsa.Encrypt(_aes.Key, RSAEncryptionPadding.Pkcs1);
+
+            // convert the key to capi simpleblob format before exporting
+            byte[] simpleKeyBlob = CryptoConvert.ToCapiSimpleKeyBlob(encryptedKey);
+            return Convert.ToBase64String(simpleKeyBlob);
+        }
+
+        /// <summary>
+        /// Import a public key into the provider whose context
+        /// has been obtained.
+        /// </summary>
+        /// <param name="publicKey">Base64 encoded public key to import.</param>
+        public void ImportPublicKeyFromBase64EncodedString(string publicKey)
+        {
+            Dbg.Assert(!string.IsNullOrEmpty(publicKey), "key cannot be null or empty");
+
+            byte[] publicKeyBlob = Convert.FromBase64String(publicKey);
+            _rsa = CryptoConvert.FromCapiPublicKeyBlob(publicKeyBlob);
+        }
+
+        /// <summary>
+        /// Import a session key from the remote side into
+        /// the current CSP.
+        /// </summary>
+        /// <param name="sessionKey">encrypted session key as a
+        /// base64 encoded string</param>
+        public void ImportSessionKeyFromBase64EncodedString(string sessionKey)
+        {
+            Dbg.Assert(!string.IsNullOrEmpty(sessionKey), "key cannot be null or empty");
+
+            byte[] sessionKeyBlob = Convert.FromBase64String(sessionKey);
+            byte[] rsaEncryptedKey = CryptoConvert.FromCapiSimpleKeyBlob(sessionKeyBlob);
+
+            _aes.Key = _rsa.Decrypt(rsaEncryptedKey, RSAEncryptionPadding.Pkcs1);
+
+            // now we have imported the key and will be able to
+            // encrypt using the session key
+            _canEncrypt = true;
+        }
+
+        /// <summary>
+        /// Encrypt the specified byte array.
+        /// </summary>
+        /// <param name="data">Data to encrypt.</param>
+        /// <returns>Encrypted byte array.</returns>
+        public byte[] EncryptWithSessionKey(byte[] data)
+        {
+            Dbg.Assert(_canEncrypt, "Remote key has not been imported to encrypt");
+
+            using (ICryptoTransform encryptor = _aes.CreateEncryptor())
+            using (MemoryStream msEncrypt = new MemoryStream())
+            using (MemoryStream swEncrypt = new MemoryStream(data))
+            {
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    swEncrypt.CopyTo(csEncrypt);
+                }
+
+                return msEncrypt.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decrypt the specified buffer.
+        /// </summary>
+        /// <param name="data">Data to decrypt.</param>
+        /// <returns>Decrypted buffer.</returns>
+        public byte[] DecryptWithSessionKey(byte[] data)
+        {
+            using (ICryptoTransform decryptor = _aes.CreateDecryptor())
+            using (MemoryStream msDecrypt = new MemoryStream(data))
+            using (MemoryStream srDecrypt = new MemoryStream())
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                {
+                    csDecrypt.CopyTo(srDecrypt);
+                }
+
+                return srDecrypt.ToArray();
+            } 
+        }
+
+        /// <summary>
+        /// Generates key pair in a thread safe manner
+        /// the first time when required.
+        /// </summary>
+        public void GenerateKeyPair()
+        {
+            _rsa = RSA.Create();
+            _rsa.KeySize = 2048;
+        }
+
+        /// <summary>
+        /// Indicates if a key exchange is complete
+        /// and this provider can encrypt.
+        /// </summary>
+        public bool CanEncrypt
+        {
+            get
+            {
+                return _canEncrypt;
+            }
+
+            set
+            {
+                _canEncrypt = value;
+            }
+        }
+
+        #endregion Internal Methods
+
+        #region Internal Static Methods
+
+        /// <summary>
+        /// Returns a crypto service provider for use in the
+        /// client. This will reuse the key that has been
+        /// generated.
+        /// </summary>
+        /// <returns>Crypto service provider for
+        /// the client side.</returns>
+        internal static CorePSRSACryptoServiceProvider GetRSACryptoServiceProviderForClient()
+        {
+            return new CorePSRSACryptoServiceProvider(false);
+        }
+
+        /// <summary>
+        /// Returns a crypto service provider for use in the
+        /// server. This will not generate a key pair.
+        /// </summary>
+        /// <returns>Crypto service provider for
+        /// the server side.</returns>
+        internal static CorePSRSACryptoServiceProvider GetRSACryptoServiceProviderForServer()
+        {
+            return new CorePSRSACryptoServiceProvider(true);
+        }
+
+        #endregion Internal Static Methods
+
+        #region IDisposable
+
+        /// <summary>
+        /// Dispose resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            System.GC.SuppressFinalize(this);
+        }
+
+        // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_rsa != null)
+                {
+                    _rsa.Dispose();
+                }
+
+                if (_aes != null)
+                {
+                    _aes.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~CorePSRSACryptoServiceProvider()
+        {
+            // When Dispose() is called, GC.SuppressFinalize()
+            // is called and therefore this finalizer will not
+            // be invoked. Hence this is run only on process
+            // shutdown
+            Dispose(true);
+        }
+
+        #endregion IDisposable
+    }
+
     /// <summary>
     /// One of the issues with RSACryptoServiceProvider is that it never uses CRYPT_VERIFYCONTEXT
     /// to create ephemeral keys.  This class is a facade written on top of native CAPI APIs
     /// to create ephemeral keys.
     /// </summary>
-    internal class PSRSACryptoServiceProvider : IDisposable
+    internal class Win32PSRSACryptoServiceProvider : IPSRSACryptoServiceProvider
     {
         #region Private Members
 
@@ -577,7 +871,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="serverMode">indicates if this service
         /// provider is operating in server mode</param>
-        private PSRSACryptoServiceProvider(bool serverMode)
+        private Win32PSRSACryptoServiceProvider(bool serverMode)
         {
             if (serverMode)
             {
@@ -607,7 +901,7 @@ namespace System.Management.Automation.Internal
         /// Get the public key as a base64 encoded string.
         /// </summary>
         /// <returns>Public key as base64 encoded string.</returns>
-        internal string GetPublicKeyAsBase64EncodedString()
+        public string GetPublicKeyAsBase64EncodedString()
         {
             uint publicKeyLength = 0;
 
@@ -640,7 +934,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Generates an AEX-256 session key if one is not already generated.
         /// </summary>
-        internal void GenerateSessionKey()
+        public void GenerateSessionKey()
         {
             if (_sessionKeyGenerated)
                 return;
@@ -670,7 +964,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Session key encrypted with receivers public key
         /// and encoded as a base 64 string.</returns>
-        internal string SafeExportSessionKey()
+        public string SafeExportSessionKey()
         {
             // generate one if not already done.
             GenerateSessionKey();
@@ -708,7 +1002,7 @@ namespace System.Management.Automation.Internal
         /// has been obtained.
         /// </summary>
         /// <param name="publicKey">Base64 encoded public key to import.</param>
-        internal void ImportPublicKeyFromBase64EncodedString(string publicKey)
+        public void ImportPublicKeyFromBase64EncodedString(string publicKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(publicKey), "key cannot be null or empty");
 
@@ -730,7 +1024,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="sessionKey">encrypted session key as a
         /// base64 encoded string</param>
-        internal void ImportSessionKeyFromBase64EncodedString(string sessionKey)
+        public void ImportSessionKeyFromBase64EncodedString(string sessionKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(sessionKey), "key cannot be null or empty");
 
@@ -754,7 +1048,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="data">Data to encrypt.</param>
         /// <returns>Encrypted byte array.</returns>
-        internal byte[] EncryptWithSessionKey(byte[] data)
+        public byte[] EncryptWithSessionKey(byte[] data)
         {
             // first make a copy of the original data.This is needed
             // as CryptEncrypt uses the same buffer to write the encrypted data
@@ -815,7 +1109,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="data">Data to decrypt.</param>
         /// <returns>Decrypted buffer.</returns>
-        internal byte[] DecryptWithSessionKey(byte[] data)
+        public byte[] DecryptWithSessionKey(byte[] data)
         {
             // first make a copy of the original data.This is needed
             // as CryptDecrypt uses the same buffer to write the decrypted data
@@ -870,7 +1164,7 @@ namespace System.Management.Automation.Internal
         /// Generates key pair in a thread safe manner
         /// the first time when required.
         /// </summary>
-        internal void GenerateKeyPair()
+        public void GenerateKeyPair()
         {
             if (!s_keyPairGenerated)
             {
@@ -911,7 +1205,7 @@ namespace System.Management.Automation.Internal
         /// Indicates if a key exchange is complete
         /// and this provider can encrypt.
         /// </summary>
-        internal bool CanEncrypt
+        public bool CanEncrypt
         {
             get
             {
@@ -935,9 +1229,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Crypto service provider for
         /// the client side.</returns>
-        internal static PSRSACryptoServiceProvider GetRSACryptoServiceProviderForClient()
+        internal static Win32PSRSACryptoServiceProvider GetRSACryptoServiceProviderForClient()
         {
-            PSRSACryptoServiceProvider cryptoProvider = new PSRSACryptoServiceProvider(false);
+            Win32PSRSACryptoServiceProvider cryptoProvider = new Win32PSRSACryptoServiceProvider(false);
 
             // set the handles for provider and rsa key
             cryptoProvider._hProv = s_hStaticProv;
@@ -952,9 +1246,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Crypto service provider for
         /// the server side.</returns>
-        internal static PSRSACryptoServiceProvider GetRSACryptoServiceProviderForServer()
+        internal static Win32PSRSACryptoServiceProvider GetRSACryptoServiceProviderForServer()
         {
-            PSRSACryptoServiceProvider cryptoProvider = new PSRSACryptoServiceProvider(true);
+            Win32PSRSACryptoServiceProvider cryptoProvider = new Win32PSRSACryptoServiceProvider(true);
 
             return cryptoProvider;
         }
@@ -1046,7 +1340,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Destructor.
         /// </summary>
-        ~PSRSACryptoServiceProvider()
+        ~Win32PSRSACryptoServiceProvider()
         {
             // When Dispose() is called, GC.SuppressFinalize()
             // is called and therefore this finalizer will not
@@ -1072,7 +1366,7 @@ namespace System.Management.Automation.Internal
         /// it and performing symmetric key operations using the
         /// session key.
         /// </summary>
-        protected PSRSACryptoServiceProvider _rsaCryptoProvider;
+        protected IPSRSACryptoServiceProvider _rsaCryptoProvider;
 
         /// <summary>
         /// Key exchange has been completed and both keys
@@ -1325,9 +1619,9 @@ namespace System.Management.Automation.Internal
         internal PSRemotingCryptoHelperServer()
         {
 #if UNIX
-            _rsaCryptoProvider = null;
+            _rsaCryptoProvider = CorePSRSACryptoServiceProvider.GetRSACryptoServiceProviderForServer();
 #else
-            _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForServer();
+            _rsaCryptoProvider = Win32PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForServer();
 #endif
         }
 
@@ -1454,8 +1748,11 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PSRemotingCryptoHelperClient()
         {
-            _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForClient();
-
+#if UNIX
+            _rsaCryptoProvider = CorePSRSACryptoServiceProvider.GetRSACryptoServiceProviderForClient();
+#else
+            _rsaCryptoProvider = Win32PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForClient();
+#endif
             // _session = new RemoteSession();
         }
 
