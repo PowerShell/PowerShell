@@ -140,6 +140,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Switch to get the secure string as plain text.
+        /// </summary>
+        [Parameter(ParameterSetName = "AsPlainText")]
+        public SwitchParameter AsPlainText { get; set; }
+
+        /// <summary>
         /// Processes records from the input pipeline.
         /// For each input object, the command encrypts
         /// and exports the object.
@@ -164,6 +170,19 @@ namespace Microsoft.PowerShell.Commands
             else if (Key != null)
             {
                 encryptionResult = SecureStringHelper.Encrypt(SecureString, Key);
+            }
+            else if (AsPlainText)
+            {
+                IntPtr valuePtr = IntPtr.Zero;
+                try
+                {
+                    valuePtr = Marshal.SecureStringToGlobalAllocUnicode(SecureString);
+                    exportedString = Marshal.PtrToStringUni(valuePtr);
+                }
+                finally
+                {
+                    Marshal.ZeroFreeGlobalAllocUnicode(valuePtr);
+                }
             }
             else
             {
