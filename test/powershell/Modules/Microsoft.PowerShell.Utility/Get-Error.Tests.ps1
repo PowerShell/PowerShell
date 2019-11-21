@@ -93,4 +93,16 @@ Describe 'Get-Error tests' -Tag CI {
         $err.PSObject.TypeNames | Should -Contain 'System.Exception'
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception#PSExtendedError'
     }
+
+    It 'Get-Error will not modify the original error object' {
+        try {
+            1 / 0
+        }
+        catch {
+        }
+
+        $null = Get-Error
+
+        $Error[0].pstypenames | Should -Be System.Management.Automation.ErrorRecord, System.Object
+    }
 }
