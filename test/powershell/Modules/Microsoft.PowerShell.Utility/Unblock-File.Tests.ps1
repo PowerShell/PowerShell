@@ -79,8 +79,7 @@ Describe "Unblock-File" -Tags "CI" {
 
             $TestFileCreated = Get-ChildItem $TestFile
             $TestFileCreated.IsReadOnly | Should -BeTrue
-            if($IsWindows)
-            {
+            if ($IsWindows) {
                 $expectedError = "RemoveItemUnableToAccessFile,Microsoft.PowerShell.Commands.UnblockFileCommand"
             } else {
                 $expectedError = "UnblockError,Microsoft.PowerShell.Commands.UnblockFileCommand"
