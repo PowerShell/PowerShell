@@ -987,3 +987,25 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         }
     }
 }
+
+Describe 'Pwsh startup and PATH' -Tag CI {
+    BeforeEach {
+        $oldPath = $env:PATH
+    }
+
+    AfterEach {
+        $env:PATH = $oldPath
+    }
+
+    It 'Calling pwsh starts the same version of PowerShell as currently running' {
+        $version = pwsh -v
+        $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+    }
+
+    It 'pwsh starts even if PATH is not defined' {
+        $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        Remove-Item Env:\Path
+        $path = & $pwsh -noprofile -command '$env:PATH'
+        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+    }
+}
