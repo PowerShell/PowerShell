@@ -9,7 +9,6 @@ using System.Management.Automation.Internal;
 using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Xunit;
-using Newtonsoft.Json.Linq;
 
 namespace PSTests.Parallel
 {
