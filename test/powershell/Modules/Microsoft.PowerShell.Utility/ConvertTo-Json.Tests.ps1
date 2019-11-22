@@ -72,38 +72,38 @@ Describe 'ConvertTo-Json' -tags "CI" {
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
     }
 
-    It 'The result string should not contain null values when converting dictionary with IgnoreNullProperties.' {
+    It 'The result string should not contain null values when converting dictionary with IgnoreNullValue.' {
         $dict = @{}
         $dict.Add('abc', "'def'")
         $dict.Add('nullValue', $null)
-        $jsonFormat = ConvertTo-Json -InputObject $dict -IgnoreNullProperties
+        $jsonFormat = ConvertTo-Json -InputObject $dict -IgnoreNullValue
         $jsonFormat | Should -BeExactly "{$newline  ""abc"": ""'def'""$newline}"
     }
 
-    It 'The result string should not contain null values when converting Newtonsoft.Json.Linq.JObject with IgnoreNullProperties.' {
+    It 'The result string should not contain null values when converting Newtonsoft.Json.Linq.JObject with IgnoreNullValue.' {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
         $EgJObject.Add("TestValue3", "99999")
         $EgJObject.Add("nullValue", $null)
-        $jsonFormat = ConvertTo-Json -InputObject $EgJObject -IgnoreNullProperties
+        $jsonFormat = ConvertTo-Json -InputObject $EgJObject -IgnoreNullValue
         $jsonFormat | Should -BeExactly "{$newline  ""TestValue3"": 99999$newline}"
     }
 
-    It 'The result string should not contain null values when converting custom PS object with IgnoreNullProperties.' {
+    It 'The result string should not contain null values when converting custom PS object with IgnoreNullValue.' {
         class CustomClass {
             [String]$name="abc"
             [nullable[int]]$nullValue=$null
         }
         $object = New-Object -TypeName CustomClass
-        $jsonFormat = ConvertTo-Json -InputObject $object -IgnoreNullProperties
+        $jsonFormat = ConvertTo-Json -InputObject $object -IgnoreNullValue
         $jsonFormat | Should -BeExactly "{$newline  ""name"": ""abc""$newline}"
     }
 
-    It 'The Newtonsoft.Json.Linq.JObject should remain unchanged with IgnoreNullProperties.' {
+    It 'The Newtonsoft.Json.Linq.JObject should remain unchanged with IgnoreNullValue.' {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
         $EgJObject.Add("TestValue3", "99999")
         $EgJObject.Add("nullValue", $null)
         $jsonFormatOriginal = ConvertTo-Json -InputObject $EgJObject
-        $jsonFormatIgnoreNull = ConvertTo-Json -InputObject $EgJObject -IgnoreNullProperties
+        $jsonFormatIgnoreNull = ConvertTo-Json -InputObject $EgJObject -IgnoreNullValue
         $jsonFormatUnchanged = ConvertTo-Json -InputObject $EgJObject
         $jsonFormatIgnoreNull | Should -BeExactly "{$newline  ""TestValue3"": 99999$newline}"
         $jsonFormatUnchanged | Should -BeExactly $jsonFormatOriginal

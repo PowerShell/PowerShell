@@ -103,7 +103,7 @@ namespace PSTests.Parallel
         };
 
         [Fact]
-        public static void TestObjectConvertToJsonWithIgnoreNullPropertiesFalse()
+        public static void TestObjectConvertToJsonWithIgnoreNullValueFalse()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
 

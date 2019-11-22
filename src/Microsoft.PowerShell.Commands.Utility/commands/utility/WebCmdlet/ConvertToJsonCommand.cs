@@ -50,13 +50,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Compress { get; set; }
 
         /// <summary>
-        /// Gets or sets the IgnoreNullProperties property.
-        /// If the IgnoreNullProperties property is set to true, key with null
+        /// Gets or sets the IgnoreNullValue property.
+        /// If the IgnoreNullValue property is set to true, key with null
         /// value be ignored. Otherwise, key with null value will be
         /// considered for conversion.
         /// </summary>
         [Parameter]
-        public SwitchParameter IgnoreNullProperties { get; set; }
+        public SwitchParameter IgnoreNullValue { get; set; }
 
         /// <summary>
         /// Gets or sets the EnumsAsStrings property.
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
                 var context = new JsonObject.ConvertToJsonContext(
                     Depth,
                     EnumsAsStrings.IsPresent,
-                    IgnoreNullProperties.IsPresent,
+                    IgnoreNullValue.IsPresent,
                     Compress.IsPresent,
                     _cancellationSource.Token,
                     EscapeHandling,
