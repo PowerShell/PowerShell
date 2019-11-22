@@ -531,7 +531,7 @@ Fix steps:
     # When building preview, we want the configuration to enable all experiemental features by default
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if (-not $SkipExperimentalFeatureGeneration -and
-        (Test-IsPreviets $psVersion) -and
+        (Test-IsPreview $psVersion) -and
         -not (Test-IsReleaseCandidate $psVersion) -and
         -not $Runtime.Contains("arm") -and
         -not ($Runtime -like 'fxdependent*')) {
