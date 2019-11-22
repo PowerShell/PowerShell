@@ -105,4 +105,24 @@ Describe 'Get-Error tests' -Tag CI {
 
         $Error[0].pstypenames | Should -Be System.Management.Automation.ErrorRecord, System.Object
     }
+
+    It 'Get-Error adds ExceptionType for Exceptions' {
+        try {
+            [System.Net.DNS]::GetHostByName((New-Guid))
+        }
+        catch {
+        }
+
+        $out = Get-Error | Out-String
+        $out | Should -BeLikeExactly '*Type*'
+
+        if ($IsWindows) {
+            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
+        }
+        else {
+            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
+        }
+
+        $out | Should -BeLikeExactly "*$expectedExceptionType*"
+    }
 }
