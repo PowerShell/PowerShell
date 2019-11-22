@@ -201,6 +201,30 @@ function Test-IsPreview
     return $Version -like '*-*'
 }
 
+<#
+    .Synopsis
+        Tests if a version is prior to RC
+    .EXAMPLE
+        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0-rc.1' # returns false
+        Test-IsPreview -version '6.1.0' # returns false
+#>
+function Test-IsPreRC
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $false
+    }
+
+    return $Version -like '*-*'
+}
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
@@ -507,7 +531,7 @@ Fix steps:
     # When building preview, we want the configuration to enable all experiemental features by default
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if (-not $SkipExperimentalFeatureGeneration -and
-        (Test-IsPreview $psVersion) -and
+        (Test-IsPreRC $psVersion) -and
         -not $Runtime.Contains("arm") -and
         -not ($Runtime -like 'fxdependent*')) {
 
