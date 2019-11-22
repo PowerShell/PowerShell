@@ -1106,6 +1106,32 @@ namespace System.Management.Automation
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.Property;
 
+        /// <summary>
+        /// Indicates whether one or more attributes
+        /// of the specified type or of its derived types is applied to this member.
+        /// </summary>
+        /// <param name="attributeType">Attribute type to search.</param>
+        /// <returns>
+        /// True if the property has the attribute.
+        /// </returns>
+        public bool IsDefined(Type attributeType)
+        {
+            if (adapter == null)
+            {
+                return false;
+            }
+
+            foreach (var attr in adapter.BasePropertyAttributes(this))
+            {
+                if (attributeType.IsAssignableFrom(attr.GetType()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private object GetAdaptedValue()
         {
             if (this.isDeserialized)

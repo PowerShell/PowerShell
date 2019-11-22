@@ -8,6 +8,9 @@
 # This 'Describe' is for tests that were converted from utscripts (SDXROOT/admin/monad/tests/monad/DRT/utscripts)
 # and C# tests (SDXROOT/admin/monad/tests/monad/DRT/commands/utility/UnitTests) to Pester.
 #
+
+$notNewConvertToJson = -not $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.NewConvertToJson')
+
 Describe "Json Tests" -Tags "Feature" {
 
     BeforeAll {
@@ -41,7 +44,11 @@ Describe "Json Tests" -Tags "Feature" {
             # Test follow-up for bug WinBlue: 163372 - ConvertTo-JSON has hard coded english error message.
             $process = Get-Process -Id $PID
             $hash = @{ $process = "def" }
-            $expectedFullyQualifiedErrorId = "NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+            if ($notNewConvertToJson) {
+                $expectedFullyQualifiedErrorId = "NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+            } else {
+                $expectedFullyQualifiedErrorId = "System.Text.Json.JsonException,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+            }
 
             { ConvertTo-Json -InputObject $hash } | Should -Throw -ErrorId $expectedFullyQualifiedErrorId
         }
@@ -1006,8 +1013,8 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 127
-                ToJson = '""'
-                FromJson = ''
+                ToJson = if ($notNewConvertToJson) { '""' } else { '"\u007F"' }
+                FromJson = if ($notNewConvertToJson) { '' } else { "`u{007F}" }
              }
         )
 
@@ -1306,7 +1313,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             ValidateProperties -serialized $result.SerializedViaJson -expected $result.Expected -properties $propertiesToValidate
         }
 
-        It "Validate 'Get-Command Get-help' output with Json conversion" {
+        It "Validate 'Get-Command Get-help' output with Json conversion" -Pending:(!$notNewConvertToJson) {
 
             $result = @{
                 Expected = @(Get-Command Get-help)
@@ -1317,7 +1324,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             ValidateProperties -serialized $result.SerializedViaJson -expected $result.Expected -properties $propertiesToValidate
         }
 
-        It "Validate 'Get-Command Get-Help, Get-command, Get-Member' output with Json conversion" {
+        It "Validate 'Get-Command Get-Help, Get-command, Get-Member' output with Json conversion" -Pending:(!$notNewConvertToJson) {
 
             $result = @{
                 Expected = @(Get-Command Get-Help, Get-Command, Get-Member)
@@ -1407,7 +1414,10 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
             if ($testCase.ShouldThrow)
             {
-                { $previous | ConvertTo-Json -Depth $testCase.MaxDepth } | Should -Throw -ErrorId $testCase.FullyQualifiedErrorId
+                $exc = { $previous | ConvertTo-Json -Depth $testCase.MaxDepth } | Should -PassThru -Throw -ErrorId $testCase.FullyQualifiedErrorId
+                if (!$notNewConvertToJson) {
+                    $exc.Exception.TargetSite.Name | Should -BeExactly $testCase.TargetSiteName
+                }
             }
             else
             {
@@ -1416,27 +1426,60 @@ Describe "Json Bug fixes"  -Tags "Feature" {
         }
     }
 
-    $testCases = @(
-        @{
-            Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greater than 100."
-            NumberOfElements = 10
-            MaxDepth = 101
-            FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
-            ShouldThrow = $true
-        }
-        @{
-            Name = "ConvertTo-Json and ConvertFrom-Json work for any depth less than or equal to 100."
-            NumberOfElements = 100
-            MaxDepth = 100
-            ShouldThrow = $false
-        }
-        @{
-            Name = "ConvertTo-Json and ConvertFrom-Json work for depth 100 with an object larger than 100."
-            NumberOfElements = 105
-            MaxDepth = 100
-            ShouldThrow = $false
-        }
-    )
+    if ($notNewConvertToJson) {
+        $testCases = @(
+            @{
+                Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greater than 100."
+                NumberOfElements = 10
+                MaxDepth = 101
+                FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+                ShouldThrow = $true
+            }
+            @{
+                Name = "ConvertTo-Json and ConvertFrom-Json work for any depth less than or equal to 100."
+                NumberOfElements = 100
+                MaxDepth = 100
+                ShouldThrow = $false
+            }
+            @{
+                Name = "ConvertTo-Json and ConvertFrom-Json work for depth 100 with an object larger than 100."
+                NumberOfElements = 105
+                MaxDepth = 100
+                ShouldThrow = $false
+            }
+        )
+    } else {
+        $testCases = @(
+            @{
+                Name = "ConvertTo-Json -Depth 1001 throws MaximumAllowedDepthReached when the user specifies a depth greater than 1000."
+                NumberOfElements = 10
+                MaxDepth = 1001
+                FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+                TargetSiteName = "ThrowTerminatingError"
+                ShouldThrow = $true
+            }
+            @{
+                Name = "ConvertTo-Json -Depth 100 throws JsonException (CycleDetected) when the user specifies a depth greater or equal than 100."
+                NumberOfElements = 100
+                MaxDepth = 100
+                FullyQualifiedErrorId = "System.Text.Json.JsonException,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+                TargetSiteName = "ThrowJsonException_SerializerCycleDetected"
+                ShouldThrow = $true
+            }
+            @{
+                Name = "ConvertTo-Json -Depth 100 does not throw (no cycle detection throw) for any depth less than to 100."
+                NumberOfElements = 99
+                MaxDepth = 100
+                ShouldThrow = $false
+            }
+            @{
+                Name = "ConvertTo-Json and ConvertFrom-Json work for depth 100 with an object larger than 100."
+                NumberOfElements = 999
+                MaxDepth = 1000
+                ShouldThrow = $false
+            }
+        )
+    }
 
     foreach ($testCase in $testCases)
     {

@@ -2,10 +2,11 @@
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
     BeforeAll {
+        $notNewConvertToJson = -not $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.NewConvertToJson')
         $newline = [System.Environment]::NewLine
     }
 
-    It 'Newtonsoft.Json.Linq.Jproperty should be converted to Json properly' {
+    It 'Newtonsoft.Json.Linq.Jproperty should be converted to Json properly' -Skip:(!$notNewConvertToJson) {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
         $EgJObject.Add("TestValue1", "123456")
         $EgJObject.Add("TestValue2", "78910")
@@ -21,7 +22,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should -Match '"TestValue3": 99999'
     }
 
-	It "StopProcessing should succeed" -Pending:$true {
+    It "StopProcessing should succeed" -Skip:(!$notNewConvertToJson) {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
@@ -63,6 +64,25 @@ Describe 'ConvertTo-Json' -tags "CI" {
         @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
 
+    It "The result string should be escaped: <Name>." -Skip:$notNewConvertToJson -TestCases @(
+        @{name = "Default with HTML chars";             params = @{EscapeHandling = 'Default'};        source = "`",',\,<,>,&,+,``,`n";       expected = '"\",'',\\,<,>,&,+,`,\n"' }
+        @{name = "EscapeHtml with HTML chars";          params = @{EscapeHandling = 'EscapeHtml'};     source = "`",',\,<,>,&,+,``,`n";       expected = '"\u0022,\u0027,\\,\u003C,\u003E,\u0026,\u002B,\u0060,\n"' }
+        @{name = "EscapeNonAscii with HTML chars";      params = @{EscapeHandling = 'EscapeNonAscii'}; source = "`",',\,<,>,&,+,``,`n";       expected = '"\u0022,\u0027,\\,\u003C,\u003E,\u0026,\u002B,\u0060,\n"' }
+        @{name = "Default with ASCII chars";            params = @{EscapeHandling = 'Default'};        source = "abcdefghijklmnopqrstuvwxyz"; expected = '"abcdefghijklmnopqrstuvwxyz"' }
+        @{name = "EscapeHtml with ASCII chars";         params = @{EscapeHandling = 'EscapeHtml'};     source = "abcdefghijklmnopqrstuvwxyz"; expected = '"abcdefghijklmnopqrstuvwxyz"' }
+        @{name = "EscapeNonAscii with ASCII chars";     params = @{EscapeHandling = 'EscapeNonAscii'}; source = "abcdefghijklmnopqrstuvwxyz"; expected = '"abcdefghijklmnopqrstuvwxyz"' }
+        @{name = "Default with non-ASCII chars";        params = @{EscapeHandling = 'Default'};        source = "яб";                         expected = '"яб"' }
+        @{name = "EscapeHtml with non-ASCII chars";     params = @{EscapeHandling = 'EscapeHtml'};     source = "яб";                         expected = '"\u044F\u0431"' }
+        @{name = "EscapeNonAscii non-ASCII with chars"; params = @{EscapeHandling = 'EscapeNonAscii'}; source = "яб";                         expected = '"\u044F\u0431"' }
+        @{name = "Default with empty string";           params = @{EscapeHandling = 'Default'};        source = "";                           expected = "`"`"" }
+        @{name = "EscapeHtml with empty string";        params = @{EscapeHandling = 'EscapeHtml'};     source = "";                           expected = "`"`"" }
+        @{name = "EscapeNonAscii with empty string";    params = @{EscapeHandling = 'EscapeNonAscii'}; source = "";                           expected = "`"`"" }
+    ) {
+        param ($name, $params , $source, $expected)
+
+        $source | ConvertTo-Json @params | Should -BeExactly $expected
+    }
+
     It "Should handle null" {
         [pscustomobject] @{ prop=$null } | ConvertTo-Json -Compress | Should -BeExactly '{"prop":null}'
         $null | ConvertTo-Json -Compress | Should -Be 'null'
@@ -102,5 +122,86 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $p1.psobject.Properties.Remove('dbnull')
             $p2.psobject.Properties.Remove('nullstr')
         }
+    }
+
+    It "Parameter works: -Depth <depth>" -Skip:$notNewConvertToJson {
+        $a1 = [pscustomobject] @{ prop1=$null }
+        $a2 = [pscustomobject] @{ prop2=$a1 }
+        $a3 = [pscustomobject] @{ prop3=$a2 }
+        $a4 = [pscustomobject] @{ prop4=$a3 }
+
+        $a4 | ConvertTo-Json -Depth 5 -Compress | Should -BeExactly '{"prop4":{"prop3":{"prop2":{"prop1":null}}}}'
+        $exc = { $a4 | ConvertTo-Json -Depth 4 -Compress } | Should -PassThru -Throw -ErrorId "System.Text.Json.JsonException,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+        $exc.Exception.TargetSite.Name | Should -BeExactly "ThrowJsonException_SerializerCycleDetected"
+    }
+
+    It "Attrtibute works: JsonIgnoreAttribute and Hidden" -Skip:$notNewConvertToJson {
+        class TestSerializationClass
+         {
+             [System.Text.Json.Serialization.JsonIgnoreAttribute()][string] $testName
+             [string] $testFile
+             hidden [string] $testHiddenValue
+         }
+
+        $testClass = @"
+        using System;
+        namespace Test.Serialization
+        {
+            public class Test
+            {
+                public string strValue { get; set; }
+                public int intValue { get; set; }
+                public DateTime dtValue { get; set; }
+                [System.Text.Json.Serialization.JsonIgnoreAttribute]
+                public string ignoreValue { get; set; }
+            }
+        }
+"@
+        Add-Type -TypeDefinition $testClass
+
+        $testPowerShell = [TestSerializationClass]::new()
+        $testCSharp = [Test.Serialization.Test]::new()
+
+        # Pipeline convertes $testPowerShell to PSObject - PowerShell PSObject custom serializer is used.
+        # InputObject accepts $InputObject 'as-is' without converting to PSObject - Core serializer is used.
+        # For second 'Hidden' doesn't work - it is only PowerShell pseudo attribute.
+        $testPowerShell | ConvertTo-Json -Compress | Should -BeExactly '{"testFile":null}'
+        ConvertTo-Json -Compress -InputObject $testPowerShell | Should -BeExactly '{"testFile":null,"testHiddenValue":null}'
+
+        $testCSharp | ConvertTo-Json -Compress | Should -BeExactly '{"strValue":null,"intValue":0,"dtValue":"0001-01-01T00:00:00"}'
+        ConvertTo-Json -Compress -InputObject $testCSharp| Should -BeExactly '{"strValue":null,"intValue":0,"dtValue":"0001-01-01T00:00:00"}'
+    }
+
+    It "Enumerable works" -Skip:$notNewConvertToJson {
+        $list=[array](1,2,3)
+
+        $list | ConvertTo-Json -Compress | Should -BeExactly '[1,2,3]'
+        ConvertTo-Json -Compress -InputObject $list | Should -BeExactly '[1,2,3]'
+        ,$list | ConvertTo-Json -Compress | Should -BeExactly '[1,2,3]'
+
+        Add-Member -InputObject $list -NotePropertyName test -NotePropertyValue 100
+
+        ,$list | ConvertTo-Json -Compress | Should -BeExactly '{"value":[1,2,3],"test":100}'
+
+    }
+
+    It "DateTime works" -Skip:$notNewConvertToJson {
+        $date = Get-Date -Year 2019 -Month 12 -Day 5 -Hour 1 -Minute 2 -Second 3 -Millisecond 4
+        $expected = "{`"value`":`"2019-12-05T01:02:03.+`",`"DisplayHint`":2,`"DateTime`":`"$($date.DateTime)`"}"
+        $date | ConvertTo-Json -Compress | Should -Match $expected
+    }
+
+    It "Uri works" -skip:$notNewConvertToJson {
+        $uri = [uri]"https://google.com/"
+        $expected = '"https://google.com/"'
+        $uri | ConvertTo-Json -Compress | Should -BeExactly $expected
+    }
+
+    It "Cycle detection works" -Skip:$notNewConvertToJson {
+        $Test = @{Guid = New-Guid}
+        $Test.Parent = $Test
+
+        $exc = { ConvertTo-Json -InputObject $test } | Should -PassThru -Throw -ErrorId "System.Text.Json.JsonException,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+        $exc.Exception.TargetSite.Name | Should -BeExactly "ThrowJsonException_SerializerCycleDetected"
     }
 }

@@ -15,6 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
+    [Experimental("Microsoft.PowerShell.Utility.NewConvertToJson", ExperimentAction.Hide)]
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
     public class ConvertToJsonCommand : PSCmdlet
     {
@@ -26,9 +27,7 @@ namespace Microsoft.PowerShell.Commands
         public object InputObject { get; set; }
 
         private int _depth = 2;
-
         private const int maxDepthAllowed = 100;
-
         private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
 
         /// <summary>
@@ -136,6 +135,122 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _cancellationSource.Cancel();
+        }
+    }
+
+    /// <summary>
+    /// The ConvertTo-Json command.
+    /// This command converts an object to a Json string representation.
+    /// </summary>
+    [Experimental("Microsoft.PowerShell.Utility.NewConvertToJson", ExperimentAction.Show)]
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
+    public class ConvertToJsonCommand2 : PSCmdlet
+    {
+        /// <summary>
+        /// Gets or sets the InputObject property.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [AllowNull]
+        public object InputObject { get; set; }
+
+        private const int MaxDepthAllowed = 1000;
+
+        /// <summary>
+        /// Gets or sets the Depth property.
+        /// Default is 64 (it is .Net Core default).
+        /// </summary>
+        [Parameter]
+        [ValidateRange(1, int.MaxValue)]
+        [Alias("Depth")]
+        public int MaxDepth { get; set; } = 64;
+
+        /// <summary>
+        /// Gets or sets the Compress property.
+        /// If the Compress property is set to be true, the Json string will
+        /// be output in the compressed way. Otherwise, the Json string will
+        /// be output with indentations.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Compress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EnumsAsStrings property.
+        /// If the EnumsAsStrings property is set to true, enum values will
+        /// be converted to their string equivalent. Otherwise, enum values
+        /// will be converted to their numeric equivalent.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter EnumsAsStrings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AsArray property.
+        /// If the AsArray property is set to be true, the result JSON string will
+        /// be returned with surrounding '[', ']' chars. Otherwise,
+        /// the array symbols will occur only if there is more than one input object.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsArray { get; set; }
+
+        /// <summary>
+        /// Specifies how strings are escaped when writing JSON text.
+        /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
+        /// be returned with HTML (<, >, &, ', ") and control characters (e.g. newline) are escaped.
+        /// </summary>
+        [Parameter]
+        public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
+
+        /// <summary>
+        /// Prerequisite checks.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (MaxDepth > MaxDepthAllowed)
+            {
+                string errorMessage = StringUtil.Format(WebCmdletStrings.ReachedMaximumDepthAllowed, MaxDepthAllowed);
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new InvalidOperationException(errorMessage),
+                        "ReachedMaximumDepthAllowed",
+                        ErrorCategory.InvalidOperation,
+                        null));
+}
+        }
+
+        private List<object> _inputObjects = new List<object>();
+
+        /// <summary>
+        /// Caching the input objects for the command.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            _inputObjects.Add(InputObject);
+        }
+
+        /// <summary>
+        /// Do the conversion to json and write output.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (_inputObjects.Count > 0)
+            {
+                object objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
+
+                var context = new JsonObject.ConvertToJsonContext(
+                    MaxDepth,
+                    EnumsAsStrings.IsPresent,
+                    Compress.IsPresent,
+                    CancellationToken.None,
+                    EscapeHandling,
+                    targetCmdlet: this);
+
+                // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
+                // in that case, we shouldn't write the null to the output pipe.
+                string output = JsonObject.ConvertToJson2(objectToProcess, in context);
+                if (output != null)
+                {
+                    WriteObject(output);
+                }
+            }
         }
     }
 }

@@ -9,7 +9,12 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Threading;
 
 using Newtonsoft.Json;
@@ -201,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
                         return obj;
                 }
             }
-            catch (JsonException je)
+            catch (Newtonsoft.Json.JsonException je)
             {
                 var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, je.Message);
 
@@ -487,6 +492,307 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool _maxDepthWarningWritten;
 
+        // The implementation is the same as JavaScriptEncoder.Default but can be customized.
+        // Default JavaScriptEncoder always escape HTML and follow codepoints (the comment come from .Net Core):
+        // 1. Forbid codepoints which aren't mapped to characters or which are otherwise always disallowed
+        //    (includes categories Cc, Cs, Co, Cn, Zs [except U+0020 SPACE], Zl, Zp)
+        // 2. '\' (U+005C REVERSE SOLIDUS) must always be escaped in Javascript / ECMAScript / JSON.
+        //    '/' (U+002F SOLIDUS) is not Javascript / ECMAScript / JSON-sensitive so doesn't need to be escaped.
+        // 3. '`' (U+0060 GRAVE ACCENT) is ECMAScript-sensitive (see ECMA-262).
+        private static JavaScriptEncoder s_escapeNonAsciiEncoder = InitEscapeNonAsciiEncoder();
+        private static JavaScriptEncoder InitEscapeNonAsciiEncoder()
+        {
+            var textEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin);
+
+            return JavaScriptEncoder.Create(textEncoderSettings);
+        }
+
+        /// <summary>
+        /// Convert an object to JSON string.
+        /// </summary>
+        public static string ConvertToJson2(object objectToProcess, in ConvertToJsonContext context)
+        {
+            if (objectToProcess is null)
+            {
+                return "null";
+            }
+
+            try
+            {
+                var options = new JsonSerializerOptions()
+                {
+                    WriteIndented = !context.CompressOutput,
+                    MaxDepth = context.MaxDepth,
+                    IgnoreNullValues = false,
+                    Encoder = context.StringEscapeHandling switch
+                    {
+                        StringEscapeHandling.Default => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                        StringEscapeHandling.EscapeHtml => JavaScriptEncoder.Default,
+                        StringEscapeHandling.EscapeNonAscii => s_escapeNonAsciiEncoder,
+                        _ => JavaScriptEncoder.Default
+                    }
+                };
+
+                if (context.EnumsAsStrings)
+                {
+                    options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                }
+
+                options.Converters.Add(new JsonStringEnumConverter64());
+                options.Converters.Add(new JsonConverterPSObject());
+                options.Converters.Add(new JsonConverterNullString());
+                options.Converters.Add(new JsonConverterDBNull());
+
+                return System.Text.Json.JsonSerializer.Serialize(objectToProcess, objectToProcess.GetType(), options);
+            }
+            catch (OperationCanceledException)
+            {
+                return null;
+            }
+        }
+
+        private sealed class JsonConverterDBNull : System.Text.Json.Serialization.JsonConverter<DBNull>
+        {
+            /// <inheritdoc />
+            public override DBNull Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc />
+            public override void Write(Utf8JsonWriter writer, DBNull _, JsonSerializerOptions options)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+        }
+
+        private sealed class JsonConverterNullString : System.Text.Json.Serialization.JsonConverter<NullString>
+        {
+            /// <inheritdoc />
+            public override NullString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc />
+            public override void Write(Utf8JsonWriter writer, NullString _, JsonSerializerOptions options)
+            {
+                writer.WriteNullValue();
+            }
+        }
+
+        /// <summary>
+        /// Converter to convert enums to and from strings with a workaround for long- and ulong-based enums.
+        /// </summary>
+        /// <remarks>
+        /// Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
+        /// because JavaScript does not support the necessary precision.
+        /// </remarks>
+        private class JsonStringEnumConverter64 : JsonConverterFactory
+        {
+            /// <summary>
+            /// Initialize an instance of the <see cref="JsonStringEnumConverter64"/>
+            /// with the default naming policy and allows integer values.
+            /// </summary>
+            public JsonStringEnumConverter64()
+            {
+                // An empty constructor is needed for construction via attributes
+            }
+
+            /// <inheritdoc />
+            public override bool CanConvert(Type typeToConvert)
+            {
+                if (!typeToConvert.IsEnum)
+                {
+                    return false;
+                }
+
+                var underlyingType = Enum.GetUnderlyingType(typeToConvert);
+                return (underlyingType == typeof(long) || underlyingType == typeof(ulong));
+            }
+
+            /// <inheritdoc />
+            public override System.Text.Json.Serialization.JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+            {
+                var a = new JsonStringEnumConverter(namingPolicy: null, allowIntegerValues: false);
+                return a.CreateConverter(typeToConvert, options);
+            }
+        }
+
+        internal sealed class JsonConverterPSObject : System.Text.Json.Serialization.JsonConverter<PSObject>
+        {
+            /// <inheritdoc />
+            public override PSObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc />
+            public override void Write(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
+            {
+                if (LanguagePrimitives.IsNull(pso))
+                {
+                    writer.WriteNullValue();
+                    return;
+                }
+
+                var obj = pso.BaseObject;
+
+                bool isCustomObj = false;
+
+                if (obj == NullString.Value
+                    || obj == DBNull.Value)
+                {
+                    obj = null;
+                }
+                else if (IsSimpleType(obj))
+                {
+                    // If PSObject wraps a simple type like int, string, DateTime, and so on
+                    // we serialize the base object directly.
+                }
+                else if (obj is Newtonsoft.Json.Linq.JObject jObject)
+                {
+                    obj = jObject.ToObject<Dictionary<object, object>>();
+                }
+                else
+                {
+                    var dictionary = obj as IDictionary;
+                    if (!(obj is IDictionary) && !(obj is IEnumerable))
+                    {
+                        // PSCustomObject or C# object
+                        obj = new Dictionary<string, object>();
+                        isCustomObj = true;
+
+                        // Since the converter is for PSObject only
+                        // we already have all properties in the PSObject
+                        // so makes no sense to collect the same properties from base object here.
+                    }
+                }
+
+                SerializePsProperties(writer, pso, obj, isCustomObj, options);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsSimpleType(object obj)
+        {
+            return (obj.GetType().IsPrimitive
+                    || obj.GetType().IsEnum
+                    || obj is string
+                    || obj is char
+                    || obj is bool
+                    || obj is DateTime
+                    || obj is DateTimeOffset
+                    || obj is Guid
+                    || obj is Uri
+                    || obj is double
+                    || obj is float
+                    || obj is decimal);
+        }
+
+        private static void SerializePsProperties(Utf8JsonWriter writer, PSObject pso, object obj, bool isCustomObj, JsonSerializerOptions options)
+        {
+            bool wasDictionary = true;
+            IDictionary dict = obj as IDictionary;
+
+            if (dict == null)
+            {
+                wasDictionary = false;
+                dict = new Dictionary<string, object>();
+                dict.Add("value", obj);
+            }
+
+            AppendPsProperties(pso, dict, isCustomObj);
+
+            if (wasDictionary == false && dict.Count == 1)
+            {
+                System.Text.Json.JsonSerializer.Serialize(writer, obj, obj?.GetType(), options);
+                return;
+            }
+
+            System.Text.Json.JsonSerializer.Serialize(writer, dict, options);
+        }
+
+        private static void AppendPsProperties(PSObject psObj, IDictionary receiver, bool isCustomObject)
+        {
+            // serialize only Extended and Adapted properties..
+            PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
+                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psObj,
+                    isCustomObject ? PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted) :
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+            foreach (PSPropertyInfo prop in srcPropertiesToSearch)
+            {
+                if (prop is PSProperty psproperty && psproperty.IsDefined(typeof(System.Text.Json.Serialization.JsonIgnoreAttribute)))
+                {
+                    continue;
+                }
+
+                object value = null;
+                try
+                {
+                    value = prop.Value;
+                }
+                catch (Exception)
+                {
+                }
+
+                if (!receiver.Contains(prop.Name))
+                {
+                    receiver[prop.Name] = value;
+                }
+            }
+        }
+
+        private static IDictionary ProcessCustomObject<T>(object o)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            Type t = o.GetType();
+
+            foreach (FieldInfo info in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!info.IsDefined(typeof(T), true))
+                {
+                    object value;
+                    try
+                    {
+                        value = info.GetValue(o);
+                    }
+                    catch (Exception)
+                    {
+                        value = null;
+                    }
+
+                    result.Add(info.Name, value);
+                }
+            }
+
+            foreach (PropertyInfo info2 in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!info2.IsDefined(typeof(T), true))
+                {
+                    MethodInfo getMethod = info2.GetGetMethod();
+                    if ((getMethod != null) && (getMethod.GetParameters().Length <= 0))
+                    {
+                        object value;
+                        try
+                        {
+                            value = getMethod.Invoke(o, Array.Empty<object>());
+                        }
+                        catch (Exception)
+                        {
+                            value = null;
+                        }
+
+                        result.Add(info2.Name, value);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
         /// that properties that cannot be evaluated are treated as having the value null.
@@ -604,7 +910,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                rv = ProcessCustomObject<JsonIgnoreAttribute>(obj, currentDepth, in context);
+                                rv = ProcessCustomObject<Newtonsoft.Json.JsonIgnoreAttribute>(obj, currentDepth, in context);
                                 isCustomObj = true;
                             }
                         }
