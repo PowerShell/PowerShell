@@ -864,9 +864,29 @@ namespace System.Management.Automation
                     cs.GroupId = css.GroupId;
                     cs.HardlinkCount = css.HardlinkCount;
                     cs.Size = css.Size;
-                    cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
-                    cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
-                    cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
+                    // These can sometime throw if we get an unreasonable number back
+                    // As a fallback, set the time to UnixEpoch
+                    try {
+                        cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
+                    }
+                    catch {
+                        cs.AccessTime = DateTime.UnixEpoch.ToLocalTime();
+                    }
+
+                    try {
+                        cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
+                    }
+                    catch {
+                        cs.ModifiedTime = DateTime.UnixEpoch.ToLocalTime();
+                    }
+
+                    try {
+                        cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
+                    }
+                    catch {
+                        cs.StatusChangeTime = DateTime.UnixEpoch.ToLocalTime();
+                    }
+
                     cs.BlockSize = css.BlockSize;
                     cs.DeviceId = css.DeviceId;
                     cs.NumberOfBlocks = css.NumberOfBlocks;
