@@ -33,7 +33,6 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [Debian 10][corefx-linux]                  |                         | [.deb][pv-debian10]   |                               |
-| [Debian 11][corefx-linux]                  |                         | [.deb][pv-debian11]   |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [CentOS 8][corefx-linux]                   |                         | [.rpm][pv-centos8]    |                               |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
@@ -83,7 +82,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview_7.0.0-preview.6-1.ubuntu.16.04_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview_7.0.0-preview.6-1.debian.9_amd64.deb
 [pv-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview_7.0.0-preview.6-1.debian.10_amd64.deb
-[pv-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview_7.0.0-preview.6-1.debian.11_amd64.deb
 [pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview-7.0.0_preview.6-1.rhel.7.x86_64.rpm
 [pv-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-preview-7.0.0_preview.6-1.centos.8.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/powershell-7.0.0-preview.6-osx-x64.pkg
