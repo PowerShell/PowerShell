@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                     // and search backwards through the entries
                     for (int i = entries.Length - 1; i >= 0; i--)
                     {
-                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.CurrentCulture))
+                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.Ordinal))
                         {
                             entry = entries[i];
                             break;
