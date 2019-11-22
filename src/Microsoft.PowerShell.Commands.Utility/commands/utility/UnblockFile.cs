@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         private bool IsBlocked(string path)
         {
             uint valueSize = 1024;
-            IntPtr value = Marshal.AllocHGlobal(valueSize);
+            IntPtr value = Marshal.AllocHGlobal((int)valueSize);
             try
             {
                 var resultSize = GetXattr(path, MacBlockAttribute, value, valueSize, 0, RemovexattrFollowSymLink);
