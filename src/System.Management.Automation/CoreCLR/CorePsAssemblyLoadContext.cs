@@ -236,8 +236,8 @@ namespace System.Management.Automation
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
             var folder = Path.GetDirectoryName(assembly.Location);
-            var nativeSubFolderName = s_nativeDllSubFolder ?? (s_nativeDllSubFolder = GetNativeDllSubFolderName());
-            var fullName = Path.Combine(folder, nativeSubFolderName, libraryName);
+            s_nativeDllSubFolder ??= GetNativeDllSubFolderName();
+            var fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName);
 
             return NativeLibrary.Load(fullName);
         }
