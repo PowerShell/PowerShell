@@ -45,13 +45,6 @@ namespace System.Management.Automation
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
                 }
 
-                // Add last resort native dll resolver.
-                // Default order:
-                //      1. AssemblyLoadContext.LoadUnmanagedDll()
-                //      2. System.Runtime.InteropServices.DllImportResolver callbacks
-                //      3. AssemblyLoadContext.Default.ResolvingUnmanagedDll handlers
-                AssemblyLoadContext.Default.ResolvingUnmanagedDll += NativeDllHandler;
-
                 Instance = new PowerShellAssemblyLoadContext(basePaths);
                 return Instance;
             }
@@ -99,6 +92,13 @@ namespace System.Management.Automation
 
             // LAST: Register 'Resolving' handler on the default load context.
             AssemblyLoadContext.Default.Resolving += Resolve;
+
+            // Add last resort native dll resolver.
+            // Default order:
+            //      1. System.Runtime.InteropServices.DllImportResolver callbacks
+            //      2. AssemblyLoadContext.LoadUnmanagedDll()
+            //      3. AssemblyLoadContext.Default.ResolvingUnmanagedDll handlers
+            AssemblyLoadContext.Default.ResolvingUnmanagedDll += NativeDllHandler;
         }
 
         #endregion Constructor
@@ -230,16 +230,16 @@ namespace System.Management.Automation
         ///                     |--- 'linux-arm64' subfolder
         ///                     |       |--- native.dll
         ///                     |
-        ///                     |--- 'osx' subfolder
+        ///                     |--- 'osx-x64' subfolder
         ///                     |       |--- native.dll
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
-            System.Diagnostics.Debugger.Break();
             var folder = Path.GetDirectoryName(assembly.Location);
-            var searchPath = Path.Combine(folder, NativeSubFolderName,libraryName);
+            var nativeSubFolderName = s_nativeDllSubFolder ?? (s_nativeDllSubFolder = GetNativeDllSubFolderName());
+            var fullName = Path.Combine(folder, nativeSubFolderName, libraryName);
 
-            return NativeLibrary.Load(searchPath, assembly, null);
+            return NativeLibrary.Load(fullName);
         }
 
         #endregion Internal_Methods
@@ -533,7 +533,6 @@ namespace System.Management.Automation
 
         private static string s_nativeDllSubFolder;
 
-        private static string NativeSubFolderName => s_nativeDllSubFolder ?? (s_nativeDllSubFolder = GetNativeDllSubFolderName());
         private static string GetNativeDllSubFolderName()
         {
             string folderName = string.Empty;
@@ -543,7 +542,7 @@ namespace System.Management.Automation
                 Architecture.Arm64 => "arm64",
                 Architecture.X64 => "x64",
                 Architecture.X86 => "x86",
-                _ => ""
+                _ => string.Empty
             };
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
