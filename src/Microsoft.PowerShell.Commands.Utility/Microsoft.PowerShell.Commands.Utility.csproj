@@ -32,8 +32,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
-    <PackageReference Include="System.Threading.AccessControl" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0-preview1.19504.10" />
+    <PackageReference Include="System.Threading.AccessControl" Version="4.7.0-preview3.19551.4" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0-preview3.19551.4" />
     <PackageReference Include="NJsonSchema" Version="10.0.27" />
   </ItemGroup>
 

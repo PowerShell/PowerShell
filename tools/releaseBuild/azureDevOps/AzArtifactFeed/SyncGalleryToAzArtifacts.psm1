@@ -100,7 +100,6 @@ function SyncGalleryToAzArtifacts {
         $savedPackages | Out-String | Write-Verbose -Verbose
 
         foreach($package in $savedPackages) {
-
             $pkgVersion = NormalizeVersion -version $package.Version
             $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $package.Name -and (NormalizeVersion -version $_.Version) -eq $pkgVersion }
 
@@ -122,7 +121,7 @@ function SyncGalleryToAzArtifacts {
 }
 
 function NormalizeVersion {
-    param ([Version] $version)
+    param ([string] $version)
 
     $sVer = if ($version -match "(\d+.\d+.\d+).0") {
         $matches[1]

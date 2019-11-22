@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             if ((_outVarResults != null) && (_outVarResults.Count > 0))
             {
                 Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Clear();
-                foreach (Object item in _outVarResults)
+                foreach (object item in _outVarResults)
                 {
                     Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Add(item);
                 }

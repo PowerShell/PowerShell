@@ -4751,7 +4751,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(Object runningCmd)
+        private void RestoreRemoteOutput(object runningCmd)
         {
             if (runningCmd == null) { return; }
 

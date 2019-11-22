@@ -40,7 +40,7 @@ namespace System.Management.Automation
         private Collection<PSClassInfo> _matchingClassList = null;
         private bool _useWildCards = false;
         private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
-        private object _lockObject = new Object();
+        private object _lockObject = new object();
 
         #endregion
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -270,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
                 // does not throw when encountering duplicates and just uses the last entry.
                 if (memberHashTracker.TryGetValue(entry.Key, out var maybePropertyName)
-                    && string.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
+                    && string.Compare(entry.Key, maybePropertyName, StringComparison.Ordinal) == 0)
                 {
                     var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
@@ -541,6 +542,11 @@ namespace Microsoft.PowerShell.Commands
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
+            if (LanguagePrimitives.IsNull(obj))
+            {
+                return null;
+            }
+
             PSObject pso = obj as PSObject;
 
             if (pso != null)
@@ -552,18 +558,21 @@ namespace Microsoft.PowerShell.Commands
             bool isPurePSObj = false;
             bool isCustomObj = false;
 
-            if (obj == null
-                || DBNull.Value.Equals(obj)
-                || obj is string
-                || obj is char
-                || obj is bool
-                || obj is DateTime
-                || obj is DateTimeOffset
-                || obj is Guid
-                || obj is Uri
-                || obj is double
-                || obj is float
-                || obj is decimal)
+            if (obj == NullString.Value
+                || obj == DBNull.Value)
+            {
+                rv = null;
+            }
+            else if (obj is string
+                    || obj is char
+                    || obj is bool
+                    || obj is DateTime
+                    || obj is DateTimeOffset
+                    || obj is Guid
+                    || obj is Uri
+                    || obj is double
+                    || obj is float
+                    || obj is decimal)
             {
                 rv = obj;
             }
@@ -607,7 +616,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            rv = LanguagePrimitives.ConvertTo(obj, typeof(String),
+                            rv = LanguagePrimitives.ConvertTo(obj, typeof(string),
                                 CultureInfo.InvariantCulture);
                         }
                     }

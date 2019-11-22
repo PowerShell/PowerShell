@@ -8,14 +8,14 @@ using System.Windows.Controls;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Interaction logic for AllModulesControl.xaml
+    /// Interaction logic for AllModulesControl.xaml.
     /// </summary>
     public partial class AllModulesControl : UserControl
     {
         #region Construction and Destructor
 
         /// <summary>
-        /// Initializes a new instance of the AllModulesControl class
+        /// Initializes a new instance of the AllModulesControl class.
         /// </summary>
         public AllModulesControl()
         {
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #endregion
         /// <summary>
-        /// Gets current control of the ShowModuleControl
+        /// Gets current control of the ShowModuleControl.
         /// </summary>
         internal ShowModuleControl CurrentShowModuleControl
         {

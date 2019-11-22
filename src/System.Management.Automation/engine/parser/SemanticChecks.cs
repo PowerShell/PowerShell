@@ -762,6 +762,14 @@ namespace System.Management.Automation.Language
                 {
                     errorAst = ast;
                 }
+                else if (ast is MemberExpressionAst memberExprAst && memberExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
+                else if (ast is IndexExpressionAst indexExprAst && indexExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
                 else if (ast is AttributedExpressionAst)
                 {
                     // Check for multiple types combined with [ref].

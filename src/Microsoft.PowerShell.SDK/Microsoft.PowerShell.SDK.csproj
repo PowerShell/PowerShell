@@ -18,9 +18,9 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0-preview1.19504.10" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.0-preview1.19504.10" />
+    <PackageReference Include="System.IO.Packaging" Version="4.7.0-preview3.19551.4" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.7.0-preview3.19551.4" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.0-preview3.19551.4" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.7.0-preview1.final" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.7.0-preview1.final" />
