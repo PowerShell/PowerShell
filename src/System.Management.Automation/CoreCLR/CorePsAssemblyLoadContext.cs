@@ -236,8 +236,8 @@ namespace System.Management.Automation
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
             var folder = Path.GetDirectoryName(assembly.Location);
-            s_nativeDllSubFolder ??= GetNativeDllSubFolderName();
-            var fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName);
+            s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
+            var fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
             return NativeLibrary.Load(fullName);
         }
@@ -532,8 +532,9 @@ namespace System.Management.Automation
         }
 
         private static string s_nativeDllSubFolder;
+        private static string s_nativeDllExtension;
 
-        private static string GetNativeDllSubFolderName()
+        private static string GetNativeDllSubFolderName(out string ext)
         {
             string folderName = string.Empty;
             var processArch = RuntimeInformation.ProcessArchitecture switch
@@ -548,14 +549,17 @@ namespace System.Management.Automation
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 folderName = "win-" + processArch;
+                ext = ".dll";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 folderName = "linux-" + processArch;
+                ext = ".so";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 folderName = "osx-x64";
+                ext = ".dylib";
             }
 
             return folderName;
