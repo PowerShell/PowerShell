@@ -537,6 +537,7 @@ namespace System.Management.Automation
         private static string GetNativeDllSubFolderName(out string ext)
         {
             string folderName = string.Empty;
+            ext = string.Empty;
             var processArch = RuntimeInformation.ProcessArchitecture switch
             {
                 Architecture.Arm => "arm",
