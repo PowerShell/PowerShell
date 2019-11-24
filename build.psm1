@@ -3,6 +3,11 @@
 
 Set-StrictMode -Version 3.0
 
+param(
+    # Skips a check that prevents building PowerShell on unsupported Linux distributions
+    [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
+)
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -178,7 +183,11 @@ function Get-EnvironmentInformation
             $environment.IsSUSEFamily -or
             $environment.IsAlpine)
         ) {
-            Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            if ($SkipLinuxDistroCheck) {
+                Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            } else {
+                throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell. Import this module with '-ArgumentList `$true' to bypass this check."
+            }
         }
     }
 
