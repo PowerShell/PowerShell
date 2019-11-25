@@ -10,15 +10,15 @@ Describe "Verify Markdown Spelling" {
         }
 
         Get-Job | Remove-Job -Force
+
+        $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | 
+            Where-Object DirectoryName -notlike '*node_modules*' | 
+            Group-Object -Property directory
     }
 
     AfterAll {
         Get-Job | Remove-Job -Force
     }
-
-    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | 
-        Where-Object DirectoryName -notlike '*node_modules*' | 
-        Group-Object -Property directory
 
     $jobs = @{}
     # Start all spelling verification in parallel
