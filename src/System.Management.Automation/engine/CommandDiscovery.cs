@@ -884,6 +884,11 @@ namespace System.Management.Automation
 
         internal static void AutoloadModulesWithJobSourceAdapters(System.Management.Automation.ExecutionContext context, CommandOrigin commandOrigin)
         {
+            /* This function is used by *-Job cmdlets (JobCmdletBase.BeginProcessing(), StartJobCommand.BeginProcessing())
+            It attempts to load modules from a fixed ModulesWithJobSourceAdapters list that currently has only `PSScheduledJob` module that is not PS-Core compatible.
+            Because this function does not check the result of a (currently failing) `PSScheduledJob` module autoload, it provides no value.
+            After discussion it was decided to comment out this code as it may be useful if ModulesWithJobSourceAdapters list changes in the future.
+                        
             if (!context.IsModuleWithJobSourceAdapterLoaded)
             {
                 PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
@@ -906,7 +911,7 @@ namespace System.Management.Automation
                         context.IsModuleWithJobSourceAdapterLoaded = true;
                     }
                 }
-            }
+            }*/
         }
 
         internal static Collection<PSModuleInfo> AutoloadSpecifiedModule(string moduleName, ExecutionContext context, SessionStateEntryVisibility visibility, out Exception exception)
