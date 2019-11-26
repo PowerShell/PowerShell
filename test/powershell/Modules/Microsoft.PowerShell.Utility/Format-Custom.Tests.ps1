@@ -439,7 +439,6 @@ SelectScriptBlock
     }
 }
 
-
 Describe "Custom formatting returning nothing" -Tags "CI" {
   BeforeAll {
       $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
