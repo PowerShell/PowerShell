@@ -499,6 +499,7 @@ Describe "Custom formatting returning nothing" -Tags "CI" {
 
 
 
+
 '@ -replace '\r?\n', "^"
 
       $ps.Invoke() -replace '\r?\n', "^" | Should -BeExactly $expectedOutput
