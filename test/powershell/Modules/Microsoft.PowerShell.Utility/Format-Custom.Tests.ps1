@@ -457,7 +457,7 @@ Describe "Custom formatting returning nothing" -Tags "CI" {
                           <CustomItem>
                               <ExpressionBinding>
                                   <ScriptBlock>
-                                    ""
+                                    $null
                                   </ScriptBlock>
                               </ExpressionBinding>
                           </CustomItem>
@@ -496,7 +496,6 @@ Describe "Custom formatting returning nothing" -Tags "CI" {
 
       # one newline for start, one for grouping, and one for end
       $expectedOutput = @'
-
 
 
 
