@@ -281,7 +281,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // do the formatting and we will be done
                     if (cpt.control == null || cpt.control is FieldControlBody)
                     {
-
                         if (val == null)
                         {
                             return;
