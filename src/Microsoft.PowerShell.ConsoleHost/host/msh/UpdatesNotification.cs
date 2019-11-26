@@ -18,6 +18,9 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// A Helper class for printing notification on PowerShell startup when there is a new update.
     /// </summary>
+    /// <remarks>
+    /// For the detailed design, please take a look at the corresponding RFC.
+    /// </remarks>
     internal static class UpdatesNotification
     {
         private const string UpdateCheckEnvVar = "POWERSHELL_UPDATECHECK";
@@ -25,12 +28,24 @@ namespace Microsoft.PowerShell
         private const string StableBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/stable.json";
         private const string PreviewBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/preview.json";
 
+        /// <summary>
+        /// The version of new update is persisted using a file, not as the file content, but instead baked in the file name in the following template:
+        ///  `update{notification-type}_{version}_{publish-date}` -- held by 's_updateFileNameTemplate',
+        /// while 's_updateFileNamePattern' holds the pattern of this file name.
+        /// </summary>
+        private static readonly string s_updateFileNameTemplate, s_updateFileNamePattern;
+
+        /// <summary>
+        /// For each notification type, we need two files to achieve the synchronization for the update check:
+        ///  `_sentinel{notification-type}_` -- held by 's_sentinelFileName';
+        ///  `sentinel{notification-type}-{year}-{month}-{day}.done`
+        ///     -- held by 's_doneFileNameTemplate', while 's_doneFileNamePattern' holds the pattern of this file name.
+        /// The {notification-type} part will be the integer value of the corresponding `NotificationType` member.
+        /// The {year}-{month}-{day} part will be filled with the date of current day when the update check runs.
+        /// </summary>
+        private static readonly string s_sentinelFileName, s_doneFileNameTemplate, s_doneFileNamePattern;
+
         private static readonly string s_cacheDirectory;
-        private static readonly string s_sentinelFileName;
-        private static readonly string s_doneFileNameTemplate;
-        private static readonly string s_doneFileNamePattern;
-        private static readonly string s_updateFileNameTemplate;
-        private static readonly string s_updateFileNamePattern;
         private static readonly EnumerationOptions s_enumOptions;
         private static readonly NotificationType s_notificationType;
 
