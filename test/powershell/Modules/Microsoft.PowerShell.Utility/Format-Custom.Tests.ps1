@@ -479,7 +479,7 @@ Describe "Custom formatting returning nothing" -Tags "CI" {
   }
 
   AfterAll {
-      $rs.Close()
+      $rs.Dispose()
       $ps.Dispose()
   }
 
