@@ -281,11 +281,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // do the formatting and we will be done
                     if (cpt.control == null || cpt.control is FieldControlBody)
                     {
-                        // Since it is a leaf node we just consider it an empty string and go
-                        // on with formatting
+
                         if (val == null)
                         {
-                            val = string.Empty;
+                            return;
                         }
 
                         FieldFormattingDirective fieldFormattingDirective = null;

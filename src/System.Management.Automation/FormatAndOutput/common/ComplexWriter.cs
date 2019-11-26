@@ -49,14 +49,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we always start with no indentation
             _indentationManager.Clear();
 
+            bool hasContent = false;
             foreach (FormatEntry fe in formatValueList)
             {
-                // operate on each directive inside the list,
-                // carrying the indentation from invocation to invocation
-                GenerateFormatEntryDisplay(fe, 0);
+                if (fe.formatValueList.Count > 0)
+                {
+                    hasContent = true;
+
+                    // operate on each directive inside the list,
+                    // carrying the indentation from invocation to invocation
+                    GenerateFormatEntryDisplay(fe, 0);
+                }
             }
+
             // make sure that, if we have pending text in the buffer it gets flushed
-            WriteToScreen();
+            if (hasContent)
+            {
+                WriteToScreen();
+            }
         }
 
         /// <summary>
@@ -132,12 +142,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int firstLineIndentation = _indentationManager.FirstLineIndentation;
 
             // VALIDITY CHECKS:
-
-            // check if there's anything to write
-            if (_stringBuffer.Length == 0)
-            {
-                return;
-            }
 
             // check the useful ("active") width
             int usefulWidth = _textColumns - rightIndentation - leftIndentation;
