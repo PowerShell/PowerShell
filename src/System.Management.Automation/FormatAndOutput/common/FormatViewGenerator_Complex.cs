@@ -283,6 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         if (val == null)
                         {
+                            // Since it is a leaf node we just ignore it
                             return;
                         }
 
@@ -778,4 +779,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _enumerationLimit;
     }
 }
-
