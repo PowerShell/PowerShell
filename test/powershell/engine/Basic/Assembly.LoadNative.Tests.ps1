@@ -13,20 +13,22 @@ Describe "Can load a native assembly" -Tags "CI" {
         $root = Join-Path $TempPath "testDllNativeFolder"
         New-Item -Path $root -ItemType Directory -Force > $null
 
+        $processArch = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLower()
+
         if ($IsWindows) {
-            $arch = "win-x64"
+            $arch = "win-" + $processArch
             $nativeDllName = "nativedll.dll"
-            $sourceDllName = "mi.dll"
+            $sourceDllName = "hostpolicy.dll"
         } elseif ($IsLinux) {
-            $arch = "linux-x64"
+            $arch = "linux" + $processArch
             $nativeDllName = "nativedll.so"
-            $sourceDllName = "libmi.so"
+            $sourceDllName = "hostpolicy.so"
         } elseif ($IsMacOs) {
-            $arch = "osx-x64"
+            $arch = "osx" + $processArch
             $nativeDllName = "nativedll.dylib"
-            $sourceDllName = "libmi.dylib"
+            $sourceDllName = "hostpolicy.dylib"
         } else {
-            throw "Unsupported OS architecture"
+            throw "Unsupported OS"
         }
 
         $archFolder = Join-Path $root $arch
