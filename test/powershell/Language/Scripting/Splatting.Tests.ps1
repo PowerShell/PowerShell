@@ -145,7 +145,7 @@ Describe 'Tests for splatting' -Tags 'CI' {
             }
         }
 
-        It 'Should splat indexed data and 'using:' properly' {
+        It 'Should splat indexed data and ''using:'' properly' {
             $testObject = @(
                 @{
                     InputObject = 'First'
@@ -158,7 +158,7 @@ Describe 'Tests for splatting' -Tags 'CI' {
             1..1 | ForEach-Object -Parallel { Write-Output @using:testObject[1] } | Should -BeExactly 'Second'
         }
 
-        It 'Should splat with properties and indexed data and 'using:' properly' {
+        It 'Should splat with properties and indexed data and ''using:'' properly' {
             $testObject = [pscustomobject]@{
                 Parameters = @(
                     @{
