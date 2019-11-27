@@ -20,13 +20,13 @@ Describe "Can load a native assembly" -Tags "CI" {
             $nativeDllName = "nativedll.dll"
             $sourceDllName = "hostpolicy.dll"
         } elseif ($IsLinux) {
-            $arch = "linux" + $processArch
+            $arch = "linux-" + $processArch
             $nativeDllName = "nativedll.so"
-            $sourceDllName = "hostpolicy.so"
+            $sourceDllName = "libhostpolicy.so"
         } elseif ($IsMacOs) {
-            $arch = "osx" + $processArch
+            $arch = "osx-" + $processArch
             $nativeDllName = "nativedll.dylib"
-            $sourceDllName = "hostpolicy.dylib"
+            $sourceDllName = "libhostpolicy.dylib"
         } else {
             throw "Unsupported OS"
         }
