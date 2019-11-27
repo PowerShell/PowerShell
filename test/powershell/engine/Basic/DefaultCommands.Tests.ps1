@@ -451,7 +451,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Start-Sleep",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Start-Transaction",                "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Start-Transcript",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Stop-Computer",                    "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Stop-Computer",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Job",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Process",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Service",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
