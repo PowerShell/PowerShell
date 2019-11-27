@@ -134,11 +134,18 @@ function Get-EnvironmentInformation
 
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
+        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore
+        if ($lsb_release) {
+            $LinuxID = & $lsb_release -is
+        }
+        else {
+            $LinuxID = ""
+        }
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
-        $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
+        $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
@@ -149,6 +156,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
+        $environment += @{'IsDebianFamily' = $Environment.IsDebian -or $Environment.IsUbuntu}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}

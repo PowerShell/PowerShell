@@ -14,45 +14,45 @@ namespace Microsoft.Management.UI.Internal
     /// ViewModel for the Help Dialog used to:
     ///     build the help document
     ///     search the help document
-    ///     offer text for labels
+    ///     offer text for labels.
     /// </summary>
     internal class HelpViewModel : INotifyPropertyChanged
     {
         /// <summary>
-        /// The builder for the help FlowDocument Paragraph  used in a RichEditText control
+        /// The builder for the help FlowDocument Paragraph  used in a RichEditText control.
         /// </summary>
         private readonly HelpParagraphBuilder helpBuilder;
 
         /// <summary>
-        /// Searcher for selecting current matches in paragraph text
+        /// Searcher for selecting current matches in paragraph text.
         /// </summary>
         private readonly ParagraphSearcher searcher;
 
         /// <summary>
-        /// Title of the help window
+        /// Title of the help window.
         /// </summary>
         private readonly string helpTitle;
 
         /// <summary>
-        /// the zoom bound to the zoom slider value
+        /// the zoom bound to the zoom slider value.
         /// </summary>
         private double zoom = 100;
 
         /// <summary>
-        /// Text to be found. This is bound to the find TextBox
+        /// Text to be found. This is bound to the find TextBox.
         /// </summary>
         private string findText;
 
         /// <summary>
-        /// text for the number of matches found
+        /// text for the number of matches found.
         /// </summary>
         private string matchesLabel;
 
         /// <summary>
-        /// Initializes a new instance of the HelpViewModel class
+        /// Initializes a new instance of the HelpViewModel class.
         /// </summary>
-        /// <param name="psObj">object containing help</param>
-        /// <param name="documentParagraph">paragraph in which help text is built/searched</param>
+        /// <param name="psObj">Object containing help.</param>
+        /// <param name="documentParagraph">Paragraph in which help text is built/searched.</param>
         internal HelpViewModel(PSObject psObj, Paragraph documentParagraph)
         {
             Debug.Assert(psObj != null, "ensured by caller");
@@ -70,13 +70,13 @@ namespace Microsoft.Management.UI.Internal
 
         #region INotifyPropertyChanged Members
         /// <summary>
-        /// Used to notify of property changes
+        /// Used to notify of property changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         /// <summary>
-        /// Gets or sets the Zoom bound to the zoom slider value
+        /// Gets or sets the Zoom bound to the zoom slider value.
         /// </summary>
         public double Zoom
         {
@@ -95,7 +95,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the value bound to the RichTextEdit zoom, which is calculated based on the zoom
+        /// Gets the value bound to the RichTextEdit zoom, which is calculated based on the zoom.
         /// </summary>
         public double ZoomLevel
         {
@@ -106,7 +106,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the label to be displayed for the zoom
+        /// Gets the label to be displayed for the zoom.
         /// </summary>
         public string ZoomLabel
         {
@@ -117,7 +117,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets or sets the text to be found
+        /// Gets or sets the text to be found.
         /// </summary>
         public string FindText
         {
@@ -135,7 +135,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the title of the window
+        /// Gets the title of the window.
         /// </summary>
         public string HelpTitle
         {
@@ -146,7 +146,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets or sets the label for current matches
+        /// Gets or sets the label for current matches.
         /// </summary>
         public string MatchesLabel
         {
@@ -163,7 +163,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a value indicating whether there are matches to go to
+        /// Gets a value indicating whether there are matches to go to.
         /// </summary>
         public bool CanGoToNextOrPrevious
         {
@@ -174,7 +174,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the searcher for selecting current matches in paragraph text
+        /// Gets the searcher for selecting current matches in paragraph text.
         /// </summary>
         internal ParagraphSearcher Searcher
         {
@@ -182,7 +182,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the paragraph builder used to write help content
+        /// Gets the paragraph builder used to write help content.
         /// </summary>
         internal HelpParagraphBuilder HelpBuilder
         {
@@ -200,7 +200,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Increases Zoom if not above maximum
+        /// Increases Zoom if not above maximum.
         /// </summary>
         internal void ZoomIn()
         {
@@ -211,7 +211,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Decreases Zoom if not below minimum
+        /// Decreases Zoom if not below minimum.
         /// </summary>
         internal void ZoomOut()
         {
@@ -222,10 +222,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called to update the matches label
+        /// Called to update the matches label.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpBuilder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "HighlightCount")
@@ -236,7 +236,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Sets the current matches label
+        /// Sets the current matches label.
         /// </summary>
         private void SetMatchesLabel()
         {
@@ -268,9 +268,9 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called internally to notify when a proiperty changed
+        /// Called internally to notify when a proiperty changed.
         /// </summary>
-        /// <param name="propertyName">property name</param>
+        /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;

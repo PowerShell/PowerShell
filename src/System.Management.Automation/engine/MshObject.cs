@@ -1914,7 +1914,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal SerializationMethod GetSerializationMethod(TypeTable backupTypeTable)
         {
-            SerializationMethod result = TypeTable.defaultSerializationMethod;
+            SerializationMethod result = TypeTable.DefaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (typeTable != null)
@@ -1922,7 +1922,7 @@ namespace System.Management.Automation
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
                 result = (SerializationMethod)GetNoteSettingValue(standardMemberSet,
-                        TypeTable.SerializationMethodNode, TypeTable.defaultSerializationMethod, typeof(SerializationMethod), true, this);
+                        TypeTable.SerializationMethodNode, TypeTable.DefaultSerializationMethod, typeof(SerializationMethod), true, this);
             }
 
             return result;

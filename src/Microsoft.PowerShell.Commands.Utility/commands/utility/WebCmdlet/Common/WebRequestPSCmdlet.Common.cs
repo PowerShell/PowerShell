@@ -381,6 +381,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter Resume { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether to skip checking HTTP status for error codes.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
+
         #endregion
 
         #endregion Virtual Properties
@@ -688,6 +694,11 @@ namespace Microsoft.PowerShell.Commands
         internal bool ShouldWriteToPipeline
         {
             get { return (!ShouldSaveToOutFile || PassThru); }
+        }
+
+        internal bool ShouldCheckHttpStatus
+        {
+            get { return !SkipHttpErrorCheck; }
         }
 
         /// <summary>
@@ -1513,7 +1524,7 @@ namespace Microsoft.PowerShell.Commands
                                     OutFile = null;
                                 }
 
-                                if (!_isSuccess)
+                                if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
                                     string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);

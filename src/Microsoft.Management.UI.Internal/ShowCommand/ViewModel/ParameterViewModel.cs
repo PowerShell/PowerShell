@@ -31,12 +31,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private ShowCommandParameterInfo parameter;
 
         /// <summary>
-        /// value entered in the GUI for the parameter
+        /// value entered in the GUI for the parameter.
         /// </summary>
         private object parameterValue;
 
         /// <summary>
-        /// Name of the parameter set this parameter is in
+        /// Name of the parameter set this parameter is in.
         /// </summary>
         private string parameterSetName;
 
@@ -44,8 +44,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initializes a new instance of the ParameterViewModel class.
         /// </summary>
-        /// <param name="parameter">The parameter information for this parameter</param>
-        /// <param name="parameterSetName">the name of the parameter set this parameter is in</param>
+        /// <param name="parameter">The parameter information for this parameter.</param>
+        /// <param name="parameterSetName">The name of the parameter set this parameter is in.</param>
         public ParameterViewModel(ShowCommandParameterInfo parameter, string parameterSetName)
         {
             if (parameter == null)
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region INotifyPropertyChanged Members
 
         /// <summary>
-        /// PropertyChanged Event
+        /// PropertyChanged Event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the value for this parameter from the GUI
+        /// Gets or sets the value for this parameter from the GUI.
         /// </summary>
         public object Value
         {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the parameter name
+        /// Gets the parameter name.
         /// </summary>
         public string Name
         {
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the name of the parameter set this parameter is in
+        /// Gets the name of the parameter set this parameter is in.
         /// </summary>
         public string ParameterSetName
         {
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether this parameter is in the shared parameterset
+        /// Gets a value indicating whether this parameter is in the shared parameterset.
         /// </summary>
         public bool IsInSharedParameterSet
         {
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets Name with an extra suffix to indicate if the parameter is mandatory to serve
+        /// Gets Name with an extra suffix to indicate if the parameter is mandatory to serve.
         /// </summary>
         public string NameTextLabel
         {
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets Label in the case this parameter is used in a combo box
+        /// Gets Label in the case this parameter is used in a combo box.
         /// </summary>
         public string NameCheckLabel
         {
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets Tooltip string for the parameter
+        /// Gets Tooltip string for the parameter.
         /// </summary>
         public string ToolTip
         {
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether the parameter is mandatory
+        /// Gets a value indicating whether the parameter is mandatory.
         /// </summary>
         public bool IsMandatory
         {
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether the parameter has a value
+        /// Gets a value indicating whether the parameter has a value.
         /// </summary>
         public bool HasValue
         {
@@ -219,14 +219,14 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Evaluates the tooltip based on the parameters
+        /// Evaluates the tooltip based on the parameters.
         /// </summary>
-        /// <param name="typeName">parameter type name</param>
-        /// <param name="position">parameter position</param>
-        /// <param name="mandatory">true if the parameter is mandatory</param>
-        /// <param name="shared">true if the parameter is shared by parameter sets</param>
-        /// <param name="valueFromPipeline">true if the parameter takes value from the pipeline</param>
-        /// <returns> the tooltip based on the parameters</returns>
+        /// <param name="typeName">Parameter type name.</param>
+        /// <param name="position">Parameter position.</param>
+        /// <param name="mandatory">True if the parameter is mandatory.</param>
+        /// <param name="shared">True if the parameter is shared by parameter sets.</param>
+        /// <param name="valueFromPipeline">True if the parameter takes value from the pipeline.</param>
+        /// <returns> the tooltip based on the parameters.</returns>
         internal static string EvaluateTooltip(string typeName, int position, bool mandatory, bool shared, bool valueFromPipeline)
         {
             StringBuilder returnValue = new StringBuilder(string.Format(
@@ -263,9 +263,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// If property changed will be notify
+        /// If property changed will be notify.
         /// </summary>
-        /// <param name="propertyName">The changed property</param>
+        /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;

@@ -2426,23 +2426,7 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), wmiClassException.Message);
             }
         }
-#endif
 
-        // System.Configuration.CommaDelimitedStringCollection is derived from the StringCollection class
-        private static System.Configuration.CommaDelimitedStringCollection ConvertToCommaDelimitedStringCollection(object valueToConvert,
-                                                                                                                   Type resultType,
-                                                                                                                   bool recursion,
-                                                                                                                   PSObject originalValueToConvert,
-                                                                                                                   IFormatProvider formatProvider,
-                                                                                                                   TypeTable backupTable)
-        {
-            typeConversion.WriteLine("Standard type conversion to a CommaDelimitedStringCollection.");
-            var commaDelimitedStringCollection = new System.Configuration.CommaDelimitedStringCollection();
-            AddItemsToCollection(valueToConvert, resultType, formatProvider, backupTable, commaDelimitedStringCollection);
-            return commaDelimitedStringCollection;
-        }
-
-#if !UNIX
         private static DirectoryEntry ConvertToADSI(object valueToConvert,
                                                     Type resultType,
                                                     bool recursion,
@@ -5005,14 +4989,6 @@ namespace System.Management.Automation
                 ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
                 return CacheConversion<StringCollection>(fromType, toType, LanguagePrimitives.ConvertToStringCollection, rank);
             }
-
-#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
-            if (toType == typeof(System.Configuration.CommaDelimitedStringCollection))
-            {
-                ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
-                return CacheConversion<System.Configuration.CommaDelimitedStringCollection>(fromType, toType, LanguagePrimitives.ConvertToCommaDelimitedStringCollection, rank);
-            }
-#endif
 
             if (toType.IsSubclassOf(typeof(System.Delegate))
                 && (fromType == typeof(ScriptBlock) || fromType.IsSubclassOf(typeof(ScriptBlock))))

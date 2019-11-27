@@ -390,6 +390,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            _commandsWritten.Clear();
+
             // Module and FullyQualifiedModule should not be specified at the same time.
             // Throw out terminating error if this is the case.
             if (_isModuleSpecified && _isFullyQualifiedModuleSpecified)

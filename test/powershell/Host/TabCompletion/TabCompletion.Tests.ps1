@@ -17,9 +17,10 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete abbreviated function' {
-        $res = (TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        function Test-AbbreviatedFunctionExpansion {}
+        $res = (TabExpansion2 -inputScript 't-afe' -cursorColumn 't-afe'.Length).CompletionMatches.CompletionText
         $res.Count | Should -BeGreaterOrEqual 1
-        $res | Should -BeExactly 'PSConsoleHostReadLine'
+        $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
@@ -30,6 +31,16 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator' {
+        $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator without first letter' {
+        $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
 
     It 'Should complete Magic foreach' {

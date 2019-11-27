@@ -263,4 +263,10 @@ Describe "Get-Command Tests" -Tags "CI" {
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
         VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType System.Text.Encoding
     }
+
+    It "Piping more than one CommandInfo works" {
+        $result = Get-Command -Name Add-Content, Get-Content | Get-Command
+        $result.Count | Should -Be 2
+        $result.Name | Should -Be "Add-Content","Get-Content"
+    }
 }

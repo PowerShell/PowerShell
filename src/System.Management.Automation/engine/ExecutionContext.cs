@@ -1056,7 +1056,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
-                    InitialSessionState.defaultDebugPreference,
+                    InitialSessionState.DefaultDebugPreference,
                     out defaultUsed);
             }
 
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
-                    InitialSessionState.defaultVerbosePreference,
+                    InitialSessionState.DefaultVerbosePreference,
                     out defaultUsed);
             }
 
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
-                    InitialSessionState.defaultErrorActionPreference,
+                    InitialSessionState.DefaultErrorActionPreference,
                     out defaultUsed);
             }
 
@@ -1119,7 +1119,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
-                    InitialSessionState.defaultWarningPreference,
+                    InitialSessionState.DefaultWarningPreference,
                     out defaultUsed);
             }
 
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
-                    InitialSessionState.defaultInformationPreference,
+                    InitialSessionState.DefaultInformationPreference,
                     out defaultUsed);
             }
 
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
-                    InitialSessionState.defaultConfirmPreference,
+                    InitialSessionState.DefaultConfirmPreference,
                     out defaultUsed);
             }
 

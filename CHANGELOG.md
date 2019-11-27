@@ -1,5 +1,121 @@
 # Changelog
 
+## v7.0.0-preview.6 - 10/21/2019
+
+### Breaking Changes
+
+- Update `Test-Connection` to work more like the one in Windows PowerShell (#10697) (Thanks @vexx32!)
+- Preserve `$?` for `ParenExpression`, `SubExpression` and `ArrayExpression` (#11040)
+- Set working directory to current directory in `Start-Job` (#10920) (Thanks @iSazonov!)
+
+### Engine Updates and Fixes
+
+- Allow `pwsh` to inherit `$env:PSModulePath` and enable `powershell.exe` to start correctly (#11057)
+
+### Experimental Features
+
+- Provide Unix stat information in filesystem output (#11042)
+- Support null-conditional operators `?.` and `?[]` in PowerShell language (#10960)
+- Support using non-compatible Windows PowerShell modules in PowerShell Core (#10973)
+
+### Performance
+
+- Avoid using closure in `Parser.SaveError` (#11006)
+- Improve the caching when creating new `Regex` instances (#10657) (Thanks @iSazonov!)
+- Improve processing of the PowerShell built-in type data from `types.ps1xml`, `typesV3.ps1xml` and `GetEvent.types.ps1xml` (#10898)
+- Update `PSConfiguration.ReadValueFromFile` to make it faster and more memory efficient (#10839)
+
+### General Cmdlet Updates and Fixes
+
+- Add limit check in `Get-WinEvent` (#10648) (Thanks @iSazonov!)
+- Fix command runtime so `StopUpstreamCommandsException` doesn't get populated in `-ErrorVariable` (#10840)
+- Set the output encoding to `[Console]::OutputEncoding` for native commands (#10824)
+- Support multi-line code blocks in examples (#10776) (Thanks @Greg-Smulko!)
+- Add Culture parameter to `Select-String` cmdlet (#10943) (Thanks @iSazonov!)
+- Fix `Start-Job` working directory path with trailing backslash (#11041)
+- `ConvertFrom-Json`: Unwrap collections by default (#10861) (Thanks @danstur!)
+- Use case-sensitive Hashtable for `Group-Object` cmdlet with `-CaseSensitive` and `-AsHashtable` switches (#11030) (Thanks @vexx32!)
+- Handle exception if enumerating files fails when rebuilding path to have correct casing (#11014)
+- Fix `ConciseView` to show `Activity` instead of `myCommand` (#11007)
+- Allow web cmdlets to ignore HTTP error statuses (#10466) (Thanks @vdamewood!)
+- Fix piping of more than one `CommandInfo` to `Get-Command` (#10929)
+- Add back `Get-Counter` cmdlet for Windows (#10933)
+- Make `ConvertTo-Json` treat `[AutomationNull]::Value` and `[NullString]::Value` as `$null` (#10957)
+- Remove brackets from `ipv6` address for SSH remoting (#10968)
+- Fix crash if command sent to pwsh is just whitespace (#10977)
+- Added cross-platform `Get-Clipboard` and `Set-Clipboard` (#10340)
+- Fix setting original path of filesystem object to not have extra trailing slash (#10959)
+- Support `$null` for `ConvertTo-Json` (#10947)
+- Add back `Out-Printer` command on Windows (#10906)
+- Fix `Start-Job -WorkingDirectory` with whitespace (#10951)
+- Return default value when getting `null` for a setting in `PSConfiguration.cs` (#10963) (Thanks @iSazonov!)
+- Handle IO exception as non-terminating (#10950)
+- Add `GraphicalHost` assembly to enable `Out-GridView`, `Show-Command`, and `Get-Help -ShowWindow` (#10899)
+- Take `ComputerName` via pipeline in `Get-HotFix` (#10852) (Thanks @kvprasoon!)
+- Fix tab completion for parameters so that it shows common parameters as available (#10850)
+- Fix `GetCorrectCasedPath()` to first check if any system file entries is returned before calling `First()` (#10930)
+- Set working directory to current directory in `Start-Job` (#10920) (Thanks @iSazonov!)
+- Change `TabExpansion2` to not require `-CursorColumn` and treat as `$InputScript.Length` (#10849)
+- Handle case where Host may not return Rows or Columns of screen (#10938)
+- Fix use of accent colors for hosts that don't support them (#10937)
+- Add back `Update-List` command (#10922)
+- Update `FWLink` Id for `Clear-RecycleBin` (#10925)
+- During tab completion, skip file if can't read file attributes (#10910)
+- Add back `Clear-RecycleBin` for Windows (#10909)
+- Add `$env:__SuppressAnsiEscapeSequences` to control whether to have VT escape sequence in output (#10814)
+
+### Code Cleanup
+
+- Cleanup style issues in `Compiler.cs` (#10368) (Thanks @iSazonov!)
+- Remove the unused type converter for `CommaDelimitedStringCollection` (#11000) (Thanks @iSazonov!)
+- Cleanup style in `InitialSessionState.cs` (#10865) (Thanks @iSazonov!)
+- Code clean up for `PSSession` class (#11001)
+- Remove the not-working 'run `Update-Help` from `Get-Help` when `Get-Help` runs for the first time' feature (#10974)
+- Fix style issues (#10998) (Thanks @iSazonov!)
+- Cleanup: use the built-in type alias (#10882) (Thanks @iSazonov!)
+- Remove the unused setting key `ConsolePrompting` and avoid unnecessary string creation when querying `ExecutionPolicy` setting (#10985)
+- Disable update notification check for daily builds (#10903) (Thanks @bergmeister!)
+- Reinstate debugging API lost in #10338 (#10808)
+
+### Tools
+
+- Add default setting for the `SDKToUse` property so that it builds in VS (#11085)
+- `Install-Powershell.ps1`: Add parameter to use MSI installation (#10921) (Thanks @MJECloud!)
+- Add basic examples for `install-powershell.ps1` (#10914) (Thanks @kilasuit!)
+
+### Tests
+
+- Fix `stringdata` test to correctly validate keys of hashtables (#10810)
+- Unload test modules (#11061) (Thanks @iSazonov!)
+- Increase time between retries of testing URL (#11015)
+- Update tests to accurately describe test actions. (#10928) (Thanks @romero126!)
+
+### Build and Packaging Improvements
+
+- Updating links in `README.md` and `metadata.json` for Preview.5 (#10854)
+- Select the files for compliance tests which are owned by PowerShell (#10837)
+- Allow `win7x86` `msix` package to build. (Internal 10515)
+- Allow semantic versions to be passed to `NormalizeVersion` function (#11087)
+- Bump .NET core framework to `3.1-preview.3` (#11079)
+- Bump `PSReadLine` from `2.0.0-beta5` to `2.0.0-beta6` in /src/Modules (#11078)
+- Bump `Newtonsoft.Json` from `12.0.2` to `12.0.3` (#11037) (#11038)
+- Add Debian 10, 11 and CentOS 8 packages (#11028)
+- Upload `Build-Info` Json file with the `ReleaseDate` field (#10986)
+- Bump .NET core framework to `3.1-preview.2` (#10993)
+- Enable build of x86 MSIX package (#10934)
+- Update the dotnet SDK install script URL in `build.psm1` (#10927)
+- Bump `Markdig.Signed` from `0.17.1` to `0.18.0` (#10887)
+- Bump `ThreadJob` from `2.0.1` to `2.0.2` (#10886)
+- Update `AppX` Manifest and Packaging module to conform to MS Store requirements (#10878)
+
+### Documentation and Help Content
+
+- Update `CONTRIBUTING.md` (#11096) (Thanks @mklement0!)
+- Fix installation doc links in `README.md` (#11083)
+- Adds examples to `install-powershell.ps1` script (#11024) (Thanks @kilasuit!)
+- Fix to `Select-String` emphasis and `Import-DscResource` in CHANGELOG.md (#10890)
+- Remove the stale link from `powershell-beginners-guide.md` (#10926)
+
 ## v7.0.0-preview.5 - 10/23/2019
 
 ### Breaking Changes

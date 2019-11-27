@@ -370,6 +370,13 @@ $redirectTests = @(
 Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
+        $NotFoundQuery = @{
+            statuscode = 404
+            responsephrase = 'Not Found'
+            contenttype = 'text/plain'
+            body = 'oops'
+            headers = "{}"
+        }
     }
 
     # Validate the output of Invoke-WebRequest
@@ -778,6 +785,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RelationLink["first"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
         $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=2&type=${type}"
+    }
+
+    It "Verify Invoke-WebRequest supresses terminating errors with -SkipHttpErrorCheck" {
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
+        $command = "Invoke-WebRequest -SkipHttpErrorCheck -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output.StatusCode | Should -Be 404
+        $result.output.Content | Should -BeExactly "oops"
+        $result.error | Should -BeNullOrEmpty
+    }
+
+    It "Verify Invoke-WebRequest terminates without -SkipHttpErrorCheck" {
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output | Should -BeNullOrEmpty
+        $result.error | Should -Not -BeNullOrEmpty
     }
 
     Context "Redirect" {
@@ -1930,6 +1954,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
+
+        $NotFoundQuery = @{
+            statuscode = 404
+            responsephrase = 'Not Found'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -2257,6 +2289,64 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
         1..3 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
+    }
+
+    It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
+        $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output.message | Should -BeExactly "oops"
+        $result.output.error | Should -BeNullOrEmpty
+    }
+
+    It "Verify Invoke-RestMethod terminates without -SkipHttpErrorCheck" {
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
+        $command = "Invoke-RestMethod -Uri '$uri'"
+        $result = ExecuteWebCommand -Command $command
+        $result.output | Should -BeNullOrEmpty
+        $result.error | Should -Not -BeNullOrEmpty
+    }
+
+    It "Verify Invoke-RestMethod assigns 200 status code with -StatusCodeVariable" {
+        $query = @{
+            statuscode = 200
+            responsephrase = 'OK'
+            contenttype = 'application/json'
+            body = '{"message": "works"}'
+            headers = "{}"
+        }
+
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        Invoke-RestMethod -StatusCodeVariable code -Uri "$uri"
+        $code | Should -Be 200
+    }
+
+    It "Verify Invoke-RestMethod assigns 404 status code with -StatusCodeVariable" {
+        $query = @{
+            statuscode = 404
+            responsephrase = 'Not Found'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
+
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        Invoke-RestMethod -SkipHttpErrorCheck -StatusCodeVariable code -Uri "$uri"
+        $code | Should -Be 404
+    }
+
+    It "Verify Invoke-RestMethod assigns 500 status code with -StatusCodeVariable" {
+        $query = @{
+            statuscode = 500
+            responsephrase = 'Internal Server Error'
+            contenttype = 'application/json'
+            body = '{"message": "oops"}'
+            headers = "{}"
+        }
+
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        Invoke-RestMethod -SkipHttpErrorCheck -StatusCodeVariable code -Uri "$uri"
+        $code | Should -Be 500
     }
 
     #region Redirect tests
@@ -3387,4 +3477,3 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $result.Hello | Should -Be "world"
     }
 }
-

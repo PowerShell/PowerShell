@@ -13,6 +13,11 @@
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
   </PropertyGroup>
 
+  <!-- Have default so this builds in Visual Studio -->
+  <PropertyGroup Condition = "'$(SDKToUse)' == ''">
+    <SDKToUse>Microsoft.NET.Sdk.WindowsDesktop</SDKToUse>
+  </PropertyGroup>
+
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
 

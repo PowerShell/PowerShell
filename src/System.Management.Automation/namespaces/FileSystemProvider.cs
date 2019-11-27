@@ -161,14 +161,22 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
-                        var entries = Directory.GetFileSystemEntries(exactPath, item);
-                        if (entries.Length > 0)
+                        try
                         {
-                            exactPath = entries.First();
+                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            if (entries.Length > 0)
+                            {
+                                exactPath = entries.First();
+                            }
+                            else
+                            {
+                                // If previous call didn't return anything, something failed so we just return the path we were given
+                                return path;
+                            }
                         }
-                        else
+                        catch
                         {
-                            // If previous call didn't return anything, something failed so we just return the path we were given
+                            // If we can't enumerate, we stop and just return the original path
                             return path;
                         }
                     }
@@ -5047,7 +5055,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Add the base path back on so that it can be used for
                             // processing
-                            if (!result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (!result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = MakePath(basePath, result);
                             }
@@ -5111,7 +5119,7 @@ namespace Microsoft.PowerShell.Commands
                             result = files.First();
 #endif
 
-                            if (result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = result.Substring(basePath.Length);
                             }

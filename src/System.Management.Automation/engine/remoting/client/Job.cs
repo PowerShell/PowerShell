@@ -3912,7 +3912,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
-        /// <param name="breakpoints">Breakpoints.</param>
+        /// <param name="breakpoints">Breakpoints to set.</param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
             _wrappedDebugger.SetBreakpoints(breakpoints);
 
