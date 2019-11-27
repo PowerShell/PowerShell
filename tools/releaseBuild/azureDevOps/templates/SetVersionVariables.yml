@@ -4,7 +4,7 @@ parameters:
   CreateJson: 'no'
 
 steps:
-- pwsh: |
+- powershell: |
     $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
     $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
@@ -18,7 +18,7 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
 
-- pwsh: |
+- powershell: |
     Get-ChildItem -Path env:
   displayName: Capture environment
   condition: succeededOrFailed()
