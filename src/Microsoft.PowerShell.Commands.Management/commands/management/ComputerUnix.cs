@@ -10,6 +10,30 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell.Commands
 {
+#region Restart-Computer
+
+    /// <summary>
+    /// Cmdlet to restart computer.
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097060", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    public sealed class RestartComputerCommand : CommandLineCmdletBase
+    {
+        // TODO: Support remote computers?
+
+#region "Overrides"
+
+        /// <summary>
+        /// BeginProcessing.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            RunCommand("/sbin/shutdown", "-r now");
+        }
+#endregion "Overrides"
+    }
+#endregion Restart-Computer
+
 #region Stop-Computer
 
     /// <summary>
@@ -17,15 +41,39 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097151", RemotingCapability = RemotingCapability.SupportedByCommand)]
-    public sealed class StopComputerCommand : PSCmdlet, IDisposable
+    public sealed class StopComputerCommand : CommandLineCmdletBase
+    {
+        // TODO: Support remote computers?
+
+#region "Overrides"
+
+        /// <summary>
+        /// BeginProcessing.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            var args = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                args = "-P now";
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                args = "now";
+            }
+            RunCommand("/sbin/shutdown", args);
+        }
+#endregion "Overrides"
+    }
+
+    /// <summary>
+    /// A base class for cmdlets that can run shell commands
+    /// </summary>
+    public class CommandLineCmdletBase : PSCmdlet, IDisposable
     {
 #region Private Members
-
         private Process _process = null;
-
 #endregion
-
-        // TODO: Support remote computers?
 
 #region "IDisposable Members"
 
@@ -40,15 +88,6 @@ namespace Microsoft.PowerShell.Commands
 #endregion "IDisposable Members"
 
 #region "Overrides"
-
-        /// <summary>
-        /// BeginProcessing.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            doShutdown();
-        }
-
         /// <summary>
         /// To implement ^C.
         /// </summary>
@@ -67,21 +106,15 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException) {}
             catch (NotSupportedException) {}
         }
-
 #endregion "Overrides"
 
 #region "Internals"
 
-        private void doShutdown() {
+        /// <summary>
+        /// Run a command
+        /// </summary>
+        protected void RunCommand(String command, String args) {
             String cmd = "";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                cmd = "-P now";
-            }
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                cmd = "now";
-            }
 
             _process = new Process()
             {
