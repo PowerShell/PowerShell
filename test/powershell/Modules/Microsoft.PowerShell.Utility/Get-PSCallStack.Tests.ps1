@@ -91,6 +91,8 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
     }
 
     It "Get-PSCallStack returns Arguments" {
-        & { (Get-PSCallStack)[0].Arguments } 'foo'  | Should -Match 'foo'
+        & { (Get-PSCallStack)[0].Arguments } 'foo' | Should -Match 'foo'
+        & { param ($x)  (Get-PSCallStack)[0].Arguments } 'foo' | Should -Match 'foo'
+        & { (Get-PSCallStack)[0].Arguments } 'foo' 'bar' | Should -Match 'foo, bar'
     }
 }
