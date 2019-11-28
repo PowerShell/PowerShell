@@ -538,14 +538,7 @@ namespace System.Management.Automation
         {
             string folderName = string.Empty;
             ext = string.Empty;
-            var processArch = RuntimeInformation.ProcessArchitecture switch
-            {
-                Architecture.Arm => "arm",
-                Architecture.Arm64 => "arm64",
-                Architecture.X64 => "x64",
-                Architecture.X86 => "x86",
-                _ => string.Empty
-            };
+            var processArch = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
