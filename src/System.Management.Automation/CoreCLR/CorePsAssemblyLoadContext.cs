@@ -90,7 +90,7 @@ namespace System.Management.Automation
             _availableDotNetAssemblyNames = new Lazy<HashSet<string>>(
                     () => new HashSet<string>(_coreClrTypeCatalog.Values, StringComparer.Ordinal));
 
-            // LAST: Register 'Resolving' handler on the default load context.
+            // LAST: Register the 'Resolving' handler and 'ResolvingUnmanagedDll' handler on the default load context.
             AssemblyLoadContext.Default.Resolving += Resolve;
 
             // Add last resort native dll resolver.
