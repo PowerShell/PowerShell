@@ -87,7 +87,7 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
         $results[1].Command | Should -Be $scriptFileName
         $results[1].ScriptName | Should -Be $scriptFilePath
         $results[1].ScriptLineNumber | Should -Be 7
-        $results[1].InvocationInfo.ScriptLineNumber | Should -Be 77
+        $results[1].InvocationInfo.ScriptLineNumber | Should -Be 80
     }
 
     It "Get-PSCallStack returns Arguments" {
