@@ -219,19 +219,19 @@ namespace System.Management.Automation
         ///                     |       |--- native.dll
         ///                     |
         ///                     |--- 'linux-x64' subfolder
-        ///                     |       |--- native.dll
+        ///                     |       |--- native.so
         ///                     |
         ///                     |--- 'linux-x86' subfolder
-        ///                     |       |--- native.dll
+        ///                     |       |--- native.so
         ///                     |
         ///                     |--- 'linux-arm' subfolder
-        ///                     |       |--- native.dll
+        ///                     |       |--- native.so
         ///                     |
         ///                     |--- 'linux-arm64' subfolder
-        ///                     |       |--- native.dll
+        ///                     |       |--- native.so
         ///                     |
         ///                     |--- 'osx-x64' subfolder
-        ///                     |       |--- native.dll
+        ///                     |       |--- native.dylib
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
