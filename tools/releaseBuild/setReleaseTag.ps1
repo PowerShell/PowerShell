@@ -36,6 +36,7 @@ function New-BuildInfoJson {
     ## Get the UTC time and round up to the second.
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
+    $dateTime = $dateTime.ToString("o")
 
     @{
         ReleaseTag = $ReleaseTag
