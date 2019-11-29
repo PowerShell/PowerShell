@@ -2,124 +2,264 @@
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Management.Automation.Remoting;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-using Microsoft.Win32.SafeHandles;
-
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Security.Cryptography;
-using System.IO;
 
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// This class provides the wrapper for all Native CAPI functions.
+    /// This class provides the converters for all Native CAPI key blob formats.
     /// </summary>
-    internal class PSCryptoNativeUtils
+    internal static class PSCryptoNativeConverter
     {
-        #region Functions
-
-        #endregion Functions
-
         #region Constants
 
         /// <summary>
-        /// Do not use persisted private key.
+        /// The blob version is fixed.
         /// </summary>
-        public const uint CRYPT_VERIFYCONTEXT = 0xF0000000;
-
-        /// <summary>
-        /// Mark the key for export.
-        /// </summary>
-        public const uint CRYPT_EXPORTABLE = 0x00000001;
-
-        /// <summary>
-        /// Automatically assign a salt value when creating a
-        /// session key.
-        /// </summary>
-        public const int CRYPT_CREATE_SALT = 4;
-
-        /// <summary>
-        /// RSA Provider.
-        /// </summary>
-        public const int PROV_RSA_FULL = 1;
-
-        /// <summary>
-        /// RSA Provider that supports AES
-        /// encryption.
-        /// </summary>
-        public const int PROV_RSA_AES = 24;
-
-        /// <summary>
-        /// Public key to be used for encryption.
-        /// </summary>
-        public const int AT_KEYEXCHANGE = 1;
+        public const uint CUR_BLOB_VERSION = 0x00000002; 
 
         /// <summary>
         /// RSA Key.
         /// </summary>
-        public const int CALG_RSA_KEYX =
-            (PSCryptoNativeUtils.ALG_CLASS_KEY_EXCHANGE |
-            (PSCryptoNativeUtils.ALG_TYPE_RSA | PSCryptoNativeUtils.ALG_SID_RSA_ANY));
-
-        /// <summary>
-        /// Create a key for encryption.
-        /// </summary>
-        public const int ALG_CLASS_KEY_EXCHANGE = (5) << (13);
-
-        /// <summary>
-        /// Create a RSA key pair.
-        /// </summary>
-        public const int ALG_TYPE_RSA = (2) << (9);
-
-        /// <summary>
-        /// </summary>
-        public const int ALG_SID_RSA_ANY = 0;
-
-        /// <summary>
-        /// Option for exporting public key blob.
-        /// </summary>
-        public const int PUBLICKEYBLOB = 6;
-
-        /// <summary>
-        /// Option for exporting a session key.
-        /// </summary>
-        public const int SIMPLEBLOB = 1;
+        public const uint CALG_RSA_KEYX = 0x000000a4;
 
         /// <summary>
         /// AES 256 symmetric key.
         /// </summary>
-        public const int CALG_AES_256 = (ALG_CLASS_DATA_ENCRYPT | ALG_TYPE_BLOCK | ALG_SID_AES_256);
+        public const uint CALG_AES_256 = 0x00000010;
 
         /// <summary>
-        /// ALG_CLASS_DATA_ENCRYPT.
+        /// Option for exporting public key blob.
         /// </summary>
-        public const int ALG_CLASS_DATA_ENCRYPT = (3) << (13);
+        public const uint PUBLICKEYBLOB = 0x00000006;
+
+        /// <summmary>
+        /// PUBLICKEYBLOB header length.
+        /// </summary>
+        public const int PUBLICKEYBLOB_HEADER_LEN = 20;
 
         /// <summary>
-        /// ALG_TYPE_BLOCK.
+        /// Option for exporting a session key.
         /// </summary>
-        public const int ALG_TYPE_BLOCK = (3) << (9);
+        public const uint SIMPLEBLOB = 0x00000001;
 
-        /// <summary>
-        /// ALG_SID_AES_256 -> 16.
+        /// <summmary>
+        /// SIMPLEBLOB header length.
         /// </summary>
-        public const int ALG_SID_AES_256 = 16;
-
-        /// CALG_AES_128 -> (ALG_CLASS_DATA_ENCRYPT|ALG_TYPE_BLOCK|ALG_SID_AES_128)
-        public const int CALG_AES_128 = (ALG_CLASS_DATA_ENCRYPT
-                    | (ALG_TYPE_BLOCK | ALG_SID_AES_128));
-
-        /// ALG_SID_AES_128 -> 14
-        public const int ALG_SID_AES_128 = 14;
+        public const int SIMPLEBLOB_HEADER_LEN = 12;
 
         #endregion Constants
+
+        #region Functions
+
+        private static int ToInt32LE(byte[] bytes, int offset)
+        {
+            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset +1 ] << 8) | bytes[offset];
+        }
+
+        private static uint ToUInt32LE(byte[] bytes, int offset)
+        {
+            return (uint)((bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1] << 8) | bytes[offset]);
+        }
+
+        private static byte[] GetBytesLE(int val)
+        {
+            return new [] { 
+                (byte)(val & 0xff), 
+                (byte)((val >> 8) & 0xff), 
+                (byte)((val >> 16) & 0xff), 
+                (byte)((val >> 24) & 0xff)
+            };
+        }
+
+        private static byte[] CreateReverseByteArray(byte[] data)
+        {
+            byte[] reverseData = new byte[data.Length];
+            Array.Copy(data, reverseData, data.Length);
+            Array.Reverse(reverseData, 0, reverseData.Length);
+            return reverseData;
+        }
+
+        internal static RSA FromCapiPublicKeyBlob(byte[] blob) 
+        {
+            return FromCapiPublicKeyBlob(blob, 0);
+        }
+
+        private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset) 
+        {
+            if (blob == null)
+            {
+                throw new ArgumentNullException("blob");
+            }
+
+            if (offset > blob.Length)
+            {
+                throw new ArgumentException("offset exceeds key blob boundary");
+            }
+
+            var rsap = GetParametersFromCapiPublicKeyBlob(blob, offset);
+
+            try 
+            {
+                RSA rsa = RSA.Create();
+                rsa.ImportParameters(rsap);
+                return rsa;
+            } 
+            catch (Exception ex) 
+            {
+                throw new CryptographicException("Failed to import public key", ex);
+            }
+        }
+
+        private static RSAParameters GetParametersFromCapiPublicKeyBlob(byte[] blob, int offset)
+        {
+            if (blob == null)
+            {
+                throw new ArgumentNullException("blob");
+            }
+
+            if (offset > blob.Length)
+            {
+                throw new ArgumentException("offset exceeds key blob boundary");
+            }
+
+            if (blob.Length < PUBLICKEYBLOB_HEADER_LEN)
+            {
+                throw new ArgumentException("key blob wrong length");
+            }
+
+            try 
+            {
+                if ((blob[offset]   != PUBLICKEYBLOB) ||      // PUBLICKEYBLOB (0x06)
+                    (blob[offset + 1] != CUR_BLOB_VERSION) ||   // Version (0x02)
+                    (blob[offset + 2] != 0x00) ||               // Reserved (word)
+                    (blob[offset + 3] != 0x00) ||
+                    (ToUInt32LE(blob, offset + 8) != 0x31415352))    // DWORD magic = RSA1
+                { 
+                    throw new CryptographicException("Invalid blob header");
+                }
+
+                // DWORD bitlen
+                int bitLen = ToInt32LE(blob, offset + 12);
+
+                // DWORD public exponent
+                RSAParameters rsap = new RSAParameters();
+                rsap.Exponent = new byte[3];
+                rsap.Exponent[0] = blob[offset + 18];
+                rsap.Exponent[1] = blob[offset + 17];
+                rsap.Exponent[2] = blob[offset + 16];
+            
+                int pos = offset + 20;
+                int byteLen = (bitLen >> 3);
+                rsap.Modulus = new byte[byteLen];
+                Buffer.BlockCopy(blob, pos, rsap.Modulus, 0, byteLen);
+                Array.Reverse(rsap.Modulus);
+
+                return rsap;
+            } 
+            catch (Exception ex) 
+            {
+                throw new CryptographicException("Invalid public key blob", ex);
+            }
+        }
+
+        internal static byte[] ToCapiPublicKeyBlob(RSA rsa) 
+        {
+            if (rsa == null)
+            {
+                throw new ArgumentNullException("rsa");
+            }
+
+            RSAParameters p = rsa.ExportParameters(false);
+            int keyLength = p.Modulus.Length; // in bytes
+            byte[] blob = new byte[PUBLICKEYBLOB_HEADER_LEN + keyLength];
+
+            blob[0] = (byte)PUBLICKEYBLOB;    // Type - PUBLICKEYBLOB (0x06)
+            blob[1] = (byte)CUR_BLOB_VERSION; // Version - Always CUR_BLOB_VERSION (0x02)
+            // [2], [3]                 // RESERVED - Always 0
+            blob[5] = (byte)CALG_RSA_KEYX;    // ALGID - Always 00 a4 00 00 (for CALG_RSA_KEYX)
+            blob[8] = 0x52;             // Magic - RSA1 (ASCII in hex)
+            blob[9] = 0x53;
+            blob[10] = 0x41;
+            blob[11] = 0x31;
+
+            byte[] bitlen = GetBytesLE(keyLength << 3);
+            blob[12] = bitlen[0];       // bitlen
+            blob[13] = bitlen[1];
+            blob[14] = bitlen[2];
+            blob[15] = bitlen[3];
+
+            // public exponent (DWORD)
+            int pos = 16;
+            int n = p.Exponent.Length;
+            while (n > 0)
+            {
+                blob[pos++] = p.Exponent[--n];
+            }
+
+            // modulus
+            pos = 20;
+            byte[] part = p.Modulus;
+            int len = part.Length;
+            Array.Reverse(part, 0, len);
+            Buffer.BlockCopy(part, 0, blob, pos, len);
+
+            return blob;
+        }
+
+        internal static byte[] FromCapiSimpleKeyBlob(byte[] blob)
+        {
+            if (blob == null)
+            {
+                throw new ArgumentNullException("blob");
+            }
+
+            if (blob.Length < SIMPLEBLOB_HEADER_LEN)
+            {
+                throw new ArgumentException("key blob wrong length");
+            }
+
+            // just ignore the header of the capi blob and go straight for the key
+            return CreateReverseByteArray(blob.Skip(SIMPLEBLOB_HEADER_LEN).ToArray());
+        }
+
+        internal static byte[] ToCapiSimpleKeyBlob(byte[] encryptedKey)
+        {
+            if (encryptedKey == null)
+            {
+                throw new ArgumentNullException("encryptedKey");
+            }
+
+            // formulate the PUBLICKEYSTRUCT
+            byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
+
+            blob[0] = (byte)SIMPLEBLOB;          // Type - SIMPLEBLOB (0x01)
+            blob[1] = (byte)CUR_BLOB_VERSION;    // Version - Always CUR_BLOB_VERSION (0x02)
+            // [2], [3]                    // RESERVED - Always 0
+            blob[4] = (byte)CALG_AES_256;        // AES-256 algo id (0x10)
+            blob[5] = 0x66;                // ??
+            // [6], [7], [8]               // 0x00 
+            blob[9] = (byte)CALG_RSA_KEYX;       // 0xa4
+            // [10], [11]                  // 0x00 
+
+            // create a reversed copy and add the encrypted key
+            byte[] reversedKey = CreateReverseByteArray(encryptedKey);
+            Buffer.BlockCopy(reversedKey, 0, blob, SIMPLEBLOB_HEADER_LEN, reversedKey.Length);
+
+            return blob;
+        }
+
+        #endregion Functions
     }
 
     /// <summary>
@@ -233,7 +373,7 @@ namespace System.Management.Automation.Internal
 
         private RSA _rsa;
         // handle session key encryption/decryption
-        private Aes _aes;
+        private readonly Aes _aes;
         // handle to the AES provider object (houses session key and iv)
         private bool _canEncrypt = false;            // this flag indicates that this class has a key
         // imported from the remote end and so can be
@@ -241,7 +381,6 @@ namespace System.Management.Automation.Internal
         private bool _sessionKeyGenerated = false;
         // bool indicating if session key was generated before
 
-        // private static bool s_keyPairGenerated = false;
         private static object s_syncObject = new object();
 
         #endregion Private Members
@@ -276,8 +415,7 @@ namespace System.Management.Automation.Internal
         {
             Dbg.Assert(_rsa != null, "No public key available.");
 
-            RSAParameters rsaParams = _rsa.ExportParameters(false);
-            byte[] capiPublicKeyBlob = CryptoConvert.ToCapiPublicKeyBlob(_rsa);
+            byte[] capiPublicKeyBlob = PSCryptoNativeConverter.ToCapiPublicKeyBlob(_rsa);
 
             return Convert.ToBase64String(capiPublicKeyBlob);
         }
@@ -322,7 +460,7 @@ namespace System.Management.Automation.Internal
             byte[] encryptedKey = _rsa.Encrypt(_aes.Key, RSAEncryptionPadding.Pkcs1);
 
             // convert the key to capi simpleblob format before exporting
-            byte[] simpleKeyBlob = CryptoConvert.ToCapiSimpleKeyBlob(encryptedKey);
+            byte[] simpleKeyBlob = PSCryptoNativeConverter.ToCapiSimpleKeyBlob(encryptedKey);
             return Convert.ToBase64String(simpleKeyBlob);
         }
 
@@ -336,7 +474,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(!string.IsNullOrEmpty(publicKey), "key cannot be null or empty");
 
             byte[] publicKeyBlob = Convert.FromBase64String(publicKey);
-            _rsa = CryptoConvert.FromCapiPublicKeyBlob(publicKeyBlob);
+            _rsa = PSCryptoNativeConverter.FromCapiPublicKeyBlob(publicKeyBlob);
         }
 
         /// <summary>
@@ -350,7 +488,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(!string.IsNullOrEmpty(sessionKey), "key cannot be null or empty");
 
             byte[] sessionKeyBlob = Convert.FromBase64String(sessionKey);
-            byte[] rsaEncryptedKey = CryptoConvert.FromCapiSimpleKeyBlob(sessionKeyBlob);
+            byte[] rsaEncryptedKey = PSCryptoNativeConverter.FromCapiSimpleKeyBlob(sessionKeyBlob);
 
             _aes.Key = _rsa.Decrypt(rsaEncryptedKey, RSAEncryptionPadding.Pkcs1);
 
@@ -369,15 +507,15 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(_canEncrypt, "Remote key has not been imported to encrypt");
 
             using (ICryptoTransform encryptor = _aes.CreateEncryptor())
-            using (MemoryStream msEncrypt = new MemoryStream())
-            using (MemoryStream swEncrypt = new MemoryStream(data))
+            using (MemoryStream targetStream = new MemoryStream())
+            using (MemoryStream sourceStream = new MemoryStream(data))
             {
-                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                using (CryptoStream cryptoStream = new CryptoStream(targetStream, encryptor, CryptoStreamMode.Write))
                 {
-                    swEncrypt.CopyTo(csEncrypt);
+                    sourceStream.CopyTo(cryptoStream);
                 }
 
-                return msEncrypt.ToArray();
+                return targetStream.ToArray();
             }
         }
 
@@ -389,15 +527,15 @@ namespace System.Management.Automation.Internal
         internal byte[] DecryptWithSessionKey(byte[] data)
         {
             using (ICryptoTransform decryptor = _aes.CreateDecryptor())
-            using (MemoryStream msDecrypt = new MemoryStream(data))
-            using (MemoryStream srDecrypt = new MemoryStream())
+            using (MemoryStream sourceStream = new MemoryStream(data))
+            using (MemoryStream targetStream = new MemoryStream())
             {
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                using (CryptoStream csDecrypt = new CryptoStream(sourceStream, decryptor, CryptoStreamMode.Read))
                 {
-                    csDecrypt.CopyTo(srDecrypt);
+                    csDecrypt.CopyTo(targetStream);
                 }
 
-                return srDecrypt.ToArray();
+                return targetStream.ToArray();
             } 
         }
 
