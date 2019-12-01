@@ -137,6 +137,7 @@ Describe "Command Discovery tests" -Tags "CI" {
 
             $shouldNotExecuteCases = @(
                 @{command = 'subFolder\[test1].ps1' ; testName = 'Relative path that where module qualified syntax overlaps'; ExpectedErrorId = 'CouldNotAutoLoadModule'}
+                @{command = 'subFolder\1.ps1' ; testName = 'Relative path that where module qualified syntax overlaps'; ExpectedErrorId = 'CouldNotAutoLoadModule'}
                 @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matching multiple files'}
             )
