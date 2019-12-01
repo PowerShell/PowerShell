@@ -170,7 +170,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (string.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
+            if (string.Compare(result.Name, drive.Name, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Set the drive in the current scope.
 
@@ -1295,7 +1295,7 @@ namespace System.Management.Automation
                 // Make sure the provider didn't try to pull a fast one on us
                 // and substitute a different drive.
 
-                if (string.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(result.Name, drive.Name, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     driveRemovable = true;
                 }

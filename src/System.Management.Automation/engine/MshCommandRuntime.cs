@@ -2932,7 +2932,7 @@ namespace System.Management.Automation
         // See "User Feedback Mechanisms - Note.doc" for details.
 
         private bool _isConfirmPreferenceCached = false;
-        private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
+        private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
         /// </summary>
@@ -2972,7 +2972,7 @@ namespace System.Management.Automation
         }
 
         private bool _isDebugPreferenceSet = false;
-        private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
+        private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
         /// <summary>
         /// Preference setting.
@@ -3026,7 +3026,7 @@ namespace System.Management.Automation
         }
 
         private bool _isVerbosePreferenceCached = false;
-        private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
+        private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3075,7 +3075,7 @@ namespace System.Management.Automation
         internal bool IsWarningActionSet { get; private set; } = false;
 
         private bool _isWarningPreferenceCached = false;
-        private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
+        private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3214,7 +3214,7 @@ namespace System.Management.Automation
 
         internal bool IsDebugFlagSet { get; private set; } = false;
 
-        private bool _whatIfFlag = InitialSessionState.defaultWhatIfPreference;
+        private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
         private bool _isWhatIfPreferenceCached /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
@@ -3246,7 +3246,7 @@ namespace System.Management.Automation
 
         internal bool IsWhatIfFlagSet { get; private set; }
 
-        private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
+        private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
         private bool _isErrorActionPreferenceCached = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
@@ -3322,7 +3322,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
+        private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
         private bool _isProgressPreferenceSet = false;
         private bool _isProgressPreferenceCached = false;
 
@@ -3359,7 +3359,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
+        private ActionPreference _informationPreference = InitialSessionState.DefaultInformationPreference;
 
         internal bool IsInformationActionSet { get; private set; } = false;
 

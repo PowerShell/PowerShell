@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             cms.Decode(contentBytes);
 
             PSObject result = new PSObject(cms);
-            List<Object> recipients = new List<Object>();
+            List<object> recipients = new List<object>();
             foreach (RecipientInfo recipient in cms.RecipientInfos)
             {
                 recipients.Add(recipient.RecipientIdentifier.Value);

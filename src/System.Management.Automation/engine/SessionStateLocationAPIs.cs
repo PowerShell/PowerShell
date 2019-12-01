@@ -733,7 +733,7 @@ namespace System.Management.Automation
                     providerSpecificPath,
                     currentWorkingPath);
 
-                if (string.Compare(providerSpecificPath, currentWorkingPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(providerSpecificPath, currentWorkingPath, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     // The path is the current working directory so
                     // return true
@@ -765,7 +765,7 @@ namespace System.Management.Automation
                             lockedDirectory,
                             providerSpecificPath);
 
-                        if (string.Compare(lockedDirectory, providerSpecificPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Compare(lockedDirectory, providerSpecificPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             // The path is a parent of the current working
                             // directory

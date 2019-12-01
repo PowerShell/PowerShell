@@ -1101,12 +1101,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 ps.AddScript(commandToInvoke);
 
-                EventHandler<DataAddedEventArgs> debugAdded = delegate (Object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
-                EventHandler<DataAddedEventArgs> errorAdded = delegate (Object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
-                EventHandler<DataAddedEventArgs> informationAdded = delegate (Object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
-                EventHandler<DataAddedEventArgs> progressAdded = delegate (Object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
-                EventHandler<DataAddedEventArgs> verboseAdded = delegate (Object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
-                EventHandler<DataAddedEventArgs> warningAdded = delegate (Object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
+                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
+                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
+                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
+                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
+                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
+                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
 
                 ps.Streams.Debug.DataAdded += debugAdded;
                 ps.Streams.Error.DataAdded += errorAdded;
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                     // and search backwards through the entries
                     for (int i = entries.Length - 1; i >= 0; i--)
                     {
-                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.CurrentCulture))
+                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.Ordinal))
                         {
                             entry = entries[i];
                             break;

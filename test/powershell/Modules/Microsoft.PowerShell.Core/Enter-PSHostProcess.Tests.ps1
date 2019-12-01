@@ -97,9 +97,9 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            # Start a Windows PowerShell job where the first thing it does is return $pid. After that, spin forever.
+            # Start a PowerShell job where the first thing it does is return $pid. After that, spin forever.
             # We will use this job as the target process for Enter-PSHostProcess
-            $powershellJob = Start-Job -PSVersion 5.1 {
+            $powershellJob = Start-Job {
                 $pid
                 while ($true) {
                     Start-Sleep -Seconds 30 | Out-Null

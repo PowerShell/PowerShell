@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
                     int index = 0;
                     foreach (string typeName in input.TypeNames)
                     {
-                        if (index > 0 && (typeName.Equals(typeof(Object).FullName, StringComparison.OrdinalIgnoreCase) ||
+                        if (index > 0 && (typeName.Equals(typeof(object).FullName, StringComparison.OrdinalIgnoreCase) ||
                             typeName.Equals(typeof(MarshalByRefObject).FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             break;

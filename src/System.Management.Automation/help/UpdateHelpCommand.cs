@@ -143,9 +143,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Disable Get-Help prompt
-            UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
-
             if (_path == null)
             {
                 // Pull default source path from GP

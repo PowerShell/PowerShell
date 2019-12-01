@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
 
         private AutoResetEvent _eventArrived = new AutoResetEvent(false);
         private PSEventArgs _receivedEvent = null;
-        private object _receivedEventLock = new Object();
+        private object _receivedEventLock = new object();
         private WildcardPattern _matchPattern;
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
             _eventArrived.Set();
         }
 
-        private void ReceivedEvents_PSEventReceived(Object sender, PSEventArgs e)
+        private void ReceivedEvents_PSEventReceived(object sender, PSEventArgs e)
         {
             // If they want to wait on just any event
             if (_sourceIdentifier == null)

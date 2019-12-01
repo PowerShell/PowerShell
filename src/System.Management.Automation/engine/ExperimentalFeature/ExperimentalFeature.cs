@@ -127,6 +127,19 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSPipelineChainOperators",
                     description: "Allow use of && and || as operators between pipeline invocations"),
+#if UNIX
+                new ExperimentalFeature(
+                    name: "PSUnixFileStat",
+                    description: "Provide unix permission information for files and directories"),
+#endif
+                new ExperimentalFeature(
+                    name: "PSNullConditionalOperators",
+                    description: "Support the null conditional member access operators in PowerShell language"),
+#if !UNIX
+                new ExperimentalFeature(
+                    name: "PSWindowsPowerShellCompatibility",
+                    description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting"),
+#endif
                 new ExperimentalFeature(
                     name: "PSCommonSplatParameter",
                     description: "Add -splat common parameter to PowerShell for inline splatting"),

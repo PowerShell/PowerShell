@@ -12,12 +12,12 @@ using Microsoft.Management.UI.Internal;
 namespace Microsoft.Management.UI
 {
     /// <summary>
-    /// A window displaying help content and allowing search
+    /// A window displaying help content and allowing search.
     /// </summary>
     public partial class HelpWindow : Window
     {
         /// <summary>
-        /// Minimum zoom in the slider
+        /// Minimum zoom in the slider.
         /// </summary>
         public static double MinimumZoom
         {
@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Maximum zoom in the slider
+        /// Maximum zoom in the slider.
         /// </summary>
         public static double MaximumZoom
         {
@@ -39,7 +39,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Zoom interval
+        /// Zoom interval.
         /// </summary>
         public static double ZoomInterval
         {
@@ -50,14 +50,14 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// The ViewModel for the dialog
+        /// The ViewModel for the dialog.
         /// </summary>
         private readonly HelpViewModel viewModel;
 
         /// <summary>
-        /// Initializes a new instance of the HelpWindow class
+        /// Initializes a new instance of the HelpWindow class.
         /// </summary>
-        /// <param name="helpObject">the object with help information</param>
+        /// <param name="helpObject">The object with help information.</param>
         public HelpWindow(PSObject helpObject)
         {
             InitializeComponent();
@@ -82,9 +82,9 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Handles the mouse wheel to zoom in/out
+        /// Handles the mouse wheel to zoom in/out.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.Control)
@@ -106,9 +106,9 @@ namespace Microsoft.Management.UI
 
         /// <summary>
         /// Handles key down to fix the Page/Douwn going to end of help issue
-        /// And to implement some additional shortcuts like Ctrl+F and ZoomIn/ZoomOut
+        /// And to implement some additional shortcuts like Ctrl+F and ZoomIn/ZoomOut.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.None)
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Reads the zoom part of the user settings
+        /// Reads the zoom part of the user settings.
         /// </summary>
         private void ReadZoomUserSetting()
         {
@@ -164,9 +164,9 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Handles Zoom in and Zoom out keys
+        /// Handles Zoom in and Zoom out keys.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleZoomInAndZoomOut(KeyEventArgs e)
         {
             if (e.Key == Key.OemPlus || e.Key == Key.Add)
@@ -183,10 +183,10 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Listens to changes in the zoom in order to update the user settings
+        /// Listens to changes in the zoom in order to update the user settings.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Zoom")
@@ -196,30 +196,30 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves the user settings
+        /// Saves the user settings.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpDialog_Closed(object sender, System.EventArgs e)
         {
             HelpWindowSettings.Default.Save();
         }
 
         /// <summary>
-        /// Updates the user setting with window state
+        /// Updates the user setting with window state.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpDialog_StateChanged(object sender, System.EventArgs e)
         {
             HelpWindowSettings.Default.HelpWindowMaximized = this.WindowState == WindowState.Maximized;
         }
 
         /// <summary>
-        /// Sets the positions from user settings and start monitoring position changes
+        /// Sets the positions from user settings and start monitoring position changes.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpDialog_Loaded(object sender, RoutedEventArgs e)
         {
             this.StateChanged += new System.EventHandler(this.HelpDialog_StateChanged);
@@ -228,10 +228,10 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves size changes in user settings
+        /// Saves size changes in user settings.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpDialog_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             HelpWindowSettings.Default.HelpWindowWidth = this.Width;
@@ -239,10 +239,10 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Saves position changes in user settings
+        /// Saves position changes in user settings.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HelpDialog_LocationChanged(object sender, System.EventArgs e)
         {
             HelpWindowSettings.Default.HelpWindowTop = this.Top;
@@ -250,10 +250,10 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the settings button is clicked
+        /// Called when the settings button is clicked.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             SettingsDialog settings = new SettingsDialog();
@@ -269,29 +269,29 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Called when the Previous button is clicked
+        /// Called when the Previous button is clicked.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void PreviousMatch_Click(object sender, RoutedEventArgs e)
         {
             this.MoveToNextMatch(false);
         }
 
         /// <summary>
-        /// Called when the Next button is clicked
+        /// Called when the Next button is clicked.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void NextMatch_Click(object sender, RoutedEventArgs e)
         {
             this.MoveToNextMatch(true);
         }
 
         /// <summary>
-        /// Moves to the previous or next match
+        /// Moves to the previous or next match.
         /// </summary>
-        /// <param name="forward">true for forward false for backwards</param>
+        /// <param name="forward">True for forward false for backwards.</param>
         private void MoveToNextMatch(bool forward)
         {
             TextPointer caretPosition = this.HelpText.CaretPosition;
@@ -300,9 +300,9 @@ namespace Microsoft.Management.UI
         }
 
         /// <summary>
-        /// Moves to the caret and brings the view to the <paramref name="run"/>
+        /// Moves to the caret and brings the view to the <paramref name="run"/>.
         /// </summary>
-        /// <param name="run">run to move to</param>
+        /// <param name="run">Run to move to.</param>
         private void MoveToRun(Run run)
         {
             if (run == null)

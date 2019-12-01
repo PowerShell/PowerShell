@@ -9,7 +9,7 @@ using System.Windows.Controls;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Button with images to represent enabled and disabled states
+    /// Button with images to represent enabled and disabled states.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Required by XAML")]
     public partial class ImageButton : ImageButtonBase
@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Copies the automation id and name from the parent control to the inner button
+        /// Copies the automation id and name from the parent control to the inner button.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void ImageButton_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             object thisAutomationId = this.GetValue(AutomationProperties.AutomationIdProperty);

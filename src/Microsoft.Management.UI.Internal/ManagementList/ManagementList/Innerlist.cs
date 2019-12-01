@@ -34,7 +34,7 @@ namespace Microsoft.Management.UI.Internal
         #region internal fields
         #region StyleCop Suppression - generated code
         /// <summary>
-        /// The current ICollectionView being displayed
+        /// The current ICollectionView being displayed.
         /// </summary>
         internal ICollectionView CollectionView;
 

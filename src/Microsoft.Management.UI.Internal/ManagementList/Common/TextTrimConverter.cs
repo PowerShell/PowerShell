@@ -29,7 +29,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Trims excess whitespace from the given string.
         /// </summary>
-        /// <param name="value">original string</param>
+        /// <param name="value">Original string.</param>
         /// <param name="targetType">The parameter is not used.</param>
         /// <param name="parameter">The parameter is not used.</param>
         /// <param name="culture">The parameter is not used.</param>
@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Trims extra whitespace from the given string during backward conversion.
         /// </summary>
-        /// <param name="value">original string</param>
+        /// <param name="value">Original string.</param>
         /// <param name="targetType">The parameter is not used.</param>
         /// <param name="parameter">The parameter is not used.</param>
         /// <param name="culture">The parameter is not used.</param>

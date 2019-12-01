@@ -827,7 +827,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal void WriteInformation(Object messageData, string[] tags)
+        internal void WriteInformation(object messageData, string[] tags)
         {
             if (_command != null)
             {

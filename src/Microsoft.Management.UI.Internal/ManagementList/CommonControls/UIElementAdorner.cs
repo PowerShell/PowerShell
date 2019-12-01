@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Overrides Visual.GetVisualChild, and returns a child at the specified index from a collection of child elements.
         /// </summary>
-        /// <param name="index">The zero-based index of the requested child element in the collection. </param>
+        /// <param name="index">The zero-based index of the requested child element in the collection..</param>
         /// <returns>The requested child element. This should not return null; if the provided index is out of range, an exception is thrown.</returns>
         protected override Visual GetVisualChild(int index)
         {
@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Implements any custom measuring behavior for the popupAdorner.
         /// </summary>
-        /// <param name="constraint">A size to constrain the popupAdorner to. </param>
+        /// <param name="constraint">A size to constrain the popupAdorner to..</param>
         /// <returns>A Size object representing the amount of layout space needed by the popupAdorner.</returns>
         protected override Size MeasureOverride(Size constraint)
         {
