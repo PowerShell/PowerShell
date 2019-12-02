@@ -172,7 +172,7 @@ namespace System.Management.Automation.Language
             char quoteToUse = string.IsNullOrWhiteSpace(quoteInUse) ? (char)0 : quoteInUse[0];
             if (quoteToUse == (char)0)
             {
-                if (ShouldArgumentNotBeBareword(value))
+                if (ArgRequiresQuote(value))
                 {
                     // argument value not compatible with bareword
                     quoteToUse = '\'';
@@ -189,55 +189,57 @@ namespace System.Management.Automation.Language
                 EscapeSingleQuotedStringContent(value)) + quoteToUse;
         }
 
-        // A brute force method to determine when an argument's value cannot be used bareword.
-        private static bool ShouldArgumentNotBeBareword(string value)
+        internal static bool CmdRequiresQuote (string value) =>
+            CmdRequiresQuote(value, false);
+
+        // Test for conditions that a value being attempted to be provided to be used as a commnd name
+        // to be parsed may need to be quoted in order to be correctly parsed.
+        // IsExpandable refers to the target parsing condition, when false, target is without the `invoke`
+        // operators, else the target is behind the `invoke` operators.
+        internal static bool CmdRequiresQuote(string value, bool IsExpandable = false)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                return false;
-            }
+            return _CommonRequiresQuote(value, IsExpandable, out Token tokenToCheck) ||
+                !IsExpandable && (tokenToCheck.Kind == TokenKind.Number ||
+                        tokenToCheck.Kind == TokenKind.Semi) || (tokenToCheck.TokenFlags & (TokenFlags.UnaryOperator | TokenFlags.Keyword)) != 0;
+        }
 
-            // Rules for allowable bareword arguments:
-            // - Characters that cannot be at start of argument: '@','#','<','>'
-            // - Patterns that cannot be at start of argument: 
-            // - - /[1-6]>/
-            // - - /<IsDash>(<IsDash>$|[<IsIdentifierStart>])/
-            var firstChar = value[0];
-            var length = value.Length;
-            bool requiresQuote = "@#<>".Contains(firstChar) ||
-                length > 1 && ((uint)(firstChar - '1') <= 5 && value[1] == '>' ||
-                firstChar.IsDash() && (value[1].IsIdentifierStart() || (length == 2 && value[1].IsDash())));
+        // Test for conditions that a value being attempted to be provided in a command line argument
+        // may need to be quoted in order to be correctly parsed.
+        private static bool ArgRequiresQuote(string value)
+        {
+            return _CommonRequiresQuote(value, true, out Token tokenToCheck) ||
+                tokenToCheck.Kind == TokenKind.Redirection ||
+                tokenToCheck.Kind == TokenKind.RedirectInStd ||
+                tokenToCheck.Kind == TokenKind.Parameter;
+        }
 
-            if (!requiresQuote)
-            {
-                bool lastCharWasDollar = false;
-                for (int i = 0; i < length; i++)
-                {
-                    // - Characters that cannot appear anywhere:
-                    // - - ForceStartNewToken
-                    // - - IsSingleQuote
-                    // - - IsDoubleQuote
-                    // - - Backtick ('\`')
-                    char c = value[i];
-                    if (c.ForceStartNewToken() || c.IsSingleQuote() || c.IsDoubleQuote() || c == '`')
-                    {
-                        requiresQuote = true;
-                        break;
-                    }
+        // List of TokensKinds to which commonly require quoting in order to be used as a command name or
+        // as an argument to a command.
+        private static readonly TokenKind[] s_commonQuotedTokenKinds = {
+            TokenKind.Variable,
+            TokenKind.SplattedVariable,
+            TokenKind.StringExpandable,
+            TokenKind.StringLiteral,
+            TokenKind.HereStringExpandable,
+            TokenKind.HereStringLiteral,
+            TokenKind.Comment };
 
-                    // - IsVariableStart characters cannot appear after a `$`
-                    // Note `{` and `(` is handled by ForceStartNewToken()
-                    if (lastCharWasDollar && c.IsVariableStart())
-                    {
-                        requiresQuote = true;
-                        break;
-                    }
+        // Attempt to parse a command name or argument value and test for common reasons the value would
+        // need to be quoted in order to be used as is if it were to be offered for parsing on a real command line.
+        private static bool _CommonRequiresQuote(string value, bool IsExpandable, out Token tokenToCheck)
+        {
+            Parser.ParseInput((IsExpandable ? "&" : "") + value, out Token[] _tokens, out ParseError[] _parseerrors);
+            Token _token = tokenToCheck = _tokens[IsExpandable ? 1 : 0];
 
-                    lastCharWasDollar = c == '$';
-                }
-            }
-
-            return requiresQuote;
+            // Quoting is required if there are: parse errors, not correct number of returned tokens,
+            // token.Kind is any of s_commonQuotedTokenKinds, contains expanded elements,
+            // (StringToken)token.Value.Length didn't match the original value or the last character is a backtick,
+            //  or the EOI token was misplaced.
+            return _parseerrors.Length != 0 || _tokens.Length != (IsExpandable ? 3 : 2) ||
+                Array.Exists(s_commonQuotedTokenKinds, tokenKind => tokenKind == _token.Kind) ||
+                (IsExpandable && _tokens[1] is StringExpandableToken) ||
+                (tokenToCheck is StringToken stringToken && (stringToken.Value.Length != value.Length || stringToken.Value.EndsWith('`'))) ||
+                _tokens[IsExpandable ? 2 : 1].Kind != TokenKind.EndOfInput;
         }
 
         /// <summary>

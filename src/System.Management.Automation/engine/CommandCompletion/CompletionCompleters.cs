@@ -227,15 +227,24 @@ namespace System.Management.Automation
                 }
             }
 
-            syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
-            name = CodeGeneration.QuoteArgument(name, quote, false);
+            // If addAmpersandIfNecessary indicates we need to check for non-expandable syntax, and command isn't quoted,
+            // we'll need an ampersand if command requires quotes for non-expandable syntax.
+            bool needAmpersand = addAmpersandIfNecessary && string.IsNullOrEmpty(quote) &&
+                CodeGeneration.CmdRequiresQuote(name);
 
-            // determine if an ampersand is needed, if adding an ampersand (`&`) is enabled,
-            // and either the argument is quoted or
-            // the argument matches a keyword and that keyword is NOT in the list of keywords to exclude from adding an ampersand.
-            bool needAmpersand = addAmpersandIfNecessary &&
-                (name[0].IsSingleQuote() || name[0].IsDoubleQuote() ||
-                Tokenizer.IsKeyword(name) && !s_keywordsToExcludeFromAddingAmpersand.Contains(name));
+            // Prepare the quote character to use (or null if not needing quoting), if not previously quoted, if either needing
+            // an ampersand or adding an ampersand is not permitted, and the command requires quotes for expandable syntax application, 
+            // use a single quote, else keep it bareword, else use the previously supplied quote.
+            char quoteToUse = string.IsNullOrEmpty(quote)
+                ? ((needAmpersand || !addAmpersandIfNecessary) && CodeGeneration.CmdRequiresQuote(name,true) ? '\'' : (char)0)
+                : quote[0];
+
+            if (quoteToUse != (char)0){
+                name = quoteToUse + (quoteToUse.IsDoubleQuote() ? CodeGeneration.EscapeDoubleQuotedStringContent(name) :
+                    CodeGeneration.EscapeSingleQuotedStringContent(name)) + quoteToUse;
+            }
+
+            syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
 
             // It's useless to call ForEach-Object (foreach) as the first command of a pipeline. For example:
             //     PS C:\> fore<tab>  --->   PS C:\> foreach   (expected, use as the keyword)
@@ -3916,11 +3925,21 @@ namespace System.Management.Automation
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
         {
-            return CompleteFilename(context, containerOnly: false, extension: null);
+            return CompleteFilename(context, containerOnly: false, extension: null, asCommand: false);
+        }
+
+        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool asCommand)
+        {
+            return CompleteFilename(context, containerOnly: false, extension: null, asCommand: asCommand);
+        }
+
+        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
+        {
+            return CompleteFilename(context, containerOnly: containerOnly, extension: extension, asCommand: false);
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
+        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension, bool asCommand)
         {
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -3941,7 +3960,7 @@ namespace System.Management.Automation
                     if (sharePattern.IsMatch(share))
                     {
                         string shareFullPath = "\\\\" + server + "\\" + share;
-                        string completionText = CodeGeneration.QuoteArgument(shareFullPath, quote, useLiteralPath);
+                        string completionText = asCommand ? shareFullPath : CodeGeneration.QuoteArgument(shareFullPath, quote, useLiteralPath);
 
                         results.Add(new CompletionResult(completionText, share, CompletionResultType.ProviderContainer, shareFullPath));
                     }
@@ -4190,7 +4209,7 @@ namespace System.Management.Automation
                             completionText = completionText.Substring(index + 2);
                         }
 
-                        completionText = CodeGeneration.QuoteArgument(completionText, quote, useLiteralPath);
+                        completionText = asCommand ? completionText : CodeGeneration.QuoteArgument(completionText, quote, useLiteralPath);
 
                         if (isFileSystem)
                         {

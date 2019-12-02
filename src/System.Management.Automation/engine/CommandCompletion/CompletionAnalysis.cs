@@ -2091,6 +2091,8 @@ namespace System.Management.Automation
         private static List<CompletionResult> CompleteFileNameAsCommand(CompletionContext completionContext)
         {
             var addAmpersandIfNecessary = CompletionCompleters.IsAmpersandNeeded(completionContext, true);
+            var wordToComplete = completionContext.WordToComplete;
+            var quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
             var result = new List<CompletionResult>();
             var clearLiteralPathsKey = false;
 
@@ -2107,21 +2109,33 @@ namespace System.Management.Automation
 
             try
             {
-                var fileNameResult = CompletionCompleters.CompleteFilename(completionContext);
+                var fileNameResult = CompletionCompleters.CompleteFilename(completionContext, asCommand: true);
                 foreach (var entry in fileNameResult)
                 {
-                    // Add '&' to file names that are quoted
                     var completionText = entry.CompletionText;
-                    var len = completionText.Length;
-                    if (addAmpersandIfNecessary && len > 2 && completionText[0].IsSingleQuote() && completionText[len - 1].IsSingleQuote())
+                    // Must determine if each file name needs quoting specifically when used as a command.
+                    // If addAmpersandIfNecessary indicates we need to check for non-expandable syntax, and command isn't quoted,
+                    // we'll need an ampersand if command requires quotes for non-expandable syntax.
+                    bool needAmpersand = addAmpersandIfNecessary && string.IsNullOrEmpty(quote) &&
+                        CodeGeneration.CmdRequiresQuote(completionText);
+
+                    // Prepare the quote character to use (or null if not needing quoting), if not previously quoted, if either needing
+                    // an ampersand or adding an ampersand is not permitted, and the command requires quotes for expandable syntax application, 
+                    // use a single quote, else keep it bareword, else use the previously supplied quote.
+                    char quoteToUse = string.IsNullOrEmpty(quote)
+                        ? ((needAmpersand || !addAmpersandIfNecessary) && CodeGeneration.CmdRequiresQuote(completionText, true) ? '\'' : (char)0)
+                        : quote[0];
+
+                    if (quoteToUse != (char)0){
+                        completionText = quoteToUse + (quoteToUse.IsDoubleQuote() ? CodeGeneration.EscapeDoubleQuotedStringContent(completionText) :
+                            CodeGeneration.EscapeSingleQuotedStringContent(completionText)) + quoteToUse;
+                    }
+
+                    if (needAmpersand)
                     {
                         completionText = "& " + completionText;
-                        result.Add(new CompletionResult(completionText, entry.ListItemText, entry.ResultType, entry.ToolTip));
                     }
-                    else
-                    {
-                        result.Add(entry);
-                    }
+                    result.Add(new CompletionResult(completionText, entry.ListItemText, entry.ResultType, entry.ToolTip));
                 }
             }
             finally
