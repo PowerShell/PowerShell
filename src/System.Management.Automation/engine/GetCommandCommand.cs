@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// commands of the given name.  It returns an instance of CommandInfo for each
     /// command that is found.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113309")]
+    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096579")]
     [OutputType(typeof(AliasInfo), typeof(ApplicationInfo), typeof(FunctionInfo),
                 typeof(CmdletInfo), typeof(ExternalScriptInfo), typeof(FilterInfo),
                 typeof(string), typeof(PSObject))]

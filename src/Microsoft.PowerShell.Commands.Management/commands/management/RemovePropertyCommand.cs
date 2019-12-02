@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to remove a property from an item.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113374")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097013")]
     public class RemoveItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters

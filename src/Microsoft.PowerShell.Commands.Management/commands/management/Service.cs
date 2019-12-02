@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the get-service command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Service", DefaultParameterSetName = "Default",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113332", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096496", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public sealed class GetServiceCommand : MultipleServiceCommandBase
     {
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
     /// Note that the services will be sorted before being stopped.
     /// PM confirms that this is OK.
     /// </remarks>
-    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113414")]
+    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097052")]
     [OutputType(typeof(ServiceController))]
     public sealed class StopServiceCommand : ServiceOperationBaseCommand
     {
@@ -1342,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the start-service command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113406")]
+    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097051")]
     [OutputType(typeof(ServiceController))]
     public sealed class StartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1374,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the suspend-service command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113416")]
+    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097053")]
     [OutputType(typeof(ServiceController))]
     public sealed class SuspendServiceCommand : ServiceOperationBaseCommand
     {
@@ -1407,7 +1407,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the resume-service command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Resume, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113386")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097150")]
     [OutputType(typeof(ServiceController))]
     public sealed class ResumeServiceCommand : ServiceOperationBaseCommand
     {
@@ -1441,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the restart-service command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113385")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097059")]
     [OutputType(typeof(ServiceController))]
     public sealed class RestartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the set-service command.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113399", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097148", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public class SetServiceCommand : ServiceOperationBaseCommand
     {
@@ -1992,9 +1992,9 @@ namespace Microsoft.PowerShell.Commands
 
     #region NewServiceCommand
     /// <summary>
-    /// This class implements the set-service command.
+    /// This class implements the New-Service command.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113359")]
+    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096905")]
     [OutputType(typeof(ServiceController))]
     public class NewServiceCommand : ServiceBaseCommand
     {

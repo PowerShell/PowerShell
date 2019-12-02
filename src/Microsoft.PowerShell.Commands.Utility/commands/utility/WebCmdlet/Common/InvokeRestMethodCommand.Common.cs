@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
     /// Intended to work against the wide spectrum of "RESTful" web services
     /// currently deployed across the web.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217034", DefaultParameterSetName = "StandardMethod")]
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
     public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides

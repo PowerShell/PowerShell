@@ -29,7 +29,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
 
-    [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141444")]
+    [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096627")]
     public class GetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region parameter
@@ -637,7 +637,7 @@ namespace Microsoft.WSMan.Management
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141458")]
+    [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096937")]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
@@ -1009,7 +1009,7 @@ namespace Microsoft.WSMan.Management
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141453")]
+    [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096721")]
     public class RemoveWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
@@ -1275,7 +1275,7 @@ namespace Microsoft.WSMan.Management
     /// using specified ValueSet or input File.
     /// </summary>
 
-    [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141448")]
+    [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096933")]
     public class NewWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>

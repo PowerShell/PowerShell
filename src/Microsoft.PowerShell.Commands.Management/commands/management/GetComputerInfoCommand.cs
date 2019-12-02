@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799466")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096810")]
     [Alias("gin")]
     [OutputType(typeof(ComputerInfo), typeof(PSObject))]
     public class GetComputerInfoCommand : PSCmdlet

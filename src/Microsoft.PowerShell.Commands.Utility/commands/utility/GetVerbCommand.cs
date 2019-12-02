@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation of the Get Verb Command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Verb", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=160712")]
+    [Cmdlet(VerbsCommon.Get, "Verb", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097026")]
     [OutputType(typeof(VerbInfo))]
     public class GetVerbCommand : Cmdlet
     {
