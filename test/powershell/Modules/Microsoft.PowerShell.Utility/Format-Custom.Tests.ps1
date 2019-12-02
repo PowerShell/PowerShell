@@ -438,3 +438,69 @@ SelectScriptBlock
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 }
+
+Describe "Custom formatting returning nothing" -Tags "CI" {
+  BeforeAll {
+      $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
+      $xmlContent = @'
+      <Configuration>
+      <ViewDefinitions>
+          <View>
+              <Name>Test</Name>
+              <ViewSelectedBy>
+                  <TypeName>MyTestObject</TypeName>
+              </ViewSelectedBy>
+              <CustomControl>
+                  <CustomEntries>
+                      <CustomEntry>
+                          <CustomItem>
+                              <ExpressionBinding>
+                                  <ScriptBlock>
+                                    $null
+                                  </ScriptBlock>
+                              </ExpressionBinding>
+                          </CustomItem>
+                      </CustomEntry>
+                  </CustomEntries>
+              </CustomControl>
+          </View>
+      </ViewDefinitions>
+  </Configuration>
+'@
+
+      Set-Content -Path $formatFilePath -Value $xmlContent
+      $ps = [powershell]::Create()
+      $iss = [initialsessionstate]::CreateDefault2()
+      $iss.Formats.Add($formatFilePath)
+      $rs = [runspacefactory]::CreateRunspace($iss)
+      $rs.Open()
+      $ps.Runspace = $rs
+  }
+
+  AfterAll {
+      $rs.Dispose()
+      $ps.Dispose()
+  }
+
+  It 'Newlines are not written if nothing is returned by custom format' {
+      $script = {
+          [PSCustomObject]@{
+              PSTypeName = 'MyTestObject'
+              Name = 'testing'
+          }
+      }
+
+      $null = $ps.AddScript($script).AddCommand('Out-String')
+      $ps.Streams.Error.Clear()
+
+      # one newline for start, one for grouping, and one for end
+      $expectedOutput = @'
+
+
+
+'@ -replace '\r?\n', "^"
+
+      $ps.Invoke() -replace '\r?\n', "^" | Should -BeExactly $expectedOutput
+      $ps.Streams.Error | Should -BeNullOrEmpty
+  }
+}
