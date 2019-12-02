@@ -24,9 +24,9 @@ namespace Microsoft.PowerShell
     internal static class UpdatesNotification
     {
         private const string UpdateCheckEnvVar = "POWERSHELL_UPDATECHECK";
-        private const string LTSBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/lts.json";
-        private const string StableBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/stable.json";
-        private const string PreviewBuildInfoURL = "https://pscoretestdata.blob.core.windows.net/buildinfo/preview.json";
+        private const string LTSBuildInfoURL = "https://aka.ms/pwsh-buildinfo-lts";
+        private const string StableBuildInfoURL = "https://aka.ms/pwsh-buildinfo-stable";
+        private const string PreviewBuildInfoURL = "https://aka.ms/pwsh-buildinfo-preview";
 
         /// <summary>
         /// The version of new update is persisted using a file, not as the file content, but instead baked in the file name in the following template:
