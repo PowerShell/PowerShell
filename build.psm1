@@ -205,9 +205,9 @@ function Test-IsPreview
     .Synopsis
         Tests if a version is a Release Candidate
     .EXAMPLE
-        Test-IsPreview -version '6.1.0-sometthing' # returns false
-        Test-IsPreview -version '6.1.0-rc.1' # returns true
-        Test-IsPreview -version '6.1.0' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
 #>
 function Test-IsReleaseCandidate
 {
