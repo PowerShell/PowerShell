@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'get-AuthenticodeSignature' cmdlet.
     /// This cmdlet extracts the digital signature from the given file.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "AuthenticodeSignature", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113307")]
+    [Cmdlet(VerbsCommon.Get, "AuthenticodeSignature", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096823")]
     [OutputType(typeof(Signature))]
     public sealed class GetAuthenticodeSignatureCommand : SignatureCommandsBase
     {
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet sets the digital signature on a given file.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "AuthenticodeSignature", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113391")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096919")]
     [OutputType(typeof(Signature))]
     public sealed class SetAuthenticodeSignatureCommand : SignatureCommandsBase
     {

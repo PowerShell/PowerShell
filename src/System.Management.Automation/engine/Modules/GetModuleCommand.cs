@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements a cmdlet that gets the list of loaded modules...
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Module", DefaultParameterSetName = ParameterSet_Loaded,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141552")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096696")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class GetModuleCommand : ModuleCmdletBase, IDisposable
     {

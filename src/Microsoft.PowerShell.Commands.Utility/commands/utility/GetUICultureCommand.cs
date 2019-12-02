@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Returns the thread's current UI culture.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "UICulture", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113334")]
+    [Cmdlet(VerbsCommon.Get, "UICulture", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096613")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
     public sealed class GetUICultureCommand : PSCmdlet
     {

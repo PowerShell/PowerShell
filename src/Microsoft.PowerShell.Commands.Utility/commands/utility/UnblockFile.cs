@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Removes the Zone.Identifier stream from a file.</summary>
     [Cmdlet(VerbsSecurity.Unblock, "File", DefaultParameterSetName = "ByPath", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217450")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097033")]
     public sealed class UnblockFileCommand : PSCmdlet
     {
         /// <summary>

@@ -4167,7 +4167,7 @@ $RawUI.SetBufferContents(
     @{Top = -1; Bottom = -1; Right = -1; Left = -1},
     @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
 # .Link
-# https://go.microsoft.com/fwlink/?LinkID=225747
+# https://go.microsoft.com/fwlink/?LinkID=2096480
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
             }
@@ -4179,7 +4179,7 @@ $RawUI.SetBufferContents(
     & (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
 ))
 # .Link
-# https://go.microsoft.com/fwlink/?LinkID=225747
+# https://go.microsoft.com/fwlink/?LinkID=2096480
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
             }
