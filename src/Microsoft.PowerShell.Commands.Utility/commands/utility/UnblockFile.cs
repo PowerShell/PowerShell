@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        WriteError(new ErrorRecord(e, "RemoveItemUnableToAccessFile", ErrorCategory.ResourceUnavailable, path));
+                        WriteError(new ErrorRecord(exception: e, errorId: "RemoveItemUnableToAccessFile", ErrorCategory.ResourceUnavailable, targetObject: path));
                     }
                 }
             }
@@ -139,8 +139,8 @@ namespace Microsoft.PowerShell.Commands
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 string errorMessage = UnblockFileStrings.LinuxNotSupported;
-                Exception e = new NotImplementedException(errorMessage);
-                ThrowTerminatingError(new ErrorRecord(e, "LinuxNotSupported", ErrorCategory.NotImplemented, null));
+                Exception e = new PlatformNotSupportedException(errorMessage);
+                ThrowTerminatingError(new ErrorRecord(exception: e, errorId: "LinuxNotSupported", ErrorCategory.NotImplemented, targetObject: null));
                 return;
             }
 
@@ -148,12 +148,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if(IsBlocked(path))
                 {
-                    UInt32 result = RemoveXattr(path,MacBlockAttribute,RemovexattrFollowSymLink);
+                    UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
                     if(result != 0)
                     {
                         string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
                         Exception e = new InvalidOperationException(errorMessage);
-                        WriteError(new ErrorRecord(e, "UnblockError", ErrorCategory.InvalidResult,path));
+                        WriteError(new ErrorRecord(exception: e, errorId: "UnblockError", ErrorCategory.InvalidResult, targetObject: path));
                     }
                 }
             }
