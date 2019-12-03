@@ -1181,11 +1181,7 @@ $result
         /// </summary>
         public void Dispose()
         {
-            try
-            {
-                _cancel.Dispose();
-            }
-            catch (ObjectDisposedException) { }
+             _cancel.Dispose();
         }
 
         #endregion "IDisposable Members"
