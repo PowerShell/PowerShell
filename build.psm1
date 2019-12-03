@@ -201,6 +201,30 @@ function Test-IsPreview
     return $Version -like '*-*'
 }
 
+<#
+    .Synopsis
+        Tests if a version is a Release Candidate
+    .EXAMPLE
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
+#>
+function Test-IsReleaseCandidate
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $true
+    }
+
+    return $false
+}
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
@@ -508,6 +532,7 @@ Fix steps:
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if (-not $SkipExperimentalFeatureGeneration -and
         (Test-IsPreview $psVersion) -and
+        -not (Test-IsReleaseCandidate $psVersion) -and
         -not $Runtime.Contains("arm") -and
         -not ($Runtime -like 'fxdependent*')) {
 
