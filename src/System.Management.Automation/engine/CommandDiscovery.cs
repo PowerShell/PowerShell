@@ -1287,27 +1287,6 @@ namespace System.Management.Automation
         private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories.
-        /// </summary>
-        /// <param name="patterns">
-        /// The patterns to search for. These patterns must be in the form taken
-        /// by DirectoryInfo.GetFiles().
-        /// </param>
-        /// <returns>
-        /// An instance of CommandPathSearch that is initialized with the specified
-        /// patterns and using the PATH as the lookup directories.
-        /// </returns>
-        internal IEnumerable<string> GetCommandPathSearcher(IEnumerable<string> patterns)
-        {
-            // Get the PATH environment variable
-            IEnumerable<string> lookupPathArray = GetLookupDirectoryPaths();
-
-            // Construct the CommandPathSearch object and return it.
-            return new CommandPathSearch(patterns, lookupPathArray, Context);
-        }
-
-        /// <summary>
         /// Gets the resolved paths contained in the PATH environment
         /// variable.
         /// </summary>
@@ -1317,7 +1296,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// The result is an ordered list of paths with paths starting with "." unresolved until lookup time.
         /// </remarks>
-        internal IEnumerable<string> GetLookupDirectoryPaths()
+        internal LookupPathCollection GetLookupDirectoryPaths()
         {
             LookupPathCollection result = new LookupPathCollection();
 

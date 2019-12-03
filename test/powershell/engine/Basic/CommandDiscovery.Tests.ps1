@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
@@ -213,6 +214,17 @@ Describe "Command Discovery tests" -Tags "CI" {
 
         It "Should return command not found for commands in the global scope" {
             {Get-Command -Name 'global:help' -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException'
+        }
+    }
+
+    Context "Native command discovery" {
+        It 'Can discover a native command without extension' {
+            $expectedName = if ($IsWindows) { "ping.exe" } else { "ping" }
+            (Get-Command -Name "ping" -CommandType Application).Name | Should -Match $expectedName
+        }
+
+        It 'Can discover a native command with extension on Windows' -skip:(-not $IsWindows) {
+            (Get-Command -Name "ping.exe" -CommandType Application).Name | Should -Match "ping.exe"
         }
     }
 }

@@ -1332,27 +1332,25 @@ namespace System.Management.Automation
         /// If <paramref name="name"/> contains one or more of the
         /// invalid characters defined in InvalidPathChars.
         /// </exception>
-        internal Collection<string> ConstructSearchPatternsFromName(string name, bool commandDiscovery = false)
+        internal LookupPathCollection ConstructSearchPatternsFromName(string name, bool commandDiscovery = false)
         {
             Dbg.Assert(
                 !string.IsNullOrEmpty(name),
                 "Caller should verify name");
 
-            Collection<string> result = new Collection<string>();
+            var result = new LookupPathCollection();
 
             // First check to see if the commandName has an extension, if so
             // look for that first
+            bool commandNameAddedFirst = Path.HasExtension(name);
 
-            bool commandNameAddedFirst = false;
-
-            if (!string.IsNullOrEmpty(Path.GetExtension(name)))
+            if (commandNameAddedFirst)
             {
                 result.Add(name);
-                commandNameAddedFirst = true;
             }
 
             // Add the extensions for script, module and data files in that order...
-            if ((_commandTypes & CommandTypes.ExternalScript) != 0)
+            if (_commandTypes.HasFlag(CommandTypes.ExternalScript))
             {
                 result.Add(name + StringLiterals.PowerShellScriptFileExtension);
                 if (!commandDiscovery)
@@ -1362,20 +1360,17 @@ namespace System.Management.Automation
                     result.Add(name + StringLiterals.PowerShellDataFileExtension);
                 }
             }
-
-            if ((_commandTypes & CommandTypes.Application) != 0)
+#if !UNIX
+            if (_commandTypes.HasFlag(CommandTypes.Application))
             {
                 // Now add each extension from the PATHEXT environment variable
-
                 foreach (string extension in CommandDiscovery.PathExtensions)
                 {
                     result.Add(name + extension);
                 }
             }
-
-            // Now add the commandName by itself if it wasn't added as the first
-            // pattern
-
+#endif
+            // Now add the commandName by itself if it wasn't added as the first pattern
             if (!commandNameAddedFirst)
             {
                 result.Add(name);
@@ -1553,14 +1548,15 @@ namespace System.Management.Automation
                             _commandName,
                             _context.CommandDiscovery.GetLookupDirectoryPaths(),
                             _context,
-                            ConstructSearchPatternsFromName(_commandName, commandDiscovery: true));
+                            ConstructSearchPatternsFromName(_commandName, commandDiscovery: true),
+                            useFuzzyMatch : false);
                 }
                 else if (_canDoPathLookupResult == CanDoPathLookupResult.PathIsRooted)
                 {
                     _canDoPathLookup = true;
 
                     string directory = Path.GetDirectoryName(_commandName);
-                    var directoryCollection = new[] { directory };
+                    var directoryCollection = new LookupPathCollection { directory };
 
                     CommandDiscovery.discoveryTracer.WriteLine(
                         "The path is rooted, so only doing the lookup in the specified directory: {0}",
@@ -1576,7 +1572,8 @@ namespace System.Management.Automation
                                 fileName,
                                 directoryCollection,
                                 _context,
-                                ConstructSearchPatternsFromName(fileName, commandDiscovery: true));
+                                ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
+                                useFuzzyMatch : false);
                     }
                     else
                     {
@@ -1603,7 +1600,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        var directoryCollection = new[] { directory };
+                        var directoryCollection = new LookupPathCollection { directory };
 
                         string fileName = Path.GetFileName(_commandName);
 
@@ -1615,7 +1612,8 @@ namespace System.Management.Automation
                                     fileName,
                                     directoryCollection,
                                     _context,
-                                    ConstructSearchPatternsFromName(fileName, commandDiscovery: true));
+                                    ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
+                                    useFuzzyMatch : false);
                         }
                         else
                         {
