@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
                     result.Add(name + StringLiterals.PowerShellDataFileExtension);
                 }
             }
-#if !Unix
+#if !UNIX
             if (_commandTypes.HasFlag(CommandTypes.Application))
             {
                 // Now add each extension from the PATHEXT environment variable
