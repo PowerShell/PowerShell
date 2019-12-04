@@ -2794,18 +2794,18 @@ namespace Microsoft.PowerShell
         {
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
             // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
-
             bool isWide = c >= 0x1100 &&
                 (c <= 0x115f || /* Hangul Jamo init. consonants */
                  c == 0x2329 || c == 0x232a ||
-                 (c >= 0x2e80 && c <= 0xa4cf &&
+                 ((uint)(c - 0x2e80) <= (0xa4cf - 0x2e80) &&
                   c != 0x303f) || /* CJK ... Yi */
-                 (c >= 0xac00 && c <= 0xd7a3) || /* Hangul Syllables */
-                 (c >= 0xf900 && c <= 0xfaff) || /* CJK Compatibility Ideographs */
-                 (c >= 0xfe10 && c <= 0xfe19) || /* Vertical forms */
-                 (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
-                 (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
-                 (c >= 0xffe0 && c <= 0xffe6));
+                 ((uint)(c - 0xac00) <= (0xd7a3 - 0xac00)) || /* Hangul Syllables */
+                 ((uint)(c - 0xf900) <= (0xfaff - 0xf900)) || /* CJK Compatibility Ideographs */
+                 ((uint)(c - 0xfe10) <= (0xfe19 - 0xfe10)) || /* Vertical forms */
+                 ((uint)(c - 0xfe30) <= (0xfe6f - 0xfe30)) || /* CJK Compatibility Forms */
+                 ((uint)(c - 0xff00) <= (0xff60 - 0xff00)) || /* Fullwidth Forms */
+                 ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
+
             // We can ignore these ranges because .Net strings use surrogate pairs
             // for this range and we do not handle surrogage pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
