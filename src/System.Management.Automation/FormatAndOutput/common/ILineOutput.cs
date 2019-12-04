@@ -69,7 +69,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
             // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
-
             bool isWide = c >= 0x1100 &&
                 (c <= 0x115f || /* Hangul Jamo init. consonants */
                  c == 0x2329 || c == 0x232a ||
@@ -81,6 +80,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
                  (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
                  (c >= 0xffe0 && c <= 0xffe6));
+
             // We can ignore these ranges because .Net strings use surrogate pairs
             // for this range and we do not handle surrogage pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
