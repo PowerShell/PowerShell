@@ -9,6 +9,3 @@ contact_links:
   - name: Documentation Issue
     url: https://github.com/MicrosoftDocs/PowerShell-Docs
     about: Please open issues on documentation for PowerShell here.
-  - name: Security Issue
-    url: https://github.com/PowerShell/PowerShell/blob/master/.github/SECURITY.md
-    about: Reporting security issues for PowerShell.
