@@ -30,7 +30,8 @@ function New-EditionCompatibleModule
     param(
         [Parameter(Mandatory = $true)][string]$ModuleName,
         [string]$DirPath,
-        [string[]]$CompatiblePSEditions)
+        [string[]]$CompatiblePSEditions,
+        [string]$ErrorGenerationCode='')
 
     $modulePath = Join-Path $DirPath $ModuleName
 
@@ -41,7 +42,7 @@ function New-EditionCompatibleModule
 
     New-Item -Path $modulePath -ItemType Directory
 
-    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true } function Test-${ModuleName}PSEdition { `$PSVersionTable.PSEdition }" -Force
+    New-Item -Path $psm1Path -Value "$ErrorGenerationCode function Test-$ModuleName { `$true } function Test-${ModuleName}PSEdition { `$PSVersionTable.PSEdition }" -Force
 
     if ($CompatiblePSEditions)
     {
@@ -129,7 +130,6 @@ function New-TestNestedModule
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
-
 
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
@@ -359,6 +359,43 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             param($Editions, $ModuleName, $Result)
 
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
+        }
+    }
+}
+
+Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
+    BeforeAll {
+        $ModuleName = "DesktopModule"
+        $basePath = Join-Path $TestDrive "WinCompatModules"
+        # create an incompatible module that generates an error on import
+        New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
+    }
+
+    Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
+        BeforeAll {
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Verify that Error/Warning are generated with default ErrorAction/WarningAction" -Skip:(-not $IsWindows) {
+
+            $out = pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName"
+
+            # above should generate 1 error and 1 warning
+            $out.Count | Should -BeExactly 2
+            $out[0] | Should -BeLike "*divide by zero*"
+            $out[1] | Should -BeLike "*loaded in Windows PowerShell*"
+        }
+
+        It "Verify that Error/Warning are Not generated with ErrorAction/WarningAction = Ignore" -Skip:(-not $IsWindows) {
+
+            $out = pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore -WarningAction Ignore"
+
+            # above should not generate any errors or warnings
+            $out.Count | Should -BeExactly 0
         }
     }
 }
