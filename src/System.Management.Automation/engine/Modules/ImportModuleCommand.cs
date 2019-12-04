@@ -1881,7 +1881,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
-            IList<PSModuleInfo> moduleProxyList = null;
+            IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
             var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
             if (WindowsPowerShellCompatRemotingSession != null)
             {
