@@ -382,7 +382,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
 
         It "Verify that Error/Warning are generated with default ErrorAction/WarningAction" -Skip:(-not $IsWindows) {
 
-            $out = pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName"
+            $out = & "$PSHOME\pwsh.exe" -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName"
 
             # above should generate 1 error and 1 warning
             $out.Count | Should -BeExactly 2
@@ -392,7 +392,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
 
         It "Verify that Error/Warning are Not generated with ErrorAction/WarningAction = Ignore" -Skip:(-not $IsWindows) {
 
-            $out = pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore -WarningAction Ignore"
+            $out = & "$PSHOME\pwsh.exe" -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore -WarningAction Ignore"
 
             # above should not generate any errors or warnings
             $out.Count | Should -BeExactly 0
