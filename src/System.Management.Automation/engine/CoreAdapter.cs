@@ -2043,7 +2043,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the first no-hidden member that satisfies the predicate.
+        /// Get the first non-hidden member that satisfies the predicate.
         /// </summary>
         /// <remarks>
         /// Hidden members are not returned for any fuzzy searches (searching by 'match' or enumerating a collection).

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'Bug fixes related to formatting' -Tag CI {
+Describe "Hidden properties should not be returned by the 'FirstOrDefault' primitive" -Tag CI {
 
     It "Formatting for an object with no property/field should use 'ToString'" {
         class Empty {
