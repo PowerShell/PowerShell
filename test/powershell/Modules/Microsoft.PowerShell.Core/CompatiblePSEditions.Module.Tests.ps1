@@ -367,6 +367,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
     BeforeAll {
         $ModuleName = "DesktopModule"
         $basePath = Join-Path $TestDrive "WinCompatModules"
+        remove-item $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
     }
@@ -380,22 +381,28 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Verify that Error/Warning are generated with default ErrorAction/WarningAction" -Skip:(-not $IsWindows) {
-
-            $out = & "$PSHOME\pwsh.exe" -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName"
-
-            # above should generate 1 error and 1 warning
-            $out.Count | Should -BeExactly 2
-            $out[0] | Should -BeLike "*divide by zero*"
-            $out[1] | Should -BeLike "*loaded in Windows PowerShell*"
+        It "Verify that Error is generated with default ErrorAction" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            $LogPath | Should -FileContentMatch 'divide by zero'
         }
 
-        It "Verify that Error/Warning are Not generated with ErrorAction/WarningAction = Ignore" -Skip:(-not $IsWindows) {
+        It "Verify that Warning is generated with default WarningAction" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell'
+        }
 
-            $out = & "$PSHOME\pwsh.exe" -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore -WarningAction Ignore"
+        It "Verify that Error is Not generated with -ErrorAction Ignore" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore" *> $LogPath
+            $LogPath | Should -Not -FileContentMatch 'divide by zero'
+        }
 
-            # above should not generate any errors or warnings
-            $out.Count | Should -BeExactly 0
+        It "Verify that Warning is Not generated with -WarningAction Ignore" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -WarningAction Ignore" *> $LogPath
+            $LogPath | Should -Not -FileContentMatch 'loaded in Windows PowerShell'
         }
     }
 }
