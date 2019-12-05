@@ -361,22 +361,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (!Force)
-                    {
-                        string error =
-                            SecureStringCommands.ForceRequired;
-                        Exception e = new ArgumentException(error);
-                        WriteError(new ErrorRecord(e, "ImportSecureString_ForceRequired", ErrorCategory.InvalidArgument, null));
-                    }
-                    else
-                    {
-                        // The entire purpose of the SecureString is to prevent a secret from being
-                        // permanently stored in memory as a .Net string.  If they use the
-                        // -AsPlainText and -Force flags, they consciously have made the decision to be OK
-                        // with that.
-                        importedString = new SecureString();
-                        foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
-                    }
+                    importedString = new SecureString();
+                    foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
                 }
             }
             catch (ArgumentException e)
