@@ -159,4 +159,24 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $result | Should -Match "Name\s*:\s*test.txt"
         $result | Should -Match "Length\s*:\s*5"
     }
+
+    It "Format-List should work with double byte wide chars" {
+        $obj = [pscustomobject]@{
+            "哇" = "62";
+            "dbda" = "KM";
+            "消息" = "千"
+        }
+
+        $expected = @"
+
+哇   : 62
+dbda : KM
+消息 : 千
+
+
+
+"@
+
+        $obj | Format-List | Out-String | Should -BeExactly $expected
+    }
 }
