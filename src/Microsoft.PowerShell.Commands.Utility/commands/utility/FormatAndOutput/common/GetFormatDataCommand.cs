@@ -97,9 +97,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            bool writeOldWay = PowerShellVersion == null ||
-                               PowerShellVersion.Major < 5 ||
-                               (PowerShellVersion.Major == 5 && PowerShellVersion.Minor < 1);
+            // During remoting, remain compatible with older clients by default.
+            // Remoting detection: Automatic variable $PSSenderInfo is defined in true remoting contexts and also in background jobs.
+            //                     However, its Boolean .PSShowComputerName NoteProperty is true only in remoting contexts.
+            bool remoting = (GetVariableValue("PSSenderInfo") as PSObject)?.Properties["PSShowComputerName"]?.Value is bool value && value;
+            bool writeOldWay = remoting && (
+                                PowerShellVersion == null ||
+                                PowerShellVersion.Major < 5 ||
+                                (PowerShellVersion.Major == 5 && PowerShellVersion.Minor < 1)
+                                );
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 
