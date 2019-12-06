@@ -76,8 +76,13 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         if ($IsWindows)
         {
-write-verbose -verbose ($paths | out-string)
-            $paths.Count | Should -Be 6
+            $expectedPaths = 3 # user, shared, pshome
+            $userPaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::User)
+            $expectedPaths += $userPaths ? $userPaths.Split($pathSeparator).Count : 0
+            $machinePaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::Machine)
+            $expectedPaths += $machinePaths ? $machinePaths.Split($pathSeparator).Count : 0
+
+            $paths.Count | Should -Be $expectedPaths
         }
         else
         {
