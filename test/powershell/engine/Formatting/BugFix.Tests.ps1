@@ -10,6 +10,11 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
 
         $outstring = [Empty]::new() | Out-String
         $outstring.Trim() | Should -BeExactly "MyString"
+
+        class Empty2 { }
+
+        $outstring = [Empty2]::new() | Out-String
+        $outstring.Trim() | Should -BeLike "*.Empty2"
     }
 
     It "Formatting for an object with only hidden property should use 'ToString'" {
@@ -20,6 +25,13 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
 
         $outstring = [Hidden]::new() | Out-String
         $outstring.Trim() | Should -BeExactly "MyString"
+
+        class Hidden2 {
+            hidden $Param = 'Foo'
+        }
+
+        $outstring = [Hidden2]::new() | Out-String
+        $outstring.Trim() | Should -BeLike "*.Hidden2"
     }
 
     It 'Formatting for an object with no-hidden property should use the default view' {
@@ -29,6 +41,14 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
         }
 
         $outstring = [Params]::new() | Out-String
+        $outstring.Trim() | Should -BeExactly "Param$([System.Environment]::NewLine)-----$([System.Environment]::NewLine)Foo"
+
+        class Params2 {
+            $Param = 'Foo'
+            [String]ToString() { return 'MyString' }
+        }
+
+        $outstring = [Params2]::new() | Out-String
         $outstring.Trim() | Should -BeExactly "Param$([System.Environment]::NewLine)-----$([System.Environment]::NewLine)Foo"
     }
 }
