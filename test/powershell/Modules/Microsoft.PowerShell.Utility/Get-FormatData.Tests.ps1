@@ -11,9 +11,10 @@ Describe "Get-FormatData" -Tags "CI" {
 
     Context "Local use: Can get format data requiring v5.1 by default" {
         BeforeAll {
-            $cmds =
-                @{ cmd = { Get-FormatData System.IO.FileInfo } },
+            $cmds = @(
+                @{ cmd = { Get-FormatData System.IO.FileInfo } }
                 @{ cmd = { (Get-FormatData System.IO.FileInfo &) | Receive-Job -Wait -AutoRemoveJob } }
+            )
         }
         It "Can get format data requiring v5.1 with <cmd>" -TestCases $cmds {
             param([scriptblock] $cmd)
@@ -25,9 +26,10 @@ Describe "Get-FormatData" -Tags "CI" {
         BeforeAll {
             # Simulate a remoting session.
             $PSSenderInfo = [pscustomobject] @{ PSShowComputerName = $true }
-            $cmds =
+            $cmds = @(
                 @{ cmd = { Get-FormatData System.IO.FileInfo }; shouldBeNull = $true },
                 @{ cmd = { Get-FormatData System.IO.FileInfo -PowerShellVersion 5.1 }; shouldBeNull = $false }
+            )
         }
         It "When remoting, <cmd> should return <shouldBeNull> for a null-output test" -TestCases $cmds {
             param([scriptblock] $cmd, [bool] $shouldBeNull)
