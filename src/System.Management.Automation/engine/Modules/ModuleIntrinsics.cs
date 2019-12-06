@@ -1284,7 +1284,7 @@ namespace System.Management.Automation
             // otherwise, the user modified it and we should use the process one
             if (string.CompareOrdinal(GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User), currentModulePath) == 0)
             {
-                currentModulePath += Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                currentModulePath = currentModulePath + Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
