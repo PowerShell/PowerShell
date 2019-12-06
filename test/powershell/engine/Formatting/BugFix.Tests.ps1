@@ -45,7 +45,6 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
 
         class Params2 {
             $Param = 'Foo'
-            [String]ToString() { return 'MyString' }
         }
 
         $outstring = [Params2]::new() | Out-String
