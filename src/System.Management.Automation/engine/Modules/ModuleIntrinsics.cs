@@ -1152,6 +1152,11 @@ namespace System.Management.Automation
                             else
                                 result.Append(Path.PathSeparator + subPathToAdd);
                         }
+                        else if (insertPosition > result.Length)
+                        {
+                            // handle case where path is a singleton with no path seperator already
+                            result.Append(Path.PathSeparator + subPathToAdd);
+                        }
                         else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
                         {
                             result.Insert(insertPosition, subPathToAdd + Path.PathSeparator);
@@ -1164,9 +1169,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate. Note - because these
-        /// strings go through the provider, we need to escape any wildcards before passing them
-        /// along.
+        /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate.
         /// </summary>
         public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)
         {
@@ -1196,11 +1199,6 @@ namespace System.Management.Automation
                 {
                     currentProcessModulePath += hklmMachineModulePath; // += EVT.Machine
                 }
-
-#if !UNIX
-                // Add Windows Modules path
-                currentProcessModulePath = $"{currentProcessModulePath}{Path.PathSeparator}{s_windowsPowerShellPSHomeModulePath}";
-#endif
             }
             // EVT.Process exists
             // Now handle the case where the environment variable is already set.
@@ -1281,9 +1279,16 @@ namespace System.Management.Automation
         private static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
+#if !UNIX
+            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete
+            // otherwise, the user modified it and we should use the process one
+            if (string.CompareOrdinal(GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User), currentModulePath) == 0)
+            {
+                currentModulePath += Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+            }
+#endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
-
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))
