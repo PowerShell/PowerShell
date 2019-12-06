@@ -76,6 +76,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         if ($IsWindows)
         {
+write-verbose -verbose ($paths | out-string)
             $paths.Count | Should -Be 6
         }
         else
