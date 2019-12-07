@@ -64,7 +64,7 @@ namespace System.Management.Automation.Internal
 
         private static int ToInt32LE(byte[] bytes, int offset)
         {
-            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset +1 ] << 8) | bytes[offset];
+            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1 ] << 8) | bytes[offset];
         }
 
         private static uint ToUInt32LE(byte[] bytes, int offset)
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Internal
         {
             byte[] reverseData = new byte[data.Length];
             Array.Copy(data, reverseData, data.Length);
-            Array.Reverse(reverseData, 0, reverseData.Length);
+            Array.Reverse(reverseData);
             return reverseData;
         }
 
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Internal
 
             if (offset > blob.Length)
             {
-                throw new ArgumentException("offset exceeds key blob boundary");
+                throw new ArgumentException(SecuritySupportStrings.InvalidOffset);
             }
 
             var rsap = GetParametersFromCapiPublicKeyBlob(blob, offset);
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Internal
             } 
             catch (Exception ex) 
             {
-                throw new CryptographicException("Failed to import public key", ex);
+                throw new CryptographicException(SecuritySupportStrings.CannotImportPublicKey, ex);
             }
         }
 
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Internal
 
             if (offset > blob.Length)
             {
-                throw new ArgumentException("offset exceeds key blob boundary");
+                throw new ArgumentException(SecuritySupportStrings.InvalidOffset);
             }
 
             if (blob.Length < PUBLICKEYBLOB_HEADER_LEN)
@@ -140,13 +140,13 @@ namespace System.Management.Automation.Internal
 
             try 
             {
-                if ((blob[offset]   != PUBLICKEYBLOB) ||      // PUBLICKEYBLOB (0x06)
-                    (blob[offset + 1] != CUR_BLOB_VERSION) ||   // Version (0x02)
-                    (blob[offset + 2] != 0x00) ||               // Reserved (word)
+                if ((blob[offset]   != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
+                    (blob[offset + 1] != CUR_BLOB_VERSION) ||       // Version (0x02)
+                    (blob[offset + 2] != 0x00) ||                   // Reserved (word)
                     (blob[offset + 3] != 0x00) ||
-                    (ToUInt32LE(blob, offset + 8) != 0x31415352))    // DWORD magic = RSA1
+                    (ToUInt32LE(blob, offset + 8) != 0x31415352))   // DWORD magic = RSA1
                 { 
-                    throw new CryptographicException("Invalid blob header");
+                    throw new CryptographicException(SecuritySupportStrings.InvalidPublicKey);
                 }
 
                 // DWORD bitlen
@@ -169,7 +169,7 @@ namespace System.Management.Automation.Internal
             } 
             catch (Exception ex) 
             {
-                throw new CryptographicException("Invalid public key blob", ex);
+                throw new CryptographicException(SecuritySupportStrings.InvalidPublicKey, ex);
             }
         }
 
@@ -181,20 +181,20 @@ namespace System.Management.Automation.Internal
             }
 
             RSAParameters p = rsa.ExportParameters(false);
-            int keyLength = p.Modulus.Length; // in bytes
+            int keyLength = p.Modulus.Length;   // in bytes
             byte[] blob = new byte[PUBLICKEYBLOB_HEADER_LEN + keyLength];
 
-            blob[0] = (byte)PUBLICKEYBLOB;    // Type - PUBLICKEYBLOB (0x06)
-            blob[1] = (byte)CUR_BLOB_VERSION; // Version - Always CUR_BLOB_VERSION (0x02)
-            // [2], [3]                 // RESERVED - Always 0
-            blob[5] = (byte)CALG_RSA_KEYX;    // ALGID - Always 00 a4 00 00 (for CALG_RSA_KEYX)
-            blob[8] = 0x52;             // Magic - RSA1 (ASCII in hex)
+            blob[0] = (byte)PUBLICKEYBLOB;      // Type - PUBLICKEYBLOB (0x06)
+            blob[1] = (byte)CUR_BLOB_VERSION;   // Version - Always CUR_BLOB_VERSION (0x02)
+            // [2], [3]                         // RESERVED - Always 0
+            blob[5] = (byte)CALG_RSA_KEYX;      // ALGID - Always 00 a4 00 00 (for CALG_RSA_KEYX)
+            blob[8] = 0x52;                     // Magic - RSA1 (ASCII in hex)
             blob[9] = 0x53;
             blob[10] = 0x41;
             blob[11] = 0x31;
 
             byte[] bitlen = GetBytesLE(keyLength << 3);
-            blob[12] = bitlen[0];       // bitlen
+            blob[12] = bitlen[0];               // bitlen
             blob[13] = bitlen[1];
             blob[14] = bitlen[2];
             blob[15] = bitlen[3];
@@ -209,10 +209,9 @@ namespace System.Management.Automation.Internal
 
             // modulus
             pos = 20;
-            byte[] part = p.Modulus;
-            int len = part.Length;
-            Array.Reverse(part, 0, len);
-            Buffer.BlockCopy(part, 0, blob, pos, len);
+            byte[] key = p.Modulus;
+            Array.Reverse(key);
+            Buffer.BlockCopy(key, 0, blob, pos, keyLength);
 
             return blob;
         }
@@ -226,7 +225,7 @@ namespace System.Management.Automation.Internal
 
             if (blob.Length < SIMPLEBLOB_HEADER_LEN)
             {
-                throw new ArgumentException("key blob wrong length");
+                throw new ArgumentException(SecuritySupportStrings.InvalidSessionKey);
             }
 
             // just ignore the header of the capi blob and go straight for the key
@@ -243,14 +242,14 @@ namespace System.Management.Automation.Internal
             // formulate the PUBLICKEYSTRUCT
             byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
 
-            blob[0] = (byte)SIMPLEBLOB;          // Type - SIMPLEBLOB (0x01)
-            blob[1] = (byte)CUR_BLOB_VERSION;    // Version - Always CUR_BLOB_VERSION (0x02)
-            // [2], [3]                    // RESERVED - Always 0
-            blob[4] = (byte)CALG_AES_256;        // AES-256 algo id (0x10)
-            blob[5] = 0x66;                // ??
-            // [6], [7], [8]               // 0x00 
-            blob[9] = (byte)CALG_RSA_KEYX;       // 0xa4
-            // [10], [11]                  // 0x00 
+            blob[0] = (byte)SIMPLEBLOB;         // Type - SIMPLEBLOB (0x01)
+            blob[1] = (byte)CUR_BLOB_VERSION;   // Version - Always CUR_BLOB_VERSION (0x02)
+            // [2], [3]                         // RESERVED - Always 0
+            blob[4] = (byte)CALG_AES_256;       // AES-256 algo id (0x10)
+            blob[5] = 0x66;                     // ??
+            // [6], [7], [8]                    // 0x00 
+            blob[9] = (byte)CALG_RSA_KEYX;      // 0xa4
+            // [10], [11]                       // 0x00 
 
             // create a reversed copy and add the encrypted key
             byte[] reversedKey = CreateReverseByteArray(encryptedKey);
