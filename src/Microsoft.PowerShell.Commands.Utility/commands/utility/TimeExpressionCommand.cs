@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements a cmdlet that applies a script block
     /// to each element of the pipeline.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Measure, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113348", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsDiagnostic.Measure, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097029", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
     public sealed class MeasureCommandCommand : PSCmdlet
     {

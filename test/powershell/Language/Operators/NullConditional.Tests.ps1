@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'NullConditionalOperations' -Tags 'CI' {
+Describe 'NullCoalesceOperations' -Tags 'CI' {
     BeforeAll {
 
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCoalescingOperators')
@@ -261,6 +261,136 @@ Describe 'NullConditionalOperations' -Tags 'CI' {
         It 'First two are null' {
             $z ??= $null ?? 100
             $z | Should -Be 100
+        }
+    }
+}
+
+Describe 'NullConditionalMemberAccess' -Tag 'CI' {
+
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
+    Context '?. operator tests' {
+        BeforeAll {
+            $psObj = [psobject]::new()
+            $psObj | Add-Member -Name 'name' -Value 'value' -MemberType NoteProperty
+            $psObj | Add-Member -Name 'nested' -Value @{name = 'valuenested'} -MemberType NoteProperty
+
+            $psobj2 = [psobject]::new()
+            $psobj2 | Add-Member -Name 'GetHello' -Value { "hello" } -MemberType ScriptMethod
+            $psObj | Add-Member -Name 'nestedMethod' -Value $psobj2 -MemberType NoteProperty
+
+            $array = 1..3
+            $hash = @{ a = 1; b = 2}
+
+            $null = New-Item -ItemType File -Path "$TestDrive/testfile.txt" -Force
+        }
+
+        It 'Can get member value of a non-null variable' {
+            ${psObj}?.name | Should -BeExactly 'value'
+            ${array}?.length | Should -Be 3
+            ${hash}?.a | Should -Be 1
+
+            (Get-Process -Id $pid)?.Name | Should -BeLike "pwsh*"
+            (Get-Item $TestDrive)?.EnumerateFiles()?.Name | Should -BeExactly 'testfile.txt'
+
+            [int32]::MaxValue?.ToString() | Should -BeExactly '2147483647'
+        }
+
+        It 'Can get null when variable is null' {
+            ${nonExistent}?.name | Should -BeNullOrEmpty
+            ${nonExistent}?.MyMethod() | Should -BeNullOrEmpty
+
+            (get-process -Name doesnotexist -ErrorAction SilentlyContinue)?.Id | Should -BeNullOrEmpty
+        }
+
+        It 'Use ?. operator multiple times in statement' {
+            ${psObj}?.name?.nonExistent | Should -BeNullOrEmpty
+            ${psObj}?.nonExistent?.nonExistent | Should -BeNullOrEmpty
+            ${nonExistent}?.nonExistent?.nonExistent | Should -BeNullOrEmpty
+
+            ${psObj}?.nested?.name | Should -BeExactly 'valuenested'
+            ${psObj}?.nestedMethod?.GetHello() | Should -BeExactly 'hello'
+        }
+
+        It 'Use ?. on a dynamic method name' {
+            $methodName = 'ToLongDateString'
+            (Get-Date '11/11/2019')?.$methodName() | Should -BeExactly 'Monday, November 11, 2019'
+
+            ${doesNotExist}?.$methodName() | Should -BeNullOrEmpty
+        }
+
+        It 'Use ?. on a dynamic method name that does not exist' {
+            $methodName = 'DoesNotExist'
+            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+
+        It 'Use ?. on a dynamic method name that does not exist' {
+            $methodName = $null
+            { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+
+        It 'Use ?. on a dynamic property name' {
+            $propName = 'Name'
+            (Get-Process -Id $pid)?.$propName | Should -BeLike 'pwsh*'
+
+            ${doesNotExist}?.$propName() | Should -BeNullOrEmpty
+        }
+
+        It 'Should throw error when method does not exist' {
+            { ${psObj}?.nestedMethod?.NonExistent() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+    }
+
+    Context '?[] operator tests' {
+        BeforeAll {
+            $array = 1..3
+            $hash = @{ a = 1; b = 2}
+
+            $dateArray = @(
+                (Get-Date '11/1/2019'),
+                (Get-Date '11/2/2019'),
+                (Get-Date '11/3/2019'))
+        }
+
+        It 'Can index can call properties' {
+            ${array}?[0] | Should -Be 1
+            ${array}?[0,1] | Should -Be @(1,2)
+            ${array}?[0..2] | Should -Be @(1,2,3)
+            ${array}?[-2] | Should -Be 2
+
+            ${hash}?['a'] | Should -Be 1
+        }
+
+        It 'Indexing in null items should be null' {
+            ${doesnotExist}?[0] | Should -BeNullOrEmpty
+            ${doesnotExist}?[0,1] | Should -BeNullOrEmpty
+            ${doesnotExist}?[0..2] | Should -BeNullOrEmpty
+            ${doesnotExist}?[-2] | Should -BeNullOrEmpty
+
+            ${doesnotExist}?['a'] | Should -BeNullOrEmpty
+        }
+
+        It 'Can call methods on indexed items' {
+            ${dateArray}?[0]?.ToLongDateString() | Should -BeExactly 'Friday, November 1, 2019'
+        }
+
+        It 'Calling a method on nonexistent item give null' {
+            ${dateArray}?[1234]?.ToLongDateString() | Should -BeNullOrEmpty
+            ${doesNotExist}?[0]?.MyGetMethod() | Should -BeNullOrEmpty
         }
     }
 }

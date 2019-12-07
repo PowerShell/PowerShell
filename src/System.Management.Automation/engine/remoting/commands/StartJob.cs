@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet start invocation of jobs in background.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113405")]
+    [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096796")]
     [OutputType(typeof(PSRemotingJob))]
     public class StartJobCommand : PSExecutionCmdlet, IDisposable
     {
@@ -606,6 +606,17 @@ namespace Microsoft.PowerShell.Commands
                         targetObject: null);
 
                     ThrowTerminatingError(errorRecord);
+            }
+
+            if (WorkingDirectory == null)
+            {
+                try
+                {
+                    WorkingDirectory = SessionState.Internal.CurrentLocation.Path;
+                }
+                catch (PSInvalidOperationException)
+                {
+                }
             }
 
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);

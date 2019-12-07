@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the format-custom command. It just calls the formatting engine on complex shape.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Custom", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113301")]
+    [Cmdlet(VerbsCommon.Format, "Custom", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096929")]
     public class FormatCustomCommand : OuterFormatShapeCommandBase
     {
         /// <summary>

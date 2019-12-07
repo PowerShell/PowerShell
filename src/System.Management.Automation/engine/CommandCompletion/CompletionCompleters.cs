@@ -1993,16 +1993,27 @@ namespace System.Management.Automation
             CompletionContext context,
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
-            if (string.IsNullOrEmpty(commandName))
+            string parameterName = parameter.Name;
+
+            // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
+            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // See issue https://github.com/PowerShell/PowerShell/issues/10567
+            string actualCommandName = string.IsNullOrEmpty(commandName)
+                        ? commandAst.GetCommandName()
+                        : commandName;
+
+            if (string.IsNullOrEmpty(actualCommandName))
             {
                 return;
             }
 
-            var parameterName = parameter.Name;
-            var customCompleter = GetCustomArgumentCompleter(
-                    "CustomArgumentCompleters",
-                    new[] { commandName + ":" + parameterName, parameterName },
-                    context);
+            string parameterFullName = $"{actualCommandName}:{parameterName}";
+
+            ScriptBlock customCompleter = GetCustomArgumentCompleter(
+                "CustomArgumentCompleters",
+                new[] { parameterFullName, parameterName },
+                context);
+
             if (customCompleter != null)
             {
                 if (InvokeScriptArgumentCompleter(
@@ -4275,10 +4286,17 @@ namespace System.Management.Automation
                                                     continue;
 
                                                 var fileInfo = new FileInfo(entry);
-                                                if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                try
                                                 {
-                                                    PSObject wrapper = PSObject.AsPSObject(entry);
-                                                    psobjs.Add(wrapper);
+                                                    if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                    {
+                                                        PSObject wrapper = PSObject.AsPSObject(entry);
+                                                        psobjs.Add(wrapper);
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    // do nothing if can't get file attributes
                                                 }
                                             }
                                         }

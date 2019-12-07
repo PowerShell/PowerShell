@@ -24,6 +24,8 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         if ($IsWindows) {
             $pssession | Remove-PSSession -ErrorAction SilentlyContinue
         }
+
+        Remove-Module TestImport -Force -ErrorAction SilentlyContinue
     }
 
     BeforeEach {

@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
     /// "Microsoft.PowerShell" is used.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "Command", DefaultParameterSetName = InvokeCommandCommand.InProcParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135225", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096789", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class InvokeCommandCommand : PSExecutionCmdlet, IDisposable
     {
         #region Parameters
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (Operations.Count > 0)
                                     {
-                                        string[] locations = new String[ConnectionUri.Length];
+                                        string[] locations = new string[ConnectionUri.Length];
                                         for (int i = 0; i < locations.Length; i++)
                                         {
                                             locations[i] = ConnectionUri[i].ToString();

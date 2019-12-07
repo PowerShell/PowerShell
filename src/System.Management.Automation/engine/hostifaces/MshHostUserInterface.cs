@@ -973,7 +973,7 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new Object();
+        private static object s_systemTranscriptLock = new object();
         private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);

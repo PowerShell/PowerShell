@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "get-alias" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Alias", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113306")]
+    [Cmdlet(VerbsCommon.Get, "Alias", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096702")]
     [OutputType(typeof(AliasInfo))]
     public class GetAliasCommand : PSCmdlet
     {

@@ -17,9 +17,10 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete abbreviated function' {
-        $res = (TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        function Test-AbbreviatedFunctionExpansion {}
+        $res = (TabExpansion2 -inputScript 't-afe' -cursorColumn 't-afe'.Length).CompletionMatches.CompletionText
         $res.Count | Should -BeGreaterOrEqual 1
-        $res | Should -BeExactly 'PSConsoleHostReadLine'
+        $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
@@ -30,6 +31,16 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator' {
+        $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator without first letter' {
+        $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
 
     It 'Should complete Magic foreach' {
@@ -825,6 +836,32 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
+            $scriptBl = {
+                function Test-Completion {
+                    param (
+                        [String]$TestVal
+                    )
+                }
+                [scriptblock]$completer = {
+                    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+                    @('Val1', 'Val2')
+                }
+                Register-ArgumentCompleter -CommandName Test-Completion -ParameterName TestVal -ScriptBlock $completer
+            }
+            $pwsh = [PowerShell]::Create()
+            $pwsh.AddScript($scriptBl)
+            $pwsh.Invoke()
+
+            $completeInput_Input = $scriptBl.ToString()
+            $completeInput_Input += "`nTest-Completion -TestVal "
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($completeInput_Input, $completeInput_Input.Length, $null, $pwsh)
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Val1'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Val2'
+        }
+
         It "Tab completion for enum type parameter of a custom function" {
             function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
             $inputStr = "baz -name "
@@ -894,6 +931,20 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 33
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
+        }
+
+        It "Test completion with common parameters" {
+            $inputStr = 'invoke-webrequest -out'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutVariable"
+        }
+
+        It "Test completion with exact match" {
+            $inputStr = 'get-content -wa'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
         }
     }
 
@@ -1322,7 +1373,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
-        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
         @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
@@ -1345,7 +1396,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     ) {
         param($path, $parameter, $expected)
         $script = "new-item wsman:\$path $parameter"
-        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $res = TabExpansion2 -inputScript $script
         $res.CompletionMatches | Should -HaveCount $expected.Count
         $completionOptions = ""
         foreach ($completion in $res.CompletionMatches) {

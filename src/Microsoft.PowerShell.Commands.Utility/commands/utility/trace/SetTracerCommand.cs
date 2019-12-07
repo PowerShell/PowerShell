@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet that sets the properties of the TraceSwitch instances that are instantiated in the process.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TraceSource", DefaultParameterSetName = "optionsSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113400")]
+    [Cmdlet(VerbsCommon.Set, "TraceSource", DefaultParameterSetName = "optionsSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097129")]
     [OutputType(typeof(PSTraceSource))]
     public class SetTraceSourceCommand : TraceListenerCommandBase
     {

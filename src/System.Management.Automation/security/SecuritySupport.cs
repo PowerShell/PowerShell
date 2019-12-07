@@ -1662,7 +1662,7 @@ namespace System.Management.Automation
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
         private static bool s_amsiInitFailed = false;
-        private static object s_amsiLockObject = new Object();
+        private static object s_amsiLockObject = new object();
 
         /// <summary>
         /// Reset the AMSI session (used to track related script invocations)

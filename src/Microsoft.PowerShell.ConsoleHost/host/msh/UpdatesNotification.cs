@@ -106,6 +106,13 @@ namespace Microsoft.PowerShell
                 return;
             }
 
+            // Daily builds do not support update notifications
+            string preReleaseLabel = PSVersionInfo.PSCurrentVersion.PreReleaseLabel;
+            if (preReleaseLabel != null && preReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
             // If the host is not connect to a network, skip the rest of the check.
             if (!NetworkInterface.GetIsNetworkAvailable())
             {

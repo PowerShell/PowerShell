@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Exit-PSSession cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Exit, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135212")]
+    [Cmdlet(VerbsCommon.Exit, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096787")]
     public class ExitPSSessionCommand : PSRemotingCmdlet
     {
         /// <summary>

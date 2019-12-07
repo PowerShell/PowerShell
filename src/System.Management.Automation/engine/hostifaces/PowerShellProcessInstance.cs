@@ -24,6 +24,7 @@ namespace System.Management.Automation.Runspaces
         private bool _processExited;
 
         internal static readonly string PwshExePath;
+        internal static readonly string WinPwshExePath;
 
         #endregion Fields
 
@@ -37,11 +38,12 @@ namespace System.Management.Automation.Runspaces
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
 #else
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
+            WinPwshExePath = Path.Combine(Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID), "powershell.exe");
 #endif
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
         /// <param name="powerShellVersion">Specifies the version of powershell.</param>
         /// <param name="credential">Specifies a user account credentials.</param>
@@ -50,38 +52,38 @@ namespace System.Management.Automation.Runspaces
         /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
-            string processArguments = " -s -NoLogo -NoProfile";
-
-            if (!string.IsNullOrWhiteSpace(workingDirectory))
+            string exePath = PwshExePath;
+            bool startingWindowsPowerShell51 = false;
+#if !UNIX
+            // if requested PS version was "5.1" then we start Windows PS instead of PS Core
+            startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
+            if (startingWindowsPowerShell51)
             {
-                processArguments = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0} -wd {1}",
-                    processArguments,
-                    workingDirectory);
-            }
+                exePath = WinPwshExePath;
 
-            if (initializationScript != null)
-            {
-                string scripBlockAsString = initializationScript.ToString();
-                if (!string.IsNullOrEmpty(scripBlockAsString))
+                if (useWow64)
                 {
-                    string encodedCommand =
-                        Convert.ToBase64String(Encoding.Unicode.GetBytes(scripBlockAsString));
-                    processArguments = string.Format(
-                        CultureInfo.InvariantCulture,
-                        "{0} -EncodedCommand {1}",
-                        processArguments,
-                        encodedCommand);
+                    string procArch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+
+                    if ((!string.IsNullOrEmpty(procArch)) && (procArch.Equals("amd64", StringComparison.OrdinalIgnoreCase) ||
+                        procArch.Equals("ia64", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        exePath = WinPwshExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
+
+                        if (!File.Exists(exePath))
+                        {
+                            string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WowComponentNotPresent, exePath);
+                            throw new PSInvalidOperationException(message);
+                        }
+                    }
                 }
             }
-
+#endif
             // 'WindowStyle' is used only if 'UseShellExecute' is 'true'. Since 'UseShellExecute' is set
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
             {
-                FileName = PwshExePath,
-                Arguments = processArguments,
+                FileName = exePath,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
@@ -91,6 +93,33 @@ namespace System.Management.Automation.Runspaces
                 LoadUserProfile = true,
 #endif
             };
+
+            if (startingWindowsPowerShell51)
+            {
+                _startInfo.ArgumentList.Add("-Version");
+                _startInfo.ArgumentList.Add("5.1");
+            }
+
+            _startInfo.ArgumentList.Add("-s");
+            _startInfo.ArgumentList.Add("-NoLogo");
+            _startInfo.ArgumentList.Add("-NoProfile");
+
+            if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell51)
+            {
+                _startInfo.ArgumentList.Add("-wd");
+                _startInfo.ArgumentList.Add(workingDirectory);
+            }
+
+            if (initializationScript != null)
+            {
+                var scriptBlockString = initializationScript.ToString();
+                if (!string.IsNullOrEmpty(scriptBlockString))
+                {
+                    var encodedCommand = Convert.ToBase64String(Encoding.Unicode.GetBytes(scriptBlockString));
+                    _startInfo.ArgumentList.Add("-EncodedCommand");
+                    _startInfo.ArgumentList.Add(encodedCommand);
+                }
+            }
 
             if (credential != null)
             {
@@ -105,7 +134,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class. 
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>

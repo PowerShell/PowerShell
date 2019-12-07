@@ -617,7 +617,7 @@ namespace System.Management.Automation
                                 var arguments = usingValue as System.Collections.IEnumerable;
                                 if (arguments != null)
                                 {
-                                    foreach (Object argument in arguments)
+                                    foreach (object argument in arguments)
                                     {
                                         _powershell.AddArgument(argument);
                                     }

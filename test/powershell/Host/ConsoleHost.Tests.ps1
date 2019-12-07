@@ -247,6 +247,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed = echo hello | pwsh -noprofile $testFilePath e -
             $observed | Should -BeExactly "h-llo"
         }
+
+        It "Empty command should fail" {
+            pwsh -noprofile -c ''
+            $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Whitespace command should succeed" {
+            pwsh -noprofile -c ' ' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
     }
 
     Context "-Login pwsh switch" {
@@ -975,5 +985,27 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         finally {
             Pop-Location
         }
+    }
+}
+
+Describe 'Pwsh startup and PATH' -Tag CI {
+    BeforeEach {
+        $oldPath = $env:PATH
+    }
+
+    AfterEach {
+        $env:PATH = $oldPath
+    }
+
+    It 'Calling pwsh starts the same version of PowerShell as currently running' {
+        $version = pwsh -v
+        $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+    }
+
+    It 'pwsh starts even if PATH is not defined' {
+        $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        Remove-Item Env:\PATH
+        $path = & $pwsh -noprofile -command '$env:PATH'
+        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
     }
 }

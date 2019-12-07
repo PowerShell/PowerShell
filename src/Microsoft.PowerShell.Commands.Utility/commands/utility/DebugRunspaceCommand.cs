@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DebugRunspaceCommand.RunspaceParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403731")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096917")]
     public sealed class DebugRunspaceCommand : PSCmdlet
     {
         #region Strings

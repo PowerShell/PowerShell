@@ -22,7 +22,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to synchronize access to the ResourceManagerCache.
         /// </summary>
-        private static object s_syncRoot = new Object();
+        private static object s_syncRoot = new object();
 
         /// <summary>
         /// Gets the ResourceManager from the cache or gets an instance of the ResourceManager

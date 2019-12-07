@@ -113,13 +113,17 @@ namespace Microsoft.PowerShell
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");
-            if (path != null)
+            string pshome = Utils.DefaultPowerShellAppBase + Path.PathSeparator;
+
+            // to not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
+            // we also don't handle the edge case where PATH only contains $PSHOME
+            if (string.IsNullOrEmpty(path))
             {
-                string pshome = Utils.DefaultPowerShellAppBase;
-                if (!path.Contains(pshome))
-                {
-                    Environment.SetEnvironmentVariable("PATH", pshome + Path.PathSeparator + path);
-                }
+                Environment.SetEnvironmentVariable("PATH", pshome);
+            }
+            else if (!path.StartsWith(pshome))
+            {
+                Environment.SetEnvironmentVariable("PATH", pshome + path);
             }
 
             try
