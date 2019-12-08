@@ -109,17 +109,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;
             }
+
             // During remoting, remain compatible with v5.0- clients by default.
             // Passing a -PowerShellVersion argument allows overriding the client version.
             bool writeOldWay = 
-                remotingClientInfo != null && clientVersion == null  // To be safe: Remoting client version could unexpectedly not be determined.
+                (remotingClientInfo != null && clientVersion == null)  // To be safe: Remoting client version could unexpectedly not be determined.
                 || 
                 (clientVersion != null
                     &&
                     (clientVersion.Major < 5
                         ||
-                    (clientVersion.Major == 5 && clientVersion.Minor < 1))
-                );
+                    (clientVersion.Major == 5 && clientVersion.Minor < 1)));
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 

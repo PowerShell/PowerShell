@@ -2110,7 +2110,6 @@ namespace System.Management.Automation.Internal
             ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
             return pssi;
         }
-
     }
 
     /// <summary>
