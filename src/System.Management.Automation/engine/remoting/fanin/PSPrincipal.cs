@@ -154,7 +154,8 @@ namespace System.Management.Automation.Remoting
         {
             get { return _applicationArguments; }
 
-            internal set { _applicationArguments = value; }
+            // Conceptually `internal`, but public to support simulating remoting sessions during testing.
+            set { _applicationArguments = value; }
         }
 
         /// <summary>
