@@ -153,9 +153,8 @@ namespace System.Management.Automation.Remoting
         public PSPrimitiveDictionary ApplicationArguments
         {
             get { return _applicationArguments; }
-
-            // Conceptually `internal`, but public to support simulating remoting sessions during testing.
-            set { _applicationArguments = value; }
+            
+            internal set { _applicationArguments = value; }
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "justMyCode": false,
-            "stopAtEntry": true,
+            // "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
             "preLaunchTask": "Build",
             "externalConsole": true,
