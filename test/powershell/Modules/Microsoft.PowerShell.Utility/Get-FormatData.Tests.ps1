@@ -39,7 +39,7 @@ Describe "Get-FormatData" -Tags "CI" {
         }
     }
 
-    Context "Remote use: Don't get format data requiring v5.1 by default" {
+    Context "Remote use: By default, don't get format data requiring v5.1+ for v5.0- clients" {
         BeforeAll {
             # Simulated PSSenderInfo instances for various PowerShell versions.
             $pssiV50 = [System.Management.Automation.Internal.InternalTestHooks]::GetCustomPSSenderInfo('foo', [version] '5.0')
