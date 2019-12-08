@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
             // Remoting detection: 
             //   * Automatic variable $PSSenderInfo is defined in true remoting contexts as well as in background jobs.
             //   * $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion contains the client version, as a [version] instance.
-            //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] hree,
+            //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,
             //            presumably because only the latter type deserializes type-faithfully.
             var clientVersion = PowerShellVersion;
             PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
