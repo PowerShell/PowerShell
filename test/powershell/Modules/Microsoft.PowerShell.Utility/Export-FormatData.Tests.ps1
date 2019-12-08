@@ -23,7 +23,7 @@ Describe "Export-FormatData" -Tags "CI" {
             $runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($sessionState)
             $runspace.Open()
 
-            $runspace.CreatePipeline("Update-FormatData -prependPath $TESTDRIVE\allformat.ps1xml").Invoke()
+            $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
             $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -PowerShellVersion $clientVersion").Invoke()
 
             $fd.Count | Should -Be $actualAllFormat.Count
