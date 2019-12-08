@@ -2107,7 +2107,7 @@ namespace System.Management.Automation.Internal
             var pssi = new PSSenderInfo(dummyPrincipal, url);
             pssi.ApplicationArguments = new PSPrimitiveDictionary();
             pssi.ApplicationArguments.Add("PSVersionTable", new PSObject(new PSPrimitiveDictionary()));
-            ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", clientVersion);
+            ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
             return pssi;
         }
 
