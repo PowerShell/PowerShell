@@ -1881,19 +1881,20 @@ namespace Microsoft.PowerShell.Commands
 
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
-            IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
-            var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
-            if (WindowsPowerShellCompatRemotingSession != null)
+            PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
+            if (WindowsPowerShellCompatRemotingSession == null)
             {
-                moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, true);
-                foreach(PSModuleInfo moduleProxy in moduleProxyList)
-                {
-                    moduleProxy.IsWindowsPowerShellCompatModule = true;
-                    System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
+                return new List<PSModuleInfo>();
+            }
 
-                    string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
-                    WriteWarning(message);
-                }
+            var moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            {
+                moduleProxy.IsWindowsPowerShellCompatModule = true;
+                System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
+
+                string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                WriteWarning(message);
             }
 
             return moduleProxyList;

@@ -2367,7 +2367,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        var moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
 
                         // we are loading by a single ManifestPath so expect max of 1
                         if(moduleProxies.Count > 0) 

@@ -367,7 +367,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
     BeforeAll {
         $ModuleName = "DesktopModule"
         $basePath = Join-Path $TestDrive "WinCompatModules"
-        remove-item $basePath -Recurse -ErrorAction SilentlyContinue
+        Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
     }
