@@ -161,11 +161,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
         public string ConfigurationName { get; set; }
-    
+
         /// <summary>
         /// Gets or sets parameter value that creates connection to a Windows PowerShell process.
         /// </summary>
-        [Experimental("PSWindowsPowerShellCompatibility", ExperimentAction.Show)]
         [Parameter(Mandatory = true, ParameterSetName = NewPSSessionCommand.UseWindowsPowerShellParameterSet)]
         public SwitchParameter UseWindowsPowerShell { get; set; }
 

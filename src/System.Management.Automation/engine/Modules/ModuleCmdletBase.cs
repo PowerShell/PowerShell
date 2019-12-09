@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// Session name for WindowsPS compat remoting session.
         /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
-        
+
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
@@ -2363,69 +2363,25 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility"))
+                if (importingModule)
                 {
-                    if (importingModule)
+                    var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
+                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("PassThru", true);
+                    ps.AddParameter("Name", moduleManifestPath);
+                    ps.AddParameter("UseWindowsPowerShell", true);
+
+                    var moduleProxies = ps.Invoke<PSModuleInfo>();
+
+                    // we are loading by a single ManifestPath so expect max of 1
+                    if(moduleProxies.Count > 0)
                     {
-                        var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                        using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-                        ps.AddCommand(commandInfo);
-                        ps.AddParameter("PassThru", true);
-                        ps.AddParameter("Name", moduleManifestPath);
-                        ps.AddParameter("UseWindowsPowerShell", true);
-
-                        var moduleProxies = ps.Invoke<PSModuleInfo>();
-
-                        // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0) 
-                        {
-                            return moduleProxies[0];
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        return moduleProxies[0];
                     }
-                }
-                else
-                {
-                    containedErrors = true;
-
-                    if (writingErrors)
+                    else
                     {
-                        message = StringUtil.Format(
-                            Modules.PSEditionNotSupported,
-                            moduleManifestPath,
-                            PSVersionInfo.PSEdition,
-                            string.Join(',', inferredCompatiblePSEditions));
-
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-
-                        ErrorRecord er = new ErrorRecord(
-                            ioe,
-                            nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
-                            ErrorCategory.ResourceUnavailable,
-                            moduleManifestPath);
-
-                        WriteError(er);
-                    }
-
-                    if (bailOnFirstError)
-                    {
-                        // If we're trying to load the module, return null so that caches
-                        // are not polluted
-                        if (importingModule)
-                        {
-                            return null;
-                        }
-
-                        // If we return null with Get-Module, a fake module info will be created. Since
-                        // we want to suppress output of the module, we need to do that here.
-                        return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
-                        {
-                            HadErrorsLoading = true,
-                            IsConsideredEditionCompatible = false,
-                        };
+                        return null;
                     }
                 }
             }
@@ -4959,7 +4915,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
+                    if (module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
                     {
                         CleanupWindowsPowerShellCompatResources();
                     }

@@ -36,8 +36,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Gets a value indicating whether update notification should be done.
         /// </summary>
-        internal static readonly bool CanNotifyUpdates = !Utils.GetOptOutEnvVariableAsBool(UpdateCheckOptOutEnvVar, defaultValue: false)
-            && ExperimentalFeature.IsEnabled("PSUpdatesNotification");
+        internal static readonly bool CanNotifyUpdates = !Utils.GetOptOutEnvVariableAsBool(UpdateCheckOptOutEnvVar, defaultValue: false);
 
         // Maybe we shouldn't do update check and show notification when it's from a mini-shell, meaning when
         // 'ConsoleShell.Start' is not called by 'ManagedEntrance.Start'.

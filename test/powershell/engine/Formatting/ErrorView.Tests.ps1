@@ -8,11 +8,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     It '$ErrorView should have correct default value' {
-        $expectedDefault = 'NormalView'
-
-        if ((Get-ExperimentalFeature -Name PSErrorView).Enabled) {
-            $expectedDefault = 'ConciseView'
-        }
+        $expectedDefault = 'ConciseView'
 
         $ErrorView | Should -BeExactly $expectedDefault
     }

@@ -35,8 +35,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
-        private static readonly bool s_pipelineChainsEnabled = ExperimentalFeature.IsEnabled("PSPipelineChainOperators");
-
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
@@ -5715,11 +5713,6 @@ namespace System.Management.Automation.Language
 
             // If this feature is not enabled,
             // just look for pipelines as before.
-            if (!s_pipelineChainsEnabled)
-            {
-                return PipelineRule(allowBackground: true);
-            }
-
             RuntimeHelpers.EnsureSufficientExecutionStack();
 
             // First look for assignment, since PipelineRule once handled that and this supercedes that.
@@ -5950,7 +5943,6 @@ namespace System.Management.Automation.Language
             while (scanning)
             {
                 CommandBaseAst commandAst;
-                Token assignToken = null;
 
                 if (expr == null)
                 {
@@ -5960,21 +5952,6 @@ namespace System.Management.Automation.Language
                     {
                         SetTokenizerMode(TokenizerMode.Expression);
                         expr = ExpressionRule();
-
-                        // When pipeline chains are not enabled, we must process assignment.
-                        // We are looking for <expr> = <statement>, and have seen <expr>.
-                        // Now looking for '='
-                        if (!s_pipelineChainsEnabled && expr != null)
-                        {
-                            // We peek here because we are in expression mode,
-                            // otherwise =0 will get scanned as a single token.
-                            Token token = PeekToken();
-                            if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
-                            {
-                                SkipToken();
-                                assignToken = token;
-                            }
-                        }
                     }
                     finally
                     {
@@ -5991,35 +5968,6 @@ namespace System.Management.Automation.Language
                             expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
-                    }
-
-                    // To process assignment when pipeline chains are not enabled,
-                    // we have seen '<expr> = ' and now expect a statement
-                    if (!s_pipelineChainsEnabled && assignToken != null)
-                    {
-                        SkipNewlines();
-                        StatementAst statement = StatementRule();
-
-                        if (statement == null)
-                        {
-                            // ErrorRecovery:
-                            // We are likely at EOF, since almost anything else should result in a pipeline,
-                            // so just keep parsing
-                            IScriptExtent errorExtent = After(assignToken);
-                            ReportIncompleteInput(
-                                errorExtent,
-                                nameof(ParserStrings.ExpectedValueExpression),
-                                ParserStrings.ExpectedValueExpression,
-                                assignToken.Kind.Text());
-                            statement = new ErrorStatementAst(errorExtent);
-                        }
-
-                        return new AssignmentStatementAst(
-                            ExtentOf(expr, statement),
-                            expr,
-                            assignToken.Kind,
-                            statement,
-                            assignToken.Extent);
                     }
 
                     RedirectionAst[] redirections = null;
@@ -6098,31 +6046,12 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
-                        if (s_pipelineChainsEnabled)
-                        {
-                            scanning = false;
-                            continue;
-                        }
-
-                        // Report that &&/|| are unsupported
-                        SkipToken();
-                        SkipNewlines();
-                        ReportError(
-                            nextToken.Extent,
-                            nameof(ParserStrings.InvalidEndOfLine),
-                            ParserStrings.InvalidEndOfLine,
-                            nextToken.Text);
-
-                        if (PeekToken().Kind == TokenKind.EndOfInput)
-                        {
-                            scanning = false;
-                        }
-
-                        break;
+                        scanning = false;
+                        continue;
 
                     case TokenKind.Ampersand:
                         // When pipeline chains are not enabled, pipelines always handle backgrounding
-                        if (s_pipelineChainsEnabled && !allowBackground)
+                        if (!allowBackground)
                         {
                             // Handled by invoking rule
                             scanning = false;
@@ -6721,11 +6650,6 @@ namespace System.Management.Automation.Language
             // G      binary-expression   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
 
             // TODO: remove this if-block when making 'ternary operator' an official feature.
-            if (!ExperimentalFeature.IsEnabled("PSTernaryOperator"))
-            {
-                return BinaryExpressionRule();
-            }
-
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
             try
