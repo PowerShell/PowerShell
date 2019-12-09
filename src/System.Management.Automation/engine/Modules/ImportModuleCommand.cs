@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_ViaWinCompat = "WinCompat";
         private const string ParameterSet_FQName_ViaWinCompat = "FullyQualifiedNameAndWinCompat";
 
-
         /// <summary>
         /// This parameter specifies whether to import to the current session state
         /// or to the global / top-level session state.

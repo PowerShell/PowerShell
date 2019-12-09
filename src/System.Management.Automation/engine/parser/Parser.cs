@@ -6050,7 +6050,6 @@ namespace System.Management.Automation.Language
                         continue;
 
                     case TokenKind.Ampersand:
-                        // When pipeline chains are not enabled, pipelines always handle backgrounding
                         if (!allowBackground)
                         {
                             // Handled by invoking rule
