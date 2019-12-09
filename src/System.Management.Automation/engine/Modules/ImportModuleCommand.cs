@@ -1870,24 +1870,34 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.UseWindowsPowerShell)
                 {
-                    var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
-                    if (WindowsPowerShellCompatRemotingSession != null)
-                    {
-                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, this.FullyQualifiedName, WindowsPowerShellCompatRemotingSession, true))
-                        {
-                            moduleProxy.IsWindowsPowerShellCompatModule = true;
-                            System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
-
-                            string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
-                            WriteWarning(message);
-                        }
-                    }
+                    ImportModulesUsingWinCompat(this.Name, this.FullyQualifiedName, importModuleOptions);
                 }
             }
             else
             {
                 Dbg.Assert(false, "Unrecognized parameter set");
             }
+        }
+
+        internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
+        {
+            PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
+            if (WindowsPowerShellCompatRemotingSession == null)
+            {
+                return new List<PSModuleInfo>();
+            }
+
+            var moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            {
+                moduleProxy.IsWindowsPowerShellCompatModule = true;
+                System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
+
+                string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                WriteWarning(message);
+            }
+
+            return moduleProxyList;
         }
 
         private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
