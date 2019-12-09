@@ -3,6 +3,7 @@
 
 Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
+    BeforeAll {
         $sb = { "Hello!" }
     }
 
