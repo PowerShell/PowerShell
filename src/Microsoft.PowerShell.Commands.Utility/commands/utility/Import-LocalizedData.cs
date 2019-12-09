@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "import-localizeddata" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
+    [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096710")]
     public sealed class ImportLocalizedData : PSCmdlet
     {
         #region Parameters

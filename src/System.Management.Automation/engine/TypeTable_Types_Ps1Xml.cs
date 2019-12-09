@@ -6058,7 +6058,7 @@ namespace System.Management.Automation.Runspaces
           {
           if ($argumentsBuilder.Length -gt 1)
           {
-          $argumentsBuilder.Append(string.Empty, string.Empty);
+          $argumentsBuilder.Append("", "");
           }
 
           $argumentsBuilder.Append($entry.Key).Append(""="")
@@ -6073,7 +6073,7 @@ namespace System.Management.Automation.Runspaces
           {
           if ($argumentsBuilder.Length -gt 1)
           {
-          $argumentsBuilder.Append(string.Empty, string.Empty)
+          $argumentsBuilder.Append("", "")
           }
 
           if ($arg)

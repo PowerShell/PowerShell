@@ -5055,7 +5055,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Add the base path back on so that it can be used for
                             // processing
-                            if (!result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (!result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = MakePath(basePath, result);
                             }
@@ -5119,7 +5119,7 @@ namespace Microsoft.PowerShell.Commands
                             result = files.First();
 #endif
 
-                            if (result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = result.Substring(basePath.Length);
                             }

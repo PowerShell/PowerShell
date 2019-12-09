@@ -114,7 +114,7 @@ namespace Microsoft.WSMan.Management
     /// <summary>
     /// Connect wsman cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
+    [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096841")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
     {
         #region Parameters
@@ -293,7 +293,7 @@ namespace Microsoft.WSMan.Management
     /// IP address to indicate the remote host(s)
     /// </summary>
 
-    [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141439")]
+    [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096839")]
     public class DisconnectWSManCommand : PSCmdlet, IDisposable
     {
         /// <summary>

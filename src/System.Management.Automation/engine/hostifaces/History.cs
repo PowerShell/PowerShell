@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class Implements the get-history command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113317")]
+    [Cmdlet(VerbsCommon.Get, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096788")]
     [OutputType(typeof(HistoryInfo))]
     public class GetHistoryCommand : PSCmdlet
     {
@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Invoke-History command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "History", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113344")]
+    [Cmdlet(VerbsLifecycle.Invoke, "History", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096586")]
     public class InvokeHistoryCommand : PSCmdlet
     {
         #region Parameters
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                     // and search backwards through the entries
                     for (int i = entries.Length - 1; i >= 0; i--)
                     {
-                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.CurrentCulture))
+                        if (entries[i].CommandLine.StartsWith(_commandLine, StringComparison.Ordinal))
                         {
                             entry = entries[i];
                             break;
@@ -1332,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class Implements the add-history command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113279")]
+    [Cmdlet(VerbsCommon.Add, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096479")]
     [OutputType(typeof(HistoryInfo))]
     public class AddHistoryCommand : PSCmdlet
     {
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
     /// This Class implements the Clear History cmdlet
     ///</summary>
 
-    [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135199")]
+    [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
     {
         #region Command Line Parameters

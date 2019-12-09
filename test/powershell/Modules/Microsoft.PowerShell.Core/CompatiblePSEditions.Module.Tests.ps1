@@ -30,7 +30,8 @@ function New-EditionCompatibleModule
     param(
         [Parameter(Mandatory = $true)][string]$ModuleName,
         [string]$DirPath,
-        [string[]]$CompatiblePSEditions)
+        [string[]]$CompatiblePSEditions,
+        [string]$ErrorGenerationCode='')
 
     $modulePath = Join-Path $DirPath $ModuleName
 
@@ -41,7 +42,7 @@ function New-EditionCompatibleModule
 
     New-Item -Path $modulePath -ItemType Directory
 
-    New-Item -Path $psm1Path -Value "function Test-$ModuleName { `$true } function Test-${ModuleName}PSEdition { `$PSVersionTable.PSEdition }" -Force
+    New-Item -Path $psm1Path -Value "$ErrorGenerationCode function Test-$ModuleName { `$true } function Test-${ModuleName}PSEdition { `$PSVersionTable.PSEdition }" -Force
 
     if ($CompatiblePSEditions)
     {
@@ -385,6 +386,50 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             param($Editions, $ModuleName, $Result)
 
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
+        }
+    }
+}
+
+Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
+    BeforeAll {
+        $ModuleName = "DesktopModule"
+        $basePath = Join-Path $TestDrive "WinCompatModules"
+        Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
+        # create an incompatible module that generates an error on import
+        New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
+    }
+
+    Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
+        BeforeAll {
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Verify that Error is generated with default ErrorAction" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            $LogPath | Should -FileContentMatch 'divide by zero'
+        }
+
+        It "Verify that Warning is generated with default WarningAction" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell'
+        }
+
+        It "Verify that Error is Not generated with -ErrorAction Ignore" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore" *> $LogPath
+            $LogPath | Should -Not -FileContentMatch 'divide by zero'
+        }
+
+        It "Verify that Warning is Not generated with -WarningAction Ignore" -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -WarningAction Ignore" *> $LogPath
+            $LogPath | Should -Not -FileContentMatch 'loaded in Windows PowerShell'
         }
     }
 }

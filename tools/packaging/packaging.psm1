@@ -973,7 +973,7 @@ function New-MacOsDistributionPackage
     # 2 - package path
     # 3 - minimum os version
     # 4 - Package Identifier
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.13', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
@@ -1170,7 +1170,8 @@ function Get-PackageDependencies
             switch -regex ($Distribution) {
                 "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian\.(9|10|11)" { $Dependencies += @("libssl1.0.2", "libicu57") }
+                "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+                "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
         } elseif ($Environment.IsRedHatFamily) {

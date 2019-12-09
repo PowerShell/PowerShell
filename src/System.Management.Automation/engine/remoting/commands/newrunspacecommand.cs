@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
     /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096484", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class NewPSSessionCommand : PSRemotingBaseCmdlet, IDisposable
     {

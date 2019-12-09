@@ -138,7 +138,7 @@ namespace System.Management.Automation
 #if !UNIX
                 new ExperimentalFeature(
                     name: "PSWindowsPowerShellCompatibility",
-                    description: "Load non-PSCore-compartible modules into Windows PowerShell over PS Remoting")
+                    description: "Load non-PSCore-compatible modules into Windows PowerShell over PS Remoting")
 #endif
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

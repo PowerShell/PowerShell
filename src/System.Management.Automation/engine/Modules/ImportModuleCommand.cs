@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141553")]
+    [Cmdlet(VerbsData.Import, "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096585")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportModuleCommand : ModuleCmdletBase, IDisposable
     {
@@ -1870,33 +1870,43 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.UseWindowsPowerShell)
                 {
-#if !UNIX
-                    var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
-                    if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
-                    {
-                        string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
-                        throw new InvalidOperationException(errorMessage);
-                    }
-
-                    var WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
-                    if (WindowsPowerShellCompatRemotingSession != null)
-                    {
-                        foreach(PSModuleInfo moduleProxy in ImportModule_RemotelyViaPsrpSession(importModuleOptions, this.Name, this.FullyQualifiedName, WindowsPowerShellCompatRemotingSession, true))
-                        {
-                            moduleProxy.IsWindowsPowerShellCompatModule = true;
-                            System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
-
-                            string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
-                            WriteWarning(message);
-                        }
-                    }
-#endif
+                    ImportModulesUsingWinCompat(this.Name, this.FullyQualifiedName, importModuleOptions);
                 }
             }
             else
             {
                 Dbg.Assert(false, "Unrecognized parameter set");
             }
+        }
+
+        internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
+        {
+            IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
+#if !UNIX
+            var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
+            if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
+            {
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
+            if (WindowsPowerShellCompatRemotingSession == null)
+            {
+                return new List<PSModuleInfo>();
+            }
+
+            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            {
+                moduleProxy.IsWindowsPowerShellCompatModule = true;
+                System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
+
+                string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                WriteWarning(message);
+            }
+#endif
+            return moduleProxyList;
         }
 
         private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
