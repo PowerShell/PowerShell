@@ -77,6 +77,10 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 }
             }
         }
+
+        It "Container check works" {
+            Test-Path wsman:\foo -PathType container | Should -BeFalse
+        }
     }
 
     Context "Get-Item tests" {
