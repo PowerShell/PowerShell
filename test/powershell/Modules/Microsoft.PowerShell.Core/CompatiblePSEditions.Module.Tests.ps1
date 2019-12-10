@@ -246,7 +246,16 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
         New-TestModules -TestCases $successCases -BaseDir $basePath
         New-TestModules -TestCases $failCases -BaseDir $basePath
 
-        $allModules = ($successCases + $failCases).ModuleName
+        $allCases = $successCases + $failCases
+        $allModules = $allCases.ModuleName
+        $versionTestCases = @()
+        foreach($versionString in @('1.0','2.0','3.0','4.0','5.0','5.1','5.1.14393.0'))
+        {
+            foreach($case in $allCases)
+            {
+                $versionTestCases += $case + @{WinPSVersion = $versionString}
+            }
+        }
 
         # make sure there are no ImplicitRemoting leftovers from previous tests
         Get-Module | Where-Object {$_.PrivateData.ImplicitRemoting} | Remove-Module -Force
@@ -299,6 +308,24 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
             Import-Module $ModuleName -UseWindowsPowerShell -Force
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "WinCompat works only with Windows PS 5.1 (when PSEdition <Editions> and WinPSVersion <WinPSVersion>)" -TestCases $versionTestCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result, $WinPSVersion)
+
+            try {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellVersionString", $WinPSVersion)
+                if ($WinPSVersion.StartsWith('5.1')) {
+                    Import-Module $ModuleName -UseWindowsPowerShell -Force
+                    & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
+                }
+                else {
+                    { Import-Module $ModuleName -UseWindowsPowerShell -Force } | Should -Throw -ErrorId "InvalidOperationException"
+                }
+            }
+            finally {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellVersionString", $null)
+            }
         }
     }
 

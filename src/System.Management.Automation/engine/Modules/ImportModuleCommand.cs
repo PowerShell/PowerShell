@@ -1881,13 +1881,22 @@ namespace Microsoft.PowerShell.Commands
 
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
+            IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
+#if !UNIX
+            var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
+            if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
+            {
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
+                throw new InvalidOperationException(errorMessage);
+            }
+
             PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
             if (WindowsPowerShellCompatRemotingSession == null)
             {
                 return new List<PSModuleInfo>();
             }
 
-            var moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
             foreach(PSModuleInfo moduleProxy in moduleProxyList)
             {
                 moduleProxy.IsWindowsPowerShellCompatModule = true;
@@ -1896,7 +1905,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
                 WriteWarning(message);
             }
-
+#endif
             return moduleProxyList;
         }
 
