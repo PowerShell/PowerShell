@@ -1160,8 +1160,9 @@ namespace Microsoft.PowerShell.Commands
 
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
             connectionInfo.AuthenticationMechanism = this.Authentication;
+#if !UNIX
             connectionInfo.PSVersion = new Version(5, 1);
-
+#endif
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             string runspaceName = GetRunspaceName(0, out int runspaceIdUnused);
             remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: connectionInfo,

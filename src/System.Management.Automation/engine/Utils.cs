@@ -446,6 +446,41 @@ namespace System.Management.Automation
 
             return null;
         }
+
+        private static string s_windowsPowerShellVersion = null;
+
+        /// <summary>
+        /// Get the Windows PowerShell version from registry.
+        /// </summary>
+        /// <returns>
+        /// String of Windows PowerShell version from registry.
+        /// </returns>
+        internal static string GetWindowsPowerShellVersionFromRegistry()
+        {
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellVersionString))
+            {
+                return InternalTestHooks.TestWindowsPowerShellVersionString;
+            }
+
+            if (s_windowsPowerShellVersion != null)
+            {
+                return s_windowsPowerShellVersion;
+            }
+
+            string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
+                PSVersionInfo.RegistryVersionKey + "\\" + RegistryStrings.MonadEngineKey;
+
+            using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
+            {
+                if (engineKey != null)
+                {
+                    s_windowsPowerShellVersion = engineKey.GetValue(RegistryStrings.MonadEngine_MonadVersion) as string;
+                    return s_windowsPowerShellVersion;
+                }
+            }
+
+            return string.Empty;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
@@ -2035,6 +2070,9 @@ namespace System.Management.Automation.Internal
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
+
+        // A version of Windows PS that is installed on the system; normally this is retrieved from a reg key that is write-protected.
+        internal static string TestWindowsPowerShellVersionString;
 
         internal static bool ShowMarkdownOutputBypass;
 
