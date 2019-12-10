@@ -17,4 +17,4 @@ This is a list of adopters of using PowerShell in production or in their product
   More information about Azure Cloud Shell is available at [Azure Cloud Shell Overview.](https://docs.microsoft.com/azure/cloud-shell/overview)
 * [PowerShell Universal Dashboard](https://ironmansoftware.com/powershell-universal-dashboard) is a cross-platform web framework for PowerShell. 
   It provides the ability to create robust, interactive websites, REST APIs, and Electron-based desktop apps with PowerShell script. 
-More information about PowerShell Universal Dashboard is available at the [PowerShell Universal Dashboard Docs](https://docs.universaldashboard.io).
+  More information about PowerShell Universal Dashboard is available at the [PowerShell Universal Dashboard Docs](https://docs.universaldashboard.io).
