@@ -1199,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(parameter.Attributes == null || parameter.Attributes.Count == 0,
                         "Attributes shouldn't get rehydrated");
 
-                    // sanitize - remove type constraint that are not whitelisted
+                    // sanitize - remove type constraint that are not allowed
                     if (!IsSafeTypeConstraint(parameter.ParameterType))
                     {
                         parameter.ParameterType = null;
