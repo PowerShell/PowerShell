@@ -747,7 +747,7 @@ namespace System.Management.Automation
             {
                 DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
-                var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger.IsActive, _serverRemoteDebugger.IsRemote, out commandArgument);
+                var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, out commandArgument);
 
                 switch (result)
                 {
@@ -775,6 +775,10 @@ namespace System.Management.Automation
                         break;
 
                     case PreProcessCommandResult.ValidNotProcessed:
+                        terminateImmediate = true;
+                        break;
+
+                    case PreProcessCommandResult.SetBreakpoint:
                         terminateImmediate = true;
                         break;
                 }
@@ -1237,6 +1241,8 @@ namespace System.Management.Automation
             /// SetPreserveUnhandledBreakpointMode.
             /// </summary>
             SetPreserveUnhandledBreakpointMode,
+
+            SetBreakpoint
         };
 
         private class DebuggerCommandArgument
@@ -1255,14 +1261,12 @@ namespace System.Management.Automation
         /// Parses special debugger commands and converts to equivalent script for remote execution as needed.
         /// </summary>
         /// <param name="commands">PSCommand.</param>
-        /// <param name="isDebuggerActive">True if debugger is active.</param>
-        /// <param name="isDebuggerRemote">True if active debugger is pushed and is a remote debugger.</param>
+        /// <param name="serverRemoteDebugger"></param>
         /// <param name="commandArgument">Command argument.</param>
         /// <returns>PreProcessCommandResult type if preprocessing occurred.</returns>
         private static PreProcessCommandResult PreProcessDebuggerCommand(
             PSCommand commands,
-            bool isDebuggerActive,
-            bool isDebuggerRemote,
+            ServerRemoteDebugger serverRemoteDebugger,
             out DebuggerCommandArgument commandArgument)
         {
             commandArgument = new DebuggerCommandArgument();
@@ -1282,7 +1286,7 @@ namespace System.Management.Automation
                 // Returns DebuggerStopEventArgs object.
 
                 // Evaluate this command only if the debugger is activated.
-                if (!isDebuggerActive)
+                if (!serverRemoteDebugger.IsActive)
                 {
                     return PreProcessCommandResult.ValidNotProcessed;
                 }
@@ -1296,7 +1300,7 @@ namespace System.Management.Automation
                 // Returns void.
 
                 // Evaluate this command only if the debugger is activated.
-                if (!isDebuggerActive)
+                if (!serverRemoteDebugger.IsActive)
                 {
                     return PreProcessCommandResult.ValidNotProcessed;
                 }
@@ -1394,7 +1398,7 @@ namespace System.Management.Automation
                 // Returns Breakpoint object(s).
                 string script = null;
 
-                if (command.Parameters?.Count > 0)
+                if (command.Parameters?.Count > 1)
                 {
                     int breakpointId = CheckBreakpointIdParameter(command);
                     script = $"$host.Runspace.Debugger.GetBreakpoint({breakpointId})";
@@ -1408,71 +1412,23 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(RemoteDebuggingCommands.SetBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
-                // __Set-PSBreakpoint private virtual command.
-                // Input parameters:
-                // [-Script] <string[]> [-Line] <int[]> [[-Column] <int>] [-Action <scriptblock>]
-                // [[-Script] <string[]>] -Command <string[]> [-Action <scriptblock>]
-                // [[-Script] <string[]>] -Variable <string[]> [-Action <scriptblock>] [-Mode <VariableAccessMode>]
-                // Returns Breakpoint object.
-                if (command.Parameters == null || command.Parameters.Count == 0)
+                if (!(command.Parameters[0].Value is Breakpoint breakpoint))
                 {
-                    throw new PSArgumentException("You must provide at least one parameter.");
+                    throw new PSArgumentException("bad");
                 }
 
-                string breakpointType = null;
-                foreach (var commandParameter in command.Parameters)
+                if (!(command.Parameters[1].Value is int runspaceId))
                 {
-                    if (!commandParameter.Name.Equals("Script", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Line", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Column", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Command", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Variable", StringComparison.OrdinalIgnoreCase) &&
-                        !commandParameter.Name.Equals("Mode", StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new PSArgumentException(commandParameter.Name);
-                    }
-
-                    if (commandParameter.Name.Equals("Line", StringComparison.OrdinalIgnoreCase) ||
-                        commandParameter.Name.Equals("Column", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (breakpointType != null && breakpointType != "Line")
-                        {
-                            throw new PSArgumentException(commandParameter.Name);
-                        }
-
-                        breakpointType = "Line";
-                    }
-                    else if (commandParameter.Name.Equals("Command", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (breakpointType != null)
-                        {
-                            throw new PSArgumentException(commandParameter.Name);
-                        }
-
-                        breakpointType = "Command";
-                    }
-                    else if (commandParameter.Name.Equals("Variable", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (breakpointType != null)
-                        {
-                            throw new PSArgumentException(commandParameter.Name);
-                        }
-
-                        breakpointType = "Variable";
-                    }
+                    throw new PSArgumentException("bad");
                 }
 
                 commands.Clear();
-                commands.AddCommand("Set-PSBreakpoint");
-                foreach (var commandParameter in command.Parameters)
-                {
-                    var parameterValue = commandParameter.Name.Equals("Action", StringComparison.OrdinalIgnoreCase)
-                        ? ScriptBlock.Create(commandParameter.Value as string)
-                        : commandParameter.Value;
 
-                    commands.AddParameter(commandParameter.Name, parameterValue);
-                }
+                serverRemoteDebugger.SetBreakpoints(new[] {breakpoint}, runspaceId);
+
+
+                result = PreProcessCommandResult.SetBreakpoint;
+
             }
             else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1483,9 +1439,15 @@ namespace System.Management.Automation
 
                 int breakpointId = CheckBreakpointIdParameter(command);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); $bp -ne $null -and $host.Runspace.Debugger.RemoveBreakpoint($bp)";
+                if (!(command.Parameters[1].Value is int runspaceId))
+                {
+                    throw new PSArgumentException("bad");
+                }
 
-                ReplaceVirtualCommandWithScript(commands, script);
+                serverRemoteDebugger.RemoveBreakpoint(serverRemoteDebugger.GetBreakpoint(breakpointId), runspaceId);
+
+                result = PreProcessCommandResult.SetBreakpoint;
+
             }
             else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1846,32 +1808,33 @@ namespace System.Management.Automation
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">List of breakpoints.</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
-            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
+        /// <param name="runspaceId"></param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null) =>
+            _wrappedDebugger.Value.SetBreakpoints(breakpoints, runspaceId);
 
-        public override Breakpoint GetBreakpoint(int id) =>
-            _wrappedDebugger.Value.GetBreakpoint(id);
+        public override Breakpoint GetBreakpoint(int id, int? runspaceId = null) =>
+            _wrappedDebugger.Value.GetBreakpoint(id, runspaceId);
 
-        public override List<Breakpoint> GetBreakpoints() =>
-            _wrappedDebugger.Value.GetBreakpoints();
+        public override List<Breakpoint> GetBreakpoints(int? runspaceId = null) =>
+            _wrappedDebugger.Value.GetBreakpoints(runspaceId);
 
-        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null) =>
-            _wrappedDebugger.Value.SetCommandBreakpoint(command, action, path);
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null, int? runspaceId = null) =>
+            _wrappedDebugger.Value.SetCommandBreakpoint(command, action, path, runspaceId);
 
-        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null) =>
-            _wrappedDebugger.Value.SetLineBreakpoint(path, line, column, action);
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null, int? runspaceId = null) =>
+            _wrappedDebugger.Value.SetLineBreakpoint(path, line, column, action, runspaceId);
 
-        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null) =>
-            _wrappedDebugger.Value.SetVariableBreakpoint(variableName, accessMode, action, path);
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null, int? runspaceId = null) =>
+            _wrappedDebugger.Value.SetVariableBreakpoint(variableName, accessMode, action, path, runspaceId);
 
-        public override bool RemoveBreakpoint(Breakpoint breakpoint) =>
-            _wrappedDebugger.Value.RemoveBreakpoint(breakpoint);
+        public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+            _wrappedDebugger.Value.RemoveBreakpoint(breakpoint, runspaceId);
 
-        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint) =>
-            _wrappedDebugger.Value.EnableBreakpoint(breakpoint);
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+            _wrappedDebugger.Value.EnableBreakpoint(breakpoint, runspaceId);
 
-        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint) =>
-            _wrappedDebugger.Value.DisableBreakpoint(breakpoint);
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+            _wrappedDebugger.Value.DisableBreakpoint(breakpoint, runspaceId);
 
         /// <summary>
         /// Exits debugger mode with the provided resume action.
