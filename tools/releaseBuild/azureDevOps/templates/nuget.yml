@@ -136,6 +136,7 @@ jobs:
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
