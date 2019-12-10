@@ -864,26 +864,33 @@ namespace System.Management.Automation
                     cs.GroupId = css.GroupId;
                     cs.HardlinkCount = css.HardlinkCount;
                     cs.Size = css.Size;
-                    // These can sometime throw if we get an unreasonable number back
-                    // As a fallback, set the time to UnixEpoch
-                    try {
+
+                    // These can sometime throw if we get too large a number back (seen on Raspbian).
+                    // As a fallback, set the time to UnixEpoch.
+                    try
+                    {
                         cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
                     }
-                    catch {
+                    catch
+                    {
                         cs.AccessTime = DateTime.UnixEpoch.ToLocalTime();
                     }
 
-                    try {
+                    try
+                    {
                         cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
                     }
-                    catch {
+                    catch
+                    {
                         cs.ModifiedTime = DateTime.UnixEpoch.ToLocalTime();
                     }
 
-                    try {
+                    try
+                    {
                         cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
                     }
-                    catch {
+                    catch
+                    {
                         cs.StatusChangeTime = DateTime.UnixEpoch.ToLocalTime();
                     }
 
