@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Telemetry
         static ApplicationInsightsTelemetry()
         {
             // If we can't send telemetry, there's no reason to do any of this
-            CanSendTelemetry = !Utils.GetOptOutEnvVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
+            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             if (CanSendTelemetry)
             {
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
@@ -134,6 +134,35 @@ namespace Microsoft.PowerShell.Telemetry
                     };
 
                 s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
+            }
+        }
+
+        /// <summary>
+        /// Determine whether the environment variable is set and how.
+        /// </summary>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="defaultValue">If the environment variable is not set, use this as the default value.</param>
+        /// <returns>A boolean representing the value of the environment variable.</returns>
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
+        {
+            var str = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrEmpty(str))
+            {
+                return defaultValue;
+            }
+
+            switch (str.ToLowerInvariant())
+            {
+                case "true":
+                case "1":
+                case "yes":
+                    return true;
+                case "false":
+                case "0":
+                case "no":
+                    return false;
+                default:
+                    return defaultValue;
             }
         }
 
