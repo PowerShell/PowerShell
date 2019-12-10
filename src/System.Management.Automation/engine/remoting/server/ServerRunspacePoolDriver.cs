@@ -778,7 +778,7 @@ namespace System.Management.Automation
                         terminateImmediate = true;
                         break;
 
-                    case PreProcessCommandResult.SetBreakpoint:
+                    case PreProcessCommandResult.BreakpointManagement:
                         terminateImmediate = true;
                         break;
                 }
@@ -1242,7 +1242,10 @@ namespace System.Management.Automation
             /// </summary>
             SetPreserveUnhandledBreakpointMode,
 
-            SetBreakpoint
+            /// <summary>
+            /// BreakpointManagement.
+            /// </summary>
+            BreakpointManagement,
         };
 
         private class DebuggerCommandArgument
@@ -1396,11 +1399,14 @@ namespace System.Management.Automation
                 // Input parameters:
                 // [-Id <int>]
                 // Returns Breakpoint object(s).
+                // This is the only command that uses the pipeline because right now,
+                // that's the easiest way to return something back to the client.
+                // The other breakpoint management messages don't need to return anything
+                // at this time.
                 string script = null;
 
-                if (command.Parameters?.Count > 1)
+                if (TryGetParameter<int>(command, "Id", out int breakpointId))
                 {
-                    int breakpointId = CheckBreakpointIdParameter(command);
                     script = $"$host.Runspace.Debugger.GetBreakpoint({breakpointId})";
                 }
                 else
@@ -1412,22 +1418,25 @@ namespace System.Management.Automation
             }
             else if (commandText.Equals(RemoteDebuggingCommands.SetBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(command.Parameters[0].Value is Breakpoint breakpoint))
+                // __Set-PSBreakpoint private virtual command.
+                // Input parameters:
+                // -Breakpoint <Breakpoint> or -BreakpointList <IEnumerable<Breakpoint>>
+                // [-RunspaceId <int?>]
+
+                TryGetParameter<Breakpoint>(command, "Breakpoint", out Breakpoint breakpoint);
+                TryGetParameter<IEnumerable<Breakpoint>>(command, "BreakpointList", out IEnumerable<Breakpoint> breakpoints);
+                if (breakpoint == null && breakpoints == null)
                 {
-                    throw new PSArgumentException("bad");
+                    throw new PSArgumentException("Breakpoint or BreakpointList must be specified");
                 }
 
-                if (!(command.Parameters[1].Value is int runspaceId))
-                {
-                    throw new PSArgumentException("bad");
-                }
+                TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
                 commands.Clear();
 
-                serverRemoteDebugger.SetBreakpoints(new[] {breakpoint}, runspaceId);
+                serverRemoteDebugger.SetBreakpoints(breakpoints != null ? breakpoints : new[] { breakpoint }, runspaceId);
 
-
-                result = PreProcessCommandResult.SetBreakpoint;
+                result = PreProcessCommandResult.BreakpointManagement;
 
             }
             else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
@@ -1435,18 +1444,14 @@ namespace System.Management.Automation
                 // __Remove-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
-                // Returns bool.
+                // [-RunspaceId <int?>]
 
-                int breakpointId = CheckBreakpointIdParameter(command);
+                int breakpointId = GetParameter<int>(command, "Id");
+                TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
-                if (!(command.Parameters[1].Value is int runspaceId))
-                {
-                    throw new PSArgumentException("bad");
-                }
+                serverRemoteDebugger.RemoveBreakpoint(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId), runspaceId);
 
-                serverRemoteDebugger.RemoveBreakpoint(serverRemoteDebugger.GetBreakpoint(breakpointId), runspaceId);
-
-                result = PreProcessCommandResult.SetBreakpoint;
+                result = PreProcessCommandResult.BreakpointManagement;
 
             }
             else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
@@ -1454,26 +1459,36 @@ namespace System.Management.Automation
                 // __Enable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
-                // Returns Breakpoint.
+                // [-RunspaceId <int?>]
 
-                int breakpointId = CheckBreakpointIdParameter(command);
+                int breakpointId = GetParameter<int>(command, "Id");
+                TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.EnableBreakpoint($bp)}}";
-
-                ReplaceVirtualCommandWithScript(commands, script);
+                Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
+                if (bp != null)
+                {
+                    serverRemoteDebugger.EnableBreakpoint(bp, runspaceId);
+                }
+                
+                result = PreProcessCommandResult.BreakpointManagement;
             }
             else if (commandText.Equals(RemoteDebuggingCommands.DisableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
                 // __Disable-PSBreakpoint private virtual command.
                 // Input parameters:
                 // -Id <int>
-                // Returns Breakpoint.
+                // [-RunspaceId <int?>]
 
-                int breakpointId = CheckBreakpointIdParameter(command);
+                int breakpointId = GetParameter<int>(command, "Id");
+                TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
-                string script = $"$bp = $host.Runspace.Debugger.GetBreakpoint({breakpointId}); if ($bp -ne $null) {{$host.Runspace.Debugger.DisableBreakpoint($bp)}}";
-
-                ReplaceVirtualCommandWithScript(commands, script);
+                Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
+                if (bp != null)
+                {
+                    serverRemoteDebugger.DisableBreakpoint(bp, runspaceId);
+                }
+                
+                result = PreProcessCommandResult.BreakpointManagement;
             }
 
             return result;
@@ -1489,22 +1504,36 @@ namespace System.Management.Automation
                     .AddParameter("NoNewScope", true);
         }
 
-        private static int CheckBreakpointIdParameter(Command command)
+        private static T GetParameter<T>(Command command, string parameterName)
         {
-            if (command.Parameters == null ||
-                command.Parameters.Count == 0 ||
-                !command.Parameters[0].Name.Equals("Id", StringComparison.OrdinalIgnoreCase))
+            if(command.Parameters?.Count == 0)
             {
-                throw new PSArgumentException("Id");
+                throw new PSArgumentException(parameterName);
             }
 
-            int? breakpointId = command.Parameters[0].Value as int?;
-            if (breakpointId == null)
+            foreach (CommandParameter param in command.Parameters)
             {
-                throw new PSArgumentException("Id");
+                if (string.Equals(param.Name, parameterName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return (T) param.Value;
+                }
             }
 
-            return breakpointId.Value;
+            throw new PSArgumentException(parameterName);
+        }
+
+        private static bool TryGetParameter<T>(Command command, string parameterName, out T value)
+        {
+            try
+            {
+                value = GetParameter<T>(command, parameterName);
+                return true;
+            }
+            catch(Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
+            {
+                value = default(T);
+                return false;
+            }
         }
 
         #endregion

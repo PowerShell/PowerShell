@@ -2011,8 +2011,23 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="breakpoints">Breakpoints to set.</param>
         /// <param name="runspaceId"></param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null) =>
-            _runspace.Debugger?.SetBreakpoints(breakpoints, runspaceId);
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null)
+        {
+            // This is supported only for PowerShell versions >= 7.0
+            CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
+
+            var functionParameters = new Dictionary<string, object>
+            {
+                { "Breakpoint", breakpoints },
+            };
+
+            if (runspaceId.HasValue)
+            {
+                functionParameters.Add("RunspaceId", runspaceId.Value);
+            }
+
+            InvokeRemoteBreakpointFunction<CommandBreakpoint>(RemoteDebuggingCommands.SetBreakpoint, functionParameters);
+        }
 
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
@@ -2075,21 +2090,12 @@ namespace System.Management.Automation
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
-
+            
+            Breakpoint breakpoint = new CommandBreakpoint(path, null, command, action);
             var functionParameters = new Dictionary<string, object>
             {
-                { "Command", command },
+                { "Breakpoint", breakpoint },
             };
-
-            if (action != null)
-            {
-                functionParameters.Add("Action", action);
-            }
-
-            if (path != null)
-            {
-                functionParameters.Add("Script", path);
-            }
 
             if (runspaceId.HasValue)
             {
@@ -2133,25 +2139,12 @@ namespace System.Management.Automation
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
 
+            Breakpoint breakpoint = new VariableBreakpoint(path, variableName, accessMode, action);
+
             var functionParameters = new Dictionary<string, object>
             {
-                { "Variable", variableName },
+                { "Breakpoint", breakpoint },
             };
-
-            if (accessMode != VariableAccessMode.Write)
-            {
-                functionParameters.Add("Mode", accessMode);
-            }
-
-            if (action != null)
-            {
-                functionParameters.Add("Action", action);
-            }
-
-            if (path != null)
-            {
-                functionParameters.Add("Script", path);
-            }
 
             if (runspaceId.HasValue)
             {
@@ -2165,6 +2158,11 @@ namespace System.Management.Automation
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.RemoveBreakpoint);
+
+            if (breakpoint == null)
+            {
+                return false;
+            }
 
             var functionParameters = new Dictionary<string, object>
             {
@@ -2184,6 +2182,11 @@ namespace System.Management.Automation
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.EnableBreakpoint);
 
+            if (breakpoint == null)
+            {
+                return null;
+            }
+
             var functionParameters = new Dictionary<string, object>
             {
                 { "Id", breakpoint.Id },
@@ -2201,6 +2204,11 @@ namespace System.Management.Automation
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.DisableBreakpoint);
+
+            if (breakpoint == null)
+            {
+                return null;
+            }
 
             var functionParameters = new Dictionary<string, object>
             {
