@@ -34,6 +34,16 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[2].CompletionText | Should -BeExactly "-NoOverwrite"
     }
 
+    It "Issue#11227 - [CompletionCompleters]::CompleteVariable and [CompletionCompleters]::CompleteType should work" {
+        $result = [System.Management.Automation.CompletionCompleters]::CompleteType("CompletionComple")
+        $result.Count | Should -BeExactly 1
+        $result[0].CompletionText | Should -BeExactly 'System.Management.Automation.CompletionCompleters'
+
+        $result = [System.Management.Automation.CompletionCompleters]::CompleteVariable("errorAction")
+        $result.Count | Should -BeExactly 1
+        $result[0].CompletionText | Should -BeExactly '$ErrorActionPreference'
+    }
+
     Context "Issue#3416 - 'Select-Object'" {
         BeforeAll {
             $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name
