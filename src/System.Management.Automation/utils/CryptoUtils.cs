@@ -99,7 +99,7 @@ namespace System.Management.Automation.Internal
         {
             if (blob == null)
             {
-                throw new ArgumentNullException("blob");
+                throw new ArgumentNullException(nameof(blob));
             }
 
             if (offset > blob.Length)
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal
         {
             if (blob == null)
             {
-                throw new ArgumentNullException("blob");
+                throw new ArgumentNullException(nameof(blob));
             }
 
             if (offset > blob.Length)
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Internal
         {
             if (rsa == null)
             {
-                throw new ArgumentNullException("rsa");
+                throw new ArgumentNullException(nameof(rsa));
             }
 
             RSAParameters p = rsa.ExportParameters(false);
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         {
             if (blob == null)
             {
-                throw new ArgumentNullException("blob");
+                throw new ArgumentNullException(nameof(blob));
             }
 
             if (blob.Length < SIMPLEBLOB_HEADER_LEN)
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Internal
         {
             if (encryptedKey == null)
             {
-                throw new ArgumentNullException("encryptedKey");
+                throw new ArgumentNullException(nameof(encryptedKey));
             }
 
             // formulate the PUBLICKEYSTRUCT
