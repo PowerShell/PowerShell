@@ -15,7 +15,7 @@ This is a list of adopters of using PowerShell in production or in their product
 * [Azure Cloud Shell](https://shell.azure.com/) provides a batteries-included browser-based PowerShell environment used by Azure administrators to manage their environment.
   It includes up-to-date PowerShell modules for `Azure`, `AzureAD`, `Exchange`, `Teams`, and many more.
   More information about Azure Cloud Shell is available at [Azure Cloud Shell Overview.](https://docs.microsoft.com/azure/cloud-shell/overview)
-* [Azure Functions - PowerShell](https://github.com/Azure/azure-functions-powershell-worker) is a serveless compute service to execute PowerShell scripts in the cloud without worrying about managing resources.
+* [Azure Functions - PowerShell](https://github.com/Azure/azure-functions-powershell-worker) is a serverless compute service to execute PowerShell scripts in the cloud without worrying about managing resources.
   In addition, Azure Functions provides client tools such as [`Az.Functions`](https://www.powershellgallery.com/packages/Az.Functions), a cross-platform PowerShell module to manage function apps and service plans in the cloud.
   For more information about Functions, please visit [functions overview](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview).
 * [PowerShell Universal Dashboard](https://ironmansoftware.com/powershell-universal-dashboard) is a cross-platform web framework for PowerShell. 
