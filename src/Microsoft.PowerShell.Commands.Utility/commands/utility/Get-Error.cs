@@ -11,7 +11,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Get-Error implementation.
     /// </summary>
-    [Experimental("Microsoft.PowerShell.Utility.PSGetError", ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Get, "Error",
         HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp",
         DefaultParameterSetName = NewestParameterSetName)]
