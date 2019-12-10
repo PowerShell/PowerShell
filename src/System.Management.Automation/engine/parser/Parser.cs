@@ -6648,7 +6648,6 @@ namespace System.Management.Automation.Language
             // G  ternary-expression:
             // G      binary-expression   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
 
-            // TODO: remove this if-block when making 'ternary operator' an official feature.
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
             try
