@@ -113,7 +113,7 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
-        private readonly HashSet<string> _blackListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
+        private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
                 "System.Windows.Forms"
             };
 
@@ -331,7 +331,7 @@ namespace System.Management.Automation
         private bool TryFindInGAC(AssemblyName assemblyName, out string assemblyFilePath)
         {
             assemblyFilePath = null;
-            if (_blackListedAssemblies.Contains(assemblyName.Name))
+            if (_denyListedAssemblies.Contains(assemblyName.Name))
             {
                 // DotNet catches and throws a new exception with no inner exception
                 // We cannot change the message DotNet returns.
