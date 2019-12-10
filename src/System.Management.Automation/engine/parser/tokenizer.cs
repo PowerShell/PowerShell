@@ -727,7 +727,7 @@ namespace System.Management.Automation.Language
         internal bool ForceEndNumberOnTernaryOpChars
         {
             get { return _forceEndNumberOnTernaryOpChars; }
-            set { _forceEndNumberOnTernaryOpChars = value && ExperimentalFeature.IsEnabled("PSTernaryOperator"); }
+            set { _forceEndNumberOnTernaryOpChars = value; }
         }
 
         internal bool WantSimpleName { get; set; }
@@ -5015,23 +5015,20 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
-                    if (ExperimentalFeature.IsEnabled("PSCoalescingOperators"))
+                    c1 = PeekChar();
+
+                    if (c1 == '?')
                     {
+                        SkipChar();
                         c1 = PeekChar();
 
-                        if (c1 == '?')
+                        if (c1 == '=')
                         {
                             SkipChar();
-                            c1 = PeekChar();
-
-                            if (c1 == '=')
-                            {
-                                SkipChar();
-                                return this.NewToken(TokenKind.QuestionQuestionEquals);
-                            }
-
-                            return this.NewToken(TokenKind.QuestionQuestion);
+                            return this.NewToken(TokenKind.QuestionQuestionEquals);
                         }
+
+                        return this.NewToken(TokenKind.QuestionQuestion);
                     }
 
                     return this.NewToken(TokenKind.QuestionMark);

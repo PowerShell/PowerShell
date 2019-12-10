@@ -103,12 +103,6 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
-                    if (!ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
-                    {
-                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
-                        return null;
-                    }
-
                     Version version;
                     if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out version))
                     {
@@ -490,14 +484,6 @@ namespace System.Management.Automation
         internal static void CacheModuleExports(PSModuleInfo module, ExecutionContext context)
         {
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
-
-            // Don't cache incompatible modules on the system32 module path even if loaded with
-            // -SkipEditionCheck, since it will break subsequent sessions.
-            if (!ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && !module.IsConsideredEditionCompatible)
-            {
-                ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
-                return;
-            }
 
             DateTime lastWriteTime;
             ModuleCacheEntry moduleCacheEntry;

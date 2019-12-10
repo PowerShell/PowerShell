@@ -234,7 +234,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a script block to run in parallel for each pipeline object.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public ScriptBlock Parallel { get; set; }
 
@@ -242,7 +241,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the maximum number of concurrently running scriptblocks on separate threads.
         /// The default number is 5.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(1, Int32.MaxValue)]
         public int ThrottleLimit { get; set; } = 5;
@@ -251,7 +249,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a timeout time in seconds, after which the parallel running scripts will be stopped
         /// The default value is 0, indicating no timeout.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(0, (Int32.MaxValue / 1000))]
         public int TimeoutSeconds { get; set; }
@@ -260,7 +257,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a flag that returns a job object immediately for the parallel operation, instead of returning after
         /// all foreach processing is completed.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter AsJob { get; set; }
 
