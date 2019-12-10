@@ -70,12 +70,19 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         $env:PSModulePath = ""
         $defaultModulePath = & $powershell -nopro -c '$env:PSModulePath'
+        $pathSeparator = [System.IO.Path]::PathSeparator
 
-        $paths = $defaultModulePath -split [System.IO.Path]::PathSeparator
+        $paths = $defaultModulePath.Replace("$pathSeparator$pathSeparator", "$pathSeparator") -split $pathSeparator
 
         if ($IsWindows)
         {
-            $paths.Count | Should -Be 4
+            $expectedPaths = 3 # user, shared, pshome
+            $userPaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::User)
+            $expectedPaths += $userPaths ? $userPaths.Split($pathSeparator).Count : 0
+            $machinePaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::Machine)
+            $expectedPaths += $machinePaths ? $machinePaths.Split($pathSeparator).Count : 0
+
+            $paths.Count | Should -Be $expectedPaths
         }
         else
         {
@@ -85,10 +92,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths[0].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedUserPath
         $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSharedPath
         $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSystemPath
-        if ($IsWindows)
-        {
-            $paths[3].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedWindowsPowerShellPSHomePath
-        }
+        $defaultModulePath | Should -BeLike "*$expectedWindowsPowerShellPSHomePath*"
     }
 
     It "Works with pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
@@ -104,18 +108,11 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $env:PSModulePath = $fakePSHomeModuleDir
             $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
             $paths = $newModulePath -split [System.IO.Path]::PathSeparator
-
             $paths.Count | Should -Be 4
-
             $paths[0] | Should -Be $expectedUserPath
             $paths[1] | Should -Be $expectedSharedPath
             $paths[2] | Should -Be $expectedSystemPath
             $paths[3] | Should -Be $fakePSHomeModuleDir
-            if ($IsWindows)
-            {
-                $expectedWindowsPowerShellPSHomePath | Should -Not -BeIn $paths
-            }
-
         } finally {
 
             ## Remove 'powershell' and 'pwsh.deps.json' from the fake PSHome folder
@@ -180,9 +177,14 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
     }
 
     It 'Windows PowerShell does not inherit path defined in powershell.config.json' -Skip:(!$IsWindows) {
-        $userConfig = '{ "PSModulePath": "myUserPath" }'
-        Set-Content -Path $userConfigPath -Value $userConfig -Force
-        $out = pwsh -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
-        $out | Should -Not -BeLike 'myUserPath;*'
+        try {
+            $userConfig = '{ "PSModulePath": "myUserPath" }'
+            Set-Content -Path $userConfigPath -Value $userConfig -Force
+            $out = pwsh -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+            $out | Should -Not -BeLike 'myUserPath;*'
+        }
+        finally {
+            Remove-Item -Path $userConfigPath -Force
+        }
     }
 }

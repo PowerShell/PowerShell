@@ -53,5 +53,14 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = pwsh -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
         }
+
+        It "Pester Should shows test file and not pester" {
+            $testScript = '1 + 1 | Should -Be 3'
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'mytest.ps1'
+            Set-Content -Path $testScriptPath -Value $testScript
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
+            $e | Out-String | Should -BeLike "*$testScriptPath*"
+            $e | Out-String | Should -Not -BeLike '*pester*'
+        }
     }
 }

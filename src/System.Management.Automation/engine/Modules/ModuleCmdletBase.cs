@@ -2365,12 +2365,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (importingModule)
                 {
-                    var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-                    ps.AddCommand(commandInfo);
-                    ps.AddParameter("PassThru", true);
-                    ps.AddParameter("Name", moduleManifestPath);
-                    ps.AddParameter("UseWindowsPowerShell", true);
+                    if (importingModule)
+                    {
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
 
                     var moduleProxies = ps.Invoke<PSModuleInfo>();
 
@@ -4822,6 +4819,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
+        internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) {throw new System.NotImplementedException();}
 
         private void RemoveTypesAndFormatting(
             IList<string> formatFilesToRemove,

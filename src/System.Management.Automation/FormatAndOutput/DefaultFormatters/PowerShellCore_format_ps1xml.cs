@@ -1050,14 +1050,29 @@ namespace System.Management.Automation.Runspaces
                                         $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
-                                            if ($myinv.ScriptName) {
+                                            $useTargetObject = $false
+
+                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
+                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
+                                                $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
+                                                $useTargetObject = $true
+                                            }
+                                            elseif ($myinv.ScriptName) {
                                                 $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
                                             }
 
-                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($useTargetObject) {
+                                                $scriptLineNumber = $_.TargetObject.Line
+                                                $scriptLineNumberLength = $_.TargetObject.Line.ToString().Length
+                                            }
+                                            else {
+                                                $scriptLineNumber = $myinv.ScriptLineNumber
+                                                $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            }
+
                                             if ($scriptLineNumberLength -gt 4) {
                                                 $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
                                             }
@@ -1069,17 +1084,27 @@ namespace System.Management.Automation.Runspaces
 
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
-                                            $line = $myinv.Line
-                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
+
+                                            if ($useTargetObject) {
+                                                $line = $_.TargetObject.LineText.Trim()
+                                                $offsetLength = 0
+                                                $offsetInLine = 0
+                                            }
+                                            else {
+                                                $line = $myinv.Line
+                                                $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
+                                                $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
+                                                $offsetInLine = $myinv.OffsetInLine - 1
+                                            }
+
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
-                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor).Insert($myinv.OffsetInLine - 1, $accentColor)
+                                                $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
-                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}`n""
+                                            $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
                                             $message = ""${prefix}${offsetWhitespace}^ ""
                                         }
