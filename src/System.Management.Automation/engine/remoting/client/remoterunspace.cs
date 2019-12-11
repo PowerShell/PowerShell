@@ -2010,7 +2010,7 @@ namespace System.Management.Automation
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">Breakpoints to set.</param>
-        /// <param name="runspaceId"></param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null)
         {
             // This is supported only for PowerShell versions >= 7.0
@@ -2033,7 +2033,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        /// <param name="runspaceId"></param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
         public override Breakpoint GetBreakpoint(int id, int? runspaceId = null)
         {
             // This is supported only for PowerShell versions >= 7.0
@@ -2055,6 +2055,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
         public override List<Breakpoint> GetBreakpoints(int? runspaceId = null)
         {
             // This is supported only for PowerShell versions >= 7.0

@@ -1091,7 +1091,7 @@ namespace System.Management.Automation.PSTasks
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">List of breakpoints.</param>
-        /// <param name="runspaceId"></param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null) =>
             _wrappedDebugger.SetBreakpoints(breakpoints, runspaceId);
 
