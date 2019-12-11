@@ -1271,9 +1271,9 @@ namespace System.Management.Automation
         /// Parses special debugger commands and converts to equivalent script for remote execution as needed.
         /// </summary>
         /// <param name="commands">PSCommand.</param>
-        /// <param name="serverRemoteDebugger"></param>
+        /// <param name="serverRemoteDebugger">The debugger that can be used to invoke debug operations via API.</param>
+        /// <param name="preProcessOutput">A Collection that can be used to send output to the client.</param>
         /// <param name="commandArgument">Command argument.</param>
-        /// <param name="preProcessOutput"></param>
         /// <returns>PreProcessCommandResult type if preprocessing occurred.</returns>
         private static PreProcessCommandResult PreProcessDebuggerCommand(
             PSCommand commands,
@@ -1284,7 +1284,7 @@ namespace System.Management.Automation
             commandArgument = new DebuggerCommandArgument();
             PreProcessCommandResult result = PreProcessCommandResult.None;
 
-            if ((commands.Commands.Count == 0) || (commands.Commands[0].IsScript))
+            if (commands.Commands.Count == 0 || commands.Commands[0].IsScript)
             {
                 return result;
             }
@@ -1452,7 +1452,6 @@ namespace System.Management.Automation
                 }
 
                 result = PreProcessCommandResult.BreakpointManagement;
-
             }
             else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1472,7 +1471,6 @@ namespace System.Management.Automation
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
-
             }
             else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1528,7 +1526,7 @@ namespace System.Management.Automation
 
         private static T GetParameter<T>(Command command, string parameterName)
         {
-            if(command.Parameters?.Count == 0)
+            if (command.Parameters?.Count == 0)
             {
                 throw new PSArgumentException(parameterName);
             }
@@ -1537,7 +1535,7 @@ namespace System.Management.Automation
             {
                 if (string.Equals(param.Name, parameterName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return (T) param.Value;
+                    return (T)param.Value;
                 }
             }
 
@@ -1551,7 +1549,7 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch(Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
+            catch (Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
             {
                 value = default(T);
                 return false;
