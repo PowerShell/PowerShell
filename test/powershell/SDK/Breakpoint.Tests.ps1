@@ -78,15 +78,15 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
     Context 'Managing breakpoints in a remote runspace via the SDK' {
 
         It 'Can set command breakpoints' {
-            $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeNullOrEmpty
+            $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
         }
 
         It 'Can set variable breakpoints' {
-            $jobRunspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { break }) | Should -BeNullOrEmpty
+            $jobRunspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { break }) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
         }
 
         It 'Can set line breakpoints' {
-            $jobRunspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { break }) | Should -BeNullOrEmpty
+            $jobRunspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { break }) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
         }
 
         It 'Can get breakpoints' {
@@ -96,13 +96,15 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
         It 'Can disable breakpoints' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
-                $jobRunspace.Debugger.DisableBreakpoint($bp) | Should -BeNullOrEmpty
+                $bp = $jobRunspace.Debugger.DisableBreakpoint($bp)
+                $bp.Enabled | Should -BeFalse
             }
         }
 
         It 'Can enable breakpoints' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
-                $jobRunspace.Debugger.EnableBreakpoint($bp) | Should -BeNullOrEmpty
+                $bp = $jobRunspace.Debugger.EnableBreakpoint($bp)
+                $bp.Enabled | Should -BeTrue
             }
         }
 
@@ -116,7 +118,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
         It 'Can remove breakpoints' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
-                $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeFalse
+                $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeTrue
             }
         }
 

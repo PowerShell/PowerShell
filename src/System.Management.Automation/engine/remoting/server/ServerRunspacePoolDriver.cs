@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -747,7 +748,8 @@ namespace System.Management.Automation
             {
                 DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
-                var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, out commandArgument);
+                Collection<object> preProcessOutput = new Collection<object>();
+                var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, preProcessOutput, out commandArgument);
 
                 switch (result)
                 {
@@ -799,6 +801,11 @@ namespace System.Management.Automation
                         streamOptions,
                         addToHistory,
                         null);
+
+                    if (preProcessOutput.Count > 0)
+                    {
+                        noOpDriver.AddToOutput(preProcessOutput);
+                    }
 
                     noOpDriver.RunNoOpCommand();
                     return;
@@ -1266,10 +1273,12 @@ namespace System.Management.Automation
         /// <param name="commands">PSCommand.</param>
         /// <param name="serverRemoteDebugger"></param>
         /// <param name="commandArgument">Command argument.</param>
+        /// <param name="preProcessOutput"></param>
         /// <returns>PreProcessCommandResult type if preprocessing occurred.</returns>
         private static PreProcessCommandResult PreProcessDebuggerCommand(
             PSCommand commands,
             ServerRemoteDebugger serverRemoteDebugger,
+            Collection<object> preProcessOutput,
             out DebuggerCommandArgument commandArgument)
         {
             commandArgument = new DebuggerCommandArgument();
@@ -1399,22 +1408,22 @@ namespace System.Management.Automation
                 // Input parameters:
                 // [-Id <int>]
                 // Returns Breakpoint object(s).
-                // This is the only command that uses the pipeline because right now,
-                // that's the easiest way to return something back to the client.
-                // The other breakpoint management messages don't need to return anything
                 // at this time.
-                string script = null;
 
+                TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
                 if (TryGetParameter<int>(command, "Id", out int breakpointId))
                 {
-                    script = $"$host.Runspace.Debugger.GetBreakpoint({breakpointId})";
+                     preProcessOutput.Add(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId));
                 }
                 else
                 {
-                    script = $"$host.Runspace.Debugger.GetBreakpoints()";
+                    foreach (Breakpoint breakpoint in serverRemoteDebugger.GetBreakpoints(runspaceId))
+                    {
+                        preProcessOutput.Add(breakpoint);
+                    }
                 }
 
-                ReplaceVirtualCommandWithScript(commands, script);
+                result = PreProcessCommandResult.BreakpointManagement;
             }
             else if (commandText.Equals(RemoteDebuggingCommands.SetBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1434,7 +1443,13 @@ namespace System.Management.Automation
 
                 commands.Clear();
 
-                serverRemoteDebugger.SetBreakpoints(breakpoints != null ? breakpoints : new[] { breakpoint }, runspaceId);
+                IEnumerable<Breakpoint> bps = breakpoints != null ? breakpoints : new[] { breakpoint };
+                serverRemoteDebugger.SetBreakpoints(bps, runspaceId);
+                
+                foreach (var bp in bps)
+                {
+                    preProcessOutput.Add(bp);
+                }
 
                 result = PreProcessCommandResult.BreakpointManagement;
 
@@ -1449,7 +1464,11 @@ namespace System.Management.Automation
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
-                serverRemoteDebugger.RemoveBreakpoint(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId), runspaceId);
+                Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
+                preProcessOutput.Add(
+                    breakpoint == null 
+                        ? false
+                        : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
 
@@ -1467,7 +1486,7 @@ namespace System.Management.Automation
                 Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 if (bp != null)
                 {
-                    serverRemoteDebugger.EnableBreakpoint(bp, runspaceId);
+                    preProcessOutput.Add(serverRemoteDebugger.EnableBreakpoint(bp, runspaceId));
                 }
                 
                 result = PreProcessCommandResult.BreakpointManagement;
@@ -1485,7 +1504,7 @@ namespace System.Management.Automation
                 Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 if (bp != null)
                 {
-                    serverRemoteDebugger.DisableBreakpoint(bp, runspaceId);
+                    preProcessOutput.Add(serverRemoteDebugger.DisableBreakpoint(bp, runspaceId));
                 }
                 
                 result = PreProcessCommandResult.BreakpointManagement;

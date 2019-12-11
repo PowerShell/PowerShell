@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -304,6 +305,14 @@ namespace System.Management.Automation
                                 new PSInvocationStateInfo(
                                     PSInvocationState.Completed, null));
                         });
+            }
+        }
+
+        internal void AddToOutput(IEnumerable<object> data)
+        {
+            foreach (object item in data)
+            {
+                _localPowerShellOutput.Add(new PSObject(item));
             }
         }
 
