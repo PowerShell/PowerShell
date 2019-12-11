@@ -165,4 +165,60 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
             $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeFalse
         }
     }
+
+    Context 'Manage breakpoints in another runspace' {
+        BeforeAll {
+            $runspace = [runspacefactory]::CreateRunspace()
+            $runspace.Open()
+        }
+
+        AfterAll {
+            $runspace.Close()
+            $runspace.Dispose()
+        }
+
+        It 'Can set command breakpoints' {
+            $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+        }
+
+        It 'Can set variable breakpoints' {
+            $host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+        }
+
+        It 'Can set line breakpoints' {
+            $host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }, $runspace.Id) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+        }
+
+        It 'Can get breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints($runspace.Id) | Should -HaveCount 3
+        }
+
+        It 'Can disable breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $bp = $host.Runspace.Debugger.DisableBreakpoint($bp, $runspace.Id)
+                $bp.Enabled | Should -BeFalse
+            }
+        }
+
+        It 'Can enable breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $bp = $host.Runspace.Debugger.EnableBreakpoint($bp, $runspace.Id)
+                $bp.Enabled | Should -BeTrue
+            }
+        }
+
+        It 'Doesn''t manipulate any breakpoints in the default runspace' {
+            $host.Runspace.Debugger.GetBreakpoints() | Should -BeNullOrEmpty
+        }
+
+        It 'Can remove breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $host.Runspace.Debugger.RemoveBreakpoint($bp, $runspace.Id) | Should -BeTrue
+            }
+        }
+
+        It 'Returns an empty collection when there are no breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints($runspace.Id) | Should -HaveCount 0
+        }
+    }
 }
