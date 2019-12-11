@@ -2811,13 +2811,13 @@ namespace System.Management.Automation
         {
             if(!Runspace.RunspaceDictionary.TryGetValue(runspaceId, out WeakReference<Runspace> wr))
             {
-                throw new PSArgumentException("Invalid runspace id.");
+                throw new PSArgumentException(DebuggerStrings.InvalidRunspaceId);
             }
 
 
             if(!wr.TryGetTarget(out Runspace rs))
             {
-                throw new PSArgumentException("Unable to get Runspace.");
+                throw new PSArgumentException(DebuggerStrings.UnableToGetRunspace);
             }
 
             return rs.Debugger;

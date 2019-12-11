@@ -1408,7 +1408,6 @@ namespace System.Management.Automation
                 // Input parameters:
                 // [-Id <int>]
                 // Returns Breakpoint object(s).
-                // at this time.
 
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
                 if (TryGetParameter<int>(command, "Id", out int breakpointId))
@@ -1431,6 +1430,7 @@ namespace System.Management.Automation
                 // Input parameters:
                 // -Breakpoint <Breakpoint> or -BreakpointList <IEnumerable<Breakpoint>>
                 // [-RunspaceId <int?>]
+                // Returns Breakpoint object(s).
 
                 TryGetParameter<Breakpoint>(command, "Breakpoint", out Breakpoint breakpoint);
                 TryGetParameter<IEnumerable<Breakpoint>>(command, "BreakpointList", out IEnumerable<Breakpoint> breakpoints);
@@ -1460,6 +1460,7 @@ namespace System.Management.Automation
                 // Input parameters:
                 // -Id <int>
                 // [-RunspaceId <int?>]
+                // Returns bool.
 
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
@@ -1479,6 +1480,7 @@ namespace System.Management.Automation
                 // Input parameters:
                 // -Id <int>
                 // [-RunspaceId <int?>]
+                // Returns Breakpoint object.
 
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
@@ -1497,6 +1499,7 @@ namespace System.Management.Automation
                 // Input parameters:
                 // -Id <int>
                 // [-RunspaceId <int?>]
+                // Returns Breakpoint object.
 
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
