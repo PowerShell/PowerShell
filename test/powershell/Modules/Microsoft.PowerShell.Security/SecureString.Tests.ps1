@@ -22,10 +22,11 @@ Describe "SecureString conversion tests" -Tags "CI" {
         $ss = ConvertTo-SecureString -AsPlainText -Force abcd
         $ss | Should -BeOfType SecureString
     }
+
     It "can convert back from a secure string" {
         $secret = "abcd"
         $ss1 = ConvertTo-SecureString -AsPlainText -Force $secret
-        $ss2 = convertfrom-securestring $ss1 | convertto-securestring
-        [pscredential]::New("user",$ss2).GetNetworkCredential().Password | Should -Be $secret
+        $ss2 = ConvertFrom-SecureString $ss1 | ConvertTo-SecureString
+        $ss2 | ConvertFrom-SecureString -AsPlainText | Should -Be $secret
     }
 }
