@@ -2112,26 +2112,17 @@ namespace System.Management.Automation
 
             Breakpoint breakpoint = new LineBreakpoint(path, line, column, action);
 
-            using (PowerShell ps = GetNestedPowerShell())
+            var functionParameters = new Dictionary<string, object>
             {
-                ps.AddCommand(RemoteDebuggingCommands.SetBreakpoint).AddParameter("Breakpoint", breakpoint);
-                
-                if (runspaceId.HasValue)
-                {
-                    ps.AddParameter("RunspaceId", runspaceId.Value);
-                }
+                { "Breakpoint", breakpoint },
+            };
 
-                Collection<PSObject> output = ps.Invoke<PSObject>();
-                foreach (var item in output)
-                {
-                    if (item?.BaseObject is LineBreakpoint bp)
-                    {
-                        return bp;
-                    }
-                }
+            if (runspaceId.HasValue)
+            {
+                functionParameters.Add("RunspaceId", runspaceId.Value);
             }
 
-            return null;
+            return InvokeRemoteBreakpointFunction<LineBreakpoint>(RemoteDebuggingCommands.SetBreakpoint, functionParameters);
         }
 
         public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null, int? runspaceId = null)
