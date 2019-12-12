@@ -3049,12 +3049,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    directory.Delete();
+                    directory.Delete(recurse);
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
                     WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
