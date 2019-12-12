@@ -1256,7 +1256,7 @@ namespace System.Management.Automation
             SetPreserveUnhandledBreakpointMode,
 
             /// <summary>
-            /// BreakpointManagement.
+            /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
         };
@@ -1276,7 +1276,7 @@ namespace System.Management.Automation
         /// Pre-processor for debugger commands.
         /// Parses special debugger commands and converts to equivalent script for remote execution as needed.
         /// </summary>
-        /// <param name="commands">PSCommand.</param>
+        /// <param name="commands">The PSCommand.</param>
         /// <param name="serverRemoteDebugger">The debugger that can be used to invoke debug operations via API.</param>
         /// <param name="preProcessOutput">A Collection that can be used to send output to the client.</param>
         /// <param name="commandArgument">Command argument.</param>
@@ -1414,7 +1414,6 @@ namespace System.Management.Automation
                 // Input parameters:
                 // [-Id <int>]
                 // Returns Breakpoint object(s).
-
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
                 if (TryGetParameter<int>(command, "Id", out int breakpointId))
                 {
@@ -1437,7 +1436,6 @@ namespace System.Management.Automation
                 // -Breakpoint <Breakpoint> or -BreakpointList <IEnumerable<Breakpoint>>
                 // [-RunspaceId <int?>]
                 // Returns Breakpoint object(s).
-
                 TryGetParameter<Breakpoint>(command, "Breakpoint", out Breakpoint breakpoint);
                 TryGetParameter<IEnumerable<Breakpoint>>(command, "BreakpointList", out IEnumerable<Breakpoint> breakpoints);
                 if (breakpoint == null && breakpoints == null)
@@ -1458,7 +1456,6 @@ namespace System.Management.Automation
                 }
 
                 result = PreProcessCommandResult.BreakpointManagement;
-
             }
             else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1467,7 +1464,6 @@ namespace System.Management.Automation
                 // -Id <int>
                 // [-RunspaceId <int?>]
                 // Returns bool.
-
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
@@ -1478,7 +1474,6 @@ namespace System.Management.Automation
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
-
             }
             else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1487,7 +1482,6 @@ namespace System.Management.Automation
                 // -Id <int>
                 // [-RunspaceId <int?>]
                 // Returns Breakpoint object.
-
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
@@ -1506,7 +1500,6 @@ namespace System.Management.Automation
                 // -Id <int>
                 // [-RunspaceId <int?>]
                 // Returns Breakpoint object.
-
                 int breakpointId = GetParameter<int>(command, "Id");
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
@@ -1534,7 +1527,7 @@ namespace System.Management.Automation
 
         private static T GetParameter<T>(Command command, string parameterName)
         {
-            if(command.Parameters?.Count == 0)
+            if (command.Parameters?.Count == 0)
             {
                 throw new PSArgumentException(parameterName);
             }
@@ -1543,7 +1536,7 @@ namespace System.Management.Automation
             {
                 if (string.Equals(param.Name, parameterName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return (T) param.Value;
+                    return (T)param.Value;
                 }
             }
 
@@ -1557,7 +1550,7 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch(Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
+            catch (Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
             {
                 value = default(T);
                 return false;

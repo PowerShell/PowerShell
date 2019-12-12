@@ -4223,6 +4223,7 @@ namespace System.Management.Automation
         /// Returns breakpoints on a runspace.
         /// </summary>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <returns>A list of breakpoints in a runspace.</returns>
         public override List<Breakpoint> GetBreakpoints(int? runspaceId = null) =>
             _wrappedDebugger.GetBreakpoints(runspaceId);
 

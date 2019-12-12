@@ -290,6 +290,7 @@ namespace System.Management.Automation
         /// commands that sets debugger state but doesn't run any command
         /// on the server runspace.
         /// </summary>
+        /// <param name="output">The output from preprocessing that we want to send to the client.</param>
         internal void RunNoOpCommand(IReadOnlyCollection<object> output)
         {
             if (LocalPowerShell != null)
