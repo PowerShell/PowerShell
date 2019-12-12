@@ -967,7 +967,15 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                string lvalString;
+                if (ExperimentalFeature.PSCultureInvariantReplaceOperator.Enabled)
+                {
+                    lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                }
+                else
+                {
+                    lvalString = lval?.ToString() ?? string.Empty;
+                }
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
