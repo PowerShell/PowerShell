@@ -255,4 +255,7 @@ The current session does not support debugging; operation will continue.
   <data name="UnableToGetRunspace" xml:space="preserve">
     <value>Unable to get Runspace.</value>
   </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>Breakpoint or BreakpointList must be specified.</value>
+  </data>
 </root>
