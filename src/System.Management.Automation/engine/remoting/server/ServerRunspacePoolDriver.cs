@@ -1446,7 +1446,7 @@ namespace System.Management.Automation
                 // [-RunspaceId <int?>]
                 // Returns Breakpoint object(s).
                 TryGetParameter<Breakpoint>(command, "Breakpoint", out Breakpoint breakpoint);
-                TryGetParameter<IEnumerable<Breakpoint>>(command, "BreakpointList", out IEnumerable<Breakpoint> breakpoints);
+                TryGetParameter<ArrayList>(command, "BreakpointList", out ArrayList breakpoints);
                 if (breakpoint == null && breakpoints == null)
                 {
                     throw new PSArgumentException(DebuggerStrings.BreakpointOrBreakpointListNotSpecified);
@@ -1456,7 +1456,25 @@ namespace System.Management.Automation
 
                 commands.Clear();
 
-                IEnumerable<Breakpoint> bps = breakpoints != null ? breakpoints : new[] { breakpoint };
+                // Any collection comes through remoting as an ArrayList of Objects so we convert each object
+                // into a breakpoint and add it to the list.
+                var bps = new List<Breakpoint>();
+                if (breakpoints != null)
+                {
+                    foreach (object bpObj in breakpoints)
+                    {
+                        if (!LanguagePrimitives.TryConvertTo<Breakpoint>(bpObj, out Breakpoint bp))
+                        {
+                            throw new PSArgumentException(DebuggerStrings.BreakpointListContainedANonBreakpoint);
+                        }
+                        bps.Add(bp);
+                    }
+                }
+                else
+                {
+                    bps.Add(breakpoint);
+                }
+
                 serverRemoteDebugger.SetBreakpoints(bps, runspaceId);
                 
                 foreach (var bp in bps)
@@ -1545,7 +1563,7 @@ namespace System.Management.Automation
             {
                 if (string.Equals(param.Name, parameterName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return (T)param.Value;
+                    return LanguagePrimitives.ConvertTo<T>(param.Value);
                 }
             }
 
@@ -1559,7 +1577,10 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch (Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
+            catch (Exception ex) when(
+                ex is PSArgumentException ||
+                ex is InvalidCastException ||
+                ex is PSInvalidCastException)
             {
                 value = default(T);
                 return false;

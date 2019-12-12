@@ -2018,7 +2018,7 @@ namespace System.Management.Automation
 
             var functionParameters = new Dictionary<string, object>
             {
-                { "Breakpoint", breakpoints },
+                { "BreakpointList", breakpoints },
             };
 
             if (runspaceId.HasValue)

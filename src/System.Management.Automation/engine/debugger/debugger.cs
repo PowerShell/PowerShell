@@ -2811,7 +2811,7 @@ namespace System.Management.Automation
         {
             if(!Runspace.RunspaceDictionary.TryGetValue(runspaceId, out WeakReference<Runspace> wr))
             {
-                throw new PSArgumentException(DebuggerStrings.InvalidRunspaceId);
+                throw new PSArgumentException(string.Format(DebuggerStrings.InvalidRunspaceId, runspaceId));
             }
 
             if(!wr.TryGetTarget(out Runspace rs))
