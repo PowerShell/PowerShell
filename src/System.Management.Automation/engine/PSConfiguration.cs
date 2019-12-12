@@ -214,6 +214,22 @@ namespace System.Management.Automation.Configuration
             }
         }
 
+        internal bool IsImplicitWinCompatEnabled()
+        {
+            bool? settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, "ImplicitWinCompatEnabled", null);
+            if (!settingValue.HasValue)
+            {
+                settingValue = ReadValueFromFile<bool?>(ConfigScope.AllUsers, "ImplicitWinCompatEnabled", null);
+                if (!settingValue.HasValue)
+                {
+                    // if the setting is not mentioned in configuration files, then the default value is True
+                    settingValue = true;
+                }
+            }
+
+            return settingValue.Value;
+        }
+
         /// <summary>
         /// Corresponding settings of the original Group Policies.
         /// </summary>
