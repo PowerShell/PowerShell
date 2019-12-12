@@ -1461,12 +1461,13 @@ namespace System.Management.Automation
                 var bps = new List<Breakpoint>();
                 if (breakpoints != null)
                 {
-                    foreach (object bpObj in breakpoints)
+                    foreach (object obj in breakpoints)
                     {
-                        if (!LanguagePrimitives.TryConvertTo<Breakpoint>(bpObj, out Breakpoint bp))
+                        if (!LanguagePrimitives.TryConvertTo<Breakpoint>(obj, out Breakpoint bp))
                         {
                             throw new PSArgumentException(DebuggerStrings.BreakpointListContainedANonBreakpoint);
                         }
+
                         bps.Add(bp);
                     }
                 }
