@@ -2081,6 +2081,11 @@ namespace System.Management.Automation
                     {
                         breakpoints.Add(bp);
                     }
+                    else if (TryGetRemoteDebuggerException(item, out Exception ex))
+                    {
+                        // Check for remote debugger exception and throw here.
+                        throw ex;
+                    }
                 }
             }
 
@@ -2560,6 +2565,35 @@ namespace System.Management.Automation
 
         #region Private Methods
 
+        private static bool TryGetRemoteDebuggerException(
+            PSObject item,
+            out Exception exception)
+        {
+            exception = null;
+            if (item == null) { return false; }
+
+            bool haveExceptionType = false;
+            foreach (var typeName in item.TypeNames)
+            {
+                if (typeName.Equals("Deserialized.System.Exception"))
+                {
+                    haveExceptionType = true;
+                    break;
+                }
+            }
+
+            if (haveExceptionType)
+            {
+                var errorMessage = item.Properties["Message"]?.Value ?? string.Empty;
+                exception = new RemoteException(
+                    StringUtil.Format(
+                        RemotingErrorIdStrings.RemoteDebuggerError, item.TypeNames[0], errorMessage));
+                return true;
+            }
+
+            return false;
+        }
+
         //
         // Event handlers
         //
@@ -2826,6 +2860,12 @@ namespace System.Management.Automation
                     if (item?.BaseObject is T)
                     {
                         return (T)item.BaseObject;
+                    }
+
+                    // Check for remote debugger exception object and throw here.
+                    if (TryGetRemoteDebuggerException(item, out Exception ex))
+                    {
+                        throw ex;
                     }
                 }
 

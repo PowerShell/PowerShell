@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// commands that sets debugger state but doesn't run any command
         /// on the server runspace.
         /// </summary>
-        internal void RunNoOpCommand()
+        internal void RunNoOpCommand(IReadOnlyCollection<object> output)
         {
             if (LocalPowerShell != null)
             {
@@ -301,18 +301,18 @@ namespace System.Management.Automation
                                 new PSInvocationStateInfo(
                                     PSInvocationState.Running, null));
 
+                            foreach (var item in output)
+                            {
+                                if (item != null)
+                                {
+                                    _localPowerShellOutput.Add(PSObject.AsPSObject(item));
+                                }
+                            }
+
                             LocalPowerShell.SetStateChanged(
                                 new PSInvocationStateInfo(
                                     PSInvocationState.Completed, null));
                         });
-            }
-        }
-
-        internal void AddToOutput(IEnumerable<object> data)
-        {
-            foreach (object item in data)
-            {
-                _localPowerShellOutput.Add(new PSObject(item));
             }
         }
 

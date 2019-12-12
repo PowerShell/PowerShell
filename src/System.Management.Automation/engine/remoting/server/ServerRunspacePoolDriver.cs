@@ -749,40 +749,51 @@ namespace System.Management.Automation
                 DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
                 Collection<object> preProcessOutput = new Collection<object>();
-                var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, preProcessOutput, out commandArgument);
 
-                switch (result)
+                try
                 {
-                    case PreProcessCommandResult.SetDebuggerAction:
-                        // Run this directly on the debugger and terminate the remote command.
-                        _serverRemoteDebugger.SetDebuggerAction(commandArgument.ResumeAction.Value);
-                        terminateImmediate = true;
-                        break;
+                    var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, preProcessOutput, out commandArgument);
 
-                    case PreProcessCommandResult.SetDebugMode:
-                        // Set debug mode directly and terminate remote command.
-                        _serverRemoteDebugger.SetDebugMode(commandArgument.Mode.Value);
-                        terminateImmediate = true;
-                        break;
+                    switch (result)
+                    {
+                        case PreProcessCommandResult.SetDebuggerAction:
+                            // Run this directly on the debugger and terminate the remote command.
+                            _serverRemoteDebugger.SetDebuggerAction(commandArgument.ResumeAction.Value);
+                            terminateImmediate = true;
+                            break;
 
-                    case PreProcessCommandResult.SetDebuggerStepMode:
-                        // Enable debugger and set to step action, then terminate remote command.
-                        _serverRemoteDebugger.SetDebuggerStepMode(commandArgument.DebuggerStepEnabled.Value);
-                        terminateImmediate = true;
-                        break;
+                        case PreProcessCommandResult.SetDebugMode:
+                            // Set debug mode directly and terminate remote command.
+                            _serverRemoteDebugger.SetDebugMode(commandArgument.Mode.Value);
+                            terminateImmediate = true;
+                            break;
 
-                    case PreProcessCommandResult.SetPreserveUnhandledBreakpointMode:
-                        _serverRemoteDebugger.UnhandledBreakpointMode = commandArgument.UnhandledBreakpointMode.Value;
-                        terminateImmediate = true;
-                        break;
+                        case PreProcessCommandResult.SetDebuggerStepMode:
+                            // Enable debugger and set to step action, then terminate remote command.
+                            _serverRemoteDebugger.SetDebuggerStepMode(commandArgument.DebuggerStepEnabled.Value);
+                            terminateImmediate = true;
+                            break;
 
-                    case PreProcessCommandResult.ValidNotProcessed:
-                        terminateImmediate = true;
-                        break;
+                        case PreProcessCommandResult.SetPreserveUnhandledBreakpointMode:
+                            _serverRemoteDebugger.UnhandledBreakpointMode = commandArgument.UnhandledBreakpointMode.Value;
+                            terminateImmediate = true;
+                            break;
 
-                    case PreProcessCommandResult.BreakpointManagement:
-                        terminateImmediate = true;
-                        break;
+                        case PreProcessCommandResult.ValidNotProcessed:
+                            terminateImmediate = true;
+                            break;
+
+                        case PreProcessCommandResult.BreakpointManagement:
+                            terminateImmediate = true;
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    terminateImmediate = true;
+                    
+                    preProcessOutput.Add(
+                        PSObject.AsPSObject(ex));
                 }
 
                 // If we don't want to run or queue a command to run in the server session then
@@ -802,12 +813,7 @@ namespace System.Management.Automation
                         addToHistory,
                         null);
 
-                    if (preProcessOutput.Count > 0)
-                    {
-                        noOpDriver.AddToOutput(preProcessOutput);
-                    }
-
-                    noOpDriver.RunNoOpCommand();
+                    noOpDriver.RunNoOpCommand(preProcessOutput);
                     return;
                 }
             }
@@ -1452,6 +1458,7 @@ namespace System.Management.Automation
                 }
 
                 result = PreProcessCommandResult.BreakpointManagement;
+
             }
             else if (commandText.Equals(RemoteDebuggingCommands.RemoveBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1471,6 +1478,7 @@ namespace System.Management.Automation
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
+
             }
             else if (commandText.Equals(RemoteDebuggingCommands.EnableBreakpoint, StringComparison.OrdinalIgnoreCase))
             {
@@ -1526,7 +1534,7 @@ namespace System.Management.Automation
 
         private static T GetParameter<T>(Command command, string parameterName)
         {
-            if (command.Parameters?.Count == 0)
+            if(command.Parameters?.Count == 0)
             {
                 throw new PSArgumentException(parameterName);
             }
@@ -1535,7 +1543,7 @@ namespace System.Management.Automation
             {
                 if (string.Equals(param.Name, parameterName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return (T)param.Value;
+                    return (T) param.Value;
                 }
             }
 
@@ -1549,7 +1557,7 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch (Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
+            catch(Exception ex) when(ex is PSArgumentException || ex is InvalidCastException)
             {
                 value = default(T);
                 return false;
