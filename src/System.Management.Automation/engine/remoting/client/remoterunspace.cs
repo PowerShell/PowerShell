@@ -2616,7 +2616,10 @@ namespace System.Management.Automation
             out Exception exception)
         {
             exception = null;
-            if (item == null) { return false; }
+            if (item == null)
+            {
+                return false;
+            }
 
             bool haveExceptionType = false;
             foreach (var typeName in item.TypeNames)

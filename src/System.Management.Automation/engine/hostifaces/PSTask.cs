@@ -1109,8 +1109,17 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <returns>The breakpoint with the specified id.</returns>
         public override Breakpoint GetBreakpoint(int id, int? runspaceId = null) =>
             _wrappedDebugger.GetBreakpoint(id, runspaceId);
+
+        /// <summary>
+        /// Returns breakpoints on a runspace.
+        /// </summary>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <returns>A list of breakpoints in a runspace.</returns>
+        public override List<Breakpoint> GetBreakpoints(int? runspaceId = null) =>
+            _wrappedDebugger.GetBreakpoints(runspaceId);
 
         /// <summary>
         /// Sets a command breakpoint in the debugger.
