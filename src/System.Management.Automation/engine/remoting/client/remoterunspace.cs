@@ -2085,7 +2085,6 @@ namespace System.Management.Automation
                     }
                     else if (TryGetRemoteDebuggerException(item, out Exception ex))
                     {
-                        // Check for remote debugger exception and throw here.
                         throw ex;
                     }
                 }
@@ -2911,7 +2910,6 @@ namespace System.Management.Automation
                         return (T)item.BaseObject;
                     }
 
-                    // Check for remote debugger exception object and throw here.
                     if (TryGetRemoteDebuggerException(item, out Exception ex))
                     {
                         throw ex;

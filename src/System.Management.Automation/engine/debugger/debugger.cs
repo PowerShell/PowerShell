@@ -2809,12 +2809,12 @@ namespace System.Management.Automation
 
         private Debugger GetRunspaceDebugger(int runspaceId)
         {
-            if(!Runspace.RunspaceDictionary.TryGetValue(runspaceId, out WeakReference<Runspace> wr))
+            if (!Runspace.RunspaceDictionary.TryGetValue(runspaceId, out WeakReference<Runspace> wr))
             {
                 throw new PSArgumentException(string.Format(DebuggerStrings.InvalidRunspaceId, runspaceId));
             }
 
-            if(!wr.TryGetTarget(out Runspace rs))
+            if (!wr.TryGetTarget(out Runspace rs))
             {
                 throw new PSArgumentException(DebuggerStrings.UnableToGetRunspace);
             }
