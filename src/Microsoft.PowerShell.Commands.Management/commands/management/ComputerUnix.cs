@@ -29,6 +29,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (InternalTestHooks.TestStopComputer)
+            {
+                var retVal = InternalTestHooks.TestStopComputerResults;
+                if (retVal != 0)
+                {
+                    string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
+                    ErrorRecord error = new ErrorRecord(
+                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                    WriteError(error);
+                }
+                return;
+            }
+
             RunCommand("/sbin/shutdown", "-r now");
         }
 #endregion "Overrides"
@@ -60,8 +73,17 @@ namespace Microsoft.PowerShell.Commands
             }
             if (InternalTestHooks.TestStopComputer)
             {
+                var retVal = InternalTestHooks.TestStopComputerResults;
+                if (retVal != 0)
+                {
+                    string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
+                    ErrorRecord error = new ErrorRecord(
+                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                    WriteError(error);
+                }
                 return;
             }
+
             RunCommand("/sbin/shutdown", args);
         }
 #endregion "Overrides"

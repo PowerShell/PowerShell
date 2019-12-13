@@ -9,7 +9,6 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $restartTesthookName
 
     Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
@@ -30,12 +29,18 @@ try
         }
 
         It "Should support -computer parameter" {
+            if ( ! $IsWindows ) {
+                return
+            }
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
             Restart-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {
+            if ( ! $IsWindows ) {
+                return
+            }
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
                 Restart-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
@@ -46,6 +51,9 @@ try
         # set operation. Internally, we want to suppress the progress, so
         # that is also wrapped in try/finally
         It "Should wait for a remote system" {
+            if ( ! $IsWindows ) {
+                return
+            }
             try
             {
                 Enable-Testhook -testhookname TestWaitStopComputer
@@ -78,15 +86,36 @@ try
             }
 
             It "Should produce an error when 'Delay' is specified" {
+                if ( ! $IsWindows ) {
+                    return
+                }
                 { Restart-Computer -Delay 30 } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
+            It "Should not support timeout on Unix" {
+                if ( ! $IsWindows ) {
+                    { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                }
+            }
+
+            It "Should not support Delay on Unix" {
+                if ( ! $IsWindows ) {
+                    { Restart-Computer -Delay 30 } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                }
+            }
+
             It "Should not support timeout on localhost" {
+                if ( ! $IsWindows ) {
+                    return
+                }
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
                 { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
             It "Should not support timeout on localhost" {
+                if ( ! $IsWindows ) {
+                    return
+                }
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
                 { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }

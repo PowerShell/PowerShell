@@ -10,7 +10,6 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    # $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $stopTesthook
 
     Describe "Stop-Computer" -Tag Feature {
@@ -31,12 +30,18 @@ try
         }
 
         It "Should support -Computer parameter" {
+            if ( ! $IsWindows ) {
+                return
+            }
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
             Stop-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {
+            if ( ! $IsWindows ) {
+                return
+            }
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
                 Stop-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
