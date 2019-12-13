@@ -1693,4 +1693,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
     <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
   </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>Remote debugger exception: {0}, error message: {1}</value>
+  </data>
 </root>
