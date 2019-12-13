@@ -214,7 +214,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have CallStackFrame output from the callstack command' {
-            $result['k'].Output | Should -BeOfType System.Management.Automation.CallStackFrame
+            $result['k'] | Should -BeOfType System.Management.Automation.CallStackFrame
         }
 
         It '''k'' and ''Get-PSCallStack'' should show identical script listings' {
