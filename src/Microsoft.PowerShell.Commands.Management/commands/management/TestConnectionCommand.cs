@@ -402,13 +402,16 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 #endif
+
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
                         {
                             var status = new PingStatus(
                                 Source,
-                                routerName,
+                                routerName != string.Empty
+                                    ? routerName
+                                    : hopAddressString,
                                 reply,
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
@@ -1031,12 +1034,7 @@ namespace Microsoft.PowerShell.Commands
                         return null;
                     }
 
-                    if (_status.Destination == string.Empty)
-                    {
-                        // There was a response, but the destination field is empty; use DisplayAddress.
-                        return _status.DisplayAddress;
-                    }
-
+                    // We have a usable IP address from this ping reply.
                     return _status.Destination;
                 }
             }
