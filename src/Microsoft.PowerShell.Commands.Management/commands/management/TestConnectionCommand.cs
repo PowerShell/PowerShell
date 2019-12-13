@@ -1022,10 +1022,23 @@ namespace Microsoft.PowerShell.Commands
             /// <value></value>
             public string? Hostname
             {
-                get => _status.Destination != IPAddress.Any.ToString()
-                    && _status.Destination != IPAddress.IPv6Any.ToString()
-                        ? _status.Destination
-                        : null;
+                get
+                {
+                    if (_status.Address?.ToString() == IPAddress.Any.ToString()
+                        || _status.Address?.ToString() == IPAddress.IPv6Any.ToString())
+                    {
+                        // There was no response to the ping (TimedOut).
+                        return null;
+                    }
+
+                    if (_status.Destination == string.Empty)
+                    {
+                        // There was a response, but the destination field is empty; use DisplayAddress.
+                        return _status.DisplayAddress;
+                    }
+
+                    return _status.Destination;
+                }
             }
 
             /// <summary>
