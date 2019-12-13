@@ -1024,8 +1024,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    if (_status.Address?.ToString() == IPAddress.Any.ToString()
-                        || _status.Address?.ToString() == IPAddress.IPv6Any.ToString())
+                    if (_status.Address == IPAddress.Any
+                        || _status.Address == IPAddress.IPv6Any)
                     {
                         // There was no response to the ping (TimedOut).
                         return null;
