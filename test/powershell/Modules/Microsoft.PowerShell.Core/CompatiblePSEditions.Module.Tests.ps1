@@ -130,7 +130,7 @@ function New-TestNestedModule
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
-
+<#
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
@@ -389,14 +389,17 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
         }
     }
 }
-
+#>
 Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
     BeforeAll {
         $ModuleName = "DesktopModule"
+        $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
         Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
+        # create an incompatible module
+        New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -408,7 +411,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Verify that Error is generated with default ErrorAction" -Skip:(-not $IsWindows) {
+        <#It "Verify that Error is generated with default ErrorAction" -Skip:(-not $IsWindows) {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
             $LogPath | Should -FileContentMatch 'divide by zero'
@@ -430,10 +433,31 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -WarningAction Ignore" *> $LogPath
             $LogPath | Should -Not -FileContentMatch 'loaded in Windows PowerShell'
+        }#>
+
+        It "Fails to import incompatible module if implicit WinCompat is disabled in config " -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"ImplicitWinCompatEnabled" : "False"}' | Out-File -Force $ConfigPath
+            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
+            $c = gc $LogPath -Raw
+            Write-Verbose -Verbose $c
+            $LogPath | Should -FileContentMatch 'can not be loaded implicitly using Windows Compatibility'
+        }
+
+        It "Fails to auto-import incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is disabled in config " -Skip:(-not $IsWindows) {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"ImplicitWinCompatEnabled" : "False"}' | Out-File -Force $ConfigPath
+            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+
+            $c = gc $LogPath -Raw
+            Write-Verbose -Verbose $c
+            $LogPath | Should -FileContentMatch 'not recognized as the name of a cmdlet'
         }
     }
 }
-
+<#
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
 
@@ -1060,3 +1084,4 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
         }
     }
 }
+#>
