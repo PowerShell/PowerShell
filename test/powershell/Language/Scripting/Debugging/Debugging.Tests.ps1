@@ -17,7 +17,7 @@ Describe 'Basic debugger tests' -tag 'CI' {
                 function Test-DollarQuestionMark {
                     [CmdletBinding()]
                     param()
-                    Get-Process -id ([int]::MaxValue)
+                    Get-Process -Id ([int]::MaxValue)
                     if (-not $?) {
                         'The value of $? was preserved during debugging.'
                     } else {
@@ -47,6 +47,174 @@ Describe 'Basic debugger tests' -tag 'CI' {
         It 'Should have string output showing that $? was preserved as $false by the debugger' {
             $global:DollarQuestionMarkResults | Should -BeOfType string
             $global:DollarQuestionMarkResults | Should -BeExactly 'The value of $? was preserved during debugging.'
+        }
+    }
+}
+
+Describe 'Basic breakpoint tests' -tag 'CI' {
+
+    BeforeAll {
+        Register-DebuggerHandler
+
+        $testScript = @'
+<#  1 #> $psName = 'PowerShell'
+<#  2 #> $winRMName = 'WinRM'
+<#  3 #> $svrHost = 'svcHost'
+<#  4 #> $count = 10
+<#  5 #>
+<#  6 #> 1..$count | ForEach-Object { "TestOutput $_" }
+<#  7 #>
+<#  8 #> Write-Output "Script Complete for count: $count"
+<#  9 #>
+<# 10 #> function Test-PSRemoveBreakpoint {
+<# 11 #>     [CmdletBinding(SupportsShouldProcess=$true)]
+<# 12 #>     param()
+<# 13 #>     'Line 13'
+<# 14 #>     'Line 14'
+<# 15 #>     'Line 15'
+<# 16 #> }
+<# 17 #>
+<# 18 #> Test-PSRemoveBreakpoint -WhatIf
+'@
+        $testScriptPath = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), 'BreakpointTestScript.ps1')
+        [System.IO.File]::WriteAllText($testScriptPath, $testScript)
+
+        $bpActionScript = {
+            'Hello'
+        }
+
+        $bpTestCases = @(
+            @{
+                BreakpointType        = 'Line'
+                BreakpointIdentifier  = 4
+                BreakpointLine        = 4
+                BreakpointColumnStart = 10
+                BreakpointColumnEnd   = 21
+            }
+            @{
+                BreakpointType        = 'Variable'
+                BreakpointIdentifier  = 'svrHost'
+                BreakpointLine        = 3
+                BreakpointColumnStart = 10
+                BreakpointColumnEnd   = 30
+            }
+            @{
+                BreakpointType        = 'Command'
+                BreakpointIdentifier  = 'Test-PSRemoveBreakpoint'
+                # Note: There is an inconsistency between advanced functions and cmdlets,
+                #       where the debugger stops inside the top of an advanced function
+                #       when a command breakpoint is hit on that function name, but on the
+                #       cmdlet itself since we obviously can't debug inside cmdlets. This
+                #       is misleading and confusing. Command breakpoints should stop on the
+                #       command invocation, and then let the user decide if they want to
+                #       step in or not. Whenever that gets addressed, the numbers below
+                #       will change, and they can simply be updated since we're just working
+                #       with the debugger here, which scripts that run unattended won't do.
+                BreakpointLine        = 10
+                BreakpointColumnStart = 43
+                BreakpointColumnEnd   = 44
+            }
+        )
+    }
+
+    AfterAll {
+        [System.IO.File]::Delete($testScriptPath)
+        Unregister-DebuggerHandler
+    }
+
+    Context 'Working with breakpoints in files' {
+        AfterEach {
+            Get-PSBreakpoint | Remove-PSBreakpoint
+        }
+
+        It 'Creating a <BreakpointType> breakpoint should trigger a BreakpointUpdated event' -TestCases $bpTestCases {
+            param(
+                [string] $BreakpointType,
+                [object] $BreakpointIdentifier
+            )
+            $scriptBlock = [ScriptBlock]::Create("Set-PSBreakpoint -Script '${testScriptPath}' -${BreakpointType} ${BreakpointIdentifier} -Action {${bpActionScript}}")
+            $results = @(Test-Debugger -ScriptBlock $scriptBlock -BreakpointUpdates 1)
+            $results | Should -HaveCount 1
+            $results[0].UpdateType | Should -Be ([System.Management.Automation.BreakpointUpdateType]::Set)
+            $results[0].BreakpointCount | Should -Be 1
+            $results[0].Breakpoint | Should -BeOfType "System.Management.Automation.${BreakpointType}Breakpoint"
+            $results[0].Breakpoint.Script | Should -BeExactly $testScriptPath
+            $results[0].Breakpoint.$BreakpointType | Should -Be $BreakpointIdentifier
+            $results[0].Breakpoint.Action.ToString() | Should -Be "${bpActionScript}"
+        }
+
+        It 'Should break on a <BreakpointType> breakpoint' -TestCases $bpTestCases {
+            param(
+                [string] $BreakpointType,
+                [object] $BreakpointIdentifier,
+                [int]    $BreakpointLine,
+                [int]    $BreakpointColumnStart,
+                [int]    $BreakpointColumnEnd
+            )
+            $sbpParameters = @{
+                Script          = $testScriptPath
+                $BreakpointType = $BreakpointIdentifier
+            }
+            Set-PSBreakpoint @sbpParameters
+            $scriptBlock = [ScriptBlock]::Create(@"
+& '${testScriptPath}'
+"@)
+            $results = @(Test-Debugger -ScriptBlock $scriptBlock)
+            $results | Should -HaveCount 1
+            $results[0] | ShouldHaveExtent -Line $BreakpointLine -FromColumn $BreakpointColumnStart -ToColumn $BreakpointColumnEnd
+            $results[0].Context.Breakpoints | Should -HaveCount 1
+            $results[0].Context.Breakpoints[0] | Should -BeOfType "System.Management.Automation.${BreakpointType}Breakpoint"
+            $results[0].Context.Breakpoints[0].Script | Should -BeExactly $testScriptPath
+            $results[0].Context.Breakpoints[0].$BreakpointType | Should -Be $BreakpointIdentifier
+        }
+    }
+
+    Context 'Setting another line breakpoint from within the debugger and then continuing' {
+        BeforeAll {
+            Set-PSBreakpoint -Script $testScriptPath -Line 1
+            $scriptBlock = [ScriptBlock]::Create(@"
+& '${testScriptPath}'
+"@)
+            $results = @(Test-Debugger -ScriptBlock $scriptBlock -CommandQueue "Set-PSBreakpoint -Script '${testScriptPath}' -Line 8",'continue')
+        }
+
+        AfterEach {
+            Get-PSBreakpoint | Remove-PSBreakpoint
+        }
+
+        It 'Should require 3 debugger commands (Set-PSBreakpoint, continue, continue)' {
+            $results | Should -HaveCount 3
+        }
+
+        It 'The line breakpoint on the first line should have been the trigger for the first stop event' {
+            $results[0] | ShouldHaveExtent -Line 1 -FromColumn 10 -ToColumn 32
+            $results[0].Context.Breakpoints | Should -HaveCount 1
+            $results[0].Context.Breakpoints[0] | Should -BeOfType System.Management.Automation.LineBreakpoint
+            $results[0].Context.Breakpoints[0].Script | Should -BeExactly $testScriptPath
+            $results[0].Context.Breakpoints[0].Line | Should -Be 1
+        }
+
+        It 'Non-debugger commands should use a $null a ResumeAction and should not be evaluated by the debugger' {
+            $results[0].ResumeAction | Should -BeNull
+            $results[0].EvaluatedbyDebugger | Should -BeFalse
+        }
+
+        It 'The location and debug context should remain the same after invoking a non-debugger command' {
+            $results[1] | ShouldHaveExtent -Line 1 -FromColumn 10 -ToColumn 32
+            $results[1].Context | Should -Be $results[0].Context
+        }
+
+        It 'The continue debugger command should have a resume action of ''Continue'' and be evaluated by the debugger' {
+            $results[1].ResumeAction | Should -Be 'Continue'
+            $results[1].EvaluatedbyDebugger | Should -BeTrue
+        }
+
+        It 'The line breakpoint on the 8th line should have been the trigger for the next stop event' {
+            $results[2] | ShouldHaveExtent -Line 8 -FromColumn 10 -ToColumn 58
+            $results[2].Context.Breakpoints | Should -HaveCount 1
+            $results[2].Context.Breakpoints[0] | Should -BeOfType System.Management.Automation.LineBreakpoint
+            $results[2].Context.Breakpoints[0].Script | Should -BeExactly $testScriptPath
+            $results[2].Context.Breakpoints[0].Line | Should -Be 8
         }
     }
 }

@@ -214,14 +214,13 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have CallStackFrame output from the callstack command' {
-            $results[0].Output | Should -BeOfType System.Management.Automation.CallStackFrame
+            $result['k'].Output | Should -BeOfType System.Management.Automation.CallStackFrame
         }
 
         It '''k'' and ''Get-PSCallStack'' should show identical script listings' {
             [string[]]$result['k'] -join [Environment]::NewLine | Should -BeExactly ([string[]]$result['Get-PSCallStack'] -join [Environment]::NewLine)
         }
     }
-
 }
 
 Describe 'Simple debugger stepping command tests' -tag 'CI' {
