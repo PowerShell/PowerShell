@@ -389,8 +389,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-#if !UNIX
-                        if (ResolveDestination.IsPresent && routerName == string.Empty)
+                        if (routerName == string.Empty
+                            || ResolveDestination.IsPresent && routerName == hopAddressString)
                         {
                             try
                             {
@@ -401,7 +401,6 @@ namespace Microsoft.PowerShell.Commands
                                 // Swallow host resolve exceptions and just use the IP address.
                             }
                         }
-#endif
 
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
@@ -409,9 +408,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             var status = new PingStatus(
                                 Source,
-                                routerName != string.Empty
-                                    ? routerName
-                                    : hopAddressString,
+                                routerName,
                                 reply,
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
