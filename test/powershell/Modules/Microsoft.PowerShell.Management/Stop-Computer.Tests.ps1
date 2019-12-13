@@ -10,7 +10,7 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    $PSDefaultParameterValues["it:skip"] = ! $IsWindows
+    # $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $stopTesthook
 
     Describe "Stop-Computer" -Tag Feature {

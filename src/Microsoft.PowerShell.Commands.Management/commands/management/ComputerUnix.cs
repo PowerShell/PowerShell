@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell.Commands
@@ -52,14 +53,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            var args = "";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                args = "-P now";
-            }
+            var args = "-P now";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 args = "now";
+            }
+            if (InternalTestHooks.TestStopComputer)
+            {
+                return;
             }
             RunCommand("/sbin/shutdown", args);
         }
