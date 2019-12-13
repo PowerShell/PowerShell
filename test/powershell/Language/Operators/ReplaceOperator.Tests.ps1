@@ -67,7 +67,7 @@ Describe "Replace Operator" -Tags CI {
 
     Describe "Culture-invariance tests for -split and -replace" -Tags CI {
         BeforeAll {
-            $skipTest = -not [ExperimentalFeature]::PSCultureInvariantReplaceOperator.Enabled
+            $skipTest = -not [ExperimentalFeature]::IsEnabled("PSCultureInvariantReplaceOperator")
             if ($skipTest) {
                 Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCultureInvariantReplaceOperator' to be enabled." -Verbose
                 $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

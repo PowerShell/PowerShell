@@ -968,7 +968,7 @@ namespace System.Management.Automation
             if (list == null)
             {
                 string lvalString;
-                if (ExperimentalFeature.PSCultureInvariantReplaceOperator.Enabled)
+                if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
                 {
                     lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
                 }

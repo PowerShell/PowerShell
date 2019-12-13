@@ -22,14 +22,6 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
 
-        /// <summary>
-        /// Experimental feature: Use culture invariant to-string convertor for lval in replace operator.
-        /// </summary>
-        public static readonly ExperimentalFeature PSCultureInvariantReplaceOperator =
-            new ExperimentalFeature(
-                name: nameof(PSCultureInvariantReplaceOperator),
-                description: "Use culture invariant to-string convertor for lval in replace operator");
-
         #endregion
 
         #region Instance Members
@@ -125,7 +117,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNullConditionalOperators",
                     description: "Support the null conditional member access operators in PowerShell language"),
-                PSCultureInvariantReplaceOperator,
+                new ExperimentalFeature(
+                    name: "PSCultureInvariantReplaceOperator",
+                    description: "Use culture invariant to-string convertor for lval in replace operator"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
