@@ -1306,7 +1306,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // If the matching command was an alias, then use the resolved command
                         // instead of the alias...
-                        current = ai.ResolvedCommand;
+                        current = ai.ResolvedCommand ?? CommandDiscovery.LookupCommandInfo(
+                            ai.UnresolvedCommandName,
+                            this.MyInvocation.CommandOrigin,
+                            this.Context);
+
+                        // there are situations where both ResolvedCommand and UnresolvedCommandName
+                        // are both null (often due to multiple versions of modules with aliases)
+                        // therefore we need to exit early.
                         if (current == null)
                         {
                             return false;
