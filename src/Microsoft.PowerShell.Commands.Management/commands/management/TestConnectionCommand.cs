@@ -351,8 +351,6 @@ namespace Microsoft.PowerShell.Commands
             IPAddress hopAddress;
             do
             {
-                // Clear the stored router name for every hop
-                string routerName = string.Empty;
                 pingOptions.Ttl = currentHop;
 
 #if !UNIX
@@ -383,25 +381,14 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
+                InitProcessPing(hopAddressString, out string routerName, out _);
+
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
-                        if (routerName == string.Empty
-                            || ResolveDestination.IsPresent && routerName == hopAddressString)
-                        {
-                            try
-                            {
-                                InitProcessPing(hopAddressString, out routerName, out _);
-                            }
-                            catch
-                            {
-                                // Swallow host resolve exceptions and just use the IP address.
-                            }
-                        }
-
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
@@ -1007,6 +994,16 @@ namespace Microsoft.PowerShell.Commands
                 Source = source;
                 Target = destination;
                 TargetAddress = destinationAddress;
+
+                if (_status.Address == IPAddress.Any
+                    || _status.Address == IPAddress.IPv6Any)
+                {
+                    Hostname = null;
+                }
+                else
+                {
+                    Hostname = _status.Destination;
+                }
             }
 
             private readonly PingStatus _status;
@@ -1020,21 +1017,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string? Hostname
-            {
-                get
-                {
-                    if (_status.Address == IPAddress.Any
-                        || _status.Address == IPAddress.IPv6Any)
-                    {
-                        // There was no response to the ping (TimedOut).
-                        return null;
-                    }
-
-                    // We have a usable IP address from this ping reply.
-                    return _status.Destination;
-                }
-            }
+            public string? Hostname { get; }
 
             /// <summary>
             /// Gets the sequence number of the ping in the sequence of pings to the hop point.
