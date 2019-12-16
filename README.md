@@ -10,9 +10,10 @@ It includes a command-line shell, an associated scripting language and a framewo
 ## Windows PowerShell vs. PowerShell Core
 
 Although this repository started as a fork of the Windows PowerShell code base, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
-This also means that issues tracked here are only for PowerShell Core 6.
+This also means that [issues tracked here][issues] are only for PowerShell Core 6 and higher.
 Windows PowerShell specific issues should be opened on [UserVoice][].
 
+[issues]: https://github.com/PowerShell/PowerShell/issues
 [UserVoice]: https://windowsserver.uservoice.com/forums/301869-powershell
 
 ## New to PowerShell?
@@ -32,7 +33,9 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 18.04][corefx-linux]               | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
+| [Debian 10][corefx-linux]                  |                         | [.deb][pv-debian10]   |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
+| [CentOS 8][corefx-linux]                   |                         | [.rpm][pv-centos8]    |                               |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
 | [openSUSE 42.3][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
 | [Fedora 28][corefx-linux]                  | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |

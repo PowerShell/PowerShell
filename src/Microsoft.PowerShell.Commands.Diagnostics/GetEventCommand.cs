@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string logName in eventLogSession.GetLogNames())
                     {
                         if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
-                            && string.Equals(logPattern, logName, StringComparison.CurrentCultureIgnoreCase))
+                            && string.Equals(logPattern, logName, StringComparison.OrdinalIgnoreCase))
                             ||
                             (wildLogPattern.IsMatch(logName)))
                         {
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string provName in eventLogSession.GetProviderNames())
                     {
                         if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
-                            && string.Equals(provPattern, provName, StringComparison.CurrentCultureIgnoreCase))
+                            && string.Equals(provPattern, provName, StringComparison.OrdinalIgnoreCase))
                             ||
                             (wildProvPattern.IsMatch(provName)))
                         {
@@ -2070,7 +2070,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string actualLogName in eventLogSession.GetLogNames())
                 {
                     if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
-                        && (logPattern.Equals(actualLogName, StringComparison.CurrentCultureIgnoreCase)))
+                        && (logPattern.Equals(actualLogName, StringComparison.OrdinalIgnoreCase)))
                         ||
                         (wildLogPattern.IsMatch(actualLogName)))
                     {
@@ -2139,7 +2139,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string provName in eventLogSession.GetProviderNames())
                 {
                     if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
-                      && (provPattern.Equals(provName, StringComparison.CurrentCultureIgnoreCase)))
+                      && (provPattern.Equals(provName, StringComparison.OrdinalIgnoreCase)))
                       ||
                       (wildProvPattern.IsMatch(provName)))
                     {

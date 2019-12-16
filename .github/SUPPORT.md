@@ -10,4 +10,4 @@ If you know how to fix the issue, feel free to send a pull request our way. (The
 [Contribution Guides]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
 [known issues]: https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
-[new issue]: https://github.com/PowerShell/PowerShell/issues/new
+[new issue]: https://github.com/PowerShell/PowerShell/issues/new/choose
