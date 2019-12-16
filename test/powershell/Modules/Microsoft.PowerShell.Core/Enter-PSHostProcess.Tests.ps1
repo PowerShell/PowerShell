@@ -133,7 +133,22 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $rs.Open()
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
-                $ps.AddScript('$pid').Invoke() | Should -Be $pwshId
+                $ps.AddScript('$pid')
+
+                [int]$retry = 0
+                $result = $null
+                while ($retry -lt 5 -and $result -eq $null) {
+                    try {
+                        $result = $ps.Invoke()
+                    }
+                    catch [System.Management.Automation.Runspaces.InvalidRunspaceStateException] {
+                        Write-Verbose -Verbose $_.Exception.InnerException.Message
+                        $retry++
+                        Start-Sleep -Milliseconds 100
+                    }
+                }
+
+                $result | Should -Be $pwshId
             } finally {
                 $rs.Dispose()
                 $ps.Dispose()
