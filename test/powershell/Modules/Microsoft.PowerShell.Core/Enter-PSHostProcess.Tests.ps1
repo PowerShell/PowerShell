@@ -137,18 +137,19 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 [int]$retry = 0
                 $result = $null
+                $errorMsg = "Exception: "
                 while ($retry -lt 5 -and $result -eq $null) {
                     try {
                         $result = $ps.Invoke()
                     }
                     catch [System.Management.Automation.Runspaces.InvalidRunspaceStateException] {
-                        Write-Verbose -Verbose $_.Exception.InnerException.Message
+                        $errorMsg += $_.Exception.InnerException.Message + "; "
                         $retry++
                         Start-Sleep -Milliseconds 100
                     }
                 }
 
-                $result | Should -Be $pwshId
+                $result | Should -Be $pwshId -Because $errorMsg
             } finally {
                 $rs.Dispose()
                 $ps.Dispose()
