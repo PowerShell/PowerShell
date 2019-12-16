@@ -9,6 +9,7 @@
  * elevation to support local machine remoting).
  */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -467,6 +468,8 @@ namespace System.Management.Automation.Remoting.Client
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
         private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private Timer _closeTimeOutTimer;
+        private readonly BlockingCollection<string> _sessionMessageQueue;
+        private readonly BlockingCollection<string> _commandMessageQueue;
 
         protected OutOfProcessTextWriter stdInWriter;
         protected PowerShellTraceSource _tracer;
@@ -506,6 +509,20 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.MaximumReceivedObjectSize = BaseTransportManager.MaximumReceivedObjectSize;
             // timers initialization
             _closeTimeOutTimer = new Timer(OnCloseTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+
+            // Session message processing
+            _sessionMessageQueue = new BlockingCollection<string>();
+            var sessionThread = new Thread(ProcessMessageProc);
+            sessionThread.Name = "SessionMessageProcessing";
+            sessionThread.IsBackground = true;
+            sessionThread.Start(_sessionMessageQueue);
+
+            // Command message processing
+            _commandMessageQueue = new BlockingCollection<string>();
+            var commandThread = new Thread(ProcessMessageProc);
+            commandThread.Name = "CommandMessageProcessing";
+            commandThread.IsBackground = true;
+            commandThread.Start(_commandMessageQueue);
 
             _tracer = PowerShellTraceSourceFactory.GetTraceSource();
         }
@@ -601,7 +618,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources.
+        /// Terminates the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)
@@ -611,6 +628,8 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
+                _sessionMessageQueue.Dispose();
+                _commandMessageQueue.Dispose();
             }
         }
 
@@ -663,11 +682,64 @@ namespace System.Management.Automation.Remoting.Client
         {
             // stop timer
             _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            // Stop protocol message processing threads.
+            _sessionMessageQueue.CompleteAdding();
+            _commandMessageQueue.CompleteAdding();
+
             RaiseCloseCompleted();
             CleanupConnection();
         }
 
         protected abstract void CleanupConnection();
+
+        private void ProcessMessageProc(object state)
+        {
+            var messageQueue = state as BlockingCollection<string>;
+
+            try
+            {
+                while (true)
+                {
+                    var data = messageQueue.Take();
+                    try
+                    {
+                        OutOfProcessUtils.ProcessData(data, _dataProcessingCallbacks);
+                    }
+                    catch (Exception exception)
+                    {
+                        PSRemotingTransportException psrte =
+                            new PSRemotingTransportException(PSRemotingErrorId.IPCErrorProcessingServerData,
+                                RemotingErrorIdStrings.IPCErrorProcessingServerData,
+                                exception.Message);
+                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // Normal session message processing thread end.
+            }
+        }
+
+        private const string GUIDTAG = "PSGuid='";
+        private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
+        private Guid GetMessageGuid(string data)
+        {
+            // Scan data packet for a GUID.
+            var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
+            if (iTag > -1)
+            {
+                try
+                {
+                    var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
+                    return new Guid(psGuidString);
+                }
+                catch { }
+            }
+
+            return Guid.Empty;
+        }
 
         #endregion
 
@@ -675,17 +747,17 @@ namespace System.Management.Automation.Remoting.Client
 
         protected void HandleOutputDataReceived(string data)
         {
-            try
+            // Route protocol message based on whether it is a session or command message.
+            // Session messages have empty Guid values.
+            if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
             {
-                OutOfProcessUtils.ProcessData(data, _dataProcessingCallbacks);
+                // Session message
+                _sessionMessageQueue.Add(data);
             }
-            catch (Exception exception)
+            else
             {
-                PSRemotingTransportException psrte =
-                    new PSRemotingTransportException(PSRemotingErrorId.IPCErrorProcessingServerData,
-                        RemotingErrorIdStrings.IPCErrorProcessingServerData,
-                        exception.Message);
-                RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                // Command message
+                _commandMessageQueue.Add(data);
             }
         }
 
