@@ -381,7 +381,11 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
-                InitProcessPing(hopAddressString, out string routerName, out _);
+                string routerName = null;
+                if (!InitProcessPing(hopAddressString, out routerName, out _))
+                {
+                    routerName = hopAddressString;
+                }
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
