@@ -390,10 +390,12 @@
     <value>Failed to save Help for the module(s) '{0}' : {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
