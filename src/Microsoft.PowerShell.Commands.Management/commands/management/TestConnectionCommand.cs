@@ -381,8 +381,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
-                string routerName = null;
-                if (!InitProcessPing(hopAddressString, out routerName, out _))
+                if (!InitProcessPing(hopAddressString, out string routerName, out _))
                 {
                     routerName = hopAddressString;
                 }
