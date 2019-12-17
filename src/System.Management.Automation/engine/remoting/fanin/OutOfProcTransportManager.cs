@@ -728,7 +728,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private Guid GetMessageGuid(string data)
         {
-            // Scan data packet for a GUID.
+            // Perform quick scan for data packet for a GUID, ignoring any errors.
             var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
             if (iTag > -1)
             {
@@ -739,6 +739,8 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch 
                 {
+                    // Ignore any malformed packet errors here and return an empty Guid.
+                    // Packet errors will be reported later during message processing.
                 }
             }
 
