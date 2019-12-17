@@ -464,12 +464,12 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
+        private readonly BlockingCollection<string> _sessionMessageQueue;
+        private readonly BlockingCollection<string> _commandMessageQueue;
         private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
         private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private Timer _closeTimeOutTimer;
-        private readonly BlockingCollection<string> _sessionMessageQueue;
-        private readonly BlockingCollection<string> _commandMessageQueue;
 
         protected OutOfProcessTextWriter stdInWriter;
         protected PowerShellTraceSource _tracer;
@@ -709,7 +709,8 @@ namespace System.Management.Automation.Remoting.Client
                     catch (Exception exception)
                     {
                         PSRemotingTransportException psrte =
-                            new PSRemotingTransportException(PSRemotingErrorId.IPCErrorProcessingServerData,
+                            new PSRemotingTransportException(
+                                PSRemotingErrorId.IPCErrorProcessingServerData,
                                 RemotingErrorIdStrings.IPCErrorProcessingServerData,
                                 exception.Message);
                         RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
@@ -724,6 +725,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private const string GUIDTAG = "PSGuid='";
         private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
+
         private Guid GetMessageGuid(string data)
         {
             // Scan data packet for a GUID.
@@ -735,7 +737,9 @@ namespace System.Management.Automation.Remoting.Client
                     var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
                     return new Guid(psGuidString);
                 }
-                catch { }
+                catch 
+                {
+                }
             }
 
             return Guid.Empty;
