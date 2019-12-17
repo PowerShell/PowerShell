@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             if (-not $line.EndsWith(""`n"")) {
-                                                $line += ""`n""
+                                                $line += $newline
                                             }
 
                                             # don't color the whole line red
