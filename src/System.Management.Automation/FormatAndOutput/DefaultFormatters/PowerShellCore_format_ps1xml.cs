@@ -1103,7 +1103,7 @@ namespace System.Management.Automation.Runspaces
                                                 $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}`n""
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
                                             $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
                                             $message = ""${prefix}${offsetWhitespace}^ ""
