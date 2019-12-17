@@ -1097,6 +1097,9 @@ namespace System.Management.Automation.Runspaces
                                                 $offsetInLine = $myinv.OffsetInLine - 1
                                             }
 
+                                            if (-not $line.EndsWith(""`n"")) {
+                                                $line += ""`n""
+                                            }
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
