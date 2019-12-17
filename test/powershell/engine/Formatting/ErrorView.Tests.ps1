@@ -63,4 +63,23 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Out-String | Should -Not -BeLike '*pester*'
         }
     }
+
+    Context 'NormalView tests' {
+
+        It 'Error shows up when using strict mode' {
+            try {
+                $ErrorView = 'NormalView'
+                Set-StrictMode -Version 2
+                throw 'Oops!'
+            }
+            catch {
+                $e = $_ | Out-String
+            }
+            finally {
+                Set-StrictMode -Off
+            }
+
+            $e | Should -BeLike '*Oops!*'
+        }
+    }
 }

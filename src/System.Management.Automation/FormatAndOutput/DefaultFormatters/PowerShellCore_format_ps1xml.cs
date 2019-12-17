@@ -991,9 +991,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                    Set-StrictMode -Off
 
                                     function Get-ConciseViewPositionMessage {
-                                        Set-StrictMode -Off
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
