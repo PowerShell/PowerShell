@@ -279,7 +279,7 @@ Describe "Test-Connection" -tags "CI" {
         It 'has a non-null value for Destination for reachable hosts' {
             $results = Test-Connection 127.0.0.1 -Traceroute
 
-            $results.Destination | Should -Not -BeNullOrEmpty
+            $results.Hostname | Should -Not -BeNullOrEmpty
         }
     }
 }
