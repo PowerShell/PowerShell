@@ -1,6 +1,57 @@
 # Current preview Changelog
 
-## v7.0.0-preview.6 - 10/21/2019
+## v7.0.0-rc.1 - 12/16/2019
+
+### Breaking Changes
+- Make update notification support `LTS` and default channels (#11132)
+
+### Engine Updates and Fixes
+- Improvements in breakpoint APIs for remote scenarios (#11312)
+- Fix PowerShell class definition leaking into another Runspace (#11273)
+- Fix a regression in formatting caused by the `FirstOrDefault` primitive added in `7.0.0-Preview1` (#11258)
+- Additional Microsoft Modules to track in `PS7` Telemetry (#10751)
+- Make approved features non-experimental (#11303)
+- Update `ConciseView` to use `TargetObject` if applicable (#11075)
+- Fix `NullReferenceException` in `CompletionCompleters` public methods (#11274)
+- Fix apartment thread state check on non-Windows platforms (#11301)
+- Update setting `PSModulePath` to concatenate the process and machine environment variables (#11276)
+- Bump `.NET Core` to `3.1.0` (#11260)
+- Fix detection of `$PSHOME` in front of `$env:PATH` (#11141)
+
+### General Cmdlet Updates and Fixes
+- Fix for issue on Raspbian for setting date of file changes in `UnixStat` Experimental Feature (#11313)
+- Add `-AsPlainText` to `ConvertFrom-SecureString` (#11142)
+- Added `WindowsPS` version check for `WinCompat` (#11148)
+- Fix error-reporting in some `WinCompat` scenarios (#11259)
+- Add native binary resolver (#11032) (Thanks @iSazonov!)
+- Update calculation of char width to respect `CJK` chars correctly (#11262)
+- Add `Unblock-File` for macOS (#11137)
+- Fix regression in `Get-PSCallStack` (#11210) (Thanks @iSazonov!)
+- Avoid automatically loading the `ScheduledJob` module when using Job cmdlets (#11194)
+- Add `OutputType` to `Get-Error` cmdlet and preserve original `TypeNames` (#10856)
+- Fix null reference in `SupportsVirtualTerminal` property (#11105)
+
+### Code Cleanup
+- Change comment and element text to meet Microsoft standards (#11304)
+
+### Tests
+- Make unreliable `DSC` test pending (#11131)
+
+### Build and Packaging Improvements
+- Fix Nuget package signing for Coordinated Package build (#11316)
+- Update dependencies from PowerShell Gallery and NuGet (#11323)
+- Bump `Microsoft.ApplicationInsights` from `2.11.0` to `2.12.0` (#11305)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `3.3.1` to `3.4.0` (#11265)
+- Updates packages for Debian 10 and 11 (#11236)
+- Only enable experimental features prior to `RC` (#11162)
+- Update macOS minimum version (#11163)
+- Bump `NJsonSchema` from `10.0.27` to `10.0.28` (#11170)
+
+### Documentation and Help Content
+- Refactor change logs into one log per release (#11165)
+- Fix `FWLinks` for PowerShell 7 online help documents (#11071)
+
+## v7.0.0-preview.6 - 11/21/2019
 
 ### Breaking Changes
 
