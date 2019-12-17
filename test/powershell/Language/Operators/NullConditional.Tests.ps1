@@ -250,6 +250,9 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
     }
 }
 
+<# Disable null-conditional operators tests to not cause parsing errors when the NullConditionalOperator feature is disabled
+   Tracked by #11354 in GitHub
+
 Describe 'NullConditionalMemberAccess' -Tag 'CI' {
 
     BeforeAll {
@@ -379,3 +382,4 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         }
     }
 }
+#>

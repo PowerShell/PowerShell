@@ -278,6 +278,9 @@ Describe 'null coalescing statement parsing' -Tag "CI" {
     ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 9,17
 }
 
+<# Disable null-conditional operator tests to not cause parsing errors when the NullConditionalOperator feature is disabled
+   Tracked by #11354 in GitHub
+
 Describe 'null conditional member access statement parsing' -Tag 'CI' {
     BeforeAll {
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
@@ -308,6 +311,7 @@ Describe 'null conditional member access statement parsing' -Tag 'CI' {
     ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
     ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
 }
+#>
 
 Describe 'splatting parsing' -Tags "CI" {
     ShouldBeParseError '@a' SplattingNotPermitted 0
