@@ -224,7 +224,7 @@ function Test-IsReleaseCandidate
         $Version
     )
 
-    if ($Version -like '*-rc.*')
+    if ($Version -match '^v\d.\d.\d-rc.\d$')
     {
         return $true
     }
