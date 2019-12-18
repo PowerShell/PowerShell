@@ -134,7 +134,7 @@ function Get-EnvironmentInformation
 
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
-        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore
+        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore | Select-Object -First 1
         if ($lsb_release) {
             $LinuxID = & $lsb_release -is
         }
