@@ -1097,13 +1097,16 @@ namespace System.Management.Automation.Runspaces
                                                 $offsetInLine = $myinv.OffsetInLine - 1
                                             }
 
+                                            if (-not $line.EndsWith(""`n"")) {
+                                                $line += $newline
+                                            }
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
                                                 $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}`n""
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
                                             $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
                                             $message = ""${prefix}${offsetWhitespace}^ ""
