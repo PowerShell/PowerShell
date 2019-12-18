@@ -440,7 +440,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
             '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
             pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
-            $LogPath | Should -FileContentMatch 'can not be loaded implicitly using Windows Compatibility'
+            $LogPath | Should -FileContentMatch 'cannot be loaded implicitly using Windows Compatibility'
         }
 
         It "Fails to auto-import incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Disabled in config " -Skip:(-not $IsWindows) {
