@@ -144,6 +144,7 @@ function Get-EnvironmentInformation
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
+        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
@@ -499,13 +500,17 @@ Fix steps:
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
     }
 
-    if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
 
-        if ($Environment.IsDebian9){
+        if ($Environment.IsDebian10){
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
+        }
+        elseif ($Environment.IsDebian9){
             # NOTE: Debian 8 doesn't need these symlinks
             $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
             $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
