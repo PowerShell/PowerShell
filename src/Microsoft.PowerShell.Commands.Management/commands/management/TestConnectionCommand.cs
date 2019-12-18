@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
-                string routerName = null;
+                string routerName = hopAddressString;
                 try
                 {
                     if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
@@ -392,7 +392,6 @@ namespace Microsoft.PowerShell.Commands
                 catch
                 {
                     // Swallow hostname resolve exceptions and continue with traceroute
-                    routerName = hopAddressString;
                 }
 
                 // In traceroutes we don't use 'Count' parameter.
