@@ -135,7 +135,7 @@ namespace System.Management.Automation.Internal
 
             if (blob.Length < PUBLICKEYBLOB_HEADER_LEN)
             {
-                throw new ArgumentException("key blob wrong length");
+                throw new ArgumentException(SecuritySupportStrings.InvalidPublicKey);
             }
 
             try 
@@ -202,6 +202,9 @@ namespace System.Management.Automation.Internal
             // public exponent (DWORD)
             int pos = 16;
             int n = p.Exponent.Length;
+
+            Dbg.Assert(n <= 4, "RSA exponent byte length cannot exceed allocated segment");
+
             while (n > 0)
             {
                 blob[pos++] = p.Exponent[--n];
@@ -370,15 +373,18 @@ namespace System.Management.Automation.Internal
     {
         #region Private Members
 
-        private RSA _rsa;
         // handle session key encryption/decryption
-        private readonly Aes _aes;
+        private RSA _rsa;
+
         // handle to the AES provider object (houses session key and iv)
-        private bool _canEncrypt = false;            // this flag indicates that this class has a key
-        // imported from the remote end and so can be
-        // used for encryption
-        private bool _sessionKeyGenerated = false;
+        private readonly Aes _aes;
+
+        // this flag indicates that this class has a key imported from the 
+        // remote end and so can be used for encryption
+        private bool _canEncrypt;            
+
         // bool indicating if session key was generated before
+        private bool _sessionKeyGenerated = false;
 
         private static object s_syncObject = new object();
 
