@@ -11,13 +11,13 @@ Describe "Test-Json" -Tags "CI" {
 
         $validSchemaJson = @"
             {
-            'description': 'A person',
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'hobbies': {
-                'type': 'array',
-                'items': {'type': 'string'}
+            "description": "A person",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "hobbies": {
+                "type": "array",
+                "items": {"type": "string"}
                 }
                 }
             }
@@ -25,13 +25,13 @@ Describe "Test-Json" -Tags "CI" {
 
         $invalidSchemaJson = @"
             {
-            'description',
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'hobbies': {
-                'type': 'array',
-                'items': {'type': 'string'}
+            "description",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "hobbies": {
+                "type": "array",
+                "items": {"type": "string"}
                 }
                 }
             }
@@ -39,29 +39,29 @@ Describe "Test-Json" -Tags "CI" {
 
         $validJson = @"
             {
-                'name': 'James',
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": "James",
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
 "@
 
         $invalidTypeInJson = @"
             {
-                'name': 123,
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": 123,
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
 "@
 
         $invalidTypeInJson2 = @"
             {
-                'name': 123,
-                'hobbies': [456, 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": 123,
+                "hobbies": [456, "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
 "@
 
         $invalidNodeInJson = @"
             {
-                'name': 'James',
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": "James",
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
                 errorNode
             }
 "@
@@ -151,5 +151,18 @@ Describe "Test-Json" -Tags "CI" {
         $errorVar.Count | Should -Be 2
         $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
         $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Test-Json recognizes primitives: <name>" -TestCases @(
+        @{ name = 'number'; value = 1 }
+        @{ name = '"true"'; value = '"true"' }
+        @{ name = '"false"'; value = '"false"' }
+        @{ name = '"null"'; value = '"null"' }
+        @{ name = 'string'; value = '"abc"' }
+        @{ name = 'array'; value = '[ 1, 2 ]' }
+    ) {
+        param ($name, $value)
+
+        Test-Json -Json $value | Should -BeTrue
     }
 }

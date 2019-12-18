@@ -8,8 +8,11 @@ using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+
 using NJsonSchema;
+
+#nullable enable
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -26,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets JSON string to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
-        public string Json { get; set; }
+        public string Json { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets schema to validate the JSON against.
@@ -38,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaStringParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string Schema { get; set; }
+        public string? Schema { get; set; }
 
         /// <summary>
         /// Gets or sets path to the file containg schema to validate the JSON string against.
@@ -46,9 +49,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string SchemaFile { get; set; }
+        public string? SchemaFile { get; set; }
 
-        private JsonSchema _jschema;
+        private JsonSchema? _jschema;
 
         /// <summary>
         /// Process all exceptions in the AggregateException.
@@ -59,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Return value is unreachable since we always rethrow.</returns>
         private static bool UnwrapException(Exception e)
         {
-            if (e is TargetInvocationException)
+            if (e is TargetInvocationException && e.InnerException != null)
             {
                 ExceptionDispatchInfo.Capture(e.InnerException).Throw();
             }
@@ -135,16 +138,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            JObject parsedJson = null;
             bool result = true;
 
             try
             {
-                parsedJson = JObject.Parse(Json);
+                JsonDocument.Parse(Json);
 
                 if (_jschema != null)
                 {
-                    var errorMessages = _jschema.Validate(parsedJson);
+                    var errorMessages = _jschema.Validate(Json);
                     if (errorMessages != null && errorMessages.Count != 0)
                     {
                         result = false;
