@@ -1091,10 +1091,11 @@ namespace System.Management.Automation.Runspaces
                                                 $offsetInLine = 0
                                             }
                                             else {
-                                                $line = $myinv.Line
-                                                $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                                $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
-                                                $offsetInLine = $myinv.OffsetInLine - 1
+                                                $positionMessage = $myinv.PositionMessage.Split('+')
+                                                $line = $positionMessage[1]
+                                                $highlightLine = $positionMessage.Count - 1
+                                                $offsetLength = $positionMessage[$highlightLine].Trim().Length
+                                                $offsetInLine = $positionMessage[$highlightLine].IndexOf('~')
                                             }
 
                                             if (-not $line.EndsWith(""`n"")) {
