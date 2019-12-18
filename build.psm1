@@ -2063,9 +2063,9 @@ function script:Write-Log
         [ValidateNotNullOrEmpty()]
         [string] $message,
 
-        [switch] $error
+        [switch] $errorId
     )
-    if ($error)
+    if ($errorId)
     {
         Write-Host -Foreground Red $message
     }
