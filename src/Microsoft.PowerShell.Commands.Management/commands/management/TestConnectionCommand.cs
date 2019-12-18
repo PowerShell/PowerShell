@@ -381,9 +381,10 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
+                string routerName = null;
                 try
                 {
-                    if (!TryResolveNameOrAddress(hopAddressString, out string routerName, out _))
+                    if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
                     {
                         routerName = hopAddressString;
                     }
