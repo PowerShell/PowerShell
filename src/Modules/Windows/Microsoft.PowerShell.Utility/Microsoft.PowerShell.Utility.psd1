@@ -37,10 +37,6 @@ PrivateData = @{
         Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
         Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
       }
-      @{
-        Name        = 'Microsoft.PowerShell.Utility.PSGetError'
-        Description = 'Enable Get-Error cmdlet that displays detailed information about ErrorRecords included nested objects'
-      }
     )
   }
 }
