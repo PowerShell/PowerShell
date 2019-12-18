@@ -32,7 +32,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
-            $e | Out-String | Should -BeLike "*$testScriptPath*"
+            $e | Out-String | Should -BeLike "*${testScriptPath}:4"
             # validate line number is shown
             $e | Out-String | Should -BeLike '* 4 *'
         }

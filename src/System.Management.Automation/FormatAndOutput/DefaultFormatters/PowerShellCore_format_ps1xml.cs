@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Runspaces
                                                 $useTargetObject = $true
                                             }
                                             elseif ($myinv.ScriptName) {
-                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
+                                                $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
