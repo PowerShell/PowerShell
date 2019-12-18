@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!CanResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!CanResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
-                if (!CanResolveNameOrAddress(hopAddressString, out string routerName, out _))
+                if (!TryResolveNameOrAddress(hopAddressString, out string routerName, out _))
                 {
                     routerName = hopAddressString;
                 }
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply? reply, replyResult = null;
-            if (!CanResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            if (!CanResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool CanResolveNameOrAddress(
+        private bool TryResolveNameOrAddress(
             string targetNameOrAddress,
             out string resolvedTargetName,
             [NotNullWhen(true)]
