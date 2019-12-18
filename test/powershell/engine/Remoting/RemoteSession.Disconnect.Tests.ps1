@@ -58,7 +58,7 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
 
         if ($ps -ne $null) { $ps.Dispose() }
         if ($session -ne $null) { Remove-PSSession -Session $session }
-        if ($global:job -ne $null) { Remove-Job -Job $global:job -Force }
+        if ($script:job -ne $null) { Remove-Job -Job $script:job -Force }
     }
 
     It "Verifies that an abruptly disconnected Invoke-Command session produces a valid disconnected job needed for reconnect" {
@@ -67,16 +67,16 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
         $ps.BeginInvoke()
 
         # Run script synchronously on remote session, and let disconnect script disconnect the remote session.
-        $null = Invoke-Command -Session $session -ScriptBlock { 
-            1..60 | ForEach-Object { Start-Sleep 1; "Output $_" } 
+        $null = Invoke-Command -Session $session -ScriptBlock {
+            1..60 | ForEach-Object { Start-Sleep 1; "Output $_" }
         } -ErrorAction SilentlyContinue
 
         # Session should be disconnected.
         $session.State | Should -BeExactly 'Disconnected'
 
         # A disconnected job should have been created for reconnect.
-        $global:job = Get-Job | Where-Object { $_.ChildJobs[0].Runspace.Id -eq $session.Runspace.Id }
-        $global:job | Should -Not -BeNullOrEmpty
-        $global:job.State | Should -BeExactly 'Disconnected'
+        $script:job = Get-Job | Where-Object { $_.ChildJobs[0].Runspace.Id -eq $session.Runspace.Id }
+        $script:job | Should -Not -BeNullOrEmpty
+        $script:job.State | Should -BeExactly 'Disconnected'
     }
 }
