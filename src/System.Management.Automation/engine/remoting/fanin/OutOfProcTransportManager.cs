@@ -636,6 +636,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch (ObjectDisposedException)
                 {
+                    // Object already disposed.
                 }
                 _sessionMessageQueue.Dispose();
 
@@ -646,6 +647,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch (ObjectDisposedException)
                 {
+                    // Object already disposed.
                 }
                 _commandMessageQueue.Dispose();
             }
@@ -785,7 +787,7 @@ namespace System.Management.Automation.Remoting.Client
             catch (InvalidOperationException)
             {
                 // This exception will be thrown by the BlockingCollection message queue objects
-                // after they have been closed (during session closed acknowledgement).
+                // after they have been closed.
             }
         }
 
