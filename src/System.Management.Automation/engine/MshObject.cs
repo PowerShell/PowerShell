@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
                             return Microsoft.PowerShell.ToStringCodeMethods.Type(type);
                         }
 
-                        return obj.ToString() ?? string.Empty;
+                        return obj.ToString();
                     }
 
                     return objFormattable.ToString(format, formatProvider);
