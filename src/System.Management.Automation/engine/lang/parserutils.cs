@@ -970,7 +970,7 @@ namespace System.Management.Automation
                 string lvalString;
                 if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
                 {
-                    lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                    lvalString = PSObject.ToStringParser(context, lval);
                 }
                 else
                 {
