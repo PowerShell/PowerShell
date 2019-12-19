@@ -130,7 +130,7 @@ function New-TestNestedModule
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
-<#
+
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
@@ -389,7 +389,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
         }
     }
 }
-#>
+
 Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
     BeforeAll {
         $ModuleName = "DesktopModule"
@@ -460,7 +460,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
         }
     }
 }
-<#
+
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
 
@@ -1086,4 +1086,4 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             }
         }
     }
-}#>
+}
