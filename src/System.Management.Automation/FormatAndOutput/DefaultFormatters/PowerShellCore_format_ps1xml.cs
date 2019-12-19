@@ -1091,16 +1091,18 @@ namespace System.Management.Automation.Runspaces
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
 
+                                            $highlightLine = ''
                                             if ($useTargetObject) {
                                                 $line = $_.TargetObject.LineText.Trim()
                                                 $offsetLength = 0
                                                 $offsetInLine = 0
                                             }
                                             else {
-                                                $line = $myinv.Line
-                                                $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                                $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
-                                                $offsetInLine = $myinv.OffsetInLine - 1
+                                                $positionMessage = $myinv.PositionMessage.Split('+')
+                                                $line = $positionMessage[1]
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1]
+                                                $offsetLength = $highlightLine.Trim().Length
+                                                $offsetInLine = $highlightLine.IndexOf('~')
                                             }
 
                                             if (-not $line.EndsWith(""`n"")) {
@@ -1115,7 +1117,10 @@ namespace System.Management.Automation.Runspaces
                                             $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
                                             $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
-                                            $message = ""${prefix}${offsetWhitespace}^ ""
+                                            if ($highlightLine -ne '') {
+                                                $posMsg += ""${newline}${prefix}${highlightLine}${newline}""
+                                            }
+                                            $message = ""${prefix}""
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
