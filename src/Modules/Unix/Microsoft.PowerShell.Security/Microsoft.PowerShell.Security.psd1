@@ -10,5 +10,5 @@ FunctionsToExport = @()
 CmdletsToExport="Get-Credential", "Get-ExecutionPolicy", "Set-ExecutionPolicy", "ConvertFrom-SecureString", "ConvertTo-SecureString", "Get-PfxCertificate"
 AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.Security.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855959'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113533'
 }
