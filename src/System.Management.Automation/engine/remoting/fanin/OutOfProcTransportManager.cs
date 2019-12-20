@@ -638,6 +638,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // Object already disposed.
                 }
+
                 _sessionMessageQueue.Dispose();
 
                 // Stop command processing thread.
@@ -649,6 +650,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // Object already disposed.
                 }
+                
                 _commandMessageQueue.Dispose();
             }
         }
