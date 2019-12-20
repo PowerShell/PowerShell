@@ -29,7 +29,7 @@ CmdletsToExport = @(
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855960'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113633'
 PrivateData = @{
   PSData = @{
     ExperimentalFeatures = @(
