@@ -991,9 +991,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                    Set-StrictMode -Off
 
                                     function Get-ConciseViewPositionMessage {
-                                        Set-StrictMode -Off
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
@@ -1058,7 +1058,13 @@ namespace System.Management.Automation.Runspaces
                                                 $useTargetObject = $true
                                             }
                                             elseif ($myinv.ScriptName) {
-                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
+                                                if ($env:TERM_PROGRAM -eq 'vscode') {
+                                                    # If we are running in vscode, we know the file:line:col links are clickable so we use this format
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}""
+                                                }
+                                                else {
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
+                                                }
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
@@ -1085,28 +1091,36 @@ namespace System.Management.Automation.Runspaces
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
 
+                                            $highlightLine = ''
                                             if ($useTargetObject) {
                                                 $line = $_.TargetObject.LineText.Trim()
                                                 $offsetLength = 0
                                                 $offsetInLine = 0
                                             }
                                             else {
-                                                $line = $myinv.Line
-                                                $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                                $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
-                                                $offsetInLine = $myinv.OffsetInLine - 1
+                                                $positionMessage = $myinv.PositionMessage.Split('+')
+                                                $line = $positionMessage[1]
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1]
+                                                $offsetLength = $highlightLine.Trim().Length
+                                                $offsetInLine = $highlightLine.IndexOf('~')
                                             }
 
+                                            if (-not $line.EndsWith(""`n"")) {
+                                                $line += $newline
+                                            }
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
                                                 $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}`n""
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
                                             $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
-                                            $message = ""${prefix}${offsetWhitespace}^ ""
+                                            if ($highlightLine -ne '') {
+                                                $posMsg += ""${newline}${prefix}${highlightLine}${newline}""
+                                            }
+                                            $message = ""${prefix}""
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {

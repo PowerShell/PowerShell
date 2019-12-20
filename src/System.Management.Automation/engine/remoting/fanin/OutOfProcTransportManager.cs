@@ -9,6 +9,7 @@
  * elevation to support local machine remoting).
  */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -463,6 +464,8 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
+        private readonly BlockingCollection<string> _sessionMessageQueue;
+        private readonly BlockingCollection<string> _commandMessageQueue;
         private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
         private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
@@ -506,6 +509,20 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.MaximumReceivedObjectSize = BaseTransportManager.MaximumReceivedObjectSize;
             // timers initialization
             _closeTimeOutTimer = new Timer(OnCloseTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+
+            // Session message processing
+            _sessionMessageQueue = new BlockingCollection<string>();
+            var sessionThread = new Thread(ProcessMessageProc);
+            sessionThread.Name = "SessionMessageProcessing";
+            sessionThread.IsBackground = true;
+            sessionThread.Start(_sessionMessageQueue);
+
+            // Command message processing
+            _commandMessageQueue = new BlockingCollection<string>();
+            var commandThread = new Thread(ProcessMessageProc);
+            commandThread.Name = "CommandMessageProcessing";
+            commandThread.IsBackground = true;
+            commandThread.Start(_commandMessageQueue);
 
             _tracer = PowerShellTraceSourceFactory.GetTraceSource();
         }
@@ -601,7 +618,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources.
+        /// Terminates the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)
@@ -611,6 +628,30 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
+
+                // Stop session processing thread.
+                try
+                {
+                    _sessionMessageQueue.CompleteAdding();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Object already disposed.
+                }
+
+                _sessionMessageQueue.Dispose();
+
+                // Stop command processing thread.
+                try
+                {
+                    _commandMessageQueue.CompleteAdding();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Object already disposed.
+                }
+                
+                _commandMessageQueue.Dispose();
             }
         }
 
@@ -663,11 +704,66 @@ namespace System.Management.Automation.Remoting.Client
         {
             // stop timer
             _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
             RaiseCloseCompleted();
             CleanupConnection();
         }
 
         protected abstract void CleanupConnection();
+
+        private void ProcessMessageProc(object state)
+        {
+            var messageQueue = state as BlockingCollection<string>;
+
+            try
+            {
+                while (true)
+                {
+                    var data = messageQueue.Take();
+                    try
+                    {
+                        OutOfProcessUtils.ProcessData(data, _dataProcessingCallbacks);
+                    }
+                    catch (Exception exception)
+                    {
+                        PSRemotingTransportException psrte =
+                            new PSRemotingTransportException(
+                                PSRemotingErrorId.IPCErrorProcessingServerData,
+                                RemotingErrorIdStrings.IPCErrorProcessingServerData,
+                                exception.Message);
+                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // Normal session message processing thread end.
+            }
+        }
+
+        private const string GUIDTAG = "PSGuid='";
+        private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
+
+        private Guid GetMessageGuid(string data)
+        {
+            // Perform quick scan for data packet for a GUID, ignoring any errors.
+            var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
+            if (iTag > -1)
+            {
+                try
+                {
+                    var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
+                    return new Guid(psGuidString);
+                }
+                catch 
+                {
+                    // Ignore any malformed packet errors here and return an empty Guid.
+                    // Packet errors will be reported later during message processing.
+                }
+            }
+
+            return Guid.Empty;
+        }
 
         #endregion
 
@@ -677,15 +773,23 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                OutOfProcessUtils.ProcessData(data, _dataProcessingCallbacks);
+                // Route protocol message based on whether it is a session or command message.
+                // Session messages have empty Guid values.
+                if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
+                {
+                    // Session message
+                    _sessionMessageQueue.Add(data);
+                }
+                else
+                {
+                    // Command message
+                    _commandMessageQueue.Add(data);
+                }
             }
-            catch (Exception exception)
+            catch (InvalidOperationException)
             {
-                PSRemotingTransportException psrte =
-                    new PSRemotingTransportException(PSRemotingErrorId.IPCErrorProcessingServerData,
-                        RemotingErrorIdStrings.IPCErrorProcessingServerData,
-                        exception.Message);
-                RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                // This exception will be thrown by the BlockingCollection message queue objects
+                // after they have been closed.
             }
         }
 

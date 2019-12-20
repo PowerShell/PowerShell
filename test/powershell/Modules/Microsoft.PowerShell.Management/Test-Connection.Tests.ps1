@@ -275,6 +275,12 @@ Describe "Test-Connection" -tags "CI" {
         It 'returns false without error if MaxHops is exceeded during -Traceroute -Quiet' {
             Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -Quiet | Should -BeFalse
         }
+
+        It 'has a non-null value for Destination for reachable hosts' {
+            $results = Test-Connection 127.0.0.1 -Traceroute
+
+            $results.Hostname | Should -Not -BeNullOrEmpty
+        }
     }
 }
 

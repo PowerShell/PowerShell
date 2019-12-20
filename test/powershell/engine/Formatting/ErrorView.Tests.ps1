@@ -32,7 +32,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
-            $e | Out-String | Should -BeLike "*$testScriptPath*"
+            $e | Out-String | Should -BeLike "*${testScriptPath}:4*"
             # validate line number is shown
             $e | Out-String | Should -BeLike '* 4 *'
         }
@@ -61,6 +61,25 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
             $e | Out-String | Should -BeLike "*$testScriptPath*"
             $e | Out-String | Should -Not -BeLike '*pester*'
+        }
+    }
+
+    Context 'NormalView tests' {
+
+        It 'Error shows up when using strict mode' {
+            try {
+                $ErrorView = 'NormalView'
+                Set-StrictMode -Version 2
+                throw 'Oops!'
+            }
+            catch {
+                $e = $_ | Out-String
+            }
+            finally {
+                Set-StrictMode -Off
+            }
+
+            $e | Should -BeLike '*Oops!*'
         }
     }
 }
