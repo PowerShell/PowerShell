@@ -628,7 +628,29 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
+
+                // Stop session processing thread.
+                try
+                {
+                    _sessionMessageQueue.CompleteAdding();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Object already disposed.
+                }
+
                 _sessionMessageQueue.Dispose();
+
+                // Stop command processing thread.
+                try
+                {
+                    _commandMessageQueue.CompleteAdding();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Object already disposed.
+                }
+                
                 _commandMessageQueue.Dispose();
             }
         }
@@ -682,10 +704,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             // stop timer
             _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            // Stop protocol message processing threads.
-            _sessionMessageQueue.CompleteAdding();
-            _commandMessageQueue.CompleteAdding();
 
             RaiseCloseCompleted();
             CleanupConnection();
@@ -753,17 +771,25 @@ namespace System.Management.Automation.Remoting.Client
 
         protected void HandleOutputDataReceived(string data)
         {
-            // Route protocol message based on whether it is a session or command message.
-            // Session messages have empty Guid values.
-            if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
+            try
             {
-                // Session message
-                _sessionMessageQueue.Add(data);
+                // Route protocol message based on whether it is a session or command message.
+                // Session messages have empty Guid values.
+                if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
+                {
+                    // Session message
+                    _sessionMessageQueue.Add(data);
+                }
+                else
+                {
+                    // Command message
+                    _commandMessageQueue.Add(data);
+                }
             }
-            else
+            catch (InvalidOperationException)
             {
-                // Command message
-                _commandMessageQueue.Add(data);
+                // This exception will be thrown by the BlockingCollection message queue objects
+                // after they have been closed.
             }
         }
 
