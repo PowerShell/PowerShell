@@ -391,9 +391,13 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 }
 
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
-    $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
 
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+
         $ModuleName = "DesktopModule"
         $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
@@ -402,6 +406,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
         # create an incompatible module
         New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -464,7 +472,17 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
-    $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
 
     Context "System32 module path prepended to PSModulePath" {
         BeforeAll {
