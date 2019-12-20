@@ -3,6 +3,7 @@
 Describe "TabCompletion" -Tags CI {
     BeforeAll {
         $separator = [System.IO.Path]::DirectorySeparatorChar
+        $nullConditionalFeatureDisabled = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
     }
 
     It 'Should complete Command' {
@@ -33,12 +34,12 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
     }
 
-    It 'Should complete dotnet method with null conditional operator' {
+    It 'Should complete dotnet method with null conditional operator' -skip:$nullConditionalFeatureDisabled {
         $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
     }
 
-    It 'Should complete dotnet method with null conditional operator without first letter' {
+    It 'Should complete dotnet method with null conditional operator without first letter' -skip:$nullConditionalFeatureDisabled {
         $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
