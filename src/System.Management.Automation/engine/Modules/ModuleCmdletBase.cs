@@ -2390,10 +2390,8 @@ namespace Microsoft.PowerShell.Commands
                             moduleManifestPath,
                             string.Join(',', inferredCompatiblePSEditions));
 
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-
                         ErrorRecord er = new ErrorRecord(
-                            ioe,
+                            new InvalidOperationException(message),
                             nameof(Modules) + "_" + nameof(Modules.ImplicitWinCompatDisabled),
                             ErrorCategory.ResourceUnavailable,
                             moduleManifestPath);
