@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.Commands
 
             // TODO: assign real TechNet addresses
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://go.microsoft.com/fwlink/?linkid=855954");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://go.microsoft.com/fwlink/?linkid=855953");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://go.microsoft.com/fwlink/?linkid=855960");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://go.microsoft.com/fwlink/?linkid=855956");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://go.microsoft.com/fwlink/?linkid=855958");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://go.microsoft.com/fwlink/?linkid=855959");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://go.microsoft.com/fwlink/?linkid=855961");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://go.microsoft.com/fwlink/?linkid=2113532");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://go.microsoft.com/fwlink/?linkid=2113534");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://go.microsoft.com/fwlink/?linkid=2113633");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://go.microsoft.com/fwlink/?linkid=2113538");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://go.microsoft.com/fwlink/?linkid=2113632");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://go.microsoft.com/fwlink/?linkid=2113533");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://go.microsoft.com/fwlink/?linkid=2113537");
         }
 
         /// <summary>

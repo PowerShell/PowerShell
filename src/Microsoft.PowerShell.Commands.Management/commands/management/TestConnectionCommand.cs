@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -351,8 +351,6 @@ namespace Microsoft.PowerShell.Commands
             IPAddress hopAddress;
             do
             {
-                // Clear the stored router name for every hop
-                string routerName = string.Empty;
                 pingOptions.Ttl = currentHop;
 
 #if !UNIX
@@ -383,25 +381,25 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
+                string routerName = hopAddressString;
+                try
+                {
+                    if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
+                    {
+                        routerName = hopAddressString;
+                    }
+                }
+                catch
+                {
+                    // Swallow hostname resolve exceptions and continue with traceroute
+                }
+
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
-#if !UNIX
-                        if (ResolveDestination.IsPresent && routerName == string.Empty)
-                        {
-                            try
-                            {
-                                InitProcessPing(hopAddressString, out routerName, out _);
-                            }
-                            catch
-                            {
-                                // Swallow host resolve exceptions and just use the IP address.
-                            }
-                        }
-#endif
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
@@ -475,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply? reply, replyResult = null;
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -578,7 +576,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -643,7 +641,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool InitProcessPing(
+        private bool TryResolveNameOrAddress(
             string targetNameOrAddress,
             out string resolvedTargetName,
             [NotNullWhen(true)]
@@ -1007,6 +1005,16 @@ namespace Microsoft.PowerShell.Commands
                 Source = source;
                 Target = destination;
                 TargetAddress = destinationAddress;
+
+                if (_status.Address == IPAddress.Any
+                    || _status.Address == IPAddress.IPv6Any)
+                {
+                    Hostname = null;
+                }
+                else
+                {
+                    Hostname = _status.Destination;
+                }
             }
 
             private readonly PingStatus _status;
@@ -1020,13 +1028,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string? Hostname
-            {
-                get => _status.Destination != IPAddress.Any.ToString()
-                    && _status.Destination != IPAddress.IPv6Any.ToString()
-                        ? _status.Destination
-                        : null;
-            }
+            public string? Hostname { get; }
 
             /// <summary>
             /// Gets the sequence number of the ping in the sequence of pings to the hop point.

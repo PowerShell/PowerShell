@@ -772,7 +772,7 @@ ZoneId=$FileType
 
             function Test-RemoteSignedExecutionPolicy {
 
-                param($testScript, $expected, $error)
+                param ($testScript, $expected, $errorId)
 
                 $TestTypePrefix = "Test 'RemoteSigned' execution policy."
 
@@ -806,91 +806,91 @@ ZoneId=$FileType
                     $actualError = $result."exception"
 
                     $actualResult | Should -Be $expected
-                    $actualError | Should -Be $error
+                    $actualError | Should -Be $errorId
                 }
             }
             $message = "Hello"
-            $error = "System.Management.Automation.PSSecurityException"
+            $errorId = "System.Management.Automation.PSSecurityException"
             $testData = @(
                 @{
                     testScript = $LocalUnsignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $LocalSignatureCorruptedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $LocalSignedScript
                     expected = "Hello"
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $MyComputerUnsignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $MyComputerSignatureCorruptedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $myComputerSignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $TrustedUnsignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $TrustedSignatureCorruptedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $TrustedSignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $IntranetUnsignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $IntranetSignatureCorruptedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $IntranetSignedScript
                     expected = $message
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $InternetUnsignedScript
                     expected = $null
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $InternetSignatureCorruptedScript
                     expected = $null
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $UntrustedUnsignedScript
                     expected = $null
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $UntrustedSignatureCorruptedScript
                     expected = $null
-                    error = $error
+                    errorId = $errorId
                 }
             )
 
@@ -915,11 +915,11 @@ ZoneId=$FileType
 
             $TestTypePrefix = "Test 'AllSigned' execution policy."
 
-            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $errorId = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
             $testData = @(
                 @{
                     module = "Microsoft.PowerShell.Archive"
-                    error = $null
+                    errorId = $null
                 }
             )
 
@@ -927,21 +927,21 @@ ZoneId=$FileType
                 $testData += @(
                     @{
                         module = $PSHomeUntrustedModule
-                        error = $error
+                        errorId = $errorId
                     }
                     @{
                         module = $PSHomeUnsignedModule
-                        error = $error
+                        errorId = $errorId
                     }
                 )
             }
 
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
-                param([string]$module, [string]$error)
+                param ([string]$module, [string]$errorId)
                 $testScript = {Import-Module -Name $module -Force}
-                if($error)
+                if ($errorId)
                 {
-                    $testScript | Should -Throw -ErrorId $error
+                    $testScript | Should -Throw -ErrorId $errorId
                 }
                 else
                 {
@@ -949,33 +949,33 @@ ZoneId=$FileType
                 }
             }
 
-            $error = "UnauthorizedAccess"
+            $errorId = "UnauthorizedAccess"
             $pendingTestData = @(
                 # The following files are not signed correctly when generated, so we will skip for now
                 # filed https://github.com/PowerShell/PowerShell/issues/5559
                 @{
                     testScript = $MyComputerSignedScript
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $UntrustedSignedScript
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $TrustedSignedScript
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $LocalSignedScript
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $IntranetSignedScript
-                    error = $null
+                    errorId = $null
                 }
                 @{
                     testScript = $InternetSignedScript
-                    error = $null
+                    errorId = $null
                 }
             )
             It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $pendingTestData -Pending  {}
@@ -983,64 +983,64 @@ ZoneId=$FileType
             $testData = @(
                 @{
                     testScript = $InternetSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $InternetUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $IntranetSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $IntranetSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $IntranetUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $LocalSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $LocalUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $TrustedSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $TrustedUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $UntrustedSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $UntrustedUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $MyComputerSignatureCorruptedScript
-                    error = $error
+                    errorId = $errorId
                 }
                 @{
                     testScript = $MyComputerUnsignedScript
-                    error = $error
+                    errorId = $errorId
                 }
 
             )
             It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $testData  {
-                param([string]$testScript, [string]$error)
+                param ([string]$testScript, [string]$errorId)
                 $testScript | Should -Exist
-                if($error)
+                if ($errorId)
                 {
-                    {& $testScript} | Should -Throw -ErrorId $error
+                    {& $testScript} | Should -Throw -ErrorId $errorId
                 }
                 else
                 {
