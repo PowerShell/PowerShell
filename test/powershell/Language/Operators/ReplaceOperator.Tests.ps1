@@ -64,4 +64,35 @@ Describe "Replace Operator" -Tags CI {
             $res | Should -BeExactly "ID XXXX123"
         }
     }
+
+    Describe "Culture-invariance tests for -split and -replace" -Tags CI {
+        BeforeAll {
+            $skipTest = -not [ExperimentalFeature]::IsEnabled("PSCultureInvariantReplaceOperator")
+            if ($skipTest) {
+                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCultureInvariantReplaceOperator' to be enabled." -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+            } else {
+                $prevCulture = [cultureinfo]::CurrentCulture
+                # The French culture uses "," as the decimal mark.
+                [cultureinfo]::CurrentCulture = 'fr'
+            }
+        }
+
+        AfterAll {
+            if ($skipTest) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            } else {
+                [cultureinfo]::CurrentCulture = $prevCulture
+            }
+        }
+
+        It "-split: LHS stringification is not culture-sensitive" {
+          1.2 -split ',' | Should -Be '1.2'
+        }
+
+        It "-replace: LHS stringification is not culture-sensitive" {
+          1.2 -replace ',' | Should -Be '1.2'
+        }
+    }
 }

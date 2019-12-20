@@ -1,6 +1,7 @@
 {
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
-    "PSNullConditionalOperators": [ "test/powershell/Language/Operators/NullConditional.Tests.ps1" ]
+    "PSNullConditionalOperators": [ "test/powershell/Language/Operators/NullConditional.Tests.ps1" ],
+    "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ]
   }
 }
