@@ -3782,6 +3782,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         /// <param name="warning"></param>
         /// <returns></returns>
+        [Obsolete("Custom PSSnapIn is deprecated. Please use a module instead.", true)]
         public PSSnapInInfo ImportPSSnapIn(string name, out PSSnapInException warning)
         {
             if (string.IsNullOrEmpty(name))
