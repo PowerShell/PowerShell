@@ -146,7 +146,6 @@ namespace System.Management.Automation.Runspaces
             var errorRecord_Exception = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
-            errorRecord_Exception.TypeNames.Add("System.Exception");
             yield return errorRecord_Exception;
 
             yield return new ExtendedTypeDefinition(
@@ -1129,8 +1128,14 @@ namespace System.Management.Automation.Runspaces
                                                 # need to parse out the relevant part of the pre-rendered positionmessage
                                                 $message += $err.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
                                             }
-                                            else {
+                                            elseif ($err.Exception) {
                                                 $message += $err.Exception.Message
+                                            }
+                                            elseif ($err.Message) {
+                                                $message += $err.Message
+                                            }
+                                            else {
+                                                $message += $err.ToString()
                                             }
                                         }
                                         else {
