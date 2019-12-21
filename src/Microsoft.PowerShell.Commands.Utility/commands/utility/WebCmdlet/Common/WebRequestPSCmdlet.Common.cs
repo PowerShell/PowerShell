@@ -1260,21 +1260,24 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var entry in WebSession.ContentHeaders)
             {
-                if (SkipHeaderValidation)
+                if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
-                    request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
-                }
-                else
-                {
-                    try
+                    if (SkipHeaderValidation)
                     {
-                        request.Content.Headers.Add(entry.Key, entry.Value);
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
                     }
-                    catch (FormatException ex)
+                    else
                     {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                        ThrowTerminatingError(er);
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
                     }
                 }
             }
