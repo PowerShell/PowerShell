@@ -144,8 +144,9 @@ function Get-EnvironmentInformation
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
-        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
+        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
+        $environment += @{'IsDebian11' = $Environment.IsDebian -and $LinuxInfo.PRETTY_NAME -match 'bullseye'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
@@ -506,7 +507,7 @@ Fix steps:
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
 
-        if ($Environment.IsDebian10){
+        if ($Environment.IsDebian10 -or $Environment.IsDebian11){
             $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
             $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
         }
