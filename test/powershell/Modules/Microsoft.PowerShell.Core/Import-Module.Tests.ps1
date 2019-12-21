@@ -257,7 +257,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         Copy-Item $gacAssemblyPath -Destination $destPath -Force
 
         # Use a different pwsh so that we do not have the PSScheduledJob module already loaded.
-        $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
+        $loadedAssemblyLocation = & "$PSHOME/pwsh" -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
         $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
     }
 }
