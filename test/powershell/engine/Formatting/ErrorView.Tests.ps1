@@ -13,6 +13,11 @@ Describe 'Tests for $ErrorView' -Tag CI {
         $ErrorView | Should -BeExactly $expectedDefault
     }
 
+    It 'Exceptions not thrown do not get formatted as ErrorRecord' {
+        $exp = [System.Exception]::new('test') | Out-String
+        $exp | Should -BeLike "*Message        : test*"
+    }
+
     Context 'ConciseView tests' {
 
         It 'Cmdlet error should be one line of text' {
