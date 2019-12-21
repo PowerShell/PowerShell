@@ -295,18 +295,21 @@ Describe 'null conditional member access statement parsing' -Tag 'CI' {
         }
     }
 
-    ShouldBeParseError '[datetime]?::now' ExpectedValueExpression,UnexpectedToken 11,11
-    ShouldBeParseError '$x ?.name' ExpectedValueExpression,UnexpectedToken 4,4
-    ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
-    ShouldBeParseError '${x}?.' MissingPropertyName 6
-    ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
+    # We need to add this check as parsing on script block is done before an `It` is called.
+    if (-not $skipTest) {
+        ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
+        ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
+        ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
+        ShouldBeParseError '${x}?.' MissingPropertyName 6
+        ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
 
-    ShouldBeParseError '[datetime]?[0]' MissingTypename,ExpectedValueExpression,UnexpectedToken 12,11,11
-    ShouldBeParseError '${x} ?[1]' MissingTypename,ExpectedValueExpression,UnexpectedToken 7,6,6
-    ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
-    ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
-    ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
-    ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
+        ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
+        ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
+        ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
+        ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
+        ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+        ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
+    }
 }
 
 Describe 'splatting parsing' -Tags "CI" {
