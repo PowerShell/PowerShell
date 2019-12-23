@@ -52,7 +52,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
         { $script:a = New-CimInstance -ClassName Win32_Environment -Property ([ordered]@{
             Name="TestCimInstance";
             VariableValue="testvalu234e";
-            UserName="<SYSTEM>"
+            UserName=[System.Environment]::UserName
         }) } | Should -Not -Throw
         $script:a | Should -Not -BeNullOrEmpty
         $script:a.Name | Should -BeExactly "TestCimInstance"
