@@ -2,13 +2,13 @@
 # Licensed under the MIT License.
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     BeforeAll {
-        If (-not $IsCoreCLR) {
-            Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
+        If ($IsWindows) {
+            Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
         }
     }
     AfterAll {
-        If (-not $IsCoreCLR) {
-            Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
+        If ($IsWindows) {
+            Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
         }
     }
 
@@ -45,15 +45,17 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
         It '$a should not be $null' { $script:a | Should -Not -BeNullOrEmpty }
    }
 
-    It 'Set-WmiInstance cmdlet - Argument parameter must take IDictionary' -skip:$IsCoreCLR {
+    It 'New-CimInstance cmdlet - Property parameter must take IDictionary' -Skip:(-not $IsWindows) {
 
         $script:a = $null
 
-        { $script:a = set-wmiinstance -class win32_environment -argument ([ordered]@{Name="TestWmiInstance";
-                        VariableValue="testvalu234e";
-                        UserName="<SYSTEM>"}) } | Should -Not -Throw
+        { $script:a = New-CimInstance -ClassName Win32_Environment -Property ([ordered]@{
+            Name="TestCimInstance";
+            VariableValue="testvalu234e";
+            UserName="<SYSTEM>"
+        }) } | Should -Not -Throw
         $script:a | Should -Not -BeNullOrEmpty
-        $script:a.Name | Should -BeExactly "TestWmiInstance"
+        $script:a.Name | Should -BeExactly "TestCimInstance"
     }
 
     Context 'Select-Object cmdlet - Property parameter (Calculated properties) must take IDictionary' {
