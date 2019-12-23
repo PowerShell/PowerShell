@@ -663,8 +663,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    // add the header value (or overwrite it if already present)
-                    WebSession.Headers[key] = Headers[key].ToString();
+                    var value = Headers[key];
+
+                    // null is not valid value for header.
+                    // We silently ignore header if value is null.
+                    if (!(value is null))
+                    {
+                        // add the header value (or overwrite it if already present)
+                        WebSession.Headers[key] = value.ToString();
+                    }
                 }
             }
 
