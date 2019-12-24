@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
-                    Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
+                    Task timeoutTask = Task.Delay(millisecondsDelay: 3000);
                     Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
 
                     if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
