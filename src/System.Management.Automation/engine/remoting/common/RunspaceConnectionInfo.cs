@@ -1917,7 +1917,7 @@ namespace System.Management.Automation.Runspaces
             this.UserName = userName;
             this.ComputerName = computerName;
             this.KeyFilePath = keyFilePath;
-            this.Port = DefaultPort;
+            this.Port = DefaultPort; // TODO: don't override Port directive in ssh_config
             this.Subsystem = DefaultSubsystem;
         }
 
@@ -1936,7 +1936,7 @@ namespace System.Management.Automation.Runspaces
         {
             ValidatePortInRange(port);
 
-            this.Port = (port != 0) ? port : DefaultPort;
+            this.Port = (port != 0) ? port : DefaultPort; // TODO: don't override Port directive in ssh_config
         }
 
         /// <summary>
@@ -1956,7 +1956,7 @@ namespace System.Management.Automation.Runspaces
         {
             ValidatePortInRange(port);
 
-            this.Port = (port != 0) ? port : DefaultPort;
+            this.Port = (port != 0) ? port : DefaultPort; // TODO: don't override Port directive in ssh_config
             this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
@@ -2063,28 +2063,24 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Extract an optional domain name if provided.
-            string domainName = null;
-            string userName = this.UserName ?? GetCurrentUserName();
-#if !UNIX
-            var parts = userName.Split(Utils.Separators.Backslash);
-            if (parts.Length == 2)
-            {
-                domainName = parts[0];
-                userName = parts[1];
-            }
-#endif
+            // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
+            // Local ssh process invoked as:
+            //   windows:
+            //     ssh.exe [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
+            //   linux|macos:
+            //     ssh [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
+            // Remote sshd process' subsystem configured for PowerShell Remoting Protocol (PSRP) over Secure Shell Protocol (SSH)
+            // by adding one of the following Subsystem directives to sshd_config on the remote machine:
+            //   windows:
+            //     Subsystem powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -SSHServerMode -NoLogo -NoProfile
+            //     Subsystem powershell C:\Program Files\PowerShell\6\pwsh.exe -SSHServerMode -NoLogo -NoProfile
+            //   linux|macos:
+            //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
-            // Create client ssh process that hosts powershell as a subsystem and is configured
-            // to be in server mode for PSRP over SSHD:
-            //   powershell -sshs -NoLogo -NoProfile
-            //   See sshd_configuration file, subsystems section and it will have this entry:
-            //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -sshs -NoLogo -NoProfile
-            string arguments;
+            // collect ssh command line arguments into an array
+            var arguments = new List<string>();
 
-            // ssh.exe expects ipv6 not to have square brackets so we have to remove
-            string hostname = this.ComputerName.TrimStart('[').TrimEnd(']');
-
+            // pass "-i identity_file" command line argument to ssh if KeyFilePath is set
             if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
                 if (!System.IO.File.Exists(this.KeyFilePath))
@@ -2093,38 +2089,40 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -p {3} -s {4}", this.KeyFilePath, userName, hostname, this.Port, this.Subsystem) :
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -p {4} -s {5}", this.KeyFilePath, userName, domainName, hostname, this.Port, this.Subsystem);
+                arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
             }
-            else
+
+            // pass "-l login_name" commmand line argument to ssh if UserName is set
+            if (!string.IsNullOrEmpty(this.UserName))
             {
-                arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -p {2} -s {3}", userName, hostname, this.Port, this.Subsystem) :
-                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -p {3} -s {4}", userName, domainName, hostname, this.Port, this.Subsystem);
+                var parts = this.UserName.Split(Utils.Separators.Backslash);
+                if (parts.Length == 2)
+                {
+                    // ? pass DOMAIN\username as username@DOMAIN (still needed?)
+                    arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", parts[1], parts[0]));
+                }
+                else
+                {
+                    arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
+                }
             }
+
+            // pass "-p port" command line argument to ssh
+            // TODO: don't override Port directive in ssh_config
+            arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+
+            // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
+            // ? note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them (still needed?)
+            arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-s {0} {1}", this.ComputerName.TrimStart('[').TrimEnd(']'), this.Subsystem));
 
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
                 filePath,
-                arguments);
+                string.Join(string.Format(CultureInfo.InvariantCulture, @" "), arguments));
             startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
 
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private string GetCurrentUserName()
-        {
-#if UNIX
-            return System.Environment.GetEnvironmentVariable("USER") ?? string.Empty;
-#else
-            return System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-#endif
         }
 
         #endregion
