@@ -2117,7 +2117,7 @@ namespace System.Management.Automation.Runspaces
 
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
                 filePath,
-                string.Join(string.Format(CultureInfo.InvariantCulture, @" "), arguments));
+                string.Join(" ", arguments));
             startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
