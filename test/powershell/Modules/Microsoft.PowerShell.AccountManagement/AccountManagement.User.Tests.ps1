@@ -13,13 +13,13 @@ try {
             $pwd = (New-Object -TypeName Net.NetworkCredential("", $Password)).SecurePassword
         }
 
-        AfterEach {
-            if ($IsWindows) {
-                net user TestUserNew /delete
-            }
-        }
-
         Context "Validate New-User" {
+
+            AfterEach {
+                if ($IsWindows) {
+                    $null = net user TestUserNew /delete *>1
+                }
+            }
 
             It "Can create New-User with only name" {
                 $result = New-User -Name TestUserNew -PasswordNotRequired -AccountStore Machine
@@ -120,7 +120,7 @@ try {
         Context "Validate Remove-User" {
             AfterAll {
                 if ($IsWindows) {
-                    net user TestUserNew /delete
+                    $null = net user TestUserNew /delete *>1
                 }
             }
 
@@ -142,6 +142,39 @@ try {
                 $err = net user TestUserNew *>&1 | Out-String
                 $err | Should -BeLike "The user name could not be found*"
                 { Remove-User -Identity $userIdentity -ErrorAction Stop } | Should -Throw -ErrorId "UserAlreadyRemoved,Microsoft.PowerShell.Commands.RemoveUserCommand"
+            }
+        }
+
+        Context "Validate Get-User" {
+            BeforeAll {
+                if ($IsWindows) {
+                    $users = Get-User -AccountStore Machine
+                    $userPrincipal = $users[0]
+                }
+            }
+
+            It "Can get user accounts" {
+                $users.Count | Should -BeGreaterThan 0
+                $users[0].Name | Should -Not -BeNullOrEmpty
+                $users[0].Sid | Should -Not -BeNullOrEmpty
+                $users[0].SamAccountName | Should -Not -BeNullOrEmpty
+            }
+
+            It "Can get user account with a parameter: <paramName>" -TestCases: @(
+                @{ paramName = "Name"; argument = @{ Name = $userPrincipal.Name } }
+                @{ paramName = "SamAccountName"; argument = @{ SamAccountName = $userPrincipal.SamAccountName } }
+            ){
+                param ($paramName, $argument)
+
+                $users.Count | Should -BeGreaterThan 0
+
+                $u = Get-User @argument -AccountStore Machine
+
+                $u.Name | Should -BeExactly $userPrincipal.Name
+                $u.Sid | Should -BeExactly $userPrincipal.Sid
+                $u.SamAccountName | Should  -BeExactly $userPrincipal.SamAccountName
+                $u.Description | Should  -BeExactly $userPrincipal.Description
+                $u.DisplayName | Should  -BeExactly $userPrincipal.DisplayName
             }
         }
     }
