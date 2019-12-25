@@ -1267,9 +1267,20 @@ namespace System.Management.Automation
                             }
                         }
 
+                        string str = "null";
+                        try
+                        {
+                            str = (result == null) ? str : result.ToString();
+                        }
+                        catch
+                        {
+                            // Sometimes ToString() can throw.
+                            // This is not a reason to break the binding.
+                        }
+
                         bindingTracer.WriteLine(
                             "CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{0}]",
-                            (result == null) ? "null" : result.ToString());
+                            str);
                     } while (false);
                 }
                 catch (NotSupportedException notSupported)
