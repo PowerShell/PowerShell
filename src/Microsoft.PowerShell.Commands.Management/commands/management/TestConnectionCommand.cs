@@ -371,7 +371,6 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteObject(new TcpTestStatus(
                         Source,
-                        Source,
                         targetNameOrAddress,
                         targetAddress.ToString(),
                         TcpPortVerbose,
@@ -383,21 +382,17 @@ namespace Microsoft.PowerShell.Commands
                 { 
                     WriteObject(new TcpTestStatus(
                         Source,
-                        Source,
                         targetNameOrAddress,
                         targetAddress.ToString(),
                         TcpPortVerbose,
                         0,
                         TcpConnectionTestResult.Timeout
                     ));
-                }
-                
-                return;   
+                } 
             }
             catch
             {
                 WriteObject(new TcpTestStatus(
-                    Source,
                     Source,
                     targetNameOrAddress,
                     targetAddress.ToString(),
@@ -955,16 +950,14 @@ namespace Microsoft.PowerShell.Commands
             /// utilised to perform a traceroute.
             /// </summary>
             /// <param name="source">The source machine name or IP of the test.</param>
-            /// <param name="sourceAddress">The resolved IP from the source</param>
             /// <param name="destination">The destination machine name or IP of the test.</param>
             /// <param name="destinationAddress">The resolved IP from the destination</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="testResult">The result of the test.</param>
-            internal TcpTestStatus(string source, string sourceAddress, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult testResult)
+            internal TcpTestStatus(string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult testResult)
             {
                 Source = source;
-                SourceAddress = sourceAddress;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
                 Port = port;
@@ -976,11 +969,6 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the source from which the test was sent.
             /// </summary>
             public string Source { get; }
-
-            /// <summary>
-            /// Gets the resolved address from which the test was sent.
-            /// </summary>
-            public string SourceAddress { get; }
 
             /// <summary>
             /// Gets the destination name.
