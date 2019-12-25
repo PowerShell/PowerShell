@@ -295,7 +295,6 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
