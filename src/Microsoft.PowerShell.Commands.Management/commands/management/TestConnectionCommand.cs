@@ -28,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
+    [OutputType(typeof(TcpTestStatus), ParameterSetName = new string[] { TcpPortVerboseParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         #region Parameter Set Names
@@ -35,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
         private const string RepeatPingParameterSet = "RepeatPing";
         private const string TraceRouteParameterSet = "TraceRoute";
         private const string TcpPortParameterSet = "TcpPort";
+        private const string TcpPortVerboseParameterSet = "TcpPortVerbose";
         private const string MtuSizeDetectParameterSet = "MtuSizeDetect";
 
         #endregion
@@ -86,6 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
+        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
@@ -96,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
+        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
@@ -106,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
+        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -117,6 +122,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
+        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
@@ -226,6 +232,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = TcpPortParameterSet)]
         public int TcpPort { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether to perform a verbose TCP connection test.
+        /// </summary>
+        [ValidateRange(0, 65535)]
+        [Parameter(Mandatory = true, ParameterSetName = TcpPortVerboseParameterSet)]
+        public int TcpPortVerbose { get; set; }
+        
         #endregion Parameters
 
         /// <summary>
@@ -267,6 +280,9 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     case TcpPortParameterSet:
                         ProcessConnectionByTCPPort(targetName);
+                        break;
+                    case TcpPortVerboseParameterSet:
+                        TcpPortConnectionTestVerbose(targetName);
                         break;
                 }
             }
@@ -330,6 +346,74 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion ConnectionTest
 
+        #region VerboseTcpTest
+
+        private void TcpPortConnectionTestVerbose(string targetNameOrAddress)
+        {
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
+            {
+                return;
+            }
+
+            TcpClient client = new TcpClient();
+            Stopwatch stopwatch = new Stopwatch();
+            
+            try
+            {
+                stopwatch.Start();
+                
+                Task connectionTask = client.ConnectAsync(targetAddress, TcpPortVerbose);
+                Task.WhenAny(connectionTask, Task.Delay(new TimeSpan(0, 0, TimeoutSeconds))).Wait();
+                
+                if (connectionTask.Status == TaskStatus.RanToCompletion) 
+                {
+                    stopwatch.Stop();
+
+                    WriteObject(new TcpTestStatus(
+                        Source,
+                        Source,
+                        targetNameOrAddress,
+                        targetAddress.ToString(),
+                        TcpPortVerbose,
+                        stopwatch.ElapsedMilliseconds,
+                        TcpConnectionTestResult.Success
+                    ));
+                } 
+                else 
+                { 
+                    WriteObject(new TcpTestStatus(
+                        Source,
+                        Source,
+                        targetNameOrAddress,
+                        targetAddress.ToString(),
+                        TcpPortVerbose,
+                        0,
+                        TcpConnectionTestResult.Timeout
+                    ));
+                }
+                
+                return;   
+            }
+            catch
+            {
+                WriteObject(new TcpTestStatus(
+                    Source,
+                    Source,
+                    targetNameOrAddress,
+                    targetAddress.ToString(),
+                    TcpPortVerbose,
+                    0,
+                    TcpConnectionTestResult.Failed
+                ));
+            }
+            finally
+            {
+                client.Close();
+            }
+        }
+
+        #endregion VerboseTcpTest
+        
         #region TracerouteTest
 
         private void ProcessTraceroute(string targetNameOrAddress)
@@ -859,6 +943,92 @@ namespace Microsoft.PowerShell.Commands
             ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
 
+        /// <summary>
+        /// The class contains information about the TCP connection test
+        /// </summary>
+        public class TcpTestStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TcpTestStatus"/> class.
+            /// This constructor allows manually specifying the initial values for the cases where the PingReply
+            /// object may be missing some information, specifically in the instances where PingReply objects are
+            /// utilised to perform a traceroute.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the test.</param>
+            /// <param name="sourceAddress">The resolved IP from the source</param>
+            /// <param name="destination">The destination machine name or IP of the test.</param>
+            /// <param name="destinationAddress">The resolved IP from the destination</param>
+            /// <param name="port">The port used for the connection.</param>
+            /// <param name="latency">The latency of the test.</param>
+            /// <param name="testResult">The result of the test.</param>
+            internal TcpTestStatus(string source, string sourceAddress, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult testResult)
+            {
+                Source = source;
+                SourceAddress = sourceAddress;
+                Destination = destination;
+                DestinationAddress = destinationAddress;
+                Port = port;
+                Latency = latency;
+                TestResult = testResult;
+            }
+
+            /// <summary>
+            /// Gets the source from which the test was sent.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the resolved address from which the test was sent.
+            /// </summary>
+            public string SourceAddress { get; }
+
+            /// <summary>
+            /// Gets the destination name.
+            /// </summary>
+            public string Destination { get; }
+
+            /// <summary>
+            /// Gets the resolved address for the destination.
+            /// </summary>
+            public string DestinationAddress { get; }
+
+            /// <summary>
+            /// Gets the port used for the test.
+            /// </summary>
+            public int Port { get; }
+
+            /// <summary>
+            /// The latancy seen during the test
+            /// </summary>
+            public long Latency { get; }
+
+            /// <summary>
+            /// The result of the connection test
+            /// </summary>
+            public TcpConnectionTestResult TestResult { get; }
+        }
+
+        /// <summary>
+        /// Results of the verbose TCP connection test
+        /// </summary>  
+        public enum TcpConnectionTestResult
+        {
+            /// <summary>
+            /// Connection was successful.
+            /// </summary>
+            Success,
+
+            /// <summary>
+            /// Test was not able to run.
+            /// </summary>
+            Failed,
+
+            /// <summary>
+            /// Connection timed out.
+            /// </summary>
+            Timeout,
+        }
+        
         /// <summary>
         /// The class contains information about the source, the destination and ping results.
         /// </summary>
