@@ -1917,7 +1917,7 @@ namespace System.Management.Automation.Runspaces
             this.UserName = userName;
             this.ComputerName = computerName;
             this.KeyFilePath = keyFilePath;
-            this.Port = DefaultPort; // TODO: don't override Port directive in ssh_config
+            this.Port = ReservedPort;
             this.Subsystem = DefaultSubsystem;
         }
 
@@ -1936,7 +1936,7 @@ namespace System.Management.Automation.Runspaces
         {
             ValidatePortInRange(port);
 
-            this.Port = (port != 0) ? port : DefaultPort; // TODO: don't override Port directive in ssh_config
+            this.Port = port;
         }
 
         /// <summary>
@@ -1956,7 +1956,7 @@ namespace System.Management.Automation.Runspaces
         {
             ValidatePortInRange(port);
 
-            this.Port = (port != 0) ? port : DefaultPort; // TODO: don't override Port directive in ssh_config
+            this.Port = port;
             this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
@@ -2107,9 +2107,11 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // pass "-p port" command line argument to ssh
-            // TODO: don't override Port directive in ssh_config
-            arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+            // pass "-p port" command line argument to ssh if Port is set
+            if (this.Port != ReservedPort)
+            {
+                arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+            }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
             // ? note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them (still needed?)
@@ -2130,9 +2132,9 @@ namespace System.Management.Automation.Runspaces
         #region Constants
 
         /// <summary>
-        /// Default value for port.
+        /// Reserved value for port.
         /// </summary>
-        private const int DefaultPort = 22;
+        private const int ReservedPort = 0;
 
         /// <summary>
         /// Default value for subsystem.
