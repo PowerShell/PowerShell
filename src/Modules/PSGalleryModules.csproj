@@ -7,7 +7,7 @@
     <PackageReference Include="PackageManagement" Version="1.4.6" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.3.0" />
     <PackageReference Include="PSReadLine" Version="2.0.0-rc1" />
-    <PackageReference Include="ThreadJob" Version="2.0.2" />
+    <PackageReference Include="ThreadJob" Version="2.0.3" />
     <PackageReference Include="PSDesiredStateConfiguration" Version="2.0.5" />
   </ItemGroup>
 
