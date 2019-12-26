@@ -885,7 +885,11 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         # anything else, we use ToString()
                                         else {
-                                            $value = $prop.Value.ToString().Trim()
+                                            if ($prop.Value -ne $null) {
+                                                $value = $prop.Value.ToString().Trim()
+                                            } else {
+                                                $value = $prop.ToString().Trim()
+                                            }
 
                                             $isFirstLine = $true
                                             if ($value.Contains($newline)) {
