@@ -53,7 +53,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
             Name="TestCimInstance";
             VariableValue="testvalu234e";
             UserName=[System.Environment]::UserName
-        }) } | Should -Not -Throw
+        }) -ClientOnly } | Should -Not -Throw
         $script:a | Should -Not -BeNullOrEmpty
         $script:a.Name | Should -BeExactly "TestCimInstance"
     }

@@ -173,7 +173,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 id = "$_"
                 field1 = "field $_"
                 field2 = 10 * $_
-                }
+                } -ClientOnly
             }
         }
 
