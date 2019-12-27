@@ -292,10 +292,10 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     }
 
     It "Test connection to local host port 80" {
-        Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort | Should -BeTrue
+        Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Quiet | Should -BeTrue
     }
 
     It "Test connection to unreachable host port 80" {
-        Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
+        Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 -Quiet | Should -BeFalse
     }
 }
