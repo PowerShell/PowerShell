@@ -97,7 +97,7 @@ Describe "Verify Markdown Links" {
 
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
-                        $allowedFailures = @(
+                        $allowedFailures = [System.Net.HttpStatusCode[]](
                             503, # Service Unavailable
                             504  # Gateway Timeout
                         )
