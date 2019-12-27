@@ -97,9 +97,10 @@ Describe "Verify Markdown Links" {
 
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
-                        # 503 = Service Unavailable
-                        # 504 = Gateway Timeout
-                        $allowedFailures = @( 503, 504 )
+                        $allowedFailures = @(
+                            503, # Service Unavailable
+                            504  # Gateway Timeout
+                        )
 
                         $prefix = $url.Substring(0,7)
 
