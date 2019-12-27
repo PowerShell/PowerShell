@@ -111,7 +111,7 @@ Describe "Verify Markdown Links" {
                             {
                                 $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
-                            catch [System.Net.WebException]
+                            catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
                                     throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
