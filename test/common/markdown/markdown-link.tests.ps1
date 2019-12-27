@@ -114,7 +114,14 @@ Describe "Verify Markdown Links" {
                             catch
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
+                                    $PSCmdlet.ThrowTerminatingError(
+                                        [System.Management.Automation.ErrorRecord]::new(
+                                            "Failed to complete request to `"$url`". $($PSItem.Exception.Message)",
+                                            $PSItem.FullyQualifiedErrorId,
+                                            $PSItem.CategoryInfo.Category,
+                                            $null
+                                        )
+                                    )
                                 }
                             }
                         }
