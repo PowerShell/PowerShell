@@ -114,7 +114,7 @@ Describe "Verify Markdown Links" {
                             catch
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "retry of URL failed with error: $($_.Exception.Message)"
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
                                 }
                             }
                         }
