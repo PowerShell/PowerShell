@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
-    [OutputType(typeof(TcpTestStatus), ParameterSetName = new string[] { TcpPortVerboseParameterSet })]
+    [OutputType(typeof(TcpTestStatus), ParameterSetName = new string[] { TcpPortParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         #region Parameter Set Names
@@ -36,7 +36,6 @@ namespace Microsoft.PowerShell.Commands
         private const string RepeatPingParameterSet = "RepeatPing";
         private const string TraceRouteParameterSet = "TraceRoute";
         private const string TcpPortParameterSet = "TcpPort";
-        private const string TcpPortVerboseParameterSet = "TcpPortVerbose";
         private const string MtuSizeDetectParameterSet = "MtuSizeDetect";
 
         #endregion
@@ -88,7 +87,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
-        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
@@ -99,7 +97,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
-        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
@@ -110,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = MtuSizeDetectParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
-        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -122,7 +118,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
-        [Parameter(ParameterSetName = TcpPortVerboseParameterSet)]
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
@@ -231,13 +226,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortParameterSet)]
         public int TcpPort { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether to perform a verbose TCP connection test.
-        /// </summary>
-        [ValidateRange(0, 65535)]
-        [Parameter(Mandatory = true, ParameterSetName = TcpPortVerboseParameterSet)]
-        public int TcpPortVerbose { get; set; }
         
         #endregion Parameters
 
@@ -281,9 +269,6 @@ namespace Microsoft.PowerShell.Commands
                     case TcpPortParameterSet:
                         ProcessConnectionByTCPPort(targetName);
                         break;
-                    case TcpPortVerboseParameterSet:
-                        TcpPortConnectionTestVerbose(targetName);
-                        break;
                 }
             }
         }
@@ -306,12 +291,23 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            TcpClient client = new TcpClient();
+            TcpTestStatus testResult = new TcpTestStatus(
+                Source,
+                targetNameOrAddress,
+                targetAddress.ToString(),
+                TcpPort,
+                0,
+                TcpConnectionTestResult.Failed
+            );
 
+            TcpClient client = new TcpClient();
+            
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                
                 Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
@@ -320,16 +316,23 @@ namespace Microsoft.PowerShell.Commands
 
                     if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                     {
-                        // Waiting is interrupted by Ctrl-C.
-                        WriteObject(false);
-                        return;
+                        testResult.TestResult = TcpConnectionTestResult.Cancelled;                        
+                        break;
                     }
-
+                    
+                    if (i == TimeoutSeconds && timeoutTask.Status == TaskStatus.RanToCompletion)
+                    {
+                        testResult.TestResult = TcpConnectionTestResult.Timeout;
+                        break;
+                    }
+                    
                     if (connectionTask.Status == TaskStatus.RanToCompletion)
                     {
-                        WriteObject(true);
-                        return;
-                    }
+                        stopwatch.Stop();
+                        testResult.TestResult = TcpConnectionTestResult.Success;
+                        testResult.Latency = stopwatch.ElapsedMilliseconds;
+                        break;
+                    }                    
                 }
             }
             catch
@@ -339,75 +342,19 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 client.Close();
-            }
 
-            WriteObject(false);
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(testResult.TestResult == TcpConnectionTestResult.Success);
+                }
+                else
+                {
+                    WriteObject(testResult);
+                }
+            }
         }
 
         #endregion ConnectionTest
-
-        #region VerboseTcpTest
-
-        private void TcpPortConnectionTestVerbose(string targetNameOrAddress)
-        {
-            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
-            {
-                return;
-            }
-
-            TcpClient client = new TcpClient();
-            Stopwatch stopwatch = new Stopwatch();
-            
-            try
-            {
-                stopwatch.Start();
-                
-                Task connectionTask = client.ConnectAsync(targetAddress, TcpPortVerbose);
-                Task.WhenAny(connectionTask, Task.Delay(new TimeSpan(0, 0, TimeoutSeconds))).Wait();
-                
-                if (connectionTask.Status == TaskStatus.RanToCompletion) 
-                {
-                    stopwatch.Stop();
-
-                    WriteObject(new TcpTestStatus(
-                        Source,
-                        targetNameOrAddress,
-                        targetAddress.ToString(),
-                        TcpPortVerbose,
-                        stopwatch.ElapsedMilliseconds,
-                        TcpConnectionTestResult.Success
-                    ));
-                } 
-                else 
-                { 
-                    WriteObject(new TcpTestStatus(
-                        Source,
-                        targetNameOrAddress,
-                        targetAddress.ToString(),
-                        TcpPortVerbose,
-                        0,
-                        TcpConnectionTestResult.Timeout
-                    ));
-                } 
-            }
-            catch
-            {
-                WriteObject(new TcpTestStatus(
-                    Source,
-                    targetNameOrAddress,
-                    targetAddress.ToString(),
-                    TcpPortVerbose,
-                    0,
-                    TcpConnectionTestResult.Failed
-                ));
-            }
-            finally
-            {
-                client.Close();
-            }
-        }
-
-        #endregion VerboseTcpTest
         
         #region TracerouteTest
 
@@ -945,9 +892,6 @@ namespace Microsoft.PowerShell.Commands
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="TcpTestStatus"/> class.
-            /// This constructor allows manually specifying the initial values for the cases where the PingReply
-            /// object may be missing some information, specifically in the instances where PingReply objects are
-            /// utilised to perform a traceroute.
             /// </summary>
             /// <param name="source">The source machine name or IP of the test.</param>
             /// <param name="destination">The destination machine name or IP of the test.</param>
@@ -986,18 +930,18 @@ namespace Microsoft.PowerShell.Commands
             public int Port { get; }
 
             /// <summary>
-            /// The latancy seen during the test
+            /// Gets or sets the latancy of the connection
             /// </summary>
-            public long Latency { get; }
+            public long Latency { get; set; }
 
             /// <summary>
-            /// The result of the connection test
+            /// Gets or sets the result of the test
             /// </summary>
-            public TcpConnectionTestResult TestResult { get; }
+            public TcpConnectionTestResult TestResult { get; set; }
         }
 
         /// <summary>
-        /// Results of the verbose TCP connection test
+        /// Results of the detailed TCP connection test
         /// </summary>  
         public enum TcpConnectionTestResult
         {
@@ -1015,6 +959,11 @@ namespace Microsoft.PowerShell.Commands
             /// Connection timed out.
             /// </summary>
             Timeout,
+
+            /// <summary>
+            /// Test was cancelled
+            /// </summary>
+            Cancelled
         }
         
         /// <summary>
