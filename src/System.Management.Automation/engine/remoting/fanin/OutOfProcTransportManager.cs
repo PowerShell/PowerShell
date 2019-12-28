@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // Object already disposed.
                 }
-                
+
                 _commandMessageQueue.Dispose();
             }
         }
@@ -746,6 +746,8 @@ namespace System.Management.Automation.Remoting.Client
 
         private Guid GetMessageGuid(string data)
         {
+            Dbg.Assert(data != null, "data cannot be null in GetMessageGuid");
+
             // Perform quick scan for data packet for a GUID, ignoring any errors.
             var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
             if (iTag > -1)
@@ -755,7 +757,7 @@ namespace System.Management.Automation.Remoting.Client
                     var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
                     return new Guid(psGuidString);
                 }
-                catch 
+                catch
                 {
                     // Ignore any malformed packet errors here and return an empty Guid.
                     // Packet errors will be reported later during message processing.
@@ -1217,6 +1219,11 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            if (string.IsNullOrEmpty(e.Data))
+            {
+                return;
+            }
+
             HandleOutputDataReceived(e.Data);
         }
 
