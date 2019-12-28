@@ -292,31 +292,31 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            try
+            int successfulConnections = 0;
+
+            for (var i = 1; i <= Count; i++)
             {
-                int successfulConnections = 0;
-
-                for (var i = 1; i <= Count; i++)
+                TcpTestStatus testResult = new TcpTestStatus(
+                    i,
+                    Source,
+                    targetNameOrAddress,
+                    targetAddress.ToString(),
+                    TcpPort,
+                    0,
+                    TcpConnectionTestResult.New
+                );
+                
+                try
                 {
-                    TcpTestStatus testResult = new TcpTestStatus(
-                        i,
-                        Source,
-                        targetNameOrAddress,
-                        targetAddress.ToString(),
-                        TcpPort,
-                        0,
-                        TcpConnectionTestResult.Failed
-                    );
-                    
                     TcpClient client = new TcpClient();
-
+                    
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
-                    
-                    Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);                   
-                    Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
-                    Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
 
+                    Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
+                    Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
+
+                    Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
                     stopwatch.Stop();
 
                     client.Close();
@@ -338,29 +338,29 @@ namespace Microsoft.PowerShell.Commands
                         testResult.Result = TcpConnectionTestResult.Success;
                         testResult.Latency = stopwatch.ElapsedMilliseconds;
                     }
+                }
+                catch
+                {
+                    testResult.Result = TcpConnectionTestResult.Failed;
+                }                  
 
-                    if (Quiet.IsPresent)
-                    {   
-                        if (i > successfulConnections)
-                        {
-                            WriteObject(false);
-                            return;
-                        }
-                        else if(i == Count)
-                        {
-                            WriteObject(true);
-                            return;
-                        }
-                    }
-                    else
+                if (Quiet.IsPresent)
+                {   
+                    if (i > successfulConnections)
                     {
-                        WriteObject(testResult);
+                        WriteObject(false);
+                        return;
+                    }
+                    else if(i == Count)
+                    {
+                        WriteObject(true);
+                        return;
                     }
                 }
-            }
-            catch
-            {
-                // Silently ignore connection errors.
+                else
+                {
+                    WriteObject(testResult);
+                }
             }
         }
 
@@ -962,6 +962,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>  
         public enum TcpConnectionTestResult
         {
+            /// <summary>
+            /// Connection test has not run
+            /// </summary>
+            New,
+            
             /// <summary>
             /// Connection was successful.
             /// </summary>
