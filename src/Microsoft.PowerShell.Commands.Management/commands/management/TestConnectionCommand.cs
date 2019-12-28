@@ -138,6 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Count { get; set; } = 4;
 
@@ -291,66 +292,75 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            TcpTestStatus testResult = new TcpTestStatus(
-                Source,
-                targetNameOrAddress,
-                targetAddress.ToString(),
-                TcpPort,
-                0,
-                TcpConnectionTestResult.Failed
-            );
-
-            TcpClient client = new TcpClient();
-            
             try
             {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                
-                Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
+                int successfulConnections = 0;
 
-                for (var i = 1; i <= TimeoutSeconds; i++)
+                for (var i = 1; i <= Count; i++)
                 {
-                    Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
+                    TcpTestStatus testResult = new TcpTestStatus(
+                        i,
+                        Source,
+                        targetNameOrAddress,
+                        targetAddress.ToString(),
+                        TcpPort,
+                        0,
+                        TcpConnectionTestResult.Failed
+                    );
+                    
+                    TcpClient client = new TcpClient();
+
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    
+                    Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);                   
+                    Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
                     Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
+
+                    stopwatch.Stop();
+
+                    client.Close();
 
                     if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                     {
-                        testResult.TestResult = TcpConnectionTestResult.Cancelled;                        
-                        break;
+                        testResult.Result = TcpConnectionTestResult.Cancelled;                        
+                        return;
                     }
                     
-                    if (i == TimeoutSeconds && timeoutTask.Status == TaskStatus.RanToCompletion)
+                    if (timeoutTask.Status == TaskStatus.RanToCompletion)
                     {
-                        testResult.TestResult = TcpConnectionTestResult.Timeout;
-                        break;
+                        testResult.Result = TcpConnectionTestResult.Timeout;
                     }
                     
                     if (connectionTask.Status == TaskStatus.RanToCompletion)
                     {
-                        stopwatch.Stop();
-                        testResult.TestResult = TcpConnectionTestResult.Success;
+                        successfulConnections++;
+                        testResult.Result = TcpConnectionTestResult.Success;
                         testResult.Latency = stopwatch.ElapsedMilliseconds;
-                        break;
-                    }                    
+                    }
+
+                    if (Quiet.IsPresent)
+                    {   
+                        if (i > successfulConnections)
+                        {
+                            WriteObject(false);
+                            return;
+                        }
+                        else if(i == Count)
+                        {
+                            WriteObject(true);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        WriteObject(testResult);
+                    }
                 }
             }
             catch
             {
                 // Silently ignore connection errors.
-            }
-            finally
-            {
-                client.Close();
-
-                if (Quiet.IsPresent)
-                {
-                    WriteObject(testResult.TestResult == TcpConnectionTestResult.Success);
-                }
-                else
-                {
-                    WriteObject(testResult);
-                }
             }
         }
 
@@ -893,21 +903,28 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Initializes a new instance of the <see cref="TcpTestStatus"/> class.
             /// </summary>
+            /// <param name="testNum">The number of this test.</param>
             /// <param name="source">The source machine name or IP of the test.</param>
             /// <param name="destination">The destination machine name or IP of the test.</param>
             /// <param name="destinationAddress">The resolved IP from the destination</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
-            /// <param name="testResult">The result of the test.</param>
-            internal TcpTestStatus(string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult testResult)
+            /// <param name="result">The result of the test.</param>
+            internal TcpTestStatus(int testNum, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
             {
+                TestNum = testNum;
                 Source = source;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
                 Port = port;
                 Latency = latency;
-                TestResult = testResult;
+                Result = result;
             }
+
+            /// <summary>
+            /// Gets and sets the count of the test.
+            /// </summary>
+            public int TestNum { get; set; }
 
             /// <summary>
             /// Gets the source from which the test was sent.
@@ -937,7 +954,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets or sets the result of the test
             /// </summary>
-            public TcpConnectionTestResult TestResult { get; set; }
+            public TcpConnectionTestResult Result { get; set; }
         }
 
         /// <summary>

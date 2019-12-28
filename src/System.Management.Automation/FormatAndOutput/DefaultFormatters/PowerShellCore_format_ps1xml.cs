@@ -241,6 +241,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpTestStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpTestStatus());
+
+            yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
                 ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
 
@@ -1836,6 +1840,31 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
                     .EndEntry()
                 .EndList());
+        }
+    
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpTestStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpTestStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Test", width: 4)
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Destination", width: 16)
+                    .AddHeader(Alignment.Left, label: "DestinationAddress", width: 18)
+                    .AddHeader(Alignment.Right, label: "Port", width: 7)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Left, label: "Result", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("TestNum")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Destination")
+                        .AddPropertyColumn("DestinationAddress")
+                        .AddPropertyColumn("Port")
+                        .AddPropertyColumn("Latency")
+                        .AddPropertyColumn("Result")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
