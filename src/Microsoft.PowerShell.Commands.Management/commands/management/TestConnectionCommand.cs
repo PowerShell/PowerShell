@@ -134,13 +134,14 @@ namespace Microsoft.PowerShell.Commands
         public int MaxHops { get; set; } = DefaultMaxHops;
 
         /// <summary>
-        /// Gets or sets the number of ping attempts.
-        /// The default (from Windows) is 4 times.
+        /// Gets or sets the number of test attempts.
+        /// The value is -1 if not set explicitly as a parameter
+        /// If not set explicitly, the value is set depending on type of test (ping = 4, tcp = 1)
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
-        public int Count { get; set; } = 4;
+        public int Count { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the delay between ping attempts.
@@ -148,6 +149,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Delay { get; set; } = 1;
 
@@ -174,6 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [Alias("Continuous")]
         public SwitchParameter Repeat { get; set; }
 
@@ -232,14 +235,25 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// BeginProcessing implementation for TestConnectionCommand.
+        /// Sets Count for different types of tests unless specified explicitly.
         /// </summary>
         protected override void BeginProcessing()
         {
-            switch (ParameterSetName)
+            if (Count == -1)
             {
-                case RepeatPingParameterSet:
-                    Count = int.MaxValue;
-                    break;
+                if (ParameterSetName == TcpPortParameterSet)
+                {
+                    Count = 1;
+                }
+                else
+                {
+                    Count = 4;
+                }
+            }
+            
+            if (Repeat.IsPresent)
+            {
+                Count = int.MaxValue;
             }
         }
 
@@ -286,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         #region ConnectionTest
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
-        {
+        {    
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
@@ -361,6 +375,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(testResult);
                 }
+
+                Thread.Sleep(new TimeSpan(0, 0, Delay));
             }
         }
 
