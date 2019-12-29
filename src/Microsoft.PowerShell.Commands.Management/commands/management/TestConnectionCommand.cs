@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
                     targetAddress.ToString(),
                     TcpPort,
                     0,
-                    TcpConnectionTestResult.New
+                    TcpTestStatus.TcpConnectionTestResult.New
                 );
                 
                 try
@@ -337,25 +337,25 @@ namespace Microsoft.PowerShell.Commands
 
                     if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                     {
-                        testResult.Result = TcpConnectionTestResult.Cancelled;                        
+                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Cancelled;                        
                         return;
                     }
                     
                     if (timeoutTask.Status == TaskStatus.RanToCompletion)
                     {
-                        testResult.Result = TcpConnectionTestResult.Timeout;
+                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Timeout;
                     }
                     
                     if (connectionTask.Status == TaskStatus.RanToCompletion)
                     {
                         successfulConnections++;
-                        testResult.Result = TcpConnectionTestResult.Success;
+                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Success;
                         testResult.Latency = stopwatch.ElapsedMilliseconds;
                     }
                 }
                 catch
                 {
-                    testResult.Result = TcpConnectionTestResult.Failed;
+                    testResult.Result = TcpTestStatus.TcpConnectionTestResult.Failed;
                 }                  
 
                 if (Quiet.IsPresent)
@@ -971,37 +971,37 @@ namespace Microsoft.PowerShell.Commands
             /// Gets or sets the result of the test
             /// </summary>
             public TcpConnectionTestResult Result { get; set; }
-        }
-
-        /// <summary>
-        /// Results of the detailed TCP connection test
-        /// </summary>  
-        public enum TcpConnectionTestResult
-        {
-            /// <summary>
-            /// Connection test has not run
-            /// </summary>
-            New,
-            
-            /// <summary>
-            /// Connection was successful.
-            /// </summary>
-            Success,
 
             /// <summary>
-            /// Test was not able to run.
-            /// </summary>
-            Failed,
+            /// Results of the detailed TCP connection test
+            /// </summary>  
+            public enum TcpConnectionTestResult
+            {
+                /// <summary>
+                /// Connection test has not run
+                /// </summary>
+                New,
+                
+                /// <summary>
+                /// Connection was successful.
+                /// </summary>
+                Success,
 
-            /// <summary>
-            /// Connection timed out.
-            /// </summary>
-            Timeout,
+                /// <summary>
+                /// Test was not able to run.
+                /// </summary>
+                Failed,
 
-            /// <summary>
-            /// Test was cancelled
-            /// </summary>
-            Cancelled
+                /// <summary>
+                /// Connection timed out.
+                /// </summary>
+                Timeout,
+
+                /// <summary>
+                /// Test was cancelled
+                /// </summary>
+                Cancelled
+            }
         }
         
         /// <summary>
