@@ -911,7 +911,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The class contains information about the TCP connection test
+        /// The class contains information about the TCP connection test.
         /// </summary>
         public class TcpTestStatus
         {
@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="testNum">The number of this test.</param>
             /// <param name="source">The source machine name or IP of the test.</param>
             /// <param name="destination">The destination machine name or IP of the test.</param>
-            /// <param name="destinationAddress">The resolved IP from the destination</param>
+            /// <param name="destinationAddress">The resolved IP from the destination.</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="result">The result of the test.</param>
@@ -962,22 +962,22 @@ namespace Microsoft.PowerShell.Commands
             public int Port { get; }
 
             /// <summary>
-            /// Gets or sets the latancy of the connection
+            /// Gets or sets the latancy of the connection.
             /// </summary>
             public long Latency { get; set; }
 
             /// <summary>
-            /// Gets or sets the result of the test
+            /// Gets or sets the result of the test.
             /// </summary>
             public TcpConnectionTestResult Result { get; set; }
 
             /// <summary>
-            /// Results of the detailed TCP connection test
+            /// Results of the detailed TCP connection test.
             /// </summary>
             public enum TcpConnectionTestResult
             {
                 /// <summary>
-                /// Connection test has not run
+                /// Connection test has not run.
                 /// </summary>
                 New,
 
@@ -997,7 +997,7 @@ namespace Microsoft.PowerShell.Commands
                 Timeout,
 
                 /// <summary>
-                /// Test was cancelled
+                /// Test was cancelled.
                 /// </summary>
                 Cancelled
             }
