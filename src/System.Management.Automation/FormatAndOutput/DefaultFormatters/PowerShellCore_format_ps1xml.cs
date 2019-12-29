@@ -241,8 +241,8 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
 
             yield return new ExtendedTypeDefinition(
-                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpTestStatus",
-                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpTestStatus());
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpPortStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpPortStatus());
 
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
@@ -1841,11 +1841,11 @@ namespace System.Management.Automation.Runspaces
                     .EndEntry()
                 .EndList());
         }
-    
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpTestStatus()
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpPortStatus()
         {
             yield return new FormatViewDefinition(
-                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpTestStatus",
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpPortStatus",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, label: "Test", width: 4)
                     .AddHeader(Alignment.Left, label: "Source", width: 16)

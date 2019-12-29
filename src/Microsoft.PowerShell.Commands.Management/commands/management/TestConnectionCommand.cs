@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
-    [OutputType(typeof(TcpTestStatus), ParameterSetName = new string[] { TcpPortParameterSet })]
+    [OutputType(typeof(TcpPortStatus), ParameterSetName = new string[] { TcpPortParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         #region Parameter Set Names
@@ -310,14 +310,14 @@ namespace Microsoft.PowerShell.Commands
 
             for (var i = 1; i <= Count; i++)
             {
-                TcpTestStatus testResult = new TcpTestStatus(
+                TcpPortStatus testResult = new TcpPortStatus(
                     i,
                     Source,
                     targetNameOrAddress,
                     targetAddress.ToString(),
                     TcpPort,
                     0,
-                    TcpTestStatus.TcpConnectionTestResult.New
+                    TcpPortStatus.TcpConnectionTestResult.New
                 );
 
                 using(TcpClient client = new TcpClient())
@@ -335,25 +335,25 @@ namespace Microsoft.PowerShell.Commands
 
                         if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                         {
-                            testResult.Result = TcpTestStatus.TcpConnectionTestResult.Cancelled;
+                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Cancelled;
                             return;
                         }
 
                         if (timeoutTask.Status == TaskStatus.RanToCompletion)
                         {
-                            testResult.Result = TcpTestStatus.TcpConnectionTestResult.Timeout;
+                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Timeout;
                         }
 
                         if (connectionTask.Status == TaskStatus.RanToCompletion)
                         {
                             successfulConnections++;
-                            testResult.Result = TcpTestStatus.TcpConnectionTestResult.Success;
+                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Success;
                             testResult.Latency = stopwatch.ElapsedMilliseconds;
                         }
                     }
                     catch
                     {
-                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Failed;
+                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Failed;
                     }
                 }
 
@@ -913,10 +913,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The class contains information about the TCP connection test.
         /// </summary>
-        public class TcpTestStatus
+        public class TcpPortStatus
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="TcpTestStatus"/> class.
+            /// Initializes a new instance of the <see cref="TcpPortStatus"/> class.
             /// </summary>
             /// <param name="testNum">The number of this test.</param>
             /// <param name="source">The source machine name or IP of the test.</param>
@@ -925,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="result">The result of the test.</param>
-            internal TcpTestStatus(int testNum, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
+            internal TcpPortStatus(int testNum, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
             {
                 TestNum = testNum;
                 Source = source;
