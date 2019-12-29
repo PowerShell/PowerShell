@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortParameterSet)]
         public int TcpPort { get; set; }
-        
+
         #endregion Parameters
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                     Count = 4;
                 }
             }
-            
+
             if (Repeat.IsPresent)
             {
                 Count = int.MaxValue;
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         #region ConnectionTest
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
-        {    
+        {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
@@ -319,11 +319,11 @@ namespace Microsoft.PowerShell.Commands
                     0,
                     TcpTestStatus.TcpConnectionTestResult.New
                 );
-                
+
                 try
                 {
                     TcpClient client = new TcpClient();
-                    
+
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
 
@@ -337,15 +337,15 @@ namespace Microsoft.PowerShell.Commands
 
                     if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                     {
-                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Cancelled;                        
+                        testResult.Result = TcpTestStatus.TcpConnectionTestResult.Cancelled;
                         return;
                     }
-                    
+
                     if (timeoutTask.Status == TaskStatus.RanToCompletion)
                     {
                         testResult.Result = TcpTestStatus.TcpConnectionTestResult.Timeout;
                     }
-                    
+
                     if (connectionTask.Status == TaskStatus.RanToCompletion)
                     {
                         successfulConnections++;
@@ -356,10 +356,10 @@ namespace Microsoft.PowerShell.Commands
                 catch
                 {
                     testResult.Result = TcpTestStatus.TcpConnectionTestResult.Failed;
-                }                  
+                }
 
                 if (Quiet.IsPresent)
-                {   
+                {
                     if (i > successfulConnections)
                     {
                         WriteObject(false);
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion ConnectionTest
-        
+
         #region TracerouteTest
 
         private void ProcessTraceroute(string targetNameOrAddress)
@@ -974,14 +974,14 @@ namespace Microsoft.PowerShell.Commands
 
             /// <summary>
             /// Results of the detailed TCP connection test
-            /// </summary>  
+            /// </summary>
             public enum TcpConnectionTestResult
             {
                 /// <summary>
                 /// Connection test has not run
                 /// </summary>
                 New,
-                
+
                 /// <summary>
                 /// Connection was successful.
                 /// </summary>
@@ -1003,7 +1003,7 @@ namespace Microsoft.PowerShell.Commands
                 Cancelled
             }
         }
-        
+
         /// <summary>
         /// The class contains information about the source, the destination and ping results.
         /// </summary>
