@@ -134,14 +134,13 @@ namespace Microsoft.PowerShell.Commands
         public int MaxHops { get; set; } = DefaultMaxHops;
 
         /// <summary>
-        /// Gets or sets the number of test attempts.
-        /// The value is -1 if not set explicitly as a parameter
-        /// If not set explicitly, the value is set depending on type of test (ping = 4, tcp = 1)
+        /// Gets or sets the number of ping attempts.
+        /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
-        public int Count { get; set; } = -1;
+        public int Count { get; set; } = 4;
 
         /// <summary>
         /// Gets or sets the delay between ping attempts.
@@ -239,21 +238,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Count == -1)
+            switch (ParameterSetName)
             {
-                if (ParameterSetName == TcpPortParameterSet)
-                {
-                    Count = 1;
-                }
-                else
-                {
-                    Count = 4;
-                }
-            }
-
-            if (Repeat.IsPresent)
-            {
+                case RepeatPingParameterSet:
                 Count = int.MaxValue;
+                    break;
             }
         }
 
@@ -301,6 +290,15 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
+            if(Repeat.IsPresent)
+            {
+                Count = int.MaxValue;
+            }
+            else if (!MyInvocation.BoundParameters.ContainsKey("Count"))
+            {
+                Count = 1;
+            }
+
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
