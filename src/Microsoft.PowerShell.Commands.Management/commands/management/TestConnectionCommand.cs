@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
                     targetAddress.ToString(),
                     TcpPort,
                     0,
-                    TcpPortStatus.TcpConnectionTestResult.New
+                    TcpPortStatus.TcpConnectionTestResult.None
                 );
 
                 Stopwatch stopwatch = new Stopwatch();
@@ -982,7 +982,7 @@ namespace Microsoft.PowerShell.Commands
                 /// <summary>
                 /// Connection test has not run.
                 /// </summary>
-                New,
+                None,
 
                 /// <summary>
                 /// Connection was successful.
