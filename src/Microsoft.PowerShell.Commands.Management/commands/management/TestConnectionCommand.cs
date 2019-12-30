@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if(Repeat.IsPresent)
+            if (Repeat.IsPresent)
             {
                 Count = int.MaxValue;
             }
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Stopwatch stopwatch = new Stopwatch();
 
-                using(TcpClient client = new TcpClient())
+                using (TcpClient client = new TcpClient())
                 {
                     try
                     {
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(false);
                         return;
                     }
-                    else if(i == Count)
+                    else if (i == Count)
                     {
                         WriteObject(true);
                         return;
