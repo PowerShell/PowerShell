@@ -167,7 +167,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "BufferSize Should -Be between 0 and 65500" {
-            { Test-Connection $targetName -BufferSize 0 -Count 1 } | Should -Not -Throw
+            { Test-Connection $targetName -BufferSize 0 } | Should -Not -Throw
             { Test-Connection $targetName -BufferSize -1 } |
                 Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
             { Test-Connection $targetName -BufferSize 65501 } |
@@ -268,14 +268,12 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It 'writes an error if MaxHops is exceeded during -Traceroute' {
-            # TimeoutSeconds is only needed for Azure CI where the test takes 40 seconds.
-            { Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -TimeoutSeconds 5 -ErrorAction Stop } |
+            { Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -ErrorAction Stop } |
                 Should -Throw -ErrorId 'TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand'
         }
 
         It 'returns false without error if MaxHops is exceeded during -Traceroute -Quiet' {
-            # TimeoutSeconds is only needed for Azure CI where the test takes 40 seconds.
-            Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -TimeoutSeconds 5 -Quiet | Should -BeFalse
+            Test-Connection 8.8.8.8 -Traceroute -MaxHops 2 -Quiet | Should -BeFalse
         }
 
         It 'has a non-null value for Destination for reachable hosts' {
