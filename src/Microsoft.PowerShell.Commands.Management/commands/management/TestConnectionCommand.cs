@@ -318,11 +318,12 @@ namespace Microsoft.PowerShell.Commands
                     TcpPortStatus.TcpConnectionTestResult.New
                 );
 
+                Stopwatch stopwatch = new Stopwatch();
+
                 using(TcpClient client = new TcpClient())
                 {
                     try
                     {
-                        Stopwatch stopwatch = new Stopwatch();
                         stopwatch.Start();
 
                         Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
@@ -352,6 +353,10 @@ namespace Microsoft.PowerShell.Commands
                     catch
                     {
                         testResult.Result = TcpPortStatus.TcpConnectionTestResult.Failed;
+                    }
+                    finally
+                    {
+                        stopwatch.Reset();
                     }
                 }
 
