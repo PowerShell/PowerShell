@@ -20,15 +20,15 @@ Describe "Get-Location" -Tags "CI" {
     }
 
     It "Should throw an exception when missing an argument for parameter 'PSProvider'" {
-        { Get-Location -PSProvider } | Should -Throw "Missing an argument for parameter 'PSProvider'."
+         { Get-Location -PSProvider } | Should -Throw -ErrorId "MissingArgument"
     }
 
     It "Should throw an exception when missing an argument for parameter 'PSDrive'" {
-        { Get-Location -PSDrive } | Should -Throw "Missing an argument for parameter 'PSDrive'."
+        { Get-Location -PSDrive } | Should -Throw -ErrorId "MissingArgument"
     }
 
     It "Should throw an exception when missing an argument for parameter 'StackName'" {
-        { Get-Location -StackName } | Should -Throw "Missing an argument for parameter 'StackName'."
+        { Get-Location -StackName } | Should -Throw -ErrorId "MissingArgument"
     }
 
     It "Should return a PathInfo object when no parameters are given" {
@@ -56,7 +56,7 @@ Describe "Get-Location" -Tags "CI" {
     It "Should return a PathInfoStack with the correct values for parameter 'Stack'" {
         $stackAsArray = (Get-Location -Stack).ToArray()
 
-        $stackAsArray.Length -gt 0 | Should -BeTrue
+        $stackAsArray.Length | Should -BeGreaterThan 0
 
         $stackAsArray[0] | Should -BeExactly $currentDirectory
     }
@@ -64,7 +64,7 @@ Describe "Get-Location" -Tags "CI" {
     It "Should return a PathInfoStack with the correct values for the argument for parameter 'StackName'" {
         $tempDirectory = Join-Path -Path $currentDirectory -ChildPath "getLocationTempDir"
 
-        New-Item -Path ($tempDirectory) -ItemType "directory"
+        New-Item -Path ($tempDirectory) -ItemType "directory" > $null
 
         Set-Location -Path $tempDirectory
 
