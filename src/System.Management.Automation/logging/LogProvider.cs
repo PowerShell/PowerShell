@@ -228,7 +228,7 @@ namespace System.Management.Automation
         // Estimated length of all Strings.* values
         // Rough estimate of values
         // max path for Command path
-        const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
+        const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255 + 11 + 80;
 
         /// <summary>
         /// Converts log context to string.
@@ -271,6 +271,8 @@ namespace System.Management.Automation
             sb.AppendLine(context.ConnectedUser);
             sb.Append(Strings.LogContextShellId);
             sb.AppendLine(context.ShellId);
+            sb.Append(nameof(PSVersionInfo.GitCommitId));
+            sb.AppendLine(PSVersionInfo.GitCommitId);
 
             return sb.ToString();
         }
