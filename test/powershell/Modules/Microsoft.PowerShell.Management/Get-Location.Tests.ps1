@@ -56,7 +56,7 @@ Describe "Get-Location" -Tags "CI" {
     It "Should return a PathInfoStack with the correct values for parameter 'Stack'" {
         $stackAsArray = (Get-Location -Stack).ToArray()
 
-        $stackAsArray.Length | Should -BeExactly 1
+        $stackAsArray.Length -gt 0 | Should -BeTrue
 
         $stackAsArray[0] | Should -BeExactly $currentDirectory
     }
