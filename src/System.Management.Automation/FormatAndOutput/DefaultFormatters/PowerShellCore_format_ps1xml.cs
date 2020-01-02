@@ -1847,7 +1847,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpPortStatus",
                 TableControl.Create()
-                    .AddHeader(Alignment.Right, label: "Test", width: 4)
+                    .AddHeader(Alignment.Right, label: "Id", width: 4)
                     .AddHeader(Alignment.Left, label: "Source", width: 16)
                     .AddHeader(Alignment.Left, label: "Destination", width: 16)
                     .AddHeader(Alignment.Left, label: "DestinationAddress", width: 18)
@@ -1855,7 +1855,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
                     .AddHeader(Alignment.Left, label: "Result", width: 24)
                     .StartRowDefinition()
-                        .AddPropertyColumn("TestNum")
+                        .AddPropertyColumn("Id")
                         .AddPropertyColumn("Source")
                         .AddPropertyColumn("Destination")
                         .AddPropertyColumn("DestinationAddress")

@@ -918,16 +918,16 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Initializes a new instance of the <see cref="TcpPortStatus"/> class.
             /// </summary>
-            /// <param name="testNum">The number of this test.</param>
+            /// <param name="id">The number of this test.</param>
             /// <param name="source">The source machine name or IP of the test.</param>
             /// <param name="destination">The destination machine name or IP of the test.</param>
             /// <param name="destinationAddress">The resolved IP from the destination.</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="result">The result of the test.</param>
-            internal TcpPortStatus(int testNum, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
+            internal TcpPortStatus(int id, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
             {
-                TestNum = testNum;
+                Id = id;
                 Source = source;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets and sets the count of the test.
             /// </summary>
-            public int TestNum { get; set; }
+            public int Id { get; set; }
 
             /// <summary>
             /// Gets the source from which the test was sent.

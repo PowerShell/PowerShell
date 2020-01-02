@@ -303,7 +303,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort
 
         $result.Count | Should -Be 1
-        $result[0].TestNum | Should -BeExactly 1
+        $result[0].Id | Should -BeExactly 1
         $result[0].Destination | Should -BeExactly '127.0.0.1'
         $result[0].DestinationAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
@@ -315,7 +315,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Count 2
 
         $result.Count | Should -Be 2
-        $result[0].TestNum | Should -BeExactly 1
+        $result[0].Id | Should -BeExactly 1
         $result[0].Destination | Should -BeExactly '127.0.0.1'
         $result[0].DestinationAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
@@ -327,7 +327,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $result = Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1
 
         $result.Count | Should -Be 1
-        $result[0].TestNum | Should -BeExactly 1
+        $result[0].Id | Should -BeExactly 1
         $result[0].Destination | Should -BeExactly $UnreachableAddress
         $result[0].DestinationAddress | Should -BeExactly $UnreachableAddress
         $result[0].Port | Should -Be 80
