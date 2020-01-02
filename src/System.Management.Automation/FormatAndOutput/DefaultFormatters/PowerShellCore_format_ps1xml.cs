@@ -1853,7 +1853,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "DestinationAddress", width: 18)
                     .AddHeader(Alignment.Right, label: "Port", width: 7)
                     .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
-                    .AddHeader(Alignment.Left, label: "Result", width: 16)
+                    .AddHeader(Alignment.Left, label: "Result", width: 24)
                     .StartRowDefinition()
                         .AddPropertyColumn("TestNum")
                         .AddPropertyColumn("Source")
