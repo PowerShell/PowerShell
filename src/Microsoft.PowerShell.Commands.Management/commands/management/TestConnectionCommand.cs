@@ -304,8 +304,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            int successfulConnections = 0;
-
             for (var i = 1; i <= Count; i++)
             {
                 TcpPortStatus testResult = new TcpPortStatus(
@@ -345,7 +343,6 @@ namespace Microsoft.PowerShell.Commands
 
                         if (connectionTask.Status == TaskStatus.RanToCompletion)
                         {
-                            successfulConnections++;
                             testResult.Result = TcpPortStatus.TcpConnectionTestResult.Success;
                             testResult.Latency = stopwatch.ElapsedMilliseconds;
                         }
@@ -362,14 +359,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Quiet.IsPresent)
                 {
-                    if (i > successfulConnections)
+                    if (testResult.Result == TcpPortStatus.TcpConnectionTestResult.Success)
                     {
-                        WriteObject(false);
+                        WriteObject(true);
                         return;
                     }
                     else if (i == Count)
                     {
-                        WriteObject(true);
+                        WriteObject(false);
                         return;
                     }
                 }
