@@ -105,7 +105,7 @@ To run the link-checker, follow these steps:
 
 ### Code Editor
 
-You should use the multi-platform [Visual Studio Code (VS Code)][use-vscode-editor].
+You should use the multi-platform [Visual Studio Code (VS Code)](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6).
 
 ### Building and testing
 
