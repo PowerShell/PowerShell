@@ -502,6 +502,7 @@ Fix steps:
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
+        # Symbolic links added here do NOT affect packaging as we do not build on Debian.
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
