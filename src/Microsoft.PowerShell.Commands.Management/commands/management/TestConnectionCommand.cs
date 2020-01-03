@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                     i,
                     Source,
                     targetNameOrAddress,
-                    targetAddress.ToString(),
+                    targetAddress,
                     TcpPort,
                     0,
                     TcpPortStatus.TcpConnectionTestResult.None
@@ -920,17 +920,17 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="id">The number of this test.</param>
             /// <param name="source">The source machine name or IP of the test.</param>
-            /// <param name="destination">The destination machine name or IP of the test.</param>
-            /// <param name="destinationAddress">The resolved IP from the destination.</param>
+            /// <param name="target">The target machine name or IP of the test.</param>
+            /// <param name="targetAddress">The resolved IP from the target.</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="result">The result of the test.</param>
-            internal TcpPortStatus(int id, string source, string destination, string destinationAddress, int port, long latency, TcpConnectionTestResult result)
+            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, TcpConnectionTestResult result)
             {
                 Id = id;
                 Source = source;
-                Destination = destination;
-                DestinationAddress = destinationAddress;
+                Target = target;
+                TargetAddress = targetAddress;
                 Port = port;
                 Latency = latency;
                 Result = result;
@@ -947,14 +947,14 @@ namespace Microsoft.PowerShell.Commands
             public string Source { get; }
 
             /// <summary>
-            /// Gets the destination name.
+            /// Gets the target name.
             /// </summary>
-            public string Destination { get; }
+            public string Target { get; }
 
             /// <summary>
-            /// Gets the resolved address for the destination.
+            /// Gets the resolved address for the target.
             /// </summary>
-            public string DestinationAddress { get; }
+            public IPAddress TargetAddress { get; }
 
             /// <summary>
             /// Gets the port used for the test.

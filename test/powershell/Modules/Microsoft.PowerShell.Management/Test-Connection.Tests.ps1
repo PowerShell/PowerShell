@@ -304,8 +304,8 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
-        $result[0].Destination | Should -BeExactly '127.0.0.1'
-        $result[0].DestinationAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Target | Should -BeExactly '127.0.0.1'
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
         $result[0].Latency | Should -BeGreaterOrEqual 0
         $result[0].Result | Should -BeExactly 'Success'
@@ -316,8 +316,8 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 2
         $result[0].Id | Should -BeExactly 1
-        $result[0].Destination | Should -BeExactly '127.0.0.1'
-        $result[0].DestinationAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Target | Should -BeExactly '127.0.0.1'
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
         $result[0].Latency | Should -BeGreaterOrEqual 0
         $result[0].Result | Should -BeExactly 'Success'
@@ -328,8 +328,8 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
-        $result[0].Destination | Should -BeExactly $UnreachableAddress
-        $result[0].DestinationAddress | Should -BeExactly $UnreachableAddress
+        $result[0].Target | Should -BeExactly $UnreachableAddress
+        $result[0].TargetAddress | Should -BeExactly $UnreachableAddress
         $result[0].Port | Should -Be 80
         $result[0].Latency | Should -BeExactly 0
         $result[0].Result | Should -Not -BeExactly 'Success'
