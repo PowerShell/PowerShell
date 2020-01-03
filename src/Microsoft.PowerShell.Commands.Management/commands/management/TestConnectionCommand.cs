@@ -318,43 +318,42 @@ namespace Microsoft.PowerShell.Commands
 
                 Stopwatch stopwatch = new Stopwatch();
 
-                using (TcpClient client = new TcpClient())
+                using TcpClient client = new TcpClient();
+
+                try
                 {
-                    try
+                    stopwatch.Start();
+
+                    Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
+                    Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
+
+                    Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
+                    stopwatch.Stop();
+
+                    if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
                     {
-                        stopwatch.Start();
-
-                        Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                        Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
-
-                        Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
-                        stopwatch.Stop();
-
-                        if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
-                        {
-                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Cancelled;
-                            return;
-                        }
-
-                        if (timeoutTask.Status == TaskStatus.RanToCompletion)
-                        {
-                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Timeout;
-                        }
-
-                        if (connectionTask.Status == TaskStatus.RanToCompletion)
-                        {
-                            testResult.Result = TcpPortStatus.TcpConnectionTestResult.Success;
-                            testResult.Latency = stopwatch.ElapsedMilliseconds;
-                        }
+                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Cancelled;
+                        return;
                     }
-                    catch
+
+                    if (timeoutTask.Status == TaskStatus.RanToCompletion)
                     {
-                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Failed;
+                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Timeout;
                     }
-                    finally
+
+                    if (connectionTask.Status == TaskStatus.RanToCompletion)
                     {
-                        stopwatch.Reset();
+                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Success;
+                        testResult.Latency = stopwatch.ElapsedMilliseconds;
                     }
+                }
+                catch
+                {
+                    testResult.Result = TcpPortStatus.TcpConnectionTestResult.Failed;
+                }
+                finally
+                {
+                    stopwatch.Reset();
                 }
 
                 if (Quiet.IsPresent)
