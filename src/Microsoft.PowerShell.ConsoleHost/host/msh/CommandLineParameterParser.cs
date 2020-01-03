@@ -18,6 +18,8 @@ using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
+#nullable enable
+
 namespace Microsoft.PowerShell
 {
     /// <summary>
@@ -29,7 +31,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// RawUI.
         /// </summary>
-        public override PSHostRawUserInterface RawUI
+        public override PSHostRawUserInterface? RawUI
         {
             get { return null; }
         }
@@ -223,17 +225,8 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
-        internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
+        internal CommandLineParameterParser()
         {
-            if (hostUI == null)
-            {
-                throw new PSArgumentNullException(nameof(hostUI));
-            }
-
-            _hostUI = hostUI;
-
-            _bannerText = bannerText;
-            _helpText = helpText;
         }
 
         #region Internal properties
@@ -247,7 +240,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string InitialCommand
+        internal string? InitialCommand
         {
             get
             {
@@ -336,7 +329,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string ConfigurationName
+        internal string? ConfigurationName
         {
             get { return _configurationName; }
         }
@@ -375,7 +368,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string CustomPipeName
+        internal string? CustomPipeName
         {
             get
             {
@@ -412,7 +405,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string File
+        internal string? File
         {
             get
             {
@@ -421,7 +414,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string ExecutionPolicy
+        internal string? ExecutionPolicy
         {
             get
             {
@@ -443,12 +436,12 @@ namespace Microsoft.PowerShell
             get { return _noInteractive; }
         }
 
-        internal string WorkingDirectory
+        internal string? WorkingDirectory
         {
             get
             {
 #if !UNIX
-                if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory.Length > 0)
+                if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory?.Length > 0)
                 {
                     return _workingDirectory.Remove(_workingDirectory.Length - 1);
                 }
@@ -476,49 +469,33 @@ namespace Microsoft.PowerShell
         /// <param name="settingFileArgIndex">
         /// The index in args to the argument following '-SettingFile'.
         /// </param>
-        /// <param name="parser">
-        /// Used to allow the helper to write errors to the console.  If not supplied, no errors will be written.
-        /// </param>
         /// <returns>
         /// Returns true if the argument was parsed successfully and false if not.
         /// </returns>
-        private static bool TryParseSettingFileHelper(string[] args, int settingFileArgIndex, CommandLineParameterParser parser)
+        private bool TryParseSettingFileHelper(string[] args, int settingFileArgIndex)
         {
             if (settingFileArgIndex >= args.Length)
             {
-                if (parser != null)
-                {
-                    parser.WriteCommandLineError(
-                        CommandLineParameterParserStrings.MissingSettingsFileArgument);
-                }
-
+                SetCommandLineError(CommandLineParameterParserStrings.MissingSettingsFileArgument);
                 return false;
             }
 
-            string configFile = null;
+            string configFile;
             try
             {
                 configFile = NormalizeFilePath(args[settingFileArgIndex]);
             }
             catch (Exception ex)
             {
-                if (parser != null)
-                {
-                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[settingFileArgIndex], ex.Message);
-                    parser.WriteCommandLineError(error);
-                }
-
+                string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[settingFileArgIndex], ex.Message);
+                SetCommandLineError(error);
                 return false;
             }
 
             if (!System.IO.File.Exists(configFile))
             {
-                if (parser != null)
-                {
-                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
-                    parser.WriteCommandLineError(error);
-                }
-
+                string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                SetCommandLineError(error);
                 return false;
             }
 
@@ -536,43 +513,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
-        /// Success to indicate that the program should continue running.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        internal static void EarlyParse(string[] args)
-        {
-            if (args == null)
-            {
-                Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
-                return;
-            }
-
-            bool noexitSeen = false;
-            for (int i = 0; i < args.Length; ++i)
-            {
-                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, parser: null, ref noexitSeen);
-                if (switchKeyResults.ShouldBreak)
-                {
-                    break;
-                }
-
-                string switchKey = switchKeyResults.SwitchKey;
-
-                if (!string.IsNullOrEmpty(switchKey) && MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
-                {
-                    // parse setting file arg and don't write error as there is no host yet.
-                    if (!TryParseSettingFileHelper(args, ++i, parser: null))
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets the word in a switch from the current argument or parses a file.
         /// For example -foo, /foo, or --foo would return 'foo'.
         /// </summary>
@@ -582,9 +522,6 @@ namespace Microsoft.PowerShell
         /// <param name="argIndex">
         /// The index in args to the argument to process.
         /// </param>
-        /// <param name="parser">
-        /// Used to parse files in the args.  If not supplied, Files will not be parsed.
-        /// </param>
         /// <param name="noexitSeen">
         /// Used during parsing files.
         /// </param>
@@ -593,24 +530,21 @@ namespace Microsoft.PowerShell
         /// The first value is a String called SwitchKey with the word in a switch from the current argument or null.
         /// The second value is a bool called ShouldBreak, indicating if the parsing look should break.
         /// </returns>
-        private static (string SwitchKey, bool ShouldBreak) GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, ref bool noexitSeen)
+        private (string SwitchKey, bool ShouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
         {
             string switchKey = args[argIndex].Trim().ToLowerInvariant();
             if (string.IsNullOrEmpty(switchKey))
             {
-                return (SwitchKey: null, ShouldBreak: false);
+                return (SwitchKey: string.Empty, ShouldBreak: false);
             }
 
             if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
             {
                 // then its a file
-                if (parser != null)
-                {
-                    --argIndex;
-                    parser.ParseFile(args, ref argIndex, noexitSeen);
-                }
+                --argIndex;
+                ParseFile(args, ref argIndex, noexitSeen);
 
-                return (SwitchKey: null, ShouldBreak: true);
+                return (SwitchKey: string.Empty, ShouldBreak: true);
             }
 
             // chop off the first character so that we're agnostic wrt specifying / or -
@@ -637,7 +571,6 @@ namespace Microsoft.PowerShell
 
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
-            Dbg.Assert(switchKey != null, "need a value");
             Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
             Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
@@ -649,26 +582,46 @@ namespace Microsoft.PowerShell
 
         #endregion
 
-        private void ShowHelp()
+        private void ShowError(PSHostUserInterface hostUI)
         {
-            Dbg.Assert(_helpText != null, "_helpText should not be null");
-            _hostUI.WriteLine(string.Empty);
-            _hostUI.Write(_helpText);
-            if (_showExtendedHelp)
+            if (_error != null)
             {
-                _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
+                hostUI.WriteErrorLine(_error);
             }
-
-            _hostUI.WriteLine(string.Empty);
         }
 
-        private void DisplayBanner()
+        private void ShowHelp(PSHostUserInterface hostUI, string helpText)
         {
-            // If banner text is not supplied do nothing.
-            if (!string.IsNullOrEmpty(_bannerText))
+            Dbg.Assert(helpText != null, "_helpText should not be null");
+
+            if (_showHelp)
             {
-                _hostUI.WriteLine(_bannerText);
-                _hostUI.WriteLine();
+                hostUI.WriteLine(string.Empty);
+                hostUI.Write(helpText);
+                if (_showExtendedHelp)
+                {
+                    hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
+                }
+
+                hostUI.WriteLine(string.Empty);
+            }
+        }
+
+        private void DisplayBanner(PSHostUserInterface hostUI, string? bannerText)
+        {
+            if (_showBanner && !_showHelp)
+            {
+                // If banner text is not supplied do nothing.
+                if (!string.IsNullOrEmpty(bannerText))
+                {
+                    hostUI.WriteLine(bannerText);
+                    hostUI.WriteLine();
+                }
+
+                if (UpdatesNotification.CanNotifyUpdates)
+                {
+                    UpdatesNotification.ShowUpdateNotification(hostUI);
+                }
             }
         }
 
@@ -699,9 +652,8 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!_dirty, "This instance has already been used. Create a new instance.");
 
-            // indicates that we've called this method on this instance, and that when it's done, the state variables
+            // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
-
             _dirty = true;
 
             ParseHelper(args);
@@ -717,12 +669,16 @@ namespace Microsoft.PowerShell
 
         private void ParseHelper(string[] args)
         {
-            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
+            if (args == null || args.Length == 0)
+            {
+                return;
+            }
+
             bool noexitSeen = false;
 
             for (int i = 0; i < args.Length; ++i)
             {
-                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, this, ref noexitSeen);
+                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, ref noexitSeen);
                 if (switchKeyResults.ShouldBreak)
                 {
                     break;
@@ -794,7 +750,7 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i >= args.Length)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MissingConfigurationNameArgument);
                         break;
                     }
@@ -806,7 +762,7 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i >= args.Length)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
                         break;
                     }
@@ -816,7 +772,7 @@ namespace Microsoft.PowerShell
                         int maxNameLength = (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
                         if (args[i].Length > maxNameLength)
                         {
-                            WriteCommandLineError(
+                            SetCommandLineError(
                                 string.Format(
                                     CommandLineParameterParserStrings.CustomPipeNameTooLong,
                                     maxNameLength,
@@ -838,14 +794,14 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
 #if UNIX
-                    WriteCommandLineError(
+                    SetCommandLineError(
                         CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
                     break;
 #else
                     ++i;
                     if (i >= args.Length)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MissingWindowStyleArgument);
                         break;
                     }
@@ -858,7 +814,7 @@ namespace Microsoft.PowerShell
                     }
                     catch (PSInvalidCastException e)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidWindowStyleArgument, args[i], e.Message));
                         break;
                     }
@@ -877,59 +833,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "wait", "wa"))
                 {
                     // This does not need to be localized: its chk only
-
-                    ((ConsoleHostUserInterface)_hostUI).WriteToConsole("Waiting - type enter to continue:", false);
-                    _hostUI.ReadLine();
-                }
-
-                // this option is useful for testing the initial InitialSessionState experience
-                else if (MatchSwitch(switchKey, "iss", "iss"))
-                {
-                    // Just toss this option, it was processed earlier...
-                }
-
-                // this option is useful for testing the initial InitialSessionState experience
-                // this is independent of the normal wait switch because configuration processing
-                // happens so early in the cycle...
-                else if (MatchSwitch(switchKey, "isswait", "isswait"))
-                {
-                    // Just toss this option, it was processed earlier...
-                }
-                else if (MatchSwitch(switchKey, "modules", "mod"))
-                {
-                    if (ConsoleHost.DefaultInitialSessionState == null)
-                    {
-                        WriteCommandLineError(
-                            "The -module option can only be specified with the -iss option.",
-                            showHelp: true,
-                            showBanner: false);
-                        break;
-                    }
-
-                    ++i;
-                    int moduleCount = 0;
-                    // Accumulate the arguments to this script...
-                    while (i < args.Length)
-                    {
-                        string arg = args[i];
-
-                        if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]))
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            ConsoleHost.DefaultInitialSessionState.ImportPSModule(new string[] { arg });
-                            moduleCount++;
-                        }
-
-                        ++i;
-                    }
-
-                    if (moduleCount < 1)
-                    {
-                        _hostUI.WriteErrorLine("No modules specified for -module option");
-                    }
+                    _wait = true;
                 }
 #endif
                 else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
@@ -963,7 +867,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error
-                    if (!TryParseSettingFileHelper(args, ++i, this))
+                    if (!TryParseSettingFileHelper(args, ++i))
                     {
                         break;
                     }
@@ -972,7 +876,7 @@ namespace Microsoft.PowerShell
                 {
                     if (!Platform.IsWindowsDesktop)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
                         break;
                     }
@@ -980,7 +884,7 @@ namespace Microsoft.PowerShell
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MtaStaMutuallyExclusive);
                         break;
                     }
@@ -991,7 +895,7 @@ namespace Microsoft.PowerShell
                 {
                     if (!Platform.IsWindowsDesktop)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MTANotImplemented);
                         break;
                     }
@@ -999,7 +903,7 @@ namespace Microsoft.PowerShell
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MtaStaMutuallyExclusive);
                         break;
                     }
@@ -1011,7 +915,7 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i >= args.Length)
                     {
-                        WriteCommandLineError(
+                        SetCommandLineError(
                             CommandLineParameterParserStrings.MissingWorkingDirectoryArgument);
                         break;
                     }
@@ -1027,27 +931,11 @@ namespace Microsoft.PowerShell
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
-
                     --i;
                     if (!ParseFile(args, ref i, noexitSeen))
                     {
                         break;
                     }
-                }
-            }
-
-            if (_showHelp)
-            {
-                ShowHelp();
-            }
-
-            if (_showBanner && !_showHelp)
-            {
-                DisplayBanner();
-
-                if (UpdatesNotification.CanNotifyUpdates)
-                {
-                    UpdatesNotification.ShowUpdateNotification(_hostUI);
                 }
             }
 
@@ -1057,9 +945,38 @@ namespace Microsoft.PowerShell
                 "if exit code is failure, then abortstartup should be true");
         }
 
-        private void WriteCommandLineError(string msg, bool showHelp = false, bool showBanner = false)
+#if DEBUG
+        private void WaitingRemoteDebugger(PSHostUserInterface hostUI, string[] args)
         {
-            _hostUI.WriteErrorLine(msg);
+            // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
+            // attach to an already running process with that debugger.
+            if (_wait)
+            {
+                // This does not need to be localized: its chk only
+                ((ConsoleHostUserInterface)hostUI).WriteToConsole("Waiting - type enter to continue:", false);
+                hostUI.ReadLine();
+            }
+        }
+#endif
+
+        internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string helpText, string[] args)
+        {
+#if DEBUG
+            WaitingRemoteDebugger(hostUI, args);
+#endif
+            ShowError(hostUI);
+            ShowHelp(hostUI, helpText);
+            DisplayBanner(hostUI, bannerText);
+        }
+
+        private void SetCommandLineError(string msg, bool showHelp = false, bool showBanner = false)
+        {
+            if (_error != null)
+            {
+                throw new ArgumentException(nameof(SetCommandLineError), nameof(_error));
+            }
+
+            _error = msg;
             _showHelp = showHelp;
             _showBanner = showBanner;
             _abortStartup = true;
@@ -1078,13 +995,11 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                _hostUI.WriteErrorLine(
+                SetCommandLineError(
                     StringUtil.Format(
                         resourceStr,
-                        sb.ToString()));
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                        sb.ToString()),
+                    showHelp: true);
                 return;
             }
 
@@ -1094,27 +1009,21 @@ namespace Microsoft.PowerShell
             }
             catch (ArgumentException)
             {
-                _hostUI.WriteErrorLine(
+                SetCommandLineError(
                     StringUtil.Format(
                         CommandLineParameterParserStrings.BadFormatParameterValue,
                         args[i],
-                        sb.ToString()));
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                        sb.ToString()),
+                    showHelp: true);
             }
         }
 
-        private void ParseExecutionPolicy(string[] args, ref int i, ref string executionPolicy, string resourceStr)
+        private void ParseExecutionPolicy(string[] args, ref int i, ref string? executionPolicy, string resourceStr)
         {
             ++i;
             if (i >= args.Length)
             {
-                _hostUI.WriteErrorLine(resourceStr);
-
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(resourceStr, showHelp: true);
                 return;
             }
 
@@ -1127,7 +1036,6 @@ namespace Microsoft.PowerShell
             // since if -command comes before -file, -file will be treated as part
             // of the script to evaluate. If -file comes before -command, it will
             // treat -command as an argument to the script...
-
             bool TryGetBoolValue(string arg, out bool boolValue)
             {
                 if (arg.Equals("$true", StringComparison.OrdinalIgnoreCase) || arg.Equals("true", StringComparison.OrdinalIgnoreCase))
@@ -1148,7 +1056,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                WriteCommandLineError(
+                SetCommandLineError(
                     CommandLineParameterParserStrings.MissingFileArgument,
                     showHelp: true,
                     showBanner: false);
@@ -1176,7 +1084,6 @@ namespace Microsoft.PowerShell
                 // We need to get the full path to the script because it will be
                 // executed after the profiles are run and they may change the current
                 // directory.
-                string exceptionMessage = null;
                 try
                 {
                     _file = NormalizeFilePath(args[i]);
@@ -1185,13 +1092,8 @@ namespace Microsoft.PowerShell
                 {
                     // Catch all exceptions - we're just going to exit anyway so there's
                     // no issue of the system being destabilized.
-                    exceptionMessage = e.Message;
-                }
-
-                if (exceptionMessage != null)
-                {
-                    WriteCommandLineError(
-                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
+                    SetCommandLineError(
+                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], e.Message),
                         showBanner: false);
                     return false;
                 }
@@ -1213,15 +1115,16 @@ namespace Microsoft.PowerShell
 
                         if (possibleParameters.Length > 0)
                         {
-                            WriteCommandLineError(
-                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i]),
+                            SetCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i]) +
+                                Environment.NewLine +
+                                possibleParameters.ToString(),
                                 showBanner: false);
-                            WriteCommandLineError(possibleParameters.ToString(), showBanner: false);
                             return false;
                         }
                     }
 
-                    WriteCommandLineError(
+                    SetCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
                         showHelp: true);
                     return false;
@@ -1229,7 +1132,7 @@ namespace Microsoft.PowerShell
 
                 i++;
 
-                string pendingParameter = null;
+                string? pendingParameter = null;
 
                 // Accumulate the arguments to this script...
                 while (i < args.Length)
@@ -1288,21 +1191,14 @@ namespace Microsoft.PowerShell
             if (_commandLineCommand != null)
             {
                 // we've already set the command, so squawk
-
-                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.CommandAlreadySpecified);
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(CommandLineParameterParserStrings.CommandAlreadySpecified, showHelp: true);
                 return false;
             }
 
             ++i;
             if (i >= args.Length)
             {
-                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.MissingCommandParameter);
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(CommandLineParameterParserStrings.MissingCommandParameter, showHelp: true);
                 return false;
             }
 
@@ -1315,10 +1211,7 @@ namespace Microsoft.PowerShell
                 // decoding failed
                 catch
                 {
-                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.BadCommandValue);
-                    _showHelp = true;
-                    _abortStartup = true;
-                    _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                    SetCommandLineError(CommandLineParameterParserStrings.BadCommandValue, showHelp: true);
                     return false;
                 }
             }
@@ -1334,19 +1227,13 @@ namespace Microsoft.PowerShell
                 {
                     // there are more parameters to -command than -, which is an error.
 
-                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.TooManyParametersToCommand);
-                    _showHelp = true;
-                    _abortStartup = true;
-                    _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                    SetCommandLineError(CommandLineParameterParserStrings.TooManyParametersToCommand, showHelp: true);
                     return false;
                 }
 
                 if (!Console.IsInputRedirected)
                 {
-                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
-                    _showHelp = true;
-                    _abortStartup = true;
-                    _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                    SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;
                 }
             }
@@ -1386,20 +1273,14 @@ namespace Microsoft.PowerShell
         {
             if (_collectedArgs.Count != 0)
             {
-                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.ArgsAlreadySpecified);
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(CommandLineParameterParserStrings.ArgsAlreadySpecified, showHelp: true);
                 return false;
             }
 
             ++i;
             if (i >= args.Length)
             {
-                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.MissingArgsValue);
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(CommandLineParameterParserStrings.MissingArgsValue, showHelp: true);
                 return false;
             }
 
@@ -1417,11 +1298,7 @@ namespace Microsoft.PowerShell
             catch
             {
                 // decoding failed
-
-                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.BadArgsValue);
-                _showHelp = true;
-                _abortStartup = true;
-                _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
+                SetCommandLineError(CommandLineParameterParserStrings.BadArgsValue, showHelp: true);
                 return false;
             }
 
@@ -1433,22 +1310,20 @@ namespace Microsoft.PowerShell
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
         private bool _showVersion;
-        private string _configurationName;
-        private PSHostUserInterface _hostUI;
+        private string? _configurationName;
+        private string? _error;
         private bool _showHelp;
         private bool _showExtendedHelp;
         private bool _showBanner = true;
         private bool _noInteractive;
-        private string _bannerText;
-        private string _helpText;
         private bool _abortStartup;
         private bool _skipUserInit;
-        private string _customPipeName;
+        private string? _customPipeName;
         private bool? _staMode = null;
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;
         private bool _noPrompt;
-        private string _commandLineCommand;
+        private string? _commandLineCommand;
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
@@ -1456,9 +1331,12 @@ namespace Microsoft.PowerShell
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
-        private string _file;
-        private string _executionPolicy;
-        private string _workingDirectory;
+        private string? _file;
+        private string? _executionPolicy;
+        private string? _workingDirectory;
+#if DEBUG
+        private bool _wait;
+#endif
 
 #if !UNIX
         private bool _removeWorkingDirectoryTrailingCharacter = false;

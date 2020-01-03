@@ -11,6 +11,8 @@ using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+#nullable enable
+
 namespace Microsoft.PowerShell
 {
     /// <summary>
@@ -30,19 +32,39 @@ namespace Microsoft.PowerShell
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
+        [Obsolete("Do not use the method", error: true)]
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         {
+            return Start(args);
+        }
+
+        /// <summary>
+        /// Starts managed MSH.
+        /// </summary>
+        /// <param name="args">
+        /// Command line arguments to the managed MSH
+        /// </param>
+        public static int Start(string[] args)
+        {
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             // Warm up some components concurrently on background threads.
             EarlyStartup.Init();
 
-            // We need to read the settings file before we create the console host
-            CommandLineParameterParser.EarlyParse(args);
+            var banner = string.Format(
+                CultureInfo.InvariantCulture,
+                ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                PSVersionInfo.GitCommitId);
 
-#if !UNIX
-            // NOTE: On Unix, logging has to be deferred until after command-line parsing
-            // complete. On Windows, deferring the call is not needed.
+            ConsoleHost.ParseCommandLine(args);
+
+            // NOTE: On Unix, logging depends on a command line parsing
+            // and must be just after ConsoleHost.ParseCommandLine(args)
+            // to allow overriding logging options.
             PSEtwLog.LogConsoleStartup();
-#endif
 
             // Windows Vista and later support non-traditional UI fallback ie., a
             // user on an Arabic machine can choose either French or English(US) as
@@ -69,19 +91,12 @@ namespace Microsoft.PowerShell
             int exitCode = 0;
             try
             {
-                var banner = string.Format(
-                    CultureInfo.InvariantCulture,
-                    ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
-                    PSVersionInfo.GitCommitId);
-
                 exitCode = ConsoleShell.Start(banner, ManagedEntranceStrings.UsageHelp, args);
             }
             catch (HostException e)
             {
-                if (e.InnerException != null && e.InnerException.GetType() == typeof(Win32Exception))
+                if (e.InnerException is Win32Exception win32e)
                 {
-                    Win32Exception win32e = e.InnerException as Win32Exception;
-
                     // These exceptions are caused by killing conhost.exe
                     // 1236, network connection aborted by local system
                     // 0x6, invalid console handle
@@ -102,4 +117,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-

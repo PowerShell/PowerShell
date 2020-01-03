@@ -4,7 +4,6 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -161,15 +160,8 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                PSHostUserInterface hostUi = s_theConsoleHost?.UI ?? new NullHostUserInterface();
-                s_cpp = new CommandLineParameterParser(hostUi, bannerText, helpText);
-                s_cpp.Parse(args);
-
-#if UNIX
-                // On Unix, logging has to be deferred until after command-line parsing
-                // completes to allow overriding logging options.
-                PSEtwLog.LogConsoleStartup();
-#endif
+                PSHostUserInterface hostUI = s_theConsoleHost?.UI ?? new NullHostUserInterface();
+                s_cpp.ShowErrorHelpBanner(hostUI, bannerText, helpText, args);
 
                 if (s_cpp.ShowVersion)
                 {
@@ -277,7 +269,12 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static CommandLineParameterParser s_cpp;
+        internal static void ParseCommandLine(string[] args)
+        {
+            s_cpp.Parse(args);
+        }
+
+        private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
 
 #if UNIX
         /// <summary>
