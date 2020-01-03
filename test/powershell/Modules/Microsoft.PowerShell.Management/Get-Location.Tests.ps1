@@ -3,11 +3,11 @@
 Describe "Get-Location" -Tags "CI" {
     $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
 
-    BeforeEach {
+    BeforeAll {
         Push-Location $currentDirectory
     }
 
-    AfterEach {
+    AfterAll {
         Pop-location
     }
 
