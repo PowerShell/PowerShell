@@ -3061,8 +3061,11 @@ function Test-FileWxs
             Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
         }
 
+        # There is only one ComponentGroup.
+        # So we get all of them and select the first one.
         $componentGroups = @($newFilesAssetXml.GetElementsByTagName('ComponentGroup'))
         $componentGroup = $componentGroups[0]
+
         # add all the file components to the patch
         foreach($component in $components)
         {
