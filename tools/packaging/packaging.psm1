@@ -3048,7 +3048,7 @@ function Test-FileWxs
     $components = $filesAssetXml.GetElementsByTagName('Component')
     $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
     $componentGroups = @($filesAssetXml.GetElementsByTagName('ComponentGroup'))
-    [XmlElement] $componentGroup = $componentGroups[0]
+    $componentGroup = $componentGroups[0]
 
     $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
     if ( $componentComparison.Count -gt 0){
