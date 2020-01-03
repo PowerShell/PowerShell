@@ -594,6 +594,9 @@
   <data name="PSEditionNotSupported" xml:space="preserve">
     <value>Module '{0}' does not support current PowerShell edition '{1}'. Its supported editions are '{2}'. Use 'Import-Module -SkipEditionCheck' to ignore the compatibility of this module.</value>
   </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>Module '{0}' supports PowerShell edition '{1}' and cannot be loaded implicitly using the Windows Compatibility feature because it is disabled in the settings file. Use 'Import-Module -UseWindowsPowerShell' to load this module with Windows PowerShell or 'Import-Module -SkipEditionCheck' to try to load the module with the current PowerShell.</value>
+  </data>
   <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
     <value>A non-empty string value should be specified for an experimental feature declared in the module manifest.</value>
   </data>
