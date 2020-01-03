@@ -3044,6 +3044,35 @@ function Test-FileWxs
         }
     }
 
+    # get all the file components from the files.wxs
+    $components = $filesAssetXml.GetElementsByTagName('Component')
+    $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
+    $componentGroups = @($filesAssetXml.GetElementsByTagName('ComponentGroup'))
+    [XmlElement] $componentGroup = $componentGroups[0]
+
+    $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
+    if ( $componentComparison.Count -gt 0){
+        $passed = $false
+        Write-Verbose "Rebuilding componentRefs" -Verbose
+
+        # add all the file components to the patch
+        foreach($component in $components)
+        {
+            $componentId = $component.Id
+            Write-Verbose "Removing $componentId" -Verbose
+            Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+        }
+
+        # add all the file components to the patch
+        foreach($component in $components)
+        {
+            $id = $component.Id
+            Write-Verbose "Adding $id" -Verbose
+            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $componentGroup -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $id
+        }
+    }
+
     if (!$passed)
     {
         $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.wxs')
