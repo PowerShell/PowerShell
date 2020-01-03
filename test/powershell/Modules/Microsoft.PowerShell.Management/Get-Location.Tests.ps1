@@ -1,14 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Get-Location" -Tags "CI" {
-    $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
-
     BeforeAll {
-        Push-Location $currentDirectory
-    }
-
-    AfterAll {
-        Pop-location
+        $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
     }
 
     It "Should list the output of the current working directory" {
@@ -52,11 +46,15 @@ Describe "Get-Location" -Tags "CI" {
     }
 
     It "Should return a PathInfoStack with the correct values for parameter 'Stack'" {
+        Push-Location $currentDirectory
+
         $stackAsArray = (Get-Location -Stack).ToArray()
 
         $stackAsArray.Length | Should -BeGreaterThan 0
 
         $stackAsArray[0] | Should -BeExactly $currentDirectory
+
+        Pop-location
     }
 
     It "Should return a PathInfoStack with the correct values for the argument for parameter 'StackName'" {
