@@ -3047,8 +3047,6 @@ function Test-FileWxs
     # get all the file components from the files.wxs
     $components = $filesAssetXml.GetElementsByTagName('Component')
     $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
-    $componentGroups = @($filesAssetXml.GetElementsByTagName('ComponentGroup'))
-    $componentGroup = $componentGroups[0]
 
     $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
     if ( $componentComparison.Count -gt 0){
@@ -3063,6 +3061,8 @@ function Test-FileWxs
             Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
         }
 
+        $componentGroups = @($newFilesAssetXml.GetElementsByTagName('ComponentGroup'))
+        $componentGroup = $componentGroups[0]
         # add all the file components to the patch
         foreach($component in $components)
         {
