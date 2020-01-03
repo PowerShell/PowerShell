@@ -5,6 +5,10 @@ Describe "Get-Location" -Tags "CI" {
         $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
     }
 
+    AfterAll {
+        Remove-Variable currentDirectory
+    }
+
     It "Should list the output of the current working directory" {
         (Get-Location).Path | Should -BeExactly $currentDirectory
     }
