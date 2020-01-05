@@ -114,7 +114,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
         It "Create job with native command" {
             try {
-                $nativeJob = Start-job { pwsh -c 1+1 }
+                $nativeJob = Start-job { & "$PSHOME/pwsh" -c 1+1 }
                 $nativeJob | Wait-Job
                 $nativeJob.State | Should -BeExactly "Completed"
                 $nativeJob.HasMoreData | Should -BeTrue

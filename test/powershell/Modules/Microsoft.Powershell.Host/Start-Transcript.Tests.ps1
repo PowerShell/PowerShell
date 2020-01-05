@@ -149,7 +149,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
-        pwsh -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"
+        & "$PSHOME/pwsh" -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch "Before Dispose"
