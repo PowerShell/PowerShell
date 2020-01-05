@@ -99,7 +99,7 @@ Describe "Validate start of console host" -Tag CI {
             Remove-Item $profileDataFile -Force
         }
 
-        $loadedAssemblies = pwsh -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
+        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {
