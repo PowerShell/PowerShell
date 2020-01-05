@@ -51,7 +51,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 15 }
+            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 8 }
         }
         AfterEach {
             Get-Job | Remove-Job -Force
