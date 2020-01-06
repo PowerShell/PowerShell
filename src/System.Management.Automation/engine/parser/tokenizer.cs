@@ -663,7 +663,8 @@ namespace System.Management.Automation.Language
         /*13*/  "isplit",               "csplit",               "isnot",                "is",                     /*13*/
         /*14*/  "as",                   "f",                    "and",                  "band",                   /*14*/
         /*15*/  "or",                   "bor",                  "xor",                  "bxor",                   /*15*/
-        /*16*/  "join",                 "shl",                  "shr",                  "matchall"                                        /*16*/
+        /*16*/  "join",                 "shl",                  "shr",                  "matchall",               /*16*/
+        /*17*/  "imatchall"
         };
 
         private static readonly TokenKind[] s_operatorTokenKind = new TokenKind[] {
@@ -682,7 +683,8 @@ namespace System.Management.Automation.Language
         /*13*/  TokenKind.Isplit,       TokenKind.Csplit,       TokenKind.IsNot,        TokenKind.Is,             /*13*/
         /*14*/  TokenKind.As,           TokenKind.Format,       TokenKind.And,          TokenKind.Band,           /*14*/
         /*15*/  TokenKind.Or,           TokenKind.Bor,          TokenKind.Xor,          TokenKind.Bxor,           /*15*/
-        /*16*/  TokenKind.Join,         TokenKind.Shl,          TokenKind.Shr,          TokenKind.Matchall,                                  /*16*/
+        /*16*/  TokenKind.Join,         TokenKind.Shl,          TokenKind.Shr,          TokenKind.Matchall,       /*16*/
+        /*17*/  TokenKind.Matchall
         };
 
         #endregion Tables for initialization

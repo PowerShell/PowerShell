@@ -878,7 +878,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*            matchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
+            /*           Imatchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
