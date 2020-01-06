@@ -5799,7 +5799,7 @@ namespace System.Management.Automation.Language
                         Expression.Constant(binaryExpressionAst.ErrorPosition),
                         lhs.Cast(typeof(object)),
                         rhs.Cast(typeof(string)),
-                        ExpressionCache.Constant(false));
+                        ExpressionCache.Constant(true));
                 case TokenKind.Ireplace:
                     // TODO: replace this with faster code
                     return Expression.Call(

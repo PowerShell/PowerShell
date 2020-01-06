@@ -1164,7 +1164,6 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object MatchAllOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, string rval, bool ignoreCase)
         {
-            Regex r = new Regex(rval);
             List<MatchCollection> matches = new List<MatchCollection>();
             string[] text;
             if (lval is string)
@@ -1180,7 +1179,16 @@ namespace System.Management.Automation
 
             foreach(string s in text)
             {
-                MatchCollection match = Regex.Matches(s, rval);
+                MatchCollection match;
+                if (ignoreCase)
+                {
+                    match = Regex.Matches(s, rval, RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    match = Regex.Matches(s, rval);
+                }
+               
                 matches.Add(match);
                 
             }
