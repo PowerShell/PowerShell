@@ -742,32 +742,18 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         private const string GUIDTAG = "PSGuid='";
-        private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
 
-        private Guid GetMessageGuid(string data)
+        private bool ContainsMessageGuid(ReadOnlySpan<char> data)
         {
-            if (string.IsNullOrEmpty(data))
-            {
-                return Guid.Empty;
-            }
-
             // Perform quick scan for data packet for a GUID, ignoring any errors.
             var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
             if (iTag > -1)
             {
-                try
-                {
-                    var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
-                    return new Guid(psGuidString);
-                }
-                catch
-                {
-                    // Ignore any malformed packet errors here and return an empty Guid.
-                    // Packet errors will be reported later during message processing.
-                }
+                var psGuidString = data.Slice(iTag + GUIDTAG.Length);
+                return Guid.TryParse(psGuidString, out _);
             }
 
-            return Guid.Empty;
+            return false;
         }
 
         #endregion
@@ -780,15 +766,15 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // Route protocol message based on whether it is a session or command message.
                 // Session messages have empty Guid values.
-                if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
-                {
-                    // Session message
-                    _sessionMessageQueue.Add(data);
-                }
-                else
+                if (ContainsMessageGuid(data))
                 {
                     // Command message
                     _commandMessageQueue.Add(data);
+                }
+                else
+                {
+                    // Session message
+                    _sessionMessageQueue.Add(data);
                 }
             }
             catch (InvalidOperationException)
