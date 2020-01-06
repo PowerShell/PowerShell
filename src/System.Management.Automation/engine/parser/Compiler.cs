@@ -5791,7 +5791,7 @@ namespace System.Management.Automation.Language
                         rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(true),
                         ExpressionCache.Constant(true));
-                case TokenKind.Matchall:
+                case TokenKind.Imatchall:
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchAllOperator,
@@ -5871,6 +5871,15 @@ namespace System.Management.Automation.Language
                         lhs.Cast(typeof(object)),
                         rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false),
+                        ExpressionCache.Constant(false));
+                case TokenKind.Cmatchall:
+                    // TODO: replace this with faster code
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_MatchAllOperator,
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(string)),
                         ExpressionCache.Constant(false));
                 case TokenKind.Cnotmatch:
                     // TODO: replace this with faster code

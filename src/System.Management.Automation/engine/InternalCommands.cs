@@ -1764,20 +1764,38 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get or sets binary operator -Matchall.
+        /// Get or sets binary operator -Imatchall.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
-        [Alias("MatchAll")]
-        public SwitchParameter MatchAll
+        [Alias("ImatchAll")]
+        public SwitchParameter ImatchAll
         {
             get
             {
-                return _binaryOperator == TokenKind.Matchall;
+                return _binaryOperator == TokenKind.Imatchall;
             }
 
             set
             {
-                _binaryOperator = TokenKind.Matchall;
+                _binaryOperator = TokenKind.Imatchall;
+            }
+        }
+
+         /// <summary>
+        /// Get or sets binary operator -Matchall.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
+        [Alias("CmatchAll")]
+        public SwitchParameter CmatchAll
+        {
+            get
+            {
+                return _binaryOperator == TokenKind.Cmatchall;
+            }
+
+            set
+            {
+                _binaryOperator = TokenKind.Cmatchall;
             }
         }
 
@@ -2102,10 +2120,15 @@ namespace Microsoft.PowerShell.Commands
                     _operationDelegate =
                         (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
                     break;
-                case TokenKind.Matchall:
+                case TokenKind.Imatchall:
                     CheckLanguageMode();
                     _operationDelegate =
                         (lval, rval) => ParserOps.MatchAllOperator(Context, PositionUtilities.EmptyExtent, lval, (string) rval, ignoreCase: true);
+                    break;
+                case TokenKind.Cmatchall:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchAllOperator(Context, PositionUtilities.EmptyExtent, lval, (string) rval, ignoreCase: false);
                     break;
                 case TokenKind.Imatch:
                     CheckLanguageMode();

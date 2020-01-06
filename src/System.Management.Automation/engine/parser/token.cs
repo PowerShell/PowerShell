@@ -427,9 +427,14 @@ namespace System.Management.Automation.Language
 
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
+
         /// <summary>The case insensitive match operator '-imatchall' or '-matchall'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Matchall = 105,
+        Imatchall = 105,
+
+        /// <summary>The case insensitive match operator '-cmatchall'.</summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        Cmatchall = 106,
 
         #endregion Operators
 
@@ -879,7 +884,7 @@ namespace System.Management.Automation.Language
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
             /*           Imatchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 8  */ TokenFlags.None,
+            /*           CMatchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
             /*     Reserved slot 11 */ TokenFlags.None,
