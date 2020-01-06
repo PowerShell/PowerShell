@@ -447,6 +447,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $Uri.Authority
     }
 
+    It "Invoke-WebRequest with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        ValidateResponse -response $result
+    }
+
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get'
@@ -1993,6 +2003,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         $result.Output.headers.'User-Agent' | Should -MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-RestMethod with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Error | Should -BeNullOrEmpty
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
