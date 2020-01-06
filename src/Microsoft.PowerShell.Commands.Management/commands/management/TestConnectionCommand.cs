@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case RepeatPingParameterSet:
-                Count = int.MaxValue;
+                    Count = int.MaxValue;
                     break;
             }
         }
