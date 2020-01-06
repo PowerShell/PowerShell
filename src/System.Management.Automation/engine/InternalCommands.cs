@@ -1764,6 +1764,24 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Get or sets binary operator -Matchall.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
+        [Alias("MatchAll")]
+        public SwitchParameter MatchAll
+        {
+            get
+            {
+                return _binaryOperator == TokenKind.Matchall;
+            }
+
+            set
+            {
+                _binaryOperator = TokenKind.Matchall;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets binary operator -Contains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ContainsSet")]
@@ -2021,7 +2039,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-
+            
             switch (_binaryOperator)
             {
                 case TokenKind.Ieq:
@@ -2083,6 +2101,11 @@ namespace Microsoft.PowerShell.Commands
                 case TokenKind.Cnotlike:
                     _operationDelegate =
                         (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
+                    break;
+                case TokenKind.Matchall:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchAllOperator(Context, PositionUtilities.EmptyExtent, lval, (string) rval, ignoreCase: true);
                     break;
                 case TokenKind.Imatch:
                     CheckLanguageMode();

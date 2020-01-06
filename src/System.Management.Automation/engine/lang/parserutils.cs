@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
@@ -1150,6 +1151,41 @@ namespace System.Management.Automation
             }
 
             return resultList.ToArray();
+        }
+
+        /// <summary>
+        /// Implementation of the PowerShell -matchall operator.
+        /// </summary>
+        /// <param name="context">The execution context to use.</param>
+        /// <param name="errorPosition">The position to use for error reporting.</param>
+        /// <param name="lval">Left operand.</param>
+        /// <param name="rval">Right operand.</param>
+        /// <param name="ignoreCase">Ignore case?</param>
+        /// <returns>The result of the operator.</returns>
+        internal static object MatchAllOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, string rval, bool ignoreCase)
+        {
+            Regex r = new Regex(rval);
+            List<MatchCollection> matches = new List<MatchCollection>();
+            string[] text;
+            if (lval is string)
+            {
+                text = new string[]{(string)lval};
+            } 
+            else
+            {
+                text = ((IEnumerable)lval).Cast<object>()
+                                 .Select(x => x.ToString())
+                                 .ToArray();
+            }
+
+            foreach(string s in text)
+            {
+                MatchCollection match = Regex.Matches(s, rval);
+                matches.Add(match);
+                
+            }
+            
+            return matches.ToArray();
         }
 
         /// <summary>

@@ -427,6 +427,9 @@ namespace System.Management.Automation.Language
 
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
+        /// <summary>The case insensitive match operator '-imatchall' or '-matchall'.</summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        Matchall = 105,
 
         #endregion Operators
 
@@ -583,7 +586,7 @@ namespace System.Management.Automation.Language
         Hidden = 167,
 
         /// <summary>The 'base' keyword</summary>
-        Base = 168,
+        Base = 168
 
         #endregion Keywords
     }
@@ -875,7 +878,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
+            /*            matchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
@@ -1073,7 +1076,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
             /*     QuestionLBracket */ "?[",
-            /*    Reserved slot 7   */ string.Empty,
+            /*            matchall  */ "-matchall",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,
@@ -1163,7 +1166,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(GetTraits(TokenKind.Shr) == (TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold),
                                "Table out of sync with enum - flags Shr");
             Diagnostics.Assert(s_tokenText[(int)TokenKind.Shr].Equals("-shr", StringComparison.OrdinalIgnoreCase),
-                               "Table out of sync with enum - text Shr");
+                               "Table out of sync with enum - text Shr " + s_tokenText[(int)TokenKind.Shr]);
         }
 #endif
 
