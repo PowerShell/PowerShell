@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Scalar LHS MatchAll Operator" {
+Describe "Scalar LHS MatchAll Operator" -Tags CI {
     Context "Case insensitive regular expression matching" {
         It "Should produce one match from an exact string pattern" {
             $pattern = "foo"
@@ -83,7 +83,7 @@ Describe "Scalar LHS MatchAll Operator" {
     }
 }
 
-Describe "Array LHS MatchAll operator" {
+Describe "Array LHS MatchAll operator" -Tags CI {
     Context "Case insensitive regular expression matching" {
         It "Should produce different matches from different strings in the array" {
             $strings = 'foo', 'baa'
