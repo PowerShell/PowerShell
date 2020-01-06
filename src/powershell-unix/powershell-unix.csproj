@@ -8,6 +8,7 @@
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
     <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 

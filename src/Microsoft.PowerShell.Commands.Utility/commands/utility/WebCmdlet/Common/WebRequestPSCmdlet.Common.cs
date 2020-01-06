@@ -381,6 +381,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter Resume { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether to skip checking HTTP status for error codes.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
+
         #endregion
 
         #endregion Virtual Properties
@@ -688,6 +694,11 @@ namespace Microsoft.PowerShell.Commands
         internal bool ShouldWriteToPipeline
         {
             get { return (!ShouldSaveToOutFile || PassThru); }
+        }
+
+        internal bool ShouldCheckHttpStatus
+        {
+            get { return !SkipHttpErrorCheck; }
         }
 
         /// <summary>
@@ -1242,28 +1253,31 @@ namespace Microsoft.PowerShell.Commands
 
             // Add the content headers
             if (request.Content == null)
-            {   
+            {
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
             }
 
             foreach (var entry in WebSession.ContentHeaders)
             {
-                if (SkipHeaderValidation)
+                if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
-                    request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
-                }
-                else
-                {
-                    try
+                    if (SkipHeaderValidation)
                     {
-                        request.Content.Headers.Add(entry.Key, entry.Value);
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
                     }
-                    catch (FormatException ex)
+                    else
                     {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                        ThrowTerminatingError(er);
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
                     }
                 }
             }
@@ -1513,7 +1527,7 @@ namespace Microsoft.PowerShell.Commands
                                     OutFile = null;
                                 }
 
-                                if (!_isSuccess)
+                                if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
                                     string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
@@ -1833,7 +1847,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is String, File, or Collection.
+        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is string, File, or Collection.
         /// </summary>
         /// <param name="fieldName">The Field Name to use.</param>
         /// <param name="fieldValue">The Field Value to use.</param>
@@ -1889,11 +1903,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
+        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(object)" /> to convert the objects to strings.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
-        private StringContent GetMultipartStringContent(Object fieldName, object fieldValue)
+        private StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1906,11 +1920,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(object)" /> to convert the fieldname to a string.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
+        private StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1924,11 +1938,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
         /// <param name="file">The file to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
+        private StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.

@@ -97,9 +97,9 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            # Start a Windows PowerShell job where the first thing it does is return $pid. After that, spin forever.
+            # Start a PowerShell job where the first thing it does is return $pid. After that, spin forever.
             # We will use this job as the target process for Enter-PSHostProcess
-            $powershellJob = Start-Job -PSVersion 5.1 {
+            $powershellJob = Start-Job {
                 $pid
                 while ($true) {
                     Start-Sleep -Seconds 30 | Out-Null
@@ -133,7 +133,23 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $rs.Open()
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
-                $ps.AddScript('$pid').Invoke() | Should -Be $pwshId
+                $ps.AddScript('$pid')
+
+                [int]$retry = 0
+                $result = $null
+                $errorMsg = "Exception: "
+                while ($retry -lt 5 -and $result -eq $null) {
+                    try {
+                        $result = $ps.Invoke()
+                    }
+                    catch [System.Management.Automation.Runspaces.InvalidRunspaceStateException] {
+                        $errorMsg += $_.Exception.InnerException.Message + "; "
+                        $retry++
+                        Start-Sleep -Milliseconds 100
+                    }
+                }
+
+                $result | Should -Be $pwshId -Because $errorMsg
             } finally {
                 $rs.Dispose()
                 $ps.Dispose()

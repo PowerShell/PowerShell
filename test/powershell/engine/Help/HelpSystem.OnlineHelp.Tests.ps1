@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe 'Online help tests for PowerShell Cmdlets' -Tags "CI" {
+
+Describe 'Online help tests for PowerShell Cmdlets' -Tags "Feature" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
@@ -31,7 +32,13 @@ Describe 'Online help tests for PowerShell Cmdlets' -Tags "CI" {
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ErrorAction SilentlyContinue)
+            $command = Get-Command $cmdlet.TopicTitle -ErrorAction SilentlyContinue
+            $skipTest = $null -eq ($command)
+            if ((-not $skipTest) -and $command.Module.PrivateData.ImplicitRemoting)
+            {
+                $skipTest = $true
+                Remove-Module $command.Module
+            }
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file

@@ -505,7 +505,7 @@ namespace System.Management.Automation
         }
 
         internal static void InvokePipelineInBackground(
-                                            PipelineAst pipelineAst,
+                                            PipelineBaseAst pipelineAst,
                                             FunctionContext funcContext)
         {
             PipelineProcessor pipelineProcessor = new PipelineProcessor();
@@ -525,28 +525,35 @@ namespace System.Management.Automation
                 var scriptblockBodyString = pipelineAst.Extent.Text;
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+
                 // Used to make sure that the job runs in the current directory
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
+
                 // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
                 System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
                 updatedScriptblock.Append(cmdPrefix);
                 int position = 0;
+
                 // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
-                    var vName = ((VariableExpressionAst)v).VariablePath.UserPath;
+                    var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+
                     // Skip variables that don't exist
-                    if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
+                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                    {
                         continue;
+                    }
+
                     // Skip PowerShell magic variables
-                    if (Regex.Match(vName,
+                    if (Regex.Match(
+                            variableName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false
-                    )
+                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
                     {
                         updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");
-                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(vName));
+                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
                         updatedScriptblock.Append('}');
                         position = v.Extent.EndOffset - pipelineOffset;
                     }
@@ -555,11 +562,13 @@ namespace System.Management.Automation
                 updatedScriptblock.Append(scriptblockBodyString.Substring(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
-                    commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
                 var parameter = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/pipelineAst, "ScriptBlock", null,
-                    /*argumentAst*/pipelineAst, sb,
+                    parameterAst: pipelineAst,
+                    "ScriptBlock",
+                    null,
+                    argumentAst: pipelineAst,
+                    sb,
                     false);
                 commandProcessor.AddParameter(parameter);
                 pipelineProcessor.Add(commandProcessor);
@@ -2584,7 +2593,7 @@ namespace System.Management.Automation
                     return rest.ToArray();
                 }
 
-                object[] first = new System.Object[numberToReturn];
+                object[] first = new object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);

@@ -244,8 +244,18 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 '@
             $testFilePath = Join-Path $TestDrive "test.ps1"
             Set-Content -Path $testFilePath -Value $testScript
-            $observed = echo hello | pwsh -noprofile $testFilePath e -
+            $observed = echo hello | & $powershell -noprofile $testFilePath e -
             $observed | Should -BeExactly "h-llo"
+        }
+
+        It "Empty command should fail" {
+            & $powershell -noprofile -c ''
+            $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Whitespace command should succeed" {
+            & $powershell -noprofile -c ' ' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
         }
     }
 
@@ -645,7 +655,7 @@ namespace StackTest {
 
     Context "PATH environment variable" {
         It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            pwsh -v | Should -Match $psversiontable.GitCommitId
+            & $powershell -v | Should -Match $psversiontable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -721,7 +731,7 @@ namespace StackTest {
 "@ > $PROFILE
 
             try {
-                $out = pwsh -workingdirectory ~ -c '(Get-Location).Path'
+                $out = & $powershell -workingdirectory ~ -c '(Get-Location).Path'
                 $out | Should -HaveCount 2
                 $out[0] | Should -BeExactly (Get-Item ~).FullName
                 $out[1] | Should -BeExactly "$testdrive"
@@ -869,7 +879,7 @@ public enum ShowWindowCommands : int
         param ($WindowStyle)
 
         try {
-            $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+            $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
             $startTime = Get-Date
             $showCmd = "Unknown"
             while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle) {
@@ -884,7 +894,7 @@ public enum ShowWindowCommands : int
     }
 
     It "Invalid -WindowStyle returns error" {
-        pwsh -WindowStyle invalid
+        & $powershell -WindowStyle invalid
         $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
 }
@@ -975,5 +985,27 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         finally {
             Pop-Location
         }
+    }
+}
+
+Describe 'Pwsh startup and PATH' -Tag CI {
+    BeforeEach {
+        $oldPath = $env:PATH
+    }
+
+    AfterEach {
+        $env:PATH = $oldPath
+    }
+
+    It 'Calling pwsh starts the same version of PowerShell as currently running' {
+        $version = pwsh -v
+        $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+    }
+
+    It 'pwsh starts even if PATH is not defined' {
+        $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        Remove-Item Env:\PATH
+        $path = & $pwsh -noprofile -command '$env:PATH'
+        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
     }
 }

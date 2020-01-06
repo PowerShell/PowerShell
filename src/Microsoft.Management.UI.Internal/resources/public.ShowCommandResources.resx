@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionButtons_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ActionButtons_Button_Copy" xml:space="preserve">
+    <value>Co_py</value>
+  </data>
+  <data name="ActionButtons_Button_Run" xml:space="preserve">
+    <value>_Run</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="AllModulesControl_Label_Modules" xml:space="preserve">
+    <value>Modules:</value>
+  </data>
+  <data name="CmdletControl_Button_GetHelp" xml:space="preserve">
+    <value> ? </value>
+  </data>
+  <data name="CmdletControl_Button_ToolTip_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="CmdletControl_Header_CommonParameters" xml:space="preserve">
+    <value>Common Parameters</value>
+  </data>
+  <data name="CmdletControl_Header_Errors" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="DetailsParameterTitleFormat" xml:space="preserve">
+    <value>Parameters for "{0}":</value>
+  </data>
+  <data name="CmdletTooltipFormat" xml:space="preserve">
+    <value>Name: {0}
+Module: {1} ({2})</value>
+  </data>
+  <data name="EndProcessingErrorMessage" xml:space="preserve">
+    <value>The following errors occurred running the command:
+{0}</value>
+  </data>
+  <data name="MandatoryLabelSegment" xml:space="preserve">
+    <value> *</value>
+    <comment>Used in MandatoryNameLabelFormat to designate a mandatory parameter with a *</comment>
+  </data>
+  <data name="MandatoryNameLabelFormat" xml:space="preserve">
+    <value>{0}:{1}</value>
+    <comment>This is a label for a control, hence the colon. {0} is a parameter name, {1} is MandatoryLabelSegment or an empty string</comment>
+  </data>
+  <data name="NameLabelFormat" xml:space="preserve">
+    <value>{0}:</value>
+    <comment>This is a label for a control, hence the colon. {0} is a parameter name</comment>
+  </data>
+  <data name="ShowModuleControl_Label_Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="ActionButtons_Button_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="MultiParameter_Button_Browse" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="CommandNameAutomationName" xml:space="preserve">
+    <value>Command Name</value>
+  </data>
+  <data name="ModulesAutomationName" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="NoModuleName" xml:space="preserve">
+    <value>&lt;No module name&gt;</value>
+  </data>
+  <data name="SelectMultipleValuesForParameterFormat" xml:space="preserve">
+    <value>Select multiple values for "{0}"</value>
+  </data>
+  <data name="CanReceiveValueFromPipeline" xml:space="preserve">
+    <value>Can receive value from pipeline</value>
+  </data>
+  <data name="CommonToAllParameterSets" xml:space="preserve">
+    <value>Common to all parameter sets</value>
+  </data>
+  <data name="Mandatory" xml:space="preserve">
+    <value>Mandatory</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="PositionFormat" xml:space="preserve">
+    <value>Position: {0}</value>
+  </data>
+  <data name="TypeFormat" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="Imported" xml:space="preserve">
+    <value>Imported</value>
+  </data>
+  <data name="NotImported" xml:space="preserve">
+    <value>Not Imported</value>
+  </data>
+  <data name="ImportModuleButtonText" xml:space="preserve">
+    <value>Show Details</value>
+  </data>
+  <data name="ImportModuleFailedFormat" xml:space="preserve">
+    <value>Failed to import the module required by command "{0}". Module name: "{1}". Error message: "{2}".</value>
+  </data>
+  <data name="NotImportedFormat" xml:space="preserve">
+    <value>To import the "{0}" module and its cmdlets, including "{1}", click {2}.</value>
+  </data>
+  <data name="ShowCommandError" xml:space="preserve">
+    <value>Show Command - Error</value>
+  </data>
+  <data name="PleaseWaitMessage" xml:space="preserve">
+    <value>Please Wait...</value>
+  </data>
+  <data name="ShowModuleControl_RefreshButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="NoParameters" xml:space="preserve">
+    <value>There are no parameters.</value>
+  </data>
+  <data name="RefreshShowCommandTooltipFormat" xml:space="preserve">
+    <value>Click after using "{0}" to see the new commands</value>
+  </data>
+</root>

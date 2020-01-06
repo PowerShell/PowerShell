@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     else if (char.IsControl(keyInfo.KeyChar))
                     {
-                        // blacklist control characters
+                        // deny list control characters
                         continue;
                     }
 #endif
@@ -1355,6 +1355,9 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Format colors
+        public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
+
         // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
@@ -1782,7 +1785,7 @@ namespace Microsoft.PowerShell
 
                     if (char.IsControl(keyInfo.KeyChar))
                     {
-                        // blacklist control characters
+                        // deny list control characters
                         continue;
                     }
 

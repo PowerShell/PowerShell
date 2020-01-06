@@ -128,15 +128,21 @@ Type 'help' to get help.</value>
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>!! A new PowerShell preview release is available: v{0} !!
-Upgrade now, or check out the release page at:
-https://github.com/PowerShell/PowerShell/releases/tag/v{0}
+    <value>  {1} A new PowerShell preview release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>!! A new PowerShell stable release is available: v{0} !!
-Upgrade now, or check out the release page at:
-https://github.com/PowerShell/PowerShell/releases/tag/v{0}
+    <value>  {1} A new PowerShell stable release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">

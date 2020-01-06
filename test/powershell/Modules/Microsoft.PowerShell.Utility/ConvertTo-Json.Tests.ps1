@@ -62,4 +62,45 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
         @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
+
+    It "Should handle null" {
+        [pscustomobject] @{ prop=$null } | ConvertTo-Json -Compress | Should -BeExactly '{"prop":null}'
+        $null | ConvertTo-Json -Compress | Should -Be 'null'
+        ConvertTo-Json -Compress $null | Should -Be 'null'
+        1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
+    }
+
+    It "Should handle 'AutomationNull.Value' and 'NullString.Value' correctly" {
+        [ordered]@{
+            a = $null;
+            b = [System.Management.Automation.Internal.AutomationNull]::Value;
+            c = [System.DBNull]::Value;
+            d = [NullString]::Value
+        } | ConvertTo-Json -Compress | Should -BeExactly '{"a":null,"b":null,"c":null,"d":null}'
+
+        ConvertTo-Json ([System.Management.Automation.Internal.AutomationNull]::Value) | Should -BeExactly 'null'
+        ConvertTo-Json ([NullString]::Value) | Should -BeExactly 'null'
+
+        ConvertTo-Json -Compress @(
+            $null,
+            [System.Management.Automation.Internal.AutomationNull]::Value,
+            [System.DBNull]::Value,
+            [NullString]::Value
+        ) | Should -BeExactly '[null,null,null,null]'
+    }
+
+    It "Should handle the ETS properties added to 'DBNull.Value' and 'NullString.Value'" {
+        try
+        {
+            $p1 = Add-Member -InputObject ([System.DBNull]::Value) -MemberType NoteProperty -Name dbnull -Value 'dbnull' -PassThru
+            $p2 = Add-Member -InputObject ([NullString]::Value) -MemberType NoteProperty -Name nullstr -Value 'nullstr' -PassThru
+
+            $p1, $p2 | ConvertTo-Json -Compress | Should -BeExactly '[{"value":null,"dbnull":"dbnull"},{"value":null,"nullstr":"nullstr"}]'
+        }
+        finally
+        {
+            $p1.psobject.Properties.Remove('dbnull')
+            $p2.psobject.Properties.Remove('nullstr')
+        }
+    }
 }

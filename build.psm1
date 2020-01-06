@@ -5,7 +5,7 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 3.0 goes RTM
+$dotnetCLIChannel = 'release'
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -123,13 +123,31 @@ function Get-EnvironmentInformation
         $environment += @{'nugetPackagesRoot' = "${env:HOME}/.nuget/packages"}
     }
 
+    if ($Environment.IsMacOS) {
+        $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
+        $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
+
+        if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
+            throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
+        }
+    }
+
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
+        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore | Select-Object -First 1
+        if ($lsb_release) {
+            $LinuxID = & $lsb_release -is
+        }
+        else {
+            $LinuxID = ""
+        }
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
-        $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
+        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
+        $environment += @{'IsDebian11' = $Environment.IsDebian -and $LinuxInfo.PRETTY_NAME -match 'bullseye'}
+        $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
@@ -140,6 +158,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
+        $environment += @{'IsDebianFamily' = $Environment.IsDebian -or $Environment.IsUbuntu}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
@@ -191,6 +210,30 @@ function Test-IsPreview
     return $Version -like '*-*'
 }
 
+<#
+    .Synopsis
+        Tests if a version is a Release Candidate
+    .EXAMPLE
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
+#>
+function Test-IsReleaseCandidate
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $true
+    }
+
+    return $false
+}
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
@@ -210,6 +253,10 @@ function Start-PSBuild {
         [Parameter(ParameterSetName="Default")]
         [switch]$NoPSModuleRestore,
         [switch]$CI,
+
+        # Skips the step where the pwsh that's been built is used to create a configuration
+        # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
+        [switch]$SkipExperimentalFeatureGeneration,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -381,11 +428,10 @@ Fix steps:
     }
 
     try {
+        # Relative paths do not work well if cwd is not changed to project
+        Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*') {
-            # Relative paths do not work well if cwd is not changed to project
-            Push-Location $Options.Top
-
             if ($Options.Runtime -like 'win-arm*') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } else {
@@ -401,7 +447,6 @@ Fix steps:
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
                 Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
             }
-
         } else {
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
@@ -411,8 +456,6 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            # Relative paths do not work well if cwd is not changed to project
-            Push-Location $Options.Top
             Write-Log "Run dotnet $Arguments from $pwd"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
@@ -429,6 +472,11 @@ Fix steps:
         }
     } finally {
         Pop-Location
+    }
+
+    # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
+    if ($SMAOnly) {
+        return
     }
 
     # publish reference assemblies
@@ -453,13 +501,17 @@ Fix steps:
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
     }
 
-    if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
 
-        if ($Environment.IsDebian9){
+        if ($Environment.IsDebian10 -or $Environment.IsDebian11){
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
+        }
+        elseif ($Environment.IsDebian9){
             # NOTE: Debian 8 doesn't need these symlinks
             $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
             $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
@@ -489,8 +541,14 @@ Fix steps:
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
     }
 
+    # When building preview, we want the configuration to enable all experiemental features by default
     # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if ((Test-IsPreview $psVersion) -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+    if (-not $SkipExperimentalFeatureGeneration -and
+        (Test-IsPreview $psVersion) -and
+        -not (Test-IsReleaseCandidate $psVersion) -and
+        -not $Runtime.Contains("arm") -and
+        -not ($Runtime -like 'fxdependent*')) {
+
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
             Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
@@ -641,8 +699,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp3.0")]
-        [string]$Framework = "netcoreapp3.0",
+        [ValidateSet("netcoreapp3.1")]
+        [string]$Framework = "netcoreapp3.1",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1550,7 +1608,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dot.net/v1"
+    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
@@ -1710,7 +1768,11 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
+                if ($Environment.UsingHomebrew) {
+                    $PackageManager = "brew"
+                } elseif ($Environment.UsingMacports) {
+                    $PackageManager = "$sudo port"
+                }
 
                 # Build tools
                 $Deps += "cmake"
@@ -1720,7 +1782,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution { brew install $Deps } -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
@@ -2007,9 +2069,9 @@ function script:Write-Log
         [ValidateNotNullOrEmpty()]
         [string] $message,
 
-        [switch] $error
+        [switch] $isError
     )
-    if ($error)
+    if ($isError)
     {
         Write-Host -Foreground Red $message
     }
@@ -2187,7 +2249,7 @@ function Start-CrossGen {
     $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
 
     $crossGenRequiredAssemblies += if ($Environment.IsWindows) {
-         "clrjit.dll"
+        "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
     } elseif ($Environment.IsMacOS) {
@@ -2246,6 +2308,7 @@ function Start-CrossGen {
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
+            "Microsoft.PowerShell.GraphicalHost.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )
     }

@@ -282,6 +282,8 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string HelpInfoUri { get; private set; }
 
+        internal bool IsWindowsPowerShellCompatModule { get; set; }
+
         internal void SetHelpInfoUri(string uri)
         {
             HelpInfoUri = uri;
@@ -1601,10 +1603,10 @@ namespace System.Management.Automation
         public bool Equals(PSModuleInfo x, PSModuleInfo y)
         {
             // Check whether the compared objects reference the same data.
-            if (Object.ReferenceEquals(x, y)) return true;
+            if (object.ReferenceEquals(x, y)) return true;
 
             // Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
                 return false;
 
             bool result = string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase) &&

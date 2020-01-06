@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to set the content of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113392")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097142")]
     public class SetContentCommand : WriteContentCommandBase
     {
         #region protected members

@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements the start-transcript cmdlet.
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
+    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096485")]
     [OutputType(typeof(string))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {

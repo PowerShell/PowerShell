@@ -79,7 +79,7 @@ namespace System.Management.Automation.Remoting
             return endpoint;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
 

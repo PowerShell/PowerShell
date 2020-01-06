@@ -27,6 +27,8 @@ Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feat
             $tmpVhdPath = Join-Path $TestDrive 'TestVHD.vhd'
             New-VHD -path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop
             Remove-Item $tmpVhdPath
+            $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $True
+            Remove-Module Hyper-V
         }
         catch
         { $VHDToolsNotFound = $true }

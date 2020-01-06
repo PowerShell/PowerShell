@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Registers for an event on an object.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "ObjectEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135244")]
+    [Cmdlet(VerbsLifecycle.Register, "ObjectEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096714")]
     [OutputType(typeof(PSEventJob))]
     public class RegisterObjectEventCommand : ObjectEventRegistrationBase
     {

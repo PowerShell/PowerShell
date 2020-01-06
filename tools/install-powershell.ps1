@@ -17,6 +17,12 @@
     On Windows, add the absolute destination path to the 'User' scope environment variable 'Path';
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
+.EXAMPLE
+    Install the daily build
+    .\install-powershell.ps1 -Daily
+.EXAMPLE
+    Invoke this script directly from GitHub
+    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 #>
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
@@ -37,6 +43,12 @@ param(
 
     [Parameter(ParameterSetName = "MSI")]
     [switch] $Quiet,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $AddExplorerContextMenu,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $EnablePSRemoting,
 
     [Parameter()]
     [switch] $Preview
@@ -68,6 +80,14 @@ if (-not $UseMSI) {
 } else {
     if (-not $IsWinEnv) {
         throw "-UseMSI is only supported on Windows"
+    } else {
+        $MSIArguments = @()
+        if($AddExplorerContextMenu) {
+            $MSIArguments += "ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+        }
+        if($EnablePSRemoting) {
+            $MSIArguments += "ENABLE_PSREMOTING=1"
+        }
     }
 }
 
@@ -249,7 +269,7 @@ try {
         $blobName = $metadata.BlobName
 
         # Get version from currently installed PowerShell Daily if available.
-        $pwshPath = Join-Path $Destination "pwsh"
+        $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
         $currentlyInstalledVersion = if(Test-Path $pwshPath) {
             ((& $pwshPath -version) -split " ")[1]
         }
@@ -300,12 +320,20 @@ try {
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
-                $process = Start-Process msiexec -ArgumentList "/i", $packagePath, "/quiet" -Wait -PassThru
+                $ArgumentList=@("/i", $packagePath, "/quiet")
+                if($MSIArguments) {
+                    $ArgumentList+=$MSIArguments
+                }
+                $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
                 if ($process.exitcode -ne 0) {
                     throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
                 }
             } elseif ($UseMSI) {
-                Start-Process $packagePath -Wait
+                if($MSIArguments) {
+                    Start-Process $packagePath -ArgumentList $MSIArguments -Wait
+                } else {
+                    Start-Process $packagePath -Wait
+                }
             } else {
                 Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
             }
@@ -356,12 +384,20 @@ try {
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
-                $process = Start-Process msiexec -ArgumentList "/i", $packagePath, "/quiet" -Wait -PassThru
+                $ArgumentList=@("/i", $packagePath, "/quiet")
+                if($MSIArguments) {
+                    $ArgumentList+=$MSIArguments
+                }
+                $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
                 if ($process.exitcode -ne 0) {
                     throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
                 }
             } elseif ($UseMSI) {
-                Start-Process $packagePath -Wait
+                if($MSIArguments) {
+                    Start-Process $packagePath -ArgumentList $MSIArguments -Wait
+                } else {
+                    Start-Process $packagePath -Wait
+                }
             } else {
                 Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
             }

@@ -5342,6 +5342,130 @@ namespace System.Management.Automation.Language
         #endregion Visitors
     }
 
+    /// <summary>
+    /// An AST representing a syntax element chainable with '&amp;&amp;' or '||'.
+    /// </summary>
+    public abstract class ChainableAst : PipelineBaseAst
+    {
+        /// <summary>
+        /// Initializes a new instance of the new chainable AST with the given extent.
+        /// </summary>
+        /// <param name="extent">The script extent of the AST.</param>
+        protected ChainableAst(IScriptExtent extent) : base(extent)
+        {
+        }
+    }
+
+    /// <summary>
+    /// A command-oriented flow-controlled pipeline chain.
+    /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
+    /// </summary>
+    public class PipelineChainAst : ChainableAst
+    {
+        /// <summary>
+        /// Initializes a new instance of the new statement chain AST from two statements and an operator.
+        /// </summary>
+        /// <param name="extent">The extent of the chained statement.</param>
+        /// <param name="lhsChain">The pipeline or pipeline chain to the left of the operator.</param>
+        /// <param name="rhsPipeline">The pipeline to the right of the operator.</param>
+        /// <param name="chainOperator">The operator used.</param>
+        /// <param name="background">True when this chain has been invoked with the background operator, false otherwise.</param>
+        public PipelineChainAst(
+            IScriptExtent extent,
+            ChainableAst lhsChain,
+            PipelineAst rhsPipeline,
+            TokenKind chainOperator,
+            bool background = false)
+            : base(extent)
+        {
+            if (lhsChain == null)
+            {
+                throw new ArgumentNullException(nameof(lhsChain));
+            }
+
+            if (rhsPipeline == null)
+            {
+                throw new ArgumentNullException(nameof(rhsPipeline));
+            }
+
+            if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
+            {
+                throw new ArgumentException(nameof(chainOperator));
+            }
+
+            LhsPipelineChain = lhsChain;
+            RhsPipeline = rhsPipeline;
+            Operator = chainOperator;
+            Background = background;
+
+            SetParent(LhsPipelineChain);
+            SetParent(RhsPipeline);
+        }
+
+        /// <summary>
+        /// Gets the left hand pipeline in the chain.
+        /// </summary>
+        public ChainableAst LhsPipelineChain { get; }
+
+        /// <summary>
+        /// Gets the right hand pipeline in the chain.
+        /// </summary>
+        public PipelineAst RhsPipeline { get; }
+
+        /// <summary>
+        /// Gets the chaining operator used.
+        /// </summary>
+        public TokenKind Operator { get; }
+
+        /// <summary>
+        /// Gets a flag that indicates whether this chain has been invoked with the background operator.
+        /// </summary>
+        public bool Background { get; }
+
+        /// <summary>
+        /// Create a copy of this Ast.
+        /// </summary>
+        /// <returns>
+        /// A fresh copy of this PipelineChainAst instance.
+        /// </returns>
+        public override Ast Copy()
+        {
+            return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+        }
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            return (visitor as ICustomAstVisitor2)?.VisitPipelineChain(this);
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            AstVisitAction action = AstVisitAction.Continue;
+
+            // Can only visit new AST type if using AstVisitor2
+            if (visitor is AstVisitor2 visitor2)
+            {
+                action = visitor2.VisitPipelineChain(this);
+                if (action == AstVisitAction.SkipChildren)
+                {
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = LhsPipelineChain.InternalVisit(visitor);
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                action = RhsPipeline.InternalVisit(visitor);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+    }
+
     #endregion Flow Control Statements
 
     #region Pipelines
@@ -5377,7 +5501,7 @@ namespace System.Management.Automation.Language
     /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
     /// A pipeline must have at least 1 command.  The first command may be an expression or a command invocation.
     /// </summary>
-    public class PipelineAst : PipelineBaseAst
+    public class PipelineAst : ChainableAst
     {
         /// <summary>
         /// Construct a pipeline from a collection of commands.
@@ -5461,7 +5585,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicates that this pipeline should be run in the background.
         /// </summary>
-        public bool Background { get; private set; }
+        public bool Background { get; internal set; }
 
         /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.
@@ -5485,6 +5609,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the PipelineAst instance.
         /// </summary>
+        /// <returns>A fresh copy of this PipelineAst instance.</returns>
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);
@@ -7727,6 +7852,26 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the operator '.', '::' or '?.' and ending after
+        /// membername or expression naming the member.
+        /// </param>
+        /// <param name="expression">The expression before the member access operator '.', '::' or '?.'.</param>
+        /// <param name="member">The name or expression naming the member to access.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' or '?.' is used.</param>
+        /// <param name="nullConditional">True if '?.' used.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
+        /// </exception>
+        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditional)
+            : this(extent, expression, member, @static)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// The expression that produces the value to retrieve the member from.  This property is never null.
         /// </summary>
         public ExpressionAst Expression { get; private set; }
@@ -7742,13 +7887,18 @@ namespace System.Management.Automation.Language
         public bool Static { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating true if the operator used is ?. or ?[].
+        /// </summary>
+        public bool NullConditional { get; protected set; }
+
+        /// <summary>
         /// Copy the MemberExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
-            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static);
+            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -7790,7 +7940,7 @@ namespace System.Management.Automation.Language
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
         /// closing paren after the arguments.
         /// </param>
-        /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::').</param>
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
@@ -7810,6 +7960,29 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::' or '?.').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.' or '?.'.
+        /// </param>
+        /// <param name="nullConditional">True if the operator used is '?.'.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditional)
+            : this(extent, expression, method, arguments, @static)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// The non-empty collection of arguments to pass when invoking the method, or null if no arguments were specified.
         /// </summary>
         public ReadOnlyCollection<ExpressionAst> Arguments { get; private set; }
@@ -7822,7 +7995,7 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
             var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static);
+            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditional);
         }
 
         #region Visitors
@@ -10096,6 +10269,22 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="IndexExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="target">The expression being indexed.</param>
+        /// <param name="index">The index expression.</param>
+        /// <param name="nullConditional">Access the index only if the target is not null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="target"/>, or <paramref name="index"/> is null.
+        /// </exception>
+        public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index, bool nullConditional)
+            : this(extent, target, index)
+        {
+            this.NullConditional = nullConditional;
+        }
+
+        /// <summary>
         /// Return the ast for the expression being indexed.  This value is never null.
         /// </summary>
         public ExpressionAst Target { get; private set; }
@@ -10106,13 +10295,18 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether ?[] operator is being used.
+        /// </summary>
+        public bool NullConditional { get; private set; }
+
+        /// <summary>
         /// Copy the IndexExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newTarget = CopyElement(this.Target);
             var newIndex = CopyElement(this.Index);
-            return new IndexExpressionAst(this.Extent, newTarget, newIndex);
+            return new IndexExpressionAst(this.Extent, newTarget, newIndex, this.NullConditional);
         }
 
         #region Visitors

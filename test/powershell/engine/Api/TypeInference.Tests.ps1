@@ -226,7 +226,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers type from using statement" {
-        $res = [AstTypeInference]::InferTypeOf( { $pid = 1; $using:pid }.Ast.EndBlock.Statements[1].PipelineElements[0].Expression)
+        $res = [AstTypeInference]::InferTypeOf( { $int = 1; $using:int }.Ast.EndBlock.Statements[1].PipelineElements[0].Expression)
         $res.Count | Should -Be 1
         $res.Name | Should -Be System.Int32
     }

@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'get-acl' cmdlet.
     /// This cmdlet gets the security descriptor of an item at the specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113305")]
+    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096593")]
     public sealed class GetAclCommand : SecurityDescriptorCommandsBase
     {
         /// <summary>
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet sets the security descriptor of an item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Acl", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
-            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113389")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096600")]
     public sealed class SetAclCommand : SecurityDescriptorCommandsBase
     {
         private string[] _path;

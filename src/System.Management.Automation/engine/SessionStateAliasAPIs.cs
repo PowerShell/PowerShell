@@ -42,8 +42,10 @@ namespace System.Management.Automation
         /// </summary>
         internal IDictionary<string, AliasInfo> GetAliasTable()
         {
+            // On 7.0 version we have 132 aliases so we set a larger number to reduce re-allocations.
+            const int InitialAliasCount = 150;
             Dictionary<string, AliasInfo> result =
-                new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
+                new Dictionary<string, AliasInfo>(InitialAliasCount, StringComparer.OrdinalIgnoreCase);
 
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);

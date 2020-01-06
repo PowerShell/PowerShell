@@ -3,6 +3,7 @@
 Describe "TabCompletion" -Tags CI {
     BeforeAll {
         $separator = [System.IO.Path]::DirectorySeparatorChar
+        $nullConditionalFeatureDisabled = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
     }
 
     It 'Should complete Command' {
@@ -17,9 +18,10 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete abbreviated function' {
-        $res = (TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        function Test-AbbreviatedFunctionExpansion {}
+        $res = (TabExpansion2 -inputScript 't-afe' -cursorColumn 't-afe'.Length).CompletionMatches.CompletionText
         $res.Count | Should -BeGreaterOrEqual 1
-        $res | Should -BeExactly 'PSConsoleHostReadLine'
+        $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
@@ -30,6 +32,16 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator' -skip:$nullConditionalFeatureDisabled {
+        $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
+    }
+
+    It 'Should complete dotnet method with null conditional operator without first letter' -skip:$nullConditionalFeatureDisabled {
+        $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
 
     It 'Should complete Magic foreach' {
@@ -150,6 +162,144 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'help -Fu' -cursorColumn 'help -Fu'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Full'
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
+    }
+
+    It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
+        @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference="'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '$ErrorActionPreference = ''s'; filter = '| Where-Object { $_ -like "''s*" }'; doubleQuotes = $false }
+        @{ inputStr = '$ErrorActionPreference = "siL'; filter = '| Where-Object { $_ -like ''"sil*'' }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e='; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = '; filter = ''; doubleQuotes = $false }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "'; filter = ''; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "s'; filter = '| Where-Object { $_ -like """s*" }'; doubleQuotes = $true }
+        @{ inputStr = '[System.Management.Automation.ActionPreference]$e = "x'; filter = '| Where-Object { $_ -like """x*" }'; doubleQuotes = $true }
+    ){
+        param($inputStr, $filter, $doubleQuotes)
+
+        $quote = ''''
+        if ($doubleQuotes) {
+            $quote = '"'
+        }
+
+        $sb = [scriptblock]::Create(@"
+            [cmdletbinding()] param([Parameter(ValueFromPipeline=`$true)]`$obj) process { `$obj $filter }
+"@)
+
+        $expectedValues = [enum]::GetValues("System.Management.Automation.ActionPreference") | ForEach-Object { $quote + $_.ToString() + $quote } | & $sb | Sort-Object
+        if ($expectedValues.Count -gt 0) {
+            $expected = [string]::Join(",",$expectedValues)
+        }
+        else {
+            $expected = ''
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
+    }
+
+    It 'Should work for variable assignment of custom enum: <inputStr>' -TestCases @(
+        @{ inputStr = '[Animal]$c="g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '[Animal]$c='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "g'; expected = '"Giraffe"','"Goose"' }
+        @{ inputStr = '$script:test='; expected = "'Duck'","'Giraffe'","'Goose'","'Horse'" }
+        @{ inputStr = '$script:test = "x'; expected = @() }
+    ){
+        param($inputStr, $expected)
+
+        enum Animal { Duck; Goose; Horse; Giraffe }
+        [Animal]$script:test = 'Duck'
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '$test="c'; expected = ''; doubleQuotes = $true }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        [ValidateSet('a','aa','aab','b')][string]$test = 'b'
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
+    }
+
+    It 'Should work for assignment of variable with validateset of int: <inputStr>' -TestCases @(
+        @{ inputStr = '$test='; expected = 2,3,11,112 }
+        @{ inputStr = '$test = 1'; expected = 11,112 }
+        @{ inputStr = '$test =11'; expected = 11,112 }
+        @{ inputStr = '$test =4'; expected = @() }
+    ){
+        param($inputStr, $expected)
+
+        [ValidateSet(2,3,11,112)][int]$test = 2
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly ([string]::Join(",",$expected))
+    }
+
+    It 'Should work for assignment of variable with validateset of strings: <inputStr>' -TestCases @(
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test='; expected = "'a'","'aa'","'aab'","'b'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test="a'; expected = "'a'","'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test = "aa'; expected = "'aa'","'aab'"; doubleQuotes = $true }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''aab'; expected = "'aab'"; doubleQuotes = $false }
+        @{ inputStr = '[validateset("a","aa","aab","b")][string]$test=''c'; expected = ''; doubleQuotes = $false }
+    ){
+        param($inputStr, $expected, $doubleQuotes)
+
+        $expected = [string]::Join(",",$expected)
+        if ($doubleQuotes) {
+            $expected = $expected.Replace("'", """")
+        }
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        if ($res.CompletionMatches.Count -gt 0) {
+            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+        }
+        else {
+            $actual = ''
+        }
+
+        $actual | Should -BeExactly $expected
     }
 
     Context NativeCommand {
@@ -687,6 +837,32 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
+            $scriptBl = {
+                function Test-Completion {
+                    param (
+                        [String]$TestVal
+                    )
+                }
+                [scriptblock]$completer = {
+                    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+                    @('Val1', 'Val2')
+                }
+                Register-ArgumentCompleter -CommandName Test-Completion -ParameterName TestVal -ScriptBlock $completer
+            }
+            $pwsh = [PowerShell]::Create()
+            $pwsh.AddScript($scriptBl)
+            $pwsh.Invoke()
+
+            $completeInput_Input = $scriptBl.ToString()
+            $completeInput_Input += "`nTest-Completion -TestVal "
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($completeInput_Input, $completeInput_Input.Length, $null, $pwsh)
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Val1'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Val2'
+        }
+
         It "Tab completion for enum type parameter of a custom function" {
             function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
             $inputStr = "baz -name "
@@ -756,6 +932,20 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 33
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
+        }
+
+        It "Test completion with common parameters" {
+            $inputStr = 'invoke-webrequest -out'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutVariable"
+        }
+
+        It "Test completion with exact match" {
+            $inputStr = 'get-content -wa'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
         }
     }
 
@@ -1184,7 +1374,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
-        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
         @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
@@ -1207,7 +1397,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     ) {
         param($path, $parameter, $expected)
         $script = "new-item wsman:\$path $parameter"
-        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $res = TabExpansion2 -inputScript $script
         $res.CompletionMatches | Should -HaveCount $expected.Count
         $completionOptions = ""
         foreach ($completion in $res.CompletionMatches) {

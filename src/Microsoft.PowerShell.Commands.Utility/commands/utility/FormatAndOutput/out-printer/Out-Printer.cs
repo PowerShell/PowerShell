@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the out-printer command.
     /// </summary>
-    [Cmdlet(VerbsData.Out, "Printer", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113367")]
+    [Cmdlet(VerbsData.Out, "Printer", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109553")]
     public class OutPrinterCommand : FrontEndCommandBase
     {
         /// <summary>

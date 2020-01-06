@@ -28,6 +28,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
+        
+        /// <summary>
+        /// Send telemetry when we load a module using Windows compatibility feature, only module names in the s_knownModules list
+        /// will be reported, otherwise it will be "anonymous".
+        /// </summary>
+        WinCompatModuleLoad,
 
         /// <summary>
         /// Send telemetry for experimental module feature activation.
@@ -99,14 +105,16 @@ namespace Microsoft.PowerShell.Telemetry
         static ApplicationInsightsTelemetry()
         {
             // If we can't send telemetry, there's no reason to do any of this
-            CanSendTelemetry = !Utils.GetOptOutEnvVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
+            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             if (CanSendTelemetry)
             {
-                s_telemetryClient = new TelemetryClient();
-                TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
+                TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+                configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
+                configuration.TelemetryChannel.DeveloperMode = false;
+
+                s_telemetryClient = new TelemetryClient(configuration);
                 s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
@@ -533,6 +541,35 @@ namespace Microsoft.PowerShell.Telemetry
         }
 
         /// <summary>
+        /// Determine whether the environment variable is set and how.
+        /// </summary>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="defaultValue">If the environment variable is not set, use this as the default value.</param>
+        /// <returns>A boolean representing the value of the environment variable.</returns>
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
+        {
+            var str = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrEmpty(str))
+            {
+                return defaultValue;
+            }
+
+            switch (str.ToLowerInvariant())
+            {
+                case "true":
+                case "1":
+                case "yes":
+                    return true;
+                case "false":
+                case "0":
+                case "no":
+                    return false;
+                default:
+                    return defaultValue;
+            }
+        }
+
+        /// <summary>
         /// Send telemetry as a metric.
         /// </summary>
         /// <param name="metricId">The type of telemetry that we'll be sending.</param>
@@ -560,6 +597,7 @@ namespace Microsoft.PowerShell.Telemetry
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
                     case TelemetryType.ModuleLoad:
+                    case TelemetryType.WinCompatModuleLoad:
                         string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, moduleName);
                         break;

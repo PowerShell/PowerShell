@@ -15,7 +15,9 @@ Describe "Get-FormatData" -Tags "CI" {
         $format.TypeNames | Should -HaveCount 2
         $format.TypeNames[0] | Should -BeExactly "System.IO.DirectoryInfo"
         $format.TypeNames[1] | Should -BeExactly "System.IO.FileInfo"
-        $format.FormatViewDefinition | Should -HaveCount 4
+
+        $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
+        $format.FormatViewDefinition | Should -HaveCount ( $isUnixStatEnabled ? 5 : 4)
     }
 
     It "Should return nothing for format data requiring '-PowerShellVersion 5.1' and not provided" {

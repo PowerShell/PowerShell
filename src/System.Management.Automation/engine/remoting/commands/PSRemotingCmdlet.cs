@@ -195,6 +195,11 @@ namespace Microsoft.PowerShell.Commands
         protected const string SessionParameterSet = "Session";
 
         /// <summary>
+        /// Parameter set to use Windows PowerShell.
+        /// </summary>
+        protected const string UseWindowsPowerShellParameterSet = "UseWindowsPowerShellParameterSet";
+
+        /// <summary>
         /// Default shellname.
         /// </summary>
         protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
@@ -1060,7 +1065,17 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as string.</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
-            if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
+            string paramValue;
+            try
+            {
+                paramValue = LanguagePrimitives.ConvertTo<string>(param);
+            }
+            catch (PSInvalidCastException e)
+            {
+                throw new PSArgumentException(e.Message, e);
+            }
+
+            if (!string.IsNullOrEmpty(paramValue))
             {
                 return paramValue;
             }
@@ -1075,12 +1090,19 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as integer.</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
-            if (param is int paramValue)
+            if (param == null)
             {
-                return paramValue;
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
             }
 
-            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+            try
+            {
+                return LanguagePrimitives.ConvertTo<int>(param);
+            }
+            catch (PSInvalidCastException e)
+            {
+                throw new PSArgumentException(e.Message, e);
+            }
         }
 
         #endregion Private Methods

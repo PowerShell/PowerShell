@@ -104,9 +104,9 @@ install(){
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
-                DIST=$( (grep '^DISTRIB_ID' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-                PSUEDONAME=$( (grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-                REV=$( (grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }') < /etc/lsb-release)
+                DIST=$(. /etc/os-release && echo $NAME)
+                PSUEDONAME=$(. /etc/os-release && echo $VERSION_CODENAME)
+                REV=$(. /etc/os-release && echo $VERSION_ID)
             fi
             if [ -f /etc/UnitedLinux-release ] ; then
                 DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"

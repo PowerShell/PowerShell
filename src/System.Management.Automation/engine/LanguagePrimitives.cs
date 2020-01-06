@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        public static bool IsNullLike(object obj) => obj == DBNull.Value || obj == NullString.Value || IsNull(obj);
+        public static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
         /// <typeparam name="T">The type for which to convert</typeparam>
         /// <param name="castObject">The object from which to convert.</param>
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
-        internal static T FromObjectAs<T>(Object castObject)
+        internal static T FromObjectAs<T>(object castObject)
         {
             T returnType = default(T);
 
@@ -1453,11 +1453,11 @@ namespace System.Management.Automation
             {
                 return new UInt64Converter();
             }
-            else if (type == typeof(Byte))
+            else if (type == typeof(byte))
             {
                 return new ByteConverter();
             }
-            else if (type == typeof(SByte))
+            else if (type == typeof(sbyte))
             {
                 return new SByteConverter();
             }
@@ -2426,23 +2426,7 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), wmiClassException.Message);
             }
         }
-#endif
 
-        // System.Configuration.CommaDelimitedStringCollection is derived from the StringCollection class
-        private static System.Configuration.CommaDelimitedStringCollection ConvertToCommaDelimitedStringCollection(object valueToConvert,
-                                                                                                                   Type resultType,
-                                                                                                                   bool recursion,
-                                                                                                                   PSObject originalValueToConvert,
-                                                                                                                   IFormatProvider formatProvider,
-                                                                                                                   TypeTable backupTable)
-        {
-            typeConversion.WriteLine("Standard type conversion to a CommaDelimitedStringCollection.");
-            var commaDelimitedStringCollection = new System.Configuration.CommaDelimitedStringCollection();
-            AddItemsToCollection(valueToConvert, resultType, formatProvider, backupTable, commaDelimitedStringCollection);
-            return commaDelimitedStringCollection;
-        }
-
-#if !UNIX
         private static DirectoryEntry ConvertToADSI(object valueToConvert,
                                                     Type resultType,
                                                     bool recursion,
@@ -3204,7 +3188,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((SByte)valueToConvert) != default(SByte);
+            return ((sbyte)valueToConvert) != default(sbyte);
         }
 
         private static bool ConvertByteToBool(object valueToConvert,
@@ -3214,7 +3198,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Byte)valueToConvert) != default(Byte);
+            return ((byte)valueToConvert) != default(byte);
         }
 
         private static bool ConvertSingleToBool(object valueToConvert,
@@ -3234,7 +3218,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Double)valueToConvert) != default(Double);
+            return ((double)valueToConvert) != default(double);
         }
 
         private static bool ConvertDecimalToBool(object valueToConvert,
@@ -4400,21 +4384,21 @@ namespace System.Management.Automation
         private static Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte),
-            typeof(Single), typeof(Double), typeof(Decimal)
+            typeof(sbyte), typeof(byte),
+            typeof(Single), typeof(double), typeof(decimal)
         };
 
         private static Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte)
+            typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static Type[] s_signedIntegerTypes = new Type[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
+        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
         internal static void RebuildConversionCache()
         {
@@ -4426,7 +4410,7 @@ namespace System.Management.Automation
                 Type typeofNull = typeof(Null);
                 Type typeofFloat = typeof(float);
                 Type typeofDouble = typeof(double);
-                Type typeofDecimal = typeof(Decimal);
+                Type typeofDecimal = typeof(decimal);
                 Type typeofBool = typeof(bool);
                 Type typeofChar = typeof(char);
                 foreach (Type type in LanguagePrimitives.s_numericTypes)
@@ -4442,11 +4426,11 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(UInt16), typeofBool, ConvertUInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt32), typeofBool, ConvertUInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt64), typeofBool, ConvertUInt64ToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(SByte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(sbyte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Single), typeofBool, ConvertSingleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -5005,14 +4989,6 @@ namespace System.Management.Automation
                 ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
                 return CacheConversion<StringCollection>(fromType, toType, LanguagePrimitives.ConvertToStringCollection, rank);
             }
-
-#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
-            if (toType == typeof(System.Configuration.CommaDelimitedStringCollection))
-            {
-                ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
-                return CacheConversion<System.Configuration.CommaDelimitedStringCollection>(fromType, toType, LanguagePrimitives.ConvertToCommaDelimitedStringCollection, rank);
-            }
-#endif
 
             if (toType.IsSubclassOf(typeof(System.Delegate))
                 && (fromType == typeof(ScriptBlock) || fromType.IsSubclassOf(typeof(ScriptBlock))))
@@ -5613,8 +5589,8 @@ namespace System.Management.Automation
 
                 if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                 {
-                    if ((toType != typeof(Object)) &&
-                        (toType != typeof(Object[])) &&
+                    if ((toType != typeof(object)) &&
+                        (toType != typeof(object[])) &&
                         (!CoreTypes.Contains(toType)))
                     {
                         converter = ConvertNotSupportedConversion;

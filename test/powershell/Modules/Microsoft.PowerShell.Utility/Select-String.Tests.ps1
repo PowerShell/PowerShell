@@ -7,9 +7,15 @@ Describe "Select-String" -Tags "CI" {
         $currentDirectory = $pwd.Path
     }
 
+    AfterAll {
+        Push-Location $currentDirectory
+    }
+
     Context "String actions" {
-        $testinputone = "hello","Hello","goodbye"
-        $testinputtwo = "hello","Hello"
+        BeforeAll {
+            $testinputone = "hello","Hello","goodbye"
+            $testinputtwo = "hello","Hello"
+        }
 
         it "Should be called without errors" {
             { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
@@ -76,47 +82,47 @@ Describe "Select-String" -Tags "CI" {
         }
 
         it "Should output a string with the first match highlighted" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string with all matches highlighted when AllMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0m`e[7ml`e[0mo${nl}He`e[7ml`e[0m`e[7ml`e[0mo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string with the first match highlighted when SimpleMatch is used" {
-            if ($Host.UI.SupportsVirtualTerminal)
+            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
+                $result | Should -Be "${nl}he`e[7ml`e[0mlo${nl}He`e[7ml`e[0mlo${nl}${nl}"
             }
             else
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
-                $result | Should -Be "`nhello`nHello`n`n"
+                $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
             }
         }
 
         it "Should output a string without highlighting when NoEmphasis is used" {
             $result = $testinputone | Select-String -Pattern "l" -NoEmphasis | Out-String
-            $result | Should -Be "`nhello`nHello`n`n"
+            $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
         }
 
         it "Should return an array of matching strings without virtual terminal sequences" {
@@ -248,7 +254,44 @@ Describe "Select-String" -Tags "CI" {
         }
     }
 
-    AfterAll {
-        Push-Location $currentDirectory
+    Context "Culture parameter" {
+        It "Should throw if -Culture parameter is used without -SimpleMatch parameter" {
+            { "1" | Select-String -Pattern "hello" -Culture "ru-RU" } | Should -Throw -ErrorId "CannotSpecifyCultureWithoutSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"
+        }
+
+        It "Should accept a culture: '<culture>'" -TestCases: @(
+            @{ culture = "Ordinal"},
+            @{ culture = "Invariant"},
+            @{ culture = "Current"},
+            @{ culture = "ru-RU"}
+        ) {
+            param ($culture)
+            { "1" | Select-String -Pattern "hello" -Culture $culture -SimpleMatch } | Should -Not -Throw
+        }
+
+        It "Should works if -Culture parameter is a culture name: '<culture>'-'<pattern>'-'CaseSensitive:<casesensitive>'" -TestCases: @(
+            @{pattern = 'file'; culture = 'tr-TR';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'tr-TR';       expected = $null;  casesensitive = $true }
+            @{pattern = "f`u{0130}le"; culture = 'tr-TR';expected = 'file'; casesensitive = $false }
+            @{pattern = 'file'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'en-US';       expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Ordinal';     expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Invariant';   expected = $null;  casesensitive = $true }
+            @{pattern = 'file'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = 'file'; casesensitive = $false }
+            @{pattern = 'fIle'; culture = 'Current';     expected = $null;  casesensitive = $true }
+        ) {
+            param ($pattern, $culture, $expected, $casesensitive)
+
+            if ($culture -ne 'Current' -or [CultureInfo]::CurrentCulture.Name -ne "tr-TR") {
+                'file' | Select-String -Pattern $pattern -Culture $culture -SimpleMatch -CaseSensitive:$casesensitive | Should -BeExactly $expected
+            }
+       }
     }
 }

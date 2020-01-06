@@ -3,18 +3,18 @@
 This guide supplements the [Linux instructions](./linux.md), as
 building on macOS is almost identical.
 
-.NET Core 2.x (and by transitivity, us) only supports macOS 10.12+.
+.NET Core 2.x (and by transitivity, us) only supports macOS 10.13+.
 
 ## Environment
 
-You will want [Homebrew](https://brew.sh/), the missing package manager for macOS.
+You will want [Homebrew](https://brew.sh/) or [MacPorts](https://www.macports.org/), the missing package manager for macOS.
 Once installed, follow the same instructions to download and
 install a self-hosted copy of PowerShell on your macOS machine.
 From `pwsh.exe`, run `Import-Module ./build.psm1` and use `Start-PSBootstrap` to install the dependencies.
 
 The `Start-PSBootstrap` function does the following:
 
-- Uses `brew` to install CMake, OpenSSL, and GNU WGet
+- Uses `brew` or `port` to install CMake, OpenSSL, and GNU WGet
 - Uninstalls any prior versions of .NET CLI
 - Downloads and installs .NET Core SDK to `~/.dotnet`
 
