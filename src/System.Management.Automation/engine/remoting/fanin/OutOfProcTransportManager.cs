@@ -746,7 +746,10 @@ namespace System.Management.Automation.Remoting.Client
 
         private Guid GetMessageGuid(string data)
         {
-            Dbg.Assert(data != null, "data cannot be null in GetMessageGuid");
+            if (string.IsNullOrEmpty(data))
+            {
+                return Guid.Empty;
+            }
 
             // Perform quick scan for data packet for a GUID, ignoring any errors.
             var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
@@ -1219,11 +1222,6 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (string.IsNullOrEmpty(e.Data))
-            {
-                return;
-            }
-
             HandleOutputDataReceived(e.Data);
         }
 
