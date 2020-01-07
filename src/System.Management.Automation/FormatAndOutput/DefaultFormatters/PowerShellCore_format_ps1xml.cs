@@ -146,7 +146,6 @@ namespace System.Management.Automation.Runspaces
             var errorRecord_Exception = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
-            errorRecord_Exception.TypeNames.Add("System.Exception");
             yield return errorRecord_Exception;
 
             yield return new ExtendedTypeDefinition(
@@ -991,9 +990,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                    Set-StrictMode -Off
 
                                     function Get-ConciseViewPositionMessage {
-                                        Set-StrictMode -Off
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
@@ -1050,14 +1049,35 @@ namespace System.Management.Automation.Runspaces
                                         $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
-                                            if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
+                                            $useTargetObject = $false
+
+                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
+                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
+                                                $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
+                                                $useTargetObject = $true
+                                            }
+                                            elseif ($myinv.ScriptName) {
+                                                if ($env:TERM_PROGRAM -eq 'vscode') {
+                                                    # If we are running in vscode, we know the file:line:col links are clickable so we use this format
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}""
+                                                }
+                                                else {
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
+                                                }
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
                                             }
 
-                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($useTargetObject) {
+                                                $scriptLineNumber = $_.TargetObject.Line
+                                                $scriptLineNumberLength = $_.TargetObject.Line.ToString().Length
+                                            }
+                                            else {
+                                                $scriptLineNumber = $myinv.ScriptLineNumber
+                                                $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            }
+
                                             if ($scriptLineNumberLength -gt 4) {
                                                 $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
                                             }
@@ -1069,19 +1089,37 @@ namespace System.Management.Automation.Runspaces
 
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
-                                            $line = $myinv.Line
-                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
+
+                                            $highlightLine = ''
+                                            if ($useTargetObject) {
+                                                $line = $_.TargetObject.LineText.Trim()
+                                                $offsetLength = 0
+                                                $offsetInLine = 0
+                                            }
+                                            else {
+                                                $positionMessage = $myinv.PositionMessage.Split('+')
+                                                $line = $positionMessage[1]
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1]
+                                                $offsetLength = $highlightLine.Trim().Length
+                                                $offsetInLine = $highlightLine.IndexOf('~')
+                                            }
+
+                                            if (-not $line.EndsWith(""`n"")) {
+                                                $line += $newline
+                                            }
 
                                             # don't color the whole line red
                                             if ($offsetLength -lt $line.Length - 1) {
-                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor).Insert($myinv.OffsetInLine - 1, $accentColor)
+                                                $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
-                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
+                                            $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
-                                            $message = ""${prefix}${offsetWhitespace}^ ""
+                                            if ($highlightLine -ne '') {
+                                                $posMsg += ""${newline}${prefix}${highlightLine}${newline}""
+                                            }
+                                            $message = ""${prefix}""
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
@@ -1090,8 +1128,14 @@ namespace System.Management.Automation.Runspaces
                                                 # need to parse out the relevant part of the pre-rendered positionmessage
                                                 $message += $err.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
                                             }
-                                            else {
+                                            elseif ($err.Exception) {
                                                 $message += $err.Exception.Message
+                                            }
+                                            elseif ($err.Message) {
+                                                $message += $err.Message
+                                            }
+                                            else {
+                                                $message += $err.ToString()
                                             }
                                         }
                                         else {

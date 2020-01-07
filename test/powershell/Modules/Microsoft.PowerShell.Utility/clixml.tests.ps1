@@ -23,11 +23,11 @@ Describe "CliXml test" -Tags "CI" {
             [string] $expectedError
             [string] $testFile
 
-            TestData($name, $file, $inputObj, $error)
+            TestData($name, $file, $inputObj, $errorId)
             {
                 $this.testName = $name
                 $this.inputObject = $inputObj
-                $this.expectedError = $error
+                $this.expectedError = $errorId
                 $this.testFile = $file
             }
         }

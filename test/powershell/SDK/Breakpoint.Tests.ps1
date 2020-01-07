@@ -34,6 +34,12 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
     Context 'Managing breakpoints in the host runspace via the SDK' {
 
+        AfterAll {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints()) {
+                $host.Runspace.Debugger.RemoveBreakpoint($bp) | Should -BeTrue
+            }
+        }
+
         It 'Can set command breakpoints' {
             $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist') | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
         }
@@ -52,14 +58,14 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
         It 'Can disable breakpoints' {
             foreach ($bp in $host.Runspace.Debugger.GetBreakpoints()) {
-                $bp = $host.Runspace.Debugger.DisableBreakpoint($bp)                
+                $bp = $host.Runspace.Debugger.DisableBreakpoint($bp)
                 $bp.Enabled | Should -BeFalse
             }
         }
 
         It 'Can enable breakpoints' {
             foreach ($bp in $host.Runspace.Debugger.GetBreakpoints()) {
-                $bp = $host.Runspace.Debugger.EnableBreakpoint($bp)                
+                $bp = $host.Runspace.Debugger.EnableBreakpoint($bp)
                 $bp.Enabled | Should -BeTrue
             }
         }
@@ -73,9 +79,26 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         It 'Returns an empty collection when there are no breakpoints' {
             $host.Runspace.Debugger.GetBreakpoints() | Should -HaveCount 0
         }
+
+        It 'Can set multiple breakpoints' {
+            $breakpoints = [System.Collections.Generic.List[System.Management.Automation.Breakpoint]] @(
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 1)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 2)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 3)
+            )
+
+            $host.Runspace.Debugger.SetBreakpoints($breakpoints)
+            $host.Runspace.Debugger.GetBreakpoints() | Should -HaveCount 3
+        }
     }
 
     Context 'Managing breakpoints in a remote runspace via the SDK' {
+
+        AfterAll {
+            foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
+                $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeTrue
+            }
+        }
 
         It 'Can set command breakpoints' {
             $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
@@ -96,14 +119,14 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
         It 'Can disable breakpoints' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
-                $bp = $jobRunspace.Debugger.DisableBreakpoint($bp)                
+                $bp = $jobRunspace.Debugger.DisableBreakpoint($bp)
                 $bp.Enabled | Should -BeFalse
             }
         }
 
         It 'Can enable breakpoints' {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
-                $bp = $jobRunspace.Debugger.EnableBreakpoint($bp)                
+                $bp = $jobRunspace.Debugger.EnableBreakpoint($bp)
                 $bp.Enabled | Should -BeTrue
             }
         }
@@ -125,13 +148,23 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         It 'Returns an empty collection when there are no breakpoints' {
             $jobRunspace.Debugger.GetBreakpoints() | Should -HaveCount 0
         }
+
+        It 'Can set multiple breakpoints' {
+            $breakpoints = [System.Collections.Generic.List[System.Management.Automation.Breakpoint]] @(
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 1)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 2)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 3)
+            )
+
+            $jobRunspace.Debugger.SetBreakpoints($breakpoints)
+            $jobRunspace.Debugger.GetBreakpoints() | Should -HaveCount 3
+        }
     }
 
-    Context 'Handling empty collections and  errors while managing breakpoints in the host runspace via the SDK' {
+    Context 'Handling empty collections and errors while managing breakpoints in the host runspace via the SDK' {
 
         BeforeAll {
-            $bp = $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist')
-            $host.Runspace.Debugger.RemoveBreakpoint($bp) > $null
+            $bp = [System.Management.Automation.CommandBreakpoint]::new($TestDrive, $null, 'Test-ThisCommandDoesNotExist')
         }
 
         It 'Returns false when trying to disable a breakpoint that does not exist' {
@@ -164,6 +197,73 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
         It 'Returns false when trying to remove a breakpoint that does not exist' {
             $jobRunspace.Debugger.RemoveBreakpoint($bp) | Should -BeFalse
+        }
+    }
+
+    Context 'Manage breakpoints in another runspace' {
+        BeforeAll {
+            $runspace = [runspacefactory]::CreateRunspace()
+            $runspace.Open()
+        }
+
+        AfterAll {
+            $runspace.Close()
+            $runspace.Dispose()
+        }
+
+        It 'Can set command breakpoints' {
+            $host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+        }
+
+        It 'Can set variable breakpoints' {
+            $host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+        }
+
+        It 'Can set line breakpoints' {
+            $host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }, $runspace.Id) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+        }
+
+        It 'Can get breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints($runspace.Id) | Should -HaveCount 3
+        }
+
+        It 'Can disable breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $bp = $host.Runspace.Debugger.DisableBreakpoint($bp, $runspace.Id)
+                $bp.Enabled | Should -BeFalse
+            }
+        }
+
+        It 'Can enable breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $bp = $host.Runspace.Debugger.EnableBreakpoint($bp, $runspace.Id)
+                $bp.Enabled | Should -BeTrue
+            }
+        }
+
+        It 'Doesn''t manipulate any breakpoints in the default runspace' {
+            $host.Runspace.Debugger.GetBreakpoints() | Should -BeNullOrEmpty
+        }
+
+        It 'Can remove breakpoints' {
+            foreach ($bp in $host.Runspace.Debugger.GetBreakpoints($runspace.Id)) {
+                $host.Runspace.Debugger.RemoveBreakpoint($bp, $runspace.Id) | Should -BeTrue
+            }
+        }
+
+        It 'Returns an empty collection when there are no breakpoints' {
+            $host.Runspace.Debugger.GetBreakpoints($runspace.Id) | Should -HaveCount 0
+        }
+
+        It 'Can set multiple breakpoints' {
+            $breakpoints = [System.Collections.Generic.List[System.Management.Automation.Breakpoint]] @(
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 1)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 2)
+                [System.Management.Automation.LineBreakpoint]::new("/Path/to/foo.ps1", 3)
+            )
+
+            $host.Runspace.Debugger.SetBreakpoints($breakpoints, $runspace.Id)
+            $host.Runspace.Debugger.GetBreakpoints($runspace.Id) | Should -HaveCount 3
         }
     }
 }

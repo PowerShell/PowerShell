@@ -1204,8 +1204,15 @@ namespace Microsoft.PowerShell.Commands
                         // be connected to later.
                         WriteJobResults(false);
 
-                        // finally dispose the job.
-                        _job.Dispose();
+                        // Dispose job object if it is not returned to the user.
+                        // The _asjob field can change dynamically and needs to be checked before the job 
+                        // object is disposed. For example, if remote sessions are disconnected abruptly
+                        // via WinRM, a disconnected job object is created to facilitate a reconnect.
+                        // If the job object is disposed here, then a session reconnect cannot happen.
+                        if (!_asjob)
+                        {
+                            _job.Dispose();
+                        }
 
                         // We no longer need to call ClearInvokeCommandOnRunspaces() here because
                         // this command might finish before the foreach block finishes. previously,
@@ -1251,8 +1258,15 @@ namespace Microsoft.PowerShell.Commands
                             // be connected to later.
                             WriteJobResults(false);
 
-                            // finally dispose the job.
-                            _job.Dispose();
+                            // Dispose job object if it is not returned to the user.
+                            // The _asjob field can change dynamically and needs to be checked before the job 
+                            // object is disposed. For example, if remote sessions are disconnected abruptly
+                            // via WinRM, a disconnected job object is created to facilitate a reconnect.
+                            // If the job object is disposed here, then a session reconnect cannot happen.
+                            if (!_asjob)
+                            {
+                                _job.Dispose();
+                            }
                         }
                     }
                 }

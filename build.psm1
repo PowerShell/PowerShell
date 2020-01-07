@@ -134,7 +134,7 @@ function Get-EnvironmentInformation
 
     if ($Environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
-        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore
+        $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore | Select-Object -First 1
         if ($lsb_release) {
             $LinuxID = & $lsb_release -is
         }
@@ -145,6 +145,8 @@ function Get-EnvironmentInformation
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
+        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
+        $environment += @{'IsDebian11' = $Environment.IsDebian -and $LinuxInfo.PRETTY_NAME -match 'bullseye'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
@@ -499,13 +501,17 @@ Fix steps:
         $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
     }
 
-    if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
 
-        if ($Environment.IsDebian9){
+        if ($Environment.IsDebian10 -or $Environment.IsDebian11){
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
+        }
+        elseif ($Environment.IsDebian9){
             # NOTE: Debian 8 doesn't need these symlinks
             $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
             $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
@@ -2063,9 +2069,9 @@ function script:Write-Log
         [ValidateNotNullOrEmpty()]
         [string] $message,
 
-        [switch] $error
+        [switch] $isError
     )
-    if ($error)
+    if ($isError)
     {
         Write-Host -Foreground Red $message
     }

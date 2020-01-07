@@ -3,30 +3,15 @@
 
 Describe 'NullCoalesceOperations' -Tags 'CI' {
     BeforeAll {
-
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSCoalescingOperators')
-
-        if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCoalescingOperators' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        } else {
-            $someGuid = New-Guid
-            $typesTests = @(
-                @{ name = 'string'; valueToSet = 'hello' }
-                @{ name = 'dotnetType'; valueToSet = $someGuid }
-                @{ name = 'byte'; valueToSet = [byte]0x94 }
-                @{ name = 'intArray'; valueToSet = 1..2 }
-                @{ name = 'stringArray'; valueToSet = 'a'..'c' }
-                @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
-            )
-        }
-    }
-
-    AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        }
+        $someGuid = New-Guid
+        $typesTests = @(
+            @{ name = 'string'; valueToSet = 'hello' }
+            @{ name = 'dotnetType'; valueToSet = $someGuid }
+            @{ name = 'byte'; valueToSet = [byte]0x94 }
+            @{ name = 'intArray'; valueToSet = 1..2 }
+            @{ name = 'stringArray'; valueToSet = 'a'..'c' }
+            @{ name = 'emptyArray'; valueToSet = @(1, 2, 3) }
+        )
     }
 
     Context "Null conditional assignment operator ??=" {
@@ -275,6 +260,15 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         }
+
+        function ExecuteTestIfFeatureIsEnabled([string] $TestContet)
+        {
+            if ($skipTest) {
+                Set-ItResult -Skipped -Because "PSNullConditionalOperators feature is disabled"
+            } else {
+                Invoke-Expression $testContent
+            }
+        }
     }
 
     AfterAll {
@@ -300,6 +294,8 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         }
 
         It 'Can get member value of a non-null variable' {
+
+            $testContent = @'
             ${psObj}?.name | Should -BeExactly 'value'
             ${array}?.length | Should -Be 3
             ${hash}?.a | Should -Be 1
@@ -308,50 +304,81 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             (Get-Item $TestDrive)?.EnumerateFiles()?.Name | Should -BeExactly 'testfile.txt'
 
             [int32]::MaxValue?.ToString() | Should -BeExactly '2147483647'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Can get null when variable is null' {
+            $testContent = @'
             ${nonExistent}?.name | Should -BeNullOrEmpty
             ${nonExistent}?.MyMethod() | Should -BeNullOrEmpty
 
             (get-process -Name doesnotexist -ErrorAction SilentlyContinue)?.Id | Should -BeNullOrEmpty
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Use ?. operator multiple times in statement' {
+            $testContent = @'
             ${psObj}?.name?.nonExistent | Should -BeNullOrEmpty
             ${psObj}?.nonExistent?.nonExistent | Should -BeNullOrEmpty
             ${nonExistent}?.nonExistent?.nonExistent | Should -BeNullOrEmpty
 
             ${psObj}?.nested?.name | Should -BeExactly 'valuenested'
             ${psObj}?.nestedMethod?.GetHello() | Should -BeExactly 'hello'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Use ?. on a dynamic method name' {
+            $testContent = @'
             $methodName = 'ToLongDateString'
             (Get-Date '11/11/2019')?.$methodName() | Should -BeExactly 'Monday, November 11, 2019'
 
             ${doesNotExist}?.$methodName() | Should -BeNullOrEmpty
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Use ?. on a dynamic method name that does not exist' {
+            $testContent = @'
             $methodName = 'DoesNotExist'
             { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Use ?. on a dynamic method name that does not exist' {
+            $testContent = @'
             $methodName = $null
             { (Get-Date '11/11/2019')?.$methodName() } | Should -Throw -ErrorId 'MethodNotFound'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Use ?. on a dynamic property name' {
+            $testContent = @'
             $propName = 'Name'
             (Get-Process -Id $pid)?.$propName | Should -BeLike 'pwsh*'
 
             ${doesNotExist}?.$propName() | Should -BeNullOrEmpty
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Should throw error when method does not exist' {
+            $testContent = @'
             { ${psObj}?.nestedMethod?.NonExistent() } | Should -Throw -ErrorId 'MethodNotFound'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
     }
 
@@ -367,30 +394,46 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         }
 
         It 'Can index can call properties' {
+            $testContent = @'
             ${array}?[0] | Should -Be 1
             ${array}?[0,1] | Should -Be @(1,2)
             ${array}?[0..2] | Should -Be @(1,2,3)
             ${array}?[-2] | Should -Be 2
 
             ${hash}?['a'] | Should -Be 1
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Indexing in null items should be null' {
+            $testContent = @'
             ${doesnotExist}?[0] | Should -BeNullOrEmpty
             ${doesnotExist}?[0,1] | Should -BeNullOrEmpty
             ${doesnotExist}?[0..2] | Should -BeNullOrEmpty
             ${doesnotExist}?[-2] | Should -BeNullOrEmpty
 
             ${doesnotExist}?['a'] | Should -BeNullOrEmpty
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Can call methods on indexed items' {
+            $testContent = @'
             ${dateArray}?[0]?.ToLongDateString() | Should -BeExactly 'Friday, November 1, 2019'
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
 
         It 'Calling a method on nonexistent item give null' {
+            $testContent = @'
             ${dateArray}?[1234]?.ToLongDateString() | Should -BeNullOrEmpty
             ${doesNotExist}?[0]?.MyGetMethod() | Should -BeNullOrEmpty
+'@
+
+            ExecuteTestIfFeatureIsEnabled -TestContent $testContent
         }
     }
 }

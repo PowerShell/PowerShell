@@ -8,13 +8,14 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     It '$ErrorView should have correct default value' {
-        $expectedDefault = 'NormalView'
-
-        if ((Get-ExperimentalFeature -Name PSErrorView).Enabled) {
-            $expectedDefault = 'ConciseView'
-        }
+        $expectedDefault = 'ConciseView'
 
         $ErrorView | Should -BeExactly $expectedDefault
+    }
+
+    It 'Exceptions not thrown do not get formatted as ErrorRecord' {
+        $exp = [System.Exception]::new('test') | Out-String
+        $exp | Should -BeLike "*Message        : test*"
     }
 
     Context 'ConciseView tests' {
@@ -36,7 +37,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
-            $e | Out-String | Should -BeLike "*$testScriptPath*"
+            $e | Out-String | Should -BeLike "*${testScriptPath}:4*"
             # validate line number is shown
             $e | Out-String | Should -BeLike '* 4 *'
         }
@@ -47,15 +48,43 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Activity shows up correctly for scriptblocks" {
-            $e = pwsh -noprofile -command 'Write-Error 'myError' -ErrorAction SilentlyContinue; $error[0] | Out-String'
+            $e = & "$PSHOME/pwsh" -noprofile -command 'Write-Error 'myError' -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
         }
 
         It "Function shows up correctly" {
             function test-myerror { [cmdletbinding()] param() write-error 'myError' }
 
-            $e = pwsh -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
+            $e = & "$PSHOME/pwsh" -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
+        }
+
+        It "Pester Should shows test file and not pester" {
+            $testScript = '1 + 1 | Should -Be 3'
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'mytest.ps1'
+            Set-Content -Path $testScriptPath -Value $testScript
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
+            $e | Out-String | Should -BeLike "*$testScriptPath*"
+            $e | Out-String | Should -Not -BeLike '*pester*'
+        }
+    }
+
+    Context 'NormalView tests' {
+
+        It 'Error shows up when using strict mode' {
+            try {
+                $ErrorView = 'NormalView'
+                Set-StrictMode -Version 2
+                throw 'Oops!'
+            }
+            catch {
+                $e = $_ | Out-String
+            }
+            finally {
+                Set-StrictMode -Off
+            }
+
+            $e | Should -BeLike '*Oops!*'
         }
     }
 }

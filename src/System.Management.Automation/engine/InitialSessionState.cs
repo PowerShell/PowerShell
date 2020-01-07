@@ -3782,6 +3782,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         /// <param name="warning"></param>
         /// <returns></returns>
+        [Obsolete("Custom PSSnapIn is deprecated. Please use a module instead.", true)]
         public PSSnapInInfo ImportPSSnapIn(string name, out PSSnapInException warning)
         {
             if (string.IsNullOrEmpty(name))
@@ -4426,7 +4427,7 @@ end {
         internal const ActionPreference DefaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
-        internal const ErrorView DefaultErrorView = ErrorView.NormalView;
+        internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
@@ -4501,7 +4502,7 @@ end {
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : DefaultErrorView,
+                DefaultErrorView,
                 RunspaceInit.ErrorViewDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ErrorView))),

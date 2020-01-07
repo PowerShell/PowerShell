@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// Session name for WindowsPS compat remoting session.
         /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
-        
+
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
@@ -2363,21 +2363,14 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility"))
+                if (PowerShellConfig.Instance.IsImplicitWinCompatEnabled())
                 {
                     if (importingModule)
                     {
-                        var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                        using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-                        ps.AddCommand(commandInfo);
-                        ps.AddParameter("PassThru", true);
-                        ps.AddParameter("Name", moduleManifestPath);
-                        ps.AddParameter("UseWindowsPowerShell", true);
-
-                        var moduleProxies = ps.Invoke<PSModuleInfo>();
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
 
                         // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0) 
+                        if(moduleProxies.Count > 0)
                         {
                             return moduleProxies[0];
                         }
@@ -2390,20 +2383,16 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     containedErrors = true;
-
                     if (writingErrors)
                     {
                         message = StringUtil.Format(
-                            Modules.PSEditionNotSupported,
+                            Modules.ImplicitWinCompatDisabled,
                             moduleManifestPath,
-                            PSVersionInfo.PSEdition,
                             string.Join(',', inferredCompatiblePSEditions));
 
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-
                         ErrorRecord er = new ErrorRecord(
-                            ioe,
-                            nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
+                            new InvalidOperationException(message),
+                            nameof(Modules) + "_" + nameof(Modules.ImplicitWinCompatDisabled),
                             ErrorCategory.ResourceUnavailable,
                             moduleManifestPath);
 
@@ -4867,6 +4856,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) {throw new System.NotImplementedException();}
+
         private void RemoveTypesAndFormatting(
             IList<string> formatFilesToRemove,
             IList<string> typeFilesToRemove)
@@ -4959,7 +4950,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
+                    if (module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
                     {
                         CleanupWindowsPowerShellCompatResources();
                     }
