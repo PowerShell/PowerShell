@@ -766,16 +766,16 @@ namespace System.Management.Automation.Remoting.Client
 
         protected void HandleOutputDataReceived(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                // A null/empty data string indicates a problem in the transport,
+                // e.g., named pipe emitting a null packet because it closed or some reason.
+                // In this case we simply ignore the packet.
+                return;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(data))
-                {
-                    // A null/empty data string indicates a problem in the transport,
-                    // e.g., named pipe emitting a null packet because it closed or some reason.
-                    // In this case we simply ignore the packet.
-                    return;
-                }
-
                 // Route protocol message based on whether it is a session or command message.
                 if (IsCommandMessage(data))
                 {
