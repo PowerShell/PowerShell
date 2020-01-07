@@ -741,16 +741,11 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
-
-        private bool IsSessionMessage(ReadOnlySpan<char> data)
-        {
-            return data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1;
-        }
-
         #endregion
 
         #region Event Handlers
+
+        private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
 
         protected void HandleOutputDataReceived(string data)
         {
@@ -765,7 +760,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                if (IsSessionMessage(data))
+                if (data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);
