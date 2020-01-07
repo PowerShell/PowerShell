@@ -741,23 +741,11 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        private const string COMMANDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
+        private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
 
-        private bool IsCommandMessage(ReadOnlySpan<char> data)
+        private bool IsSessionMessage(ReadOnlySpan<char> data)
         {
-            try
-            {
-                // Command message contains empty GUID.
-                // Session message contains non-empty GUID.
-                var iTag = data.IndexOf(COMMANDMESSAGETAG, StringComparison.OrdinalIgnoreCase);
-                return iTag > -1;
-            }
-            catch
-            {
-                // The method should never throw.
-            }
-
-            return false;
+            return data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1;
         }
 
         #endregion
@@ -777,15 +765,15 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                if (IsCommandMessage(data))
-                {
-                    // Command message
-                    _commandMessageQueue.Add(data);
-                }
-                else
+                if (IsSessionMessage(data))
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);
+                }
+                else
+                {
+                    // Command message
+                    _commandMessageQueue.Add(data);
                 }
             }
             catch (InvalidOperationException)
