@@ -741,19 +741,16 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        private const string GUIDTAG = "PSGuid='";
+        private const string COMMANDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
 
-        private bool ContainsMessageGuid(ReadOnlySpan<char> data)
+        private bool IsCommandMessage(ReadOnlySpan<char> data)
         {
             try
             {
-                // Perform quick scan for data packet for a GUID, ignoring any errors.
-                var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
-                if (iTag > -1)
-                {
-                    var psGuidString = data.Slice(iTag + GUIDTAG.Length);
-                    return Guid.TryParse(psGuidString, out _);
-                }
+                // Command message contains empty GUID.
+                // Session message contains non-empty GUID.
+                var iTag = data.IndexOf(COMMANDMESSAGETAG, StringComparison.OrdinalIgnoreCase);
+                return iTag > -1;
             }
             catch
             {
@@ -781,7 +778,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 // Route protocol message based on whether it is a session or command message.
                 // Session messages have empty Guid values.
-                if (ContainsMessageGuid(data))
+                if (IsCommandMessage(data))
                 {
                     // Command message
                     _commandMessageQueue.Add(data);
