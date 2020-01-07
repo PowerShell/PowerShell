@@ -777,7 +777,6 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 // Route protocol message based on whether it is a session or command message.
-                // Session messages have empty Guid values.
                 if (IsCommandMessage(data))
                 {
                     // Command message
