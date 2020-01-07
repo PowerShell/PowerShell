@@ -304,11 +304,11 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
-        $result[0].Target | Should -BeExactly '127.0.0.1'
         $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
         $result[0].Latency | Should -BeGreaterOrEqual 0
-        $result[0].Result | Should -BeExactly 'Success'
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
     }
 
     It "Test detailed connection to local host on working port with modified count" {
@@ -316,11 +316,11 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 2
         $result[0].Id | Should -BeExactly 1
-        $result[0].Target | Should -BeExactly '127.0.0.1'
         $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
         $result[0].Port | Should -Be $WebListener.HttpPort
         $result[0].Latency | Should -BeGreaterOrEqual 0
-        $result[0].Result | Should -BeExactly 'Success'
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
     }
 
     It "Test detailed connection to unreachable host port 80" {
@@ -328,10 +328,10 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
-        $result[0].Target | Should -BeExactly $UnreachableAddress
         $result[0].TargetAddress | Should -BeExactly $UnreachableAddress
         $result[0].Port | Should -Be 80
         $result[0].Latency | Should -BeExactly 0
-        $result[0].Result | Should -Not -BeExactly 'Success'
+        $result[0].Connected | Should -BeFalse
+        $result[0].Status | Should -Not -BeExactly 'Success'
     }
 }

@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
                     targetAddress,
                     TcpPort,
                     0,
-                    TcpPortStatus.TcpConnectionTestResult.None
+                    false
                 );
 
                 Stopwatch stopwatch = new Stopwatch();
@@ -324,32 +324,31 @@ namespace Microsoft.PowerShell.Commands
                 {
                     stopwatch.Start();
 
-                    Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                    Task timeoutTask = Task.Delay(new TimeSpan(0, 0, TimeoutSeconds));
-
-                    Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
-                    stopwatch.Stop();
-
-                    if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
+                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000))
                     {
-                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Cancelled;
-                        return;
-                    }
-
-                    if (timeoutTask.Status == TaskStatus.RanToCompletion)
-                    {
-                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Timeout;
-                    }
-
-                    if (connectionTask.Status == TaskStatus.RanToCompletion)
-                    {
-                        testResult.Result = TcpPortStatus.TcpConnectionTestResult.Success;
+                        testResult.Connected = true;
                         testResult.Latency = stopwatch.ElapsedMilliseconds;
                     }
+                    else
+                    {
+                        testResult.Status = SocketError.TimedOut;
+                    }
                 }
-                catch
+                catch (AggregateException ae)
                 {
-                    testResult.Result = TcpPortStatus.TcpConnectionTestResult.Failed;
+                    ae.Handle((ex) =>
+                    {
+                        if (ex is SocketException)
+                        {
+                            SocketException? socketException = ex as SocketException;
+                            testResult.Status = socketException!.SocketErrorCode;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    });
                 }
                 finally
                 {
@@ -358,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Quiet.IsPresent)
                 {
-                    if (testResult.Result == TcpPortStatus.TcpConnectionTestResult.Success)
+                    if (testResult.Connected)
                     {
                         WriteObject(true);
                         return;
@@ -923,8 +922,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="targetAddress">The resolved IP from the target.</param>
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
-            /// <param name="result">The result of the test.</param>
-            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, TcpConnectionTestResult result)
+            /// <param name="connected">If the test connection succeeded.</param>
+            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, bool connected)
             {
                 Id = id;
                 Source = source;
@@ -932,7 +931,7 @@ namespace Microsoft.PowerShell.Commands
                 TargetAddress = targetAddress;
                 Port = port;
                 Latency = latency;
-                Result = result;
+                Connected = connected;
             }
 
             /// <summary>
@@ -968,38 +967,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets or sets the result of the test.
             /// </summary>
-            public TcpConnectionTestResult Result { get; set; }
+            public bool Connected { get; set; }
 
             /// <summary>
-            /// Results of the detailed TCP connection test.
+            /// Gets or sets the state of the socket after the test.
             /// </summary>
-            public enum TcpConnectionTestResult
-            {
-                /// <summary>
-                /// Connection test has not run.
-                /// </summary>
-                None,
-
-                /// <summary>
-                /// Connection was successful.
-                /// </summary>
-                Success,
-
-                /// <summary>
-                /// Test was not able to run.
-                /// </summary>
-                Failed,
-
-                /// <summary>
-                /// Connection timed out.
-                /// </summary>
-                Timeout,
-
-                /// <summary>
-                /// Test was cancelled.
-                /// </summary>
-                Cancelled
-            }
+            public SocketError Status { get; set; }
         }
 
         /// <summary>
