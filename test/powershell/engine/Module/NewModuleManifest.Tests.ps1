@@ -24,6 +24,7 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
         $module.Name | Should -BeExactly "test"
         $module.ModuleType | Should -BeExactly "Manifest"
         $module.Version | Should -BeExactly "0.0.1"
+        $module.PrivateData.PSData.RequireLicenseAcceptance | Should -BeNullOrEmpty
     }
 
     It "Verify manifest fields 2" {
