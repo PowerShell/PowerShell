@@ -3496,4 +3496,19 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
     }
+
+    It "Web cmdlets ignore headers with null value" {
+        $query = @{
+            body        = "hello"
+            contenttype = 'text/plain'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+
+        # Core throws if a header has null value.
+        # We ignore such headers so no exception is expected.
+        { Invoke-WebRequest -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-WebRequest -Uri $uri -ContentType $null } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
+    }
 }
