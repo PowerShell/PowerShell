@@ -745,12 +745,19 @@ namespace System.Management.Automation.Remoting.Client
 
         private bool ContainsMessageGuid(ReadOnlySpan<char> data)
         {
-            // Perform quick scan for data packet for a GUID, ignoring any errors.
-            var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
-            if (iTag > -1)
+            try
             {
-                var psGuidString = data.Slice(iTag + GUIDTAG.Length);
-                return Guid.TryParse(psGuidString, out _);
+                // Perform quick scan for data packet for a GUID, ignoring any errors.
+                var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
+                if (iTag > -1)
+                {
+                    var psGuidString = data.Slice(iTag + GUIDTAG.Length);
+                    return Guid.TryParse(psGuidString, out _);
+                }
+            }
+            catch
+            {
+                // The method should never throw.
             }
 
             return false;
@@ -764,6 +771,14 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
+                if (string.IsNullOrEmpty(data))
+                {
+                    // A null/empty data string indicates a problem in the transport,
+                    // e.g., named pipe emitting a null packet because it closed or some reason.
+                    // In this case we simply ignore the packet.
+                    return;
+                }
+
                 // Route protocol message based on whether it is a session or command message.
                 // Session messages have empty Guid values.
                 if (ContainsMessageGuid(data))
