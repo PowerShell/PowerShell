@@ -58,7 +58,7 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
         $module.RequiredModules | Should -BeExactly 'PSReadline'
         $module.PrivateData.PSData.ExternalModuleDependencies | Should -BeExactly 'PSReadline'
         $module.PrivateData.PSData.Prerelease | Should -BeExactly 'prerelease'
-        $module.PrivateData.PSData.RequireLicenseAcceptance | Should -BeExactly $true
+        $module.PrivateData.PSData.RequireLicenseAcceptance | Should -BeNullOrEmpty
     }
 }
 
