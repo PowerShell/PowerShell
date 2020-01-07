@@ -10,7 +10,7 @@ Describe "Get-FormatData" -Tags "CI" {
     }
 
     # Note: Format data for [System.IO.FileInfo] (among others) is not to be
-    #       returned to remoting v5.0- remoting clients.
+    #       returned to v5.0- remoting clients.
 
     Context "Local use: Can get format data requiring v5.1+ by default" {
         BeforeAll {
@@ -21,7 +21,13 @@ Describe "Get-FormatData" -Tags "CI" {
         }
         It "Can get format data requiring v5.1+ with <cmd>" -TestCases $cmds {
             param([scriptblock] $cmd)
-            (& $cmd).TypeNames | Should -Contain 'System.IO.FileInfo'
+            $format = & $cmd
+            $format.TypeNames | Should -HaveCount 2
+            $format.TypeNames[0] | Should -BeExactly "System.IO.DirectoryInfo"
+            $format.TypeNames[1] | Should -BeExactly "System.IO.FileInfo"
+
+            $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
+            $format.FormatViewDefinition | Should -HaveCount ($isUnixStatEnabled ? 5 : 4)
         }
     }
 
