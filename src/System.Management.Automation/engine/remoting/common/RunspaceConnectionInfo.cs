@@ -1917,7 +1917,7 @@ namespace System.Management.Automation.Runspaces
             this.UserName = userName;
             this.ComputerName = computerName;
             this.KeyFilePath = keyFilePath;
-            this.Port = ReservedPort;
+            this.Port = 0;
             this.Subsystem = DefaultSubsystem;
         }
 
@@ -2064,12 +2064,15 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
-            // Local ssh process invoked as:
+            //
+            // Local ssh invoked as:
             //   windows:
             //     ssh.exe [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
             //   linux|macos:
             //     ssh [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
-            // Remote sshd process' subsystem configured for PowerShell Remoting Protocol (PSRP) over Secure Shell Protocol (SSH)
+            // where <command> is interpreted as the subsystem due to the -s flag.
+            //
+            // Remote sshd configured for PowerShell Remoting Protocol (PSRP) over Secure Shell Protocol (SSH)
             // by adding one of the following Subsystem directives to sshd_config on the remote machine:
             //   windows:
             //     Subsystem powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -SSHServerMode -NoLogo -NoProfile
@@ -2077,10 +2080,10 @@ namespace System.Management.Automation.Runspaces
             //   linux|macos:
             //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
-            // collect ssh command line arguments into an array
-            var arguments = new List<string>();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(filePath);
 
             // pass "-i identity_file" command line argument to ssh if KeyFilePath is set
+            // if KeyFilePath is not set, then ssh will use IdentityFile / IdentityAgent from ssh_config if defined else none by default
             if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
                 if (!System.IO.File.Exists(this.KeyFilePath))
@@ -2089,37 +2092,38 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
+                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
             }
 
             // pass "-l login_name" commmand line argument to ssh if UserName is set
+            // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {
                 var parts = this.UserName.Split(Utils.Separators.Backslash);
                 if (parts.Length == 2)
                 {
-                    // ? pass DOMAIN\username as username@DOMAIN (still needed?)
-                    arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", parts[1], parts[0]));
+                    // convert DOMAIN\user to user@DOMAIN
+                    var domainName = parts[0];
+                    var userName = parts[1];
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", userName, domainName));
                 }
                 else
                 {
-                    arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
                 }
             }
 
             // pass "-p port" command line argument to ssh if Port is set
-            if (this.Port != ReservedPort)
+            // if Port is not set, then ssh will use Port from ssh_config if defined else 22 by default
+            if (this.Port != 0)
             {
-                arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
             }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
-            // ? note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them (still needed?)
-            arguments.Add(string.Format(CultureInfo.InvariantCulture, @"-s {0} {1}", this.ComputerName.TrimStart('[').TrimEnd(']'), this.Subsystem));
+            // note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them if present
+            startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-s {0} {1}", this.ComputerName.TrimStart('[').TrimEnd(']'), this.Subsystem));
 
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
-                filePath,
-                string.Join(" ", arguments));
             startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
@@ -2130,11 +2134,6 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         #region Constants
-
-        /// <summary>
-        /// Reserved value for port.
-        /// </summary>
-        private const int ReservedPort = 0;
 
         /// <summary>
         /// Default value for subsystem.
@@ -2286,7 +2285,7 @@ namespace System.Management.Automation.Runspaces
             var argvList = new List<string>();
             argvList.Add(psi.FileName);
 
-            var argsToParse = psi.Arguments.Trim();
+            var argsToParse = String.Join(" ", psi.ArgumentList).Trim();
             var argsLength = argsToParse.Length;
             for (int i=0; i<argsLength; )
             {
