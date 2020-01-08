@@ -301,7 +301,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 }
 
 Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI" {
-    It "Test-Connection works after constructing a WindowsForm object" {
+    It "Test-Connection works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
         $pwsh = Join-Path $PSHOME "pwsh"
         $pingResults = & $pwsh -noprofile {
             Add-Type -AssemblyName System.Windows.Forms

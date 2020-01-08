@@ -819,10 +819,6 @@ namespace Microsoft.PowerShell.Commands
                 // The only cancellation we have implemented is on pipeline stops via StopProcessing().
                 throw new PipelineStoppedException();
             }
-            catch (Exception ex)
-            {
-                throw new PingException(ex.Message, ex);
-            }
             finally
             {
                 timer?.Stop();
