@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
-Describe 'Task-based PowerShell async APIs' -Tags 'Feature' {
+Describe 'Task-based PowerShell async APIs' -Tags 'CI' {
     BeforeAll {
         $sbStub = @'
 .foreach{
@@ -11,7 +10,7 @@ Describe 'Task-based PowerShell async APIs' -Tags 'Feature' {
         ThreadId   = [System.Threading.Thread]::CurrentThread.ManagedThreadId
         RunspaceId = [runspace]::DefaultRunspace.Id
     }
-    Start-Sleep -Milliseconds 250
+    Start-Sleep -Milliseconds 500
 }
 '@
     }

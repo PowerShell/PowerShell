@@ -663,15 +663,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    var value = Headers[key];
-
-                    // null is not valid value for header.
-                    // We silently ignore header if value is null.
-                    if (!(value is null))
-                    {
-                        // add the header value (or overwrite it if already present)
-                        WebSession.Headers[key] = value.ToString();
-                    }
+                    // add the header value (or overwrite it if already present)
+                    WebSession.Headers[key] = Headers[key].ToString();
                 }
             }
 
@@ -1267,24 +1260,21 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var entry in WebSession.ContentHeaders)
             {
-                if (!string.IsNullOrWhiteSpace(entry.Value))
+                if (SkipHeaderValidation)
                 {
-                    if (SkipHeaderValidation)
+                    request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                }
+                else
+                {
+                    try
                     {
-                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                        request.Content.Headers.Add(entry.Key, entry.Value);
                     }
-                    else
+                    catch (FormatException ex)
                     {
-                        try
-                        {
-                            request.Content.Headers.Add(entry.Key, entry.Value);
-                        }
-                        catch (FormatException ex)
-                        {
-                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                            ThrowTerminatingError(er);
-                        }
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
                     }
                 }
             }

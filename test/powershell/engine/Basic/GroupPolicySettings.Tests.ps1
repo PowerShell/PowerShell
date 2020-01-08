@@ -151,7 +151,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Set-ItemProperty -Path $KeyPath -Name EnableInvocationHeader -Value 1 -Force
 
                 $number = get-random
-                $null = & "$PSHOME/pwsh" -NoProfile -NonInteractive -c "$number"
+                $null = pwsh -NoProfile -NonInteractive -c "$number"
 
                 Remove-ItemProperty -Path $KeyPath -Name OutputDirectory -Force
                 Remove-ItemProperty -Path $KeyPath -Name EnableInvocationHeader -Force
@@ -228,7 +228,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Set-ItemProperty -Path $KeyPath -Name ConsoleSessionConfigurationName -Value $SessionName -Force
 
                 $LogPath = (New-TemporaryFile).FullName
-                & "$PSHOME/pwsh" -NoProfile -NonInteractive -c "1" *> $LogPath # this implicitly uses SessionConfiguration from the policy
+                pwsh -NoProfile -NonInteractive -c "1" *> $LogPath # this implicitly uses SessionConfiguration from the policy
 
                 # Log should have an error that has our configuration session name; e.g.:
                 # 'The shell cannot be started. A failure occurred during initialization:

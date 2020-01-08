@@ -477,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
         /// </summary>
         [Parameter]
-        public SwitchParameter RequireLicenseAcceptance { get; set; }
+        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the external module dependencies.

@@ -2363,58 +2363,18 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                if (PowerShellConfig.Instance.IsImplicitWinCompatEnabled())
+                if (importingModule)
                 {
-                    if (importingModule)
-                    {
-                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
+                    IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
 
-                        // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0)
-                        {
-                            return moduleProxies[0];
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                    // we are loading by a single ManifestPath so expect max of 1
+                    if(moduleProxies.Count > 0)
+                    {
+                        return moduleProxies[0];
                     }
-                }
-                else
-                {
-                    containedErrors = true;
-                    if (writingErrors)
+                    else
                     {
-                        message = StringUtil.Format(
-                            Modules.ImplicitWinCompatDisabled,
-                            moduleManifestPath,
-                            string.Join(',', inferredCompatiblePSEditions));
-
-                        ErrorRecord er = new ErrorRecord(
-                            new InvalidOperationException(message),
-                            nameof(Modules) + "_" + nameof(Modules.ImplicitWinCompatDisabled),
-                            ErrorCategory.ResourceUnavailable,
-                            moduleManifestPath);
-
-                        WriteError(er);
-                    }
-
-                    if (bailOnFirstError)
-                    {
-                        // If we're trying to load the module, return null so that caches
-                        // are not polluted
-                        if (importingModule)
-                        {
-                            return null;
-                        }
-
-                        // If we return null with Get-Module, a fake module info will be created. Since
-                        // we want to suppress output of the module, we need to do that here.
-                        return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
-                        {
-                            HadErrorsLoading = true,
-                            IsConsideredEditionCompatible = false,
-                        };
+                        return null;
                     }
                 }
             }
