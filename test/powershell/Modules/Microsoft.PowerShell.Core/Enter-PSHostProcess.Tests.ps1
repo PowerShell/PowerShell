@@ -9,8 +9,9 @@ function Wait-JobPid {
     )
 
     # This is to prevent hanging in the test.
+    # Some test environments (such as raspberry_pi) require more time for background job to run.
     $startTime = [DateTime]::Now
-    $TimeoutInMilliseconds = 10000
+    $TimeoutInMilliseconds = 60000
 
     # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
     do {
