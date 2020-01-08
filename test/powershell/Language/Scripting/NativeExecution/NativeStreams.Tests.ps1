@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Native streams behavior with PowerShell" -Tags 'CI' {
-    BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
-    }
+    $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
 
     Context "Error stream" {
         # we are using powershell itself as an example of a native program.
@@ -59,7 +57,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             while ($longtext.Length -lt [console]::WindowWidth) {
                 $longtext += $longtext
             }
-            & $powershell -c "& { [Console]::Error.WriteLine('$longtext') }" 2>&1 > $testdrive\error.txt
+            pwsh -c "& { [Console]::Error.WriteLine('$longtext') }" 2>&1 > $testdrive\error.txt
             $e = Get-Content -Path $testdrive\error.txt
             $e.Count | Should -Be 1
             $e | Should -BeExactly $longtext

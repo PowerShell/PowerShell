@@ -447,16 +447,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $Uri.Authority
     }
 
-    It "Invoke-WebRequest with blank ContentType succeeds" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -ContentType ''"
-
-        $result = ExecuteWebCommand -command $command
-
-        # Validate response
-        ValidateResponse -response $result
-    }
-
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get'
@@ -2005,16 +1995,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.headers.'User-Agent' | Should -MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
-    It "Invoke-RestMethod with blank ContentType succeeds" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -ContentType ''"
-
-        $result = ExecuteWebCommand -command $command
-
-        # Validate response
-        $result.Error | Should -BeNullOrEmpty
-    }
-
     It "Invoke-RestMethod returns headers dictionary" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri'"
@@ -3495,20 +3475,5 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
-    }
-
-    It "Web cmdlets ignore headers with null value" {
-        $query = @{
-            body        = "hello"
-            contenttype = 'text/plain'
-        }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-
-        # Core throws if a header has null value.
-        # We ignore such headers so no exception is expected.
-        { Invoke-WebRequest -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
-        { Invoke-WebRequest -Uri $uri -ContentType $null } | Should -Not -Throw
-        { Invoke-RestMethod -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
-        { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
     }
 }

@@ -12,17 +12,17 @@ Describe 'Tests for indexers' -Tags "CI" {
         $hashtable["Hello There"] | Should -BeNullOrEmpty
         }
 
-    It 'CimClass implements an indexer' -Skip:(-not $IsWindows)  {
+    It 'Wmi object implements an indexer' -Skip:$IsCoreCLR  {
 
-        $service = Get-CimClass -ClassName Win32_Service
+        $service = Get-WmiObject -List -Amended Win32_Service
 
-        $service.CimClassProperties["DisplayName"].Name | Should -BeExactly 'DisplayName'
+        $service.Properties["DisplayName"].Name | Should -BeExactly 'DisplayName'
     }
 
-    It 'Accessing a Indexed property of a CimClass that does not exist should return $NULL' -Skip:(-not $IsWindows) {
+    It 'Accessing a Indexed property of a wmi object that does not exist should return $NULL' -skip:$IsCoreCLR {
 
-        $service = Get-CimClass -ClassName Win32_Service
-        $service.CimClassProperties["Hello There"] | Should -BeNullOrEmpty
+        $service = Get-WmiObject -List -Amended Win32_Service
+        $service.Properties["Hello There"] | Should -BeNullOrEmpty
     }
 
     It 'ITuple implementations can be indexed' {

@@ -1,6 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
+    BeforeAll {
+        If (-not $IsCoreCLR) {
+            Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
+        }
+    }
+    AfterAll {
+        If (-not $IsCoreCLR) {
+            Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
+        }
+    }
+
     It 'New-Object - Property Parameter Must take IDictionary' {
         $a = new-object psobject -property ([ordered]@{one=1;two=2})
         $a | Should -Not -BeNullOrEmpty
@@ -34,30 +45,15 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
         It '$a should not be $null' { $script:a | Should -Not -BeNullOrEmpty }
    }
 
-    Context 'New-CimInstance cmdlet' {
-        BeforeAll {
-            If ($IsWindows) {
-                Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
-            }
-        }
-        AfterAll {
-            If ($IsWindows) {
-                Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
-            }
-        }
+    It 'Set-WmiInstance cmdlet - Argument parameter must take IDictionary' -skip:$IsCoreCLR {
 
-        It 'Property parameter must take IDictionary' -Skip:(-not $IsWindows) {
+        $script:a = $null
 
-            $script:a = $null
-
-            { $script:a = New-CimInstance -ClassName Win32_Environment -Property ([ordered]@{
-                Name="TestCimInstance";
-                VariableValue="testvalu234e";
-                UserName=[System.Environment]::UserName
-            }) -ClientOnly } | Should -Not -Throw
-            $script:a | Should -Not -BeNullOrEmpty
-            $script:a.Name | Should -BeExactly "TestCimInstance"
-        }
+        { $script:a = set-wmiinstance -class win32_environment -argument ([ordered]@{Name="TestWmiInstance";
+                        VariableValue="testvalu234e";
+                        UserName="<SYSTEM>"}) } | Should -Not -Throw
+        $script:a | Should -Not -BeNullOrEmpty
+        $script:a.Name | Should -BeExactly "TestWmiInstance"
     }
 
     Context 'Select-Object cmdlet - Property parameter (Calculated properties) must take IDictionary' {

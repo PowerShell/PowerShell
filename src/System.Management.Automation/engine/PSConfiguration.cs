@@ -49,7 +49,6 @@ namespace System.Management.Automation.Configuration
     {
         private const string ConfigFileName = "powershell.config.json";
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
-        private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
 
         // Provide a singleton
         internal static readonly PowerShellConfig Instance = new PowerShellConfig();
@@ -213,18 +212,6 @@ namespace System.Management.Automation.Configuration
                 features.Remove(featureName);
                 WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
             }
-        }
-
-        internal bool IsImplicitWinCompatEnabled()
-        {
-            bool? settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey);
-            if (!settingValue.HasValue)
-            {
-                // if the setting is not mentioned in configuration files, then the default DisableImplicitWinCompat value is False
-                settingValue = ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey, defaultValue: false);
-            }
-
-            return !settingValue.Value;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'Basic Job Tests' -Tags 'Feature' {
+Describe 'Basic Job Tests' -Tags 'CI' {
     BeforeAll {
         # Make sure we do not have any jobs running
         Get-Job | Remove-Job -Force
@@ -114,7 +114,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
         It "Create job with native command" {
             try {
-                $nativeJob = Start-job { & "$PSHOME/pwsh" -c 1+1 }
+                $nativeJob = Start-job { pwsh -c 1+1 }
                 $nativeJob | Wait-Job
                 $nativeJob.State | Should -BeExactly "Completed"
                 $nativeJob.HasMoreData | Should -BeTrue
