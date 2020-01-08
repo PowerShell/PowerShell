@@ -274,7 +274,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
         It "'Get-Module -ListAvailable' should not load the module assembly" {
             ## $fullName should be null and thus the result should just be the module's name.
-            $result = pwsh -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
+            $result = & "$PSHOME/pwsh" -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
             $result | Should -BeExactly "MyModuelTest"
         }
     }
