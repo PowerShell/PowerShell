@@ -26,6 +26,13 @@ Function Test-IsInvokeDscResourceEnable {
 }
 
 Describe "Test PSDesiredStateConfiguration" -tags CI {
+    BeforeAll {
+        $MissingLibmi = $false
+        if ((Get-PlatformInfo) -match "alpine|raspbian") {
+            $MissingLibmi = $true
+        }
+    }
+
     Context "Module loading" {
         BeforeAll {
             Function BeCommand {
@@ -213,6 +220,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because "Will only find script from PSDesiredStateConfiguration without modulename"
             }
 
+            if ($MissingLibmi) {
+                Set-ItResult -Pending -Because "Libmi not available for this platform"
+            }
+
             if ($PendingBecause) {
                 Set-ItResult -Pending -Because $PendingBecause
             }
@@ -295,6 +306,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         it "should be able to get class resource - <Name> from <ModuleName> - <TestCaseName>" -TestCases $classTestCases {
             param($Name, $ModuleName, $PendingBecause)
 
+            if ($MissingLibmi) {
+                Set-ItResult -Pending -Because "Libmi not available for this platform"
+            }
+
             if ($PendingBecause) {
                 Set-ItResult -Pending -Because $PendingBecause
             }
@@ -314,6 +329,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             param($Name, $ModuleName, $PendingBecause)
             if ($IsWindows) {
                 Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/19"
+            }
+
+            if ($MissingLibmi) {
+                Set-ItResult -Pending -Because "Libmi not available for this platform"
             }
 
             if ($PendingBecause) {
@@ -374,6 +393,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 $psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
             }
             it "Set method should work" -Skip:(!(Test-IsInvokeDscResourceEnable)) {
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 if (!$IsLinux) {
                     $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method set -Property @{
                         Name               = 'PsDscResources'
@@ -395,6 +418,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     $ExpectedResult
                 )
 
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 # using create scriptBlock because $using:<variable> doesn't work with existing Invoke-DscResource
                 # Verified in Windows PowerShell on 20190814
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
@@ -403,17 +430,29 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             }
 
             it "Test method should return false"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -Not -BeNullOrEmpty
                 $result.InDesiredState | Should -BeFalse -Because "Test method return false"
             }
 
             it "Test method should return true"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
             }
 
             it "Test method should return true with moduleSpecification"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 $module = get-module PsDscResources -ListAvailable
                 $moduleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
                 $result = Invoke-DscResource -Name Script -ModuleName $moduleSpecification -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
@@ -473,6 +512,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/17"
                 }
 
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+
                 {
                     Invoke-DscResource -Name santoheusnaasonteuhsantoheu -Method Test -Property @{TestScript = { Write-Host 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } } -ErrorAction Stop
                 } |
@@ -525,6 +568,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     $value,
                     $ExpectedResult
                 )
+
+                if ($MissingLibmi) {
+                    Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
 
                 $testString = '890574209347509120348'
                 $result = Invoke-DscResource -Name XmlFileContentResource -ModuleName XmlContentDsc -Property @{Path = $resolvedXmlPath; XPath = '/configuration/appSetting/Test1'; Ensure = 'Present'; Attributes = @{ TestValue2 = $testString; Name = $testString } } -Method Set
