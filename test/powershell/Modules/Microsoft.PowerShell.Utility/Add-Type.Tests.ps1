@@ -85,7 +85,7 @@ public class SMAAttributeTest$guid : PSCmdlet
 
     It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
         $returnedTypes = Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru
-        $returnedTypes.Count | Should BeGreaterThan 0
+        $returnedTypes.Count | Should -BeGreaterThan 0
         ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should -BeExactly 'System.Runtime.Serialization.Primitives'
     }
 
