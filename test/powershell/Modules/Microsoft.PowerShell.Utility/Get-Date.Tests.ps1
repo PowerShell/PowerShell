@@ -7,7 +7,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $result = Get-Date -Date $date -Year 1973 -Month 2 -Day 22 -Hour 15 -Minute 40 -Second 10 -Millisecond 200
         $result | Should -BeOfType Datetime
         $result.Year | Should -Be 1973
-        $result.Month| Should -Be 2
+        $result.Month | Should -Be 2
         $result.Day | Should -Be 22
         $result.Hour | Should -Be 15
         $result.Minute | Should -Be 40

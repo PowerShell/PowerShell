@@ -535,9 +535,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 $result.Ensure | Should -Be 'Present'
                 $result.Name | Should -be 'PsDscResources'
                 $result.Description | Should -BeLike 'This*DSC*'
-                $result.InstalledVersion | should -BeOfType [Version]
+                $result.InstalledVersion | Should -BeOfType [Version]
                 $result.ModuleBase | Should -BeLike '*PSDscResources*'
-                $result.Repository | should -BeOfType [string]
+                $result.Repository | Should -BeOfType [string]
                 $result.ModuleType | Should -Be 'Manifest'
             }
         }

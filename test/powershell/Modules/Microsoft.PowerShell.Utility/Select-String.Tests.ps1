@@ -171,7 +171,7 @@ Describe "Select-String" -Tags "CI" {
         It "Should return all strings where 'second' is found in testfile1 if there is only one lines that has a match" {
             $expected = $testInputFile + ":2:This is the second line"
 
-            Select-String $testInputFile  -Pattern "second"| Should -BeExactly $expected
+            Select-String $testInputFile  -Pattern "second" | Should -BeExactly $expected
         }
 
         It "Should return all strings where 'in' is found in testfile1 pattern switch is not required" {
@@ -202,7 +202,7 @@ Describe "Select-String" -Tags "CI" {
         }
 
         It "Should return the number of matches for 'is' in textfile1 " {
-            (Select-String is $testInputFile -CaseSensitive).count| Should -Be 4
+            (Select-String is $testInputFile -CaseSensitive).count | Should -Be 4
         }
 
         It "Should return the third line in testfile1 when a relative path is used" {

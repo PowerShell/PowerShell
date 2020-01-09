@@ -105,6 +105,6 @@ Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
         param ($cmdline, $cmd)
 
         $scriptBlock = [scriptblock]::Create($cmdline)
-        $scriptBlock | should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
+        $scriptBlock | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }
 }

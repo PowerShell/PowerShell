@@ -1913,7 +1913,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $response.Images | out-null
             }
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             # pathological regex
             $regex = [RegEx]::new('<img\s+[^>]*>')
@@ -1944,7 +1944,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Pathological regex
             $regex = [RegEx]::new('<meta\s[.\n]*[^><]*charset\s*=\s*["''\n]?(?<charset>[A-Za-z].[^\s"''\n<>]*)[\s"''\n>]')
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             [TimeSpan] $pathologicalTimeSpan = Measure-Command {
                 $regex.Match($content)

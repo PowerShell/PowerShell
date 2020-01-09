@@ -379,7 +379,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-fooe| Should -Be 55
+            get-fooe | Should -Be 55
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
@@ -390,7 +390,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-foof| Should -Be 55
+            get-foof | Should -Be 55
         }
 
         It "Validation attributes should not run on default values" {

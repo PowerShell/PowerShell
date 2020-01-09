@@ -109,14 +109,14 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Select-Object @{ ' -cursorColumn 'Get-ChildItem | Select-Object @{ '.Length
         $res.CompletionMatches | Should -HaveCount 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should -BeExactly 'Expression Name'
+        $completionText -join ' ' | Should -BeExactly 'Expression Name'
     }
 
     It 'Should complete Sort-Object hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Sort-Object @{ ' -cursorColumn 'Get-ChildItem | Sort-Object @{ '.Length
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should -BeExactly 'Ascending Descending Expression'
+        $completionText -join ' ' | Should -BeExactly 'Ascending Descending Expression'
     }
 
     It 'Should complete New-Object hashtable' {
@@ -375,7 +375,7 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'Export-Counter -FileFormat ' -cursorColumn 'Export-Counter -FileFormat '.Length
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should -BeExactly 'blg csv tsv'
+        $completionText -join ' ' | Should -BeExactly 'blg csv tsv'
     }
 
     Context "Script name completion" {
