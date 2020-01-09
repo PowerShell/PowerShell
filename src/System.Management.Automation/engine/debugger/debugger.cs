@@ -4160,7 +4160,24 @@ namespace System.Management.Automation
             // because 'ToStringParser' would iterate through the enumerator to get the individual elements, which will
             // make irreversible changes to the enumerator.
             bool isValueAnIEnumerator = PSObject.Base(value) is IEnumerator;
-            string valAsString = isValueAnIEnumerator ? typeof(IEnumerator).Name : PSObject.ToStringParser(_context, value);
+            string valAsString = string.Empty;
+            if (isValueAnIEnumerator)
+            {
+                valAsString = typeof(IEnumerator).Name;
+            }
+            else
+            {
+                try
+                {
+                    valAsString = PSObject.ToStringParser(_context, value);
+                }
+                catch
+                {
+                    // ToStringParser() can throw if the value is already disposed.
+                    valAsString = "null";
+                }
+            }
+
             int msgLength = 60 - varName.Length;
 
             if (valAsString.Length > msgLength)
