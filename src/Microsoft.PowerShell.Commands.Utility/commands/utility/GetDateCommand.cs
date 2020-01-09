@@ -490,12 +490,6 @@ namespace Microsoft.PowerShell.Commands
                                 case DayOfWeek.Wednesday:
                                     normalizedDatetime = dateTime.AddDays(3);
                                     break;
-
-                                case DayOfWeek.Friday:
-                                case DayOfWeek.Saturday:
-                                case DayOfWeek.Sunday:
-                                    normalizedDatetime = dateTime.AddDays(-3);
-                                    break;
                             }
 
                             // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
