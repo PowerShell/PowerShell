@@ -59,7 +59,7 @@ Describe "Add-Type" -Tags "CI" {
         # In subsequent launches from the same session
         # the test will be passed without real compile - it will return an assembly previously compiled.
         { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should -Not Throw
-        [CSharpfooType].Name | Should BeExactly "CSharpfooType"
+        [CSharpfooType].Name | Should -BeExactly "CSharpfooType"
     }
 
     It "Can use System.Management.Automation.CmdletAttribute" {
@@ -78,7 +78,7 @@ public class SMAAttributeTest$guid : PSCmdlet
         $cls = Add-Type -TypeDefinition $code -PassThru | Select-Object -First 1
         $testModule = Import-Module $cls.Assembly -PassThru
 
-        Invoke-Expression -Command "Get-Thing$guid" | Should BeExactly $guid
+        Invoke-Expression -Command "Get-Thing$guid" | Should -BeExactly $guid
 
         Remove-Module $testModule -ErrorAction SilentlyContinue -Force
     }
@@ -86,7 +86,7 @@ public class SMAAttributeTest$guid : PSCmdlet
     It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
         $returnedTypes = Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru
         $returnedTypes.Count | Should BeGreaterThan 0
-        ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should BeExactly 'System.Runtime.Serialization.Primitives'
+        ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should -BeExactly 'System.Runtime.Serialization.Primitives'
     }
 
     It "Can compile <sourceLanguage> files" -TestCases @(
@@ -116,7 +116,7 @@ public class SMAAttributeTest$guid : PSCmdlet
         # Return the same assembly if source code has not been changed.
         # Also check that '-LiteralPath' works.
         $returnedTypes2 = Add-Type -LiteralPath $file1,$file2 -PassThru
-        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+        $returnedTypes[0].Assembly.FullName | Should -BeExactly $returnedTypes2[0].Assembly.FullName
     }
 
     It "Can compile <sourceLanguage> with MemberDefinition" -TestCases @(
@@ -140,15 +140,15 @@ public class SMAAttributeTest$guid : PSCmdlet
         { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         $returnedTypes = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
-        ([type]$sourceRunType)::TestString() | Should BeExactly $expectedResult
+        ([type]$sourceRunType)::TestString() | Should -BeExactly $expectedResult
 
         # Return the same assembly if source code has not been changed.
         $returnedTypes2 = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
-        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+        $returnedTypes[0].Assembly.FullName | Should -BeExactly $returnedTypes2[0].Assembly.FullName
 
         # With default namespace.
         Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Language $sourceLanguage
-        ([type]$sourceDefaultNSRunType)::TestString() | Should BeExactly $expectedResult
+        ([type]$sourceDefaultNSRunType)::TestString() | Should -BeExactly $expectedResult
     }
 
     It "Can compile without loading" {
@@ -189,7 +189,7 @@ public class AttributeTest$guid : PSCmdlet
         { Invoke-Expression -Command $cmdlet } | Should Throw
 
         $testModule = Import-Module -Name $outFile -PassThru
-        & $cmdlet | Should BeExactly $guid
+        & $cmdlet | Should -BeExactly $guid
 
         Remove-Module $testModule -Force
     }
