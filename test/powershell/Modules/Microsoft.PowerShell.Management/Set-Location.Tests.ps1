@@ -171,7 +171,7 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location -
             }
-            (Get-Location).Path | Should Be $initialLocation
+            (Get-Location).Path | Should -Be $initialLocation
             { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
             # Go forwards up to the maximum
             foreach ($i in 1..($maximumLocationHistory)) {

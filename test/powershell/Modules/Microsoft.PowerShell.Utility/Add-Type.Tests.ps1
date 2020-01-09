@@ -110,8 +110,8 @@ public class SMAAttributeTest$guid : PSCmdlet
         $type2 = Invoke-Expression -Command $type2
 
         # We can compile, load and use new code.
-        $type1::Add1(1, 2) | Should Be 3
-        $type2::Add2(3, 4) | Should Be 7
+        $type1::Add1(1, 2) | Should -Be 3
+        $type2::Add2(3, 4) | Should -Be 7
 
         # Return the same assembly if source code has not been changed.
         # Also check that '-LiteralPath' works.

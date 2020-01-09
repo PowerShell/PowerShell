@@ -532,10 +532,10 @@ ZoneId=$FileType
 
         Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
             It "'Microsoft.PowerShell.Archive' should have a signature" {
-                $script:archiveAllCert | Should -Not be null
+                $script:archiveAllCert | Should -Not -Be null
             }
             It "'Microsoft.PowerShell.Archive' should have a valid signature" {
-                $script:archiveCert | Should -Not be null
+                $script:archiveCert | Should -Not -Be null
             }
         }
 

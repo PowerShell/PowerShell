@@ -159,8 +159,8 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 $LogPath = (gci -Path $OutputDirectory -Filter "PowerShell_transcript*.txt" -Recurse).FullName
                 $Log = Get-Content $LogPath -Raw
 
-                $Log.Contains("$number") | Should be $True # verifies that Transcription policy works
-                $Log.Contains("Command start time:") | Should be $True # verifies that EnableInvocationHeader works
+                $Log.Contains("$number") | Should -Be $True # verifies that Transcription policy works
+                $Log.Contains("Command start time:") | Should -Be $True # verifies that EnableInvocationHeader works
 
                 Remove-Item -Path $OutputDirectory -Recurse -Force
             }
@@ -235,7 +235,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 # Cannot create or open the configuration session 116337267.'
 
                 $Log = Get-Content $LogPath -Raw
-                $Log.Contains("$SessionName") | Should be $True
+                $Log.Contains("$SessionName") | Should -Be $True
                 Remove-Item -Path $LogPath -Force
             }
 

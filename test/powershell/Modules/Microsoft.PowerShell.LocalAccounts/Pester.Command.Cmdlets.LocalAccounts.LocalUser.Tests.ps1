@@ -35,7 +35,7 @@ function VerifyFailingTest
         throw "Expected error: $expectedFqeid"
     }
     catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
+        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
     }
     finally {
         $script:ErrorActionPreference = $backupEAP
@@ -53,13 +53,13 @@ try {
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
-            $result -contains "New-LocalUser" | Should Be $true
-            $result -contains "Set-LocalUser" | Should Be $true
-            $result -contains "Get-LocalUser" | Should Be $true
-            $result -contains "Rename-LocalUser" | Should Be $true
-            $result -contains "Remove-LocalUser" | Should Be $true
-            $result -contains "Enable-LocalUser" | Should Be $true
-            $result -contains "Disable-LocalUser" | Should Be $true
+            $result -contains "New-LocalUser" | Should -Be $true
+            $result -contains "Set-LocalUser" | Should -Be $true
+            $result -contains "Get-LocalUser" | Should -Be $true
+            $result -contains "Rename-LocalUser" | Should -Be $true
+            $result -contains "Remove-LocalUser" | Should -Be $true
+            $result -contains "Enable-LocalUser" | Should -Be $true
+            $result -contains "Disable-LocalUser" | Should -Be $true
         }
     }
 
@@ -68,21 +68,21 @@ try {
         It "Test command presence" {
             $result = get-alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
 
-            $result.Name -contains "algm" | Should Be $true
-            $result.Name -contains "dlu" | Should Be $true
-            $result.Name -contains "elu" | Should Be $true
-            $result.Name -contains "glg" | Should Be $true
-            $result.Name -contains "glgm" | Should Be $true
-            $result.Name -contains "glu" | Should Be $true
-            $result.Name -contains "nlg" | Should Be $true
-            $result.Name -contains "nlu" | Should Be $true
-            $result.Name -contains "rlg" | Should Be $true
-            $result.Name -contains "rlgm" | Should Be $true
-            $result.Name -contains "rlu" | Should Be $true
-            $result.Name -contains "rnlg" | Should Be $true
-            $result.Name -contains "rnlu" | Should Be $true
-            $result.Name -contains "slg" | Should Be $true
-            $result.Name -contains "slu" | Should Be $true
+            $result.Name -contains "algm" | Should -Be $true
+            $result.Name -contains "dlu" | Should -Be $true
+            $result.Name -contains "elu" | Should -Be $true
+            $result.Name -contains "glg" | Should -Be $true
+            $result.Name -contains "glgm" | Should -Be $true
+            $result.Name -contains "glu" | Should -Be $true
+            $result.Name -contains "nlg" | Should -Be $true
+            $result.Name -contains "nlu" | Should -Be $true
+            $result.Name -contains "rlg" | Should -Be $true
+            $result.Name -contains "rlgm" | Should -Be $true
+            $result.Name -contains "rlu" | Should -Be $true
+            $result.Name -contains "rnlg" | Should -Be $true
+            $result.Name -contains "rnlu" | Should -Be $true
+            $result.Name -contains "slg" | Should -Be $true
+            $result.Name -contains "slu" | Should -Be $true
         }
     }
 
@@ -99,9 +99,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
     }
 
@@ -120,9 +120,9 @@ try {
 
             $result.Name | Should BeExactly $userName
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Errors on Name argument of empty string or null" {
@@ -161,7 +161,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be $true
+            $failedCharacters.Count -eq 0 | Should -Be $true
         }
 
         It "Errors on names containing only spaces or periods" {
@@ -214,10 +214,10 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.ObjectClass | Should -Be User
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Can set AccountExpires to the past" {
@@ -226,10 +226,10 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.ObjectClass | Should -Be User
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Errors on AccountExpires being set to invalid date" {
@@ -245,9 +245,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
             $result.AccountExpires | Should BeNullOrEmpty
         }
 
@@ -263,9 +263,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeExactly ""
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Can set with description at max 48" {
@@ -273,9 +273,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeExactly ("A"*48)
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Can set with description over max 48" {
@@ -289,9 +289,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Can set enabled to false" {
@@ -299,9 +299,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Can set empty string for FullName" {
@@ -309,9 +309,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
             $result.FullName | Should BeNullOrEmpty
         }
 
@@ -320,9 +320,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
             $result.FullName | Should BeExactly ("A"*256)
         }
 
@@ -338,9 +338,9 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Errors when Password over max 257" {
@@ -366,10 +366,10 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.UserMayChangePassword | Should Be $false
+            $result.ObjectClass | Should -Be User
+            $result.UserMayChangePassword | Should -Be $false
         }
 
         It "Can set PasswordNeverExpires to create a user with null for PasswordExpires date" {
@@ -392,10 +392,10 @@ try {
 
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.UserMayChangePassword | Should Be $true
+            $result.ObjectClass | Should -Be User
+            $result.UserMayChangePassword | Should -Be $true
         }
     }
 
@@ -417,9 +417,9 @@ try {
         It "Can Get-LocalUser by only name" {
             $result = Get-LocalUser TestUserGet1
 
-            $result.Name | Should Be "TestUserGet1"
-            $result.Description | Should Be "Test User Get 1 Description"
-            $result.ObjectClass | Should Be "User"
+            $result.Name | Should -Be "TestUserGet1"
+            $result.Description | Should -Be "Test User Get 1 Description"
+            $result.ObjectClass | Should -Be "User"
         }
     }
 
@@ -441,7 +441,7 @@ try {
         It "Get-LocalUser gets all users"  {
             $result = Get-LocalUser
 
-            $result.Count -gt 2 | Should Be $true
+            $result.Count -gt 2 | Should -Be $true
         }
 
         It "Can get a specific user by SID" {
@@ -449,30 +449,30 @@ try {
             $resultBySID = Get-LocalUser -SID $result.SID
 
             $resultBySID.SID | Should -Not BeNullOrEmpty
-            $resultBySID.Name | Should Be TestUserGet1
+            $resultBySID.Name | Should -Be TestUserGet1
         }
 
         It "Can get a well-known user by SID string" {
             $sid = New-Object System.Security.Principal.SecurityIdentifier -ArgumentList LG
             $guestUser = Get-LocalUser -SID LG
 
-            $guestUser.SID | Should Be $sid.Value
+            $guestUser.SID | Should -Be $sid.Value
         }
 
         It "Can get users by wildcard" {
             $result = Get-LocalUser TestUserGet*
 
-            $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Count -eq 2 | Should -Be $true
+            $result.Name -contains "TestUserGet1" | Should -Be $true
+            $result.Name -contains "TestUserGet2" | Should -Be $true
         }
 
         It "Can get a user by array of names" {
             $result = Get-LocalUser @("TestUserGet1", "TestUserGet2")
 
-            $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Count -eq 2 | Should -Be $true
+            $result.Name -contains "TestUserGet1" | Should -Be $true
+            $result.Name -contains "TestUserGet2" | Should -Be $true
         }
 
         It "Can get a user by array of SIDs" {
@@ -480,9 +480,9 @@ try {
             $sid2 = (Get-LocalUser TestUserGet2).SID
             $result = Get-LocalUser -SID @($sid1, $sid2)
 
-            $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Count -eq 2 | Should -Be $true
+            $result.Name -contains "TestUserGet1" | Should -Be $true
+            $result.Name -contains "TestUserGet2" | Should -Be $true
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -492,9 +492,9 @@ try {
             Catch {
                 # Ignore the execption
             }
-            $outErr.Count -eq 1 | Should Be $true
-            $outErr[0].ErrorRecord.CategoryInfo.Reason -match "UserNotFound" | Should Be $true
-            $outOut.Name -match "TestUserGet1" | Should Be $true
+            $outErr.Count -eq 1 | Should -Be $true
+            $outErr[0].ErrorRecord.CategoryInfo.Reason -match "UserNotFound" | Should -Be $true
+            $outOut.Name -match "TestUserGet1" | Should -Be $true
         }
 
         It "Error on Name not being supplied an argument" {
@@ -539,7 +539,7 @@ try {
             $localUserName = 'TestUserGetNameThatDoesntExist'
             $result = Get-LocalGroup $localUserName*
 
-            $result | Should Be $null
+            $result | Should -Be $null
         }
 
         It "Returns the correct property values of a user" {
@@ -557,14 +557,14 @@ try {
             $result = New-LocalUser TestUserGet3 -NoPassword -AccountExpires $AccountExpires -Description $Description -Disabled -FullName $FullName -UserMayNotChangePassword
 
             $result.Name | Should BeExactly $Name
-            $result.AccountExpires | Should Be ([DateTime]$AccountExpires)
+            $result.AccountExpires | Should -Be ([DateTime]$AccountExpires)
             $result.Description | Should BeExactly $Description
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
             $result.FullName | Should BeExactly $FullName
-            $result.ObjectClass -eq "User" | Should be true
-            $result.UserMayChangePassword | Should Be $false
+            $result.ObjectClass -eq "User" | Should -Be true
+            $result.UserMayChangePassword | Should -Be $false
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
     }
 
@@ -663,10 +663,10 @@ try {
 
             $result.Name | Should BeExactly TestUserSet1
             $result.Description | Should BeExactly "Test User Set 1 Description"
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.ObjectClass | Should -Be User
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Can set AccountExpires to the past" {
@@ -676,10 +676,10 @@ try {
 
             $result.Name | Should BeExactly TestUserSet1
             $result.Description | Should BeExactly "Test User Set 1 Description"
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.ObjectClass | Should -Be User
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Errors on AccountExpires being set to invalid date" {
@@ -727,7 +727,7 @@ try {
             $result.Name | Should BeExactly TestUserSet1
             $result.Description | Should BeExactly ("A"*48)
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Can set empty string for FullName" {
@@ -744,7 +744,7 @@ try {
             $result.Name | Should BeExactly TestUserSet1
             $result.FullName | Should BeExactly ("A"*256)
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Errors when Password is an empty string" {
@@ -766,9 +766,9 @@ try {
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should BeExactly TestUserSet1
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -Be User
         }
 
         It "Errors when Password over max 257" {
@@ -804,8 +804,8 @@ try {
 
             $result.Name | Should BeExactly TestUserSet1
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.UserMayChangePassword | Should Be $true
+            $result.ObjectClass | Should -Be User
+            $result.UserMayChangePassword | Should -Be $true
         }
 
         It "Can set UserMayChangePassword to false" {
@@ -814,8 +814,8 @@ try {
 
             $result.Name | Should BeExactly TestUserSet1
             $result.SID | Should -Not BeNullOrEmpty
-            $result.ObjectClass | Should Be User
-            $result.UserMayChangePassword | Should Be $false
+            $result.ObjectClass | Should -Be User
+            $result.UserMayChangePassword | Should -Be $false
         }
     }
 
@@ -958,7 +958,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be $true
+            $failedCharacters.Count -eq 0 | Should -Be $true
         }
 
         It "Errors on names containing only spaces or periods" {
@@ -1024,7 +1024,7 @@ try {
 
         It "Can Remove-LocalUser with only name" {
             $initialCount = (Get-LocalUser).Count
-            $initialCount -gt 1 | Should Be $true
+            $initialCount -gt 1 | Should -Be $true
 
             $removeResult = Remove-LocalUser TestUserRemove1 2>&1
             $removeResult | Should BeNullOrEmpty
@@ -1035,7 +1035,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount + 1 | Should Be $true
+            $initialCount -eq $finalCount + 1 | Should -Be $true
         }
     }
 
@@ -1051,7 +1051,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalUser).Count
-                    $initialCount -gt 1 | Should Be true
+                    $initialCount -gt 1 | Should -Be true
 
                     & $removalAction
 
@@ -1061,7 +1061,7 @@ try {
                     VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
                     $finalCount = (Get-LocalUser).Count
-                    $initialCount -eq $finalCount + 1 | Should Be true
+                    $initialCount -eq $finalCount + 1 | Should -Be true
                 }
 
                 function VerifyArrayRemoval {
@@ -1069,7 +1069,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalUser).Count
-                    $initialCount -gt 1 | Should Be true
+                    $initialCount -gt 1 | Should -Be true
 
                     & $removalAction
 
@@ -1084,7 +1084,7 @@ try {
                     VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
                     $finalCount = (Get-LocalUser).Count
-                    $initialCount -eq $finalCount + 2 | Should Be $true
+                    $initialCount -eq $finalCount + 2 | Should -Be $true
                 }
             }
         }
@@ -1172,7 +1172,7 @@ try {
 
         It "Errors on remove by invalid name" {
             $initialCount =  (Get-LocalUser).Count
-            $initialCount -gt 1 | Should Be $true
+            $initialCount -gt 1 | Should -Be $true
 
             $sb = {
                 Remove-LocalUser TestUserRemove1NameThatDoesntExist
@@ -1180,14 +1180,14 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount | Should Be $true
+            $initialCount -eq $finalCount | Should -Be $true
         }
 
         It "Errors on remove by invalid SID" {
             Remove-LocalUser -SID $user1SID
             # This test verifies that it cannot be removed a second time
             $initialCount =  (Get-LocalUser).Count
-            $initialCount -gt 1 | Should Be $true
+            $initialCount -gt 1 | Should -Be $true
 
             $sb = {
                 Remove-LocalUser -SID $user1SID
@@ -1195,7 +1195,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount | Should Be $true
+            $initialCount -eq $finalCount | Should -Be $true
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -1205,11 +1205,11 @@ try {
             catch {
                 # Nothing to do here
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
+            $outError.Count | Should -Be 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -Be "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserGet1 2>&1
-            $getResult.FullyQualifiedErrorId -match "UserNotFound" | Should Be $true
+            $getResult.FullyQualifiedErrorId -match "UserNotFound" | Should -Be $true
         }
     }
 
@@ -1239,7 +1239,7 @@ try {
             Enable-LocalUser TestUserDisabled1
             $result = Get-LocalUser TestUserDisabled1
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
     }
 
@@ -1279,7 +1279,7 @@ try {
             Enable-LocalUser -SID $disabledUser1SID
             $result = Get-LocalUser -SID $disabledUser1SID
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user using -InputObject" {
@@ -1287,43 +1287,43 @@ try {
             Enable-LocalUser -InputObject $user
             $result = Get-LocalUser TestUserDisabled1
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user using pipeline" {
             Get-LocalUser TestUserDisabled1 | Enable-LocalUser
             $result = Get-LocalUser TestUserDisabled1
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user by array of names" {
             Enable-LocalUser @("TestUserDisabled1", "TestUserDisabled2")
 
-            (Get-LocalUser "TestUserDisabled1").Enabled | Should Be $true
-            (Get-LocalUser "TestUserDisabled2").Enabled | Should Be $true
+            (Get-LocalUser "TestUserDisabled1").Enabled | Should -Be $true
+            (Get-LocalUser "TestUserDisabled2").Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user by array of SIDs" {
             Enable-LocalUser -SID @($disabledUser1SID, $disabledUser2SID)
 
-            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should Be $true
-            (Get-LocalUser -SID $disabledUser2SID).Enabled | Should Be $true
+            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should -Be $true
+            (Get-LocalUser -SID $disabledUser2SID).Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user by array sent using -InputObject" {
             $users = @((Get-LocalUser "TestUserDisabled1"), (Get-LocalUser "TestUserDisabled2"))
             Enable-LocalUser -InputObject $users
 
-            (Get-LocalUser "TestUserDisabled1").Enabled | Should Be $true
-            (Get-LocalUser "TestUserDisabled2").Enabled | Should Be $true
+            (Get-LocalUser "TestUserDisabled1").Enabled | Should -Be $true
+            (Get-LocalUser "TestUserDisabled2").Enabled | Should -Be $true
         }
 
         It "Can enable a disabled user by array sent using pipeline" {
             @((Get-LocalUser "TestUserDisabled1"), (Get-LocalUser "TestUserDisabled2")) | Enable-LocalUser
 
-            (Get-LocalUser "TestUserDisabled1").Enabled | Should Be $true
-            (Get-LocalUser "TestUserDisabled2").Enabled | Should Be $true
+            (Get-LocalUser "TestUserDisabled1").Enabled | Should -Be $true
+            (Get-LocalUser "TestUserDisabled2").Enabled | Should -Be $true
         }
 
         It "Errors on no name or SID specified" {
@@ -1337,21 +1337,21 @@ try {
             Enable-LocalUser TestUserEnabled1
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Can enable an already enabled user by SID" {
             Enable-LocalUser -SID $enabledUser1SID
             $result = Get-LocalUser -SID $enabledUser1SID
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Can enable an already enabled user using the pipeline" {
             Get-LocalUser TestUserEnabled1 | Enable-LocalUser
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should Be $true
+            $result.Enabled | Should -Be $true
         }
 
         It "Errors on enabling an invalid user by name" {
@@ -1376,11 +1376,11 @@ try {
             Catch {
                 # do nothing
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.EnableLocalUserCommand"
+            $outError.Count | Should -Be 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -Be "UserNotFound,Microsoft.PowerShell.Commands.EnableLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserDisabled1 2>&1
-            $getResult.Enabled | Should Be $true
+            $getResult.Enabled | Should -Be $true
         }
     }
 
@@ -1410,7 +1410,7 @@ try {
             Disable-LocalUser TestUserEnabled1
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
         }
     }
 
@@ -1450,7 +1450,7 @@ try {
             Disable-LocalUser -SID $enabledUser1SID
             $result = Get-LocalUser -SID $enabledUser1SID
 
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user using -InputObject" {
@@ -1458,43 +1458,43 @@ try {
             Disable-LocalUser -InputObject $user
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user using pipeline" {
             Get-LocalUser TestUserEnabled1 | Disable-LocalUser
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should Be $false
+            $result.Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user by array of names" {
             Disable-LocalUser @("TestUserEnabled1", "TestUserEnabled2")
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user by array of SIDs" {
             Disable-LocalUser -SID @($enabledUser1SID, $enabledUser2SID)
 
-            (Get-LocalUser -SID $enabledUser1SID).Enabled | Should Be $false
-            (Get-LocalUser -SID $enabledUser2SID).Enabled | Should Be $false
+            (Get-LocalUser -SID $enabledUser1SID).Enabled | Should -Be $false
+            (Get-LocalUser -SID $enabledUser2SID).Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user by array sent using pipeline" {
             $users = @((Get-LocalUser "TestUserEnabled1"), (Get-LocalUser "TestUserEnabled2"))
             Disable-LocalUser -InputObject $users
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
         }
 
         It "Can disable an enabled user by array sent using pipeline" {
             @((Get-LocalUser "TestUserEnabled1"), (Get-LocalUser "TestUserEnabled2")) | Disable-LocalUser
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
         }
 
         It "Errors on no name or SID specified" {
@@ -1507,19 +1507,19 @@ try {
         It "Can disable an already disabled user by name" {
             Disable-LocalUser TestUserDisabled1
 
-            (Get-LocalUser TestUserDisabled1).Enabled | Should Be $false
+            (Get-LocalUser TestUserDisabled1).Enabled | Should -Be $false
         }
 
         It "Can disable an already disabled user by SID" {
             Disable-LocalUser -SID $disabledUser1SID
 
-            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should Be $false
+            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should -Be $false
         }
 
         It "Can disable an already disabled user using the pipeline" {
             Get-LocalUser TestUserDisabled1 | Disable-LocalUser
 
-            (Get-LocalUser TestUserDisabled1).Enabled | Should Be $false
+            (Get-LocalUser TestUserDisabled1).Enabled | Should -Be $false
         }
 
         It "Errors on disabling an invalid user by name" {
@@ -1544,11 +1544,11 @@ try {
             Catch {
                 # Do nothing here
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.DisableLocalUserCommand"
+            $outError.Count | Should -Be 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -Be "UserNotFound,Microsoft.PowerShell.Commands.DisableLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserEnabled1 2>&1
-            $getResult.Enabled | Should Be $false
+            $getResult.Enabled | Should -Be $false
         }
     }
 }

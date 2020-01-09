@@ -273,7 +273,7 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
 
     It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
-        $help.count | Should Be 1
+        $help.count | Should -Be 1
     }
 }
 
