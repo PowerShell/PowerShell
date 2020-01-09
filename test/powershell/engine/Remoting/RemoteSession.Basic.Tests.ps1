@@ -5,8 +5,9 @@ Import-Module HelpersCommon
 
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian")) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 
@@ -17,8 +18,9 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian")) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 
@@ -33,8 +35,9 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     }
 
     It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian") ) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 

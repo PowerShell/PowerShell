@@ -420,7 +420,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
         }
 
         It 'ActionPreference.Break should break in a running job' {
-            Wait-UntilTrue -sb { $job.State -eq 'AtBreakpoint' } -TimeoutInMilliseconds (10 * 1000) -IntervalInMilliseconds 100 | Should -BeTrue
+            Wait-UntilTrue -sb { $job.State -eq 'AtBreakpoint' } -TimeoutInMilliseconds (60 * 1000) -IntervalInMilliseconds 100 | Should -BeTrue
         }
     }
 }
