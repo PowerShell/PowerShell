@@ -179,7 +179,7 @@ namespace PowerShell.Hosting.SDK.Tests
         [Fact]
         public static void TestConsoleShellScenario()
         {
-            int ret = ConsoleShell.Start("Hello", "", new string[] { "-noprofile", "-c", "exit 42" });
+            int ret = ConsoleShell.Start("Hello", string.Empty, new string[] { "-noprofile", "-c", "exit 42" });
             Assert.Equal(42, ret);
         }
     }
