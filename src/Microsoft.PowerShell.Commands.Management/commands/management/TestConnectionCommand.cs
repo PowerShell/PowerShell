@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, cancellationToken))
                     {
-                        testResult.Connected = true;
+                        testResult.Connected = client.Connected;
                         testResult.Latency = stopwatch.ElapsedMilliseconds;
                     }
                     else
