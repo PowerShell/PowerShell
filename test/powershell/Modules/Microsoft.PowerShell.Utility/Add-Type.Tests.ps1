@@ -58,7 +58,7 @@ Describe "Add-Type" -Tags "CI" {
         # Also we check that '-Language CSharp' is by default.
         # In subsequent launches from the same session
         # the test will be passed without real compile - it will return an assembly previously compiled.
-        { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should Not Throw
+        { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should -Not Throw
         [CSharpfooType].Name | Should BeExactly "CSharpfooType"
     }
 

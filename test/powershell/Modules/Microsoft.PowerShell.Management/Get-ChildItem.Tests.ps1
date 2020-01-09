@@ -171,7 +171,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
             $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
-            $file | Should not be $null
+            $file | Should -Not be $null
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
