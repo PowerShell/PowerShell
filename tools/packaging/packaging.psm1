@@ -2881,7 +2881,7 @@ function New-MSIXPackage
 
     $displayName = $productName
 
-    if ($packageName.Contains('preview')) {
+    if ($packageName.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }
@@ -2899,7 +2899,13 @@ function New-MSIXPackage
     # For stable versions, the last digit is already zero so no changes
     $pversion = [version]$ProductVersion
     if ($pversion.Revision -ne 0) {
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
         $ProductVersion = $pversion.ToString()
     }
 
