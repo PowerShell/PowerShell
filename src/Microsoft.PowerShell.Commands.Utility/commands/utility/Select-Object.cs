@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (obj != AutomationNull.Value)
                 {
-                    SetPSCustomObject(obj, addedNoteProperties.Count > 0);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     WriteObject(obj);
                 }
 
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isObjUnique)
                 {
-                    SetPSCustomObject(obj, addedNoteProperties.Count > 0);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     _uniques.Add(new UniquePSObjectHelper(obj, addedNoteProperties.Count));
                 }
             }
