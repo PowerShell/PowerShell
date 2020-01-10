@@ -120,9 +120,9 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 $sbString = $script:CreatingScriptblockEvent.Message.Substring($sbStringStart, $sbStringEnd - $sbStringStart)
 
                 $StartedScriptBlockInvocationEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4105 } -MaxEvents 5 | ? {$_.Message.Contains($sbString)}
-                $StartedScriptBlockInvocationEvent | Should -Not BeNullOrEmpty
+                $StartedScriptBlockInvocationEvent | Should -Not -BeNullOrEmpty
                 $CompletedScriptBlockInvocationEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4106 } -MaxEvents 5 | ? {$_.Message.Contains($sbString)}
-                $CompletedScriptBlockInvocationEvent | Should -Not BeNullOrEmpty
+                $CompletedScriptBlockInvocationEvent | Should -Not -BeNullOrEmpty
             }
 
             $KeyPath = Join-Path $KeyRoot 'ScriptBlockLogging'

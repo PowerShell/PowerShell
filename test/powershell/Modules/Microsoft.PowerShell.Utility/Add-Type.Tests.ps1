@@ -101,8 +101,8 @@ public class SMAAttributeTest$guid : PSCmdlet
         param($type1, $type2, $file1, $file2, $sourceLanguage)
 
         # The types shouldn't exist before compile the test code.
-        $type1 -as [type] | Should BeNullOrEmpty
-        $type2 -as [type] | Should BeNullOrEmpty
+        $type1 -as [type] | Should -BeNullOrEmpty
+        $type2 -as [type] | Should -BeNullOrEmpty
 
         $returnedTypes = Add-Type -Path $file1,$file2 -PassThru
 

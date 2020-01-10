@@ -405,7 +405,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "uri"
             New-Object -TypeName $globalVar -ArgumentList 'https://www.bing.com'
 '@
-            $result | Should -Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Foreach-Object]" {
@@ -414,7 +414,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "Year"
             Get-Date | Foreach-Object -MemberName $globalVar
 '@
-            $result | Should -Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Import-Module]" {
@@ -423,7 +423,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "NonExistModule"
             Import-Module -Name $globalVar -ErrorAction SilentlyContinue -ErrorVariable ev; $ev
 '@
-            $result | Should -Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
             $result.FullyQualifiedErrorId | Should -Be "Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
 

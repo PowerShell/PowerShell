@@ -920,7 +920,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 {
                     # this goes through WinCompat code
                     { Import-Module $moduleBase -ErrorAction Stop } | Should -Not -Throw
-                    Get-Module -Name $moduleName | Should -Not BeNullOrEmpty
+                    Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                     return
                 }
 
@@ -968,7 +968,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             {
                 # this goes through WinCompat code
                 { Import-Module $moduleName -ErrorAction Stop } | Should -Not -Throw
-                Get-Module -Name $moduleName | Should -Not BeNullOrEmpty
+                Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                 return
             }
 
