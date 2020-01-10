@@ -812,6 +812,9 @@ namespace Microsoft.PowerShell.Commands
                 _sender = new Ping();
 
                 timer?.Start();
+                // 'SendPingAsync' always uses the default synchronization context (threadpool).
+                // This is what we want to avoid the deadlock resulted by async work being scheduled back to the
+                // pipeline thread due to a change of the current synchronization context of the pipeline thread.
                 return _sender.SendPingAsync(targetAddress, timeout, buffer, pingOptions).GetAwaiter().GetResult();
             }
             catch (PingException ex) when (ex.InnerException is TaskCanceledException)
