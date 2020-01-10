@@ -92,8 +92,8 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -136,8 +136,8 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }

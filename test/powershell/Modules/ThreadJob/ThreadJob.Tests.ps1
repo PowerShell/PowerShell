@@ -227,7 +227,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob and Verbose stream output' {
 
         $job = Start-ThreadJob -ScriptBlock { $VerbosePreference = 'Continue'; Write-Verbose "VerboseOut" } | Wait-Job
-        $job.Verbose | Should Match "VerboseOut"
+        $job.Verbose | Should -Match "VerboseOut"
     }
 
     It 'ThreadJob and Verbose stream output' {
