@@ -160,7 +160,7 @@ function Test-Ast
         $ast = $ast.EndBlock.Statements[0]
         Context "Ast Validation: <<$src>>" {
             $ast | Should BeOfType System.Management.Automation.Language.ErrorStatementAst
-            $ast.Flags.ContainsKey($flagName) | Should -Be $true
+            $ast.Flags.ContainsKey($flagName) | Should -BeTrue
 
             $asts = @(Flatten-Ast $ast.Flags[$flagName].Item2)
 

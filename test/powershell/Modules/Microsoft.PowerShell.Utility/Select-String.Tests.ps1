@@ -45,7 +45,7 @@ Describe "Select-String" -Tags "CI" {
             $secondMatch = $testinputtwo | Select-String -Pattern "hello" -ca
 
             $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
-            $equal | Should -Be True
+            $equal | Should -BeTrue
         }
 
         it "Should only return the case sensitive match when the casesensitive switch is used" {

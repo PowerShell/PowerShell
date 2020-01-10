@@ -66,9 +66,9 @@ try {
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
-            $result -contains "Add-LocalGroupMember" | Should -Be $true
-            $result -contains "Get-LocalGroupMember" | Should -Be $true
-            $result -contains "Remove-LocalGroupMember" | Should -Be $true
+            $result -contains "Add-LocalGroupMember" | Should -BeTrue
+            $result -contains "Get-LocalGroupMember" | Should -BeTrue
+            $result -contains "Remove-LocalGroupMember" | Should -BeTrue
         }
     }
 
@@ -92,7 +92,7 @@ try {
             Add-LocalGroupMember TestGroup1 -Member TestUser1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result.Name.EndsWith("TestUser1") | Should -Be $true
+            $result.Name.EndsWith("TestUser1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
         }
     }
@@ -123,7 +123,7 @@ try {
             Add-LocalGroupMember -SID $group1sid -Member TestUser1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result.Name.EndsWith("TestUser1") | Should -Be $true
+            $result.Name.EndsWith("TestUser1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
         }
 
@@ -132,7 +132,7 @@ try {
             Add-LocalGroupMember -Group $groupObject -Member TestUser1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result.Name.EndsWith("TestUser1") | Should -Be $true
+            $result.Name.EndsWith("TestUser1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
         }
 
@@ -140,7 +140,7 @@ try {
             Get-LocalUser TestUser1 | Add-LocalGroupMember -Name TestGroup1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result.Name.EndsWith("TestUser1") | Should -Be $true
+            $result.Name.EndsWith("TestUser1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
         }
 
@@ -169,32 +169,32 @@ try {
             Add-LocalGroupMember TestGroup1 -Member @("TestUser1", "TestUser2")
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $true
+            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
+            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -BeTrue
         }
 
         It "Can add array of user SIDs to group" {
             Add-LocalGroupMember TestGroup1 -Member @($user1sid, $user2sid)
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $true
+            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
+            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -BeTrue
         }
 
         It "Can add array of users names or SIDs to group" {
             Add-LocalGroupMember TestGroup1 -Member @($user1sid, "TestUser2")
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $true
+            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
+            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -BeTrue
         }
 
         It "Can add array of user names using pipeline" {
             @("TestUser1", "TestUser2") | Add-LocalGroupMember TestGroup1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $true
+            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
+            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should -BeTrue
         }
 
         It "Can add array of existent and nonexistent users names to group" {
@@ -204,7 +204,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroup1
-            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
+            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
             $result.Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $false
         }
 
@@ -216,7 +216,7 @@ try {
             VerifyFailingTest $sb "MemberExists,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroup1
-            $result.Name.EndsWith("TestUser1") | Should -Be $true
+            $result.Name.EndsWith("TestUser1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
         }
 
@@ -241,7 +241,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroup1
-            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should -Be $true
+            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
         }
     }
 
@@ -267,7 +267,7 @@ try {
         It "Can get a local group member by name" {
             $result = Get-LocalGroupMember TestGroupGet1
 
-            $result.Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result.Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
@@ -308,14 +308,14 @@ try {
         It "Can get all group members by name" {
             $result = Get-LocalGroupMember TestGroupGet1
 
-            $result[0].Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -Be Local
             }
             $result[0].ObjectClass | Should -Be User
-            $result[1].Name.EndsWith("TestUserGet2") | Should -Be $true
+            $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
             $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
@@ -327,14 +327,14 @@ try {
         It "Can get all group members by SID" {
             $result = Get-LocalGroupMember -SID $group1sid
 
-            $result[0].Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -Be Local
             }
             $result[0].ObjectClass | Should -Be User
-            $result[1].Name.EndsWith("TestUserGet2") | Should -Be $true
+            $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
             $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
@@ -347,14 +347,14 @@ try {
             $group = Get-LocalGroup TestGroupGet1
             $result = Get-LocalGroupMember -Group $group
 
-            $result[0].Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -Be Local
             }
             $result[0].ObjectClass | Should -Be User
-            $result[1].Name.EndsWith("TestUserGet2") | Should -Be $true
+            $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
             $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
@@ -366,14 +366,14 @@ try {
         It "Can get all group members by pipeline" {
             $result = Get-LocalGroup TestGroupGet1 | Get-LocalGroupMember
 
-            $result[0].Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -Be Local
             }
             $result[0].ObjectClass | Should -Be User
-            $result[1].Name.EndsWith("TestUserGet2") | Should -Be $true
+            $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
             $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
@@ -384,9 +384,9 @@ try {
 
         It "Can get group members by wildcard" {
             $result = Get-LocalGroupMember TestGroupGet1 -Member TestUserGet*
-            $result.Count -eq 2 | Should -Be $true
-            $result[0].Name -match ($OptDomainPrefix+"TestUserGet1") | Should -Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUserGet2") | Should -Be $true
+            $result.Count -eq 2 | Should -BeTrue
+            $result[0].Name -match ($OptDomainPrefix+"TestUserGet1") | Should -BeTrue
+            $result[1].Name -match ($OptDomainPrefix + "TestUserGet2") | Should -BeTrue
         }
 
         It "Errors on group name being nonexistent" {
@@ -399,7 +399,7 @@ try {
         It "Can get specific group member by name" {
             $result = Get-LocalGroupMember TestGroupGet1 -Member TestUserGet1
 
-            $result.Name.EndsWith("TestUserGet1") | Should -Be $true
+            $result.Name.EndsWith("TestUserGet1") | Should -BeTrue
             $result.SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
@@ -466,14 +466,14 @@ try {
             Remove-LocalGroupMember TestGroupRemove1 -Member TestUserRemove2
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result.Name.EndsWith("TestUserRemove1") | Should -Be $true
+            $result.Name.EndsWith("TestUserRemove1") | Should -BeTrue
         }
 
         It "Can remove a group member by SID" {
             Remove-LocalGroupMember -SID $group1sid -Member TestUserRemove2
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result.Name.EndsWith("TestUserRemove1") | Should -Be $true
+            $result.Name.EndsWith("TestUserRemove1") | Should -BeTrue
         }
 
         It "Can remove a group member by Group object" {
@@ -481,14 +481,14 @@ try {
             Remove-LocalGroupMember -Group $group -Member TestUserRemove2
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result.Name.EndsWith("TestUserRemove1") | Should -Be $true
+            $result.Name.EndsWith("TestUserRemove1") | Should -BeTrue
         }
 
         It "Can remove a group member by pipeline" {
             Get-LocalUser TestUserRemove2 | Remove-LocalGroupMember -Name TestGroupRemove1
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result.Name.EndsWith("TestUserRemove1") | Should -Be $true
+            $result.Name.EndsWith("TestUserRemove1") | Should -BeTrue
         }
 
         It "Errors on group argument missing" {
@@ -590,7 +590,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroupRemove1 2>&1
-            $result.Name -match ($OptDomainPrefix + "TestUserRemove2") | Should -Be $true
+            $result.Name -match ($OptDomainPrefix + "TestUserRemove2") | Should -BeTrue
         }
     }
 }
