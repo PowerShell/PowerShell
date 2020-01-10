@@ -299,7 +299,7 @@ try {
 
             $result.Name | Should -BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
             $result.SID | Should -Not BeNullOrEmpty
             $result.ObjectClass | Should -Be User
         }
@@ -369,7 +369,7 @@ try {
             $result.Enabled | Should -BeTrue
             $result.SID | Should -Not BeNullOrEmpty
             $result.ObjectClass | Should -Be User
-            $result.UserMayChangePassword | Should -Be $false
+            $result.UserMayChangePassword | Should -BeFalse
         }
 
         It "Can set PasswordNeverExpires to create a user with null for PasswordExpires date" {
@@ -559,10 +559,10 @@ try {
             $result.Name | Should -BeExactly $Name
             $result.AccountExpires | Should -Be ([DateTime]$AccountExpires)
             $result.Description | Should -BeExactly $Description
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
             $result.FullName | Should -BeExactly $FullName
             $result.ObjectClass -eq "User" | Should -BeTrue
-            $result.UserMayChangePassword | Should -Be $false
+            $result.UserMayChangePassword | Should -BeFalse
             $result.SID | Should -Not BeNullOrEmpty
             $result.ObjectClass | Should -Be User
         }
@@ -815,7 +815,7 @@ try {
             $result.Name | Should -BeExactly TestUserSet1
             $result.SID | Should -Not BeNullOrEmpty
             $result.ObjectClass | Should -Be User
-            $result.UserMayChangePassword | Should -Be $false
+            $result.UserMayChangePassword | Should -BeFalse
         }
     }
 
@@ -1410,7 +1410,7 @@ try {
             Disable-LocalUser TestUserEnabled1
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
         }
     }
 
@@ -1450,7 +1450,7 @@ try {
             Disable-LocalUser -SID $enabledUser1SID
             $result = Get-LocalUser -SID $enabledUser1SID
 
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user using -InputObject" {
@@ -1458,43 +1458,43 @@ try {
             Disable-LocalUser -InputObject $user
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user using pipeline" {
             Get-LocalUser TestUserEnabled1 | Disable-LocalUser
             $result = Get-LocalUser TestUserEnabled1
 
-            $result.Enabled | Should -Be $false
+            $result.Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user by array of names" {
             Disable-LocalUser @("TestUserEnabled1", "TestUserEnabled2")
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -BeFalse
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user by array of SIDs" {
             Disable-LocalUser -SID @($enabledUser1SID, $enabledUser2SID)
 
-            (Get-LocalUser -SID $enabledUser1SID).Enabled | Should -Be $false
-            (Get-LocalUser -SID $enabledUser2SID).Enabled | Should -Be $false
+            (Get-LocalUser -SID $enabledUser1SID).Enabled | Should -BeFalse
+            (Get-LocalUser -SID $enabledUser2SID).Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user by array sent using pipeline" {
             $users = @((Get-LocalUser "TestUserEnabled1"), (Get-LocalUser "TestUserEnabled2"))
             Disable-LocalUser -InputObject $users
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -BeFalse
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -BeFalse
         }
 
         It "Can disable an enabled user by array sent using pipeline" {
             @((Get-LocalUser "TestUserEnabled1"), (Get-LocalUser "TestUserEnabled2")) | Disable-LocalUser
 
-            (Get-LocalUser "TestUserEnabled1").Enabled | Should -Be $false
-            (Get-LocalUser "TestUserEnabled2").Enabled | Should -Be $false
+            (Get-LocalUser "TestUserEnabled1").Enabled | Should -BeFalse
+            (Get-LocalUser "TestUserEnabled2").Enabled | Should -BeFalse
         }
 
         It "Errors on no name or SID specified" {
@@ -1507,19 +1507,19 @@ try {
         It "Can disable an already disabled user by name" {
             Disable-LocalUser TestUserDisabled1
 
-            (Get-LocalUser TestUserDisabled1).Enabled | Should -Be $false
+            (Get-LocalUser TestUserDisabled1).Enabled | Should -BeFalse
         }
 
         It "Can disable an already disabled user by SID" {
             Disable-LocalUser -SID $disabledUser1SID
 
-            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should -Be $false
+            (Get-LocalUser -SID $disabledUser1SID).Enabled | Should -BeFalse
         }
 
         It "Can disable an already disabled user using the pipeline" {
             Get-LocalUser TestUserDisabled1 | Disable-LocalUser
 
-            (Get-LocalUser TestUserDisabled1).Enabled | Should -Be $false
+            (Get-LocalUser TestUserDisabled1).Enabled | Should -BeFalse
         }
 
         It "Errors on disabling an invalid user by name" {
@@ -1548,7 +1548,7 @@ try {
             $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -Be "UserNotFound,Microsoft.PowerShell.Commands.DisableLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserEnabled1 2>&1
-            $getResult.Enabled | Should -Be $false
+            $getResult.Enabled | Should -BeFalse
         }
     }
 }

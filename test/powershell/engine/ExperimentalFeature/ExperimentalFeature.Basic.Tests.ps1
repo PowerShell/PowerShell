@@ -120,7 +120,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         ## Common parameters + '-SessionName'
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["SessionName"].ParameterType.FullName | Should -BeExactly "System.String"
-        $command.Parameters.ContainsKey("ComputerName") | Should -Be $false
+        $command.Parameters.ContainsKey("ComputerName") | Should -BeFalse
     }
 
     It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
@@ -147,7 +147,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.Parameters["FileName"].ParameterSets.Count | Should -Be 1
         $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
-        $command.Parameters.ContainsKey("Destination") | Should -Be $false
+        $command.Parameters.ContainsKey("Destination") | Should -BeFalse
     }
 
     It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
@@ -170,7 +170,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType [parameter]
         $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
 
-        $command.Parameters.ContainsKey("ConfigFile") | Should -Be $false
+        $command.Parameters.ContainsKey("ConfigFile") | Should -BeFalse
     }
 }
 
@@ -318,7 +318,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         ## Common parameters + '-ComputerName'
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["ComputerName"].ParameterType.FullName | Should -BeExactly "System.String"
-        $command.Parameters.ContainsKey("SessionName") | Should -Be $false
+        $command.Parameters.ContainsKey("SessionName") | Should -BeFalse
     }
 
     It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
@@ -344,7 +344,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.Parameters["FileName"].ParameterSets.Count | Should -Be 1
         $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
-        $command.Parameters.ContainsKey("Configuration") | Should -Be $false
+        $command.Parameters.ContainsKey("Configuration") | Should -BeFalse
     }
 
     It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
@@ -368,7 +368,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType [parameter]
         $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
 
-        $command.Parameters.ContainsKey("ConfigName") | Should -Be $false
+        $command.Parameters.ContainsKey("ConfigName") | Should -BeFalse
     }
 }
 
@@ -438,6 +438,6 @@ PrivateData = @{
         $featureNameError[0].Exception.Message.Contains("Feature2.") | Should -BeTrue
         $featureNameError[0].Exception.Message.Contains("Feature3") | Should -BeTrue
         $featureNameError[0].Exception.Message.Contains("Module.Feature4") | Should -BeTrue
-        $featureNameError[0].Exception.Message.Contains("InvalidFeatureName.Feature5") | Should -Be $false
+        $featureNameError[0].Exception.Message.Contains("InvalidFeatureName.Feature5") | Should -BeFalse
     }
 }

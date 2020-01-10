@@ -67,7 +67,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog
-                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -Be $False # without GP logging for the module should be OFF
+                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -BeFalse # without GP logging for the module should be OFF
 
                 # enable GP
                 [string]$RareCommand = Get-Random

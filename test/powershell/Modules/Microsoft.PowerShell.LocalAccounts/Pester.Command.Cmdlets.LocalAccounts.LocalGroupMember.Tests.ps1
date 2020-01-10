@@ -205,7 +205,7 @@ try {
 
             $result = Get-LocalGroupMember TestGroup1
             $result.Name -match ($OptDomainPrefix + "TestUser1") | Should -BeTrue
-            $result.Name -match ($OptDomainPrefix + "TestUser2") | Should -Be $false
+            $result.Name -match ($OptDomainPrefix + "TestUser2") | Should -BeFalse
         }
 
         It "Errors on adding user to group by name twice" {
