@@ -400,7 +400,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-foog } | Should -Not -throw
+            { get-foog } | Should -Not -Throw
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set" {
@@ -411,7 +411,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-fooh } | Should -Not -throw
+            { get-fooh } | Should -Not -Throw
         }
 
         It "ValidateScript can use custom ErrorMessage" {
