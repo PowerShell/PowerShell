@@ -1165,32 +1165,38 @@ namespace System.Management.Automation
         internal static object MatchAllOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, string rval, bool ignoreCase)
         {
             List<MatchCollection> matches = new List<MatchCollection>();
-            string[] text;
-            if (lval is string)
+            IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
+            if (list == null)
             {
-                text = new string[]{(string)lval};
-            } 
-            else
-            {
-                text = ((IEnumerable)lval).Cast<object>()
-                                 .Select(x => x.ToString())
-                                 .ToArray();
-            }
-
-            foreach(string s in text)
-            {
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
                 MatchCollection match;
                 if (ignoreCase)
                 {
-                    match = Regex.Matches(s, rval, RegexOptions.IgnoreCase);
+                    match = Regex.Matches(lvalString, rval, RegexOptions.IgnoreCase);
                 }
                 else
                 {
-                    match = Regex.Matches(s, rval);
+                    match = Regex.Matches(lvalString, rval);
+                }
+               
+                return match;
+            }
+
+            while (list.MoveNext())
+            {
+                object val = list.Current;
+                string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
+                MatchCollection match;
+                if (ignoreCase)
+                {
+                    match = Regex.Matches(lvalString, rval, RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    match = Regex.Matches(lvalString, rval);
                 }
                
                 matches.Add(match);
-                
             }
             
             return matches.ToArray();
