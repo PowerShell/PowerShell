@@ -141,7 +141,7 @@ Describe "New-ModuleManifest tests" -tags "CI" {
 
         # Skip tests if the module architecture does not match the platform architecture
         # but X86 works on Amd64/X64 and Arm works on Arm64.
-        if ($moduleArch -ne $arch -and -not ($moduleArch -eq "X86" -and $arch -eq "Amd64") -and -not ($moduleArch -eq "Arm" -and $arch -eq "Arm64"))
+        if ($moduleArch -ne $arch -and -not ($moduleArch -eq "X86" -and $arch -eq "Amd64" -and $IsWindows) -and -not ($moduleArch -eq "Arm" -and $arch -eq "Arm64"))
         {
             Set-ItResult -Skipped -Because "the $moduleArch assembly architecture is not supported on the $arch platform"
             return
