@@ -919,8 +919,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
                 {
                     # this goes through WinCompat code
-                    { Import-Module $moduleBase -ErrorAction Stop } | Should Not Throw
-                    Get-Module -Name $moduleName | Should Not BeNullOrEmpty
+                    { Import-Module $moduleBase -ErrorAction Stop } | Should -Not -Throw
+                    Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                     return
                 }
 
@@ -967,8 +967,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
             {
                 # this goes through WinCompat code
-                { Import-Module $moduleName -ErrorAction Stop } | Should Not Throw
-                Get-Module -Name $moduleName | Should Not BeNullOrEmpty
+                { Import-Module $moduleName -ErrorAction Stop } | Should -Not -Throw
+                Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                 return
             }
 

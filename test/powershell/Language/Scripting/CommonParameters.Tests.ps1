@@ -141,7 +141,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
 
             # BUG in runspace api.
-            #$ps.error.count | Should Be 1
+            #$ps.error.count | Should -Be 1
 
             $ps.InvocationStateInfo.State | Should -BeExactly 'Failed'
         }

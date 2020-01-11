@@ -277,7 +277,7 @@ namespace DotNetInterop
             { $testObj.PrintMySpan("abc", 12) } | Should -Throw -ErrorId "MethodArgumentConversionInvalidCastArgument"
 
             $path = [System.IO.Path]::GetTempPath()
-            [System.IO.Path]::IsPathRooted($path.ToCharArray()) | Should -Be $true
+            [System.IO.Path]::IsPathRooted($path.ToCharArray()) | Should -BeTrue
         }
 
         It "Support constructor calls with ByRef-like parameter as long as the argument can be casted to the ByRef-like type" {

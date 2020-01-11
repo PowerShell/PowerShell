@@ -60,7 +60,7 @@ Describe "Get-HotFix Tests" -Tag CI {
     }
 
     It "Get-Hotfix can accept ComputerName via pipeline" {
-        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } |Should -Throw -ErrorID 'Microsoft.PowerShell.Commands.GetHotFixCommand'
+        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } | Should -Throw -ErrorID 'Microsoft.PowerShell.Commands.GetHotFixCommand'
         [PSCustomObject]@{ComputerName = 'localhost'} | Get-HotFix | Should -Not -BeNullOrEmpty
     }
 }

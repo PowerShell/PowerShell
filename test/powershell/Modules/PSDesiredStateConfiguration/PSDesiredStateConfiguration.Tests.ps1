@@ -487,7 +487,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     #this will fail too, but that is nat what we are testing...
                 }
 
-                $warnings.Count | Should -Be 1 -because "There should be 1 warning on macOS and Linux"
+                $warnings.Count | Should -Be 1 -Because "There should be 1 warning on macOS and Linux"
                 $warnings[0] | Should -Match 'embedded resources.*not support'
             }
 
@@ -533,11 +533,11 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 $result.InstallationPolicy | Should -BeOfType [string]
                 $result.Guid | Should -BeOfType [Guid]
                 $result.Ensure | Should -Be 'Present'
-                $result.Name | Should -be 'PsDscResources'
+                $result.Name | Should -Be 'PsDscResources'
                 $result.Description | Should -BeLike 'This*DSC*'
-                $result.InstalledVersion | should -BeOfType [Version]
+                $result.InstalledVersion | Should -BeOfType [Version]
                 $result.ModuleBase | Should -BeLike '*PSDscResources*'
-                $result.Repository | should -BeOfType [string]
+                $result.Repository | Should -BeOfType [string]
                 $result.ModuleType | Should -Be 'Manifest'
             }
         }

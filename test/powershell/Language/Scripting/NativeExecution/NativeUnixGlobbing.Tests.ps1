@@ -52,7 +52,7 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     It 'Should not normalize absolute paths' {
         $matches = /bin/echo /etc/*
         # Matched path should start with '/etc/' not '../..'
-        $matches.substring(0,5) | Should Be '/etc/'
+        $matches.substring(0,5) | Should -Be '/etc/'
     }
 	It 'Globbing should not happen with quoted expressions' {
 	    $v = "$TESTDRIVE/abc*"

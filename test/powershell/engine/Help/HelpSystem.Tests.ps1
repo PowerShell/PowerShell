@@ -92,8 +92,8 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -136,8 +136,8 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -273,7 +273,7 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
 
     It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
-        $help.count | Should Be 1
+        $help.count | Should -Be 1
     }
 }
 

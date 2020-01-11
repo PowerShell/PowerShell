@@ -163,6 +163,6 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
         $psInvoke.Commands.AddScript('param ($cmdLine, $runspace) [System.Management.Automation.Internal.InternalTestHooks]::TestImplicitRemotingBatching($cmdLine, $runspace)').AddArgument($CommandLine).AddArgument($localRunspace)
 
         $result = $psInvoke.Invoke()
-        $result | Should Be $ExpectedOutput
+        $result | Should -Be $ExpectedOutput
     }
 }

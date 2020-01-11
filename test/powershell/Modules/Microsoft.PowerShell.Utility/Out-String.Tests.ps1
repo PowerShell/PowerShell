@@ -37,7 +37,7 @@ Describe "Out-String" -Tags "CI" {
 	$streamoutputlength = $($testInput | Out-String -Stream).Length
 	$nonstreamoutputlength = $($testInput | Out-String).Length
 
-	$nonstreamoutputlength| Should -BeGreaterThan $streamoutputlength
+	$nonstreamoutputlength | Should -BeGreaterThan $streamoutputlength
     }
 
     It "Should send a single object through a pipeline when the stream switch is used" {

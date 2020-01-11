@@ -47,6 +47,6 @@ Describe "Read-Host Test" -tag "CI" {
         else {
             $expected = @('foo: !1','!1')
         }
-        $result | should -BeExactly $expected
+        $result | Should -BeExactly $expected
     }
 }
