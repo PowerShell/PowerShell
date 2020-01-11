@@ -12,11 +12,11 @@ Describe "MatchAll/IMatchAll Operator" -Tags CI {
             param($string, $pattern)
             $match = $string -matchall $pattern
             $match.Count | Should -Be 1
-            $match.Value | Should -Be $string
+            $match.Value | Should -BeExactly $string
 
             $match = $string -imatchall $pattern
             $match.Count | Should -Be 1
-            $match.Value | Should -Be $string
+            $match.Value | Should -BeExactly $string
         }
 
         It "Should produce two matches from a pattern with regex syntax" -TestCases @(
