@@ -293,7 +293,7 @@ Describe "Import-Module should be case insensitive" -Tags 'CI' {
         Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
         Import-Module testMODULE
         $m = Get-Module TESTmodule
-        $m | Should -BeOfType "System.Management.Automation.PSModuleInfo"
+        $m | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         $m.Name | Should -BeIn "TESTMODULE"
         mytest | Should -BeExactly "hello"
         Remove-Module TestModule

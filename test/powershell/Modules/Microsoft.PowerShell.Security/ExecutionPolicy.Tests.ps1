@@ -565,7 +565,7 @@ ZoneId=$FileType
 
                     $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
+                    $exception.Exception | Should -BeOfType ([System.Management.Automation.PSSecurityException])
                 }
             }
 

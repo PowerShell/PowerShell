@@ -30,14 +30,14 @@ Describe "Test-Connection" -tags "CI" {
                 Where-Object Status -eq 'Success' |
                 Select-Object -First 1
 
-            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus"
+            $result | Should -BeOfType ([Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus])
             $result.Ping | Should -Be 1
             $result.Source | Should -BeExactly $hostName
             $result.Destination | Should -BeExactly $targetName
             $result.Address | Should -BeIn @($targetAddress, $targetAddressIPv6)
             $result.Status | Should -BeExactly "Success"
-            $result.Latency | Should -BeOfType "long"
-            $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
+            $result.Latency | Should -BeOfType ([long])
+            $result.Reply | Should -BeOfType ([System.Net.NetworkInformation.PingReply])
             $result.BufferSize | Should -Be 32
         }
 
@@ -228,7 +228,7 @@ Describe "Test-Connection" -tags "CI" {
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize
 
-            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
+            $result | Should -BeOfType ([Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus])
             $result.Destination | Should -BeExactly $hostName
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
@@ -237,7 +237,7 @@ Describe "Test-Connection" -tags "CI" {
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize -Quiet
 
-            $result | Should -BeOfType "Int32"
+            $result | Should -BeOfType ([Int32])
             $result | Should -BeGreaterThan 0
         }
     }
@@ -247,7 +247,7 @@ Describe "Test-Connection" -tags "CI" {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
 
-            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus"
+            $result[0] | Should -BeOfType ([Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus])
             $result[0].Source | Should -BeExactly $hostName
             $result[0].TargetAddress | Should -BeExactly $realAddress
             $result[0].Target | Should -BeExactly $hostName

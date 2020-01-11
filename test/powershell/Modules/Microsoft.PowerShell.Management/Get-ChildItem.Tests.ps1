@@ -281,7 +281,7 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
             New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType
         }
 
-        $item | Should -BeOfType "System.IO.FileSystemInfo"
+        $item | Should -BeOfType ([System.IO.FileSystemInfo])
 
         $actualMode = [Microsoft.PowerShell.Commands.FileSystemProvider]::Mode($item)
         $actualMode | Should -BeExactly $expectedMode

@@ -10,7 +10,7 @@ try {
         }
         It "The SessionOption type can be created" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result | Should -BeOfType "Microsoft.WSMan.Management.SessionOption"
+            $result | Should -BeOfType ([Microsoft.WSMan.Management.SessionOption])
         }
         It "The SessionOption type has the proper properties when created with the default constructor" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
