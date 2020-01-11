@@ -61,27 +61,35 @@ Describe "MatchAll/IMatchAll Operator" -Tags CI {
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
+            $match.Length[0] | Should -Be 1
 
             $match.Value[1] | Should -Be "o"
             $match.Index[1] | Should -Be 2
+            $match.Length[1] | Should -Be 1
 
             $match.Value[2] | Should -Be "a"
             $match.Index[2] | Should -Be 1
+            $match.Length[2] | Should -Be 1
 
             $match.Value[3] | Should -Be "a"
             $match.Index[3] | Should -Be 2
+            $match.Length[3] | Should -Be 1
 
             $imatch.Value[0] | Should -Be "o"
             $imatch.Index[0] | Should -Be 1
+            $imatch.Length[0] | Should -Be 1
 
             $imatch.Value[1] | Should -Be "o"
             $imatch.Index[1] | Should -Be 2
+            $imatch.Length[1] | Should -Be 1
 
             $imatch.Value[2] | Should -Be "a"
             $imatch.Index[2] | Should -Be 1
+            $imatch.Length[2] | Should -Be 1
 
             $imatch.Value[3] | Should -Be "a"
             $imatch.Index[3] | Should -Be 2
+            $imatch.Length[3] | Should -Be 1
         }
     }
 }
@@ -96,9 +104,11 @@ Describe "CMatchAll operator" -Tags CI {
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
+            $match.Length[0] | Should -Be 1
 
             $match.Value[1] | Should -Be "o"
             $match.Index[1] | Should -Be 2
+            $match.Length[1] | Should -Be 1
 
         }
 
@@ -121,15 +131,19 @@ Describe "CMatchAll operator" -Tags CI {
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
+            $match.Length[0] | Should -Be 1
 
             $match.Value[1] | Should -Be "o"
             $match.Index[1] | Should -Be 2
+            $match.Length[1] | Should -Be 1
 
             $match.Value[2] | Should -Be "a"
             $match.Index[2] | Should -Be 1
+            $match.Length[2] | Should -Be 1
 
             $match.Value[3] | Should -Be "a"
             $match.Index[3] | Should -Be 2
+            $match.Length[3] | Should -Be 1
         }
 
         It "One character the pattern is uppercase and all characters in the strings are lowercase" {
@@ -140,9 +154,11 @@ Describe "CMatchAll operator" -Tags CI {
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
+            $match.Length[0] | Should -Be 1
 
             $match.Value[1] | Should -Be "o"
             $match.Index[1] | Should -Be 2
+            $match.Length[1] | Should -Be 1
         }
     }
 }
