@@ -44,7 +44,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 
     Context "Get-Item tests" {
-        it "Should be able to get a certificate store, path: <path>" -TestCases $testLocations {
+        it "Should be able to get a certificate store, path: <path>" -TestCases $testLocations -Pending:$true {
             param([string] $path)
             $expectedResolvedPath = Resolve-Path -LiteralPath $path
             $result = Get-Item -LiteralPath $path
@@ -139,7 +139,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
-        it "Should filter to codesign certificates" {
+        it "Should filter to codesign certificates" -Pending:$true {
             $allCerts = get-item cert:\CurrentUser\My\*
             $codeSignCerts = get-item cert:\CurrentUser\My\* -CodeSigningCert
             $codeSignCerts | Should -Not -Be $null
@@ -158,7 +158,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
     }
     Context "Get-ChildItem tests"{
-        it "Should filter to codesign certificates" {
+        it "Should filter to codesign certificates" -Pending:$true {
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
             $codeSignCerts | Should -Not -Be $null
