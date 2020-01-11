@@ -34,11 +34,9 @@ Describe "MatchAll/IMatchAll Operator" -Tags CI {
             {
                 $match.Value[$i] | Should -Be $string[$i]
                 $match.Index[$i] | Should -Be $i
-                $match.Length[$i] | Should -Be 1
 
                 $imatch.Value[$i] | Should -Be $string[$i]
                 $imatch.Index[$i] | Should -Be $i
-                $imatch.Length[$i] | Should -Be 1
             }
         }
     }

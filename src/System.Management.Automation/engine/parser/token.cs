@@ -1171,7 +1171,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(GetTraits(TokenKind.Shr) == (TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold),
                                "Table out of sync with enum - flags Shr");
             Diagnostics.Assert(s_tokenText[(int)TokenKind.Shr].Equals("-shr", StringComparison.OrdinalIgnoreCase),
-                               "Table out of sync with enum - text Shr " + s_tokenText[(int)TokenKind.Shr]);
+                               "Table out of sync with enum - text Shr ");
         }
 #endif
 
