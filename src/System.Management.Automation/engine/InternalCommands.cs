@@ -1764,42 +1764,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get or sets binary operator -Imatchall.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
-        [Alias("ImatchAll")]
-        public SwitchParameter ImatchAll
-        {
-            get
-            {
-                return _binaryOperator == TokenKind.Imatchall;
-            }
-
-            set
-            {
-                _binaryOperator = TokenKind.Imatchall;
-            }
-        }
-
-         /// <summary>
-        /// Get or sets binary operator -Matchall.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "MatchSet")]
-        [Alias("CmatchAll")]
-        public SwitchParameter CmatchAll
-        {
-            get
-            {
-                return _binaryOperator == TokenKind.Cmatchall;
-            }
-
-            set
-            {
-                _binaryOperator = TokenKind.Cmatchall;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets binary operator -Contains.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ContainsSet")]

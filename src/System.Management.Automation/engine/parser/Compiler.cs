@@ -5792,7 +5792,6 @@ namespace System.Management.Automation.Language
                         ExpressionCache.Constant(true),
                         ExpressionCache.Constant(true));
                 case TokenKind.Imatchall:
-                    // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchAllOperator,
                         s_executionContextParameter,
@@ -5873,7 +5872,6 @@ namespace System.Management.Automation.Language
                         ExpressionCache.Constant(false),
                         ExpressionCache.Constant(false));
                 case TokenKind.Cmatchall:
-                    // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_MatchAllOperator,
                         s_executionContextParameter,

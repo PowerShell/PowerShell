@@ -1160,43 +1160,25 @@ namespace System.Management.Automation
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="lval">Left operand.</param>
         /// <param name="rval">Right operand.</param>
-        /// <param name="ignoreCase">Ignore case?</param>
+        /// <param name="ignoreCase">Ignore case.</param>
         /// <returns>The result of the operator.</returns>
         internal static object MatchAllOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, string rval, bool ignoreCase)
         {
-            List<MatchCollection> matches = new List<MatchCollection>();
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
                 string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
-                MatchCollection match;
-                if (ignoreCase)
-                {
-                    match = Regex.Matches(lvalString, rval, RegexOptions.IgnoreCase);
-                }
-                else
-                {
-                    match = Regex.Matches(lvalString, rval);
-                }
-               
-                return match;
+                RegexOptions options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+                return Regex.Matches(lvalString, rval, options);
             }
-
+            
+            List<MatchCollection> matches = new List<MatchCollection>();
             while (list.MoveNext())
             {
                 object val = list.Current;
                 string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
-                MatchCollection match;
-                if (ignoreCase)
-                {
-                    match = Regex.Matches(lvalString, rval, RegexOptions.IgnoreCase);
-                }
-                else
-                {
-                    match = Regex.Matches(lvalString, rval);
-                }
-               
-                matches.Add(match);
+                RegexOptions options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+                matches.Add(Regex.Matches(lvalString, rval, options));
             }
             
             return matches.ToArray();
