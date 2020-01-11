@@ -117,7 +117,8 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         { New-ModuleManifest -Path $manifestPath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
     }
 
-    It "New-ModuleManifest works with assembly architecture: <moduleArch>" -TestCases @(
+    # We skip the test on Unix-s because there Roslyn compilation works in another way.
+    It "New-ModuleManifest works with assembly architecture: <moduleArch>" -Skip:(!$IsWindows) -TestCases @(
         # All values from [System.Reflection.ProcessorArchitecture]
         @{ moduleArch = "None" },
         @{ moduleArch = "MSIL" },
@@ -141,7 +142,7 @@ Describe "New-ModuleManifest tests" -tags "CI" {
 
         # Skip tests if the module architecture does not match the platform architecture
         # but X86 works on Amd64/X64 and Arm works on Arm64.
-        if ($moduleArch -ne $arch -and -not ($moduleArch -eq "X86" -and $arch -eq "Amd64" -and $IsWindows) -and -not ($moduleArch -eq "Arm" -and $arch -eq "Arm64"))
+        if ($moduleArch -ne $arch -and -not ($moduleArch -eq "X86" -and $arch -eq "Amd64") -and -not ($moduleArch -eq "Arm" -and $arch -eq "Arm64"))
         {
             Set-ItResult -Skipped -Because "the $moduleArch assembly architecture is not supported on the $arch platform"
             return
@@ -163,21 +164,21 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         }
     }
 "@
-        # We can not unload the module assembly and so we can not use Pester TestDrive without cleanup error reporting
-        $testFolder = Join-Path $([System.IO.Path]::GetTempPath()) $([System.IO.Path]::GetRandomFileName())
-        New-Item -Type Directory -Path $testFolder -Force > $null
+        try {
+            # We can not unload the module assembly and so we can not use Pester TestDrive without cleanup error reporting
+            $testFolder = Join-Path $([System.IO.Path]::GetTempPath()) $([System.IO.Path]::GetRandomFileName())
+            New-Item -Type Directory -Path $testFolder -Force > $null
 
-        $assemblyPath = Join-Path $testFolder "TP_$arch.dll"
-        $modulePath = Join-Path $testFolder "TP_$arch.psd1"
-        Add-Type -TypeDefinition $a -CompilerOptions "/platform:$roslynArch" -OutputAssembly $assemblyPath
-        New-ModuleManifest -Path $modulePath -NestedModules "TP_$arch.dll" -RequiredAssemblies "TP_$arch.dll" -ProcessorArchitecture $arch -CmdletsToExport "Get-TP"
-        Import-Module $modulePath
+            $assemblyPath = Join-Path $testFolder "TP_$arch.dll"
+            $modulePath = Join-Path $testFolder "TP_$arch.psd1"
+            Add-Type -TypeDefinition $a -CompilerOptions "/platform:$roslynArch" -OutputAssembly $assemblyPath
+            New-ModuleManifest -Path $modulePath -NestedModules "TP_$arch.dll" -RequiredAssemblies "TP_$arch.dll" -ProcessorArchitecture $arch -CmdletsToExport "Get-TP"
+            Import-Module $modulePath
 
-
-        Get-TP -ErrorAction SilentlyContinue | Should -BeExactly "$arch"
-
-        Remove-Module "TP_$arch"
-        Remove-Item -LiteralPath $testFolder -Recurse -Force -ErrorAction SilentlyContinue > $null
-
+            Get-TP -ErrorAction SilentlyContinue | Should -BeExactly "$arch"
+        } finally {
+            Remove-Module "TP_$arch" -Force
+            Remove-Item -LiteralPath $testFolder -Recurse -Force -ErrorAction SilentlyContinue > $null
+        }
     }
 }
