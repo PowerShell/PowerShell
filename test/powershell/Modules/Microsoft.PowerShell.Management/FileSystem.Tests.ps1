@@ -517,7 +517,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
-            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link | Should -BeOfType ([System.IO.DirectoryInfo])
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
         }

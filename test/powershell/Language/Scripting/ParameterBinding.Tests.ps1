@@ -335,7 +335,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             function get-fooa
             {
                 param( [System.Reflection.MemberTypes] $memberTypes = $([Enum]::GetNames("System.Reflection.MemberTypes") -join ",") )
-                $memberTypes | Should -BeOfType System.Reflection.MemberTypes
+                $memberTypes | Should -BeOfType ([System.Reflection.MemberTypes])
             }
 
             get-fooa
@@ -346,7 +346,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 [CmdletBinding()]
                 param( [System.Reflection.MemberTypes] $memberTypes = $([Enum]::GetNames("System.Reflection.MemberTypes") -join ",") )
-                $memberTypes | Should -BeOfType System.Reflection.MemberTypes
+                $memberTypes | Should -BeOfType ([System.Reflection.MemberTypes])
             }
 
             get-foob

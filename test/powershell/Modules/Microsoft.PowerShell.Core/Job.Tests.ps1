@@ -185,7 +185,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "Background with & produces a job object" {
             $j = Write-Output Hi &
-            $j | Should -BeOfType System.Management.Automation.Job
+            $j | Should -BeOfType ([System.Management.Automation.Job])
         }
     }
     Context "Variable tests" {

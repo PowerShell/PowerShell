@@ -113,7 +113,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
           }
 
         $script:exception.exception | Should -Not -BeNullOrEmpty
-        $script:exception.exception | Should -BeOfType System.management.automation.psinvalidoperationexception
+        $script:exception.exception | Should -BeOfType ([System.management.automation.psinvalidoperationexception])
         }
 
     It 'Import if psd1 file is done correctly' {

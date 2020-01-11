@@ -1385,7 +1385,7 @@ try {
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")
             $computerInfo = Get-ComputerInfo -Property $propertyFilter
-            $computerInfo | Should -BeOfType Microsoft.PowerShell.Commands.ComputerInfo
+            $computerInfo | Should -BeOfType ([Microsoft.PowerShell.Commands.ComputerInfo])
         }
     }
 }

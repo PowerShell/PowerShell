@@ -60,7 +60,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             Remove-PSDrive -Name wsman
             { Get-PSDrive -Name wsman -ErrorAction Stop } | Should -Throw -ErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
             $wsmanDrive2 = $wsmanDrive | New-PSDrive -PSProvider WSMan
-            $wsmanDrive2 | Should -BeOfType System.Management.Automation.PSDriveInfo
+            $wsmanDrive2 | Should -BeOfType ([System.Management.Automation.PSDriveInfo])
             $wsmanDrive2.Name | Should -BeExactly "WSMan"
             $wsmanDrive2.Provider.Name | Should -BeExactly "WSMan"
         }

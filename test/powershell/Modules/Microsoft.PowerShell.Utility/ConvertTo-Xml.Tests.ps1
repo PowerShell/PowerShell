@@ -13,21 +13,21 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "Can convert to XML with parameter Depth" {
         $returnObject = $customPSObject | ConvertTo-Xml -Depth 1
-        $returnObject | Should -BeOfType System.Xml.XmlDocument
+        $returnObject | Should -BeOfType ([System.Xml.XmlDocument])
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object Type="System.Management.Automation.PSCustomObject"><Property Name="prop1" Type="System.String">val1</Property><Property Name="prop2" Type="System.String">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
     }
 
     It "Can convert to XML with parameter NoTypeInformation" {
         $returnObject = $customPSObject | ConvertTo-Xml -NoTypeInformation
-        $returnObject | Should -BeOfType System.Xml.XmlDocument
+        $returnObject | Should -BeOfType ([System.Xml.XmlDocument])
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object><Property Name="prop1">val1</Property><Property Name="prop2">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
     }
 
     It "Can convert to XML as String" {
         $returnObject = $customPSObject | ConvertTo-Xml -As String
-        $returnObject | Should -BeOfType System.String
+        $returnObject | Should -BeOfType ([System.String])
         $expectedValue = @"
 <?xml version="1.0" encoding="utf-8"?>$newLine<Objects>$newLine  <Object Type="System.Management.Automation.PSCustomObject">$newLine    <Property Name="prop1" Type="System.String">val1</Property>$newLine    <Property Name="prop2" Type="System.String">val2</Property>$newLine  </Object>$newLine</Objects>
 "@
@@ -53,7 +53,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "Can convert to XML as Document" {
         $returnObject = $customPSObject | ConvertTo-Xml -As Document -NoTypeInformation
-        $returnObject | Should -BeOfType System.Xml.XmlDocument
+        $returnObject | Should -BeOfType ([System.Xml.XmlDocument])
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object><Property Name="prop1">val1</Property><Property Name="prop2">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
     }

@@ -28,7 +28,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         Test-Path $testModulePath | Should -BeTrue
 
         # use -ErrorAction Stop to cause test to fail if Test-ModuleManifest writes to error stream
-        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType System.Management.Automation.PSModuleInfo
+        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
 
     It "module manifest containing missing files returns error: <parameter>" -TestCases (
@@ -66,7 +66,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue > $null
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
-        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         $moduleManifest.RootModule | Should -Be $rootModuleValue
     }
 
@@ -76,7 +76,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType File -Path testdrive:/module/$rootModuleFileName > $null
         New-ModuleManifest -Path $testModulePath -RootModule "bar"
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
-        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         $moduleManifest.RootModule | Should -Be "bar"
     }
 
@@ -101,7 +101,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
-        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         $moduleManifest.RootModule | Should -BeNullOrEmpty
     }
 

@@ -20,7 +20,7 @@ Describe "New-TemporaryFile" -Tags "CI" {
         $tempFile = New-TemporaryFile
 
         $tempFile | Should -Exist
-        $tempFile | Should -BeOfType System.IO.FileInfo
+        $tempFile | Should -BeOfType ([System.IO.FileInfo])
         $tempFile | Should -BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
 
         if (Test-Path $tempFile) {

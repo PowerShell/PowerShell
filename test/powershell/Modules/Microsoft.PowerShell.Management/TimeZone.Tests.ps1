@@ -46,7 +46,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
         $result = Get-TimeZone
-        $result | Should -BeOfType TimeZoneInfo
+        $result | Should -BeOfType ([TimeZoneInfo])
     }
 
     It "Call WITH ListAvailable switch returns ArrayList of TimeZoneInfo objects where the list is greater than 0 item" {
