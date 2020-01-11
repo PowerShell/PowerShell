@@ -2021,7 +2021,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-            
+
             switch (_binaryOperator)
             {
                 case TokenKind.Ieq:
