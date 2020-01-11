@@ -224,7 +224,7 @@ baz
         Get-Content -Path $testPath | Should -BeExactly $testString
         Get-Content -Path $testPath -Stream hello | Should -BeExactly "World"
         $item = Get-Item -Path $testPath -Stream hello
-        $item | Should -BeOfType 'System.Management.Automation.Internal.AlternateStreamData'
+        $item | Should -BeOfType ([System.Management.Automation.Internal.AlternateStreamData])
         $item.Stream | Should -BeExactly "hello"
         Clear-Content -Path $testPath -Stream hello
         Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty
