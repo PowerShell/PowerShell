@@ -45,15 +45,19 @@ Describe "MatchAll/IMatchAll Operator" -Tags CI {
 
     Context "Array LHS regular expression matching" {
         It "Should produce different matches from different strings in the array" -TestCases @(
-            @{ strings = 'foo', 'baa'; $pattern = 'o|a' },
-            @{ strings = 'foo', 'baa'; $pattern = 'o|A' },
-            @{ strings = 'foO', 'baa'; $pattern = 'o|a' }
+            @{ strings = 'foo', 'baa'; pattern = 'o|a' },
+            @{ strings = 'foo', 'baa'; pattern = 'o|A' },
+            @{ strings = 'foO', 'baa'; pattern = 'o|a' }
         ) {
             param($strings, $pattern)
             $match = $strings -matchall $pattern
             $imatch = $strings -imatchall $pattern
-            $match.Count | Should -Be 4
-            $imatch.Count | Should -Be 4
+            $match.Count | Should -Be 2
+            $imatch.Count | Should -Be 2
+            $match[0].Count | Should -Be 2
+            $imatch[0].Count | Should -Be 2
+            $match[1].Count | Should -Be 2
+            $imatch[1].Count | Should -Be 2
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
@@ -111,7 +115,9 @@ Describe "CMatchAll operator" -Tags CI {
             $strings = 'foo', 'baa'
             $pattern = 'o|a'
             $match = $strings -cmatchall $pattern
-            $match.Count | Should -Be 4
+            $match.Count | Should -Be 2
+            $match[0].Count | Should -Be 2
+            $match[1].Count | Should -Be 2
 
             $match.Value[0] | Should -Be "o"
             $match.Index[0] | Should -Be 1
