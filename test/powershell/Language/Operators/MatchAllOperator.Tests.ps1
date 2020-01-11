@@ -30,7 +30,7 @@ Describe "MatchAll/IMatchAll Operator" -Tags CI {
             $imatch = $string -imatchall $pattern
             $match.Count | Should -Be $string.Length
             $imatch.Count | Should -Be $string.Length
-            For ($i = 0; i -lt $string.Length; $i++)
+            For ($i = 0; $i -lt $string.Length; $i++)
             {
                 $match.Value[$i] | Should -Be $string[$i]
                 $match.Index[$i] | Should -Be $i
