@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 using namespace System.Text
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
 
 Import-Module HelpersCommon
