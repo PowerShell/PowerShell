@@ -8,7 +8,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             $PSDefaultParameterValues["it:skip"] = $true
         }
         else {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $true)
         }
     }
     AfterAll {

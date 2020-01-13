@@ -8,7 +8,7 @@ function Get-ParseResults
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
+        [Parameter(ValueFromPipeline=$true,Mandatory=$true)]
         [string]$src,
         [switch]$Ast
     )
@@ -25,7 +25,7 @@ function Get-RuntimeError
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)][string]$src
+        [Parameter(ValueFromPipeline=$true,Mandatory=$true)][string]$src
     )
  
     $errors = $null

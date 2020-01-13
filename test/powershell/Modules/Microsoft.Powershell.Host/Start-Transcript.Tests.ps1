@@ -220,7 +220,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Inquire
             Stop-Transcript
@@ -280,7 +280,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Inquire
             Stop-Transcript

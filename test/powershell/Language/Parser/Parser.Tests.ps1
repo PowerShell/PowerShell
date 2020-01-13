@@ -741,28 +741,28 @@ foo``u{2195}abc
             @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
             @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
             #-eq
-            @{ Script = 'if ($False -eq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -eq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -eq $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -eq $False) { $true } else { $false }'; Expected = $false }
             #-ieq
-            @{ Script = 'if ($False -ieq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ieq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -ieq $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -ieq $False) { $true } else { $false }'; Expected = $false }
             #-le
-            @{ Script = 'if ($False -le $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -le $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -le $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -le $False) { $true } else { $false }'; Expected = $false }
             #-ile
-            @{ Script = 'if ($False -ile $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ile $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -ile $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -ile $False) { $true } else { $false }'; Expected = $false }
             #-ge
-            @{ Script = 'if ($False -ge $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ge $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -ge $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -ge $False) { $true } else { $false }'; Expected = $false }
             #-ige
-            @{ Script = 'if ($False -ige $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ige $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -ige $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -ige $False) { $true } else { $false }'; Expected = $false }
             #-like
-            @{ Script = 'if ($False -like $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -like $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -like $true -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($False -and $true -like $False) { $true } else { $false }'; Expected = $false }
             #!
-            @{ Script = 'if (!$True -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if (!$true -and $False) { $true } else { $false }'; Expected = $false }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )

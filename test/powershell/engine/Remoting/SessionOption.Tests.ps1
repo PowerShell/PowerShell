@@ -30,7 +30,7 @@ try {
             $result.SkipCACheck = $true
             $result.SkipCNCheck = $true
             $result.SkipRevocationCheck = $true
-            $result.UseUtf16 = $True
+            $result.UseUtf16 = $true
             $result.UseEncryption = $false
             $result.ProxyAuthentication = "Negotiate"
             $result.SPNPort = 10

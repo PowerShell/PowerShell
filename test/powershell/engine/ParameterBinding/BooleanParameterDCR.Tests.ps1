@@ -33,7 +33,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
     $tests = @(
             @{ inputTest = $(1 -eq 1); expected = $true },
             @{ inputTest = $true; expected = $true },
-            @{ inputTest = $TRUE; expected = $true }
+            @{ inputTest = $true; expected = $true }
     )
     It "Test that $true is accepted as a true value for Switch parameters, inputTest:<inputTest>,expect:<expected>" -TestCases $tests {
             param ( $inputTest, $expected )
