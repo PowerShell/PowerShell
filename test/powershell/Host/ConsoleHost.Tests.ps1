@@ -571,7 +571,7 @@ foo
         }
 
         It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
-            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS> `$host.EnterNestedPrompt()"
