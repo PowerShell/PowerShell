@@ -857,7 +857,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -898,7 +898,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys)"
                     }
                 }
 
@@ -939,7 +939,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -990,7 +990,7 @@ try
                             $PriorityClass
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -1036,7 +1036,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
