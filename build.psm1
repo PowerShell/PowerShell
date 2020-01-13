@@ -156,7 +156,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
         $environment += @{'IsRedHat' = $LinuxInfo.ID -match 'rhel'}
         $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
-        $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
+        $environment += @{'IsOpenSUSE13' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
         $environment += @{'IsDebianFamily' = $Environment.IsDebian -or $Environment.IsUbuntu}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
@@ -1823,7 +1823,7 @@ function Start-PSBootstrap {
             if($Force.IsPresent) {
                 Write-Log "Installing dotnet due to -Force."
             }
-            elseif(!$dotNetExistis) {
+            elseif(!$dotNetExists) {
                 Write-Log "dotnet not present.  Installing dotnet."
             }
             else {
