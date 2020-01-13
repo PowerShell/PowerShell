@@ -161,7 +161,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $protectedEventLoggingCertPath
-        $recipient.Resolve($executionContext.SessionState, "Decryption", [ref] $errors)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
         $recipient.Certificates.Count | Should -Be 1
     }

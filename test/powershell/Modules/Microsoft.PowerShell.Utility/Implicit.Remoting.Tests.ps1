@@ -1860,11 +1860,11 @@ try
         }
 
         It "Removing a module should clean-up event handlers (Windows 7: #268819)" {
-            $oldNumberOfHandlers = $executionContext.GetType().GetProperty("Events").GetValue($executionContext, $null).Subscribers.Count
+            $oldNumberOfHandlers = $ExecutionContext.GetType().GetProperty("Events").GetValue($ExecutionContext, $null).Subscribers.Count
             $module = Import-PSSession -Session $session -Name Get-Random -AllowClobber
 
             Remove-Module $module -Force
-            $newNumberOfHandlers = $executionContext.GetType().GetProperty("Events").GetValue($executionContext, $null).Subscribers.Count
+            $newNumberOfHandlers = $ExecutionContext.GetType().GetProperty("Events").GetValue($ExecutionContext, $null).Subscribers.Count
 
             ## Event should be unregistered when the module is removed
             $oldNumberOfHandlers | Should -Be $newNumberOfHandlers
