@@ -887,7 +887,7 @@ namespace System.Management.Automation.Runspaces
                                         # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error
                                         else {
                                             $value = $null
-                                            if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($a, [string], [ref]$value) -and $value -ne $null)
+                                            if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($prop.Value, [string], [ref]$value) -and $value -ne $null)
                                             {
                                                 $isFirstLine = $true
                                                 if ($value.Contains($newline)) {
