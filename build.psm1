@@ -498,7 +498,7 @@ Fix steps:
         $psVersion = $ReleaseTag
     }
     else {
-        $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
+        $psVersion = git --git-dir="$PSScriptRoot/.git" describe
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {

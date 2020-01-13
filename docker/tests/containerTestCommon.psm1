@@ -72,7 +72,7 @@ function Get-LinuxContainer
     {
         Write-Output @{
             Name = $os
-            Path = "$psscriptroot/../release/$os"
+            Path = "$PSScriptRoot/../release/$os"
         }
     }
 }
@@ -84,7 +84,7 @@ function Get-WindowsContainer
     {
         Write-Output @{
             Name = $os
-            Path = "$psscriptroot/../release/$os"
+            Path = "$PSScriptRoot/../release/$os"
         }
     }
 }
