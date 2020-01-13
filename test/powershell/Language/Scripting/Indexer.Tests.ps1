@@ -7,7 +7,7 @@ Describe 'Tests for indexers' -Tags "CI" {
         $hashtable["Hello"] | Should -BeExactly "There"
     }
 
-    It 'Accessing a Indexed property of a dictionary that does not exist should return $NULL' {
+    It 'Accessing a Indexed property of a dictionary that does not exist should return $null' {
         $hashtable = @{ "Hello"="There" }
         $hashtable["Hello There"] | Should -BeNullOrEmpty
         }
@@ -19,7 +19,7 @@ Describe 'Tests for indexers' -Tags "CI" {
         $service.CimClassProperties["DisplayName"].Name | Should -BeExactly 'DisplayName'
     }
 
-    It 'Accessing a Indexed property of a CimClass that does not exist should return $NULL' -Skip:(-not $IsWindows) {
+    It 'Accessing a Indexed property of a CimClass that does not exist should return $null' -Skip:(-not $IsWindows) {
 
         $service = Get-CimClass -ClassName Win32_Service
         $service.CimClassProperties["Hello There"] | Should -BeNullOrEmpty
