@@ -225,7 +225,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
             [void] m()
             {
                 $LASTEXITCODE
-                $lastexitcode
+                $LASTEXITCODE
                 '111' -Match '1'
                 $Matches
                 $Matches
