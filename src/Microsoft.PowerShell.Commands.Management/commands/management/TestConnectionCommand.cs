@@ -321,15 +321,8 @@ namespace Microsoft.PowerShell.Commands
 
             for (var i = 1; i <= Count; i++)
             {
-                TcpPortStatus testResult = new TcpPortStatus(
-                    i,
-                    Source,
-                    targetNameOrAddress,
-                    targetAddress,
-                    TcpPort,
-                    0,
-                    false
-                );
+                long latency = 0;
+                SocketError status = SocketError.SocketError;
 
                 Stopwatch stopwatch = new Stopwatch();
 
@@ -341,12 +334,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, cancellationToken))
                     {
-                        testResult.Connected = client.Connected;
-                        testResult.Latency = stopwatch.ElapsedMilliseconds;
+                        latency = stopwatch.ElapsedMilliseconds;
+                        status = SocketError.Success;
                     }
                     else
                     {
-                        testResult.Status = SocketError.TimedOut;
+                        status = SocketError.TimedOut;
                     }
                 }
                 catch (AggregateException ae)
@@ -356,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                         if (ex is SocketException)
                         {
                             SocketException? socketException = ex as SocketException;
-                            testResult.Status = socketException!.SocketErrorCode;
+                            status = socketException!.SocketErrorCode;
                             return true;
                         }
                         else
@@ -372,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Quiet.IsPresent)
                 {
-                    if (testResult.Connected)
+                    if (status == SocketError.Success)
                     {
                         WriteObject(true);
                         return;
@@ -385,7 +378,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(testResult);
+                    WriteObject(new TcpPortStatus(
+                        i,
+                        Source,
+                        targetNameOrAddress,
+                        targetAddress,
+                        TcpPort,
+                        latency,
+                        status == SocketError.Success,
+                        status
+                    ));
                 }
 
                 Thread.Sleep(new TimeSpan(0, 0, Delay));
@@ -938,7 +940,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="port">The port used for the connection.</param>
             /// <param name="latency">The latency of the test.</param>
             /// <param name="connected">If the test connection succeeded.</param>
-            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, bool connected)
+            /// <param name="status">Status of the underlying socket.</param>
+            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, bool connected, SocketError status)
             {
                 Id = id;
                 Source = source;
@@ -947,6 +950,7 @@ namespace Microsoft.PowerShell.Commands
                 Port = port;
                 Latency = latency;
                 Connected = connected;
+                Status = status;
             }
 
             /// <summary>
