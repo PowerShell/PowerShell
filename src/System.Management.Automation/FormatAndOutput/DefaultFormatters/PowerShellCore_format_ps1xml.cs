@@ -883,29 +883,28 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                             }
                                         }
-                                        # anything else, we use ToString()
+                                        # Anything else, we convert to string.
+                                        # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error
                                         else {
-                                            if ($prop.Value -ne $null) {
-                                                $value = $prop.Value.ToString().Trim()
-                                            } else {
-                                                $value = $prop.ToString().Trim()
-                                            }
-
-                                            $isFirstLine = $true
-                                            if ($value.Contains($newline)) {
-                                                # the 3 is to account for ' : '
-                                                $valueIndent = ' ' * ($propLength + 3)
-                                                # need to trim any extra whitespace already in the text
-                                                foreach ($line in $value.Split($newline)) {
-                                                    if (!$isFirstLine) {
-                                                        $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                            $value = $null
+                                            if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($a, [string], [ref]$value) -and $value -ne $null)
+                                            {
+                                                $isFirstLine = $true
+                                                if ($value.Contains($newline)) {
+                                                    # the 3 is to account for ' : '
+                                                    $valueIndent = ' ' * ($propLength + 3)
+                                                    # need to trim any extra whitespace already in the text
+                                                    foreach ($line in $value.Split($newline)) {
+                                                        if (!$isFirstLine) {
+                                                            $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                                        }
+                                                        $null = $output.Append($line.Trim())
+                                                        $isFirstLine = $false
                                                     }
-                                                    $null = $output.Append($line.Trim())
-                                                    $isFirstLine = $false
                                                 }
-                                            }
-                                            else {
-                                                $null = $output.Append($value)
+                                                else {
+                                                    $null = $output.Append($value)
+                                                }
                                             }
                                         }
 
