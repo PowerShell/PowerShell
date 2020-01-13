@@ -54,7 +54,7 @@ Describe "Environment-Variables" -Tags "CI" {
 
             Copy-Item -Path $pwsh -Destination "~/$pwsh2"
             $testPath = Join-Path -Path "~" -ChildPath (New-Guid)
-            New-Item -Path $testPath -ItemType Directory
+            New-Item -Path $testPath -ItemType Directory > $null
             Copy-Item -Path $pwsh -Destination "$testPath/$pwsh2"
         }
 
