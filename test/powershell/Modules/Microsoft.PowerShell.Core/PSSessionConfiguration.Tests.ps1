@@ -705,7 +705,7 @@ namespace PowershellTestConfigNamespace
                         },
                         @{
                             Name = "mymodules";
-                            ScriptBlock = 'pushd $home\Documents\WindowsPowerShell\Modules';
+                            ScriptBlock = 'pushd $HOME\Documents\WindowsPowerShell\Modules';
                             Options = "ReadOnly";
                         }
                     )
