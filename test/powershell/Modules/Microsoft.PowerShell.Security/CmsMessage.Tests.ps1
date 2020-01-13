@@ -86,8 +86,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         else
         {
             # Skip for non-Windows platforms
-            $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSdefaultParameterValues = @{ "it:skip" = $true }
+            $defaultParamValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues = @{ "it:skip" = $true }
         }
     }
 

@@ -3,7 +3,7 @@
 Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
         $IsNotSkipped = ($IsWindows -and !$IsCoreCLR)
         $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
     }

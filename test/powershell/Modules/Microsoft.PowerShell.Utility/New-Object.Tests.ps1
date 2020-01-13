@@ -133,7 +133,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 
 try
 {
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe "New-Object COM functionality" -Tags "CI" {
