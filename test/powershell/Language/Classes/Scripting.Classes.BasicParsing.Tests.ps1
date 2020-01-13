@@ -228,7 +228,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
                 $lastexitcode
                 '111' -Match '1'
                 $Matches
-                $mAtches
+                $Matches
                 $Error[0]
                 $error
                 $pwd

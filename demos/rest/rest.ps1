@@ -24,7 +24,7 @@ function Get-Issue
         {
             if ($link -match '\s*<(.*)>;\s+rel="next"')
             {
-                $uri = $matches[1]
+                $uri = $Matches[1]
             }
         }
     }

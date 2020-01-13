@@ -2385,7 +2385,7 @@ function Copy-PSGalleryModules
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
-        $nugetCache = $matches[1]
+        $nugetCache = $Matches[1]
     }
     else {
         throw "Can't find nuget global cache"
@@ -2400,7 +2400,7 @@ function Copy-PSGalleryModules
 
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
-            $matches[1]
+            $Matches[1]
         } elseif ($version -match "^\d+.\d+$") {
             # Two digit versions are stored as three digit versions
             "$version.0"
