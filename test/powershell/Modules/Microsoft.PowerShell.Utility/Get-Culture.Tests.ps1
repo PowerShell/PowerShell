@@ -14,7 +14,7 @@ Describe "Get-Culture" -Tags "CI" {
 
     It "Should have (Get-Culture).Name variable be equivalent to `$PSCulture" {
 
-        (Get-Culture).Name | Should -BeExactly $PsCulture
+        (Get-Culture).Name | Should -BeExactly $PSCulture
     }
 
     It "Should return the specified culture with '-Name' parameter" {

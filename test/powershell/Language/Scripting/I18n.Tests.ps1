@@ -120,7 +120,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
         import-localizedData mydata -filename if
 
-        if ($psculture -eq 'en-US')
+        if ($PSCulture -eq 'en-US')
         {
             $mydata.string1 | Should -BeExactly 'string1 for en-US in if'
             $mydata.string2 | Should -BeExactly 'string2 for en-US in if'
