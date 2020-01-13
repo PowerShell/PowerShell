@@ -88,7 +88,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     AfterEach {
-        $Error.Clear()
+        $error.Clear()
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {

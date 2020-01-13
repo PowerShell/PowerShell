@@ -65,9 +65,9 @@ Describe "Test-Connection" -tags "CI" {
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
             if (!$isWindows) {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
+                $error[0].Exception.InnerException.ErrorCode | Should -Be -131073
             } else {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+                $error[0].Exception.InnerException.ErrorCode | Should -Be 11001
             }
         }
 

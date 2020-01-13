@@ -47,10 +47,10 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Error automatic variable" {
-        It "Should write error messages to the `$Error automatic variable" {
+        It "Should write error messages to the `$error automatic variable" {
             Write-Error "Test Error Message" -ErrorAction SilentlyContinue
 
-            $Error[0] | Should -Match "Test Error Message"
+            $error[0] | Should -Match "Test Error Message"
         }
     }
 

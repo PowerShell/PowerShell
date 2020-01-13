@@ -255,7 +255,7 @@ try
                     It "$Description" {
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
-                        $Error.Clear()
+                        $error.Clear()
                         try
                         {
                             $null = Unregister-PSSessionConfiguration -name $SessionConfigName -ErrorAction stop
