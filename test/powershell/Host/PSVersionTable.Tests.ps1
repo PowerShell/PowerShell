@@ -78,7 +78,7 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "Verify `$PSVersionTable.PSEdition" {
-        if ($isCoreCLR) {
+        if ($IsCoreCLR) {
             $edition = "Core"
         }
         else
