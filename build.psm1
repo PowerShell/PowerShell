@@ -99,18 +99,16 @@ function Get-PSCommitId
 
 function Get-EnvironmentInformation
 {
-    $environment = @{}
+    $environment = @{'IsWindows' = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT}
     # PowerShell will likely not be built on pre-1709 nanoserver
     if ('System.Management.Automation.Platform' -as [type]) {
         $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
         $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
         $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
-        $environment += @{'IsWindows' = [System.Management.Automation.Platform]::IsWindows}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
-        $environment += @{'IsWindows' = $true}
     }
 
     if ($Environment.IsWindows)
