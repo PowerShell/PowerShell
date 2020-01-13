@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region ConnectionTest
 
-        private void ProcessConnectionByTCPPort(string targetNameOrAddress)
+        private void SetCountForTcpTest()
         {
             if (Repeat.IsPresent)
             {
@@ -311,8 +311,13 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (!MyInvocation.BoundParameters.ContainsKey("Count"))
             {
-                Count = 1;
+                Count =  1;
             }
+        }
+
+        private void ProcessConnectionByTCPPort(string targetNameOrAddress)
+        {
+            SetCountForTcpTest();
 
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
