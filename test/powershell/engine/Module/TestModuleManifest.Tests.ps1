@@ -50,7 +50,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         $args = @{$parameter = "doesnotexist.psm1"}
         New-ModuleManifest -Path $testModulePath @args
-        [string]$fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
@@ -88,7 +88,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue > $null
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        [string]$fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
@@ -114,7 +114,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue > $null
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        [string]$fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
@@ -125,7 +125,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         param($rootModuleValue, $errorId)
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        [string]$fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
