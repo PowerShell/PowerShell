@@ -612,8 +612,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = "get-childitem -Fil"; expected = "-Filter"; setup = $null }
                 @{ inputStr = '$arg'; expected = '$args'; setup = $null }
                 @{ inputStr = '$args.'; expected = 'Count'; setup = $null }
-                @{ inputStr = '$host.UI.Ra'; expected = 'RawUI'; setup = $null }
-                @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
+                @{ inputStr = '$Host.UI.Ra'; expected = 'RawUI'; setup = $null }
+                @{ inputStr = '$Host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
                 @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
                 @{ inputStr = '$e=$null;try { 1/0 } catch {$e=$_};$e.'; expected = 'CategoryInfo'; setup = $null }

@@ -10,7 +10,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
     {
         # Create PSSession
         $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-        $rs = [runspacefactory]::CreateRunspace($host, $wc)
+        $rs = [runspacefactory]::CreateRunspace($Host, $wc)
         $rs.Open()
 
         # Get WinRM host process id
@@ -69,7 +69,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
     finally
     {
         # Clean up
-        if ($host.IsRunspacePushed) { $host.PopRunspace() }
+        if ($Host.IsRunspacePushed) { $Host.PopRunspace() }
 
         if ($null -ne $psHost) { $psHost.Dispose() }
         if ($null -ne $hostRS) { $hostRS.Dispose() }

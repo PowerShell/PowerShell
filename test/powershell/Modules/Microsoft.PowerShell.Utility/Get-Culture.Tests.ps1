@@ -7,7 +7,7 @@ Describe "Get-Culture" -Tags "CI" {
 
         $culture = Get-Culture
         $culture | Should -BeOfType [CultureInfo]
-        ($culture).EnglishName | Should -BeExactly $host.CurrentCulture.EnglishName
+        ($culture).EnglishName | Should -BeExactly $Host.CurrentCulture.EnglishName
 
         Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }

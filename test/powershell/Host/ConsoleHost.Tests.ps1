@@ -573,8 +573,8 @@ foo
         It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
-            $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS> `$host.EnterNestedPrompt()"
+            $process.StandardInput.Write("`$Host.EnterNestedPrompt()`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS> `$Host.EnterNestedPrompt()"
             $process.StandardInput.Write("exit`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS>> exit"
             $process.StandardInput.Close()
@@ -909,7 +909,7 @@ Describe "Console host api tests" -Tag CI {
             @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},
             @{InputObject = "[31mabc"; Length = 7; Name = "Malformed escape - no escape"}
 
-        $testCases += if ($host.UI.SupportsVirtualTerminal)
+        $testCases += if ($Host.UI.SupportsVirtualTerminal)
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
@@ -940,7 +940,7 @@ Describe "Console host api tests" -Tag CI {
 
         It "Should properly calculate buffer cell width of '<Name>'" -TestCases $testCases {
             param($InputObject, $Length)
-            $host.UI.RawUI.LengthInBufferCells($InputObject) | Should -Be $Length
+            $Host.UI.RawUI.LengthInBufferCells($InputObject) | Should -Be $Length
         }
     }
 }
