@@ -67,7 +67,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
         $informationPreference = "Continue"
         $DebugPreference = "Continue"
-        $verbosePreference = "Continue"
+        $VerbosePreference = "Continue"
         '
 
         $invocationSettings = New-Object System.Management.Automation.PSInvocationSettings
