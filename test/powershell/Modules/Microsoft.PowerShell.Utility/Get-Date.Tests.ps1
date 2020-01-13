@@ -28,7 +28,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
 
         $seconds | Should -Be "1577836800"
-        if ($isLinux) {
+        if ($IsLinux) {
             $dateString = "01/01/2020 UTC"
             if ( (Get-PlatformInfo) -eq "alpine" ) {
                 $dateString = "2020-01-01"
