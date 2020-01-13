@@ -655,7 +655,7 @@ namespace StackTest {
 
     Context "PATH environment variable" {
         It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $psversiontable.GitCommitId
+            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -960,7 +960,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
         $osversion = [System.Environment]::OSVersion.Version
-        $psversiontable.os | Should -MatchExactly "$($osversion.Major).$($osversion.Minor)"
+        $PSVersionTable.os | Should -MatchExactly "$($osversion.Major).$($osversion.Minor)"
     }
 }
 

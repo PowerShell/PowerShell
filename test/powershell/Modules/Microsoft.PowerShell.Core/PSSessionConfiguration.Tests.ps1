@@ -21,7 +21,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+        $endpointName = "PowerShell.$($PSVersionTable.GitCommitId)"
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
