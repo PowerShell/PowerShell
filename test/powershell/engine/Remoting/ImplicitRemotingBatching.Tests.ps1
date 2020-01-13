@@ -5,7 +5,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
 
     BeforeAll {
 
-        if (! $isWindows) { return }
+        if (! $IsWindows) { return }
 
         function ThrowSetupError
         {
@@ -149,7 +149,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
 
     AfterAll {
 
-        if (! $isWindows) { return }
+        if (! $IsWindows) { return }
 
         if ($remoteSession -ne $null) { Remove-PSSession $remoteSession -ErrorAction Ignore }
         if ($powershell -ne $null) { $powershell.Dispose() }

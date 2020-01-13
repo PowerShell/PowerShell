@@ -18,7 +18,7 @@ Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
 Import-Module (Join-Path $repoRoot 'tools\packaging') -scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
-if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
+if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
 {
     Import-Module (Join-Path $PSScriptRoot 'WindowsCI.psm1') -scope Global
 }

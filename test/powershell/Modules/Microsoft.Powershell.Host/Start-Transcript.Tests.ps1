@@ -58,7 +58,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     It "Should create Transcript file at default path" {
         $script = "Start-Transcript"
-        if ($isWindows) {
+        if ($IsWindows) {
             $defaultTranscriptFilePath = [io.path]::Combine($env:USERPROFILE, "Documents", "PowerShell_transcript*")
         } else {
             $defaultTranscriptFilePath = [io.path]::Combine($env:HOME, "PowerShell_transcript*")
