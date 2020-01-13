@@ -289,7 +289,7 @@ function Start-PSBuild {
         [switch]$Detailed
     )
 
-    if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
+    if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {
         $PSModuleRestore = $true
     }
@@ -1393,14 +1393,14 @@ function Show-PSPesterError
         [PSCustomObject]$testFailureObject
         )
 
-    if ($PSCmdLet.ParameterSetName -eq 'xml')
+    if ($PSCmdlet.ParameterSetName -eq 'xml')
     {
         $description = $testFailure.description
         $name = $testFailure.name
         $message = $testFailure.failure.message
         $StackTrace = $testFailure.failure."stack-trace"
     }
-    elseif ($PSCmdLet.ParameterSetName -eq 'object')
+    elseif ($PSCmdlet.ParameterSetName -eq 'object')
     {
         $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
         $name = $testFailureObject.Name
@@ -1488,7 +1488,7 @@ function Test-PSPesterResults
         [switch] $CanHaveNoResult
     )
 
-    if($PSCmdLet.ParameterSetName -eq 'file')
+    if($PSCmdlet.ParameterSetName -eq 'file')
     {
         if(!(Test-Path $TestResultsFile))
         {
@@ -1515,7 +1515,7 @@ function Test-PSPesterResults
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
     }
-    elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
+    elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
         if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
         {

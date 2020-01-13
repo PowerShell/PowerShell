@@ -125,7 +125,7 @@ function Remove-CronJob {
             $e = New-Object System.Exception -ArgumentList "Job not found"
             throw $e
         }
-        if ($Force -or $pscmdlet.ShouldProcess($Job.Command,"Remove")) {
+        if ($Force -or $PSCmdlet.ShouldProcess($Job.Command,"Remove")) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
     }

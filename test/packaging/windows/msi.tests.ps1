@@ -28,7 +28,7 @@ function Invoke-Msiexec {
         [HashTable] $Properties
 
     )
-    $action = "$($PsCmdlet.ParameterSetName)ing"
+    $action = "$($PSCmdlet.ParameterSetName)ing"
     if ($Install.IsPresent) {
         $switch = '/I'
     } else {

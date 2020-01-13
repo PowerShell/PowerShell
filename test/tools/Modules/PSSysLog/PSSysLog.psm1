@@ -1079,7 +1079,7 @@ function Wait-PSWinEvent
 
         foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
         {
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
                 {
@@ -1094,7 +1094,7 @@ function Wait-PSWinEvent
                 }
             }
 
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyIndex")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyIndex")
             {
                 if ($thisRecord.Properties[$propertyIndex].Value -eq $propertyValue)
                 {
