@@ -231,7 +231,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
                 $Matches
                 $error[0]
                 $error
-                $pwd
+                $PWD
                 foreach ($i in 1..10) {$foreach}
                 switch ($i)
                 {

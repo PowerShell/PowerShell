@@ -202,7 +202,7 @@ Describe "Set-Location" -Tags "CI" {
         }
 
         It 'The LocationChangedAction should fire when changing location' {
-            $initialPath = $pwd
+            $initialPath = $PWD
             $oldPath = $null
             $newPath = $null
             $eventSessionState = $null
@@ -214,7 +214,7 @@ Describe "Set-Location" -Tags "CI" {
                 (Get-Variable newPath).Value = $_.newPath
             }
             Set-Location ..
-            $newPath.Path | Should -Be $pwd.Path
+            $newPath.Path | Should -Be $PWD.Path
             $oldPath.Path | Should -Be $initialPath.Path
             $eventSessionState | Should -Be $ExecutionContext.SessionState
             $eventRunspace | Should -Be ([runspace]::DefaultRunspace)

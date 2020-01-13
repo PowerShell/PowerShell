@@ -190,7 +190,7 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $xUnitTestResultsFile = Join-Path -Path $pwd -childpath "xUnitTestResults.xml"
+    $xUnitTestResultsFile = Join-Path -Path $PWD -childpath "xUnitTestResults.xml"
 
     Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
@@ -239,8 +239,8 @@ function Invoke-CITest
 
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     Write-Host -Foreground Green 'Run CoreCLR tests'
-    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin-$TagSet.xml"
-    $testResultsAdminFile = "$pwd\TestsResultsAdmin-$TagSet.xml"
+    $testResultsNonAdminFile = "$PWD\TestsResultsNonAdmin-$TagSet.xml"
+    $testResultsAdminFile = "$PWD\TestsResultsAdmin-$TagSet.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -269,7 +269,7 @@ function Invoke-CITest
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestsResultsNonAdmin.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestsResultsNonAdmin.$featureName.xml"
             $arguments['OutputFile'] = $expFeatureTestResultFile
             $arguments['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0) {
@@ -308,7 +308,7 @@ function Invoke-CITest
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestsResultsAdmin.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestsResultsAdmin.$featureName.xml"
             $arguments['OutputFile'] = $expFeatureTestResultFile
             $arguments['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0)
@@ -407,11 +407,11 @@ function Compress-CoverageArtifacts
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
-    $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
+    $zipOpenCoverPath = Join-Path $PWD 'OpenCover.zip'
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath)
     $null = $artifacts.Add($zipOpenCoverPath)
 
-    $zipCodeCoveragePath = Join-Path $pwd "CodeCoverage.zip"
+    $zipCodeCoveragePath = Join-Path $PWD "CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
     $null = $artifacts.Add($zipCodeCoveragePath)
@@ -576,8 +576,8 @@ function Invoke-LinuxTestsCore
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
-    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
-    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+    $testResultsNoSudo = "$PWD/TestResultsNoSudo.xml"
+    $testResultsSudo = "$PWD/TestResultsSudo.xml"
     $testExcludeTag = $ExcludeTag + 'RequireSudoOnUnix'
 
     $noSudoPesterParam = @{
@@ -603,7 +603,7 @@ function Invoke-LinuxTestsCore
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestResultsNoSudo.$featureName.xml"
             $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
             $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0) {
@@ -638,7 +638,7 @@ function Invoke-LinuxTestsCore
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestResultsSudo.$featureName.xml"
             $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
             $sudoPesterParam['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0)

@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    $logFolder = Join-Path -path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory

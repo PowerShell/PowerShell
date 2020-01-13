@@ -615,7 +615,7 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win7-x64
+   Invoke-OpenCover -TestPath $PWD/test/powershell -PowerShellExeDirectory $PWD/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win7-x64
 #>
 function Invoke-OpenCover
 {

@@ -216,7 +216,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "starts in the current directory" {
             $j = Get-Location | Foreach-Object -MemberName Path &
-            Receive-Job -Wait $j | Should -Be ($pwd.Path)
+            Receive-Job -Wait $j | Should -Be ($PWD.Path)
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &

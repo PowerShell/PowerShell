@@ -438,7 +438,7 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $pwd"
+            Write-Log "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
 
@@ -456,14 +456,14 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $pwd"
+            Write-Log "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
 
             try {
                 Push-Location $globalToolSrcFolder
                 $Arguments += "--output", $publishPath
-                Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                Write-Log "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
             finally {
@@ -1646,7 +1646,7 @@ function Install-Dotnet {
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path $pwd.Path -ChildPath $installScript
+            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
             Start-NativeExecution { & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version }
         }
     }

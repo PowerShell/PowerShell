@@ -706,7 +706,7 @@ namespace StackTest {
             @{ parameter = '-wo' }
         ) {
             param($parameter)
-            $output = & $powershell -NoProfile $parameter ~ -Command "`$pwd.Path"
+            $output = & $powershell -NoProfile $parameter ~ -Command "`$PWD.Path"
             $output | Should -BeExactly $((Get-Item ~).FullName)
         }
 
