@@ -1398,14 +1398,14 @@ function Show-PSPesterError
         $description = $testFailure.description
         $name = $testFailure.name
         $message = $testFailure.failure.message
-        $stackTrace = $testFailure.failure."stack-trace"
+        $StackTrace = $testFailure.failure."stack-trace"
     }
     elseif ($PSCmdLet.ParameterSetName -eq 'object')
     {
         $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
         $name = $testFailureObject.Name
         $message = $testFailureObject.FailureMessage
-        $stackTrace = $testFailureObject.StackTrace
+        $StackTrace = $testFailureObject.StackTrace
     }
     else
     {
@@ -1417,7 +1417,7 @@ function Show-PSPesterError
     Write-Log -Error "message:"
     Write-Log -Error $message
     Write-Log -Error "stack-trace:"
-    Write-Log -Error $stackTrace
+    Write-Log -Error $StackTrace
 
 }
 
@@ -1455,14 +1455,14 @@ function Test-XUnitTestResults
         $description = $failure.test.type
         $name = $failure.test.method
         $message = $failure.test.failure.message.'#cdata-section'
-        $stackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+        $StackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
 
         Write-Log -Error ("Description: " + $description)
         Write-Log -Error ("Name:        " + $name)
         Write-Log -Error "message:"
         Write-Log -Error $message
         Write-Log -Error "stack-trace:"
-        Write-Log -Error $stackTrace
+        Write-Log -Error $StackTrace
     }
 
     throw "$($failedTests.failed) tests failed"
