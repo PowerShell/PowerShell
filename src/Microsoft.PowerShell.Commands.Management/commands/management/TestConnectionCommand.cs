@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
                     ));
                 }
 
-                Thread.Sleep(new TimeSpan(0, 0, Delay));
+                Task.Delay(new TimeSpan(0, 0, i == Count ? 0 : Delay)).Wait(cancellationToken);
             }
         }
 
