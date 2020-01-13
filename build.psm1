@@ -101,11 +101,11 @@ function Get-EnvironmentInformation
 {
     $environment = @{}
     # PowerShell will likely not be built on pre-1709 nanoserver
-    if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
-        $environment += @{'IsCoreCLR' = $true}
-        $environment += @{'IsLinux' = $IsLinux}
-        $environment += @{'IsMacOS' = $IsMacOS}
-        $environment += @{'IsWindows' = $IsWindows}
+    if ('System.Management.Automation.Platform' -as [type]) {
+        $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
+        $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
+        $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
+        $environment += @{'IsWindows' = [System.Management.Automation.Platform]::IsWindows}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
