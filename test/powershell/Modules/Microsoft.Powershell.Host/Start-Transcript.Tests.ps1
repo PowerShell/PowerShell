@@ -53,7 +53,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $False)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $false)
     }
 
     It "Should create Transcript file at default path" {

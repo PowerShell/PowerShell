@@ -37,7 +37,7 @@ function Wait-FileToBePresent
 
 function Test-IsElevated
 {
-    $IsElevated = $False
+    $IsElevated = $false
     if ( $IsWindows ) {
         # on Windows we can determine whether we're executing in an
         # elevated context
