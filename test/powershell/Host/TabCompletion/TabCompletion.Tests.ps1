@@ -697,8 +697,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
                 ## if $PSHOME contains a space tabcompletion adds ' around the path
-                @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
-                @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
+                @{ inputStr = 'cd $PSHOME\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
+                @{ inputStr = 'cd "$PSHOME\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
                 @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }}
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }

@@ -11,7 +11,7 @@ using namespace System.Diagnostics
 Describe 'minishell for native executables' -Tag 'CI' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     Context 'Streams from minishell' {
@@ -53,7 +53,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
 Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
@@ -966,7 +966,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
 
 Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $dirnames = "[T]est","[Test","T][est","Test"
         $testcases = @()
         foreach ( $d in $dirnames ) {

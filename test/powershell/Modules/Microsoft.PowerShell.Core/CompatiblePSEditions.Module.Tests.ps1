@@ -502,7 +502,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             Restore-ModulePath
         }
 
-        It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" {
+        It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
             $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
         }

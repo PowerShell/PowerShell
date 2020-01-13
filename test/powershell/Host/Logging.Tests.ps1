@@ -155,7 +155,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 Write-Warning -Message 'Unsupported Linux syslog configuration.'
                 $IsSupportedEnvironment = $false
             }
-            [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+            [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
             $scriptBlockCreatedRegExTemplate = @"
 Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
 "@
@@ -273,7 +273,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
                 Set-OsLogPersistence -Enable
             }
         }
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockCreatedRegExTemplate = @'
 Creating Scriptblock text \(1 of 1\):
 {0}
@@ -436,7 +436,7 @@ $PID
 Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -452,7 +452,7 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
 
         if ($IsSupportedEnvironment)
         {
-            & "$PSHome\RegisterManifest.ps1"
+            & "$PSHOME\RegisterManifest.ps1"
         }
     }
 

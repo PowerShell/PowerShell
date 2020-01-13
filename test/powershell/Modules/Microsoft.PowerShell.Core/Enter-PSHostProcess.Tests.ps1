@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-$powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+$powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
 function Wait-JobPid {
     param (

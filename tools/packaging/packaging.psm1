@@ -1618,7 +1618,7 @@ function New-ILNugetPackage
 
             if ($file -eq "Microsoft.PowerShell.SDK.dll")
             {
-                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
                 # This is to make 'Add-Type' work in application that hosts PowerShell.
 
                 $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force

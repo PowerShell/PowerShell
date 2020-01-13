@@ -700,7 +700,7 @@ namespace PowershellTestConfigNamespace
                     FunctionDefinitions=@(
                         @{
                             Name = "sysmodules";
-                            ScriptBlock = 'pushd $pshome\Modules';
+                            ScriptBlock = 'pushd $PSHOME\Modules';
                             Options = "AllScope";
                         },
                         @{

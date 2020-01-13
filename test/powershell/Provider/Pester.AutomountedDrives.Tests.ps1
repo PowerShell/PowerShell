@@ -9,7 +9,7 @@ $script:TestSourceRoot = $PSScriptRoot
 Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feature', 'Slow', 'RequireAdminOnWindows') {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
         $AutomountVHDDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountVHDDrive.ps1'
         $vhdPath = Join-Path $TestDrive 'TestAutomountVHD.vhd'

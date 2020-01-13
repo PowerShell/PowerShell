@@ -237,7 +237,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
 Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     BeforeAll {
         $TestModulesPath = [System.IO.Path]::Combine($PSScriptRoot, 'assets', 'testmodulerunspace')
-        $PSHomeModulesPath = "$pshome\Modules"
+        $PSHomeModulesPath = "$PSHOME\Modules"
 
         # Install the Test Module
         if (Test-CanWriteToPsHome) {
@@ -250,7 +250,7 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
         $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
 
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
-        # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
+        # Before the fix, all modules under $PSHOME will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
         $verbose.Count | Should -BeLessThan 15
     }
 
