@@ -225,13 +225,13 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
             [void] m()
             {
                 $LASTEXITCODE
-                $LASTEXITCODE
+                $lastexitcode
                 '111' -Match '1'
                 $Matches
-                $Matches
+                $mAtches
                 $error[0]
                 $error
-                $PWD
+                $pwd
                 foreach ($i in 1..10) {$foreach}
                 switch ($i)
                 {

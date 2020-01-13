@@ -185,8 +185,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
         It "-File should be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
             # validates case is preserved
-            @{BoolString = '$true'},
-            @{BoolString = '$false'},
+            @{BoolString = '$truE'},
+            @{BoolString = '$falSe'},
             @{BoolString = 'trUe'},
             @{BoolString = 'faLse'}
         ) {
@@ -198,8 +198,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
         It "-File should be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
             # validates case is preserved
-            @{BoolString = '$true'},
-            @{BoolString = '$false'},
+            @{BoolString = '$tRue'},
+            @{BoolString = '$falSe'},
             @{BoolString = 'tRUe'},
             @{BoolString = 'fALse'}
         ) {
@@ -210,8 +210,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "-File should be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
-            @{BoolString = '$true'; BoolValue = 'True'},
-            @{BoolString = '$false'; BoolValue = 'False'},
+            @{BoolString = '$tRue'; BoolValue = 'True'},
+            @{BoolString = '$faLse'; BoolValue = 'False'},
             @{BoolString = 'tRue'; BoolValue = 'True'},
             @{BoolString = 'fAlse'; BoolValue = 'False'}
         ) {
