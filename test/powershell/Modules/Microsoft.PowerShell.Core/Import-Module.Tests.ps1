@@ -264,11 +264,11 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
     BeforeAll {
-        $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
+        $defaultPSModuleAutoloadingPreference = $PSModuleAutoLoadingPreference
         $originalPSModulePath = $env:PSModulePath.Clone()
         $modulesPath = "$TestDrive\Modules"
         $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
-        $PSModuleAutoloadingPreference = "none"
+        $PSModuleAutoLoadingPreference = "none"
     }
 
     AfterAll {
