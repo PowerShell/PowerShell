@@ -149,7 +149,7 @@ Class OsLogIds
     [int] $Thread = 2;
     [int] $Type = 3;
     [int] $Activity = 4;
-    [int] $Pid = 5;
+    [int] $PID = 5;
     [int] $TTL = 6;
     [int] $ProcessName = 7;
     [int] $Module = 8;

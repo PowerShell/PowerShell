@@ -761,7 +761,7 @@ namespace StackTest {
             # Generate a string that is larger than the max pipe name length.
             $longPipeName = [string]::new("A", 200)
 
-            "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
+            "`$PID" | & $powershell -CustomPipeName $longPipeName -c -
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }

@@ -80,7 +80,7 @@ Describe "Stream writer tests" -Tags "CI" {
             # redirect the streams is sufficient
             $result = Write-Information "Test Message" *>&1
             $result.NativeThreadId | Should -Not -Be 0
-            $result.ProcessId | Should -Be $pid
+            $result.ProcessId | Should -Be $PID
             $result | Should -BeOfType System.Management.Automation.InformationRecord
 
             # Use Match instead of Be so we can avoid dealing with a potential domain name

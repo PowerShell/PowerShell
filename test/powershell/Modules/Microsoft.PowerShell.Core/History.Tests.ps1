@@ -100,7 +100,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript("(Get-Command Get-Process).Visibility = 'Private'").Invoke()
         $ps.Commands.Clear()
-        $null = $ps.AddScript("Get-Process -id $pid")
+        $null = $ps.AddScript("Get-Process -id $PID")
         $null = $ps.Invoke($null, $invocationSettings)
         $ps.Commands.Clear()
         $null = $ps.AddScript("Invoke-History -id 1")

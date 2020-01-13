@@ -191,7 +191,7 @@ Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -220,7 +220,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -338,7 +338,7 @@ Path:.*
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
@@ -376,7 +376,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose

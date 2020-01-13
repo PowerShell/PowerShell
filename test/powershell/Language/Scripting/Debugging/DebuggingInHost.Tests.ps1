@@ -16,7 +16,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         # Get WinRM host process id
         [powershell] $ps = [powershell]::Create()
         $ps.Runspace = $rs
-        $result = $ps.AddScript('$pid').Invoke()
+        $result = $ps.AddScript('$PID').Invoke()
         It "Verifies the WinRM host process Id was found" {
             $result | Should -Not -BeNullOrEmpty
             ($result.Count -eq 1) | Should -BeTrue

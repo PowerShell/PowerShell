@@ -327,9 +327,9 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify protect message using OutString" {
-        $protected = Get-Process -Id $pid | Protect-CmsMessage -To (Get-GoodCertificateLocation)
+        $protected = Get-Process -Id $PID | Protect-CmsMessage -To (Get-GoodCertificateLocation)
         $decrypted = $protected | Unprotect-CmsMessage -To (Get-GoodCertificateLocation)
         # Should have had PID in output
-        $decrypted | Should -Match $pid
+        $decrypted | Should -Match $PID
     }
 }

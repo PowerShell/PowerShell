@@ -1112,7 +1112,7 @@ dir -Recurse `
                 "Overridden-TabExpansion-Function"
             }
 
-            $inputStr = '$pid.'
+            $inputStr = '$PID.'
             $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Overridden-TabExpansion-Function'
@@ -1124,7 +1124,7 @@ dir -Recurse `
             }
             Set-Alias -Name TabExpansion -Value OverrideTabExpansion
 
-            $inputStr = '$pid.'
+            $inputStr = '$PID.'
             $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Overridden-TabExpansion-Alias"
@@ -1153,12 +1153,12 @@ dir -Recurse `
             $ast = {}.Ast;
             $tokens = [System.Management.Automation.Language.Token[]]@()
             $testCases = @(
-                @{ inputStr = {[System.Management.Automation.CommandCompletion]::MapStringInputToParsedInput('$pid.', 7)}; expected = "PSArgumentException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::MapStringInputToParsedInput('$PID.', 7)}; expected = "PSArgumentException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($null, $null, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $null, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $null, $null)}; expected = "PSArgumentNullException" }
-                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$pid.', 7, $null, $null)}; expected = "PSArgumentException" }
-                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$pid.', 5, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$PID.', 7, $null, $null)}; expected = "PSArgumentException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$PID.', 5, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($null, $null, $null, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $null, $null, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $null, $null, $null)}; expected = "PSArgumentNullException" }
@@ -1218,7 +1218,7 @@ dir -Recurse `
             $testCases = @(
                 @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"; expected = "Create" }
                 @{ inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"; expected = "AttachDebugger" }
-                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst'; expected = "Win32_ComputerSystem" }
+                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst'; expected = "Win32_ComputerSystem" }
                 @{ inputStr = "Get-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
                 @{ inputStr = "New-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
                 @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = "Caption" }
@@ -1228,7 +1228,7 @@ dir -Recurse `
                 @{ inputStr = 'Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_NetIPAddress -MethodName Crea'; expected = 'Create' }
                 @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; $win32_process | Invoke-CimMethod -MethodName AttachDe'; expected = 'AttachDebugger' }
                 @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; Invoke-CimMethod -InputObject $win32_process -MethodName AttachDe'; expected = 'AttachDebugger' }
-                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
+                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
                 @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
