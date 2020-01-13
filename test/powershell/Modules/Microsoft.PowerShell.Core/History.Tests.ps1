@@ -66,7 +66,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
         }
 
         $informationPreference = "Continue"
-        $debugPreference = "Continue"
+        $DebugPreference = "Continue"
         $verbosePreference = "Continue"
         '
 
