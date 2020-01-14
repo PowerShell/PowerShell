@@ -131,9 +131,21 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
-                $rs.Open()
-                $rs.RunspaceStateInfo.State |
-                    Should -Be ([System.Management.Automation.Runspaces.RunspaceState]::Opened) -Because $rs.RunspaceStateInfo.Reason
+
+                # Try to open the runspace while tracing.
+                $splat = @{
+                    Name = "RunspaceInit"
+                    Expression = {$Input.Open()}
+                    PSHost = $true
+                    ListenerOption = [System.Diagnostics.TraceOptions]::Callstack
+                    FilePath = "$TestDrive/$([System.IO.Path]::GetRandomFileName()).log"
+                    InputObject = $rs
+                }
+                Trace-Command @splat
+
+                # If opening the runspace fails, then print out the trace with the callstack
+                Wait-UntilTrue { $rs.RunspaceStateInfo.State -eq [System.Management.Automation.Runspaces.RunspaceState]::Opened } |
+                    Should -BeTrue -Because (get-content $splat.FilePath -Raw)
 
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
