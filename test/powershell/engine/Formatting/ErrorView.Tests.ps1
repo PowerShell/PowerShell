@@ -4,7 +4,7 @@
 Describe 'Tests for $ErrorView' -Tag CI {
 
     It '$ErrorView is an enum' {
-        $ErrorView | Should -BeOfType [System.Management.Automation.ErrorView]
+        $ErrorView | Should -BeOfType System.Management.Automation.ErrorView
     }
 
     It '$ErrorView should have correct default value' {

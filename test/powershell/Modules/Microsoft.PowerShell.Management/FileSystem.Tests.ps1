@@ -289,8 +289,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Can get an appx package item" -Skip:$skipTest {
-            Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType [System.IO.FileInfo]
-            Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType [System.IO.DirectoryInfo]
+            Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType System.IO.FileInfo
+            Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType System.IO.DirectoryInfo
             Get-ChildItem -Path $pkgDir -ErrorAction Stop | Should -Not -BeNullOrEmpty
         }
     }

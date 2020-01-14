@@ -187,7 +187,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
         )
 
         $Result = $capitonyms | Group-Object -Property Capitonym -AsHashTable -CaseSensitive
-        $Result | Should -BeOfType [HashTable]
+        $Result | Should -BeOfType HashTable
         $Result.Keys | Should -BeIn @( 'Bill', 'bill' )
     }
 }
