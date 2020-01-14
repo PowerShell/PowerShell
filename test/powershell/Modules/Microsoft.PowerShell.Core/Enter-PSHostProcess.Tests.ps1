@@ -133,7 +133,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
                 $rs.Open()
                 $rs.RunspaceStateInfo.State |
-                    Should -Be [System.Management.Automation.Runspaces.RunspaceState]::Opened -Because $rs.RunspaceStateInfo.Reason
+                    Should -Be ([System.Management.Automation.Runspaces.RunspaceState]::Opened) -Because $rs.RunspaceStateInfo.Reason
 
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
