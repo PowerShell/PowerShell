@@ -3,14 +3,20 @@
 Describe "Split-Path" -Tags "CI" {
 
     It "Should return a string object when invoked" {
-        $result = Split-Path .
-        $result | Should -BeOfType String
+        try {
+            Push-Location TestDrive:
+            $result = Split-Path .
+            $result | Should -BeOfType String
 
-        $result = Split-Path . -Leaf
-        $result | Should -BeOfType String
+            $result = Split-Path . -Leaf
+            $result | Should -BeOfType String
 
-        $result = Split-Path . -Resolve
-        $result | Should -BeOfType String
+            $result = Split-Path . -Resolve
+            $result | Should -BeOfType String
+        }
+        finally {
+            Pop-Location
+        }
     }
 
     It "Should return the name of the drive when the qualifier switch is used" {
