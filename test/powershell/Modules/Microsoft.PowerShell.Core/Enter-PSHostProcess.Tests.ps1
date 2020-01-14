@@ -132,7 +132,8 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
                 $rs.Open()
-                Wait-UntilTrue { $rs.RunspaceStateInfo.State -eq [System.Management.Automation.Runspaces.RunspaceState]::Opened } | Should -BeTrue
+                $rs.RunspaceStateInfo.State |
+                    Should -Be [System.Management.Automation.Runspaces.RunspaceState]::Opened -Because $rs.RunspaceStateInfo.Reason
 
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
