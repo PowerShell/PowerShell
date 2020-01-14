@@ -366,10 +366,18 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             <Capability Type="Shell"></Capability>
         </Resource>
     </Resources>
-    <Quotas MaxIdleTimeoutms="2147483646" MaxConcurrentUsers="2147483646" IdleTimeoutms="6200000" MaxProcessesPerShell="2147483646"
+    <Quotas MaxIdleTimeoutms="2147483646" MaxConcurrentUsers="{0}" IdleTimeoutms="6200000" MaxProcessesPerShell="2147483646"
         MaxMemoryPerShellMB="2147483646" MaxConcurrentCommandsPerShell="2147483646" MaxShells="2147483646" MaxShellsPerUser="2147483646"></Quotas>
 </PlugInConfiguration>
 "@
+            $osInfo = [System.Environment]::OSVersion.Version
+            $isSrv2k12R2 = $osInfo.Major -eq 6 -and $osInfo.Minor -eq 3
+
+            # On Windows Server 2012R2 MaxConcurrentUsers is limited to 100.
+            $maxConcurrentUsers = if ($isSrv2k12R2) { '50' } else { '2147483646' }
+
+            $fileXml = $fileXml -f $maxConcurrentUsers
+
             Set-Content -Path $testdrive\plugin.xml -Value $fileXml
             try {
                 $plugin = New-Item -Path WSMan:\localhost\Plugin -File $testdrive\plugin.xml -Name TestPlugin2
