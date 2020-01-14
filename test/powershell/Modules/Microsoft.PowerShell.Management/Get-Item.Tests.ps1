@@ -127,7 +127,7 @@ Describe "Get-Item" -Tags "CI" {
     Context "Registry Provider" {
         It "Can retrieve an item from registry" -skip:$skipNotWindows {
             ${result} = Get-Item HKLM:/Software
-            ${result} | Should -BeOfType "Microsoft.Win32.RegistryKey"
+            ${result} | Should -BeOfType Microsoft.Win32.RegistryKey
         }
     }
 

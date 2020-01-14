@@ -48,7 +48,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Should output an array of objects" {
         $result = $testObject | ConvertTo-Csv
-        ,$result | Should -BeOfType "System.Array"
+        ,$result | Should -BeOfType System.Array
     }
 
     It "Should return the type of data in the first element of the output array" {

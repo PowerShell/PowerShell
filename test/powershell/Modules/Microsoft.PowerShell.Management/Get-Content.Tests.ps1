@@ -33,13 +33,13 @@ Describe "Get-Content" -Tags "CI" {
         $content = (Get-Content -Path $testPath)
         $content | Should -BeExactly $testString
         $content.Count | Should -Be 1
-        $content | Should -BeOfType "System.String"
+        $content | Should -BeOfType System.String
     }
 
     It "Should deliver an array object when listing a file with multiple lines and the correct information from a file" {
         $content = (Get-Content -Path $testPath2)
         @(Compare-Object $content $testString2.Split($nl) -SyncWindow 0).Length | Should -Be 0
-        ,$content | Should -BeOfType "System.Array"
+        ,$content | Should -BeOfType System.Array
     }
 
     It "Should be able to return a specific line from a file" {

@@ -46,14 +46,14 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "PSVersion property" {
-       $PSVersionTable.PSVersion | Should -BeOfType "System.Management.Automation.SemanticVersion"
+       $PSVersionTable.PSVersion | Should -BeOfType System.Management.Automation.SemanticVersion
        $PSVersionTable.PSVersion | Should -BeExactly $expectedPSVersion
        $PSVersionTable.PSVersion | Should -Match $expectedVersionPattern
        $PSVersionTable.PSVersion.Major | Should -Be 7
     }
 
     It "GitCommitId property" {
-       $PSVersionTable.GitCommitId | Should -BeOfType "System.String"
+       $PSVersionTable.GitCommitId | Should -BeOfType System.String
        $PSVersionTable.GitCommitId | Should -Match $expectedGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should -Not -Match $unexpectectGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should -BeExactly $rawGitCommitId
