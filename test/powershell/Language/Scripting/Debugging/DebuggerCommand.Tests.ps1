@@ -48,7 +48,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have non-empty string output from the help command' {
-            $results[0].Output | Should -BeOfType ([string])
+            $results[0].Output | Should -BeOfType string
             $result['?'] | Should -Match '\S'
         }
 
@@ -104,7 +104,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType ([string])
+            $results[0].Output | Should -BeOfType string
             $result['l'] | Should -Match '\S'
         }
 
@@ -151,7 +151,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType ([string])
+            $results[0].Output | Should -BeOfType string
             $result['l 4'] | Should -Match '\S'
         }
 
@@ -195,7 +195,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType ([string])
+            $results[0].Output | Should -BeOfType string
             $result['l 3 2'] | Should -Match '\S'
         }
 
@@ -228,7 +228,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should only have CallStackFrame output from the callstack command' {
-            $results[0].Output | Should -BeOfType ([System.Management.Automation.CallStackFrame])
+            $results[0].Output | Should -BeOfType System.Management.Automation.CallStackFrame
         }
 
         It '''k'' and ''Get-PSCallStack'' should show identical script listings' {

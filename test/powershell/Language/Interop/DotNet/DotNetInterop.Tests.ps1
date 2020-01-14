@@ -238,7 +238,7 @@ namespace DotNetInterop
 
     It "Create instance of type with method that use a ByRef-like type as a ByRef parameter" {
         $obj = [DotNetInterop.ExampleProblemClass]::new()
-        $obj | Should -BeOfType ([DotNetInterop.ExampleProblemClass])
+        $obj | Should -BeOfType DotNetInterop.ExampleProblemClass
     }
 
     Context "Passing value that is implicitly/explicitly castable to ByRef-like parameter in method invocation" {

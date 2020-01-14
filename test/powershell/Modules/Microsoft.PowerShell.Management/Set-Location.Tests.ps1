@@ -40,7 +40,7 @@ Describe "Set-Location" -Tags "CI" {
 
     It "Should generate a pathinfo object when using the Passthru switch" {
         $result = Set-Location $target -PassThru
-        $result | Should -BeOfType ([System.Management.Automation.PathInfo])
+        $result | Should -BeOfType System.Management.Automation.PathInfo
     }
 
     # https://github.com/PowerShell/PowerShell/issues/5752

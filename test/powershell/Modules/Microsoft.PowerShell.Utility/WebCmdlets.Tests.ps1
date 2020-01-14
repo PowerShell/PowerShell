@@ -698,7 +698,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType ([Microsoft.PowerShell.Commands.HttpResponseException])
+        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -891,7 +891,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
             $response = ExecuteWebCommand -command $command
 
-            $response.Error.Exception | Should -BeOfType ([Microsoft.PowerShell.Commands.HttpResponseException])
+            $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
             $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
             $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
         }
@@ -1064,7 +1064,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
@@ -1078,7 +1078,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when the attribute value is unquoted." {
@@ -1092,7 +1092,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." {
@@ -1106,7 +1106,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
@@ -1120,7 +1120,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." {
@@ -1135,7 +1135,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
@@ -1150,7 +1150,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
@@ -1164,7 +1164,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
@@ -1178,7 +1178,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
 
         It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
@@ -1193,7 +1193,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType ([Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject])
+            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
             $response.Output.Content | Should -BeExactly $query.body
         }
     }
@@ -2250,7 +2250,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType ([Microsoft.PowerShell.Commands.HttpResponseException])
+        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -2451,7 +2451,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
-        $response.Error.Exception | Should -BeOfType ([Microsoft.PowerShell.Commands.HttpResponseException])
+        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }

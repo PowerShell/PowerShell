@@ -5,7 +5,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     It "Get-Date with all parameters returns proper results" {
         $date = [datetime]::Now + ([timespan]::new(0,0,30))
         $result = Get-Date -Date $date -Year 1973 -Month 2 -Day 22 -Hour 15 -Minute 40 -Second 10 -Millisecond 200
-        $result | Should -BeOfType ([Datetime])
+        $result | Should -BeOfType Datetime
         $result.Year | Should -Be 1973
         $result.Month | Should -Be 2
         $result.Day | Should -Be 22

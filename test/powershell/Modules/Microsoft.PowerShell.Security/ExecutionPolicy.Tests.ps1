@@ -14,7 +14,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
         }
 
         It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsMacOS) {
-            Get-ExecutionPolicy | Should -BeOfType ([Microsoft.Powershell.ExecutionPolicy])
+            Get-ExecutionPolicy | Should -BeOfType Microsoft.Powershell.ExecutionPolicy
         }
     }
 
@@ -565,7 +565,7 @@ ZoneId=$FileType
 
                     $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should -BeOfType ([System.Management.Automation.PSSecurityException])
+                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
                 }
             }
 

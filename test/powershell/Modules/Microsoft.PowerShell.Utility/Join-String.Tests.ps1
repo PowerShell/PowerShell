@@ -21,7 +21,7 @@ Describe "Join-String" -Tags "CI" {
         $actual = $testObject | Join-String
 
         $actual.Count | Should -Be 1
-        $actual | Should -BeOfType ([System.String])
+        $actual | Should -BeOfType System.String
     }
 
     It "Should join property values with default separator" {

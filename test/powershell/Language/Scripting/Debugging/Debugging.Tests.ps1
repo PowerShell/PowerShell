@@ -40,12 +40,12 @@ Describe 'Basic debugger tests' -tag 'CI' {
         }
 
         It 'Should have $false output from the first $? command' {
-            $results[0].Output | Should -BeOfType ([bool])
+            $results[0].Output | Should -BeOfType bool
             $results[0].Output | Should -Not -BeTrue
         }
 
         It 'Should have string output showing that $? was preserved as $false by the debugger' {
-            $global:DollarQuestionMarkResults | Should -BeOfType ([string])
+            $global:DollarQuestionMarkResults | Should -BeOfType string
             $global:DollarQuestionMarkResults | Should -BeExactly 'The value of $? was preserved during debugging.'
         }
     }

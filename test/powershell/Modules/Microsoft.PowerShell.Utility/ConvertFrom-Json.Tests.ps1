@@ -55,7 +55,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         $json[1].a | Should -Be 'x'
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
     }
 
@@ -65,7 +65,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         $json.a | Should -Be 'x'
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
     }
 
@@ -83,7 +83,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
     }
 
@@ -95,11 +95,11 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
         else
         {
-            $json | Should -BeOfType ([PSCustomObject])
+            $json | Should -BeOfType PSCustomObject
         }
     }
 
@@ -165,11 +165,11 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
 
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
         else
         {
-            $json | Should -BeOfType ([PSCustomObject])
+            $json | Should -BeOfType PSCustomObject
         }
 
         (Count-ObjectDepth -InputObject $json) | Should -Be ($Depth - 1)
@@ -183,11 +183,11 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
 
         if ($AsHashtable)
         {
-            $json | Should -BeOfType ([Hashtable])
+            $json | Should -BeOfType Hashtable
         }
         else
         {
-            $json | Should -BeOfType ([PSCustomObject])
+            $json | Should -BeOfType PSCustomObject
         }
 
         (Count-ObjectDepth -InputObject $json) | Should -Be $Depth

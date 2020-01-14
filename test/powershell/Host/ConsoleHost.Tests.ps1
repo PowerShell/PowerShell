@@ -19,21 +19,21 @@ Describe 'minishell for native executables' -Tag 'CI' {
         It 'gets a hashtable object from minishell' {
             $output = & $powershell -noprofile { @{'a' = 'b'} }
             ($output | Measure-Object).Count | Should -Be 1
-            $output | Should -BeOfType ([Hashtable])
+            $output | Should -BeOfType 'Hashtable'
             $output['a'] | Should -Be 'b'
         }
 
         It 'gets the error stream from minishell' {
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
-            $output | Should -BeOfType ([System.Management.Automation.ErrorRecord])
+            $output | Should -BeOfType 'System.Management.Automation.ErrorRecord'
             $output.FullyQualifiedErrorId | Should -Be 'Microsoft.PowerShell.Commands.WriteErrorException'
         }
 
         It 'gets the information stream from minishell' {
             $output = & $powershell -noprofile { Write-Information 'foo' } 6>&1
             ($output | Measure-Object).Count | Should -Be 1
-            $output | Should -BeOfType ([System.Management.Automation.InformationRecord])
+            $output | Should -BeOfType 'System.Management.Automation.InformationRecord'
             $output | Should -Be 'foo'
         }
     }

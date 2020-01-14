@@ -19,7 +19,7 @@ Describe "DotNetAPI" -Tags "CI" {
 
     It "Should be able to create a new instance of a .Net object" {
         [System.Guid]$guidVal = [System.Guid]::NewGuid()
-        $guidVal | Should -BeOfType ([Guid])
+        $guidVal | Should -BeOfType Guid
     }
 
     It "Should access types in System.Console" {

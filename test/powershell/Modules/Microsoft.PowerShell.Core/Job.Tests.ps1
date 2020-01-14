@@ -9,11 +9,11 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             Get-Job | Remove-Job -Force
         }
         It "Start-Job produces a job object" {
-            $j | Should -BeOfType ([System.Management.Automation.Job])
+            $j | Should -BeOfType "System.Management.Automation.Job"
             $j.Name | Should -BeExactly "My Job"
         }
         It "Get-Job retrieves a job object" {
-            (Get-Job -Id $j.Id) | Should -BeOfType ([System.Management.Automation.Job])
+            (Get-Job -Id $j.Id) | Should -BeOfType "System.Management.Automation.Job"
         }
         It "Get-Job retrieves an array of job objects" {
             Start-Job -ScriptBlock { 2 * 2 }
@@ -21,7 +21,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $jobs.Count | Should -Be 2
             foreach ($job in $jobs)
             {
-                $job | Should -BeOfType ([System.Management.Automation.Job])
+                $job | Should -BeOfType "System.Management.Automation.Job"
             }
         }
         It "Remove-Job can remove a job" {
@@ -185,7 +185,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "Background with & produces a job object" {
             $j = Write-Output Hi &
-            $j | Should -BeOfType ([System.Management.Automation.Job])
+            $j | Should -BeOfType System.Management.Automation.Job
         }
     }
     Context "Variable tests" {

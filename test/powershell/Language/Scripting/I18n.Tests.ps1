@@ -54,7 +54,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
         import-localizedData mydata -uiculture nl-NL -ErrorAction SilentlyContinue -ErrorVariable ev
 
         $ev | Should -Not -BeNullOrEmpty
-        $ev[0].Exception | Should -BeOfType ([System.Management.Automation.PSInvalidOperationException])
+        $ev[0].Exception | Should -BeOfType "System.Management.Automation.PSInvalidOperationException"
     }
 
     It 'Import different file name is done correctly' {
@@ -113,7 +113,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
           }
 
         $script:exception.exception | Should -Not -BeNullOrEmpty
-        $script:exception.exception | Should -BeOfType ([System.management.automation.psinvalidoperationexception])
+        $script:exception.exception | Should -BeOfType System.management.automation.psinvalidoperationexception
         }
 
     It 'Import if psd1 file is done correctly' {

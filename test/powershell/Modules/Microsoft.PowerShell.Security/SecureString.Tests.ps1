@@ -20,7 +20,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
 
     It "Can convert to a secure string" {
         $ss = ConvertTo-SecureString -AsPlainText -Force abcd
-        $ss | Should -BeOfType ([SecureString])
+        $ss | Should -BeOfType SecureString
     }
 
     It "can convert back from a secure string" {

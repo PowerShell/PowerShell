@@ -46,15 +46,15 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
         $result = Get-TimeZone
-        $result | Should -BeOfType ([TimeZoneInfo])
+        $result | Should -BeOfType TimeZoneInfo
     }
 
     It "Call WITH ListAvailable switch returns ArrayList of TimeZoneInfo objects where the list is greater than 0 item" {
         $list = Get-TimeZone -ListAvailable
         $list.Count | Should -BeGreaterThan 0
 
-        ,$list | Should -BeOfType ([Object[]])
-        $list[0] | Should -BeOfType ([TimeZoneInfo])
+        ,$list | Should -BeOfType "Object[]"
+        $list[0] | Should -BeOfType "TimeZoneInfo"
     }
 
     ## The local time zone could be set to UTC or GMT*. In this case, the .NET API returns the region ID
