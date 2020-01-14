@@ -30,7 +30,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     BeforeAll {
         $TimeZonesAvailable = [System.TimeZoneInfo]::GetSystemTimeZones()
 
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = ($TimeZonesAvailable.Count -eq 0)
     }
 
@@ -127,7 +127,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 }
 
 try {
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
     Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {

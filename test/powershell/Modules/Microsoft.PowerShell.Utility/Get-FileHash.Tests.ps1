@@ -24,7 +24,7 @@ Describe "Get-FileHash" -Tags "CI" {
         }
 
         It "Should write non-terminating error if argument is a folder" {
-            $result = $pshome, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }

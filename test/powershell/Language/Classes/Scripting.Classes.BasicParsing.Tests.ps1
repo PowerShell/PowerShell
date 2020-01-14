@@ -229,7 +229,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
                 '111' -Match '1'
                 $Matches
                 $mAtches
-                $Error[0]
+                $error[0]
                 $error
                 $pwd
                 foreach ($i in 1..10) {$foreach}

@@ -88,15 +88,15 @@ Describe "Using of ternary operator" -Tags CI {
 
     It "Tab completion for variables assigned with ternary expression should work as expected" {
         ## Type inference for the ternary expression should aggregate the inferred values from both branches
-        $text1 = '$var1 = $IsCoreCLR ? (Get-Item $PSHome) : (Get-Process -Id $PID); $var1.Full'
+        $text1 = '$var1 = $IsCoreCLR ? (Get-Item $PSHOME) : (Get-Process -Id $PID); $var1.Full'
         $result = TabExpansion2 -inputScript $text1 -cursorColumn $text1.Length
         $result.CompletionMatches[0].CompletionText | Should -BeExactly FullName
 
-        $text2 = '$var1 = $IsCoreCLR ? (Get-Item $PSHome) : (Get-Process -Id $PID); $var1.Proce'
+        $text2 = '$var1 = $IsCoreCLR ? (Get-Item $PSHOME) : (Get-Process -Id $PID); $var1.Proce'
         $result = TabExpansion2 -inputScript $text2 -cursorColumn $text2.Length
         $result.CompletionMatches[0].CompletionText | Should -BeExactly ProcessName
 
-        $text3 = '$IsCoreCLR ? ($var2 = Get-Item $PSHome) : "blah"; $var2.Full'
+        $text3 = '$IsCoreCLR ? ($var2 = Get-Item $PSHOME) : "blah"; $var2.Full'
         $result = TabExpansion2 -inputScript $text3 -cursorColumn $text3.Length
         $result.CompletionMatches[0].CompletionText | Should -BeExactly FullName
     }

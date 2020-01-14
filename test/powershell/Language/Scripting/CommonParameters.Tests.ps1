@@ -154,7 +154,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding(SupportsShouldProcess=$true)]
                     param()
 
-                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    if($PSCmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
                     }
@@ -205,7 +205,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding(supportsshouldprocess=$true, ConfirmImpact="none")]
                     param()
 
-                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    if($PSCmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
                     }
@@ -239,7 +239,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="low")]
                     param()
 
-                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    if($PSCmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
                     }
@@ -274,7 +274,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="medium")]
                     param()
 
-                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    if($PSCmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
                     }
@@ -310,7 +310,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="high")]
                     param()
 
-                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    if($PSCmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
                     }
@@ -346,7 +346,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
                     [CmdletBinding()]
                     param()
 
-                    if($pscmdlet.shouldcontinue("foo", "foo action"))
+                    if($PSCmdlet.shouldcontinue("foo", "foo action"))
                     {
                         write-output "foo action"
                     }

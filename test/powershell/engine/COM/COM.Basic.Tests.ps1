@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 try {
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe 'Basic COM Tests' -Tags "CI" {

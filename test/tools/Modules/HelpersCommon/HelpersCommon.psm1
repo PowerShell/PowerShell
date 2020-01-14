@@ -37,7 +37,7 @@ function Wait-FileToBePresent
 
 function Test-IsElevated
 {
-    $IsElevated = $False
+    $IsElevated = $false
     if ( $IsWindows ) {
         # on Windows we can determine whether we're executing in an
         # elevated context
@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    $logFolder = Join-Path -path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
@@ -330,7 +330,7 @@ function Test-CanWriteToPsHome
     $script:CanWriteToPsHome = $true
 
     try {
-        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
     }
     catch [System.UnauthorizedAccessException] {

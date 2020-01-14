@@ -101,8 +101,8 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     }
 
     It 'Verifies that the current working directory is preserved' {
-        $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $pwd }
-        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
+        $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $PWD }
+        $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
     }
 }
 
@@ -307,10 +307,10 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
     }
 
     It 'Verifies that the current working directory is preserved' {
-        $job = 1..1 | ForEach-Object -AsJob -Parallel { $pwd }
+        $job = 1..1 | ForEach-Object -AsJob -Parallel { $PWD }
         $parallelScriptLocation = $job | Wait-Job | Receive-Job
         $job | Remove-Job
-        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
+        $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
     }
 }
 

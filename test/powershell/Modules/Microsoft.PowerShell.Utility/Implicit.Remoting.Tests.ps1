@@ -354,7 +354,7 @@ try
             }
 
             It "Verifies that proxy returns remote pid" {
-                (Get-Variable -Name pid).Value | Should -Not -Be $pid
+                (Get-Variable -Name pid).Value | Should -Not -Be $PID
             }
 
 	        It "Verfies Remove-Module doesn't remove user's runspace" {
@@ -762,15 +762,15 @@ try
         }
 
         It "proxy should return remote pid" {
-            (Get-VariableProxy -Name:pid).Value | Should -Not -Be $pid
+            (Get-VariableProxy -Name:pid).Value | Should -Not -Be $PID
         }
 
         It "proxy should return remote pid" {
-            (Get-Variable -Name:pid).Value | Should -Not -Be $pid
+            (Get-Variable -Name:pid).Value | Should -Not -Be $PID
         }
 
         It "proxy should return remote pid" {
-            $(& (Get-Command gvalias -Type alias) -Name:pid).Value | Should -Not -Be $pid
+            $(& (Get-Command gvalias -Type alias) -Name:pid).Value | Should -Not -Be $PID
         }
 
         It "NoName-c8aeb5c8-2388-4d64-98c1-a9c6c218d404" {
@@ -857,7 +857,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -898,7 +898,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys)"
                     }
                 }
 
@@ -939,7 +939,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -990,14 +990,14 @@ try
                             $PriorityClass
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {Get-Process -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {Get-Process -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {Get-Process -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $PID | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $PID | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $PID | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1008,15 +1008,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $PID | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $PID | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $PID | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1036,7 +1036,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
+                        "Bound parameter: $($MyInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -1860,11 +1860,11 @@ try
         }
 
         It "Removing a module should clean-up event handlers (Windows 7: #268819)" {
-            $oldNumberOfHandlers = $executionContext.GetType().GetProperty("Events").GetValue($executionContext, $null).Subscribers.Count
+            $oldNumberOfHandlers = $ExecutionContext.GetType().GetProperty("Events").GetValue($ExecutionContext, $null).Subscribers.Count
             $module = Import-PSSession -Session $session -Name Get-Random -AllowClobber
 
             Remove-Module $module -Force
-            $newNumberOfHandlers = $executionContext.GetType().GetProperty("Events").GetValue($executionContext, $null).Subscribers.Count
+            $newNumberOfHandlers = $ExecutionContext.GetType().GetProperty("Events").GetValue($ExecutionContext, $null).Subscribers.Count
 
             ## Event should be unregistered when the module is removed
             $oldNumberOfHandlers | Should -Be $newNumberOfHandlers

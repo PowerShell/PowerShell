@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Native streams behavior with PowerShell" -Tags 'CI' {
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     Context "Error stream" {

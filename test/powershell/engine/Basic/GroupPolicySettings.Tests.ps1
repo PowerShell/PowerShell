@@ -8,13 +8,13 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             $PSDefaultParameterValues["it:skip"] = $true
         }
         else {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $true)
         }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ( $IsWindows ) {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $False)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $false)
         }
     }
 
@@ -80,7 +80,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
                 Get-Alias $RareCommand -ErrorAction SilentlyContinue | Out-Null
 
-                (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $False # turn off logging
+                (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $false # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-item $ModuleNamesKeyPath -Recurse -Force
                 # usually event becomes visible in the log after ~500 ms

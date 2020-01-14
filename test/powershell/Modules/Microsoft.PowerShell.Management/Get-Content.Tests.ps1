@@ -196,7 +196,7 @@ baz
         Set-Content -Path $testPath $testContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength
-        if ($isWindows) {
+        if ($IsWindows) {
             $result | Should -BeExactly $expectedWindowsContent
         } else {
             $result | Should -BeExactly $expectedNotWindowsContent

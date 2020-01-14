@@ -4,7 +4,7 @@
 Describe "Select-String" -Tags "CI" {
     BeforeAll {
         $nl = [Environment]::NewLine
-        $currentDirectory = $pwd.Path
+        $currentDirectory = $PWD.Path
     }
 
     AfterAll {

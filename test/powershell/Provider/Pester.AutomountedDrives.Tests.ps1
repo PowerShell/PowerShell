@@ -9,7 +9,7 @@ $script:TestSourceRoot = $PSScriptRoot
 Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feature', 'Slow', 'RequireAdminOnWindows') {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
         $AutomountVHDDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountVHDDrive.ps1'
         $vhdPath = Join-Path $TestDrive 'TestAutomountVHD.vhd'
@@ -27,7 +27,7 @@ Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feat
             $tmpVhdPath = Join-Path $TestDrive 'TestVHD.vhd'
             New-VHD -path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop
             Remove-Item $tmpVhdPath
-            $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $True
+            $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $true
             Remove-Module Hyper-V
         }
         catch

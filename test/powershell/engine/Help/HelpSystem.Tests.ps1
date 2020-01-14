@@ -217,7 +217,7 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
-        $modulePath = "$pshome\Modules\Test"
+        $modulePath = "$PSHOME\Modules\Test"
         if (Test-CanWriteToPsHome) {
             $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
             New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
@@ -241,7 +241,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         Get-ChildItem -Path $aboutHelpPath -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$PSHOME path" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $help = Get-Help about_testhelp
         $help.count | Should -Be 1

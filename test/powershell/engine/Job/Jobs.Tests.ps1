@@ -81,7 +81,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         It 'Can use the user specified working directory parameter with whitespace' {
             $path = Join-Path -Path $TestDrive -ChildPath "My Dir"
             $null = New-Item -ItemType Directory -Path "$path"
-            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
+            $job = Start-Job -ScriptBlock { $PWD } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
             $jobOutput | Should -BeExactly $path.ToString()
         }
@@ -89,13 +89,13 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         It 'Can use the user specified working directory parameter with quote' -Skip:($IsWindows) {
             $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
             $null = New-Item -ItemType Directory -Path "$path"
-            $job = Start-Job -ScriptBlock { $pwd } -WorkingDirectory $path | Wait-Job
+            $job = Start-Job -ScriptBlock { $PWD } -WorkingDirectory $path | Wait-Job
             $jobOutput = Receive-Job $job
             $jobOutput | Should -BeExactly $path.ToString()
         }
 
         It 'Verifies the working directory parameter path with trailing backslash' -Skip:(! $IsWindows) {
-            $job = Start-Job { $pwd } -WorkingDirectory '\' | Wait-Job
+            $job = Start-Job { $PWD } -WorkingDirectory '\' | Wait-Job
             $job.JobStateInfo.State | Should -BeExactly 'Completed'
         }
 
@@ -106,10 +106,10 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         }
 
         It 'Verifies that the current working directory is preserved' {
-            $job = Start-Job -ScriptBlock { $pwd }
+            $job = Start-Job -ScriptBlock { $PWD }
             $location = $job | Wait-Job | Receive-Job
             $job | Remove-Job
-            $location.Path | Should -BeExactly $pwd.Path
+            $location.Path | Should -BeExactly $PWD.Path
         }
 
         It "Create job with native command" {
