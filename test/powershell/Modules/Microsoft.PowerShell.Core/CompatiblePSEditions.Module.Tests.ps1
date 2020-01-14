@@ -502,7 +502,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             Restore-ModulePath
         }
 
-        It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" {
+        It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
             $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
         }
@@ -513,9 +513,10 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
     }
 
-    It "Does not duplicate the System32 module path in subprocesses" {
+    <# Remove Pending status and update test after issue #11575 is fixed #>
+    It "Does not duplicate the System32 module path in subprocesses" -Pending:$true {
         $sys32ModPathCount = & $pwsh -C {
-            & "$PSHOME/pwsh" -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $matches.Count'
+            & "$PSHOME/pwsh" -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $Matches.Count'
         }
 
         $sys32ModPathCount | Should -Be 1

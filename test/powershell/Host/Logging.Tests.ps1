@@ -155,7 +155,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 Write-Warning -Message 'Unsupported Linux syslog configuration.'
                 $IsSupportedEnvironment = $false
             }
-            [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+            [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
             $scriptBlockCreatedRegExTemplate = @"
 Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
 "@
@@ -191,7 +191,7 @@ Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -220,7 +220,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -273,7 +273,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
                 Set-OsLogPersistence -Enable
             }
         }
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockCreatedRegExTemplate = @'
 Creating Scriptblock text \(1 of 1\):
 {0}
@@ -338,7 +338,7 @@ Path:.*
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
@@ -376,7 +376,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
@@ -436,7 +436,7 @@ $pid
 Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -452,7 +452,7 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
 
         if ($IsSupportedEnvironment)
         {
-            & "$PSHome\RegisterManifest.ps1"
+            & "$PSHOME\RegisterManifest.ps1"
         }
     }
 

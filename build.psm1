@@ -289,7 +289,7 @@ function Start-PSBuild {
         [switch]$Detailed
     )
 
-    if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
+    if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {
         $PSModuleRestore = $true
     }
@@ -438,7 +438,7 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $pwd"
+            Write-Log "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
 
@@ -456,14 +456,14 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $pwd"
+            Write-Log "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log "PowerShell output: $($Options.Output)"
 
             try {
                 Push-Location $globalToolSrcFolder
                 $Arguments += "--output", $publishPath
-                Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                Write-Log "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
             finally {
@@ -498,7 +498,7 @@ Fix steps:
         $psVersion = $ReleaseTag
     }
     else {
-        $psVersion = git --git-dir="$PSSCriptRoot/.git" describe
+        $psVersion = git --git-dir="$PSScriptRoot/.git" describe
     }
 
     if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
@@ -1393,19 +1393,19 @@ function Show-PSPesterError
         [PSCustomObject]$testFailureObject
         )
 
-    if ($PSCmdLet.ParameterSetName -eq 'xml')
+    if ($PSCmdlet.ParameterSetName -eq 'xml')
     {
         $description = $testFailure.description
         $name = $testFailure.name
         $message = $testFailure.failure.message
-        $stackTrace = $testFailure.failure."stack-trace"
+        $StackTrace = $testFailure.failure."stack-trace"
     }
-    elseif ($PSCmdLet.ParameterSetName -eq 'object')
+    elseif ($PSCmdlet.ParameterSetName -eq 'object')
     {
         $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
         $name = $testFailureObject.Name
         $message = $testFailureObject.FailureMessage
-        $stackTrace = $testFailureObject.StackTrace
+        $StackTrace = $testFailureObject.StackTrace
     }
     else
     {
@@ -1417,7 +1417,7 @@ function Show-PSPesterError
     Write-Log -Error "message:"
     Write-Log -Error $message
     Write-Log -Error "stack-trace:"
-    Write-Log -Error $stackTrace
+    Write-Log -Error $StackTrace
 
 }
 
@@ -1455,14 +1455,14 @@ function Test-XUnitTestResults
         $description = $failure.test.type
         $name = $failure.test.method
         $message = $failure.test.failure.message.'#cdata-section'
-        $stackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+        $StackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
 
         Write-Log -Error ("Description: " + $description)
         Write-Log -Error ("Name:        " + $name)
         Write-Log -Error "message:"
         Write-Log -Error $message
         Write-Log -Error "stack-trace:"
-        Write-Log -Error $stackTrace
+        Write-Log -Error $StackTrace
     }
 
     throw "$($failedTests.failed) tests failed"
@@ -1488,7 +1488,7 @@ function Test-PSPesterResults
         [switch] $CanHaveNoResult
     )
 
-    if($PSCmdLet.ParameterSetName -eq 'file')
+    if($PSCmdlet.ParameterSetName -eq 'file')
     {
         if(!(Test-Path $TestResultsFile))
         {
@@ -1515,7 +1515,7 @@ function Test-PSPesterResults
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
     }
-    elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
+    elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
         if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
         {
@@ -1646,7 +1646,7 @@ function Install-Dotnet {
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path $pwd.Path -ChildPath $installScript
+            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
             Start-NativeExecution { & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version }
         }
     }
@@ -2385,7 +2385,7 @@ function Copy-PSGalleryModules
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
-        $nugetCache = $matches[1]
+        $nugetCache = $Matches[1]
     }
     else {
         throw "Can't find nuget global cache"
@@ -2400,7 +2400,7 @@ function Copy-PSGalleryModules
 
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
-            $matches[1]
+            $Matches[1]
         } elseif ($version -match "^\d+.\d+$") {
             # Two digit versions are stored as three digit versions
             "$version.0"

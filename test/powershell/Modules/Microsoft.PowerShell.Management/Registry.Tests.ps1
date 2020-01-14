@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 try {
     #skip all tests on non-windows platform
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") {

@@ -3,7 +3,7 @@
 Describe "PSVersionTable" -Tags "CI" {
 
     BeforeAll {
-        $sma = Get-Item (Join-Path $PSHome "System.Management.Automation.dll")
+        $sma = Get-Item (Join-Path $PSHOME "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
         $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
@@ -78,7 +78,7 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "Verify `$PSVersionTable.PSEdition" {
-        if ($isCoreCLR) {
+        if ($IsCoreCLR) {
             $edition = "Core"
         }
         else

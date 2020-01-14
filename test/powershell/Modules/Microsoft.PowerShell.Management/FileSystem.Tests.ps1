@@ -104,7 +104,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Rename-Item will not rename to an existing name" {
             { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | Should -Throw -ErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
-            $Error[0].Exception | Should -BeOfType System.IO.IOException
+            $error[0].Exception | Should -BeOfType System.IO.IOException
             $testFile | Should -Exist
         }
 
@@ -133,7 +133,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
-            $Error[0].Exception | Should -BeOfType System.IO.IOException
+            $error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
         }
 
@@ -748,8 +748,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
             else
             {
                 { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
+                $error[0].Exception | Should -BeOfType System.IO.IOException
+                $error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
     }
@@ -811,8 +811,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                 )
 
                 { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
+                $error[0].Exception | Should -BeOfType System.IO.IOException
+                $error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
 

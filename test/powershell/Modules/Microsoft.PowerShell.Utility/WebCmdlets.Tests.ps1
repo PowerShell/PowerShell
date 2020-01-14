@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -1928,7 +1928,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 4,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 12
             # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
             # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
@@ -1956,7 +1957,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 2,750 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 13
             # dosLength 2,850 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 22
             # dosLength 3,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 31
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
     }
 }

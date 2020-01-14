@@ -53,12 +53,12 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $False)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $false)
     }
 
     It "Should create Transcript file at default path" {
         $script = "Start-Transcript"
-        if ($isWindows) {
+        if ($IsWindows) {
             $defaultTranscriptFilePath = [io.path]::Combine($env:USERPROFILE, "Documents", "PowerShell_transcript*")
         } else {
             $defaultTranscriptFilePath = [io.path]::Combine($env:HOME, "PowerShell_transcript*")
@@ -220,7 +220,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Inquire
             Stop-Transcript
@@ -280,7 +280,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Inquire
             Stop-Transcript

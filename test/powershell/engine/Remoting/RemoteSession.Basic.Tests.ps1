@@ -205,7 +205,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
 
-        if($isWindows)
+        if($IsWindows)
         {
             Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
         }

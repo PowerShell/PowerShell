@@ -346,7 +346,7 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
-		$p = Get-Process -Id $pid | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
+		$p = Get-Process -Id $PID | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
 		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
     }
 }

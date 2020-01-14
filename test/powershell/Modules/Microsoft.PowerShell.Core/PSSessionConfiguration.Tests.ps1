@@ -21,7 +21,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+        $endpointName = "PowerShell.$($PSVersionTable.GitCommitId)"
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
@@ -255,7 +255,7 @@ try
                     It "$Description" {
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
-                        $Error.Clear()
+                        $error.Clear()
                         try
                         {
                             $null = Unregister-PSSessionConfiguration -name $SessionConfigName -ErrorAction stop
@@ -700,12 +700,12 @@ namespace PowershellTestConfigNamespace
                     FunctionDefinitions=@(
                         @{
                             Name = "sysmodules";
-                            ScriptBlock = 'pushd $pshome\Modules';
+                            ScriptBlock = 'pushd $PSHOME\Modules';
                             Options = "AllScope";
                         },
                         @{
                             Name = "mymodules";
-                            ScriptBlock = 'pushd $home\Documents\WindowsPowerShell\Modules';
+                            ScriptBlock = 'pushd $HOME\Documents\WindowsPowerShell\Modules';
                             Options = "ReadOnly";
                         }
                     )

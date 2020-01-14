@@ -10,7 +10,7 @@ Describe 'Native pipeline should have proper encoding' -tags 'CI' {
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     It "native | ps | native doesn't block" {
