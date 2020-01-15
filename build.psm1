@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Set-StrictMode -Version 3.0
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
+$script:Options = $null
 
 $dotnetCLIChannel = 'release'
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
@@ -292,7 +295,7 @@ function Start-PSBuild {
         $PSModuleRestore = $true
     }
 
-    if ($Runtime -eq "linux-arm" -and -not $environment.IsUbuntu) {
+    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu) {
         throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
     }
 
@@ -499,32 +502,34 @@ Fix steps:
         $psVersion = git --git-dir="$PSScriptRoot/.git" describe
     }
 
-    if ($environment.IsRedHatFamily -or $environment.IsDebian) {
-        # Symbolic links added here do NOT affect packaging as we do not build on Debian.
-        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-        # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and macOS builds for itself
-        # against the correct versions.
+    if ($environment.IsLinux) {
+        if ($environment.IsRedHatFamily -or $environment.IsDebian) {
+            # Symbolic links added here do NOT affect packaging as we do not build on Debian.
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This is the only set of platforms needed for this currently
+            # as Ubuntu has these specific library files in the platform and macOS builds for itself
+            # against the correct versions.
 
-        if ($environment.IsDebian10 -or $environment.IsDebian11){
-            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
-            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
-        }
-        elseif ($environment.IsDebian9){
-            # NOTE: Debian 8 doesn't need these symlinks
-            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
-            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
-        }
-        else { #IsRedHatFamily
-            $sslTarget = "/lib64/libssl.so.10"
-            $cryptoTarget = "/lib64/libcrypto.so.10"
-        }
+            if ($environment.IsDebian10 -or $environment.IsDebian11){
+                $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
+                $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
+            }
+            elseif ($environment.IsDebian9){
+                # NOTE: Debian 8 doesn't need these symlinks
+                $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
+                $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
+            }
+            else { #IsRedHatFamily
+                $sslTarget = "/lib64/libssl.so.10"
+                $cryptoTarget = "/lib64/libcrypto.so.10"
+            }
 
-        if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
-        }
-        if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+            if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
+                $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+            }
+            if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
+                $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+            }
         }
     }
 
@@ -579,6 +584,7 @@ Fix steps:
 
 function Restore-PSPackage
 {
+    [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
         [Parameter()]
@@ -618,7 +624,7 @@ function Restore-PSPackage
             $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
         }
 
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+        if ($VerbosePreference -eq 'Continue') {
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
@@ -837,7 +843,7 @@ function Get-PSOptions {
         $DefaultToNew
     )
 
-    if(!$script:Options -and $DefaultToNew.IsPresent)
+    if ($null -eq $script:Options -and $DefaultToNew.IsPresent)
     {
         return New-PSOptions
     }
@@ -860,7 +866,7 @@ function Get-PSOutput {
     )
     if ($Options) {
         return $Options.Output
-    } elseif ($script:Options) {
+    } elseif ($null -ne $script:Options) {
         return $script:Options.Output
     } else {
         return (New-PSOptions).Output
@@ -876,7 +882,14 @@ function Get-PesterTag {
         $fullname = $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
-        $des = $ast.FindAll({$args[0] -is "System.Management.Automation.Language.CommandAst" -and $args[0].CommandElements[0].Value -eq "Describe"},$true)
+        $des = $ast.FindAll({
+            $args[0] -is [System.Management.Automation.Language.CommandAst] `
+                -and $args[0].CommandElements.GetType() -in @(
+                    [System.Management.Automation.Language.StringConstantExpressionAst],
+                    [System.Management.Automation.Language.ExpandableStringExpressionAst]
+                ) `
+                -and $args[0].CommandElements[0].Value -eq "Describe"
+        }, $true)
         foreach( $describe in $des) {
             $elements = $describe.CommandElements
             $lineno = $elements[0].Extent.StartLineNumber
@@ -1079,7 +1092,7 @@ function Start-PSPester {
         $publishArgs = @{ }
         # if we are building for Alpine, we must include the runtime as linux-x64
         # will not build runnable test tools
-        if ( $environment.IsAlpine ) {
+        if ( $environment.IsLinux -and $environment.IsAlpine ) {
             $publishArgs['runtime'] = 'alpine-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
@@ -1615,7 +1628,7 @@ function Install-Dotnet {
         $curl = Get-Command -Name curl -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
-        $uninstallScript = if ($environment.IsUbuntu) {
+        $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
         } elseif ($environment.IsMacOS) {
             "dotnet-uninstall-pkgs.sh"
@@ -1687,14 +1700,14 @@ function Start-PSBootstrap {
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
-            if ($BuildLinuxArm -and -not $environment.IsUbuntu) {
+            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu) {
                 Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
                 return
             }
 
             # Install ours and .NET's dependencies
             $Deps = @()
-            if ($environment.IsUbuntu) {
+            if ($environment.IsLinux -and $environment.IsUbuntu) {
                 # Build tools
                 $Deps += "curl", "g++", "cmake", "make"
 
@@ -1724,7 +1737,7 @@ function Start-PSBootstrap {
                     # change the apt frontend back to the original
                     $env:DEBIAN_FRONTEND=$originalDebianFrontEnd
                 }
-            } elseif ($environment.IsRedHatFamily) {
+            } elseif ($environment.IsLinux -and $environment.IsRedHatFamily) {
                 # Build tools
                 $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
@@ -1748,7 +1761,7 @@ function Start-PSBootstrap {
                 Start-NativeExecution {
                     Invoke-Expression "$baseCommand $Deps"
                 }
-            } elseif ($environment.IsSUSEFamily) {
+            } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
                 $Deps += "gcc", "cmake", "make"
 
@@ -1784,7 +1797,7 @@ function Start-PSBootstrap {
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
-            } elseif ($environment.IsAlpine) {
+            } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
                 Start-NativeExecution {
@@ -2105,8 +2118,8 @@ function script:Start-NativeExecution
         [switch]$IgnoreExitcode,
         [switch]$VerboseOutputOnError
     )
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Continue"
+    $backupEAP = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     try {
         if($VerboseOutputOnError.IsPresent)
         {
@@ -2139,7 +2152,7 @@ function script:Start-NativeExecution
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     } finally {
-        $script:ErrorActionPreference = $backupEAP
+        $ErrorActionPreference = $backupEAP
     }
 }
 
