@@ -1612,6 +1612,8 @@ function Install-Dotnet {
 
     # Install for Linux and OS X
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
+        $curl = Get-Command -Name curl -CommandType Application -TotalCount 1 -ErrorAction Stop
+
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($Environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
@@ -1621,7 +1623,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
+                & $curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1631,7 +1633,7 @@ function Install-Dotnet {
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
-            curl -sO $installObtainUrl/$installScript
+            & $curl -sO $installObtainUrl/$installScript
             bash ./$installScript -c $Channel -v $Version
         }
     } elseif ($Environment.IsWindows) {
@@ -3099,12 +3101,12 @@ function New-TestPackage
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
-    Write-Verbose -Verbose "RootFolder: $rootFolder"
+    Write-Verbose -Message "RootFolder: $rootFolder" -Verbose
     $packageRoot = Get-UniquePackageFolderName -Root $rootFolder
 
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
-    Write-Verbose -Verbose "PackagePath: $packagePath"
+    Write-Verbose -Message "PackagePath: $packagePath" -Verbose
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
     $null = Publish-PSTestTools -runtime $Runtime
