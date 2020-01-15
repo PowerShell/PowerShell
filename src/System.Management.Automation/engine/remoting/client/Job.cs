@@ -3382,7 +3382,10 @@ namespace System.Management.Automation
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
             }
-            else if (pipeline.PipelineStateInfo.State == PipelineState.Failed)
+            // Pipeline stopped state is an error condition if the associated exception is not 'PipelineStoppedException'.
+            else if ((pipeline.PipelineStateInfo.State == PipelineState.Failed) ||
+                     ((pipeline.PipelineStateInfo.State == PipelineState.Stopped) &&
+                      (pipeline.PipelineStateInfo.Reason != null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
             {
                 object targetObject = runspace.ConnectionInfo.ComputerName;
                 failureException = pipeline.PipelineStateInfo.Reason;
