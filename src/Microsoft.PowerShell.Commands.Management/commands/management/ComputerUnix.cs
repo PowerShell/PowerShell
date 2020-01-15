@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// A base class for cmdlets that can run shell commands
+    /// A base class for cmdlets that can run shell commands.
     /// </summary>
     public class CommandLineCmdletBase : PSCmdlet, IDisposable
     {
