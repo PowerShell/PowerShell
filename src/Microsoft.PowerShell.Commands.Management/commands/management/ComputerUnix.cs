@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
 #region "Internals"
 
         /// <summary>
-        /// Run a command
+        /// Run a command.
         /// </summary>
         protected void RunCommand(String command, String args) {
             String cmd = "";
