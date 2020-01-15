@@ -19,7 +19,14 @@ Describe "Built-in type information tests" -Tag "CI" {
 
     It "Should have correct number of built-in type items in type table" {
         $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
-        $types.Count | Should -BeExactly ($isUnixStatEnabled ? 272 : 273)
+        $expected = if ($IsWindows) {
+            273
+        } elseif ($isUnixStatEnabled) {
+            272
+        } else {
+            271
+        }
+        $types.Count | Should -BeExactly $expected
     }
 
     It "Should have expected member info for 'System.Diagnostics.ProcessModule'" {

@@ -14,7 +14,7 @@
 - Update `ConciseView` to use `TargetObject` if applicable (#11075)
 - Fix `NullReferenceException` in `CompletionCompleters` public methods (#11274)
 - Fix apartment thread state check on non-Windows platforms (#11301)
-- Update setting PSModulePath to concatenate the process and machine environment variables (#11276)
+- Update setting `PSModulePath` to concatenate the process and machine environment variables (#11276)
 - Bump `.NET Core` to `3.1.0` (#11260)
 - Fix detection of `$PSHOME` in front of `$env:PATH` (#11141)
 
@@ -27,8 +27,8 @@
 - Update calculation of char width to respect `CJK` chars correctly (#11262)
 - Add `Unblock-File` for macOS (#11137)
 - Fix regression in `Get-PSCallStack` (#11210) (Thanks @iSazonov!)
-- Remove autoloading of the `ScheduledJob` module when using Job cmdlets (#11194)
-- Add `OutputType` to `Get-Error` cmdlet and preserve original typenames (#10856)
+- Avoid automatically loading the `ScheduledJob` module when using Job cmdlets (#11194)
+- Add `OutputType` to `Get-Error` cmdlet and preserve original `TypeNames` (#10856)
 - Fix null reference in `SupportsVirtualTerminal` property (#11105)
 
 ### Code Cleanup
