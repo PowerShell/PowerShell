@@ -330,7 +330,7 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3'"
+        Write-Log -message "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3'"
         Push-Location $PSScriptRoot
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
@@ -431,7 +431,7 @@ Fix steps:
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
-        Write-Log "Run ResGen (generating C# bindings for resx files)"
+        Write-Log -message "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
     }
 
@@ -439,7 +439,7 @@ Fix steps:
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
     $incFileName = "powershell_$($Options.Runtime).inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
-        Write-Log "Run TypeGen (generating CorePsTypeCatalog.cs)"
+        Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
     }
 
@@ -462,14 +462,14 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $PWD"
+            Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
-            Write-Log "PowerShell output: $($Options.Output)"
+            Write-Log -message "PowerShell output: $($Options.Output)"
 
             if ($CrossGen) {
                 ## fxdependent package cannot be CrossGen'ed
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-                Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
+                Write-Log -message "pwsh.exe with ngen binaries is available at: $($Options.Output)"
             }
         } else {
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
@@ -480,14 +480,14 @@ Fix steps:
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
             }
 
-            Write-Log "Run dotnet $Arguments from $PWD"
+            Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
-            Write-Log "PowerShell output: $($Options.Output)"
+            Write-Log -message "PowerShell output: $($Options.Output)"
 
             try {
                 Push-Location $globalToolSrcFolder
                 $Arguments += "--output", $publishPath
-                Write-Log "Run dotnet $Arguments from $PWD to build global tool entry point"
+                Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
             finally {
@@ -656,7 +656,7 @@ function Restore-PSPackage
 
         $ProjectDirs | ForEach-Object {
             $project = $_
-            Write-Log "Run dotnet restore $project $RestoreArguments"
+            Write-Log -message "Run dotnet restore $project $RestoreArguments"
             $retryCount = 0
             $maxTries = 5
             while($retryCount -lt $maxTries)
@@ -667,7 +667,7 @@ function Restore-PSPackage
                 }
                 catch
                 {
-                    Write-Log "Failed to restore $project, retrying..."
+                    Write-Log -message "Failed to restore $project, retrying..."
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
@@ -676,7 +676,7 @@ function Restore-PSPackage
                     continue
                 }
 
-                Write-Log "Done restoring $project"
+                Write-Log -message "Done restoring $project"
                 break
             }
         }
@@ -691,7 +691,7 @@ function Restore-PSModuleToBuild
         $PublishPath
     )
 
-    Write-Log "Restore PowerShell modules to $publishPath"
+    Write-Log -message "Restore PowerShell modules to $publishPath"
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
     Copy-PSGalleryModules -Destination $modulesDir -CsProjPath "$PSScriptRoot\src\Modules\PSGalleryModules.csproj"
 
@@ -1447,12 +1447,12 @@ function Show-PSPesterError
         throw 'Unknown Show-PSPester parameter set'
     }
 
-    Write-Log -Error ("Description: " + $description)
-    Write-Log -Error ("Name:        " + $name)
-    Write-Log -Error "message:"
-    Write-Log -Error $message
-    Write-Log -Error "stack-trace:"
-    Write-Log -Error $StackTrace
+    Write-Log -isError -message ("Description: " + $description)
+    Write-Log -isError -message ("Name:        " + $name)
+    Write-Log -isError -message "message:"
+    Write-Log -isError -message $message
+    Write-Log -isError -message "stack-trace:"
+    Write-Log -isError -message $StackTrace
 
 }
 
@@ -1492,12 +1492,12 @@ function Test-XUnitTestResults
         $message = $failure.test.failure.message.'#cdata-section'
         $StackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
 
-        Write-Log -Error ("Description: " + $description)
-        Write-Log -Error ("Name:        " + $name)
-        Write-Log -Error "message:"
-        Write-Log -Error $message
-        Write-Log -Error "stack-trace:"
-        Write-Log -Error $StackTrace
+        Write-Log -isError -message ("Description: " + $description)
+        Write-Log -isError -message ("Name:        " + $name)
+        Write-Log -isError -message "message:"
+        Write-Log -isError -message $message
+        Write-Log -isError -message "stack-trace:"
+        Write-Log -isError -message $StackTrace
     }
 
     throw "$($failedTests.failed) tests failed"
@@ -1533,7 +1533,7 @@ function Test-PSPesterResults
         $x = [xml](Get-Content -Raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
-            Write-Log -Error "TEST FAILURES"
+            Write-Log -isError -message "TEST FAILURES"
             # switch between methods, SelectNode is not available on dotnet core
             if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
@@ -1558,7 +1558,7 @@ function Test-PSPesterResults
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
-            Write-Log -Error 'TEST FAILURES'
+            Write-Log -isError -message 'TEST FAILURES'
 
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
@@ -1730,7 +1730,7 @@ function Start-PSBootstrap {
         [switch]$Force
     )
 
-    Write-Log "Installing PowerShell build dependencies"
+    Write-Log -message "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
 
@@ -1875,20 +1875,20 @@ function Start-PSBootstrap {
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
             if($Force.IsPresent) {
-                Write-Log "Installing dotnet due to -Force."
+                Write-Log -message "Installing dotnet due to -Force."
             }
             elseif(!$dotNetExists) {
-                Write-Log "dotnet not present.  Installing dotnet."
+                Write-Log -message "dotnet not present.  Installing dotnet."
             }
             else {
-                Write-Log "dotnet version $dotNetVersion does not match required version.  Installing dotnet."
+                Write-Log -message "dotnet out of date ($dotNetVersion).  Updating dotnet."
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
             Install-Dotnet @DotnetArguments
         }
         else {
-            Write-Log "dotnet is already installed.  Skipping installation."
+            Write-Log -message "dotnet is already installed.  Skipping installation."
         }
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
@@ -1896,7 +1896,7 @@ function Start-PSBootstrap {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
-                Write-Log "pwsh.exe not found. Install latest PowerShell release and add it to Path"
+                Write-Log -message "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
@@ -2478,7 +2478,7 @@ function Copy-PSGalleryModules
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include
         $version = $m.Version
-        Write-Log "Name='$Name', Version='$version', Destination='$Destination'"
+        Write-Log -message "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
@@ -3173,7 +3173,7 @@ function New-TestPackage
     else
     {
         $null = New-Item -Path $Destination -ItemType Directory -Force
-        Write-Verbose -Message "Creating destination folder: $Destination"
+        Write-Verbose -message "Creating destination folder: $Destination"
     }
 
     $rootFolder = $env:TEMP
@@ -3194,12 +3194,12 @@ function New-TestPackage
     $null = Publish-PSTestTools -runtime $Runtime
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
-    Write-Verbose -Message "Copied test directory"
+    Write-Verbose -message "Copied test directory"
 
     # Copy assests folder to package root for wix related tests.
     $assetsPath = Join-Path $PSScriptRoot 'assets'
     Copy-Item $assetsPath -Recurse -Destination $packageRoot -Force
-    Write-Verbose -Message "Copied assests directory"
+    Write-Verbose -message "Copied assests directory"
 
     # Create expected folder structure for resx files in package root.
     $srcRootForResx = New-Item -Path "$packageRoot/src" -Force -ItemType Directory
@@ -3215,7 +3215,7 @@ function New-TestPackage
         $assemblyPart = $assemblyPart.TrimStart([io.path]::DirectorySeparatorChar)
         $resxDestPath = Join-Path $srcRootForResx $assemblyPart
         $null = New-Item -Path $resxDestPath -Force -ItemType Directory
-        Write-Verbose -Message "Created resx directory : $resxDestPath"
+        Write-Verbose -message "Created resx directory : $resxDestPath"
         Copy-Item -Path "$directoryFullName\*" -Recurse $resxDestPath -Force
     }
 
