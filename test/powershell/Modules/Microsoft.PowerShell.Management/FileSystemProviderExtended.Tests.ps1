@@ -5,6 +5,8 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
     BeforeAll {
         $restoreLocation = Get-Location
 
+        $DirSep = [io.path]::DirectorySeparatorChar
+
         $rootDir = Join-Path "TestDrive:" "TestDir"
         New-Item -Path $rootDir -ItemType Directory > $null
 
@@ -202,9 +204,9 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 4
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filehidden2.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It "Get-ChildItem -Path -Recurse -Name -Force" {
@@ -212,9 +214,9 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 13
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filehidden2.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It "Get-ChildItem -Path -Recurse -Name -Directory" {
@@ -244,8 +246,8 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 3
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filehidden2.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
         }
     }
 
@@ -341,7 +343,7 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 2
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Filter "file*" -Recurse -Name' {
@@ -350,17 +352,17 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
             $result | Where-Object { $_ -eq "filereadonly1.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filereadonly2.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\file3.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filereadonly3.doc" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filereadonly2.doc" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)file3.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filereadonly3.doc" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Filter "file????only3.*" -Recurse -Name' {
             $result = Get-ChildItem -Path $rootDir -Filter "file????only3.*" -Recurse -Name
             $result.Count | Should -Be 1
             $result | Should -BeOfType [string]
-            $result | Should -BeExactly "subDir3\filereadonly3.doc"
+            $result | Should -BeExactly "subDir3$($DirSep)filereadonly3.doc"
         }
 
         It 'Get-ChildItem -Path -Filter "file*" -Hidden -Recurse -Name' {
@@ -368,8 +370,8 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 3
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filehidden2.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Filter "file*" -Force -Recurse -Name' {
@@ -400,7 +402,7 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 2
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Include "*.t?t" -Recurse -Name' {
@@ -408,7 +410,7 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 2
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
         }
     }
 
@@ -435,9 +437,9 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 4
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21\file21.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21$($DirSep)file21.txt" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Include "*.t?t" -Recurse -Name -Force' {
@@ -445,9 +447,9 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 4
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "file1.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\file2.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir3\filehidden3.txt" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21\file21.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)file2.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21$($DirSep)file21.txt" } | Should -Not -BeNullOrEmpty
         }
     }
 
@@ -496,8 +498,8 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result = Get-ChildItem -Path $rootDir -Exclude "*.txt" -Recurse -Hidden -Name
             $result.Count | Should -Be 3
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\filehidden2.asd" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Exclude "*.txt" -Include "file*" -Recurse' {
@@ -529,7 +531,7 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result | Should -BeOfType [string]
             $result | Where-Object { $_ -eq "subDir2" } | Should -Not -BeNullOrEmpty
             $result | Where-Object { $_ -eq "subDir3" } | Should -Not -BeNullOrEmpty
-            $result | Where-Object { $_ -eq "subDir2\subDir21" } | Should -Not -BeNullOrEmpty
+            $result | Where-Object { $_ -eq "subDir2$($DirSep)subDir21" } | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-ChildItem -Path -Exclude "*.txt" -Recurse' {
