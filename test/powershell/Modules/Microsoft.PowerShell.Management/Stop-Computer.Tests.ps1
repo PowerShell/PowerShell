@@ -29,19 +29,13 @@ try
             Stop-Computer -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support -Computer parameter" {
-            if ( ! $IsWindows ) {
-                return
-            }
+        It "Should support -Computer parameter" -Skip:(!$IsWindows) {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
             Stop-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support WsmanAuthentication types" {
-            if ( ! $IsWindows ) {
-                return
-            }
+        It "Should support WsmanAuthentication types" -Skip:(!$IsWindows) {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
                 Stop-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
