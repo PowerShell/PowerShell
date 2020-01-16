@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
-        [Obsolete("Do not use the method", error: true)]
+        [Obsolete("Callers should now use UnmanagedPSEntry.Start(string[])", error: true)]
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         {
             return Start(args);
