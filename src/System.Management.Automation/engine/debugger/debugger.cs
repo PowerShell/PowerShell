@@ -627,11 +627,18 @@ namespace System.Management.Automation
             throw new PSNotImplementedException();
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger, in the current runspace.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints) =>
+            SetBreakpoints(breakpoints, runspaceId: null);
+
+        /// <summary>
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">Breakpoints.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
-        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null) =>  
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with, null being the current runspace.</param>
+        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId) =>  
             throw new PSNotImplementedException();
 
         /// <summary>
