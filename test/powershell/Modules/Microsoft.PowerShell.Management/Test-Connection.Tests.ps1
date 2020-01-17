@@ -63,12 +63,17 @@ Describe "Test-Connection" -tags "CI" {
 
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            # Error code = 11001 - Host not found.
+            # Error code = 11001 - Host not found, on Windows
+            $errno = 11001
             if (!$IsWindows) {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be -131073
-            } else {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+                # most non-Windows hosts return this errno
+                $errno = -131073
+                # raspbian is errno 11, resource temporarily unavailable
+                if ((Get-PlatformInfo) -match "raspbian" ) {
+                    $errno = 11
+                }
             }
+            $error[0].Exception.InnerException.ErrorCode | Should -Be $errno
         }
 
         # In VSTS, address is 0.0.0.0
