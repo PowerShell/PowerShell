@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the CLR version required by the module.
         /// </summary>
         [Parameter]
-        public Version CLRVersion
+        public Version ClrVersion
         {
             get { return _ClrVersion; }
 
@@ -1058,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DotNetFrameworkVersion), StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
 
-                    BuildModuleManifest(result, nameof(CLRVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(ClrVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
                     BuildModuleManifest(result, nameof(ProcessorArchitecture), Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 
