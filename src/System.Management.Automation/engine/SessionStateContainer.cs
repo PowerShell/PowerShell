@@ -2380,16 +2380,38 @@ namespace System.Management.Automation
                         // Since the path contained glob characters or we are recursing and the
                         // path is a container, do the name enumeration manually
 
-                        DoGetChildNamesManually(
-                            providerInstance,
-                            providerPath,
-                            string.Empty,
-                            returnContainers,
-                            includeMatcher,
-                            excludeMatcher,
-                            context,
-                            recurse,
-                            depth);
+                        if (providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
+                        {
+                            string newProviderPath =
+                                MakePath(
+                                    providerInstance,
+                                    providerPath,
+                                    string.Empty,
+                                    context);
+
+                            fileSystemProvider.DoGetChildNamesFast(
+                                providerInstance,
+                                newProviderPath,
+                                returnContainers,
+                                includeMatcher,
+                                excludeMatcher,
+                                context,
+                                recurse,
+                                depth);
+                        }
+                        else
+                        {
+                            DoGetChildNamesManually(
+                                providerInstance,
+                                providerPath,
+                                string.Empty,
+                                returnContainers,
+                                includeMatcher,
+                                excludeMatcher,
+                                context,
+                                recurse,
+                                depth);
+                        }
                     }
                     else
                     {
@@ -2466,16 +2488,38 @@ namespace System.Management.Automation
                     // The path did not contain glob characters but recurse was specified
                     // so do the enumeration manually
 
-                    DoGetChildNamesManually(
-                        providerInstance,
-                        providerPath,
-                        string.Empty,
-                        returnContainers,
-                        includeMatcher,
-                        excludeMatcher,
-                        context,
-                        recurse,
-                        depth);
+                    if (providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
+                    {
+                        string newProviderPath =
+                            MakePath(
+                                providerInstance,
+                                providerPath,
+                                string.Empty,
+                                context);
+
+                        fileSystemProvider.DoGetChildNamesFast(
+                            providerInstance,
+                            newProviderPath,
+                            returnContainers,
+                            includeMatcher,
+                            excludeMatcher,
+                            context,
+                            recurse,
+                            depth);
+                    }
+                    else
+                    {
+                        DoGetChildNamesManually(
+                            providerInstance,
+                            providerPath,
+                            string.Empty,
+                            returnContainers,
+                            includeMatcher,
+                            excludeMatcher,
+                            context,
+                            recurse,
+                            depth);
+                    }
                 }
                 else
                 {
