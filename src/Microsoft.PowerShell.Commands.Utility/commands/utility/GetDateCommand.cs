@@ -218,18 +218,10 @@ namespace Microsoft.PowerShell.Commands
         public string Format { get; set; }
 
         /// <summary>
-        /// Convert date to UTC before formatting
+        /// Convert date to UTC before formatting.
         /// </summary>
         [Parameter(ParameterSetName = "net")]
-        public SwitchParameter AsUTC
-        {
-            get { return _asUTC; }
-
-            set { _asUTC = value; }
-        }
-
-        private SwitchParameter _asUTC = false;
-
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
@@ -298,7 +290,8 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
             }
 
-            if (_asUTC) {
+            if (AsUTC)
+            {
                 dateToUse = dateToUse.ToUniversalTime();
             }
 
