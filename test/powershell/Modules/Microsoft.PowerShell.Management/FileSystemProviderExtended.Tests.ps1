@@ -192,6 +192,38 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
         }
     }
 
+    Context 'Validate Get-ChildItem -Path -Depth' {
+        It "Get-ChildItem -Path -Depth 0" {
+            $result = Get-ChildItem -Path $rootDir -Depth 0
+            $result.Count | Should -Be 4
+        }
+
+        It "Get-ChildItem -Path -Depth 0 -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 0 -Force
+            $result.Count | Should -Be 5
+        }
+
+        It "Get-ChildItem -Path -Depth 1" {
+            $result = Get-ChildItem -Path $rootDir -Depth 1
+            $result.Count | Should -Be 8
+        }
+
+        It "Get-ChildItem -Path -Depth 1 -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 1 -Force
+            $result.Count | Should -Be 12
+        }
+
+        It "Get-ChildItem -Path -Depth 2" {
+            $result = Get-ChildItem -Path $rootDir -Depth 2
+            $result.Count | Should -Be 8
+        }
+
+        It "Get-ChildItem -Path -Depth 2 -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 2 -Force
+            $result.Count | Should -Be 13
+        }
+    }
+
     Context 'Validate Get-ChildItem -Path -Recurse -Name' {
         It "Get-ChildItem -Path -Recurse -Name" {
             $result = Get-ChildItem -Path $rootDir -Recurse -Name
@@ -248,6 +280,43 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
             $result | Where-Object { $_ -eq "filehidden1.doc" } | Should -Not -BeNullOrEmpty
             $result | Where-Object { $_ -eq "subDir2$($DirSep)filehidden2.asd" } | Should -Not -BeNullOrEmpty
             $result | Where-Object { $_ -eq "subDir3$($DirSep)filehidden3.txt" } | Should -Not -BeNullOrEmpty
+        }
+    }
+
+    Context 'Validate Get-ChildItem -Path -Depth -Name' {
+        It "Get-ChildItem -Path -Depth 0 -Name" {
+            $result = Get-ChildItem -Path $rootDir -Depth 0 -Name
+            $result.Count | Should -Be 4
+            $result[0] | Should -BeOfType [string]
+        }
+
+        It "Get-ChildItem -Path -Depth 0 -Name -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 0 -Name -Force
+            $result.Count | Should -Be 5
+        }
+
+        It "Get-ChildItem -Path -Depth 1 -Name" {
+            $result = Get-ChildItem -Path $rootDir -Depth 1 -Name
+            $result.Count | Should -Be 8
+            $result[0] | Should -BeOfType [string]
+        }
+
+        It "Get-ChildItem -Path -Depth 1 -Name -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 1 -Name -Force
+            $result.Count | Should -Be 12
+            $result[0] | Should -BeOfType [string]
+        }
+
+        It "Get-ChildItem -Path -Depth 2 -Name" {
+            $result = Get-ChildItem -Path $rootDir -Depth 2 -Name
+            $result.Count | Should -Be 8
+            $result[0] | Should -BeOfType [string]
+        }
+
+        It "Get-ChildItem -Path -Depth 2 -Name -Force" {
+            $result = Get-ChildItem -Path $rootDir -Depth 2 -Name -Force
+            $result.Count | Should -Be 13
+            $result[0] | Should -BeOfType [string]
         }
     }
 
