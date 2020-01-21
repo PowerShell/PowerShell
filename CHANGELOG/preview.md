@@ -1,9 +1,9 @@
 # Current preview Changelog
 
-## v7.0.0-rc.2 - 1/16/2020
+## v7.0.0-rc.2 - 2020-01-16
 
 ### Breaking Changes
-- Use `ISOWeek` for week numbers in `Get-Date` accounting for leap years (#11536) (Thanks @paalbra!)
+- Use `ISOWeek` for week numbers in `Get-Date` accounting for leap years #11536 (Thanks @paalbra!)
 
 ### Engine Updates and Fixes
 - Revert the PRs that made `DBNull.Value` and `NullString.Value` treated as `$null` (#11584)
@@ -67,7 +67,7 @@
 ### Documentation and Help Content
 - Fix broken link in debugging `README.md` (#11503)
 
-## v7.0.0-rc.1 - 12/16/2019
+## v7.0.0-rc.1 - 2019-12-16
 
 ### Breaking Changes
 - Make update notification support `LTS` and default channels (#11132)
@@ -118,7 +118,7 @@
 - Refactor change logs into one log per release (#11165)
 - Fix `FWLinks` for PowerShell 7 online help documents (#11071)
 
-## v7.0.0-preview.6 - 11/21/2019
+## v7.0.0-preview.6 - 2019-11-21
 
 ### Breaking Changes
 
@@ -234,7 +234,7 @@
 - Fix to `Select-String` emphasis and `Import-DscResource` in CHANGELOG.md (#10890)
 - Remove the stale link from `powershell-beginners-guide.md` (#10926)
 
-## v7.0.0-preview.5 - 10/23/2019
+## v7.0.0-preview.5 - 2019-10-23
 
 ### Breaking Changes
 
@@ -342,7 +342,7 @@
 - Add processor architecture to distribution request template (#10661)
 - Add new PowerShell MoL book to learning PowerShell docs (#10602)
 
-## v7.0.0-preview.4 - 09/19/2019
+## v7.0.0-preview.4 - 2019-09-19
 
 ### Engine Updates and Fixes
 
@@ -414,7 +414,7 @@
 - Add a reference to `PSKoans` module to Learning Resources documentation (#10369) (Thanks @vexx32!)
 - Update `README.md` and `metadata.json` for `7.0.0-preview.3` (#10393)
 
-## v7.0.0-preview.3 - 08/20/2019
+## v7.0.0-preview.3 - 2019-08-20
 
 ### Breaking Changes
 
@@ -497,7 +497,7 @@
 - Create `Distribution_Request` issue template (#10253)
 - Fix: Removed dependency file with `Dependabot` (#10212) (Thanks @RDIL!)
 
-## v7.0.0-preview.2 - 07/17/2019
+## v7.0.0-preview.2 - 2019-07-17
 
 ### Breaking Changes
 
@@ -621,7 +621,7 @@
 - Update readme `gitter` badge (#9920) (Thanks @RDIL!)
 - Update `README` and `metadata.json` for `7.0.0-preview.1` release (#9767)
 
-## v7.0.0-preview.1 - 05/30/2019
+## v7.0.0-preview.1 - 2019-05-30
 
 ### Breaking Changes
 
