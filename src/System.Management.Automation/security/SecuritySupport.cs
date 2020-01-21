@@ -1164,13 +1164,12 @@ namespace System.Management.Automation
                 }
 
                 // Then by cert store
-                ResolveFromStoreById(sessionState, purpose, out error);
+                ResolveFromStoreById(purpose, out error);
                 if ((error != null) || (Certificates.Count != 0))
                 {
                     return;
                 }
-
-            }
+           }
 
             // Generate an error if no cert was found (and this is an encryption attempt).
             // If it is only decryption, then the system will always look in the 'My' store anyways, so
@@ -1306,9 +1305,10 @@ namespace System.Management.Automation
             }
         }
 
-        private void ResolveFromStoreById(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
+        private void ResolveFromStoreById(ResolutionPurpose purpose, out ErrorRecord error)
         {
 
+            error = null;
 
             try
             {
@@ -1333,19 +1333,13 @@ namespace System.Management.Automation
                     certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, _identifier.Trim(), false));
                     certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier.Trim(), false));
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
-
                 }
 
             }
             catch (SessionStateException)
             {
-
             }
-
-            
         }
-
-
 
         private void ProcessResolvedCertificates(ResolutionPurpose purpose, X509Certificate2Collection certificatesToProcess, out ErrorRecord error)
         {
@@ -1362,9 +1356,14 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                string.Format(CultureInfo.InvariantCulture,
-                                    SecuritySupportStrings.CertificateCannotBeUsedForEncryption, certificate.Thumbprint, CertificateFilterInfo.DocumentEncryptionOid)),
-                            "CertificateCannotBeUsedForEncryption", ErrorCategory.InvalidData, certificate);
+                                string.Format(
+                                    CultureInfo.InvariantCulture,
+                                    SecuritySupportStrings.CertificateCannotBeUsedForEncryption,
+                                    certificate.Thumbprint,
+                                    CertificateFilterInfo.DocumentEncryptionOid)),
+                            "CertificateCannotBeUsedForEncryption",
+                            ErrorCategory.InvalidData,
+                            certificate);
                         return;
                     }
                     else
@@ -1399,9 +1398,14 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                string.Format(CultureInfo.InvariantCulture,
-                                    SecuritySupportStrings.IdentifierMustReferenceSingleCertificate, _identifier, "To")),
-                            "IdentifierMustReferenceSingleCertificate", ErrorCategory.LimitsExceeded, certificatesToProcess);
+                                string.Format(
+                                    CultureInfo.InvariantCulture,
+                                    SecuritySupportStrings.IdentifierMustReferenceSingleCertificate,
+                                    _identifier,
+                                    "To")),
+                            "IdentifierMustReferenceSingleCertificate",
+                            ErrorCategory.LimitsExceeded,
+                            certificatesToProcess);
                         Certificates.Clear();
                         return;
                     }
