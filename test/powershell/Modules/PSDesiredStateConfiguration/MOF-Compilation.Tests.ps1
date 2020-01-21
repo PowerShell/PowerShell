@@ -8,20 +8,24 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
     BeforeAll {
         $SkipTests = $IsMacOS -or $IsWindows -or ((Get-PlatformInfo) -match "alpine|raspbian")
-        if ( $SkipTests ) {
-            return
+
+        # if something goes wrong, be sure to run all the tests and let the failures happen.
+        try {
+            Import-Module PSDesiredStateConfiguration
+            $dscModule = Get-Module PSDesiredStateConfiguration
+            $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
+            $testResourceSchemaPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc) schema
+
+            # Copy test resources to PSDesiredStateConfiguration module
+            Copy-Item $testResourceSchemaPath $baseSchemaPath -Recurse -Force
+
+            $_modulePath = $env:PSModulePath
+            $powershellexe = (get-process -pid $PID).MainModule.FileName
+            $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
         }
-        Import-Module PSDesiredStateConfiguration
-        $dscModule = Get-Module PSDesiredStateConfiguration
-        $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
-        $testResourceSchemaPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc) schema
-
-        # Copy test resources to PSDesiredStateConfiguration module
-        Copy-Item $testResourceSchemaPath $baseSchemaPath -Recurse -Force
-
-        $_modulePath = $env:PSModulePath
-        $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        catch {
+            Write-Warning "Some tests may fail due to $_"
+        }
     }
 
     It "Should be able to compile a MOF from a basic configuration" -Skip:${SkipTests} {
