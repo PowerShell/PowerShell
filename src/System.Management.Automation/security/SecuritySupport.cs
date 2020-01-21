@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
             if (_pendingCertificate != null)
             {
                 ProcessResolvedCertificates(purpose,
-                    new List<X509Certificate2> { _pendingCertificate }, out error);
+                    new X509Certificate2Collection(_pendingCertificate), out error);
                 if ((error != null) || (Certificates.Count != 0))
                 {
                     return;
