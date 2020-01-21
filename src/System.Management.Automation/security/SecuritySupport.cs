@@ -1163,19 +1163,13 @@ namespace System.Management.Automation
                     return;
                 }
 
-                // Then by thumbprint
-                ResolveFromThumbprint(sessionState, purpose, out error);
+                // Then by cert store
+                ResolveFromStoreById(sessionState, purpose, out error);
                 if ((error != null) || (Certificates.Count != 0))
                 {
                     return;
                 }
 
-                // Then by Subject Name
-                ResolveFromSubjectName(sessionState, purpose, out error);
-                if ((error != null) || (Certificates.Count != 0))
-                {
-                    return;
-                }
             }
 
             // Generate an error if no cert was found (and this is an encryption attempt).
@@ -1216,7 +1210,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
+            X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
             try
             {
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
@@ -1290,7 +1284,7 @@ namespace System.Management.Automation
                     resolvedPaths.Remove(path);
                 }
 
-                List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
+                X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
                 foreach (string path in resolvedPaths)
                 {
                     X509Certificate2 certificate = null;
@@ -1312,99 +1306,48 @@ namespace System.Management.Automation
             }
         }
 
-        private void ResolveFromThumbprint(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
+        private void ResolveFromStoreById(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
         {
-            // Quickly check that this is a thumbprint-like pattern (just hex)
-            if (!System.Text.RegularExpressions.Regex.IsMatch(_identifier, "^[a-f0-9]+$", Text.RegularExpressions.RegexOptions.IgnoreCase))
-            {
-                error = null;
-                return;
-            }
 
-            Collection<PSObject> certificates = new Collection<PSObject>();
 
             try
             {
-                // Get first from 'My' store
-                string certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::CurrentUser\\My", _identifier);
-                if (sessionState.InvokeProvider.Item.Exists(certificatePath))
+                X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
+
+                using (X509Store storeCU = new X509Store("my", StoreLocation.CurrentUser))
                 {
-                    foreach (PSObject certificateObject in sessionState.InvokeProvider.Item.Get(certificatePath))
+                    storeCU.Open(OpenFlags.ReadOnly);
+                    X509Certificate2Collection storeCerts = storeCU.Certificates;
+
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        certificates.Add(certificateObject);
-                    }
-                }
-
-                // Second from 'LocalMachine' store
-                certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::LocalMachine\\My", _identifier);
-                if (sessionState.InvokeProvider.Item.Exists(certificatePath))
-                {
-                    foreach (PSObject certificateObject in sessionState.InvokeProvider.Item.Get(certificatePath))
-                    {
-                        certificates.Add(certificateObject);
-                    }
-                }
-            }
-            catch (SessionStateException)
-            {
-                // If we got an ItemNotFound / etc., then this didn't represent a valid path.
-            }
-
-            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
-            foreach (PSObject certificateObject in certificates)
-            {
-                X509Certificate2 certificate = certificateObject.BaseObject as X509Certificate2;
-                if (certificate != null)
-                {
-                    certificatesToProcess.Add(certificate);
-                }
-            }
-
-            ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
-        }
-
-        private void ResolveFromSubjectName(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
-        {
-            Collection<PSObject> certificates = new Collection<PSObject>();
-            WildcardPattern subjectNamePattern = WildcardPattern.Get(_identifier, WildcardOptions.IgnoreCase);
-
-            try
-            {
-                // Get first from 'My' store, then 'LocalMachine'
-                string[] certificatePaths = new string[] {
-                        "Microsoft.PowerShell.Security\\Certificate::CurrentUser\\My",
-                        "Microsoft.PowerShell.Security\\Certificate::LocalMachine\\My" };
-
-                foreach (string certificatePath in certificatePaths)
-                {
-                    foreach (PSObject certificateObject in sessionState.InvokeProvider.ChildItem.Get(certificatePath, false))
-                    {
-                        if (subjectNamePattern.IsMatch(certificateObject.Properties["Subject"].Value.ToString()))
+                        using (X509Store storeLM = new X509Store("my", StoreLocation.LocalMachine))
                         {
-                            certificates.Add(certificateObject);
+                            storeLM.Open(OpenFlags.ReadOnly);
+                            storeCerts.AddRange(storeLM.Certificates);
                         }
                     }
+
+                    // Find is case insensitive
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier.Trim(), false));
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, _identifier.Trim(), false));
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier.Trim(), false));
+                    ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
+
                 }
+
             }
             catch (SessionStateException)
             {
-                // If we got an ItemNotFound / etc., then this didn't represent a valid path.
+
             }
 
-            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
-            foreach (PSObject certificateObject in certificates)
-            {
-                X509Certificate2 certificate = certificateObject.BaseObject as X509Certificate2;
-                if (certificate != null)
-                {
-                    certificatesToProcess.Add(certificate);
-                }
-            }
-
-            ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
+            
         }
 
-        private void ProcessResolvedCertificates(ResolutionPurpose purpose, List<X509Certificate2> certificatesToProcess, out ErrorRecord error)
+
+
+        private void ProcessResolvedCertificates(ResolutionPurpose purpose, X509Certificate2Collection certificatesToProcess, out ErrorRecord error)
         {
             error = null;
             HashSet<string> processedThumbprints = new HashSet<string>();
