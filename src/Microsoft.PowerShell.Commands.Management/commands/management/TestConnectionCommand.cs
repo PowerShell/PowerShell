@@ -347,6 +347,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ae.Handle((ex) =>
                     {
+                        if (ex is TaskCanceledException)
+                        {
+                            throw new PipelineStoppedException();
+                        }
                         if (ex is SocketException)
                         {
                             SocketException? socketException = ex as SocketException;
