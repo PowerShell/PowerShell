@@ -646,8 +646,7 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (second == null) return true;
-                return false;
+                return second == null;
             }
 
             if (second == null)
