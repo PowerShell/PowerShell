@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe 'Get-Error tests' -Tag CI {
-    It 'Get-Error resolves $Error[0] and includes InnerException' {
+    It 'Get-Error resolves $error[0] and includes InnerException' {
         try {
             1/0
         }
@@ -103,7 +103,7 @@ Describe 'Get-Error tests' -Tag CI {
 
         $null = Get-Error
 
-        $Error[0].pstypenames | Should -Be System.Management.Automation.ErrorRecord, System.Object
+        $error[0].pstypenames | Should -Be System.Management.Automation.ErrorRecord, System.Object
     }
 
     It 'Get-Error adds ExceptionType for Exceptions' {

@@ -149,7 +149,7 @@ Class OsLogIds
     [int] $Thread = 2;
     [int] $Type = 3;
     [int] $Activity = 4;
-    [int] $Pid = 5;
+    [int] $PID = 5;
     [int] $TTL = 6;
     [int] $ProcessName = 7;
     [int] $Module = 8;
@@ -1079,7 +1079,7 @@ function Wait-PSWinEvent
 
         foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
         {
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
                 {
@@ -1094,7 +1094,7 @@ function Wait-PSWinEvent
                 }
             }
 
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyIndex")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyIndex")
             {
                 if ($thisRecord.Properties[$propertyIndex].Value -eq $propertyValue)
                 {

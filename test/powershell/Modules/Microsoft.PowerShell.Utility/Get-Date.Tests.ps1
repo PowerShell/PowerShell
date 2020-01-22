@@ -7,7 +7,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $result = Get-Date -Date $date -Year 1973 -Month 2 -Day 22 -Hour 15 -Minute 40 -Second 10 -Millisecond 200
         $result | Should -BeOfType Datetime
         $result.Year | Should -Be 1973
-        $result.Month| Should -Be 2
+        $result.Month | Should -Be 2
         $result.Day | Should -Be 22
         $result.Hour | Should -Be 15
         $result.Minute | Should -Be 40
@@ -28,7 +28,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
 
         $seconds | Should -Be "1577836800"
-        if ($isLinux) {
+        if ($IsLinux) {
             $dateString = "01/01/2020 UTC"
             if ( (Get-PlatformInfo) -eq "alpine" ) {
                 $dateString = "2020-01-01"
@@ -52,6 +52,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
     # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
     It "using -uformat 'V' produces the correct output" -TestCases @(
+        @{date="1998-01-02"; week = "01"},
+        @{date="1998-01-03"; week = "01"},
+        @{date="2003-01-03"; week = "01"},
+        @{date="2004-01-02"; week = "01"},
+        @{date="2004-01-03"; week = "01"},
         @{date="2005-01-01"; week = "53"},
         @{date="2005-01-02"; week = "53"},
         @{date="2005-12-31"; week = "52"},
@@ -67,11 +72,21 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2008-12-30"; week = "01"},
         @{date="2008-12-31"; week = "01"},
         @{date="2009-01-01"; week = "01"},
+        @{date="2009-01-02"; week = "01"},
+        @{date="2009-01-03"; week = "01"},
         @{date="2009-12-31"; week = "53"},
         @{date="2010-01-01"; week = "53"},
         @{date="2010-01-02"; week = "53"},
         @{date="2010-01-03"; week = "53"},
-        @{date="2010-01-04"; week = "01"}
+        @{date="2010-01-04"; week = "01"},
+        @{date="2014-01-03"; week = "01"},
+        @{date="2015-01-02"; week = "01"},
+        @{date="2015-01-03"; week = "01"},
+        @{date="2020-01-03"; week = "01"},
+        @{date="2025-01-03"; week = "01"},
+        @{date="2026-01-02"; week = "01"},
+        @{date="2026-01-03"; week = "01"},
+        @{date="2031-01-03"; week = "01"}
     ) {
         param($date, $week)
         Get-date -Date $date -uformat %V | Should -BeExactly $week

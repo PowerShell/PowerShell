@@ -51,7 +51,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 15 }
+            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 8 }
         }
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -205,18 +205,18 @@ Describe "Ampersand background test" -tag "CI","Slow" {
             Receive-Job $j -Wait | Should -BeExactly "Hi Bob! Hi Mary! Hi Bill!"
         }
         It 'Make sure that $PID from the parent process does not overwrite $PID in the child process' {
-            $j = Write-Output $pid &
+            $j = Write-Output $PID &
             $cpid = Receive-Job $j -Wait
-            $pid | Should -Not -BeExactly $cpid
+            $PID | Should -Not -BeExactly $cpid
         }
         It 'Make sure that $global:PID from the parent process does not overwrite $global:PID in the child process' {
             $j = Write-Output $global:pid &
             $cpid = Receive-Job -Wait $j
-            $pid | Should -Not -BeExactly $cpid
+            $PID | Should -Not -BeExactly $cpid
         }
         It "starts in the current directory" {
             $j = Get-Location | Foreach-Object -MemberName Path &
-            Receive-Job -Wait $j | Should -Be ($pwd.Path)
+            Receive-Job -Wait $j | Should -Be ($PWD.Path)
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &

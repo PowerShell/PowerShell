@@ -774,7 +774,7 @@ function New-UnixPackage {
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
-        if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        if ($PSCmdlet.ShouldProcess("Create staging folder")) {
             New-StagingFolder -StagingPath $Staging
         }
 
@@ -793,7 +793,7 @@ function New-UnixPackage {
         }
         $linkSource = "/tmp/pwsh"
 
-        if ($pscmdlet.ShouldProcess("Create package file system"))
+        if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
@@ -833,7 +833,7 @@ function New-UnixPackage {
         if ($Type -eq "osxpkg")
         {
             Write-Log "Adding macOS launch application..."
-            if ($pscmdlet.ShouldProcess("Add macOS launch application"))
+            if ($PSCmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
                 $AppsFolder = New-MacOSLauncher -Version $Version
@@ -870,14 +870,14 @@ function New-UnixPackage {
 
         # Build package
         try {
-            if ($pscmdlet.ShouldProcess("Create $type package")) {
+            if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
                 Write-Log "Starting Cleanup for mac packaging..."
-                if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                if ($PSCmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
                 }
@@ -901,7 +901,7 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
-            if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
+            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
                 $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
             }
@@ -1261,11 +1261,11 @@ function New-AfterScripts
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            'debian\.(9|10)' {
+            'debian\.9' {
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
-            'debian\.11' {
+            'debian\.(10|11)' {
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
@@ -1469,7 +1469,7 @@ function New-ZipPackage
 
     if (Get-Command Compress-Archive -ErrorAction Ignore)
     {
-        if ($pscmdlet.ShouldProcess("Create zip package"))
+        if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
@@ -1618,7 +1618,7 @@ function New-ILNugetPackage
 
             if ($file -eq "Microsoft.PowerShell.SDK.dll")
             {
-                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
                 # This is to make 'Add-Type' work in application that hosts PowerShell.
 
                 $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
@@ -1745,11 +1745,15 @@ function CopyReferenceAssemblies
         [string[]] $assemblyFileList
     )
 
+    $supportedRefList = @(
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost")
+
     switch ($assemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
-            Copy-Item $ref_Utility -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        { $_ -in $supportedRefList } {
+            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+            Copy-Item $refDll -Destination $refNugetPath -Force
+            Write-Log "Copied file $refDll to $refNugetPath"
         }
 
         "Microsoft.PowerShell.SDK" {
@@ -1931,7 +1935,8 @@ function New-ReferenceAssembly
     $SMAReferenceAssembly = $null
     $assemblyNames = @(
         "System.Management.Automation",
-        "Microsoft.PowerShell.Commands.Utility"
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost"
     )
 
     foreach ($assemblyName in $assemblyNames) {
@@ -2119,10 +2124,8 @@ function GenerateBuildArguments
     $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
     $arguments += "/p:SnkFile=$SnkFilePath"
 
-    switch ($AssemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $arguments += "/p:SmaRefFile=$SMAReferencePath"
-        }
+    if ($AssemblyName -ne "System.Management.Automation") {
+        $arguments += "/p:SmaRefFile=$SMAReferencePath"
     }
 
     return $arguments
@@ -2270,7 +2273,7 @@ function New-NugetContentPackage
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
-    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+    if ($PSCmdlet.ShouldProcess("Create staging folder")) {
         New-StagingFolder -StagingPath $contentFolder
     }
 
@@ -2756,8 +2759,8 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $pwd "$packageName.wixpdb"
+    $msiLocationPath = Join-Path $PWD "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
 
     if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
     {
@@ -2881,7 +2884,7 @@ function New-MSIXPackage
 
     $displayName = $productName
 
-    if ($packageName.Contains('preview')) {
+    if ($packageName.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }
@@ -2899,7 +2902,13 @@ function New-MSIXPackage
     # For stable versions, the last digit is already zero so no changes
     $pversion = [version]$ProductVersion
     if ($pversion.Revision -ne 0) {
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
         $ProductVersion = $pversion.ToString()
     }
 
@@ -3041,6 +3050,38 @@ function Test-FileWxs
             New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $componentId
 
             Write-Warning "new file in {$folder} with name {$name} in a {$($filesNode.LocalName)} need to be added to {$FilesWxsPath}"
+        }
+    }
+
+    # get all the file components from the files.wxs
+    $components = $filesAssetXml.GetElementsByTagName('Component')
+    $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
+
+    $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
+    if ( $componentComparison.Count -gt 0){
+        $passed = $false
+        Write-Verbose "Rebuilding componentRefs" -Verbose
+
+        # add all the file components to the patch
+        foreach($component in $components)
+        {
+            $componentId = $component.Id
+            Write-Verbose "Removing $componentId" -Verbose
+            Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+        }
+
+        # There is only one ComponentGroup.
+        # So we get all of them and select the first one.
+        $componentGroups = @($newFilesAssetXml.GetElementsByTagName('ComponentGroup'))
+        $componentGroup = $componentGroups[0]
+
+        # add all the file components to the patch
+        foreach($component in $components)
+        {
+            $id = $component.Id
+            Write-Verbose "Adding $id" -Verbose
+            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $componentGroup -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $id
         }
     }
 

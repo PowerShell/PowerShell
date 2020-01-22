@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-$ps = Join-Path -Path $PsHome -ChildPath "pwsh"
+$ps = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
     #Set up

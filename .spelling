@@ -286,6 +286,7 @@ gitter
 glachancecmaisonneuve
 globbing
 GoogleTest
+GUIs
 gzip
 hackathons
 hashtable
@@ -610,6 +611,7 @@ repo
 reportgenerator
 resgen
 responseheaders
+REST
 rest.ps1
 restart-apachehttpserver
 resx
@@ -925,3 +927,6 @@ wpa
 wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
+ - CHANGELOG/preview.md
+ThomasNieto
+spongemike2

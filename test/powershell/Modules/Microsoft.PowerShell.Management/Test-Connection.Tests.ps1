@@ -64,10 +64,10 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if (!$isWindows) {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
+            if (!$IsWindows) {
+                $error[0].Exception.InnerException.ErrorCode | Should -Be -131073
             } else {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+                $error[0].Exception.InnerException.ErrorCode | Should -Be 11001
             }
         }
 
@@ -77,7 +77,7 @@ Describe "Test-Connection" -tags "CI" {
 
             $result[0].Address | Should -BeExactly $realAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
-            if ($isWindows) {
+            if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
             }
         }
@@ -94,7 +94,7 @@ Describe "Test-Connection" -tags "CI" {
             $result1.Address | Should -BeExactly $realAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
-            if (!$isWindows) {
+            if (!$IsWindows) {
                 $result1.Reply.Options.DontFragment | Should -BeFalse
                 # Depending on the network configuration any of the following should be returned
                 $result2.Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
@@ -216,7 +216,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults.Count | Should -BeGreaterThan 4
             $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
-            if ($isWindows) {
+            if ($IsWindows) {
                 $pingResults.Where( { $_.Status -eq 'Success' }, 'Default', 1 ).BufferSize | Should -Be 32
             }
         }
@@ -254,7 +254,7 @@ Describe "Test-Connection" -tags "CI" {
             $result[0].Hop | Should -Be 1
             $result[0].HopAddress | Should -BeExactly $realAddress
             $result[0].Status | Should -BeExactly "Success"
-            if (!$isWindows) {
+            if (!$IsWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
             } else {
                 $result[0].Reply.Buffer.Count | Should -Be 32
@@ -333,5 +333,26 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $result[0].Latency | Should -BeExactly 0
         $result[0].Connected | Should -BeFalse
         $result[0].Status | Should -Not -BeExactly 'Success'
+    }
+}
+
+Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI" {
+    It "Test-Connection works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
+        $pwsh = Join-Path $PSHOME "pwsh"
+        $pingResults = & $pwsh -NoProfile {
+            Add-Type -AssemblyName System.Windows.Forms
+            $null = New-Object System.Windows.Forms.Form
+            Test-Connection localhost
+        }
+
+        $pingResults.Length | Should -Be 4
+        $result = $pingResults | Select-Object -First 1
+
+        $result.Ping | Should -Be 1
+        $result.Source | Should -BeExactly ([System.Net.Dns]::GetHostName())
+        $result.Destination | Should -BeExactly localhost
+        $result.Latency | Should -BeOfType "long"
+        $result.Reply.Status | Should -BeExactly "Success"
+        $result.BufferSize | Should -Be 32
     }
 }

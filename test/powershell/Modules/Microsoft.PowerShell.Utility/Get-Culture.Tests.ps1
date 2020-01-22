@@ -7,14 +7,14 @@ Describe "Get-Culture" -Tags "CI" {
 
         $culture = Get-Culture
         $culture | Should -BeOfType [CultureInfo]
-        ($culture).EnglishName | Should -BeExactly $host.CurrentCulture.EnglishName
+        ($culture).EnglishName | Should -BeExactly $Host.CurrentCulture.EnglishName
 
         Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }
 
     It "Should have (Get-Culture).Name variable be equivalent to `$PSCulture" {
 
-        (Get-Culture).Name | Should -BeExactly $PsCulture
+        (Get-Culture).Name | Should -BeExactly $PSCulture
     }
 
     It "Should return the specified culture with '-Name' parameter" {

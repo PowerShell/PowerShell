@@ -26,7 +26,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
     }
 
     It "Should return own self" {
-        (Get-PSHostProcessInfo).ProcessId | Should -Contain $pid
+        (Get-PSHostProcessInfo).ProcessId | Should -Contain $PID
     }
 
     It "Should list info for other PowerShell hosted processes" {

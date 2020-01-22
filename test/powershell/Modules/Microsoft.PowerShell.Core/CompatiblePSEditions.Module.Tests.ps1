@@ -390,17 +390,31 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 }
 
-Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
+Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
+
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+
         $ModuleName = "DesktopModule"
+        $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
         Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
+        # create an incompatible module
+        New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
         BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
             Add-ModulePath $basePath
         }
 
@@ -408,34 +422,68 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Verify that Error is generated with default ErrorAction" -Skip:(-not $IsWindows) {
+        It "Verify that Error is generated with default ErrorAction" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
             $LogPath | Should -FileContentMatch 'divide by zero'
         }
 
-        It "Verify that Warning is generated with default WarningAction" -Skip:(-not $IsWindows) {
+        It "Verify that Warning is generated with default WarningAction" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
             $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell'
         }
 
-        It "Verify that Error is Not generated with -ErrorAction Ignore" -Skip:(-not $IsWindows) {
+        It "Verify that Error is Not generated with -ErrorAction Ignore" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore" *> $LogPath
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -ErrorAction Ignore" *> $LogPath
             $LogPath | Should -Not -FileContentMatch 'divide by zero'
         }
 
-        It "Verify that Warning is Not generated with -WarningAction Ignore" -Skip:(-not $IsWindows) {
+        It "Verify that Warning is Not generated with -WarningAction Ignore" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -WarningAction Ignore" *> $LogPath
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName -WarningAction Ignore" *> $LogPath
             $LogPath | Should -Not -FileContentMatch 'loaded in Windows PowerShell'
+        }
+
+        It "Fails to import incompatible module if implicit WinCompat is disabled in config" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
+            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
+            $LogPath | Should -FileContentMatch 'cannot be loaded implicitly using the Windows Compatibility'
+        }
+
+        It "Fails to auto-import incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Disabled in config" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
+            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+            $LogPath | Should -FileContentMatch 'not recognized as the name of a cmdlet'
+        }
+
+        It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"DisableImplicitWinCompat" : "False"}' | Out-File -Force $ConfigPath
+            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+            $LogPath | Should -FileContentMatch 'True'
         }
     }
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
-    $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
+    BeforeAll {
+        $pwsh = "$PSHOME/pwsh"
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
 
     Context "System32 module path prepended to PSModulePath" {
         BeforeAll {
@@ -454,20 +502,21 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             Restore-ModulePath
         }
 
-        It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" {
+        It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
             $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
         }
 
         It "Allows PowerShell subprocesses to call core modules" {
-            $errors = pwsh.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
         }
     }
 
-    It "Does not duplicate the System32 module path in subprocesses" {
-        $sys32ModPathCount = pwsh.exe -C {
-            pwsh.exe -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $matches.Count'
+    <# Remove Pending status and update test after issue #11575 is fixed #>
+    It "Does not duplicate the System32 module path in subprocesses" -Pending:$true {
+        $sys32ModPathCount = & $pwsh -C {
+            & "$PSHOME/pwsh" -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $Matches.Count'
         }
 
         $sys32ModPathCount | Should -Be 1
@@ -871,8 +920,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
                 {
                     # this goes through WinCompat code
-                    { Import-Module $moduleBase -ErrorAction Stop } | Should Not Throw
-                    Get-Module -Name $moduleName | Should Not BeNullOrEmpty
+                    { Import-Module $moduleBase -ErrorAction Stop } | Should -Not -Throw
+                    Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                     return
                 }
 
@@ -919,8 +968,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
             {
                 # this goes through WinCompat code
-                { Import-Module $moduleName -ErrorAction Stop } | Should Not Throw
-                Get-Module -Name $moduleName | Should Not BeNullOrEmpty
+                { Import-Module $moduleName -ErrorAction Stop } | Should -Not -Throw
+                Get-Module -Name $moduleName | Should -Not -BeNullOrEmpty
                 return
             }
 

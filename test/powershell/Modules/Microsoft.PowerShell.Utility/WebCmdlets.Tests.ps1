@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -445,6 +445,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.headers.Host | Should -Be $Uri.Authority
+    }
+
+    It "Invoke-WebRequest with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        ValidateResponse -response $result
     }
 
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
@@ -1903,7 +1913,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $response.Images | out-null
             }
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             # pathological regex
             $regex = [RegEx]::new('<img\s+[^>]*>')
@@ -1918,7 +1928,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 4,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 12
             # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
             # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
@@ -1934,7 +1945,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Pathological regex
             $regex = [RegEx]::new('<meta\s[.\n]*[^><]*charset\s*=\s*["''\n]?(?<charset>[A-Za-z].[^\s"''\n<>]*)[\s"''\n>]')
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             [TimeSpan] $pathologicalTimeSpan = Measure-Command {
                 $regex.Match($content)
@@ -1946,7 +1957,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 2,750 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 13
             # dosLength 2,850 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 22
             # dosLength 3,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 31
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
     }
 }
@@ -1993,6 +2005,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         $result.Output.headers.'User-Agent' | Should -MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-RestMethod with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Error | Should -BeNullOrEmpty
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -3319,7 +3341,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
-            $outFileHash.Hash | Should BeExactly $referenceFileHash.Hash
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
             $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
@@ -3475,5 +3497,20 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
+    }
+
+    It "Web cmdlets ignore headers with null value" {
+        $query = @{
+            body        = "hello"
+            contenttype = 'text/plain'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+
+        # Core throws if a header has null value.
+        # We ignore such headers so no exception is expected.
+        { Invoke-WebRequest -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-WebRequest -Uri $uri -ContentType $null } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
     }
 }

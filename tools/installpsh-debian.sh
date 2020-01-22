@@ -186,7 +186,7 @@ case $DISTRIB_ID in
     debian)
         DISTRIB_RELEASE=${DISTRIB_RELEASE%%.*}
         case $DISTRIB_RELEASE in
-            8|9)
+            8|9|10|11)
                 curl https://packages.microsoft.com/config/debian/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
             ;;
             *)
