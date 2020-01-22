@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (!MyInvocation.BoundParameters.ContainsKey("Count"))
             {
-                Count =  1;
+                Count = 1;
             }
         }
 
