@@ -62,10 +62,6 @@ namespace Microsoft.PowerShell.Commands
 
         private Ping? _sender;
 
-        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
-
-        private PingCompletedEventArgs? _pingCompleteArgs;
-
         #endregion
 
         #region Parameters
@@ -797,7 +793,6 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
-                    _pingComplete?.Dispose();
                 }
 
                 _disposed = true;
@@ -815,48 +810,24 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 _sender = new Ping();
-                _sender.PingCompleted += OnPingComplete;
 
                 timer?.Start();
-                _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
-                _pingComplete.Wait();
-                timer?.Stop();
-                _pingComplete.Reset();
-
-                if (_pingCompleteArgs == null)
-                {
-                    throw new PingException(string.Format(
-                        TestConnectionResources.NoPingResult,
-                        targetAddress,
-                        IPStatus.Unknown));
-                }
-
-                if (_pingCompleteArgs.Cancelled)
-                {
-                    // The only cancellation we have implemented is on pipeline stops via StopProcessing().
-                    throw new PipelineStoppedException();
-                }
-
-                if (_pingCompleteArgs.Error != null)
-                {
-                    throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
-                }
-
-                return _pingCompleteArgs.Reply;
+                // 'SendPingAsync' always uses the default synchronization context (threadpool).
+                // This is what we want to avoid the deadlock resulted by async work being scheduled back to the
+                // pipeline thread due to a change of the current synchronization context of the pipeline thread.
+                return _sender.SendPingAsync(targetAddress, timeout, buffer, pingOptions).GetAwaiter().GetResult();
+            }
+            catch (PingException ex) when (ex.InnerException is TaskCanceledException)
+            {
+                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
+                throw new PipelineStoppedException();
             }
             finally
             {
+                timer?.Stop();
                 _sender?.Dispose();
                 _sender = null;
             }
-        }
-
-        // This event is triggered when the ping is completed, and passes along the eventargs so that we know
-        // if the ping was cancelled, or an exception was thrown.
-        private static void OnPingComplete(object sender, PingCompletedEventArgs e)
-        {
-            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
-            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
 
         /// <summary>
