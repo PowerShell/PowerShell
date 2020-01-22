@@ -304,3 +304,24 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
     }
 }
+
+Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI" {
+    It "Test-Connection works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
+        $pwsh = Join-Path $PSHOME "pwsh"
+        $pingResults = & $pwsh -NoProfile {
+            Add-Type -AssemblyName System.Windows.Forms
+            $null = New-Object System.Windows.Forms.Form
+            Test-Connection localhost
+        }
+
+        $pingResults.Length | Should -Be 4
+        $result = $pingResults | Select-Object -First 1
+
+        $result.Ping | Should -Be 1
+        $result.Source | Should -BeExactly ([System.Net.Dns]::GetHostName())
+        $result.Destination | Should -BeExactly localhost
+        $result.Latency | Should -BeOfType "long"
+        $result.Reply.Status | Should -BeExactly "Success"
+        $result.BufferSize | Should -Be 32
+    }
+}
