@@ -9,8 +9,10 @@
 # Top-most EditorConfig file
 root = true
 
-# Don't use tabs for indentation.
 [*]
+charset = utf-8
+
+# Don't use tabs for indentation.
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
