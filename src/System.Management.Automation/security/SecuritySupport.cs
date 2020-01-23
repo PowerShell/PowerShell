@@ -620,16 +620,24 @@ namespace System.Management.Automation.Internal
 
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
-            Collection<string> ekus = GetCertEKU(c);
-
-            foreach (string testOid in ekus)
+            foreach(var extension in c.Extensions)
             {
-                if (testOid == oid)
+                if(extension is X509EnhancedKeyUsageExtension)
                 {
-                    return true;
+                    var EnhancedKeyUsages = (extension as X509EnhancedKeyUsageExtension).EnhancedKeyUsages;
+                    if(EnhancedKeyUsages != null)
+                    {
+                        foreach(var usageOid in EnhancedKeyUsages )
+                        {
+                            if (usageOid.Value == oid)
+                            {
+                              return true;
+                            }
+                            break;
+                        }
+                    }                    
                 }
-            }
-
+            } 
             return false;
         }
 
@@ -637,18 +645,16 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
+                var keyUsageExtension = extension as X509KeyUsageExtension;
                 if (keyUsageExtension != null)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
                     {
                         return true;
                     }
-
                     break;
                 }
             }
-
             return false;
         }
 
@@ -660,64 +666,6 @@ namespace System.Management.Automation.Internal
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
             return cert.HasPrivateKey;
-        }
-
-        /// <summary>
-        /// Get the EKUs of a cert.
-        /// </summary>
-        /// <param name="cert">Certificate object.</param>
-        /// <returns>A collection of cert eku strings.</returns>
-        [ArchitectureSensitive]
-        internal static Collection<string> GetCertEKU(X509Certificate2 cert)
-        {
-            Collection<string> ekus = new Collection<string>();
-            IntPtr pCert = cert.Handle;
-            int structSize = 0;
-            IntPtr dummy = IntPtr.Zero;
-
-            if (Security.NativeMethods.CertGetEnhancedKeyUsage(pCert, 0, dummy,
-                                                      out structSize))
-            {
-                if (structSize > 0)
-                {
-                    IntPtr ekuBuffer = Marshal.AllocHGlobal(structSize);
-
-                    try
-                    {
-                        if (Security.NativeMethods.CertGetEnhancedKeyUsage(pCert, 0,
-                                                                  ekuBuffer,
-                                                                  out structSize))
-                        {
-                            Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
-                                (Security.NativeMethods.CERT_ENHKEY_USAGE)
-                                Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
-                            IntPtr ep = ekuStruct.rgpszUsageIdentifier;
-                            IntPtr ekuptr;
-
-                            for (int i = 0; i < ekuStruct.cUsageIdentifier; i++)
-                            {
-                                ekuptr = Marshal.ReadIntPtr(ep, i * Marshal.SizeOf(ep));
-                                string eku = Marshal.PtrToStringAnsi(ekuptr);
-                                ekus.Add(eku);
-                            }
-                        }
-                        else
-                        {
-                            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-                        }
-                    }
-                    finally
-                    {
-                        Marshal.FreeHGlobal(ekuBuffer);
-                    }
-                }
-            }
-            else
-            {
-                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            return ekus;
         }
 
         /// <summary>
