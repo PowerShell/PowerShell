@@ -69,14 +69,6 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        private CancellationToken cancellationToken
-        {
-            get
-            {
-                return cancellationTokenSource.Token;
-            }
-        }
-
         #endregion
 
         #region Parameters
@@ -333,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     stopwatch.Start();
 
-                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, cancellationToken))
+                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, cancellationTokenSource.Token))
                     {
                         latency = stopwatch.ElapsedMilliseconds;
                         status = SocketError.Success;
@@ -395,7 +387,7 @@ namespace Microsoft.PowerShell.Commands
                     ));
                 }
 
-                Task.Delay(new TimeSpan(0, 0, i == Count ? 0 : Delay)).Wait(cancellationToken);
+                Task.Delay(new TimeSpan(0, 0, i == Count ? 0 : Delay)).Wait(cancellationTokenSource.Token);
             }
         }
 
