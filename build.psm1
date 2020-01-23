@@ -408,6 +408,24 @@ Fix steps:
         }
         New-Item -Path $refDestFolder -ItemType Directory -Force -ErrorAction Stop > $null
         Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
+
+        ## We need to explicitly add these assemblies which ship with netcoreapp runtime, but we use a higher version in the modules.
+        $assembliesToAdd = @(
+            "System.Diagnostics.DiagnosticSource.dll"
+        )
+
+        # Get path to the reference dlls.
+        $netCoreAppRefAssembliesPath = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*netstandard.dll;" } | ForEach-Object { $_.TrimEnd(';') } | Split-Path -Parent
+
+        foreach ($assembly in $assembliesToAdd) {
+            $srcPath = Join-Path $netCoreAppRefAssembliesPath $assembly
+
+            if (Test-Path $srcPath) {
+                Copy-Item -Path $srcPath -Destination $refDestFolder -Force -ErrorAction Stop
+            } else {
+                throw "Expected assembly was not found: $srcPath"
+            }
+        }
     } finally {
         Pop-Location
     }

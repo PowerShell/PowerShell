@@ -31,12 +31,6 @@ namespace Microsoft.PowerShell
         // PSCoreInsight2 telemetry key
         private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808";
 
-        static ApplicationInsightsTelemetry()
-        {
-            TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
-            TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
-        }
-
         private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
             var str = Environment.GetEnvironmentVariable(name);
             if (string.IsNullOrEmpty(str))
@@ -75,7 +69,13 @@ namespace Microsoft.PowerShell
 
                 if (_telemetryClient == null)
                 {
-                    _telemetryClient = new TelemetryClient();
+                    TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+                    configuration.InstrumentationKey = _psCoreTelemetryKey;
+
+                    // Set this to true to reduce latency during development
+                    configuration.TelemetryChannel.DeveloperMode = _developerMode;
+
+                    _telemetryClient = new TelemetryClient(configuration);
                 }
 
                 _telemetryClient.TrackEvent(eventName, payload, null);
