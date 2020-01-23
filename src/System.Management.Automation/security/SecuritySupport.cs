@@ -595,7 +595,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
-            if (!CertHasPrivatekey(c))
+            if (!CertHasPrivatekey(c)) // why not just c.HasPrivateKey?
             {
                 return false;
             }
@@ -632,8 +632,7 @@ namespace System.Management.Automation.Internal
                             if (usageOid.Value == oid)
                             {
                               return true;
-                            }
-                            break;
+                            }                            
                         }
                     }                    
                 }
