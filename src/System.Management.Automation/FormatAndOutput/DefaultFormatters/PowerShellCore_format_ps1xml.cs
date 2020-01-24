@@ -994,6 +994,7 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
+                                    $newline = [Environment]::Newline
 
                                     function Get-ConciseViewPositionMessage {
 
@@ -1049,7 +1050,6 @@ namespace System.Management.Automation.Runspaces
                                         $offsetWhitespace = ''
                                         $message = ''
                                         $prefix = ''
-                                        $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
                                             $useTargetObject = $false
