@@ -620,22 +620,20 @@ namespace System.Management.Automation.Internal
 
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
-            foreach(var extension in c.Extensions)
+            foreach(X509Extension extension in c.Extensions)
             {
-                if(extension is X509EnhancedKeyUsageExtension)
+                X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
+                if (ext != null)
                 {
-                    var EnhancedKeyUsages = (extension as X509EnhancedKeyUsageExtension).EnhancedKeyUsages;
-                    if(EnhancedKeyUsages != null)
+                    foreach (Oid ekuOid in ext.EnhancedKeyUsages)
                     {
-                        foreach(var usageOid in EnhancedKeyUsages )
-                        {
-                            if (usageOid.Value == oid)
-                            {
-                              return true;
-                            }                            
+                        if(ekuOid.Value == oid)
+                        { 
+                            return true; 
                         }
-                    }                    
-                }
+                    }
+                    break;
+                }  
             } 
             return false;
         }
@@ -644,7 +642,7 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                var keyUsageExtension = extension as X509KeyUsageExtension;
+                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
                 if (keyUsageExtension != null)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
