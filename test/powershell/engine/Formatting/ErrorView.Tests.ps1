@@ -19,6 +19,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     Context 'ConciseView tests' {
+        BeforeEach {
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
+        }
+
+        AfterEach {
+            Remove-Item -Path $testScriptPath -Force -ErrorAction SilentlyContinue
+        }
 
         It 'Cmdlet error should be one line of text' {
             Get-Item (New-Guid) -ErrorVariable e -ErrorAction SilentlyContinue
@@ -34,7 +41,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $b = 2
 '@
 
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
             $e | Out-String | Should -BeLike "*${testScriptPath}:4*"
@@ -61,11 +67,25 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Pester Should shows test file and not pester" {
             $testScript = '1 + 1 | Should -Be 3'
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'mytest.ps1'
+
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
             $e | Out-String | Should -BeLike "*$testScriptPath*"
             $e | Out-String | Should -Not -BeLike '*pester*'
+        }
+
+        It "Long lines should be rendered correctly" {
+            $testscript = @'
+                        $myerrors = [System.Collections.ArrayList]::new()
+                        Copy-Item (New-Guid) (New-Guid) -ErrorVariable +myerrors -ErrorAction SilentlyContinue
+                $error[0]
+'@
+
+            Set-Content -Path $testScriptPath -Value $testScript
+            $e = & $testScriptPath
+            $e | Out-String | Should -BeLike "*${testScriptPath}:2*"
+            # validate line number is shown
+            $e | Out-String | Should -BeLike '* 2 *'
         }
     }
 
