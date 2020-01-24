@@ -144,7 +144,7 @@ public enum TestSByteEnum : sbyte {
             $result = Format-Hex -InputObject $InputObject
 
             $result.count | Should -Be $Count
-            $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $result.ToString() | Should -MatchExactly $ExpectedResult
         }
     }
@@ -267,7 +267,7 @@ public enum TestSByteEnum : sbyte {
             $result = $InputObject | Format-Hex
 
             $result.Count | Should -Be $Count
-            $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $result[0].ToString() | Should -MatchExactly $ExpectedResult
 
             if ($result.count -gt 1) {
@@ -393,7 +393,7 @@ public enum TestSByteEnum : sbyte {
                 $result = Format-Hex -LiteralPath $Path
             }
 
-            $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $result[0].ToString() | Should -MatchExactly $ExpectedResult
 
             if ($result.count -gt 1) {
@@ -466,7 +466,7 @@ public enum TestSByteEnum : sbyte {
             $result = Format-Hex -InputObject 'hello' -Encoding $Encoding
 
             $result.count | Should -Be $Count
-            $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $result[0].ToString() | Should -MatchExactly $ExpectedResult
         }
     }
@@ -556,7 +556,7 @@ public enum TestSByteEnum : sbyte {
             $result = Format-Hex $inputFile1
 
             $result | Should -Not -BeNullOrEmpty
-            , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            , $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $actualResult = $result.ToString()
             $actualResult | Should -MatchExactly $inputText1
         }
@@ -566,7 +566,7 @@ public enum TestSByteEnum : sbyte {
             $result = Get-ChildItem $inputFile1 | Format-Hex
 
             $result | Should -Not -BeNullOrEmpty
-            , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            , $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $actualResult = $result.ToString()
             $actualResult | Should -MatchExactly $inputText1
         }
@@ -576,7 +576,7 @@ public enum TestSByteEnum : sbyte {
             $result = "a" * 30 | Format-Hex
 
             $result | Should -Not -BeNullOrEmpty
-            $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.ByteCollection
             $result[0].ToString() | Should -MatchExactly "0000000000000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa"
             $result[1].ToString() | Should -MatchExactly "0000000000000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
