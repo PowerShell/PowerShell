@@ -57,6 +57,7 @@ try
 
                 $result.MaxShells | Should -Be 40
                 $result.IdleTimeoutms | Should -Be 3600000
+                $result.UseSharedProcess | Should -Be 'False'
             }
         }
         Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') {
