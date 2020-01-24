@@ -20,12 +20,6 @@ if($IsWindows)
         @{path = 'Microsoft.PowerShell.Security\Certificate::'}
     )
 
-# Add CurrentUserMyLocations to TestLocations
-foreach($location in $currentUserMyLocations)
-{
-    $testLocations += $location
-}
-
 Describe "Certificate Provider tests" -Tags "CI" {
     BeforeAll{
         if(!$IsWindows)
@@ -44,7 +38,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 
     Context "Get-Item tests" {
-        It "Should be able to get a certificate store, path: <path>" -TestCases $testLocations {
+        function GetItemTestHelper {
             param([string] $path)
             $expectedResolvedPath = Resolve-Path -LiteralPath $path
             $result = Get-Item -LiteralPath $path
@@ -54,6 +48,14 @@ Describe "Certificate Provider tests" -Tags "CI" {
                 $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
                 $resolvedPath.ProviderPath.TrimStart('\') | Should -Be $expectedResolvedPath.ProviderPath.TrimStart('\')
             }
+        }
+        It "Should be able to get a certificate store, path: <path>" -TestCases $currentUserMyLocations {
+            param([string] $path)
+            GetItemTestHelper $path
+        }
+        It "Should be able to get a certificate store, path: <path>" -TestCases $testLocations -Pending:$true {
+            param([string] $path)
+            GetItemTestHelper $path
         }
         It "Should return two items at the root of the provider" {
             (Get-Item -Path cert:\*).Count | Should -Be 2
