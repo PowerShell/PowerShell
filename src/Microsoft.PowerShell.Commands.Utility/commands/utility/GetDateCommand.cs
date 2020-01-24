@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
         public string Format { get; set; }
 
         /// <summary>
-        /// Convert date to UTC before formatting.
+        /// Gets or sets a value that converts date to UTC before formatting.
         /// </summary>
         [Parameter(ParameterSetName = "net")]
         public SwitchParameter AsUTC { get; set; }
