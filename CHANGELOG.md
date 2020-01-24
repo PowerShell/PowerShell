@@ -1,5 +1,20 @@
 # Changelog
 
+## v6.2.4 - 01/23/2020
+
+### General Cmdlet Updates and Fixes
+
+- Enable `Start-Process` to work on Windows 7 (#10417) (Thanks @iSazonov!)
+- Fix global tool issues around exit code, command line parameters, and paths with spaces (#10461)
+- Make `Add-Type` usable in applications that host PowerShell (#10587)
+
+### Build and Packaging Improvements
+
+- Update to use `TSAv2` (#9914)
+- Update the dotnet SDK install script URL in `build.psm1` (#10927)
+- Update dependencies needed by Azure PowerShell and patch for `Newtonsoft.Json` (Internal 10798)
+- Fix path for getting reference assemblies (Internal 10792)
+
 ## v6.2.3 - 09/12/2019
 
 ### Engine Updates and Fixes
