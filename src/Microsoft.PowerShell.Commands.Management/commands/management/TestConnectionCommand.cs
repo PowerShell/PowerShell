@@ -343,10 +343,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             throw new PipelineStoppedException();
                         }
-                        if (ex is SocketException)
+                        if (ex is SocketException socketException)
                         {
-                            SocketException? socketException = ex as SocketException;
-                            status = socketException!.SocketErrorCode;
+                            status = socketException.SocketErrorCode;
                             return true;
                         }
                         else
