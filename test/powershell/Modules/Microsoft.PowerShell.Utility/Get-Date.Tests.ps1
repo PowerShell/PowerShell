@@ -24,6 +24,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date:"Jan 1, 2020"  -Format:"MMM-dd-yy" | Should -Be "Jan-01-20"
     }
 
+    It "using -AsUTC produces the correct output" {
+        (Get-date -Date:"2020-01-01T00:00:00").Kind | Should -Be Unspecified
+        (Get-date -Date:"2020-01-01T00:00:00" -AsUTC).Kind | Should -Be Utc
+    }
+
     It "using -uformat %s produces the correct output" {
         $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
 
