@@ -64,6 +64,12 @@ public enum TestSByteEnum : sbyte {
 
         $testCases = @(
             @{
+                Name           = "Can process bool type 'fhx -InputObject `$true'"
+                InputObject    = $true
+                Count          = 1
+                ExpectedResult = "00000000   01 00 00 00"
+            }
+            @{
                 Name           = "Can process byte type 'fhx -InputObject [byte]5'"
                 InputObject    = [byte]5
                 Count          = 1
@@ -160,6 +166,12 @@ public enum TestSByteEnum : sbyte {
 
         $testCases = @(
             @{
+                Name           = "Can process bool type '`$true | fhx'"
+                InputObject    = $true
+                Count          = 1
+                ExpectedResult = "0000000000000000   01"
+            }
+            @{
                 Name           = "Can process byte type '[byte]5 | fhx'"
                 InputObject    = [byte]5
                 Count          = 1
@@ -228,6 +240,13 @@ public enum TestSByteEnum : sbyte {
                 ExpectedSecondResult = "0000000000000000   01 02 03 04 05 06                                ������"
             }
             @{
+                Name                 = "Can process jagged array type '[bool[]](`$true, `$false), [int[]](1, 2, 3, 4) | fhx'"
+                InputObject          = [bool[]]($true, $false), [int[]](1, 2, 3, 4)
+                Count                = 2
+                ExpectedResult       = "0000000000000000   01 00 00 00 00 00 00 00                          �"
+                ExpectedSecondResult = "0000000000000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  �   �   �   �"
+            }
+            @{
                 Name           = "Can process PS-native enum array '[TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour') | fhx'"
                 InputObject    = [TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour')
                 Count          = 1
@@ -289,6 +308,19 @@ public enum TestSByteEnum : sbyte {
                     "System.String"
                     "System.Int32"
                     "System.UInt16[]"
+                ).ForEach{ [regex]::Escape($_) } -join '|'
+            }
+            @{
+                InputScript     = { $true, $false, $true, 123, 100, 76, $true, $false }
+                Count           = 3
+                ExpectedResults = @(
+                    "0000000000000000   01 00 00 00 00 00 00 00 01 00 00 00              �       �"
+                    "0000000000000000   7B 00 00 00 64 00 00 00 4C 00 00 00              {   d   L"
+                    "0000000000000000   01 00 00 00 00 00 00 00                          �"
+                )
+                ExpectedLabels  = @(
+                    "System.Boolean"
+                    "System.Int32"
                 ).ForEach{ [regex]::Escape($_) } -join '|'
             }
         )
@@ -356,8 +388,7 @@ public enum TestSByteEnum : sbyte {
 
             if ($PathCase) {
                 $result = Format-Hex -Path $Path
-            }
-            else {
+            } else {
                 # LiteralPath
                 $result = Format-Hex -LiteralPath $Path
             }
@@ -380,8 +411,7 @@ public enum TestSByteEnum : sbyte {
                 $Result.Bytes[-1] | Should -Be 0x0A
                 $Result.Bytes[-2] | Should -Be 0x0D
                 $Result.Bytes.Length | Should -Be 14
-            }
-            else {
+            } else {
                 $Result.Bytes[-1] | Should -Be 0x0A
                 $Result.Bytes.Length | Should -Be 13
             }
@@ -507,8 +537,7 @@ public enum TestSByteEnum : sbyte {
 
             if ($PathCase) {
                 $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-            }
-            else {
+            } else {
                 # LiteralPath
                 $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
             }
