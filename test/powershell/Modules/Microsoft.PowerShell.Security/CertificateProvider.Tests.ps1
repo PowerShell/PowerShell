@@ -141,7 +141,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
-        It "Should filter to codesign certificates" {
+        It "Should filter to codesign certificates" -Pending:$true {
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $codeSignCerts = Get-Item cert:\CurrentUser\My\* -CodeSigningCert
             $codeSignCerts | Should -Not -Be $null
@@ -160,7 +160,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
     }
     Context "Get-ChildItem tests"{
-        It "Should filter to codesign certificates" {
+        It "Should filter to codesign certificates" -Pending:$true {
             $allCerts = Get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = Get-ChildItem cert:\CurrentUser\My -CodeSigningCert
             $codeSignCerts | Should -Not -Be $null
