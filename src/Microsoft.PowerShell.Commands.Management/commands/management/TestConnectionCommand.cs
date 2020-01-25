@@ -386,7 +386,10 @@ namespace Microsoft.PowerShell.Commands
                     ));
                 }
 
-                Task.Delay(new TimeSpan(0, 0, i == Count ? 0 : Delay)).Wait(cancellationTokenSource.Token);
+                if (i < Count)
+                {
+                    Task.Delay(new TimeSpan(0, 0, Delay)).Wait(cancellationTokenSource.Token);
+                }
             }
         }
 
