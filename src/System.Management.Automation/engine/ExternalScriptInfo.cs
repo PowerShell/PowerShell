@@ -182,6 +182,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the version of the script.
+        /// </summary>
+        /// <returns>
+        /// A module version if the script is in the module.
+        /// Othervise a version from PSVersionattribute if it presents in the script.
+        /// </returns>
+        public override Version Version
+        {
+            get
+            {
+                return base.Version ?? ScriptBlock.PSVersion;
+            }
+        }
+
+        /// <summary>
         /// Determine the visibility for this script...
         /// </summary>
         public override SessionStateEntryVisibility Visibility

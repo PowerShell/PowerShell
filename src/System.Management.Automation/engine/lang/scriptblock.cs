@@ -641,6 +641,22 @@ namespace System.Management.Automation
             }
         }
 
+        internal Version PSVersion
+        {
+            get
+            {
+                foreach (Attribute attribute in Attributes)
+                {
+                    if (attribute is PSVersionAttribute attr)
+                    {
+                        return attr.PSVersion;
+                    }
+                }
+
+                return new Version(-1, -1);
+            }
+        }
+
         /// <summary>
         /// This is a helper function to process script invocation result.
         /// </summary>

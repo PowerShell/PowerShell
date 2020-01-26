@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
         function TestGetCommand-DynamicParametersDCR
@@ -28,7 +29,7 @@ Describe "Get-Command Tests" -Tags "CI" {
                      "return1" {
                         $attr = [System.Management.Automation.ParameterAttribute]::new()
                         $attr.Mandatory = $true
-				        $dynamicParameter = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$attr)
+                        $dynamicParameter = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$attr)
                         $dynamicParamDictionary.Add("OneString",$dynamicParameter)
                         break
                     }
@@ -268,5 +269,34 @@ Describe "Get-Command Tests" -Tags "CI" {
         $result = Get-Command -Name Add-Content, Get-Content | Get-Command
         $result.Count | Should -Be 2
         $result.Name | Should -Be "Add-Content","Get-Content"
+    }
+
+    It "ExternalScriptInfo contains metadata" {
+        $ScriptPath = "TestDrive:/GetCommandTestFile.ps1"
+        Set-Content -Path $ScriptPath -Value @"
+            [Outputtype([int])]
+            [PSVersion(1,2)]
+            param()
+
+            Process { "test" }
+"@
+
+        $info = Get-Command $ScriptPath
+        $info.OutputType[0].Name | Should -BeExactly "System.Int32"
+        $info.Version | Should -BeExactly "1.2"
+    }
+
+    It "FunctionInfo contains metadata" {
+        Function TestFunction {
+            [Outputtype([string])]
+            [PSVersion(2,4)]
+            param()
+
+            "test"
+        }
+
+        $info = Get-Command TestFunction
+        $info.OutputType[0].Name | Should -BeExactly "System.String"
+        $info.Version | Should -BeExactly "2.4"
     }
 }

@@ -516,6 +516,55 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// PSVersionAttribute is used to specify the version of function or advanced function.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
+    public sealed class PSVersionAttribute : CmdletMetadataAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSVersionAttribute"/> class
+        /// with the specified major and minor numbers.
+        /// </summary>
+        /// <param name="major">The major version number.</param>
+        /// <param name="minor">The minor version number.</param>
+        public PSVersionAttribute(int major, int minor)
+        {
+            PSVersion = new Version(major, minor);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSVersionAttribute"/> class
+        /// with the specified major, minor, and build numbers.
+        /// </summary>
+        /// <param name="major">The major version number.</param>
+        /// <param name="minor">The minor version number.</param>
+        /// <param name="build">The build version number.</param>
+        public PSVersionAttribute(int major, int minor, int build)
+        {
+            PSVersion = new Version(major, minor, build);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSVersionAttribute"/> class
+        /// with the specified major, minor, build, and revision numbers.
+        /// </summary>
+        /// <param name="major">The major version number.</param>
+        /// <param name="minor">The minor version number.</param>
+        /// <param name="build">The build version number.</param>
+        /// <param name="revision">The revision version number.</param>
+        public PSVersionAttribute(int major, int minor, int build, int revision)
+        {
+            PSVersion = new Version(major, minor, build, revision);
+        }
+
+        /// <summary>
+        /// Gets the function version.
+        /// </summary>
+        public Version PSVersion { get; }
+    }
+
+    /// <summary>
     /// This attribute is used on a dynamic assembly to mark it as one that is used to implement
     /// a set of classes defined in a PowerShell script.
     /// </summary>

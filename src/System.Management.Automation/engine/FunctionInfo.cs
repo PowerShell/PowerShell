@@ -276,6 +276,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the version of the function.
+        /// </summary>
+        /// <returns>
+        /// A module version if the function is in the module.
+        /// Othervise a version from PSVersionattribute if it presents in the function.
+        /// </returns>
+        public override Version Version
+        {
+            get
+            {
+                return base.Version ?? ScriptBlock.PSVersion;
+            }
+        }
+
+        /// <summary>
         /// Gets the name of the default parameter set.
         /// Returns <c>null</c> if this function doesn't use cmdlet parameter binding or if the default parameter set wasn't specified.
         /// </summary>

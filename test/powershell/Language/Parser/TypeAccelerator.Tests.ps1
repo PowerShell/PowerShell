@@ -187,6 +187,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.PSPrimitiveDictionary]
                 }
                 @{
+                    Accelerator = 'PSVersion'
+                    Type        = [System.Management.Automation.PSVersionAttribute]
+                }
+                @{
                     Accelerator = 'ref'
                     Type        = [System.Management.Automation.PSReference]
                 }
@@ -406,11 +410,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 99
+                $totalAccelerators = 100
             }
             else
             {
-                $totalAccelerators = 104
+                $totalAccelerators = 105
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

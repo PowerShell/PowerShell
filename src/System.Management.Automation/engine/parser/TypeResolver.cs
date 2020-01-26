@@ -769,6 +769,7 @@ namespace System.Management.Automation
                     { typeof(PSObject),                                    new[] { "psobject", "pscustomobject" } },
                     { typeof(PSPrimitiveDictionary),                       new[] { "psprimitivedictionary" } },
                     { typeof(PSReference),                                 new[] { "ref" } },
+                    { typeof(PSVersionAttribute),                          new[] { "PSVersion" } },
                     { typeof(PSTypeNameAttribute),                         new[] { "PSTypeNameAttribute" } },
                     { typeof(Regex),                                       new[] { "regex" } },
                     { typeof(DscPropertyAttribute),                        new[] { "DscProperty" } },
