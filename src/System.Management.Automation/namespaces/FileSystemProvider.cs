@@ -3049,7 +3049,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    directory.Delete(recurse);
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
+                    directory.Delete();
                 }
                 catch (Exception e)
                 {
