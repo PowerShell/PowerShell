@@ -146,7 +146,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                (DispatcherOperationCallback)((object arg) =>
+                (DispatcherOperationCallback)((arg) =>
                 {
                     if (this.IsLoaded)
                     {

@@ -645,7 +645,7 @@ Function PSGetSerializedShowCommandInfo
             }
 
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
-                new Predicate<ModuleViewModel>((ModuleViewModel module) =>
+                new Predicate<ModuleViewModel>((module) =>
                 {
                     return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
                 }));
@@ -658,7 +658,7 @@ Function PSGetSerializedShowCommandInfo
             returnValue.SelectedModule = moduleToSelect;
 
             CommandViewModel commandToSelect = moduleToSelect.Commands.Find(
-                new Predicate<CommandViewModel>((CommandViewModel command) =>
+                new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
                         command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
@@ -876,8 +876,8 @@ Function PSGetSerializedShowCommandInfo
         {
             window.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    (object ignored) => window.Activate()),
-                    string.Empty);
+                    (_) => window.Activate()),
+                string.Empty);
         }
 
         /// <summary>
@@ -936,7 +936,7 @@ Function PSGetSerializedShowCommandInfo
 
             this.hostWindow.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    (object ignored) =>
+                    (_) =>
                     {
                         Window childWindow = (Window)this.methodThatReturnsDialog.Invoke(null);
                         childWindow.Owner = this.hostWindow;
@@ -1031,7 +1031,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        (object ignored) =>
+                        (_) =>
                         {
                             string message = ShowCommandHelper.GetImportModuleFailedMessage(
                                 this.commandNeedingImportModule,
