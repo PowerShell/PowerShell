@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Cancellation support
 
-        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         #endregion
 
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _sender?.SendAsyncCancel();
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
         }
 
         #region ConnectionTest
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     stopwatch.Start();
 
-                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, cancellationTokenSource.Token))
+                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, _cancellationTokenSource.Token))
                     {
                         latency = stopwatch.ElapsedMilliseconds;
                         status = SocketError.Success;
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (i < Count)
                 {
-                    Task.Delay(Delay * 1000).Wait(cancellationTokenSource.Token);
+                    Task.Delay(Delay * 1000).Wait(_cancellationTokenSource.Token);
                 }
             }
         }
