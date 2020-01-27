@@ -245,6 +245,9 @@ namespace Microsoft.PowerShell.Commands
                 case RepeatPingParameterSet:
                     Count = int.MaxValue;
                     break;
+                case TcpPortParameterSet:
+                    SetCountForTcpTest();
+                    break;
             }
         }
 
@@ -305,8 +308,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            SetCountForTcpTest();
-
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
