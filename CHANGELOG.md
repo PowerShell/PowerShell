@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.2.4 - 01/23/2020
+## v6.2.4 - 01/27/2020
 
 ### General Cmdlet Updates and Fixes
 
