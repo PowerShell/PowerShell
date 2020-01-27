@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (i < Count)
                 {
-                    Task.Delay(new TimeSpan(0, 0, Delay)).Wait(cancellationTokenSource.Token);
+                    Task.Delay(Delay * 1000).Wait(cancellationTokenSource.Token);
                 }
             }
         }
