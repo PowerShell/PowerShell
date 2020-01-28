@@ -364,10 +364,28 @@ namespace Microsoft.PowerShell.Commands
         #region Output
 
         /// <summary>
-        /// Gets or sets the OutFile property.
+        /// Gets or sets the Path property.
         /// </summary>
         [Parameter]
-        public virtual string OutFile { get; set; }
+        [Alias("OutFile")]
+        public virtual string Path
+        {
+            get => _path;
+            set => _path = value;
+        }
+
+        private string _path;
+
+        /// <summary>
+        /// Gets or sets the LiteralPath property.
+        /// </summary>
+        [Parameter]
+        [Alias("LP")]
+        public string LiteralPath
+        {
+            get => _path;
+            set => _path = value;
+        }
 
         /// <summary>
         /// Gets or sets the PassThrough property.
@@ -376,7 +394,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Resumes downloading a partial or incomplete file. OutFile is required.
+        /// Resumes downloading a partial or incomplete file. Path/LiteralPath is required.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter Resume { get; set; }
@@ -395,6 +413,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void ValidateParameters()
         {
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Path)) && MyInvocation.BoundParameters.ContainsKey(nameof(LiteralPath)))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.CannotSpecifyPathAndLiteralPath, "CannotSpecifyPathAndLiteralPath");
+                ThrowTerminatingError(error);
+            }
+
             // sessions
             if ((WebSession != null) && (SessionVariable != null))
             {
@@ -550,15 +574,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // output ??
-            if (PassThru && (OutFile == null))
+            if (PassThru && (_path == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
                                                        "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
-            // Resume requires OutFile.
-            if (Resume.IsPresent && OutFile == null)
+            // Resume requires Path (or LiteralPath) parameter.
+            if (Resume.IsPresent && _path == null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
                                                        "WebCmdletOutFileMissingException", nameof(Resume));
@@ -690,12 +714,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile
         {
-            get { return (QualifyFilePath(OutFile)); }
+            get { return (QualifyFilePath(_path)); }
         }
 
         internal bool ShouldSaveToOutFile
         {
-            get { return (!string.IsNullOrEmpty(OutFile)); }
+            get { return (!string.IsNullOrEmpty(_path)); }
         }
 
         internal bool ShouldWriteToPipeline
@@ -763,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string QualifyFilePath(string path)
         {
-            string resolvedFilePath = PathUtils.ResolveFilePath(path, this, false);
+            string resolvedFilePath = PathUtils.ResolveFilePath(path, this, isLiteralPath: MyInvocation.BoundParameters.ContainsKey("LiteralPath"));
             return resolvedFilePath;
         }
 
@@ -1396,7 +1420,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
 
                     // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
-                    // are treated as a standard -OutFile request. This also disables appending local file.
+                    // are treated as a standard -Path/-LiteralPath request. This also disables appending local file.
                     Resume = new SwitchParameter(false);
 
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
@@ -1529,9 +1553,10 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
-                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
-                                    // Disable writing to the OutFile.
-                                    OutFile = null;
+                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, _path));
+
+                                    // Disable writing to the output file.
+                                    _path = null;
                                 }
 
                                 if (ShouldCheckHttpStatus && !_isSuccess)
