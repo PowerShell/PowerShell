@@ -1123,27 +1123,14 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    stdInWriter = _processInstance.StdInWriter;
-                    // if (stdInWriter == null)
-                    {
-                        _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
-                        _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
-                    }
-
                     _serverProcess.Exited += new EventHandler(OnExited);
-
-                    // serverProcess.Start();
                     _processInstance.Start();
 
-                    if (stdInWriter != null)
+                    stdInWriter = _processInstance.StdInWriter;
+                    if (stdInWriter == null)
                     {
-                        _serverProcess.CancelErrorRead();
-                        _serverProcess.CancelOutputRead();
+                        StartOutputAndErrorReaderThreads(_serverProcess);
                     }
-
-                    // Start asynchronous reading of output/errors
-                    _serverProcess.BeginOutputReadLine();
-                    _serverProcess.BeginErrorReadLine();
 
                     stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = stdInWriter;
@@ -1172,6 +1159,46 @@ namespace System.Management.Automation.Remoting.Client
             SendOneItem();
         }
 
+        private void StartOutputAndErrorReaderThreads(Process serverProcess)
+        {
+            ParameterizedThreadStart func = arg => {
+                var tuple = arg as Tuple<StreamReader, bool>;
+                if (tuple == null)
+                {
+                    return;
+                }
+
+                StreamReader reader = tuple.Item1;
+                bool isStandardOutput = tuple.Item2;
+
+                string data = reader.ReadLine();
+                while (data != null)
+                {
+                    if (isStandardOutput)
+                    {
+                        HandleOutputDataReceived(data);
+                    }
+                    else
+                    {
+                        HandleErrorDataReceived(data);
+                    }
+
+                    data = reader.ReadLine();
+                }
+            };
+
+            Thread outputThread = new Thread(func);
+            outputThread.IsBackground = true;
+            outputThread.Name = "Out-of-Proc Job Transport Output Thread";
+
+            Thread errorThread = new Thread(func);
+            errorThread.IsBackground = true;
+            errorThread.Name = "Out-of-Proc Job Transport Error Thread";
+
+            outputThread.Start(Tuple.Create(serverProcess.StandardOutput, /*is-stdout*/ true));
+            errorThread.Start(Tuple.Create(serverProcess.StandardError, /*is-stdout*/ false));
+        }
+
         /// <summary>
         /// Kills the server process and disposes other resources.
         /// </summary>
@@ -1198,20 +1225,6 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
 
-        #region Event Handlers
-
-        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleOutputDataReceived(e.Data);
-        }
-
-        private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleErrorDataReceived(e.Data);
-        }
-
-        #endregion
-
         #region Helper Methods
 
         private void KillServerProcess()
@@ -1234,9 +1247,6 @@ namespace System.Management.Automation.Remoting.Client
                         _serverProcess.CancelErrorRead();
                         _serverProcess.Kill();
                     }
-
-                    _serverProcess.OutputDataReceived -= new DataReceivedEventHandler(OnOutputDataReceived);
-                    _serverProcess.ErrorDataReceived -= new DataReceivedEventHandler(OnErrorDataReceived);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
