@@ -1159,7 +1159,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Enables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
         public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId) =>
@@ -1168,8 +1168,8 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Disables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
         public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId) =>
             _wrappedDebugger.DisableBreakpoint(breakpoint, runspaceId);
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Removes a breakpoint from the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value is required and may not be null.</param>
+        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value may not be null.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>True if the breakpoint was removed from the debugger; false otherwise.</returns>
         public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId) =>

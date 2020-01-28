@@ -2783,8 +2783,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a variable breakpoint in the debugger.
         /// </summary>
-        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
-        /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
+        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value may not be null.</param>
+        /// <param name="accessMode">The variable access mode that will trigger the breakpoint.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
