@@ -4,7 +4,9 @@
 using namespace System.Security.Cryptography.X509Certificates
 using namespace System.Security.Cryptography
 
-function New-CmsRecipient { param([String]$Name, [Switch]$Invalid)
+function New-CmsRecipient {
+  [CmdletBinding(SupportsShouldProcess=$true)]
+  param([String]$Name, [Switch]$Invalid)
   $hash = [HashAlgorithmName]::SHA256
   $pad = [RSASignaturePadding]::Pkcs1
 
@@ -27,7 +29,7 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
 
 
 BeforeAll  {
-  Write-Host "Generating certs"  -ForegroundColor Gray
+  Write-Verbose  "Generating certs"
   $vc1 = New-CmsRecipient "ValidCms1"
   $vc2 = New-CmsRecipient "ValidCms2"
   $ic = New-CmsRecipient "InvalidCms" -Invalid  # invalid cert
@@ -84,7 +86,7 @@ It "Get-CmsMessage from file" {
 Describe "CmsMessage cmdlets using files" -Tags "CI" {
  
 BeforeAll {
-  Write-Host "generating temp cert files"  -ForegroundColor Gray
+  Write-Verbose  "generating temp cert files"  
   $vc1File = New-TemporaryFile
   $vc2File = New-TemporaryFile
   [System.IO.File]::WriteAllBytes("$vc1File", $vc1.Export("pfx"))
@@ -117,7 +119,7 @@ It "Decrypt with multiple files" {
 Describe "CmsMessage cmdlets using cert Store" -Tags "CI" {
 
 BeforeAll -Scriptblock { 
-  Write-Host "adding temp certs to CurrentUser\My Store"  -ForegroundColor Gray
+  Write-Verbose  "adding temp certs to CurrentUser\My Store"  
   $store = [X509Store]::new("My", [StoreLocation]::CurrentUser)
   $store.Open("ReadWrite")
   $cert1 = [X509Certificate2]::new("$vc1File")
@@ -147,7 +149,7 @@ BeforeAll -Scriptblock {
 
 # ----------------------------------------------------------------
 
-Write-Host "Removing temp files and certs"   -ForegroundColor Gray
+Write-Verbose  "Removing temp files and certs"   
 $store.Remove($cert1)
 $store.Remove($cert2)
 $store.Dispose()
