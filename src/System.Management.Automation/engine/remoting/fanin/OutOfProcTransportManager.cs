@@ -1129,7 +1129,7 @@ namespace System.Management.Automation.Remoting.Client
                     stdInWriter = _processInstance.StdInWriter;
                     if (stdInWriter == null)
                     {
-                        StartOutputAndErrorReaderThreads(_serverProcess);
+                        StartRedirectionReaderThreads(_serverProcess);
                     }
 
                     stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
@@ -1159,44 +1159,52 @@ namespace System.Management.Automation.Remoting.Client
             SendOneItem();
         }
 
-        private void StartOutputAndErrorReaderThreads(Process serverProcess)
+        private void StartRedirectionReaderThreads(Process serverProcess)
         {
-            ParameterizedThreadStart func = arg => {
-                var tuple = arg as Tuple<StreamReader, bool>;
-                if (tuple == null)
-                {
-                    return;
-                }
-
-                StreamReader reader = tuple.Item1;
-                bool isStandardOutput = tuple.Item2;
-
-                string data = reader.ReadLine();
-                while (data != null)
-                {
-                    if (isStandardOutput)
-                    {
-                        HandleOutputDataReceived(data);
-                    }
-                    else
-                    {
-                        HandleErrorDataReceived(data);
-                    }
-
-                    data = reader.ReadLine();
-                }
-            };
-
-            Thread outputThread = new Thread(func);
+            Thread outputThread = new Thread(ProcessOutputData);
             outputThread.IsBackground = true;
             outputThread.Name = "Out-of-Proc Job Transport Output Thread";
 
-            Thread errorThread = new Thread(func);
+            Thread errorThread = new Thread(ProcessErrorData);
             errorThread.IsBackground = true;
             errorThread.Name = "Out-of-Proc Job Transport Error Thread";
 
-            outputThread.Start(Tuple.Create(serverProcess.StandardOutput, /*is-stdout*/ true));
-            errorThread.Start(Tuple.Create(serverProcess.StandardError, /*is-stdout*/ false));
+            outputThread.Start(serverProcess.StandardOutput);
+            errorThread.Start(serverProcess.StandardError);
+        }
+
+        private void ProcessOutputData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                string data = reader.ReadLine();
+                while (data != null)
+                {
+                    HandleOutputDataReceived(data);
+                    data = reader.ReadLine();
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
+        }
+
+        private void ProcessErrorData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                string data = reader.ReadLine();
+                while (data != null)
+                {
+                    HandleErrorDataReceived(data);
+                    data = reader.ReadLine();
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
         }
 
         /// <summary>
