@@ -1126,12 +1126,7 @@ namespace System.Management.Automation.Remoting.Client
                     _serverProcess.Exited += new EventHandler(OnExited);
                     _processInstance.Start();
 
-                    stdInWriter = _processInstance.StdInWriter;
-                    if (stdInWriter == null)
-                    {
-                        StartRedirectionReaderThreads(_serverProcess);
-                    }
-
+                    StartRedirectionReaderThreads(_serverProcess);
                     stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = stdInWriter;
                 }
@@ -1163,11 +1158,11 @@ namespace System.Management.Automation.Remoting.Client
         {
             Thread outputThread = new Thread(ProcessOutputData);
             outputThread.IsBackground = true;
-            outputThread.Name = "Out-of-Proc Job Transport Output Thread";
+            outputThread.Name = "Out-of-Proc Job Output Thread";
 
             Thread errorThread = new Thread(ProcessErrorData);
             errorThread.IsBackground = true;
-            errorThread.Name = "Out-of-Proc Job Transport Error Thread";
+            errorThread.Name = "Out-of-Proc Job Error Thread";
 
             outputThread.Start(serverProcess.StandardOutput);
             errorThread.Start(serverProcess.StandardError);
@@ -1177,11 +1172,24 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (arg is StreamReader reader)
             {
-                string data = reader.ReadLine();
-                while (data != null)
+                try
                 {
-                    HandleOutputDataReceived(data);
-                    data = reader.ReadLine();
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleOutputDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginOutputReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    string errorMsg = e.Message ?? string.Empty;
+                    _tracer.WriteMessage("OutOfProcessClientSessionTransportManager", "ProcessOutputThread", Guid.Empty,
+                        "Transport manager output reader thread ended with error: {0}", errorMsg);
                 }
             }
             else
@@ -1194,11 +1202,24 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (arg is StreamReader reader)
             {
-                string data = reader.ReadLine();
-                while (data != null)
+                try
                 {
-                    HandleErrorDataReceived(data);
-                    data = reader.ReadLine();
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleErrorDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginErrorReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    string errorMsg = e.Message ?? string.Empty;
+                    _tracer.WriteMessage("OutOfProcessClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
+                        "Transport manager error reader thread ended with error: {0}", errorMsg);
                 }
             }
             else
