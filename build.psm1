@@ -538,6 +538,7 @@ Fix steps:
     $config = @{}
     if ($environment.IsWindows) {
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned" }
+        $config += @{ "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob") }
     }
 
     # When building preview, we want the configuration to enable all experiemental features by default

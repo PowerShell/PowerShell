@@ -1882,6 +1882,94 @@ namespace Microsoft.PowerShell.Commands
         {
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
 #if !UNIX
+            // the ModuleDeny list is cached in PowerShellConfig object
+            string[] moduleDenyList = System.Management.Automation.Configuration.PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            // one of the two parameters can be passed: either ModuleNames (most of the time) or ModuleSpecifications (they are used in different parameter sets)
+            List<string> filteredModuleNames = null;
+            if (moduleNames != null)
+            {
+                if ((moduleDenyList == null) || (moduleDenyList.Length == 0))
+                {
+                    filteredModuleNames = new List<string>(moduleNames);
+                }
+                else
+                {
+                    filteredModuleNames = new List<string>();
+                    foreach(var moduleName in moduleNames)
+                    {
+                        // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+                        var exactModuleName = System.IO.Path.GetFileNameWithoutExtension(moduleName);
+                        bool match = false;
+                        foreach(var deniedModuleName in moduleDenyList)
+                        {
+                            // use case-insensitive module name comparison
+                            match = exactModuleName.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
+                            if (match)
+                            {
+                                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatModuleInDenyList, exactModuleName);
+                                InvalidOperationException exception = new InvalidOperationException(errorMessage);
+                                ErrorRecord er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, moduleName);
+                                WriteError(er);
+                                break;
+                            }
+                        }
+
+                        if (!match)
+                        {
+                            filteredModuleNames.Add(moduleName);
+                        }
+                    }
+                }
+
+                // do not setup WinCompat resources if we have no modules to import
+                if (filteredModuleNames.Count == 0)
+                {
+                    return moduleProxyList;
+                }
+            }
+
+            List<ModuleSpecification> filteredModuleFullyQualifiedNames = null;
+            if (moduleFullyQualifiedNames != null)
+            {
+                if ((moduleDenyList == null) || (moduleDenyList.Length == 0))
+                {
+                    filteredModuleFullyQualifiedNames = new List<ModuleSpecification>(moduleFullyQualifiedNames);
+                }
+                else
+                {
+                    filteredModuleFullyQualifiedNames = new List<ModuleSpecification>();
+                    foreach(var moduleSpec in moduleFullyQualifiedNames)
+                    {
+                        bool match = false;
+                        foreach(var deniedModuleName in moduleDenyList)
+                        {
+                            // use case-insensitive module name comparison
+                            match = moduleSpec.Name.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
+                            if (match)
+                            {
+                                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatModuleInDenyList, moduleSpec.Name);
+                                InvalidOperationException exception = new InvalidOperationException(errorMessage);
+                                ErrorRecord er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, moduleSpec.Name);
+                                WriteError(er);
+                                break;
+                            }
+                        }
+
+                        if (!match)
+                        {
+                            filteredModuleFullyQualifiedNames.Add(moduleSpec);
+                        }
+                    }
+                }
+
+                // do not setup WinCompat resources if we have no modules to import
+                if (filteredModuleFullyQualifiedNames.Count == 0)
+                {
+                    return moduleProxyList;
+                }
+            }
+
             var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
             if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
             {
@@ -1895,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands
                 return new List<PSModuleInfo>();
             }
 
-            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
             foreach(PSModuleInfo moduleProxy in moduleProxyList)
             {
                 moduleProxy.IsWindowsPowerShellCompatModule = true;
