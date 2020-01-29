@@ -1254,6 +1254,7 @@ namespace System.Management.Automation
         {
 
             error = null;
+            WildcardPattern subjectNamePattern = WildcardPattern.Get(_identifier, WildcardOptions.IgnoreCase);
 
             try
             {
@@ -1273,10 +1274,23 @@ namespace System.Management.Automation
                         }
                     }
 
+                    foreach(X509Certificate2 c in storeCerts)
+                    {
+                        if(c.Thumbprint == _identifier) 
+                        {
+                             certificatesToProcess.Add(c);
+                             break; 
+                        }
+                        if(subjectNamePattern.IsMatch(c.Subject))
+                        {
+                            certificatesToProcess.Add(c);
+                        }
+                    }
+
                     // Find is case insensitive
-                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier.Trim(), false));
-                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, _identifier.Trim(), false));
-                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier.Trim(), false));
+                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier.Trim(), false));
+                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, _identifier.Trim(), false));
+                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier.Trim(), false));
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
                 }
 
