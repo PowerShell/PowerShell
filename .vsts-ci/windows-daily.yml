@@ -70,8 +70,6 @@ stages:
       tagSet: Others
 
   - template: templates/verify-xunit.yml
-    parameters:
-      pool: 'Hosted VS2017'
 
 - stage: PackagingWin
   displayName: Packaging for Windows
