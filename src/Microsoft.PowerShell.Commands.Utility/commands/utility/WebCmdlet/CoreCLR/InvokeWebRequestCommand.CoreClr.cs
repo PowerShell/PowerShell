@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, _cancelToken);
+                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, _cancelToken.Token);
             }
         }
 

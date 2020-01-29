@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldWriteToPipeline)
             {
-                using (BufferingStreamReader responseStream = new BufferingStreamReader(baseResponseStream))
+                using var responseStream = new BufferingStreamReader(baseResponseStream);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, _cancelToken);
+                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))

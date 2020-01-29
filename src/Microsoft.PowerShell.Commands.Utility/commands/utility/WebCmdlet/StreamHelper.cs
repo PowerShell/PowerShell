@@ -275,27 +275,34 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationTokenSource cts)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
             if (cmdlet == null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            Task copyTask = input.CopyToAsync(output, cts.Token);
+            Task copyTask = input.CopyToAsync(output, cancellationToken);
 
             ProgressRecord record = new ProgressRecord(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 StringUtil.Format(WebCmdletStrings.WriteRequestComplete, 0));
-            do
+            try
             {
-                record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
-                cmdlet.WriteProgress(record);
+                do
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
+                    cmdlet.WriteProgress(record);
 
-                Task.Delay(1000).Wait(cts.Token);
+                    Task.Delay(1000).Wait(cancellationToken);
+                }
+                while (!copyTask.IsCompleted);
             }
-            while (!cts.IsCancellationRequested && !copyTask.IsCompleted);
+            catch
+            {
+                // Catch OperationCanceledException from Wait()
+            }
         }
 
         /// <summary>
@@ -305,13 +312,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream">Input stream.</param>
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
-        /// <param name="cts">CancellationTokenSource to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationTokenSource cts)
+        /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
             using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
-            WriteToStream(stream, output, cmdlet, cts);
+            WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
