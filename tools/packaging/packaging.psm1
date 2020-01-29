@@ -379,6 +379,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm32"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -392,6 +393,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm64"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -405,6 +407,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "alpine-x64"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -487,7 +490,9 @@ function New-TarballPackage {
         [Parameter()]
         [string] $Architecture = "x64",
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $ExcludeSymbolicLinks
     )
 
     if ($PackageNameSuffix) {
@@ -513,6 +518,10 @@ function New-TarballPackage {
             Write-Verbose "Overwrite existing package file at $packagePath" -Verbose
             Remove-Item -Path $packagePath -Force -ErrorAction Stop -Confirm:$false
         }
+    }
+
+    if (-not $ExcludeSymbolicLinks.IsPresent) {
+        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $PackageSourcePath
     }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
@@ -800,6 +809,7 @@ function New-UnixPackage {
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
+            New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -1228,6 +1238,47 @@ function New-AfterScripts
         $Distribution
     )
 
+    Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
+
+    if ($Environment.IsRedHatFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsMacOS) {
+        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
+        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+    }
+
+    return [PSCustomObject] @{
+        AfterInstallScript = $AfterInstallScript
+        AfterRemoveScript = $AfterRemoveScript
+    }
+}
+
+function New-PSSymbolicLinks
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Distribution,
+
+        [Parameter(Mandatory)]
+        [string]
+        $Staging
+    )
+
+    Write-Verbose -Message "PSSymLinks-Distribution: $Distribution" -Verbose
+
     if ($Environment.IsRedHatFamily) {
         switch -regex ($Distribution)
         {
@@ -1244,43 +1295,22 @@ function New-AfterScripts
                 New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
         }
-
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-
-        switch -regex ($Distribution)
+         switch -regex ($Distribution)
         {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            'debian\.9' {
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
             'debian\.(10|11)' {
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
+            default {
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
         }
-    }
-    elseif ($Environment.IsMacOS) {
-        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
-        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-    }
-
-    return [PSCustomObject] @{
-        AfterInstallScript = $AfterInstallScript
-        AfterRemoveScript = $AfterRemoveScript
     }
 }
 
