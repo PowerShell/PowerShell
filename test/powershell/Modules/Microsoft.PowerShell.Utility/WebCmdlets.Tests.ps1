@@ -814,25 +814,25 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.error | Should -Not -BeNullOrEmpty
     }
 
-    Context "Path and LigeralPath parameters work" {
+    Context "Path and LiteralPath parameters work" {
         BeforeAll {
             $uri = Get-WebListenerUrl -Test 'Get'
             $testOutfile1 = Join-Path $TestDrive "[outfile1].txt"
             $testOutfile2 = Join-Path $TestDrive "[outfile2].txt"
         }
 
-        It "Cannot use both Path and LigeralPath parameters" {
+        It "Cannot use both Path and LiteralPath parameters" {
             { Invoke-WebRequest -uri $uri -Path $testOutFile1 -LiteralPath $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPAthAndLiteralPath,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             { Invoke-RestMethod -uri $uri -Path $testOutFile1 -LiteralPath $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPAthAndLiteralPath,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Path and LigeralPath parameters work in Invoke-WebRequest" {
+        It "Path and LiteralPath parameters work in Invoke-WebRequest" {
             { Invoke-WebRequest -uri $uri -Path $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             Invoke-WebRequest -uri $uri -LiteralPath $testOutFile1 -ErrorAction Stop
             Test-Path -LiteralPath $testOutFile1 | Should -BeTrue
         }
 
-        It "Path and LigeralPath parameters work in Invoke-RestMethod" {
+        It "Path and LiteralPath parameters work in Invoke-RestMethod" {
             { Invoke-RestMethod -uri $uri -Path $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
             Invoke-RestMethod -uri $uri -LiteralPath $testOutFile2 -ErrorAction Stop
             Test-Path -LiteralPath $testOutFile2 | Should -BeTrue
