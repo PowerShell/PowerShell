@@ -167,8 +167,14 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 $result | Should -Be $pwshId -Because $errorMsg
             } finally {
-                ${rs}?.Dispose()
-                ${ps}?.Dispose()
+                # Clean up disposables
+                if ($rs) {
+                    $rs.Dispose()
+                }
+
+                if ($ps) {
+                    $ps.Dispose()
+                }
             }
         }
     }
