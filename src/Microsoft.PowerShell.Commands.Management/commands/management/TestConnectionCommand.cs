@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Stopwatch stopwatch = new Stopwatch();
 
-                using TcpClient client = new TcpClient();
+                using var client = new TcpClient();
 
                 try
                 {
