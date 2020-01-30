@@ -38,7 +38,9 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks,
 
-        [switch] $NoSudo
+        [switch] $NoSudo,
+
+        [switch] $LTS
     )
 
     DynamicParam {
@@ -304,6 +306,7 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
+                        LTS = $LTS
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -366,6 +369,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -380,6 +384,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -394,6 +399,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -408,6 +414,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -422,6 +429,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -438,6 +446,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:RedhatDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -454,6 +463,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -492,13 +502,20 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks
+        [switch] $ExcludeSymbolicLinks,
+
+        [switch] $LTS
     )
 
     if ($PackageNameSuffix) {
         $packageName = "$Name-$Version-{0}-$Architecture-$PackageNameSuffix.tar.gz"
     } else {
-        $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
+        $packageName = if ($LTS) {
+            "$Name-lts-$Version-{0}-$Architecture.tar.gz"
+        }
+        else {
+            "$Name-$Version-{0}-$Architecture.tar.gz"
+        }
     }
 
     if ($Environment.IsWindows) {
@@ -681,7 +698,10 @@ function New-UnixPackage {
         $Force,
 
         [switch]
-        $NoSudo
+        $NoSudo,
+
+        [switch]
+        $LTS
     )
 
     DynamicParam {
@@ -767,7 +787,15 @@ function New-UnixPackage {
         $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
-        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
+        $Name = if($LTS) {
+            "powershell-lts"
+        }
+        elseif ($IsPreview) {
+            "powershell-preview"
+        }
+        else {
+            "powershell"
+        }
 
         # Verify dependencies are installed and in the path
         Test-Dependencies
@@ -779,7 +807,7 @@ function New-UnixPackage {
         $MajorVersion = $VersionMatch.Groups[1].Value
 
         # Suffix is used for side-by-side preview/release package installation
-        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
+        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } elseif ($LTS) { $MajorVersion + "-preview" } else { $MajorVersion }
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
@@ -796,9 +824,9 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = if ($Environment.IsLinux) {
-            if ($IsPreview) { "/usr/bin/pwsh-preview" } else { "/usr/bin/pwsh" }
+            if ($IsPreview) { "/usr/bin/pwsh-preview" } elseif ($LTS) { "/usr/bin/pwsh-lts" } else { "/usr/bin/pwsh" }
         } elseif ($Environment.IsMacOS) {
-            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
+            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } elseif ($LTS) { "/usr/local/bin/pwsh-lts" } else { "/usr/local/bin/pwsh" }
         }
         $linkSource = "/tmp/pwsh"
 
