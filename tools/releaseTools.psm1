@@ -343,7 +343,7 @@ function Get-ChangeLog
 
 function PrintChangeLog($clSection, $sectionTitle) {
     if ($clSection.Count -gt 0) {
-        "### $sectionTitle"
+        "### $sectionTitle`n"
         $clSection | ForEach-Object -MemberName ChangeLogMessage
         ""
     }
