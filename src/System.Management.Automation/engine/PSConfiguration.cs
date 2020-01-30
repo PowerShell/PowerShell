@@ -233,7 +233,7 @@ namespace System.Management.Automation.Configuration
             string[] settingValue = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey);
             if (settingValue == null)
             {
-                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityModuleDenyList value is null array
+                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityModuleDenyList value is null
                 settingValue = ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
             }
 

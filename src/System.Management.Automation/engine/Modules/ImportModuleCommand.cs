@@ -12,6 +12,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Configuration;
 using System.Reflection;
 using System.Security;
 using System.Threading;
@@ -1883,7 +1884,7 @@ namespace Microsoft.PowerShell.Commands
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
 #if !UNIX
             // the ModuleDeny list is cached in PowerShellConfig object
-            string[] moduleDenyList = System.Management.Automation.Configuration.PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+            string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
 
             // one of the two parameters can be passed: either ModuleNames (most of the time) or ModuleSpecifications (they are used in different parameter sets)
             List<string> filteredModuleNames = null;
@@ -1896,12 +1897,12 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     filteredModuleNames = new List<string>();
-                    foreach(var moduleName in moduleNames)
+                    foreach (var moduleName in moduleNames)
                     {
                         // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                        var exactModuleName = System.IO.Path.GetFileNameWithoutExtension(moduleName);
+                        var exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
                         bool match = false;
-                        foreach(var deniedModuleName in moduleDenyList)
+                        foreach (var deniedModuleName in moduleDenyList)
                         {
                             // use case-insensitive module name comparison
                             match = exactModuleName.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
@@ -1939,10 +1940,10 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     filteredModuleFullyQualifiedNames = new List<ModuleSpecification>();
-                    foreach(var moduleSpec in moduleFullyQualifiedNames)
+                    foreach (var moduleSpec in moduleFullyQualifiedNames)
                     {
                         bool match = false;
-                        foreach(var deniedModuleName in moduleDenyList)
+                        foreach (var deniedModuleName in moduleDenyList)
                         {
                             // use case-insensitive module name comparison
                             match = moduleSpec.Name.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
@@ -1984,7 +1985,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
-            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            foreach (PSModuleInfo moduleProxy in moduleProxyList)
             {
                 moduleProxy.IsWindowsPowerShellCompatModule = true;
                 System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
