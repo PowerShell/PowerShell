@@ -1187,9 +1187,12 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch (Exception e)
                 {
-                    string errorMsg = e.Message ?? string.Empty;
-                    _tracer.WriteMessage("OutOfProcessClientSessionTransportManager", "ProcessOutputThread", Guid.Empty,
-                        "Transport manager output reader thread ended with error: {0}", errorMsg);
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessOutputThread",
+                        Guid.Empty,
+                        "Transport manager output reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
                 }
             }
             else
@@ -1217,9 +1220,12 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch (Exception e)
                 {
-                    string errorMsg = e.Message ?? string.Empty;
-                    _tracer.WriteMessage("OutOfProcessClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
-                        "Transport manager error reader thread ended with error: {0}", errorMsg);
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessErrorThread",
+                        Guid.Empty,
+                        "Transport manager error reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
                 }
             }
             else
