@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Count = int.MaxValue;
             }
-            else if (!MyInvocation.BoundParameters.ContainsKey("Count"))
+            else if (!MyInvocation.BoundParameters.ContainsKey(nameof(Count)))
             {
                 Count = 1;
             }
