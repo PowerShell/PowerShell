@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
             ProgressRecord record = new ProgressRecord(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
-                string.Empty);
+                WebCmdletStrings.WriteRequestProgressStatus);
             try
             {
                 do
