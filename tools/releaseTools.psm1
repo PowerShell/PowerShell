@@ -341,6 +341,31 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 }
 
+function Get-ChangeLogEx
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$LastReleaseTag,
+
+        [Parameter(Mandatory)]
+        [string]$ThisReleaseTag,
+
+        [Parameter(Mandatory)]
+        [string]$Token,
+
+        [Parameter()]
+        [switch]$HasCherryPick
+    )
+
+    $thisRelease = $ThisReleaseTag.TrimStart('v')
+
+    Write-Output "## [${thisRelease}] - $(Get-Date -Format yyyy-MM-dd)`n"
+
+    Get-ChangeLog -LastReleaseTag:$LastReleaseTag -Token:$Token -HasCherryPick:$HasCherryPick
+
+    Write-Output "[${thisRelease}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+}
+
 function PrintChangeLog($clSection, $sectionTitle) {
     if ($clSection.Count -gt 0) {
         "### $sectionTitle`n"
@@ -596,4 +621,4 @@ function Update-PsVersionInCode
                 }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode
+Export-ModuleMember -Function Get-ChangeLog, Get-ChangeLogEx, Get-NewOfficalPackage, Update-PsVersionInCode
