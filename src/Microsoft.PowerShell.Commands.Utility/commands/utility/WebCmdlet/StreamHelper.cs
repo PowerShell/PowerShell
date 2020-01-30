@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
             ProgressRecord record = new ProgressRecord(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
-                StringUtil.Format(WebCmdletStrings.WriteRequestComplete, 0));
+                string.Empty);
             try
             {
                 do
@@ -299,9 +299,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 while (!copyTask.IsCompleted);
             }
-            catch
+            catch (OperationCanceledException)
             {
-                // Catch OperationCanceledException from Wait()
+            }
+            finally
+            {
+                record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
+                cmdlet.WriteProgress(record);
             }
         }
 
