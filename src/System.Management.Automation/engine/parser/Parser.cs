@@ -8059,7 +8059,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public override string ToString()
         {
-            return PositionUtilities.VerboseMessage(Extent) + "\n" + Message;
+            return PositionUtilities.VerboseMessage(Extent) + Environment.NewLine + Message;
         }
 
         /// <summary>
