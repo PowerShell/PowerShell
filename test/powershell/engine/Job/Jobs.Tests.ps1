@@ -311,8 +311,17 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
                 @{ property = 'InstanceId'}
                 @{ property = 'State'}
             )
-            # '-Seconds 100' is chosen to be substantially large, so that the job is in running state when Stop-Job is called.
-            $jobToStop = Start-Job -ScriptBlock { Start-Sleep -Seconds 100 } -Name 'JobToStop'
+            # 20 seconds is chosen to be large, so that the job is in running state when Stop-Job is called.
+            $jobToStop = Start-Job -ScriptBlock {
+                1..80 | ForEach-Object {
+                    Write-Output $_
+                    Start-Sleep -Milliseconds 250
+                }
+            } -Name 'JobToStop'
+            # Wait until the job is actually running and executing the script
+            do {
+                $data = Receive-Job -Job $jobToStop
+            } while ($data.Count -eq 0)
         }
 
         It 'Can Stop-Job with <property>' -TestCases $stopJobTestCases {

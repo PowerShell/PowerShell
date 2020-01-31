@@ -3397,6 +3397,15 @@ namespace System.Management.Automation
                     if (rException != null)
                     {
                         errorRecord = rException.ErrorRecord;
+
+                        // A RemoteException will hide a PipelineStoppedException, which should be ignored.
+                        if (errorRecord != null &&
+                            errorRecord.FullyQualifiedErrorId.Equals("PipelineStopped", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // PipelineStoppedException should not be reported as error.
+                            failureException = null;
+                            return;
+                        }
                     }
                     else
                     {
