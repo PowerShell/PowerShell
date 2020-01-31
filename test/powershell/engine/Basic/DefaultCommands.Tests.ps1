@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
-        $FullCLR = !$isCoreCLR
-        $CoreWindows = $isCoreCLR -and $IsWindows
-        $CoreUnix = $isCoreCLR -and !$IsWindows
+        $FullCLR = !$IsCoreCLR
+        $CoreWindows = $IsCoreCLR -and $IsWindows
+        $CoreUnix = $IsCoreCLR -and !$IsWindows
         $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'

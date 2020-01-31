@@ -6,25 +6,25 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 
         $culture = Get-Culture
-        $culture | Should -BeOfType [CultureInfo]
-        ($culture).EnglishName | Should -BeExactly $host.CurrentCulture.EnglishName
+        $culture | Should -BeOfType CultureInfo
+        ($culture).EnglishName | Should -BeExactly $Host.CurrentCulture.EnglishName
 
-        Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
+        Get-Culture -NoUserOverrides | Should -BeOfType CultureInfo
     }
 
     It "Should have (Get-Culture).Name variable be equivalent to `$PSCulture" {
 
-        (Get-Culture).Name | Should -BeExactly $PsCulture
+        (Get-Culture).Name | Should -BeExactly $PSCulture
     }
 
     It "Should return the specified culture with '-Name' parameter" {
 
         $ci = Get-Culture -Name ru-RU
-        $ci | Should -BeOfType [CultureInfo]
+        $ci | Should -BeOfType CultureInfo
         $ci.Name | Should -BeExactly "ru-RU"
 
         $ci = Get-Culture -Name ru-RU -NoUserOverrides
-        $ci | Should -BeOfType [CultureInfo]
+        $ci | Should -BeOfType CultureInfo
         $ci.Name | Should -BeExactly "ru-RU"
     }
 
@@ -32,10 +32,10 @@ Describe "Get-Culture" -Tags "CI" {
 
         $ciArray = Get-Culture "", "ru-RU"
         $ciArray | Should -HaveCount 2
-        $ciArray[0] | Should -BeOfType [CultureInfo]
+        $ciArray[0] | Should -BeOfType CultureInfo
         $ciArray[0].EnglishName | Should -BeExactly "Invariant Language (Invariant Country)"
 
-        $ciArray[1] | Should -BeOfType [CultureInfo]
+        $ciArray[1] | Should -BeOfType CultureInfo
         $ciArray[1].Name | Should -BeExactly "ru-RU"
         $ciArray[1].EnglishName | Should -BeExactly "Russian (Russia)"
     }
@@ -44,9 +44,9 @@ Describe "Get-Culture" -Tags "CI" {
 
         $ciArray = "", "ru-RU" | Get-Culture
         $ciArray | Should -HaveCount 2
-        $ciArray[0] | Should -BeOfType [CultureInfo]
+        $ciArray[0] | Should -BeOfType CultureInfo
         $ciArray[0].EnglishName | Should -BeExactly "Invariant Language (Invariant Country)"
-        $ciArray[1] | Should -BeOfType [CultureInfo]
+        $ciArray[1] | Should -BeOfType CultureInfo
         $ciArray[1].Name | Should -BeExactly "ru-RU"
         $ciArray[1].EnglishName | Should -BeExactly "Russian (Russia)"
     }
@@ -55,7 +55,7 @@ Describe "Get-Culture" -Tags "CI" {
 
         $ciArray = Get-Culture -ListAvailable
         $ciArray.Count | Should -BeGreaterThan 0
-        $ciArray[0] | Should -BeOfType [CultureInfo]
+        $ciArray[0] | Should -BeOfType CultureInfo
     }
 
     It "Should write an error on unsupported culture name" {

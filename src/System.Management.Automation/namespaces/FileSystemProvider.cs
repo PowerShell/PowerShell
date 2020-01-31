@@ -3049,13 +3049,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
                     directory.Delete();
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;

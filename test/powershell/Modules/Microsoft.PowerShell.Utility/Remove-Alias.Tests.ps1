@@ -39,7 +39,7 @@ Describe "Remove-Alias" -Tags "CI" {
 
     It "Remove-Alias should throw if alias does not exist"{
         {
-            Get-Alias -Name $testAliasName -ErrorAction SilentlyContinue | Should -BeNullorEmpty
+            Get-Alias -Name $testAliasName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
             Remove-Alias -Name $testAliasName -ErrorAction Stop
         } | Should -Throw -ErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.RemoveAliasCommand'
     }

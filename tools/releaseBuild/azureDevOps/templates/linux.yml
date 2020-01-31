@@ -106,7 +106,7 @@ jobs:
       binVersionOverride: $(SigningVersionOverride)
     condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'Upload to Azure - DEB and tar.gz'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\finished\release'
@@ -119,7 +119,7 @@ jobs:
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'Upload to Azure - RPM - Unsigned'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
@@ -129,7 +129,7 @@ jobs:
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'Upload to Azure - RPM - Signed'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\signedPackages'

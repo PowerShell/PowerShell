@@ -3,10 +3,10 @@
 Describe "Write-Error Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
-        $e | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+        $e | Should -BeOfType System.Management.Automation.ErrorRecord
 
         #Exception verification
-        $e.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.WriteErrorException'
+        $e.Exception | Should -BeOfType Microsoft.PowerShell.Commands.WriteErrorException
         $e.Exception.Message | Should -Be 'myerrortext'
         $e.Exception.Data.Count | Should -Be 0
         $e.Exception.InnerException | Should -BeNullOrEmpty
@@ -35,10 +35,10 @@ Describe "Write-Error Tests" -Tags "CI" {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname
         $e = Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction 2>&1
         $e | Should -Not -BeNullOrEmpty
-        $e | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+        $e | Should -BeOfType System.Management.Automation.ErrorRecord
 
         #Exception verification
-        $e.Exception | Should -BeOfType 'System.ArgumentNullException'
+        $e.Exception | Should -BeOfType System.ArgumentNullException
         $e.Exception.ParamName | Should -Be 'paramname'
         $e.Exception.Data.Count | Should -Be 0
         $e.Exception.InnerException | Should -BeNullOrEmpty
@@ -93,7 +93,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $theError = "Error: Too many input values."
         write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
 
-        [string]$error[0]| Should -Be $theError
+        [string]$error[0] | Should -Be $theError
     }
 
     It "ErrorRecord should not be truncated or have inserted newlines when redirected from another process" {

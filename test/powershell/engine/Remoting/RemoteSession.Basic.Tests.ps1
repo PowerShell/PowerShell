@@ -5,8 +5,9 @@ Import-Module HelpersCommon
 
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian")) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 
@@ -17,8 +18,9 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian")) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 
@@ -26,15 +28,16 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $credential = [PSCredential]::new('username', $password)
 
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         # Should be PSRemotingErrorId.ConnectFailed
         # Ensures we are looking at the expected instance
         $err.Exception.ErrorCode | Should -Be 801
     }
 
     It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-        if ( (Get-PlatformInfo) -eq "alpine" ) {
-            Set-ItResult -Pending -Because "MI library not available for Alpine"
+        $platformInfo = Get-PlatformInfo
+        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian") ) {
+            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }
 
@@ -45,7 +48,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
         $uri = "https://localhost"
         New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
         $err.Exception.HResult | Should -Be 0x80131501
     }
@@ -202,7 +205,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
 
-        if($isWindows)
+        if($IsWindows)
         {
             Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
         }

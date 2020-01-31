@@ -498,7 +498,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             try
             {
                 $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
-                $s1 | Should Not BeNullOrEmpty
+                $s1 | Should -Not -BeNullOrEmpty
                 $filePath = CreateTestFile
                 $destinationFolderPath = GetDestinationFolderPath
                 { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"

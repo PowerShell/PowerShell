@@ -26,13 +26,13 @@ try
 
         It "Should restart the local computer" {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-            Restart-Computer -ErrorAction Stop| Should -BeNullOrEmpty
+            Restart-Computer -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support -computer parameter" {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Restart-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
+            Restart-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {

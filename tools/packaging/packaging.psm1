@@ -379,6 +379,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm32"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -392,6 +393,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm64"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -405,6 +407,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "alpine-x64"
+                    ExcludeSymbolicLinks = $true
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -487,7 +490,9 @@ function New-TarballPackage {
         [Parameter()]
         [string] $Architecture = "x64",
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $ExcludeSymbolicLinks
     )
 
     if ($PackageNameSuffix) {
@@ -513,6 +518,10 @@ function New-TarballPackage {
             Write-Verbose "Overwrite existing package file at $packagePath" -Verbose
             Remove-Item -Path $packagePath -Force -ErrorAction Stop -Confirm:$false
         }
+    }
+
+    if (-not $ExcludeSymbolicLinks.IsPresent) {
+        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $PackageSourcePath
     }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
@@ -774,7 +783,7 @@ function New-UnixPackage {
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
-        if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        if ($PSCmdlet.ShouldProcess("Create staging folder")) {
             New-StagingFolder -StagingPath $Staging
         }
 
@@ -793,13 +802,14 @@ function New-UnixPackage {
         }
         $linkSource = "/tmp/pwsh"
 
-        if ($pscmdlet.ShouldProcess("Create package file system"))
+        if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
+            New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -833,7 +843,7 @@ function New-UnixPackage {
         if ($Type -eq "osxpkg")
         {
             Write-Log "Adding macOS launch application..."
-            if ($pscmdlet.ShouldProcess("Add macOS launch application"))
+            if ($PSCmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
                 $AppsFolder = New-MacOSLauncher -Version $Version
@@ -870,14 +880,14 @@ function New-UnixPackage {
 
         # Build package
         try {
-            if ($pscmdlet.ShouldProcess("Create $type package")) {
+            if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
                 Write-Log "Starting Cleanup for mac packaging..."
-                if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                if ($PSCmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
                 }
@@ -901,7 +911,7 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
-            if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
+            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
                 $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
             }
@@ -1228,6 +1238,47 @@ function New-AfterScripts
         $Distribution
     )
 
+    Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
+
+    if ($Environment.IsRedHatFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsMacOS) {
+        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
+        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+    }
+
+    return [PSCustomObject] @{
+        AfterInstallScript = $AfterInstallScript
+        AfterRemoveScript = $AfterRemoveScript
+    }
+}
+
+function New-PSSymbolicLinks
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Distribution,
+
+        [Parameter(Mandatory)]
+        [string]
+        $Staging
+    )
+
+    Write-Verbose -Message "PSSymLinks-Distribution: $Distribution" -Verbose
+
     if ($Environment.IsRedHatFamily) {
         switch -regex ($Distribution)
         {
@@ -1244,43 +1295,27 @@ function New-AfterScripts
                 New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
         }
-
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-
-        switch -regex ($Distribution)
+         switch -regex ($Distribution)
         {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            'debian\.(9|10)' {
+            'debian\.9' {
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
-            'debian\.11' {
+            'debian\.(10|11)' {
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
+            default {
+                # Default to old behavior before this change
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
         }
-    }
-    elseif ($Environment.IsMacOS) {
-        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
-        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-    }
-
-    return [PSCustomObject] @{
-        AfterInstallScript = $AfterInstallScript
-        AfterRemoveScript = $AfterRemoveScript
     }
 }
 
@@ -1469,7 +1504,7 @@ function New-ZipPackage
 
     if (Get-Command Compress-Archive -ErrorAction Ignore)
     {
-        if ($pscmdlet.ShouldProcess("Create zip package"))
+        if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
@@ -1618,7 +1653,7 @@ function New-ILNugetPackage
 
             if ($file -eq "Microsoft.PowerShell.SDK.dll")
             {
-                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
                 # This is to make 'Add-Type' work in application that hosts PowerShell.
 
                 $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
@@ -1745,11 +1780,15 @@ function CopyReferenceAssemblies
         [string[]] $assemblyFileList
     )
 
+    $supportedRefList = @(
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost")
+
     switch ($assemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
-            Copy-Item $ref_Utility -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        { $_ -in $supportedRefList } {
+            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+            Copy-Item $refDll -Destination $refNugetPath -Force
+            Write-Log "Copied file $refDll to $refNugetPath"
         }
 
         "Microsoft.PowerShell.SDK" {
@@ -1931,7 +1970,8 @@ function New-ReferenceAssembly
     $SMAReferenceAssembly = $null
     $assemblyNames = @(
         "System.Management.Automation",
-        "Microsoft.PowerShell.Commands.Utility"
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost"
     )
 
     foreach ($assemblyName in $assemblyNames) {
@@ -2119,10 +2159,8 @@ function GenerateBuildArguments
     $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
     $arguments += "/p:SnkFile=$SnkFilePath"
 
-    switch ($AssemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $arguments += "/p:SmaRefFile=$SMAReferencePath"
-        }
+    if ($AssemblyName -ne "System.Management.Automation") {
+        $arguments += "/p:SmaRefFile=$SMAReferencePath"
     }
 
     return $arguments
@@ -2270,7 +2308,7 @@ function New-NugetContentPackage
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
-    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+    if ($PSCmdlet.ShouldProcess("Create staging folder")) {
         New-StagingFolder -StagingPath $contentFolder
     }
 
@@ -2756,8 +2794,8 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $pwd "$packageName.wixpdb"
+    $msiLocationPath = Join-Path $PWD "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
 
     if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
     {
@@ -2881,7 +2919,7 @@ function New-MSIXPackage
 
     $displayName = $productName
 
-    if ($packageName.Contains('preview')) {
+    if ($packageName.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }
@@ -2899,7 +2937,13 @@ function New-MSIXPackage
     # For stable versions, the last digit is already zero so no changes
     $pversion = [version]$ProductVersion
     if ($pversion.Revision -ne 0) {
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $pversion.Revision, 0)
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
         $ProductVersion = $pversion.ToString()
     }
 

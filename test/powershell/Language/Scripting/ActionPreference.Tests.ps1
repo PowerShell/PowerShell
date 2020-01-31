@@ -78,9 +78,9 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
         It '$err.Count' { $err.Count | Should -Be 1 }
         It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
-        It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
+        It '$err[0].GetType().Name' { $err[0] | Should -BeOfType System.Management.Automation.ActionPreferenceStopException }
         It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
-        It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
+        It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType System.Management.Automation.ItemNotFoundException }
     }
 
     It 'Action preference of Ignore can be set as a preference variable using a string value' {
@@ -420,7 +420,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
         }
 
         It 'ActionPreference.Break should break in a running job' {
-            Wait-UntilTrue -sb { $job.State -eq 'AtBreakpoint' } -TimeoutInMilliseconds (10 * 1000) -IntervalInMilliseconds 100 | Should -BeTrue
+            Wait-UntilTrue -sb { $job.State -eq 'AtBreakpoint' } -TimeoutInMilliseconds (60 * 1000) -IntervalInMilliseconds 100 | Should -BeTrue
         }
     }
 }

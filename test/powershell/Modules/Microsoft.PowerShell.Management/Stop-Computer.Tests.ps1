@@ -27,13 +27,13 @@ try
 
         It "Should stop the local computer" {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
-            Stop-Computer -ErrorAction Stop| Should -BeNullOrEmpty
+            Stop-Computer -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support -Computer parameter" {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Stop-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
+            Stop-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {

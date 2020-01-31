@@ -401,10 +401,10 @@ Describe "Ternary Operator parsing" -Tags CI {
         $tks[0].Text | Should -BeExactly $Script
 
         if ($TokenKind -eq "Variable") {
-            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType 'System.Management.Automation.Language.VariableExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType System.Management.Automation.Language.VariableExpressionAst
             $result.EndBlock.Statements[0].PipelineElements[0].Expression.Extent.Text | Should -BeExactly $Script
         } else {
-            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType 'System.Management.Automation.Language.StringConstantExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType System.Management.Automation.Language.StringConstantExpressionAst
             $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0].Extent.Text | Should -BeExactly $Script
         }
     }
@@ -441,9 +441,9 @@ Describe "Ternary Operator parsing" -Tags CI {
         $ers[1].ErrorId | Should -BeExactly 'ExpectedValueExpression'
 
         $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
-        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
-        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
-        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
     }
 
     It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
@@ -454,8 +454,8 @@ Describe "Ternary Operator parsing" -Tags CI {
         $ers.IncompleteInput | Should -BeFalse
         $ers.ErrorId | Should -BeExactly "ExpectedValueExpression"
         $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
-        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
-        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
-        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ConstantExpressionAst'
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ConstantExpressionAst
     }
 }

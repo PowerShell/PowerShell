@@ -50,7 +50,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.Management.Infrastructure.CimCmdlets.dll-help.xml"
         HelpInfoFiles        = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_HelpInfo.xml"
         CompressedFiles      = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_en-US_HelpContent$extension"
-        HelpInstallationPath = "$pshome\Modules\CimCmdlets\en-US"
+        HelpInstallationPath = "$PSHOME\Modules\CimCmdlets\en-US"
         HelpInstallationPathHome = "$userHelpRoot\CimCmdlets\en-US"
     }
 
@@ -58,14 +58,14 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.Archive-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
-        HelpInstallationPath = "$pshome\Modules\Microsoft.PowerShell.Archive\en-US"
+        HelpInstallationPath = "$PSHOME\Modules\Microsoft.PowerShell.Archive\en-US"
     }
 
     "Microsoft.PowerShell.Core" = @{
         HelpFiles            = "System.Management.Automation.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Core_00000000-0000-0000-0000-000000000000_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Core_00000000-0000-0000-0000-000000000000_en-US_HelpContent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -73,7 +73,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Diagnostics.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Diagnostics_ca046f10-ca64-4740-8ff9-2565dba61a4f_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Diagnostics_ca046f10-ca64-4740-8ff9-2565dba61a4f_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -81,7 +81,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.ConsoleHost.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Host_56d66100-99a0-4ffc-a12d-eee9a6718aef_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Host_56d66100-99a0-4ffc-a12d-eee9a6718aef_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -89,7 +89,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.Powershell.LocalAccounts.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.LocalAccounts_8e362604-2c0b-448f-a414-a6a690a644e2_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.LocalAccounts_8e362604-2c0b-448f-a414-a6a690a644e2_en-US_HelpContent$extension"
-        HelpInstallationPath = "$pshome\Modules\Microsoft.PowerShell.LocalAccounts\en-US"
+        HelpInstallationPath = "$PSHOME\Modules\Microsoft.PowerShell.LocalAccounts\en-US"
         HelpInstallationPathHome = "$userHelpRoot\Microsoft.PowerShell.LocalAccounts\en-US"
     }
 
@@ -97,7 +97,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Management.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Management_eefcb906-b326-4e99-9f54-8b4bb6ef3c6d_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Management_eefcb906-b326-4e99-9f54-8b4bb6ef3c6d_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -105,7 +105,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.Security.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Security_a94c8c7e-9810-47c0-b8af-65089c13a35a_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Security_a94c8c7e-9810-47c0-b8af-65089c13a35a_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -113,7 +113,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Utility.dll-Help.xml", "Microsoft.PowerShell.Utility-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -121,7 +121,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.WSMan.Management.dll-help.xml"
         HelpInfoFiles        = "Microsoft.WsMan.Management_766204A6-330E-4263-A7AB-46C87AFC366C_HelpInfo.xml"
         CompressedFiles      = "Microsoft.WsMan.Management_766204A6-330E-4263-A7AB-46C87AFC366C_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\en-US"
+        HelpInstallationPath = "$PSHOME\en-US"
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
@@ -129,7 +129,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
         HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
         CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PackageManagement\en-US"
+        HelpInstallationPath = "$PSHOME\Modules\PackageManagement\en-US"
         HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
     }
 
@@ -137,7 +137,7 @@ $testCases = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PowershellGet\en-US"
+        HelpInstallationPath = "$PSHOME\Modules\PowershellGet\en-US"
         HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
     }
 }

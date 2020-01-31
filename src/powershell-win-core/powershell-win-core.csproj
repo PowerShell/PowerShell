@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
 
   <PropertyGroup>

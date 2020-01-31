@@ -8,14 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Net.NetworkInformation;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using System.Xml;
-
-using Microsoft.Win32;
 
 namespace System.Management.Automation
 {
@@ -24,8 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class PsUtils
     {
-        internal static string ArmArchitecture = "ARM";
-
         /// <summary>
         /// Safely retrieves the MainModule property of a
         /// process. Version 2.0 and below of the .NET Framework are
@@ -136,41 +130,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns processor architecture for the current process.
-        /// If powershell is running inside Wow64, then <see cref="ProcessorArchitecture.X86"/> is returned.
-        /// </summary>
-        /// <returns>Processor architecture for the current process.</returns>
-        internal static ProcessorArchitecture GetProcessorArchitecture(out bool isRunningOnArm)
-        {
-            var sysInfo = new NativeMethods.SYSTEM_INFO();
-            NativeMethods.GetSystemInfo(ref sysInfo);
-            ProcessorArchitecture result;
-            isRunningOnArm = false;
-            switch (sysInfo.wProcessorArchitecture)
-            {
-                case NativeMethods.PROCESSOR_ARCHITECTURE_IA64:
-                    result = ProcessorArchitecture.IA64;
-                    break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_AMD64:
-                    result = ProcessorArchitecture.Amd64;
-                    break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_INTEL:
-                    result = ProcessorArchitecture.X86;
-                    break;
-                case NativeMethods.PROCESSOR_ARCHITECTURE_ARM:
-                    result = ProcessorArchitecture.None;
-                    isRunningOnArm = true;
-                    break;
-
-                default:
-                    result = ProcessorArchitecture.None;
-                    break;
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Return true/false to indicate whether the processor architecture is ARM.
         /// </summary>
         /// <returns></returns>
@@ -233,31 +192,6 @@ namespace System.Management.Automation
 
         private static class NativeMethods
         {
-            internal const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
-            internal const ushort PROCESSOR_ARCHITECTURE_ARM = 5;
-            internal const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;
-            internal const ushort PROCESSOR_ARCHITECTURE_AMD64 = 9;
-            internal const ushort PROCESSOR_ARCHITECTURE_UNKNOWN = 0xFFFF;
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal struct SYSTEM_INFO
-            {
-                public ushort wProcessorArchitecture;
-                public ushort wReserved;
-                public uint dwPageSize;
-                public IntPtr lpMinimumApplicationAddress;
-                public IntPtr lpMaximumApplicationAddress;
-                public UIntPtr dwActiveProcessorMask;
-                public uint dwNumberOfProcessors;
-                public uint dwProcessorType;
-                public uint dwAllocationGranularity;
-                public ushort wProcessorLevel;
-                public ushort wProcessorRevision;
-            };
-
-            [DllImport(PinvokeDllNames.GetSystemInfoDllName)]
-            internal static extern void GetSystemInfo(ref SYSTEM_INFO lpSystemInfo);
-
             [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
             internal static extern uint GetCurrentThreadId();
         }

@@ -49,7 +49,7 @@ Describe 'Task-based PowerShell async APIs' -Tags 'Feature' {
             try {
                 $r = InvokeAsyncHelper -PowerShell $ps -Wait
                 $r.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r.IsCompletedSuccessfully | Should -Be $true
+                $r.IsCompletedSuccessfully | Should -BeTrue
             } finally {
                 $ps.Dispose()
             }
@@ -72,8 +72,8 @@ try {
                 }
                 # This test is designed to gracefully fail with an error when invoked asynchronously.
                 { $sb.Invoke() } | Should -Throw -ErrorId 'AggregateException'
-                $r.IsFaulted | Should -Be $true
-                $r.Exception.InnerException -is [System.Management.Automation.ParameterBindingException] | Should -Be $true
+                $r.IsFaulted | Should -BeTrue
+                $r.Exception.InnerException -is [System.Management.Automation.ParameterBindingException] | Should -BeTrue
                 $r.Exception.InnerException.CommandInvocation.InvocationName | Should -BeExactly 'Get-Process'
                 $r.Exception.InnerException.ParameterName | Should -BeExactly 'Invalid'
                 $r.Exception.InnerException.ErrorId | Should -BeExactly 'NamedParameterNotFound'
@@ -91,8 +91,8 @@ try {
                 # in a runspace that has not been opened.
                 $err = { $ps.AddScript('1+1').InvokeAsync() } | Should -Throw -ErrorId "InvalidRunspaceStateException" -PassThru
 
-                $err.Exception | Should -BeOfType "System.Management.Automation.MethodInvocationException"
-                $err.Exception.InnerException | Should -BeOfType "System.Management.Automation.Runspaces.InvalidRunspaceStateException"
+                $err.Exception | Should -BeOfType System.Management.Automation.MethodInvocationException
+                $err.Exception.InnerException | Should -BeOfType System.Management.Automation.Runspaces.InvalidRunspaceStateException
                 $err.Exception.InnerException.CurrentState | Should -Be 'BeforeOpen'
                 $err.Exception.InnerException.ExpectedState | Should -Be 'Opened'
             } finally {
@@ -149,9 +149,9 @@ try {
                 $r2 = $ps2.AddScript("@(2,4,6,8,10,12,14,16,18,20)${sbStub}").InvokeAsync()
                 [System.Threading.Tasks.Task]::WaitAll(@($r1, $r2))
                 $r1.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r1.IsCompletedSuccessfully | Should -Be $true
+                $r1.IsCompletedSuccessfully | Should -BeTrue
                 $r2.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r2.IsCompletedSuccessfully | Should -Be $true
+                $r2.IsCompletedSuccessfully | Should -BeTrue
                 $results = @($r1.Result.foreach('Value')) + @($r2.Result.foreach('Value'))
                 Compare-Object -ReferenceObject @(1..20) -DifferenceObject $results -SyncWindow 20 | Should -Be $null
             } finally {
@@ -183,9 +183,9 @@ try {
                 $r2 = $ps2.AddScript($script).InvokeAsync($d2)
                 [System.Threading.Tasks.Task]::WaitAll(@($r1, $r2))
                 $r1.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r1.IsCompletedSuccessfully | Should -Be $true
+                $r1.IsCompletedSuccessfully | Should -BeTrue
                 $r2.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r2.IsCompletedSuccessfully | Should -Be $true
+                $r2.IsCompletedSuccessfully | Should -BeTrue
                 $allResults = @($r1.Result) + @($r2.Result)
                 Compare-Object -ReferenceObject @(1..20) -DifferenceObject $allResults.Value -SyncWindow 20 | Should -Be $null
             } finally {
@@ -204,9 +204,9 @@ try {
                 [System.Threading.Tasks.Task]::WaitAll(@($r1, $r2))
                 $o.Complete()
                 $r1.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r1.IsCompletedSuccessfully | Should -Be $true
+                $r1.IsCompletedSuccessfully | Should -BeTrue
                 $r2.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
-                $r2.IsCompletedSuccessfully | Should -Be $true
+                $r2.IsCompletedSuccessfully | Should -BeTrue
                 Compare-Object -ReferenceObject @(1..20) -DifferenceObject $o.Value -SyncWindow 20 | Should -Be $null
             } finally {
                 $ps1.Dispose()
@@ -227,10 +227,10 @@ try {
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $ps.Streams.Error | Should -HaveCount 0 -Because ($ps.Streams.Error | Out-String)
                 $ps.Commands.Commands.commandtext | Should -Be "Start-Sleep -Seconds 60"
-                $sr.IsCompletedSuccessfully | Should -Be $true
-                $ir.IsFaulted | Should -Be $true -Because ($ir | Format-List -Force * | Out-String)
-                $ir.Exception -is [System.AggregateException] | Should -Be $true
-                $ir.Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -Be $true
+                $sr.IsCompletedSuccessfully | Should -BeTrue
+                $ir.IsFaulted | Should -BeTrue -Because ($ir | Format-List -Force * | Out-String)
+                $ir.Exception -is [System.AggregateException] | Should -BeTrue
+                $ir.Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -BeTrue
                 $ps.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
             } finally {
                 $ps.Dispose()
