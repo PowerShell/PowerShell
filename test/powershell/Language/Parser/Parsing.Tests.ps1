@@ -459,3 +459,20 @@ Describe "Ternary Operator parsing" -Tags CI {
         $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ConstantExpressionAst
     }
 }
+
+Describe "ParserError type tests" -Tag CI {
+    # This test was added because there use to be a hardcoded newline in the ToString() method of
+    # the ParseError class. This makes sure the proper newlines are used.
+    It "Should use consistant newline depending on OS" {
+        $expected = @'
+At line:1 char:5
++ $x =
++     ~
+You must provide a value expression following the '=' operator.
+'@
+
+        $ers = $null
+        [System.Management.Automation.Language.Parser]::ParseInput('$x =', [ref]$null, [ref]$ers) | Out-Null
+        $ers[0].ToString() | Should -BeExactly $expected
+    }
+}
