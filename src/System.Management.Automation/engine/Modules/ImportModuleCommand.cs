@@ -1880,7 +1880,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
+        private bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
         {
             Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec can be specified");
 
@@ -1914,7 +1914,7 @@ namespace Microsoft.PowerShell.Commands
             return match;
         }
 
-        internal List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
+        private List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
         {
             List<T> filteredModuleCollection = null;
             if (moduleCollection != null)
