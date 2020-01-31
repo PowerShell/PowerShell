@@ -313,6 +313,9 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            int timeoutMilliseconds = TimeoutSeconds * 1000;
+            int delayMilliseconds = Delay * 1000;
+
             for (var i = 1; i <= Count; i++)
             {
                 long latency = 0;
@@ -326,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     stopwatch.Start();
 
-                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(TimeoutSeconds * 1000, _cancellationTokenSource.Token))
+                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(timeoutMilliseconds, _cancellationTokenSource.Token))
                     {
                         latency = stopwatch.ElapsedMilliseconds;
                         status = SocketError.Success;
@@ -389,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (i < Count)
                 {
-                    Task.Delay(Delay * 1000).Wait(_cancellationTokenSource.Token);
+                    Task.Delay(delayMilliseconds).Wait(_cancellationTokenSource.Token);
                 }
             }
         }
