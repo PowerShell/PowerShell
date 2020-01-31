@@ -4276,6 +4276,9 @@ param(
         else {
             $pagerCommand = 'less'
             $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+            if ($null -eq (Get-Command -Name $pagerCommand -Type Application -ErrorAction Ignore)) {
+                $pagerCommand = $null
+            }
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4320,9 +4323,12 @@ param(
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
             }
         }
-        else {
+        elseif ($pagerCommand -ne $null) {
             # The pager command is a PowerShell function, script or alias, so pipe directly into it.
             $help | & $pagerCommand $pagerArgs
+        }
+        else {
+            $help
         }
     }
 ";
