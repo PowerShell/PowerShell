@@ -2105,7 +2105,7 @@ namespace System.Management.Automation
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
-            
+
             Breakpoint breakpoint = new CommandBreakpoint(path, null, command, action);
             var functionParameters = new Dictionary<string, object>
             {

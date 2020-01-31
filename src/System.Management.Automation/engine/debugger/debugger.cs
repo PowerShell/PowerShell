@@ -645,7 +645,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="breakpoints">Breakpoints.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with, null being the current runspace.</param>
-        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId) =>  
+        public virtual void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId) =>
             throw new PSNotImplementedException();
 
         /// <summary>
@@ -3947,7 +3947,7 @@ namespace System.Management.Automation
         {
             WaitForReadyDebug();
 
-            DebugRunspace(runspace, breakAll:true);
+            DebugRunspace(runspace, breakAll: true);
 
             // Block this event thread until debugging has ended.
             WaitForDebugComplete();

@@ -419,7 +419,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string cimsessionComputerName = cimInstance.GetCimSessionComputerName();
             CreateSetSession(cimsessionComputerName, null, null, null, false);
-            this.isDefaultSession = (cimsessionComputerName  == ConstValue.NullComputerName);
+            this.isDefaultSession = (cimsessionComputerName == ConstValue.NullComputerName);
 
             DebugHelper.WriteLogEx("Create a temp session with computerName = {0}.", 0, cimsessionComputerName);
         }
@@ -570,7 +570,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 DebugHelper.WriteLogEx("ResourceUri {0},", 0, value);
 
-                this.options.ResourceUri= value;
+                this.options.ResourceUri = value;
             }
 
             get
@@ -606,7 +606,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             set
             {
                 DebugHelper.WriteLogEx("EnablePromptUser {0}", 0, value);
-                if(value)
+                if (value)
                 {
                     this.options.PromptUser = this.PromptUser;
                 }
@@ -1876,10 +1876,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimResultContext cimResultContext)
         {
             CimMethodResultObserver observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)
-                {
-                    ClassName = className,
-                    MethodName = methodName
-                };
+            {
+                ClassName = className,
+                MethodName = methodName
+            };
 
             observer.OnNewResult += this.ResultEventHandler;
             this.operationID = Interlocked.Increment(ref gOperationCounter);

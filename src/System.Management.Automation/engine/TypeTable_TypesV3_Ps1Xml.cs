@@ -365,7 +365,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"SerializedInvocationInfo",
                     GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), @"GetInvocationInfo"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 

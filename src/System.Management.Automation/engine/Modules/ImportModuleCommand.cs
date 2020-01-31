@@ -1896,7 +1896,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
-            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            foreach (PSModuleInfo moduleProxy in moduleProxyList)
             {
                 moduleProxy.IsWindowsPowerShellCompatModule = true;
                 System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);

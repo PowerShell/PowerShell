@@ -791,7 +791,7 @@ namespace System.Management.Automation
                 catch (Exception ex)
                 {
                     terminateImmediate = true;
-                    
+
                     preProcessOutput.Add(
                         PSObject.AsPSObject(ex));
                 }
@@ -1426,7 +1426,7 @@ namespace System.Management.Automation
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
                 if (TryGetParameter<int>(command, "Id", out int breakpointId))
                 {
-                     preProcessOutput.Add(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId));
+                    preProcessOutput.Add(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId));
                 }
                 else
                 {
@@ -1477,7 +1477,7 @@ namespace System.Management.Automation
                 }
 
                 serverRemoteDebugger.SetBreakpoints(bps, runspaceId);
-                
+
                 foreach (var bp in bps)
                 {
                     preProcessOutput.Add(bp);
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint == null 
+                    breakpoint == null
                         ? false
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
@@ -1518,7 +1518,7 @@ namespace System.Management.Automation
                 {
                     preProcessOutput.Add(serverRemoteDebugger.EnableBreakpoint(bp, runspaceId));
                 }
-                
+
                 result = PreProcessCommandResult.BreakpointManagement;
             }
             else if (commandText.Equals(RemoteDebuggingCommands.DisableBreakpoint, StringComparison.OrdinalIgnoreCase))
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation
                 {
                     preProcessOutput.Add(serverRemoteDebugger.DisableBreakpoint(bp, runspaceId));
                 }
-                
+
                 result = PreProcessCommandResult.BreakpointManagement;
             }
 
@@ -1578,7 +1578,7 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch (Exception ex) when(
+            catch (Exception ex) when (
                 ex is PSArgumentException ||
                 ex is InvalidCastException ||
                 ex is PSInvalidCastException)

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell.Commands
 {
-    #region Stop-Computer
+#region Stop-Computer
 
     /// <summary>
     /// Cmdlet to stop computer.
@@ -19,15 +19,15 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097151", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
-        #region Private Members
+#region Private Members
 
         private Process _process = null;
 
-        #endregion
+#endregion
 
         // TODO: Support remote computers?
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method.
@@ -37,9 +37,9 @@ namespace Microsoft.PowerShell.Commands
             _process.Dispose();
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region "Overrides"
+#region "Overrides"
 
         /// <summary>
         /// BeginProcessing.
@@ -68,9 +68,9 @@ namespace Microsoft.PowerShell.Commands
             catch (NotSupportedException) {}
         }
 
-        #endregion "Overrides"
+#endregion "Overrides"
 
-        #region "Internals"
+#region "Internals"
 
         private void doShutdown() {
             String cmd = "";
@@ -96,8 +96,8 @@ namespace Microsoft.PowerShell.Commands
             };
             _process.Start();
         }
-        #endregion
+#endregion
     }
-    #endregion
+#endregion
 }
 #endif
