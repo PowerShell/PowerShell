@@ -298,14 +298,15 @@ namespace Microsoft.PowerShell.Commands
                     Task.Delay(1000).Wait(cancellationToken);
                 }
                 while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
+
+                if (copyTask.IsCompleted)
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
+                    cmdlet.WriteProgress(record);
+                }
             }
             catch (OperationCanceledException)
             {
-            }
-            finally
-            {
-                record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
-                cmdlet.WriteProgress(record);
             }
         }
 
