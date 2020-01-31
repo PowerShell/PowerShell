@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public Window Owner
         {
-            get { return this.owner;  }
+            get { return this.owner; }
             set { this.owner = value; }
         }
 

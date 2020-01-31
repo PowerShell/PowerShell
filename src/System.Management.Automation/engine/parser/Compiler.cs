@@ -962,7 +962,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var getExpr = av.GetValue(this, exprs, temps);
 
-            if(et == ExpressionType.Coalesce)
+            if (et == ExpressionType.Coalesce)
             {
                 exprs.Add(av.SetValue(this, Coalesce(getExpr, right)));
             }
@@ -982,7 +982,7 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if(leftType == typeof(AutomationNull))
+            else if (leftType == typeof(AutomationNull))
             {
                 return right;
             }
@@ -3307,7 +3307,7 @@ namespace System.Management.Automation.Language
                     // e.g. ("Hi"), vs (Test-Path ./here.txt)
                     return ShouldSetExecutionStatusToSuccess(parenExpression.Pipeline);
 
-              case SubExpressionAst subExpressionAst:
+                case SubExpressionAst subExpressionAst:
                     // Subexpressions generally set $? since they encapsulate a statement block
                     // But $() requires an explicit setting
                     return subExpressionAst.SubExpression.Statements.Count == 0;

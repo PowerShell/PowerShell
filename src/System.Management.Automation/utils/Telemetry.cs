@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
-        
+
         /// <summary>
         /// Send telemetry when we load a module using Windows compatibility feature, only module names in the s_knownModules list
         /// will be reported, otherwise it will be "anonymous".
@@ -121,21 +121,21 @@ namespace Microsoft.PowerShell.Telemetry
                 s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                     {
                         "AADRM",
-                        "activedirectory",   
+                        "activedirectory",
                         "adcsadministration",
-                        "adcsdeployment",    
+                        "adcsdeployment",
                         "addsadministration",
-                        "addsdeployment",    
+                        "addsdeployment",
                         "adfs",
                         "adrms",
-                        "adrmsadmin",        
+                        "adrmsadmin",
                         "agpm",
-                        "appbackgroundtask", 
+                        "appbackgroundtask",
                         "applocker",
                         "appv",
-                        "appvclient",    
-                        "appvsequencer", 
-                        "appvserver",    
+                        "appvclient",
+                        "appvsequencer",
+                        "appvserver",
                         "appx",
                         "assignedaccess",
                         "Az",
