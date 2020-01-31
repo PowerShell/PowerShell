@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
                     Task.Delay(1000).Wait(cancellationToken);
                 }
-                while (!copyTask.IsCompleted);
+                while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
             }
             catch (OperationCanceledException)
             {
