@@ -311,6 +311,9 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
                 @{ property = 'InstanceId'}
                 @{ property = 'State'}
             )
+        }
+
+        BeforeEach {
             # 20 seconds is chosen to be large, so that the job is in running state when Stop-Job is called.
             $jobToStop = Start-Job -ScriptBlock {
                 1..80 | ForEach-Object {
@@ -321,7 +324,11 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             # Wait until the job is actually running and executing the script
             do {
                 $data = Receive-Job -Job $jobToStop
-            } while ($data.Count -eq 0)
+            } while (($data.Count -eq 0) -and ($jobToStop.State -eq 'Running'))
+        }
+
+        AfterEach {
+            Remove-Job $jobToStop -Force -ErrorAction SilentlyContinue
         }
 
         It 'Can Stop-Job with <property>' -TestCases $stopJobTestCases {
@@ -329,10 +336,6 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $splat = @{ $property = $jobToStop.$property }
             Stop-Job @splat
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
-        }
-
-        AfterAll {
-            Remove-Job $jobToStop -Force -ErrorAction SilentlyContinue
         }
     }
 }
