@@ -866,7 +866,7 @@ function Get-PSOutput {
     )
     if ($Options) {
         return $Options.Output
-    } elseif ($null -ne $script:Options) {
+    } elseif ($script:Options) {
         return $script:Options.Output
     } else {
         return (New-PSOptions).Output
