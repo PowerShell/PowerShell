@@ -141,6 +141,9 @@ function Get-ChangeLog
         [string]$LastReleaseTag,
 
         [Parameter(Mandatory)]
+        [string]$ThisReleaseTag,
+
+        [Parameter(Mandatory)]
         [string]$Token,
 
         [Parameter()]
@@ -328,6 +331,12 @@ function Get-ChangeLog
         throw "Some PRs are tagged multiple times or have no tags."
     }
 
+    # Output the changelog
+
+    $thisRelease = $ThisReleaseTag.TrimStart('v')
+
+    Write-Output "## [${thisRelease}] - $(Get-Date -Format yyyy-MM-dd)`n"
+
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
@@ -339,29 +348,6 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
-}
-
-function Get-ChangeLogEx
-{
-    param(
-        [Parameter(Mandatory)]
-        [string]$LastReleaseTag,
-
-        [Parameter(Mandatory)]
-        [string]$ThisReleaseTag,
-
-        [Parameter(Mandatory)]
-        [string]$Token,
-
-        [Parameter()]
-        [switch]$HasCherryPick
-    )
-
-    $thisRelease = $ThisReleaseTag.TrimStart('v')
-
-    Write-Output "## [${thisRelease}] - $(Get-Date -Format yyyy-MM-dd)`n"
-
-    Get-ChangeLog -LastReleaseTag:$LastReleaseTag -Token:$Token -HasCherryPick:$HasCherryPick
 
     Write-Output "[${thisRelease}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
@@ -621,4 +607,4 @@ function Update-PsVersionInCode
                 }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-ChangeLogEx, Get-NewOfficalPackage, Update-PsVersionInCode
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode
