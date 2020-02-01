@@ -843,7 +843,7 @@ function Get-PSOptions {
         $DefaultToNew
     )
 
-    if ($null -eq $script:Options -and $DefaultToNew.IsPresent)
+    if (!$script:Options -and $DefaultToNew.IsPresent)
     {
         return New-PSOptions
     }
