@@ -620,21 +620,21 @@ namespace System.Management.Automation.Internal
 
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
-            foreach(X509Extension extension in c.Extensions)
+            foreach (X509Extension extension in c.Extensions)
             {
                 X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
                 if (ext != null)
                 {
                     foreach (Oid ekuOid in ext.EnhancedKeyUsages)
                     {
-                        if(ekuOid.Value == oid)
-                        { 
-                            return true; 
+                        if (ekuOid.Value == oid)
+                        {
+                            return true;
                         }
                     }
                     break;
-                }  
-            } 
+                }
+            }
             return false;
         }
 
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
                 {
                     return;
                 }
-           }
+            }
 
             // Generate an error if no cert was found (and this is an encryption attempt).
             // If it is only decryption, then the system will always look in the 'My' store anyways, so
@@ -1274,23 +1274,20 @@ namespace System.Management.Automation
                         }
                     }
 
-                    foreach(X509Certificate2 c in storeCerts)
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, false));
+                    
+                    if (certificatesToProcess.Count == 0)
                     {
-                        if(c.Thumbprint == _identifier) 
+                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier, false));
+                        foreach (X509Certificate2 c in storeCerts)
                         {
-                             certificatesToProcess.Add(c);
-                             break; 
-                        }
-                        if(subjectNamePattern.IsMatch(c.Subject))
-                        {
-                            certificatesToProcess.Add(c);
+                            if (subjectNamePattern.IsMatch(c.Subject))
+                            {
+                                certificatesToProcess.Add(c);
+                            }
                         }
                     }
 
-                    // Find is case insensitive
-                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier.Trim(), false));
-                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, _identifier.Trim(), false));
-                    //certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier.Trim(), false));
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
                 }
 
