@@ -1549,7 +1549,7 @@ namespace System.Management.Automation
                             _context.CommandDiscovery.GetLookupDirectoryPaths(),
                             _context,
                             ConstructSearchPatternsFromName(_commandName, commandDiscovery: true),
-                            useFuzzyMatch : false);
+                            useFuzzyMatch: false);
                 }
                 else if (_canDoPathLookupResult == CanDoPathLookupResult.PathIsRooted)
                 {
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation
                                 directoryCollection,
                                 _context,
                                 ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
-                                useFuzzyMatch : false);
+                                useFuzzyMatch: false);
                     }
                     else
                     {
@@ -1613,7 +1613,7 @@ namespace System.Management.Automation
                                     directoryCollection,
                                     _context,
                                     ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
-                                    useFuzzyMatch : false);
+                                    useFuzzyMatch: false);
                         }
                         else
                         {

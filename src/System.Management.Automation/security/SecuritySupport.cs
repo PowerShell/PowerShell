@@ -900,8 +900,7 @@ namespace System.Management.Automation.Internal
 
                 if (newfilter.Contains("=") || newfilter.Contains("&"))
                 {
-                    throw Marshal.GetExceptionForHR(
-                                    Security.NativeMethods.E_INVALID_DATA);
+                    Marshal.ThrowExceptionForHR(Security.NativeMethods.E_INVALID_DATA);
                 }
 
                 newfilter = name + "=" + newfilter;

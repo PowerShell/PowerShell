@@ -280,8 +280,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
-        internal static readonly MethodInfo LanguagePrimitives_IsNullLike =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNullLike), StaticPublicFlags);
+        internal static readonly MethodInfo LanguagePrimitives_IsNull =
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNull), StaticFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var getExpr = av.GetValue(this, exprs, temps);
 
-            if(et == ExpressionType.Coalesce)
+            if (et == ExpressionType.Coalesce)
             {
                 exprs.Add(av.SetValue(this, Coalesce(getExpr, right)));
             }
@@ -982,7 +982,7 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if(leftType == typeof(DBNull) || leftType == typeof(NullString) || leftType == typeof(AutomationNull))
+            else if (leftType == typeof(AutomationNull))
             {
                 return right;
             }
@@ -992,7 +992,7 @@ namespace System.Management.Automation.Language
                 Expression rhs = right.Cast(typeof(object));
 
                 return Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, lhs),
+                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhs),
                     rhs,
                     lhs);
             }
@@ -3307,7 +3307,7 @@ namespace System.Management.Automation.Language
                     // e.g. ("Hi"), vs (Test-Path ./here.txt)
                     return ShouldSetExecutionStatusToSuccess(parenExpression.Pipeline);
 
-              case SubExpressionAst subExpressionAst:
+                case SubExpressionAst subExpressionAst:
                     // Subexpressions generally set $? since they encapsulate a statement block
                     // But $() requires an explicit setting
                     return subExpressionAst.SubExpression.Statements.Count == 0;
@@ -6547,7 +6547,7 @@ namespace System.Management.Automation.Language
         private static Expression GetNullConditionalWrappedExpression(Expression targetExpr, Expression memberAccessExpression)
         {
             return Expression.Condition(
-                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNullLike, targetExpr.Cast(typeof(object))),
+                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, targetExpr.Cast(typeof(object))),
                 ExpressionCache.NullConstant,
                 memberAccessExpression);
         }

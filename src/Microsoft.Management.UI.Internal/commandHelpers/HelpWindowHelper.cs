@@ -30,13 +30,13 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 ownerWindow.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        (_) =>
                         {
                             HelpWindow helpWindow = new HelpWindow(helpObj);
                             helpWindow.Owner = ownerWindow;
                             helpWindow.Show();
 
-                            helpWindow.Closed += new EventHandler(delegate(object sender, EventArgs e) { ownerWindow.Focus(); });
+                            helpWindow.Closed += new EventHandler((sender, e) => ownerWindow.Focus());
                         }),
                         string.Empty);
                 return;
