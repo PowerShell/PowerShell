@@ -116,7 +116,7 @@ Describe "CmsMessage cmdlets using files" -Tags "CI" {
   }
 
   It "Encrypt/Decrypt with Directory" {
-    "test" | Protect-CmsMessage -to "$tempDir" | Unprotect-CmsMessage -To $tempDir | Should -BeExactly "test"
+    "test" | Protect-CmsMessage -to "$tempDir" | Unprotect-CmsMessage -To "$tempDir" | Should -BeExactly "test"
   }
 
   It "Decrypt with multiple files" {
