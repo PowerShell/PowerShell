@@ -137,10 +137,10 @@ function New-CommitNode
 function Get-ChangeLog
 {
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [string]$LastReleaseTag,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [string]$ThisReleaseTag,
 
         [Parameter(Mandatory)]
@@ -333,9 +333,18 @@ function Get-ChangeLog
 
     # Output the changelog
 
-    $thisRelease = $ThisReleaseTag.TrimStart('v')
+    $base = $LastReleaseTag
 
-    Write-Output "## [${thisRelease}] - $(Get-Date -Format yyyy-MM-dd)`n"
+    if ($PSBoundParameters.ContainsKey('ThisReleaseTag')) {
+        $head = $ThisReleaseTag
+        $version = $ThisReleaseTag.TrimStart('v')
+    }
+    else {
+        $head = $(git rev-parse HEAD)
+        $version = 'Unreleased'
+    }
+
+    Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
 
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
@@ -349,7 +358,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
-    Write-Output "[${thisRelease}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${base}...${head}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle) {
