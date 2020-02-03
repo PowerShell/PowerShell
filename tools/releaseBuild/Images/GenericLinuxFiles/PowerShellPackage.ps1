@@ -48,7 +48,7 @@ function BuildPackages {
 
         Start-PSBootstrap -Package -NoSudo
 
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true }
+        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
 
         if ($FxDependent.IsPresent) {
             $projectAssetsZipName = 'linuxFxDependantProjectAssetssymbols.zip'
