@@ -4306,8 +4306,12 @@ param(
             }
         }
 
-        # If the pager is an application, format the output width before sending to the app.
-        if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
+        $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
+        if ($pagerCommandInfo -eq $null) {
+            $help
+        }
+        elseif ($pagerCommandInfo.CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
