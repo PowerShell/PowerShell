@@ -54,7 +54,7 @@ param(
     [switch] $Preview
 )
 
-Set-StrictMode -Version latest
+Set-StrictMode -Version 3.0
 $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux

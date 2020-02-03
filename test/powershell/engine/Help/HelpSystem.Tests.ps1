@@ -59,7 +59,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
-            Set-StrictMode -Version Latest
+            Set-StrictMode -Version 3.0
             Help
         }
         # the help function renders the help content as text so just verify that there is content

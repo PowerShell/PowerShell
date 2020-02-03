@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Set-StrictMode -Version 3.0
+
 $ErrorActionPreference = 'continue'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -479,7 +481,7 @@ function Invoke-CIFinish
             {
                 $null = $artifacts.Add($package)
             }
-            elseif($package -is [pscustomobject] -and $package.msi)
+            elseif($package -is [pscustomobject] -and $package.psobject.Properties['msi'])
             {
                 $null = $artifacts.Add($package.msi)
                 $null = $artifacts.Add($package.wixpdb)
@@ -497,7 +499,7 @@ function Invoke-CIFinish
         $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
 
         # fail the CI job if the tests failed, or nothing passed
-        if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
+        if(-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0)
         {
             throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
         }
@@ -579,6 +581,10 @@ function Invoke-LinuxTestsCore
     $testResultsNoSudo = "$PWD/TestResultsNoSudo.xml"
     $testResultsSudo = "$PWD/TestResultsSudo.xml"
     $testExcludeTag = $ExcludeTag + 'RequireSudoOnUnix'
+    $pesterPassThruNoSudoObject = $null
+    $pesterPassThruSudoObject = $null
+    $noSudoResultsWithExpFeatures = $null
+    $sudoResultsWithExpFeatures = $null
 
     $noSudoPesterParam = @{
         'BinDir'     = $output

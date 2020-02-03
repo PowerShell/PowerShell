@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 <#
 os_log notes:
@@ -187,7 +187,7 @@ class PSLogItem
 
     hidden static [int] GetMonth([string] $value)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         for ($x = 0; $x -lt [PSLogItem]::monthNames.Count; $x++)
         {
             [string] $monthName = [PSLogItem]::monthNames[$x]
@@ -201,7 +201,7 @@ class PSLogItem
 
     static [PSLogItem] ConvertSysLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         MMM dd HH:MM:SS machinename id[PID]: (commitid:TID:CHANNEL) [EventName] Message
         Expecting split to return
@@ -339,7 +339,7 @@ class PSLogItem
 
     static [object] ConvertOsLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         Expecting split to return
         0: date                         2018-02-07
