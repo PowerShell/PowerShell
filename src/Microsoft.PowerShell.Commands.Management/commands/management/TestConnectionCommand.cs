@@ -4,9 +4,7 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
@@ -56,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Fields
 
-        private static byte[]? s_DefaultSendBuffer;
+        private static byte[]? s_defaultSendBuffer;
 
         private bool _disposed;
 
@@ -177,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         /// With this switch, standard ping and -Traceroute returns only true / false, and -MtuSize returns an integer.
         /// </summary>
         [Parameter]
-        public SwitchParameter Quiet;
+        public SwitchParameter Quiet { get; set; }
 
         /// <summary>
         /// Gets or sets the timeout value for an individual ping in seconds.
@@ -256,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
                         ProcessPing(targetName);
                         break;
                     case MtuSizeDetectParameterSet:
-                        ProcessMTUSize(targetName);
+                        ProcessMtuSize(targetName);
                         break;
                     case TraceRouteParameterSet:
                         ProcessTraceroute(targetName);
@@ -281,7 +279,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
+            IPAddress? targetAddress = ResolveNameOrAddress(targetNameOrAddress, out _);
+            if (targetAddress == null)
             {
                 return;
             }
@@ -291,7 +290,6 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
@@ -332,7 +330,8 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            IPAddress? targetAddress = ResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName);
+            if (targetAddress == null)
             {
                 return;
             }
@@ -380,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
                 string routerName = hopAddressString;
                 try
                 {
-                    if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
+                    if (ResolveNameOrAddress(hopAddressString, out routerName) != null)
                     {
                         routerName = hopAddressString;
                     }
@@ -465,75 +464,77 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion TracerouteTest
 
-        #region MTUSizeTest
-        private void ProcessMTUSize(string targetNameOrAddress)
+        #region MtuSizeTest
+        private void ProcessMtuSize(string targetNameOrAddress)
         {
-            PingReply? reply, replyResult = null;
-            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            IPAddress? targetAddress = ResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName);
+            if (targetAddress == null)
             {
                 return;
             }
 
             // Caution! Algorithm is sensitive to changing boundary values.
-            int HighMTUSize = 10000;
-            int CurrentMTUSize = 1473;
-            int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
+            int highMtuSize = 10000;
+            int currentMtuSize = 1473;
+            int lowMtuSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
             int timeout = TimeoutSeconds * 1000;
 
+            PingReply? replyResult = null;
             try
             {
+                PingReply reply;
                 PingOptions pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
 
-                while (LowMTUSize < (HighMTUSize - 1))
+                while (lowMtuSize < (highMtuSize - 1))
                 {
-                    byte[] buffer = GetSendBuffer(CurrentMTUSize);
+                    byte[] buffer = GetSendBuffer(currentMtuSize);
 
                     WriteDebug(StringUtil.Format(
-                        "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
-                        LowMTUSize,
-                        CurrentMTUSize,
-                        HighMTUSize));
+                        "lowMtuSize: {0}, currentMtuSize: {1}, highMtuSize: {2}",
+                        lowMtuSize,
+                        currentMtuSize,
+                        highMtuSize));
 
                     reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
-                    if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
+                    switch (reply.Status)
                     {
-                        HighMTUSize = CurrentMTUSize;
-                        retry = 1;
-                    }
-                    else if (reply.Status == IPStatus.Success)
-                    {
-                        LowMTUSize = CurrentMTUSize;
-                        replyResult = reply;
-                        retry = 1;
-                    }
-                    else
-                    {
-                        // If the host didn't reply, try again up to the 'Count' value.
-                        if (retry >= Count)
-                        {
-                            string message = StringUtil.Format(
-                                TestConnectionResources.NoPingResult,
-                                targetAddress,
-                                reply.Status.ToString());
-                            Exception pingException = new PingException(message);
-                            ErrorRecord errorRecord = new ErrorRecord(
-                                pingException,
-                                TestConnectionExceptionId,
-                                ErrorCategory.ResourceUnavailable,
-                                targetAddress);
-                            WriteError(errorRecord);
-                            return;
-                        }
-                        else
-                        {
-                            retry++;
-                            continue;
-                        }
+                        case IPStatus.TimedOut:
+                        case IPStatus.PacketTooBig:
+                            highMtuSize = currentMtuSize;
+                            retry = 1;
+                            break;
+                        case IPStatus.Success:
+                            lowMtuSize = currentMtuSize;
+                            replyResult = reply;
+                            retry = 1;
+                            break;
+                        default:
+                            // If the host didn't reply, try again up to the 'Count' value.
+                            if (retry >= Count)
+                            {
+                                string message = StringUtil.Format(
+                                    TestConnectionResources.NoPingResult,
+                                    targetAddress,
+                                    reply.Status.ToString());
+                                Exception pingException = new PingException(message);
+                                ErrorRecord errorRecord = new ErrorRecord(
+                                    pingException,
+                                    TestConnectionExceptionId,
+                                    ErrorCategory.ResourceUnavailable,
+                                    targetAddress);
+                                WriteError(errorRecord);
+                                return;
+                            }
+                            else
+                            {
+                                retry++;
+                                continue;
+                            }
                     }
 
-                    CurrentMTUSize = (LowMTUSize + HighMTUSize) / 2;
+                    currentMtuSize = (lowMtuSize + highMtuSize) / 2;
 
                     // Prevent DoS attack.
                     Thread.Sleep(100);
@@ -541,38 +542,41 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PingException ex)
             {
-                string message = StringUtil.Format(TestConnectionResources.NoPingResult, targetAddress, ex.Message);
-                Exception pingException = new PingException(message, ex.InnerException);
-                ErrorRecord errorRecord = new ErrorRecord(
-                    pingException,
-                    TestConnectionExceptionId,
-                    ErrorCategory.ResourceUnavailable,
-                    targetAddress);
-                WriteError(errorRecord);
+                WriteNoPingResultError(targetAddress.ToString(), ex.Message, ex.InnerException);
                 return;
             }
 
             if (Quiet.IsPresent)
             {
-                WriteObject(CurrentMTUSize);
+                //TODO: Account for case where replyResult == null
+                WriteObject(currentMtuSize);
             }
             else
             {
-                WriteObject(new PingMtuStatus(
-                    Source,
-                    resolvedTargetName,
-                    replyResult ?? throw new ArgumentNullException(nameof(replyResult)),
-                    CurrentMTUSize));
+                if (replyResult == null)
+                {
+                    //TODO: Write an ErrorRecord instead of throwing
+                    throw new PingException(nameof(replyResult));
+                }
+                else
+                {
+                    WriteObject(new PingMtuStatus(
+                        Source,
+                        resolvedTargetName,
+                        replyResult,
+                        currentMtuSize));
+                }
             }
         }
 
-        #endregion MTUSizeTest
+        #endregion MtuSizeTest
 
         #region PingTest
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            IPAddress? targetAddress = ResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName);
+            if (targetAddress == null)
             {
                 return;
             }
@@ -593,14 +597,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (PingException ex)
                 {
-                    string message = StringUtil.Format(TestConnectionResources.NoPingResult, resolvedTargetName, ex.Message);
-                    Exception pingException = new PingException(message, ex.InnerException);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
+                    WriteNoPingResultError(resolvedTargetName, ex.Message, ex.InnerException);
 
                     quietResult = false;
                     continue;
@@ -637,32 +634,20 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool TryResolveNameOrAddress(
+        private IPAddress? ResolveNameOrAddress(
             string targetNameOrAddress,
-            out string resolvedTargetName,
-            [NotNullWhen(true)]
-            out IPAddress? targetAddress)
+            out string resolvedTargetName)
         {
             resolvedTargetName = targetNameOrAddress;
 
             IPHostEntry hostEntry;
-            if (IPAddress.TryParse(targetNameOrAddress, out targetAddress))
+            if (IPAddress.TryParse(targetNameOrAddress, out IPAddress? targetAddress))
             {
                 if ((IPv4 && targetAddress.AddressFamily != AddressFamily.InterNetwork)
                     || (IPv6 && targetAddress.AddressFamily != AddressFamily.InterNetworkV6))
                 {
-                    string message = StringUtil.Format(
-                        TestConnectionResources.NoPingResult,
-                        resolvedTargetName,
-                        TestConnectionResources.TargetAddressAbsent);
-                    Exception pingException = new PingException(message, null);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
-                    return false;
+                    WriteNoPingResultError(resolvedTargetName, TestConnectionResources.TargetAddressAbsent);
+                    return null;
                 }
 
                 if (ResolveDestination)
@@ -689,18 +674,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    string message = StringUtil.Format(
-                        TestConnectionResources.NoPingResult,
-                        resolvedTargetName,
-                        TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new PingException(message, ex);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
-                    return false;
+                    WriteNoPingResultError(resolvedTargetName, TestConnectionResources.CannotResolveTargetName, ex);
+                    return null;
                 }
 
                 if (IPv6 || IPv4)
@@ -709,18 +684,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (targetAddress == null)
                     {
-                        string message = StringUtil.Format(
-                            TestConnectionResources.NoPingResult,
-                            resolvedTargetName,
-                            TestConnectionResources.TargetAddressAbsent);
-                        Exception pingException = new PingException(message, null);
-                        ErrorRecord errorRecord = new ErrorRecord(
-                            pingException,
-                            TestConnectionExceptionId,
-                            ErrorCategory.ResourceUnavailable,
-                            resolvedTargetName);
-                        WriteError(errorRecord);
-                        return false;
+                        WriteNoPingResultError(resolvedTargetName, TestConnectionResources.TargetAddressAbsent);
+                        return null;
                     }
                 }
                 else
@@ -729,14 +694,29 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return true;
+            return targetAddress;
+        }
+
+        private void WriteNoPingResultError(string target, string status, Exception? innerException = null)
+        {
+            WriteError(
+                new ErrorRecord(
+                    new PingException(
+                        StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            target,
+                            status),
+                        innerException),
+                    TestConnectionExceptionId,
+                    ErrorCategory.ResourceUnavailable,
+                    target));
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)
         {
             AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
 
-            foreach (var address in hostEntry.AddressList)
+            foreach (IPAddress address in hostEntry.AddressList)
             {
                 if (address.AddressFamily == addressFamily)
                 {
@@ -749,23 +729,23 @@ namespace Microsoft.PowerShell.Commands
 
         // Users most often use the default buffer size so we cache the buffer.
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
-        private byte[] GetSendBuffer(int bufferSize)
+        private static byte[] GetSendBuffer(int bufferSize)
         {
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
+            if (bufferSize == DefaultSendBufferSize && s_defaultSendBuffer != null)
             {
-                return s_DefaultSendBuffer;
+                return s_defaultSendBuffer;
             }
 
             byte[] sendBuffer = new byte[bufferSize];
 
             for (int i = 0; i < bufferSize; i++)
             {
-                sendBuffer[i] = (byte)((int)'a' + i % 23);
+                sendBuffer[i] = (byte)((int)'a' + (i % 23));
             }
 
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)
+            if (bufferSize == DefaultSendBufferSize)
             {
-                s_DefaultSendBuffer = sendBuffer;
+                s_defaultSendBuffer = sendBuffer;
             }
 
             return sendBuffer;
