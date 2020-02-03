@@ -1056,8 +1056,8 @@ namespace System.Management.Automation
                     }
 
                     // Only mount drives for the current provider
-
-                    if (!provider.NameEquals(newDrive.Provider.FullName))
+                    // Use GetFullName() to avoid caching full name at init time.
+                    if (!provider.NameEquals(newDrive.Provider.GetFullName()))
                     {
                         continue;
                     }

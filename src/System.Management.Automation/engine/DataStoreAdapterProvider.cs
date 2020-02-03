@@ -50,35 +50,37 @@ namespace System.Management.Automation
         {
             get
             {
-                string GetFullName(string name, string psSnapInName, string moduleName)
-                {
-                    string result = name;
-                    if (!string.IsNullOrEmpty(psSnapInName))
-                    {
-                        result =
-                            string.Format(
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                "{0}\\{1}",
-                                psSnapInName,
-                                name);
-                    }
-
-                    // After converting core snapins to load as modules, the providers will have Module property populated
-                    else if (!string.IsNullOrEmpty(moduleName))
-                    {
-                        result =
-                            string.Format(
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                "{0}\\{1}",
-                                moduleName,
-                                name);
-                    }
-
-                    return result;
-                }
-
-                return _fullName ?? (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
+                return _fullName ?? (_fullName = GetFullName());
             }
+        }
+
+        internal string GetFullName() => EvaluateFullName(Name, PSSnapInName, ModuleName);
+
+        private string EvaluateFullName(string name, string psSnapInName, string moduleName)
+        {
+            string result = name;
+            if (!string.IsNullOrEmpty(psSnapInName))
+            {
+                result =
+                    string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "{0}\\{1}",
+                        psSnapInName,
+                        name);
+            }
+
+            // After converting core snapins to load as modules, the providers will have Module property populated
+            else if (!string.IsNullOrEmpty(moduleName))
+            {
+                result =
+                    string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "{0}\\{1}",
+                        moduleName,
+                        name);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -411,10 +413,10 @@ namespace System.Management.Automation
 
             // Create the hidden drive. The name doesn't really
             // matter since we are not adding this drive to a scope.
-
+            // Use GetFullName() to avoid caching full name at init time.
             _hiddenDrive =
                 new PSDriveInfo(
-                    this.FullName,
+                    GetFullName(),
                     this,
                     string.Empty,
                     string.Empty,
