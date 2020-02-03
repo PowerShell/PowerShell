@@ -2505,7 +2505,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!exists)
                     {
-                        WriteError(new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.ItemNotFound), "ItemNotFound", ErrorCategory.ObjectNotFound, value));
+                        string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, strTargetPath);
+                        WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemNotFound", ErrorCategory.ObjectNotFound, strTargetPath));
                         return;
                     }
 
