@@ -1252,10 +1252,8 @@ namespace System.Management.Automation
 
         private void ResolveFromStoreById(ResolutionPurpose purpose, out ErrorRecord error)
         {
-
             error = null;
-            WildcardPattern subjectNamePattern = WildcardPattern.Get(_identifier, WildcardOptions.IgnoreCase);
-
+            
             try
             {
                 X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
@@ -1275,10 +1273,10 @@ namespace System.Management.Automation
                     }
 
                     certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, false));
-                    
+
                     if (certificatesToProcess.Count == 0)
                     {   // FindBySubjectName is case insensitive and acts like "contains"
-                        String subjectName = _identifier.Trim().ToUpper().TrimStart('C','N','=');
+                        String subjectName = _identifier.Trim().ToUpperInvariant().TrimStart('C', 'N', '=');
                         certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, subjectName, false));
                     }
 
