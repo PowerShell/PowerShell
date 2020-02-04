@@ -146,8 +146,8 @@ Describe "CmsMessage cmdlets using cert Store" -Tags "CI" {
       $store.Add($cert2)
     }
     else {
-      $cert1 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc1.Thumbprint, $false)
-      $cert2 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc2.Thumbprint, $false)
+      $cert1 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc1.Thumbprint, $false)[0]
+      $cert2 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc2.Thumbprint, $false)[0]
     }
   }
 
