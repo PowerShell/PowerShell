@@ -620,10 +620,9 @@ namespace System.Management.Automation.Internal
 
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
-            foreach (X509Extension extension in c.Extensions)
+            foreach (var extension in c.Extensions)
             {
-                X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                if (ext != null)
+                if (extension is X509EnhancedKeyUsageExtension ext)
                 {
                     foreach (Oid ekuOid in ext.EnhancedKeyUsages)
                     {
@@ -1245,11 +1244,11 @@ namespace System.Management.Automation
         private void ResolveFromStoreById(ResolutionPurpose purpose, out ErrorRecord error)
         {
             error = null;
-                        
+            WildcardPattern subjectNamePattern = WildcardPattern.Get(_identifier, WildcardOptions.IgnoreCase);
+
             try
             {
                 var certificatesToProcess = new X509Certificate2Collection();
-                bool validOnly = false;
 
                 using (var storeCU = new X509Store("my", StoreLocation.CurrentUser))
                 {
@@ -1265,13 +1264,17 @@ namespace System.Management.Automation
                         }
                     }
 
-                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, validOnly));
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, validOnly: false));
 
                     if (certificatesToProcess.Count == 0)
-                    {  
-                        // FindBySubjectName is case insensitive and acts like "contains"
-                        string subjectName = _identifier.Trim().ToUpperInvariant().TrimStart('C', 'N', '=');
-                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, subjectName, validOnly));
+                    {
+                        foreach (var cert in storeCerts)
+                        {
+                            if (subjectNamePattern.IsMatch(cert.Subject))
+                            {
+                                certificatesToProcess.Add(cert);
+                            }
+                        }
                     }
 
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
@@ -1338,14 +1341,13 @@ namespace System.Management.Automation
                     // may be encrypted to the wrong person on accident.
                     if (Certificates.Count > 0)
                     {
-                        string parameter = "To";
                         error = new ErrorRecord(
                             new ArgumentException(
                                 string.Format(
                                     CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.IdentifierMustReferenceSingleCertificate,
                                     _identifier,
-                                    parameter)),
+                                    arg1: "To")),
                             "IdentifierMustReferenceSingleCertificate",
                             ErrorCategory.LimitsExceeded,
                             certificatesToProcess);
