@@ -1413,14 +1413,16 @@ function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
-        [String]$Version
+        [String]$Version,
+
+        [switch]$LTS
     )
 
     $IsPreview = Test-IsPreview -Version $Version
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launcher application.
-    $suffix = if ($IsPreview) { "-preview" }
+    $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
     $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
     # Create folder structure for launcher application.
@@ -1447,7 +1449,7 @@ function New-MacOSLauncher
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
-    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
+    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } elseif ($LTS) { "/usr/local/bin/pwsh-lts"} else { "/usr/local/bin/pwsh" }
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
     $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
     $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
