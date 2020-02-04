@@ -14,6 +14,7 @@ function New-CmsRecipient {
   $req = ([CertificateRequest]::new("CN=$Name", ([RSA]::Create(2048)), $hash, $pad))
   if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
   $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
+  $certBytes = $certTmp.Export([X509ContentType]::Pfx, "tmp")
   [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
   $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
   if ($OutPfxFile) {
