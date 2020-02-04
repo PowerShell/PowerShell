@@ -10,7 +10,6 @@ Function New-GoodCertificate
                 Document Encryption (1.3.6.1.4.1.311.80.1)
             It Cannot be use for SSL/TLS Client Authentication
     #>
-#[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
     $dataEnciphermentCert = "
 MIIKYAIBAzCCCiAGCSqGSIb3DQEHAaCCChEEggoNMIIKCTCCBgoGCSqGSIb3DQEHAaCCBfsEggX3
 MIIF8zCCBe8GCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAgPOFDMBkCffQIC
