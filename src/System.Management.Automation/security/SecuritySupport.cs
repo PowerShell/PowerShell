@@ -595,7 +595,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
-            if (!CertHasPrivatekey(c)) // why not just c.HasPrivateKey?
+            if (!c.HasPrivateKey)
             {
                 return false;
             }
@@ -653,16 +653,6 @@ namespace System.Management.Automation.Internal
                 }
             }
             return false;
-        }
-
-        /// <summary>
-        /// Check if the specified cert has a private key in it.
-        /// </summary>
-        /// <param name="cert">Certificate object.</param>
-        /// <returns>True on success, false otherwise.</returns>
-        internal static bool CertHasPrivatekey(X509Certificate2 cert)
-        {
-            return cert.HasPrivateKey;
         }
 
         /// <summary>
@@ -1084,8 +1074,10 @@ namespace System.Management.Automation
             // Process the certificate if that was supplied exactly
             if (_pendingCertificate != null)
             {
-                ProcessResolvedCertificates(purpose,
-                    new X509Certificate2Collection(_pendingCertificate), out error);
+                ProcessResolvedCertificates(
+                    purpose,
+                    new X509Certificate2Collection(_pendingCertificate),
+                    out error);
                 if ((error != null) || (Certificates.Count != 0))
                 {
                     return;
@@ -1154,7 +1146,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
+            var certificatesToProcess = new X509Certificate2Collection();
             try
             {
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
@@ -1228,7 +1220,7 @@ namespace System.Management.Automation
                     resolvedPaths.Remove(path);
                 }
 
-                X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
+                var certificatesToProcess = new X509Certificate2Collection();
                 foreach (string path in resolvedPaths)
                 {
                     X509Certificate2 certificate = null;
@@ -1253,31 +1245,33 @@ namespace System.Management.Automation
         private void ResolveFromStoreById(ResolutionPurpose purpose, out ErrorRecord error)
         {
             error = null;
-            
+                        
             try
             {
-                X509Certificate2Collection certificatesToProcess = new X509Certificate2Collection();
+                var certificatesToProcess = new X509Certificate2Collection();
+                bool validOnly = false;
 
-                using (X509Store storeCU = new X509Store("my", StoreLocation.CurrentUser))
+                using (var storeCU = new X509Store("my", StoreLocation.CurrentUser))
                 {
                     storeCU.Open(OpenFlags.ReadOnly);
                     X509Certificate2Collection storeCerts = storeCU.Certificates;
 
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        using (X509Store storeLM = new X509Store("my", StoreLocation.LocalMachine))
+                        using (var storeLM = new X509Store("my", StoreLocation.LocalMachine))
                         {
                             storeLM.Open(OpenFlags.ReadOnly);
                             storeCerts.AddRange(storeLM.Certificates);
                         }
                     }
 
-                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, false));
+                    certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, validOnly));
 
                     if (certificatesToProcess.Count == 0)
-                    {   // FindBySubjectName is case insensitive and acts like "contains"
-                        String subjectName = _identifier.Trim().ToUpperInvariant().TrimStart('C', 'N', '=');
-                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, subjectName, false));
+                    {  
+                        // FindBySubjectName is case insensitive and acts like "contains"
+                        string subjectName = _identifier.Trim().ToUpperInvariant().TrimStart('C', 'N', '=');
+                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, subjectName, validOnly));
                     }
 
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
@@ -1344,13 +1338,14 @@ namespace System.Management.Automation
                     // may be encrypted to the wrong person on accident.
                     if (Certificates.Count > 0)
                     {
+                        string parameter = "To";
                         error = new ErrorRecord(
                             new ArgumentException(
                                 string.Format(
                                     CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.IdentifierMustReferenceSingleCertificate,
                                     _identifier,
-                                    "To")),
+                                    parameter)),
                             "IdentifierMustReferenceSingleCertificate",
                             ErrorCategory.LimitsExceeded,
                             certificatesToProcess);

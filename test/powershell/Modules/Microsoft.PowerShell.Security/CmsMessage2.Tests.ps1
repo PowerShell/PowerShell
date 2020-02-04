@@ -1,27 +1,29 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 using namespace System.Security.Cryptography.X509Certificates
 using namespace System.Security.Cryptography
+
 function New-CmsRecipient {
-  [CmdletBinding(SupportsShouldProcess = $true)]
-  [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
-  param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
-  $hash = [HashAlgorithmName]::SHA256
-  $pad = [RSASignaturePadding]::Pkcs1
-  $oids = [OidCollection]::new()
-  $oids.Add("1.3.6.1.4.1.311.80.1") | Out-Null
-  $ext1 = [X509KeyUsageExtension]::new([X509KeyUsageFlags]::DataEncipherment, $false)
-  $ext2 = [X509EnhancedKeyUsageExtension]::new($oids, $false)
-  $req = ([CertificateRequest]::new("CN=$Name", ([RSA]::Create(2048)), $hash, $pad))
-  if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
-  $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
-  $certBytes = $certTmp.Export([X509ContentType]::Pfx, "tmp")
-  [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
-  $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
-  if ($OutPfxFile) {
-    [System.IO.File]::WriteAllBytes($OutPfxFile, $cert.Export([X509ContentType]::Pfx))
-  }
-  return $cert
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
+    param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
+    $hash = [HashAlgorithmName]::SHA256
+    $pad = [RSASignaturePadding]::Pkcs1
+    $oids = [OidCollection]::new()
+    $oids.Add("1.3.6.1.4.1.311.80.1") | Out-Null
+    $ext1 = [X509KeyUsageExtension]::new([X509KeyUsageFlags]::DataEncipherment, $false)
+    $ext2 = [X509EnhancedKeyUsageExtension]::new($oids, $false)
+    $req = ([CertificateRequest]::new("CN=$Name", ([RSA]::Create(2048)), $hash, $pad))
+    if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
+    $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
+    $certBytes = $certTmp.Export([X509ContentType]::Pfx, "tmp")
+    [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
+    $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
+    if ($OutPfxFile) {
+      [System.IO.File]::WriteAllBytes($OutPfxFile, $cert.Export([X509ContentType]::Pfx))
+    }
+    return $cert
 }
 
 Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
@@ -78,13 +80,11 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
   }
 
   It " Encrypt with invalid cert" {
-    $e = try { "test" | Protect-CmsMessage -to $ic } catch { $_ }
-    $e.FullyQualifiedErrorId | Should -BeLike '*CertificateCannotBeUsedForEncryption*'
+    {"test" | Protect-CmsMessage -to $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
   }
 
   It "Encrypt with valid and invalid" {
-    $e = try { "test" | Protect-CmsMessage -to $vc1, $vc2, $ic } catch { $_ }
-    $e.FullyQualifiedErrorId | Should -BeLike '*CertificateCannotBeUsedForEncryption*'
+    { "test" | Protect-CmsMessage -to $vc1, $vc2, $ic  -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
   }
 
   It "Encrypt/Decrypt from file" {
