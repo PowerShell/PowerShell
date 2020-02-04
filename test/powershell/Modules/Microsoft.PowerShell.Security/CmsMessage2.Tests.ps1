@@ -1,8 +1,10 @@
-﻿using namespace System.Security.Cryptography.X509Certificates
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+using namespace System.Security.Cryptography.X509Certificates
 using namespace System.Security.Cryptography
 function New-CmsRecipient {
   [CmdletBinding(SupportsShouldProcess = $true)]
-  param([String]$Name, [Switch]$Invalid)
+  param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
   $hash = [HashAlgorithmName]::SHA256
   $pad = [RSASignaturePadding]::Pkcs1
   $oids = [OidCollection]::new()
@@ -11,7 +13,13 @@ function New-CmsRecipient {
   $ext2 = [X509EnhancedKeyUsageExtension]::new($oids, $false)
   $req = ([CertificateRequest]::new("CN=$Name", ([RSA]::Create(2048)), $hash, $pad))
   if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
-  return $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
+  $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
+  [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
+  $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
+  if ($OutPfxFile) {
+    [System.IO.File]::WriteAllBytes($OutPfxFile, $cert.Export([X509ContentType]::Pfx))
+  }
+  return $cert
 }
 
 Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
@@ -120,20 +128,26 @@ Describe "CmsMessage cmdlets using files" -Tags "CI" {
   }
 
   It "Decrypt with multiple files" {
-     "test" | Protect-CmsMessage -to $vc1 | Unprotect-CmsMessage -to "$vc1File", "$vc2File" | Should -BeExactly "test"
+    "test" | Protect-CmsMessage -to $vc1 | Unprotect-CmsMessage -to "$vc1File", "$vc2File" | Should -BeExactly "test"
   }
 }
 
 Describe "CmsMessage cmdlets using cert Store" -Tags "CI" {
 
   BeforeAll -Scriptblock {
-    Write-Verbose  "adding temp certs to CurrentUser\My Store"
+    Write-Verbose  "adding temp certs to CurrentUser\My Store (on Mac those were added while generating vc1/vc2)"
     $store = [X509Store]::new("My", [StoreLocation]::CurrentUser)
     $store.Open("ReadWrite")
-    $cert1 = [X509Certificate2]::new("$vc1File")
-    $cert2 = [X509Certificate2]::new("$vc2File")
-    $store.Add($cert1)
-    $store.Add($cert2)
+    if (!$IsMacOS) {
+      $cert1 = [X509Certificate2]::new("$vc1File")
+      $cert2 = [X509Certificate2]::new("$vc2File")
+      $store.Add($cert1)
+      $store.Add($cert2)
+    }
+    else {
+      $cert1 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc1.Thumbprint, $false)
+      $cert2 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc2.Thumbprint, $false)
+    }
   }
 
   It "Encrypt/Decrypt using subject" {
@@ -154,6 +168,9 @@ Describe "CmsMessage cmdlets using cert Store" -Tags "CI" {
     Write-Verbose  "Removing temp files and certs"
     $store.Remove($cert1)
     $store.Remove($cert2)
+    if($IsMacOS){
+      $store.Remove($ic)
+    }
     $store.Dispose()
     Remove-Item $vc1File, $vc2File, $tmpfile
     Remove-Item -Recurse $tempDir -Force
