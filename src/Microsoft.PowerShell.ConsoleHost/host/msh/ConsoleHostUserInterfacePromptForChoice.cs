@@ -199,10 +199,7 @@ namespace Microsoft.PowerShell
                             defaultChoice);
                     }
 
-                    if (!defaultChoiceKeys.ContainsKey(defaultChoice))
-                    {
-                        defaultChoiceKeys.Add(defaultChoice, true);
-                    }
+                    defaultChoiceKeys.TryAdd(defaultChoice, true);
                 }
             }
 
