@@ -270,10 +270,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // We access those fields directly. The struct is here for reference only.
         //
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        struct PDH_COUNTER_INFO {
-            [FieldOffset(0)]  public UInt32 dwLength;
-            [FieldOffset(4)]  public UInt32 dwType;
-            [FieldOffset(8)]  public UInt32 CVersion;
+        struct PDH_COUNTER_INFO
+        {
+            [FieldOffset(0)] public UInt32 dwLength;
+            [FieldOffset(4)] public UInt32 dwType;
+            [FieldOffset(8)] public UInt32 CVersion;
             [FieldOffset(12)] public UInt32 CStatus;
             [FieldOffset(16)] public UInt32 lScale;
             [FieldOffset(20)] public UInt32 lDefaultScale;
@@ -289,7 +290,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             [FieldOffset(88)] public string szCounterName;
 
             [FieldOffset(96)] public string szExplainText;
-            [FieldOffset(104)]public IntPtr DataBuffer;
+            [FieldOffset(104)] public IntPtr DataBuffer;
         }
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]

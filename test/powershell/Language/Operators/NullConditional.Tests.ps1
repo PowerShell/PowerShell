@@ -62,7 +62,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
         It 'Lhs is DBNull' {
             $x = [System.DBNull]::Value
             $x ??= 200
-            $x | Should -Be 200
+            $x | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is AutomationNull' {
@@ -74,7 +74,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
         It 'Lhs is NullString' {
             $x = [NullString]::Value
             $x ??= 200
-            $x | Should -Be 200
+            $x | Should -Be ([NullString]::Value)
         }
 
         It 'Lhs is empty string' {
@@ -146,7 +146,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
 
         It 'Lhs is DBNull' {
             $x = [System.DBNull]::Value
-            $x ?? 200 | Should -Be 200
+            $x ?? 200 | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is AutomationNull' {
@@ -156,21 +156,17 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
 
         It 'Lhs is NullString' {
             $x = [NullString]::Value
-            $x ?? 200 | Should -Be 200
+            $x ?? 200 | Should -Be ([NullString]::Value)
         }
 
         It 'Rhs is a get variable expression' {
-            $x = [System.DBNull]::Value
+            $x = $null
             $y = 2
             $x ?? $y | Should -Be 2
         }
 
         It 'Lhs is a constant' {
-            [System.DBNull]::Value ?? 2 | Should -Be 2
-        }
-
-        It 'Both are null constants' {
-            [System.DBNull]::Value ?? [NullString]::Value | Should -Be ([NullString]::Value)
+            [System.DBNull]::Value ?? 2 | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is $?' {

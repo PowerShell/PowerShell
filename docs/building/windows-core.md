@@ -29,7 +29,7 @@ that you must have PowerShell Core 6 Beta.9 (or newer) installed to successfully
 ### .NET CLI
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to build PowerShell.
-The version we are currently using is `3.0.0`.
+The version we are currently using is mentioned in [`global.json`](../../global.json#L3) at the root of this repository.
 The `Start-PSBootstrap` function will automatically install it and add it to your path:
 
 ```powershell

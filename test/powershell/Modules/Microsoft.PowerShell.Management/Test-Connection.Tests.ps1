@@ -64,11 +64,16 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if (!$IsWindows) {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be -131073
-            } else {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+            if ((Get-PlatformInfo) -match "raspbian") {
+                $code = 11
             }
+            elseif (!$IsWindows) {
+                $code = -131073
+            }
+            else {
+                $code = 11001
+            }
+            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
         # In VSTS, address is 0.0.0.0
@@ -262,7 +267,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Quiet works" {
-            $result = Test-Connection $hostName -TraceRoute -Quiet
+            $result = Test-Connection localhost -TraceRoute -Quiet
 
             $result | Should -BeTrue
         }
