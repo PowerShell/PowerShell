@@ -242,9 +242,9 @@ function Start-PSPackage {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
                     "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg", "tar"
+                    "rpm", "nupkg"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg", "tar"
+                    "rpm", "nupkg"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
