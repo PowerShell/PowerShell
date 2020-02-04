@@ -1277,15 +1277,9 @@ namespace System.Management.Automation
                     certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindByThumbprint, _identifier, false));
                     
                     if (certificatesToProcess.Count == 0)
-                    {
-                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectDistinguishedName, _identifier, false));
-                        foreach (X509Certificate2 c in storeCerts)
-                        {
-                            if (subjectNamePattern.IsMatch(c.Subject))
-                            {
-                                certificatesToProcess.Add(c);
-                            }
-                        }
+                    {   // FindBySubjectName is case insensitive and acts like "contains"
+                        String subjectName = _identifier.Trim().ToUpper().TrimStart('C','N','=');
+                        certificatesToProcess.AddRange(storeCerts.Find(X509FindType.FindBySubjectName, subjectName, false));
                     }
 
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
