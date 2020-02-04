@@ -1882,7 +1882,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
         {
-            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec can be specified");
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
 
             var exactModuleName = string.Empty;
             bool match = false;
