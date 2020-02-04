@@ -826,11 +826,7 @@ function New-UnixPackage {
         }
 
         # Destination for symlink to powershell executable
-        $Link = if ($Environment.IsLinux) {
-            if ($IsPreview) { "/usr/bin/pwsh-preview" } elseif ($LTS) { "/usr/bin/pwsh-lts" } else { "/usr/bin/pwsh" }
-        } elseif ($Environment.IsMacOS) {
-            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } elseif ($LTS) { "/usr/local/bin/pwsh-lts" } else { "/usr/local/bin/pwsh" }
-        }
+        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
         $linkSource = "/tmp/pwsh"
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
@@ -1449,7 +1445,7 @@ function New-MacOSLauncher
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
-    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } elseif ($LTS) { "/usr/local/bin/pwsh-lts"} else { "/usr/local/bin/pwsh" }
+    $executablepath = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
     $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
     $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
@@ -1464,6 +1460,33 @@ function New-MacOSLauncher
     $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
 
     return $appsfolder
+}
+
+function Get-PwshExecutablePath
+{
+    param(
+        [switch] $IsPreview,
+        [switch] $IsLTS
+    )
+
+    if ($IsPreview -and $IsLTS)
+    {
+        throw "Cannot be LTS and Preview"
+    }
+
+    $executableName = if ($IsPreview) {
+        "pwsh-preview"
+    } elseif ($LTS) {
+        "pwsh-lts"
+    } else {
+        "pwsh"
+    }
+
+    if ($Environment.IsLinux) {
+        "/usr/bin/$executableName"
+    } elseif ($Environment.IsMacOS) {
+        "/usr/local/bin/$executableName"
+    }
 }
 
 function Clear-MacOSLauncher
