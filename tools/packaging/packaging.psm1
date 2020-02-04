@@ -537,8 +537,11 @@ function New-TarballPackage {
         }
     }
 
+    $Staging = "$PSScriptRoot/staging"
+    New-StagingFolder -StagingPath $Staging
+
     if (-not $ExcludeSymbolicLinks.IsPresent) {
-        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $PackageSourcePath
+        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
     }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
@@ -550,7 +553,7 @@ function New-TarballPackage {
             }
 
             try {
-                Push-Location -Path $PackageSourcePath
+                Push-Location -Path $Staging
                 tar $options $packagePath .
             } finally {
                 Pop-Location
@@ -807,7 +810,7 @@ function New-UnixPackage {
         $MajorVersion = $VersionMatch.Groups[1].Value
 
         # Suffix is used for side-by-side preview/release package installation
-        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } elseif ($LTS) { $MajorVersion + "-preview" } else { $MajorVersion }
+        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } elseif ($LTS) { $MajorVersion + "-lts" } else { $MajorVersion }
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
