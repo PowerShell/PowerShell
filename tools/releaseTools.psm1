@@ -140,7 +140,7 @@ function Get-ChangeLog
         [Parameter(Mandatory = $true)]
         [string]$LastReleaseTag,
 
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
         [string]$ThisReleaseTag,
 
         [Parameter(Mandatory)]
@@ -331,18 +331,9 @@ function Get-ChangeLog
         throw "Some PRs are tagged multiple times or have no tags."
     }
 
-    # Output the changelog
+    # Write output
 
-    $base = $LastReleaseTag
-
-    if ($PSBoundParameters.ContainsKey('ThisReleaseTag')) {
-        $head = $ThisReleaseTag
-        $version = $ThisReleaseTag.TrimStart('v')
-    }
-    else {
-        $head = $(git rev-parse HEAD)
-        $version = 'Unreleased'
-    }
+    $version = $ThisReleaseTag.TrimStart('v')
 
     Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
 
@@ -358,7 +349,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
-    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${base}...${head}`n"
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle) {
