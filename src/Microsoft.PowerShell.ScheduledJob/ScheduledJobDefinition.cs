@@ -2300,7 +2300,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// Simple string formatting helper.
     /// </summary>
-    internal class StringUtil
+    internal static class StringUtil
     {
         internal static string Format(string formatSpec, object o)
         {
