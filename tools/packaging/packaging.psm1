@@ -38,7 +38,9 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks,
 
-        [switch] $NoSudo
+        [switch] $NoSudo,
+
+        [switch] $LTS
     )
 
     DynamicParam {
@@ -304,6 +306,7 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
+                        LTS = $LTS
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -366,6 +369,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -380,6 +384,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -394,6 +399,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -408,6 +414,7 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -422,6 +429,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -438,6 +446,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:RedhatDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -454,6 +463,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -492,13 +502,20 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks
+        [switch] $ExcludeSymbolicLinks,
+
+        [switch] $LTS
     )
 
     if ($PackageNameSuffix) {
         $packageName = "$Name-$Version-{0}-$Architecture-$PackageNameSuffix.tar.gz"
     } else {
-        $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
+        $packageName = if ($LTS) {
+            "$Name-lts-$Version-{0}-$Architecture.tar.gz"
+        }
+        else {
+            "$Name-$Version-{0}-$Architecture.tar.gz"
+        }
     }
 
     if ($Environment.IsWindows) {
@@ -520,8 +537,11 @@ function New-TarballPackage {
         }
     }
 
+    $Staging = "$PSScriptRoot/staging"
+    New-StagingFolder -StagingPath $Staging
+
     if (-not $ExcludeSymbolicLinks.IsPresent) {
-        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $PackageSourcePath
+        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
     }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
@@ -533,7 +553,7 @@ function New-TarballPackage {
             }
 
             try {
-                Push-Location -Path $PackageSourcePath
+                Push-Location -Path $Staging
                 tar $options $packagePath .
             } finally {
                 Pop-Location
@@ -681,7 +701,10 @@ function New-UnixPackage {
         $Force,
 
         [switch]
-        $NoSudo
+        $NoSudo,
+
+        [switch]
+        $LTS
     )
 
     DynamicParam {
@@ -767,7 +790,15 @@ function New-UnixPackage {
         $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
-        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
+        $Name = if($LTS) {
+            "powershell-lts"
+        }
+        elseif ($IsPreview) {
+            "powershell-preview"
+        }
+        else {
+            "powershell"
+        }
 
         # Verify dependencies are installed and in the path
         Test-Dependencies
@@ -779,7 +810,7 @@ function New-UnixPackage {
         $MajorVersion = $VersionMatch.Groups[1].Value
 
         # Suffix is used for side-by-side preview/release package installation
-        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
+        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } elseif ($LTS) { $MajorVersion + "-lts" } else { $MajorVersion }
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
@@ -795,11 +826,7 @@ function New-UnixPackage {
         }
 
         # Destination for symlink to powershell executable
-        $Link = if ($Environment.IsLinux) {
-            if ($IsPreview) { "/usr/bin/pwsh-preview" } else { "/usr/bin/pwsh" }
-        } elseif ($Environment.IsMacOS) {
-            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
-        }
+        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
         $linkSource = "/tmp/pwsh"
 
         if ($pscmdlet.ShouldProcess("Create package file system"))
@@ -1382,14 +1409,16 @@ function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
-        [String]$Version
+        [String]$Version,
+
+        [switch]$LTS
     )
 
     $IsPreview = Test-IsPreview -Version $Version
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launcher application.
-    $suffix = if ($IsPreview) { "-preview" }
+    $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
     $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
     # Create folder structure for launcher application.
@@ -1416,7 +1445,7 @@ function New-MacOSLauncher
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
-    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
+    $executablepath = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
     $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
     $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
@@ -1431,6 +1460,33 @@ function New-MacOSLauncher
     $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
 
     return $appsfolder
+}
+
+function Get-PwshExecutablePath
+{
+    param(
+        [switch] $IsPreview,
+        [switch] $IsLTS
+    )
+
+    if ($IsPreview -and $IsLTS)
+    {
+        throw "Cannot be LTS and Preview"
+    }
+
+    $executableName = if ($IsPreview) {
+        "pwsh-preview"
+    } elseif ($LTS) {
+        "pwsh-lts"
+    } else {
+        "pwsh"
+    }
+
+    if ($Environment.IsLinux) {
+        "/usr/bin/$executableName"
+    } elseif ($Environment.IsMacOS) {
+        "/usr/local/bin/$executableName"
+    }
 }
 
 function Clear-MacOSLauncher

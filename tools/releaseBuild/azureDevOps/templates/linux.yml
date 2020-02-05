@@ -39,6 +39,7 @@ jobs:
 
   - powershell: |
       tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
