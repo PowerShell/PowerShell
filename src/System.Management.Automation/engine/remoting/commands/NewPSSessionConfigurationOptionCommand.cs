@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal const string AttribOutputBufferingMode = "OutputBufferingMode";
 
-        internal static System.Management.Automation.Runspaces.OutputBufferingMode? DefaultOutputBufferingMode = System.Management.Automation.Runspaces.OutputBufferingMode.Block;
+        internal static readonly System.Management.Automation.Runspaces.OutputBufferingMode? DefaultOutputBufferingMode = System.Management.Automation.Runspaces.OutputBufferingMode.Block;
         private System.Management.Automation.Runspaces.OutputBufferingMode? _outputBufferingMode = null;
 
         private const string AttribProcessIdleTimeout = "ProcessIdleTimeoutSec";

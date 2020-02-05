@@ -30,7 +30,7 @@ namespace System.Management.Automation
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
-        internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
         {
             { Ascii, System.Text.Encoding.ASCII },
             { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },

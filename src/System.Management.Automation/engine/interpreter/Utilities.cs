@@ -239,8 +239,8 @@ namespace System.Management.Automation.Interpreter
         internal static readonly MethodInfo BooleanToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("BooleanToObject");
         internal static readonly MethodInfo Int32ToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("Int32ToObject");
 
-        internal static object True = true;
-        internal static object False = false;
+        internal static readonly object True = true;
+        internal static readonly object False = false;
 
         internal static object GetPrimitiveDefaultValue(Type type)
         {

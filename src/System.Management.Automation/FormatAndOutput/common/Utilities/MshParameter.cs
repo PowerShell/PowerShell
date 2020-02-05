@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("ParameterProcessor", "ParameterProcessor")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ParameterProcessor", "ParameterProcessor");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ParameterProcessor", "ParameterProcessor");
         #endregion tracer
 
         internal static void ThrowParameterBindingException(TerminatingErrorContext invocationContext,

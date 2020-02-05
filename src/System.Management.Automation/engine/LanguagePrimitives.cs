@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
         /// an exception when converted to decimal.
         /// The order of lines and columns cannot be changed since NumericCompare depends on it.
         /// </summary>
-        internal static Type[][] LargestTypeTable = new Type[][]
+        internal static readonly Type[][] LargestTypeTable = new Type[][]
         {
             //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
             /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
@@ -1423,8 +1423,8 @@ namespace System.Management.Automation
 
         #region type converter
 
-        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
-        internal static ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
+        internal static readonly PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static readonly ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {

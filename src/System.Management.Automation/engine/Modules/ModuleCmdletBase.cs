@@ -237,10 +237,10 @@ namespace Microsoft.PowerShell.Commands
         private List<WildcardPattern> _matchAll;
 
         // The list of commands permitted in a module manifest
-        internal static string[] PermittedCmdlets = new string[] {
+        internal static readonly string[] PermittedCmdlets = new string[] {
             "Import-LocalizedData", "ConvertFrom-StringData", "Write-Host", "Out-Host", "Join-Path" };
 
-        internal static string[] ModuleManifestMembers = new string[] {
+        internal static readonly string[] ModuleManifestMembers = new string[] {
             "ModuleToProcess",
             "NestedModules",
             "GUID",
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
-        internal static object s_WindowsPowerShellCompatSyncObject = new object();
+        internal static readonly object s_WindowsPowerShellCompatSyncObject = new object();
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 

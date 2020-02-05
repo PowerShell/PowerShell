@@ -355,7 +355,7 @@ namespace System.Management.Automation
         internal readonly DeserializationOptions options;
         internal readonly PSRemotingCryptoHelper cryptoHelper;
 
-        internal static int MaxItemsInCimClassCache = 100;
+        internal static readonly int MaxItemsInCimClassCache = 100;
         internal readonly CimClassDeserializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassDeserializationCache<CimClassSerializationId>();
     }
 

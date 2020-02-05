@@ -1681,7 +1681,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static readonly ConsolidatedString Empty = new ConsolidatedString(Array.Empty<string>());
 
-        internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
+        internal static readonly IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
         private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
         {

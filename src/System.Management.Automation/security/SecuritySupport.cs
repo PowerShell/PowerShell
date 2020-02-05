@@ -961,11 +961,11 @@ namespace System.Management.Automation
             return encodedContent;
         }
 
-        internal static string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
-        internal static string END_CMS_SIGIL = "-----END CMS-----";
+        internal static readonly string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
+        internal static readonly string END_CMS_SIGIL = "-----END CMS-----";
 
-        internal static string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
-        internal static string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
+        internal static readonly string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
+        internal static readonly string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format.

@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// Tracer for module analysis.
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
-        internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
+        internal static readonly PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
 
         // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
         // to load forward compatible Windows PowerShell modules from
@@ -895,7 +895,7 @@ namespace System.Management.Automation
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleProcessableExtensions = new string[] {
+        internal static readonly string[] PSModuleProcessableExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellScriptFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                         };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleExtensions = new string[] {
+        internal static readonly string[] PSModuleExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,

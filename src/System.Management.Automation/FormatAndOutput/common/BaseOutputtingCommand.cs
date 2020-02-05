@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("format_out_OutCommandInner", "OutCommandInner")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutCommandInner", "OutCommandInner");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutCommandInner", "OutCommandInner");
         #endregion tracer
 
         internal override void BeginProcessing()

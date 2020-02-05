@@ -623,7 +623,7 @@ namespace System.Management.Automation
             s_cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock =
+        internal static readonly ScriptBlock EmptyScriptBlock =
             ScriptBlock.CreateDelayParsedScriptBlock(string.Empty, isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)

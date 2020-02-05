@@ -3386,7 +3386,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object s_staticLock = new object();
 
-        internal static List<string> storeNames = new List<string>();
+        internal static readonly List<string> storeNames = new List<string>();
 
         /// <summary>
         /// Get a list of store names at the specified location.
