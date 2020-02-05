@@ -142,15 +142,20 @@ namespace System.Management.Automation.Internal
             switch (policy)
             {
                 case ExecutionPolicy.Restricted:
-                    executionPolicy = "Restricted"; break;
+                    executionPolicy = "Restricted";
+                    break;
                 case ExecutionPolicy.AllSigned:
-                    executionPolicy = "AllSigned"; break;
+                    executionPolicy = "AllSigned";
+                    break;
                 case ExecutionPolicy.RemoteSigned:
-                    executionPolicy = "RemoteSigned"; break;
+                    executionPolicy = "RemoteSigned";
+                    break;
                 case ExecutionPolicy.Unrestricted:
-                    executionPolicy = "Unrestricted"; break;
+                    executionPolicy = "Unrestricted";
+                    break;
                 case ExecutionPolicy.Bypass:
-                    executionPolicy = "Bypass"; break;
+                    executionPolicy = "Bypass";
+                    break;
             }
 
             // Set the execution policy
@@ -359,12 +364,18 @@ namespace System.Management.Automation.Internal
         {
             switch (policy)
             {
-                case ExecutionPolicy.Bypass: return "Bypass";
-                case ExecutionPolicy.Unrestricted: return "Unrestricted";
-                case ExecutionPolicy.RemoteSigned: return "RemoteSigned";
-                case ExecutionPolicy.AllSigned: return "AllSigned";
-                case ExecutionPolicy.Restricted: return "Restricted";
-                default: return "Restricted";
+                case ExecutionPolicy.Bypass:
+                    return "Bypass";
+                case ExecutionPolicy.Unrestricted:
+                    return "Unrestricted";
+                case ExecutionPolicy.RemoteSigned:
+                    return "RemoteSigned";
+                case ExecutionPolicy.AllSigned:
+                    return "AllSigned";
+                case ExecutionPolicy.Restricted:
+                    return "Restricted";
+                default:
+                    return "Restricted";
             }
         }
 
@@ -1269,7 +1280,7 @@ namespace System.Management.Automation
                     {
                         foreach (var cert in storeCerts)
                         {
-                            if (subjectNamePattern.IsMatch(cert.Subject))
+                            if (subjectNamePattern.IsMatch(cert.Subject) || subjectNamePattern.IsMatch(cert.GetNameInfo(X509NameType.SimpleName, forIssuer: false)))
                             {
                                 certificatesToProcess.Add(cert);
                             }

@@ -21,7 +21,8 @@ function New-CmsRecipient {
     [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
     $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
     if ($OutPfxFile) {
-        [System.IO.File]::WriteAllBytes($OutPfxFile, $cert.Export([X509ContentType]::Pfx))
+        $outfile = New-Item $OutPfxFile -Force
+        [System.IO.File]::WriteAllBytes($outfile.FullName, $cert.Export([X509ContentType]::Pfx))
     }
     return $cert
 }
@@ -29,11 +30,26 @@ function New-CmsRecipient {
 Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
 
     BeforeAll {
-        Write-Verbose    "Generating certs"
-        $vc1 = New-CmsRecipient "ValidCms1"
-        $vc2 = New-CmsRecipient "ValidCms2"
-        $ic = New-CmsRecipient "InvalidCms" -Invalid
-        $tmpfile = New-TemporaryFile
+        Setup -Dir "certDir"
+        Setup -File "vc1.pfx"
+        Setup -File "vc2.pfx"
+        Setup -File "certDir/vc3.pfx"
+        Setup -File "message.txt" -Content "test"
+        $file1 = "TestDrive:\vc1.pfx"
+        $file2 = "TestDrive:\vc2.pfx"
+        $messageFile = "TestDrive:\message.txt"
+        $cipherFile = "TestDrive:\cipher.txt"
+        $vc1 = New-CmsRecipient "ValidCms1" -OutPfxFile $file1
+        $vc2 = New-CmsRecipient "ValidCms2" -OutPfxFile $file2
+        $vc3 = New-CmsRecipient "ValidCms22" -OutPfxFile "TestDrive:\certDir\vc3.pfx"
+        $ic = New-CmsRecipient "InvalidCms" -Invalid -OutPfxFile "TestDrive:\ic.pfx"
+        $store = [X509Store]::new("My", [StoreLocation]::CurrentUser)
+        $store.Open("ReadWrite")
+        if (!$IsMacOS) {
+            $store.Add($vc1)
+            $store.Add($vc2)
+            $store.Add($vc3)
+        }
         $certContent = "
             -----BEGIN CERTIFICATE-----
             MIIDXTCCAkWgAwIBAgIQRTsRwsx0LZBHrx9z5Dag2zANBgkqhkiG9w0BAQUFADAh
@@ -59,27 +75,63 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
             "
     }
 
-    It " Encrypting with X509Cert" {
+    It "Cert Store: Encrypt/Decrypt using Subject" {
+        "test" | Protect-CmsMessage -To $vc1.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
+        "test" | Protect-CmsMessage -To $vc1.Subject, $vc2.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
+    }
+
+    It "Cert Store: Subject with wildcard (returns single cert)" {
+        "test" | Protect-CmsMessage -To "*dCms1" | Unprotect-CmsMessage | Should -BeExactly "test"
+    }
+
+    It "Cert Store: Subject with wrong wildcard (returns multiple certs)" {
+        { "test" | Protect-CmsMessage -To "*ValidCms*" -ErrorAction Stop } | Should -Throw -ErrorId 'IdentifierMustReferenceSingleCertificate'
+    }
+
+    It "Cert Store: Encrypt/Decrypt using Thumbprint" {
+        "test" | Protect-CmsMessage -To $vc1.Thumbprint | Unprotect-CmsMessage | Should -BeExactly "test"
+        "test" | Protect-CmsMessage -To $vc1.Thumbprint, $vc2.Thumbprint | Unprotect-CmsMessage | Should -BeExactly "test"
+    }
+
+    It "Cert Store: Encrypt/Decrypt subject and thumbprint" {
+        "test" | Protect-CmsMessage -To $vc1.Thumbprint, $vc2.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
+    }
+
+    It "Cert Store: removing test certificates" {
+        $store.Remove($vc1)
+        $store.Remove($vc2)
+        $store.Remove($vc3)
+        if ($IsMacOS) {
+            $store.Remove($ic)
+        }
+
+        $store.Certificates.Find("FindByThumbprint", $vc1.Thumbprint, $false).Count | Should -BeExactly 0
+        $store.Certificates.Find("FindByThumbprint", $vc2.Thumbprint, $false).Count | Should -BeExactly 0
+        $store.Certificates.Find("FindByThumbprint", $vc3.Thumbprint, $false).Count | Should -BeExactly 0
+        $store.Certificates.Find("FindByThumbprint", $ic.Thumbprint, $false).Count | Should -BeExactly 0
+    }
+
+    It "Encrypting with X509Cert" {
         "test" | Protect-CmsMessage -To $vc1 | Should -BeLike '-----BEGIN CMS*'
     }
 
-    It " Encrypting with base64 string" {
+    It "Encrypting with base64 string" {
         "test" | Protect-CmsMessage -To $certContent | Should -BeLike '-----BEGIN CMS*'
     }
 
-    It " Encrypting with multiple X509Cert" {
-        $msg = "test" | Protect-CmsMessage -To $vc1, $vc2 | Should -BeLike '-----BEGIN CMS*'
+    It "Encrypting with multiple X509Cert" {
+        "test" | Protect-CmsMessage -To $vc1, $vc2 | Should -BeLike '-----BEGIN CMS*'
     }
 
-    It " Decrypt with X509Cert" {
+    It "Decrypt with X509Cert" {
         "test" | Protect-CmsMessage -To $vc1 | Unprotect-CmsMessage -To $vc1 | Should -BeExactly "test"
     }
 
-    It " Decrypt with multiple X509Cert" {
+    It "Decrypt with multiple X509Cert" {
         "test" | Protect-CmsMessage -To $vc1, $vc2 | Unprotect-CmsMessage -To $vc1, $vc2 | Should -BeExactly "test"
     }
 
-    It " Encrypt with invalid cert" {
+    It "Encrypt with invalid cert" {
         { "test" | Protect-CmsMessage -To $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
     }
 
@@ -88,8 +140,8 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
     }
 
     It "Encrypt/Decrypt from file" {
-        "test" | Protect-CmsMessage -To $vc1 -OutFile $tmpfile
-        $msg = Unprotect-CmsMessage -To $vc1 -Path $tmpfile
+        Protect-CmsMessage -Path $messageFile -To $vc1 -OutFile $cipherFile
+        $msg = Unprotect-CmsMessage -To $vc1 -Path $cipherFile
         $msg | Should -BeExactly "test"
     }
 
@@ -98,82 +150,30 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
     }
 
     It "Get-CmsMessage from file" {
-        (Get-CmsMessage -Path $tmpfile).Content | Should -BeLike '-----BEGIN CMS*'
-    }
-}
-
-Describe "CmsMessage cmdlets using files" -Tags "CI" {
-
-    BeforeAll {
-        Write-Verbose    "generating temp cert files"
-        $vc1File = New-TemporaryFile
-        $vc2File = New-TemporaryFile
-        $tempDir = New-Item -ItemType Directory -Path (Join-Path $vc1File.Directory.FullName "psCertTempDir") -Force
-        $vc3File = New-Item -Name "vc1.cert" -Path $tempDir
-        [System.IO.File]::WriteAllBytes("$vc1File", $vc1.Export("pfx"))
-        [System.IO.File]::WriteAllBytes("$vc2File", $vc2.Export("pfx"))
-        [System.IO.File]::WriteAllBytes("$vc3File", $vc1.Export("pfx"))
+        (Get-CmsMessage -Path $cipherFile).Content | Should -BeLike '-----BEGIN CMS*'
     }
 
     It "Encrypt With Single File" {
-        "test" | Protect-CmsMessage -To "$vc1File" | Unprotect-CmsMessage -To $vc1 | Should -BeExactly "test"
+        "test" | Protect-CmsMessage -To $file1 | Unprotect-CmsMessage -To $file1 | Should -BeExactly "test"
     }
 
-    It "Encrypt With Multiple File" {
-        $msg = "test" | Protect-CmsMessage -To "$vc1File", "$vc2File"
-        ($msg | Unprotect-CmsMessage -To    $vc1) | Should -BeExactly "test"
-        ($msg | Unprotect-CmsMessage -To    $vc2) | Should -BeExactly "test"
+    It "Encrypt With Multiple Files" {
+        $msg = "test" | Protect-CmsMessage -To $file1, $file2
+        ($msg | Unprotect-CmsMessage -To $file1) | Should -BeExactly "test"
+        ($msg | Unprotect-CmsMessage -To $file2) | Should -BeExactly "test"
     }
 
     It "Encrypt/Decrypt with Directory" {
-        "test" | Protect-CmsMessage -To "$tempDir" | Unprotect-CmsMessage -To "$tempDir" | Should -BeExactly "test"
+        "test" | Protect-CmsMessage -To "TestDrive:\certDir" | Unprotect-CmsMessage -To "TestDrive:\certDir" | Should -BeExactly "test"
     }
 
     It "Decrypt with multiple files" {
-        "test" | Protect-CmsMessage -To $vc1 | Unprotect-CmsMessage -To "$vc1File", "$vc2File" | Should -BeExactly "test"
-    }
-}
-
-Describe "CmsMessage cmdlets using cert Store" -Tags "CI" {
-
-    BeforeAll -Scriptblock {
-        Write-Verbose    "adding temp certs to CurrentUser\My Store (on Mac those were added while generating vc1/vc2)"
-        $store = [X509Store]::new("My", [StoreLocation]::CurrentUser)
-        $store.Open("ReadWrite")
-        if (!$IsMacOS) {
-            $cert1 = [X509Certificate2]::new("$vc1File")
-            $cert2 = [X509Certificate2]::new("$vc2File")
-            $store.Add($cert1)
-            $store.Add($cert2)
-        } else {
-            $cert1 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc1.Thumbprint, $false)[0]
-            $cert2 = $store.Certificates.Find([X509FindType]::FindByThumbprint, $vc2.Thumbprint, $false)[0]
-        }
-    }
-
-    It "Encrypt/Decrypt using subject" {
-        "test" | Protect-CmsMessage -To $cert1.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
-        "test" | Protect-CmsMessage -To $cert1.Subject, $cert2.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
-    }
-
-    It "Encrypt/Decrypt using Thumbprint" {
-        "test" | Protect-CmsMessage -To $cert1.Thumbprint | Unprotect-CmsMessage | Should -BeExactly "test"
-        "test" | Protect-CmsMessage -To $cert1.Thumbprint, $cert2.Thumbprint | Unprotect-CmsMessage | Should -BeExactly "test"
-    }
-
-    It "Encrypt/Decrypt mix" {
-        "test" | Protect-CmsMessage -To $cert1.Thumbprint, $cert2.Subject | Unprotect-CmsMessage | Should -BeExactly "test"
+        "test" | Protect-CmsMessage -To $vc1 | Unprotect-CmsMessage -To $file1, $file2 | Should -BeExactly "test"
     }
 
     AfterAll {
-        Write-Verbose    "Removing temp files and certs"
-        $store.Remove($cert1)
-        $store.Remove($cert2)
-        if ($IsMacOS) {
-            $store.Remove($ic)
-        }
         $store.Dispose()
-        Remove-Item $vc1File, $vc2File, $tmpfile
-        Remove-Item -Recurse $tempDir -Force
     }
 }
+
+
