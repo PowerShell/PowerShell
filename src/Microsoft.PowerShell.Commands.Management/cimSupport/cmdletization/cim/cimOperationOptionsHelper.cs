@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    internal class CimCustomOptionsDictionary
+    internal sealed class CimCustomOptionsDictionary
     {
         private readonly IDictionary<string, object> _dict;
         private readonly object _dictModificationLock = new();
