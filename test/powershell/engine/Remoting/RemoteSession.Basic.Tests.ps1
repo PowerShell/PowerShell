@@ -28,7 +28,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $credential = [PSCredential]::new('username', $password)
 
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         # Should be PSRemotingErrorId.ConnectFailed
         # Ensures we are looking at the expected instance
         $err.Exception.ErrorCode | Should -Be 801
@@ -48,7 +48,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
         $uri = "https://localhost"
         New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
         $err.Exception.HResult | Should -Be 0x80131501
     }

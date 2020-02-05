@@ -450,24 +450,64 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
             '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
-            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'cannot be loaded implicitly using the Windows Compatibility'
         }
 
         It "Fails to auto-import incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Disabled in config" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
-            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+            '{"DisableImplicitWinCompat" : "True","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'not recognized as the name of a cmdlet'
         }
 
         It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "False"}' | Out-File -Force $ConfigPath
-            pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+            '{"DisableImplicitWinCompat" : "False","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'True'
+        }
+    }
+
+    Context "Tests around Windows PowerShell Compatibility module deny list" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Successfully imports incompatible module when DenyList is not specified in powershell.config.json" {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "Successfully imports incompatible module when DenyList is empty" {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned","WindowsPowerShellCompatibilityModuleDenyList": []}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "Blocks DenyList module import by Import-Module <ModuleName> -UseWindowsPowerShell" {
+            '{"WindowsPowerShellCompatibilityModuleDenyList": ["' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
+            $out = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -UseWindowsPowerShell -ErrorVariable z -ErrorAction SilentlyContinue;`$z.FullyQualifiedErrorId"
+            $out | Should -BeExactly 'Modules_ModuleInWinCompatDenyList,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Blocks DenyList module import by Import-Module <ModuleName>" {
+            '{"WindowsPowerShellCompatibilityModuleDenyList": ["' + $ModuleName2.ToLowerInvariant() + '"]}' | Out-File -Force $ConfigPath # also check case-insensitive comparison
+            $out = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -ErrorVariable z -ErrorAction SilentlyContinue;`$z.FullyQualifiedErrorId"
+            $out | Should -BeExactly 'Modules_ModuleInWinCompatDenyList,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Blocks DenyList module import by CommandDiscovery\ModuleAutoload" {
+            '{"WindowsPowerShellCompatibilityModuleDenyList": ["RandomNameJustToMakeArrayOfSeveralModules","' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
+            $out = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');`$ErrorActionPreference = 'SilentlyContinue';Test-$ModuleName2;`$error[0].FullyQualifiedErrorId"
+            $out | Should -BeExactly 'CouldNotAutoloadMatchingModule'
         }
     }
 }
@@ -513,7 +553,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
     }
 
-    <# Remove Pending status and update test after issue #11575 is fixed #>
+    # Remove Pending status and update test after issue #11575 is fixed
     It "Does not duplicate the System32 module path in subprocesses" -Pending:$true {
         $sys32ModPathCount = & $pwsh -C {
             & "$PSHOME/pwsh" -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $Matches.Count'

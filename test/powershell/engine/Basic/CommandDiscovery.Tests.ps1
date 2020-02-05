@@ -45,7 +45,7 @@ Describe "Command Discovery tests" -Tags "CI" {
 
             $commands.Count | Should -Be 1
             $aliasResult = $commands -as [System.Management.Automation.AliasInfo]
-            $aliasResult | Should -BeOfType [System.Management.Automation.AliasInfo]
+            $aliasResult | Should -BeOfType System.Management.Automation.AliasInfo
             $aliasResult.Name | Should -Be 'AliasCommandDiscoveryTest'
     }
 

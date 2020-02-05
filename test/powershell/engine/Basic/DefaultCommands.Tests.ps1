@@ -407,7 +407,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Rename-ItemProperty",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Reset-ComputerMachinePassword",    "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Resolve-Path",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Restart-Computer",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Restart-Computer",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Restart-Service",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Restore-Computer",                 "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Resume-Job",                       "",                                 $($FullCLR                               ),     "",                     "",                     ""

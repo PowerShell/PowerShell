@@ -4,7 +4,7 @@
 Describe 'Tests for $ErrorView' -Tag CI {
 
     It '$ErrorView is an enum' {
-        $ErrorView | Should -BeOfType [System.Management.Automation.ErrorView]
+        $ErrorView | Should -BeOfType System.Management.Automation.ErrorView
     }
 
     It '$ErrorView should have correct default value' {
@@ -19,6 +19,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     Context 'ConciseView tests' {
+        BeforeEach {
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
+        }
+
+        AfterEach {
+            Remove-Item -Path $testScriptPath -Force -ErrorAction SilentlyContinue
+        }
 
         It 'Cmdlet error should be one line of text' {
             Get-Item (New-Guid) -ErrorVariable e -ErrorAction SilentlyContinue
@@ -34,12 +41,11 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $b = 2
 '@
 
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
-            $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
-            $e | Out-String | Should -BeLike "*${testScriptPath}:4*"
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru | Out-String
+            $e | Should -BeLike "*${testScriptPath}:4*"
             # validate line number is shown
-            $e | Out-String | Should -BeLike '* 4 *'
+            $e | Should -BeLike '* 4 *'
         }
 
         It "Remote errors show up correctly" {
@@ -61,11 +67,25 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Pester Should shows test file and not pester" {
             $testScript = '1 + 1 | Should -Be 3'
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'mytest.ps1'
+
             Set-Content -Path $testScriptPath -Value $testScript
-            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
-            $e | Out-String | Should -BeLike "*$testScriptPath*"
-            $e | Out-String | Should -Not -BeLike '*pester*'
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru | Out-String
+            $e | Should -BeLike "*$testScriptPath*"
+            $e | Should -Not -BeLike '*pester*'
+        }
+
+        It "Long lines should be rendered correctly with indentation" {
+            $testscript = @'
+                        $myerrors = [System.Collections.ArrayList]::new()
+                        Copy-Item (New-Guid) (New-Guid) -ErrorVariable +myerrors -ErrorAction SilentlyContinue
+                $error[0]
+'@
+
+            Set-Content -Path $testScriptPath -Value $testScript
+            $e = & $testScriptPath | Out-String
+            $e | Should -BeLike "*${testScriptPath}:2*"
+            # validate line number is shown
+            $e | Should -BeLike '* 2 *'
         }
     }
 

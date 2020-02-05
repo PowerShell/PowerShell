@@ -57,6 +57,7 @@ try
 
                 $result.MaxShells | Should -Be 40
                 $result.IdleTimeoutms | Should -Be 3600000
+                $result.UseSharedProcess | Should -Be 'False'
             }
         }
         Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') {
@@ -629,7 +630,7 @@ namespace PowershellTestConfigNamespace
             }
 
             $resultContent = invoke-expression ($result)
-            $resultContent | Should -BeOfType "System.Collections.Hashtable"
+            $resultContent | Should -BeOfType System.Collections.Hashtable
 
             # The default created hashtable in the session configuration file would have the
             # following keys which we are validating below.

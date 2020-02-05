@@ -887,7 +887,7 @@ class A
 
     [int] GetX([Foo.Bar]$bar)
     {
-        Set-StrictMode -Version latest
+        Set-StrictMode -Version 3.0
         return $bar.x
     }
 }

@@ -516,6 +516,9 @@
   <data name="WinCompatRequredVersionError" xml:space="preserve">
     <value>Detected Windows PowerShell version {0}. Windows PowerShell 5.1 is required to load modules using Windows PowerShell compatibility feature. Install Windows Management Framework (WMF) 5.1 from https://aka.ms/WMF5Download to enable this feature.</value>
   </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>Module '{0}' is blocked from loading using Windows PowerShell compatibility feature by a 'WindowsPowerShellCompatibilityModuleDenyList' setting in PowerShell configuration file.</value>
+  </data>
   <data name="PsModuleOverCimSessionError" xml:space="preserve">
     <value>The module {0} cannot be imported over a CimSession. Try using the PSSession parameter of the Import-Module cmdlet.</value>
   </data>

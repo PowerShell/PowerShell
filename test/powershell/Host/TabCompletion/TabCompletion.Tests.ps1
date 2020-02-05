@@ -131,7 +131,7 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
-        Set-StrictMode -Version latest
+        Set-StrictMode -Version 3.0
         $cmd = 'Get-Process -Id '
         [System.Management.Automation.CommandCompletion]$res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
         $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should -BeTrue

@@ -30,14 +30,14 @@ Describe "Test-Connection" -tags "CI" {
                 Where-Object Status -eq 'Success' |
                 Select-Object -First 1
 
-            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus"
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
             $result.Ping | Should -Be 1
             $result.Source | Should -BeExactly $hostName
             $result.Destination | Should -BeExactly $targetName
             $result.Address | Should -BeIn @($targetAddress, $targetAddressIPv6)
             $result.Status | Should -BeExactly "Success"
-            $result.Latency | Should -BeOfType "long"
-            $result.Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
+            $result.Latency | Should -BeOfType long
+            $result.Reply | Should -BeOfType System.Net.NetworkInformation.PingReply
             $result.BufferSize | Should -Be 32
         }
 
@@ -64,11 +64,16 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if (!$IsWindows) {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be -131073
-            } else {
-                $error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+            if ((Get-PlatformInfo) -match "raspbian") {
+                $code = 11
             }
+            elseif (!$IsWindows) {
+                $code = -131073
+            }
+            else {
+                $code = 11001
+            }
+            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
         # In VSTS, address is 0.0.0.0
@@ -228,7 +233,7 @@ Describe "Test-Connection" -tags "CI" {
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize
 
-            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
+            $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
             $result.Destination | Should -BeExactly $hostName
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
@@ -237,7 +242,7 @@ Describe "Test-Connection" -tags "CI" {
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize -Quiet
 
-            $result | Should -BeOfType "Int32"
+            $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
         }
     }
@@ -247,7 +252,7 @@ Describe "Test-Connection" -tags "CI" {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
 
-            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus"
+            $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
             $result[0].Source | Should -BeExactly $hostName
             $result[0].TargetAddress | Should -BeExactly $realAddress
             $result[0].Target | Should -BeExactly $hostName
@@ -262,7 +267,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Quiet works" {
-            $result = Test-Connection $hostName -TraceRoute -Quiet
+            $result = Test-Connection localhost -TraceRoute -Quiet
 
             $result | Should -BeTrue
         }
@@ -297,5 +302,26 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
 
     It "Test connection to unreachable host port 80" {
         Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
+    }
+}
+
+Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI" {
+    It "Test-Connection works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
+        $pwsh = Join-Path $PSHOME "pwsh"
+        $pingResults = & $pwsh -NoProfile {
+            Add-Type -AssemblyName System.Windows.Forms
+            $null = New-Object System.Windows.Forms.Form
+            Test-Connection localhost
+        }
+
+        $pingResults.Length | Should -Be 4
+        $result = $pingResults | Select-Object -First 1
+
+        $result.Ping | Should -Be 1
+        $result.Source | Should -BeExactly ([System.Net.Dns]::GetHostName())
+        $result.Destination | Should -BeExactly localhost
+        $result.Latency | Should -BeOfType "long"
+        $result.Reply.Status | Should -BeExactly "Success"
+        $result.BufferSize | Should -Be 32
     }
 }

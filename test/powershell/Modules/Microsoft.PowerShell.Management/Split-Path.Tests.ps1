@@ -61,7 +61,7 @@ Describe "Split-Path" -Tags "CI" {
         $actual.Count                   | Should -Be 2
         $actual[0]                      | Should -BeExactly $testFile1
         $actual[1]                      | Should -BeExactly $testFile2
-        ,$actual                        | Should -BeOfType "System.Array"
+        ,$actual                        | Should -BeOfType System.Array
     }
 
     It "Should be able to tell if a given path is an absolute path" {

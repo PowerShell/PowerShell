@@ -71,7 +71,7 @@ Describe "Using of ternary operator" -Tags CI {
     It "Use ternary operator with assignments" {
         $IsCoreCLR ? ([string]$var = 'string') : 'blah' > $null
         $var = [System.IO.FileInfo]::new('abc')
-        $var | Should -BeOfType [string]
+        $var | Should -BeOfType string
         $var | Should -BeExactly 'abc'
     }
 
@@ -82,7 +82,7 @@ Describe "Using of ternary operator" -Tags CI {
 
     It "Return script block from ternary expression" {
         $result = ${IsCoreCLR}?{'Core'}:{'Desktop'}
-        $result | Should -BeOfType [scriptblock]
+        $result | Should -BeOfType scriptblock
         & $result | Should -BeExactly 'Core'
     }
 

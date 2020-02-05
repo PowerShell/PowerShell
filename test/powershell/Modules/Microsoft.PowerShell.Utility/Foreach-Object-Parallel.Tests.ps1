@@ -362,6 +362,6 @@ Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
         $results.Count | Should -BeExactly 2
         $results[0] | Should -BeExactly 'Output 1'
         $results[1].FullyQualifiedErrorId | Should -BeExactly 'PSTaskException'
-        $results[1].Exception | Should -BeOfType [System.Management.Automation.PipelineStoppedException]
+        $results[1].Exception | Should -BeOfType System.Management.Automation.PipelineStoppedException
     }
 }

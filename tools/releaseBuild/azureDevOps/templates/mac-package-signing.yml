@@ -36,10 +36,20 @@ jobs:
       $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip"
       Compress-Archive -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
       Write-Host $zipFile
+
+      $ltsPkgPath = "$(System.ArtifactsDirectory)\results\powershell-lts-$(Version)-osx-x64.pkg"
+
+      if(Test-Path $ltsPkgPath)
+      {
+         $ltsZipFile = "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
+         Compress-Archive -Path $ltsPkgPath -Destination $ltsZipFile
+         Write-Host $ltsZipFile
+      }
     displayName: 'Compress macOS Package'
 
   - powershell: |
-      tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip" -path "$(System.ArtifactsDirectory)\package.xml"
+      $pkgFiles = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip", "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
+      tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles $pkgFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate macOS Package Signing Xml'
 
   - powershell: |
@@ -68,7 +78,7 @@ jobs:
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"
       New-Item -Path $destination -Type Directory
       $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
-      Expand-Archive -Path $zipPath -DestinationPath $destination
+      foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
       $targzPath = dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | select-object -expandproperty fullname
       Copy-Item -Path $targzPath -Destination $destination
     displayName: 'Extract and copy macOS artifacts for upload'
@@ -87,7 +97,7 @@ jobs:
     displayName: 'Create unsigned folder to upload'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
@@ -97,7 +107,7 @@ jobs:
       ContainerName: '$(AzureVersion)'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'AzureBlob File Copy - signed'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'

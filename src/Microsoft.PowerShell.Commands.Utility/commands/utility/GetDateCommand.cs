@@ -217,6 +217,11 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that converts date to UTC before formatting.
+        /// </summary>
+        [Parameter(ParameterSetName = "net")]
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
@@ -283,6 +288,11 @@ namespace Microsoft.PowerShell.Commands
                 offset = Millisecond - dateToUse.Millisecond;
                 dateToUse = dateToUse.AddMilliseconds(offset);
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
+            }
+
+            if (AsUTC)
+            {
+                dateToUse = dateToUse.ToUniversalTime();
             }
 
             if (UFormat != null)

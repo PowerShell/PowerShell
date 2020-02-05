@@ -46,7 +46,7 @@ Describe "Get-Process" -Tags "CI" {
         $idleProcessPid = 0
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
-        ,$ps | Should -BeOfType "System.Object[]"
+        ,$ps | Should -BeOfType System.Object[]
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {

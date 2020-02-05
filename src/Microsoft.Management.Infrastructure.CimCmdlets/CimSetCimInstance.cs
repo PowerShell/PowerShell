@@ -243,7 +243,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     else // For dynamic instance, it is valid to add a new property
                     {
                         CimProperty newProperty;
-                        if( value == null )
+                        if (value == null)
                         {
                             newProperty = CimProperty.Create(
                                 key,

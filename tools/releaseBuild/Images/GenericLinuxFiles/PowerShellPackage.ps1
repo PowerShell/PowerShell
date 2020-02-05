@@ -28,55 +28,77 @@ if ($ReleaseTag)
     $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
 }
 
-Push-Location
-try {
-    Set-Location $location
-    Import-Module "$location/build.psm1"
-    Import-Module "$location/tools/packaging"
+#Remove the initial 'v' from the ReleaseTag
+$version = $ReleaseTag -replace '^v'
+$semVersion = [System.Management.Automation.SemanticVersion] $version
 
-    Start-PSBootstrap -Package -NoSudo
+## All even minor versions are LTS
+$LTS = if ( $semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0) {
+    $true
+} else {
+    $false
+}
 
-    $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true}
+function BuildPackages {
+    param(
+        [switch] $LTS
+    )
 
-    if($FxDependent.IsPresent) {
-        $projectAssetsZipName = 'linuxFxDependantProjectAssetssymbols.zip'
-        $buildParams.Add("Runtime", "fxdependent")
-    } elseif ($Alpine.IsPresent) {
-        $projectAssetsZipName = 'linuxAlpineProjectAssetssymbols.zip'
-        $buildParams.Add("Runtime", 'alpine-x64')
-    } else {
-        # make the artifact name unique
-        $projectAssetsZipName = "linuxProjectAssets-$((get-date).Ticks)-symbols.zip"
-        $buildParams.Add("Crossgen", $true)
-    }
+    Push-Location
+    try {
+        Set-Location $location
+        Import-Module "$location/build.psm1"
+        Import-Module "$location/tools/packaging"
 
-    Start-PSBuild @buildParams @releaseTagParam
+        Start-PSBootstrap -Package -NoSudo
 
-    if($FxDependent) {
-        Start-PSPackage -Type 'fxdependent' @releaseTagParam
-    } elseif ($Alpine) {
-        Start-PSPackage -Type 'tar-alpine' @releaseTagParam
-    } else {
-        Start-PSPackage @releaseTagParam
-    }
+        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
 
-    if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
+        if ($FxDependent.IsPresent) {
+            $projectAssetsZipName = 'linuxFxDependantProjectAssetssymbols.zip'
+            $buildParams.Add("Runtime", "fxdependent")
+        } elseif ($Alpine.IsPresent) {
+            $projectAssetsZipName = 'linuxAlpineProjectAssetssymbols.zip'
+            $buildParams.Add("Runtime", 'alpine-x64')
+        } else {
+            # make the artifact name unique
+            $projectAssetsZipName = "linuxProjectAssets-$((get-date).Ticks)-symbols.zip"
+            $buildParams.Add("Crossgen", $true)
+        }
 
-    if ($TarArm) {
-        ## Build 'linux-arm' and create 'tar.gz' package for it.
-        ## Note that 'linux-arm' can only be built on Ubuntu environment.
-        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
-        Start-PSPackage -Type tar-arm @releaseTagParam
-    }
+        Start-PSBuild @buildParams @releaseTagParam
 
-    if ($TarArm64) {
-        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
-        Start-PSPackage -Type tar-arm64 @releaseTagParam
+        if ($FxDependent) {
+            Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
+        } elseif ($Alpine) {
+            Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
+        } else {
+            Start-PSPackage @releaseTagParam -LTS:$LTS
+        }
+
+        if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
+
+        if ($TarArm) {
+            ## Build 'linux-arm' and create 'tar.gz' package for it.
+            ## Note that 'linux-arm' can only be built on Ubuntu environment.
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
+            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
+        }
+
+        if ($TarArm64) {
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
+            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
+        }
+    } finally {
+        Pop-Location
     }
 }
-finally
-{
-    Pop-Location
+
+BuildPackages
+
+if ($LTS) {
+    Write-Verbose -Verbose "Packaging LTS"
+    BuildPackages -LTS
 }
 
 $linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.tar.gz

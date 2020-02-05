@@ -677,7 +677,7 @@ foo``u{2195}abc
     It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
         $result | Should -Be "3"
-        $result | Should -BeOfType [int]
+        $result | Should -BeOfType int
     }
 
     It "This test will check that an msh script can be run without invoking. (line 1641)" {
