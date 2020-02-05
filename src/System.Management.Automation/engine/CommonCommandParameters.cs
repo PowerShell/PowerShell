@@ -78,6 +78,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command what to do when an error occurs.
         /// </remarks>
         [Parameter]
+        [ValidateNotNull]
         [Alias("ea")]
         public ActionPreference ErrorAction
         {
@@ -94,6 +95,7 @@ namespace System.Management.Automation.Internal
         /// occurs.
         /// </remarks>
         [Parameter]
+        [ValidateNotNull]
         [Alias("wa")]
         public ActionPreference WarningAction
         {
@@ -115,6 +117,7 @@ namespace System.Management.Automation.Internal
         /// was added to PowerShell, so "infa" was chosen instead.
         /// -->
         [Parameter]
+        [ValidateNotNull]
         [Alias("infa")]
         public ActionPreference InformationAction
         {

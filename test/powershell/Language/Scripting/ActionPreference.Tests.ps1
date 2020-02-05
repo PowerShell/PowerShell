@@ -186,6 +186,13 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
         Remove-Item "$testdrive\test.txt" -Force
     }
+
+    It "Parameter binding throws correctly (no NRE) if argument is null" {
+        $NullVariable = $null
+        { Test-Path .\noexistfile.ps1 -ErrorAction $NullVariable } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestPathCommand"
+        { Test-Path .\noexistfile.ps1 -InformationAction $NullVariable } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestPathCommand"
+        { Test-Path .\noexistfile.ps1 -WarningAction $NullVariable } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestPathCommand"
+    }
 }
 
 Describe 'ActionPreference.Break tests' -tag 'CI' {
