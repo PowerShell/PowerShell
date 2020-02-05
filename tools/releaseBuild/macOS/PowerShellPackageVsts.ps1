@@ -32,9 +32,20 @@ param (
 $repoRoot = $location
 
 if ($Build.IsPresent) {
-    $releaseTagParam = @{}
+    $releaseTagParam = @{ }
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+        #Remove the initial 'v' from the ReleaseTag
+        $version = $ReleaseTag -replace '^v'
+        $semVersion = [System.Management.Automation.SemanticVersion] $version
+
+        ## All even minor versions are LTS
+        $LTS = if ( $semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0) {
+            $true
+        } else {
+            $false
+        }
     }
 }
 
@@ -56,6 +67,13 @@ try {
         Start-PSPackage @releaseTagParam
         switch ($ExtraPackage) {
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
+        }
+
+        if ($LTS) {
+            Start-PSPackage @releaseTagParam -LTS
+            switch ($ExtraPackage) {
+                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+            }
         }
     }
 } finally {
