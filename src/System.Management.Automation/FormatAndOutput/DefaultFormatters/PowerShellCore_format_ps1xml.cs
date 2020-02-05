@@ -1151,15 +1151,23 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+                                            try {
+                                                $windowWidth = [Console]::WindowWidth
+                                            }
+                                            catch {
+                                                # fails if there is no console
+                                                $windowWidth = 120
+                                            }
+
+                                            if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
-                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $substring = Get-TruncatedString -string $message -length ($windowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
-                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
+                                                    $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
                                                     $null = $sb.Append($substring)
                                                     $null = $sb.Append($newline)
                                                     $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
