@@ -489,7 +489,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native constants for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeConstants
+        internal static class WldpNativeConstants
         {
             internal const uint WLDP_HOST_INFORMATION_REVISION = 0x00000001;
 
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeMethods
+        internal static class WldpNativeMethods
         {
             /// Return Type: HRESULT->LONG->int
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*

@@ -566,7 +566,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is the managed entry point for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll.
     /// </summary>
-    public class PowerShellAssemblyLoadContextInitializer
+    public static class PowerShellAssemblyLoadContextInitializer
     {
         /// <summary>
         /// Create a singleton of PowerShellAssemblyLoadContext.

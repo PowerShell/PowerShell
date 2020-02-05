@@ -26,7 +26,7 @@ using Debug = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
-    internal class EarlyStartup
+    internal static class EarlyStartup
     {
         internal static void Init()
         {

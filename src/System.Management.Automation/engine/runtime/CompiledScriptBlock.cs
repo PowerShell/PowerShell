@@ -1778,7 +1778,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private class SuspiciousContentChecker
+        private static class SuspiciousContentChecker
         {
             // Based on a (bad) random number generator, but good enough
             // for our simple needs.

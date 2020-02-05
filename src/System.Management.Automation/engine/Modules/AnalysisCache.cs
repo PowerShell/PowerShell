@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
     /// </summary>
-    internal class AnalysisCache
+    internal static class AnalysisCache
     {
         private static AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
