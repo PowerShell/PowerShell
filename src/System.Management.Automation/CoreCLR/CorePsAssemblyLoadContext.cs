@@ -239,7 +239,7 @@ namespace System.Management.Automation
             s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
             var fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
-            return NativeLibrary.Load(fullName);
+            return File.Exists(fullName) ? NativeLibrary.Load(fullName) : IntPtr.Zero;
         }
 
         #endregion Internal_Methods
