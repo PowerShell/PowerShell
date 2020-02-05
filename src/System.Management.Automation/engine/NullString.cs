@@ -6,7 +6,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// This type is introduced to provide a way to pass null into a .NET method that has a string parameter.
     /// </summary>
-    public class NullString
+    public sealed class NullString
     {
         #region private_members
 

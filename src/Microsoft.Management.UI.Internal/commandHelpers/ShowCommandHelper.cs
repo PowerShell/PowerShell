@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     /// <summary>
     /// Implements thw WPF window part of the show-command cmdlet.
     /// </summary>
-    internal class ShowCommandHelper : IDisposable
+    internal sealed class ShowCommandHelper : IDisposable
     {
         #region fields
 

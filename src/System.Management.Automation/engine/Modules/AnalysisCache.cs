@@ -642,7 +642,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class AnalysisCacheData
+    internal sealed class AnalysisCacheData
     {
         private static byte[] GetHeader()
         {

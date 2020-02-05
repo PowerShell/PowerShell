@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
-    internal class MUIFileSearcher
+    internal sealed class MUIFileSearcher
     {
         /// <summary>
         /// Constructor. It is private so that MUIFileSearcher is used only internal for this class.

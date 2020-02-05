@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The powershell custom AssemblyLoadContext implementation.
     /// </summary>
-    internal partial class PowerShellAssemblyLoadContext
+    internal sealed partial class PowerShellAssemblyLoadContext
     {
         #region Resource_Strings
 

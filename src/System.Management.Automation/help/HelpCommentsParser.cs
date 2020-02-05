@@ -20,7 +20,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Parses help comments and turns them into HelpInfo objects.
     /// </summary>
-    internal class HelpCommentsParser
+    internal sealed class HelpCommentsParser
     {
         private HelpCommentsParser()
         {

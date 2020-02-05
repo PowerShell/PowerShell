@@ -15,7 +15,7 @@ using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal sealed class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
 

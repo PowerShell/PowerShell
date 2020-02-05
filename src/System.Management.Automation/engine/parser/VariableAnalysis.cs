@@ -34,7 +34,7 @@ namespace System.Management.Automation.Language
         public List<Ast> AssociatedAsts { get; }
     }
 
-    internal class FindAllVariablesVisitor : AstVisitor
+    internal sealed class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

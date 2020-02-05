@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Stores help information related to Alias Commands.
     /// </summary>
-    internal class AliasHelpInfo : HelpInfo
+    internal sealed class AliasHelpInfo : HelpInfo
     {
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.

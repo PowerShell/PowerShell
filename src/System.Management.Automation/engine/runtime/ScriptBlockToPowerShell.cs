@@ -171,7 +171,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class UsingExpressionAstSearcher : AstSearcher
+    internal sealed class UsingExpressionAstSearcher : AstSearcher
     {
         internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
         {
@@ -203,7 +203,7 @@ namespace System.Management.Automation
     /// Converts a ScriptBlock to a PowerShell object by traversing the
     /// given Ast.
     /// </summary>
-    internal class ScriptBlockToPowerShellConverter
+    internal sealed class ScriptBlockToPowerShellConverter
     {
         private readonly PowerShell _powershell;
         private ExecutionContext _context;

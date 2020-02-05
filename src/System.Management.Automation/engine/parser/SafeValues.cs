@@ -356,7 +356,7 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    internal class GetSafeValueVisitor : ICustomAstVisitor2
+    internal sealed class GetSafeValueVisitor : ICustomAstVisitor2
     {
         internal enum SafeValueContext
         {

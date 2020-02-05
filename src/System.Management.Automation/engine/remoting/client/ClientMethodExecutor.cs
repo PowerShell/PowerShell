@@ -13,7 +13,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Executes methods on the client.
     /// </summary>
-    internal class ClientMethodExecutor
+    internal sealed class ClientMethodExecutor
     {
         /// <summary>
         /// Transport manager.

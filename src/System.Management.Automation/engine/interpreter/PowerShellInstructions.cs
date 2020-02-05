@@ -15,7 +15,7 @@
 
 namespace System.Management.Automation.Interpreter
 {
-    internal class UpdatePositionInstruction : Instruction
+    internal sealed class UpdatePositionInstruction : Instruction
     {
         private readonly int _sequencePoint;
         private readonly bool _checkBreakpoints;

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Tracks (per-session) terminating errors in a given cmdlet invocation.
     /// </summary>
-    internal class TerminatingErrorTracker
+    internal sealed class TerminatingErrorTracker
     {
         #region Getting tracker for a given cmdlet invocation
 

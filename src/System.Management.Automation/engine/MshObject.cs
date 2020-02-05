@@ -2458,7 +2458,7 @@ namespace System.Management.Automation
     /// Serves as a placeholder BaseObject when PSObject's
     /// constructor with no parameters is used.
     /// </summary>
-    public class PSCustomObject
+    public sealed class PSCustomObject
     {
         /// <summary>
         /// To prevent other instances than SelfInstance.

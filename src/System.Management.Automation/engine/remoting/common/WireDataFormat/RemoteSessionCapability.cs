@@ -171,7 +171,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// The HostDefaultData class.
     /// </summary>
-    internal class HostDefaultData
+    internal sealed class HostDefaultData
     {
         /// <summary>
         /// Data.
