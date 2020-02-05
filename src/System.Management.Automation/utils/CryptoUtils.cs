@@ -612,7 +612,7 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {
