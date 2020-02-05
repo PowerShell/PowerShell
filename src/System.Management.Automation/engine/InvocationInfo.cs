@@ -451,7 +451,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A CommandInfo that has been serialized/deserialized as part of an InvocationInfo during a remote invocation.
     /// </summary>
-    public sealed class RemoteCommandInfo : CommandInfo
+    public class RemoteCommandInfo : CommandInfo
     {
         /// <summary>
         /// </summary>

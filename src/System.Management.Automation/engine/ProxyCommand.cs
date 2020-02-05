@@ -9,8 +9,19 @@ namespace System.Management.Automation
     /// <summary>
     /// A ProxyCommand class used to represent a Command constructed Dynamically.
     /// </summary>
-    public static class ProxyCommand
+    public sealed class ProxyCommand
     {
+        #region Private Constructor
+
+        /// <summary>
+        /// Private Constructor to restrict inheritance.
+        /// </summary>
+        private ProxyCommand()
+        {
+        }
+
+        #endregion
+
         #region Public Static Methods
 
         /// <summary>
