@@ -3382,8 +3382,11 @@ namespace System.Management.Automation
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
             }
-            else if (pipeline.PipelineStateInfo.State == PipelineState.Failed)
+            else if ((pipeline.PipelineStateInfo.State == PipelineState.Failed) ||
+                     ((pipeline.PipelineStateInfo.State == PipelineState.Stopped) &&
+                      (pipeline.PipelineStateInfo.Reason != null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
             {
+                // Pipeline stopped state is also an error condition if the associated exception is not 'PipelineStoppedException'.
                 object targetObject = runspace.ConnectionInfo.ComputerName;
                 failureException = pipeline.PipelineStateInfo.Reason;
                 if (failureException != null)
@@ -3394,6 +3397,15 @@ namespace System.Management.Automation
                     if (rException != null)
                     {
                         errorRecord = rException.ErrorRecord;
+
+                        // A RemoteException will hide a PipelineStoppedException, which should be ignored.
+                        if (errorRecord != null &&
+                            errorRecord.FullyQualifiedErrorId.Equals("PipelineStopped", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // PipelineStoppedException should not be reported as error.
+                            failureException = null;
+                            return;
+                        }
                     }
                     else
                     {
