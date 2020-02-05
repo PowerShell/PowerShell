@@ -1855,7 +1855,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Utility methods for configuration file commands.
     /// </summary>
-    internal class SessionConfigurationUtils
+    internal static class SessionConfigurationUtils
     {
         /// <summary>
         /// This routine builds a fragment of the config file

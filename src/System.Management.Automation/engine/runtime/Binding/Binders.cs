@@ -444,7 +444,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class BinderUtils
+    internal static class BinderUtils
     {
         internal static BindingRestrictions GetVersionCheck(DynamicMetaObjectBinder binder, int expectedVersionNumber)
         {
