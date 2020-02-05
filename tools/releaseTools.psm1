@@ -137,8 +137,11 @@ function New-CommitNode
 function Get-ChangeLog
 {
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [string]$LastReleaseTag,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ThisReleaseTag,
 
         [Parameter(Mandatory)]
         [string]$Token,
@@ -328,6 +331,12 @@ function Get-ChangeLog
         throw "Some PRs are tagged multiple times or have no tags."
     }
 
+    # Write output
+
+    $version = $ThisReleaseTag.TrimStart('v')
+
+    Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
+
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
@@ -339,11 +348,13 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
+
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle) {
     if ($clSection.Count -gt 0) {
-        "### $sectionTitle"
+        "### $sectionTitle`n"
         $clSection | ForEach-Object -MemberName ChangeLogMessage
         ""
     }
