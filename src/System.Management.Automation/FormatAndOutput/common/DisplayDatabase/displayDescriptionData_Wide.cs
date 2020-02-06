@@ -77,7 +77,7 @@ namespace System.Management.Automation
         /// <summary>Create a default WideControl</summary>
         public static WideControlBuilder Create(bool outOfBand = false, bool autoSize = false, uint columns = 0)
         {
-            var control = new WideControl { OutOfBand = false, AutoSize = autoSize, Columns = columns };
+            var control = new WideControl { OutOfBand = outOfBand, AutoSize = autoSize, Columns = columns };
             return new WideControlBuilder(control);
         }
 
