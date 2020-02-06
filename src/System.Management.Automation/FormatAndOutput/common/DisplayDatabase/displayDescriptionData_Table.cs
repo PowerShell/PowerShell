@@ -376,7 +376,7 @@ namespace System.Management.Automation
         public DisplayEntry DisplayEntry { get; set; }
 
         /// <summary>Format string to apply</summary>
-        public string FormatString { get; internal set; }
+        public string FormatString { get; set; }
 
         /// <summary>
         /// Returns the value of the entry.
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         public List<TableControlColumn> Columns { get; set; }
 
         /// <summary>List of typenames which select this entry</summary>
-        public EntrySelectedBy SelectedBy { get; internal set; }
+        public EntrySelectedBy SelectedBy { get; set; }
 
         /// <summary>When true, instead of truncating to the column width, use multiple lines.</summary>
         public bool Wrap { get; set; }
