@@ -1289,7 +1289,6 @@ namespace System.Management.Automation
 
                     ProcessResolvedCertificates(purpose, certificatesToProcess, out error);
                 }
-
             }
             catch (SessionStateException)
             {
