@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
         internal ComplexControlBody _cachedBody;
 
-        internal CustomControl()
+        public CustomControl()
         {
             Entries = new List<CustomControlEntry>();
         }
