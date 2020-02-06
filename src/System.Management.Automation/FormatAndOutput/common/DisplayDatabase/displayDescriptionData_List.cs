@@ -118,7 +118,7 @@ namespace System.Management.Automation
     public sealed class ListControl : PSControl
     {
         /// <summary>Entries in this list control</summary>
-        public List<ListControlEntry> Entries { get; internal set; }
+        public List<ListControlEntry> Entries { get; set; }
 
         /// <summary></summary>
         public static ListControlBuilder Create(bool outOfBand = false)
@@ -201,7 +201,7 @@ namespace System.Management.Automation
     public sealed class ListControlEntry
     {
         /// <summary>List of items in the entry</summary>
-        public List<ListControlEntryItem> Items { get; internal set; }
+        public List<ListControlEntryItem> Items { get; set; }
 
         /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy</summary>
         public List<string> SelectedBy
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
-        public EntrySelectedBy EntrySelectedBy { get; internal set; }
+        public EntrySelectedBy EntrySelectedBy { get; set; }
 
         /// <summary>Initiate an instance of ListControlEntry</summary>
         public ListControlEntry()
@@ -297,16 +297,16 @@ namespace System.Management.Automation
         /// If nothing is specified, then it uses the
         /// property name.
         /// </summary>
-        public string Label { get; internal set; }
+        public string Label { get; set; }
 
         /// <summary>Display entry</summary>
-        public DisplayEntry DisplayEntry { get; internal set; }
+        public DisplayEntry DisplayEntry { get; set; }
 
         /// <summary/>
-        public DisplayEntry ItemSelectionCondition { get; internal set; }
+        public DisplayEntry ItemSelectionCondition { get; set; }
 
         /// <summary>Format string to apply</summary>
-        public string FormatString { get; internal set; }
+        public string FormatString { get; set; }
 
         internal ListControlEntryItem()
         {
