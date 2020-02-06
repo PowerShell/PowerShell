@@ -123,7 +123,7 @@ namespace System.Management.Automation
         /// <summary></summary>
         public static ListControlBuilder Create(bool outOfBand = false)
         {
-            var list = new ListControl { OutOfBand = false };
+            var list = new ListControl { OutOfBand = outOfBand };
             return new ListControlBuilder(list);
         }
 
