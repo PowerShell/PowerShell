@@ -66,13 +66,13 @@ namespace System.Management.Automation
     public sealed class WideControl : PSControl
     {
         /// <summary>Entries in this wide control</summary>
-        public List<WideControlEntryItem> Entries { get; internal set; }
+        public List<WideControlEntryItem> Entries { get; set; }
 
         /// <summary>When true, widths are calculated based on more than the first object.</summary>
         public bool AutoSize { get; set; }
 
         /// <summary>Number of columns in the control</summary>
-        public uint Columns { get; internal set; }
+        public uint Columns { get; set; }
 
         /// <summary>Create a default WideControl</summary>
         public static WideControlBuilder Create(bool outOfBand = false, bool autoSize = false, uint columns = 0)
@@ -180,7 +180,7 @@ namespace System.Management.Automation
     public sealed class WideControlEntryItem
     {
         /// <summary>Display entry</summary>
-        public DisplayEntry DisplayEntry { get; internal set; }
+        public DisplayEntry DisplayEntry { get; set; }
 
         /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy</summary>
         public List<string> SelectedBy
@@ -194,10 +194,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
-        public EntrySelectedBy EntrySelectedBy { get; internal set; }
+        public EntrySelectedBy EntrySelectedBy { get; set; }
 
         /// <summary>Format string to apply</summary>
-        public string FormatString { get; internal set; }
+        public string FormatString { get; set; }
 
         internal WideControlEntryItem()
         {
