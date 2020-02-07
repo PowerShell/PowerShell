@@ -54,30 +54,28 @@ namespace System.Management.Automation
             }
         }
 
-        internal string GetFullName() => EvaluateFullName(Name, PSSnapInName, ModuleName);
-
-        private string EvaluateFullName(string name, string psSnapInName, string moduleName)
+        internal string GetFullName()
         {
-            string result = name;
-            if (!string.IsNullOrEmpty(psSnapInName))
+            string result = Name;
+            if (!string.IsNullOrEmpty(PSSnapInName))
             {
                 result =
                     string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}\\{1}",
-                        psSnapInName,
-                        name);
+                        PSSnapInName,
+                        Name);
             }
 
             // After converting core snapins to load as modules, the providers will have Module property populated
-            else if (!string.IsNullOrEmpty(moduleName))
+            else if (!string.IsNullOrEmpty(ModuleName))
             {
                 result =
                     string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}\\{1}",
-                        moduleName,
-                        name);
+                        ModuleName,
+                        Name);
             }
 
             return result;
