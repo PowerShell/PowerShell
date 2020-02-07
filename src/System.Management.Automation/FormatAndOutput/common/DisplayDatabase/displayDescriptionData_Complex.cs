@@ -64,7 +64,9 @@ namespace System.Management.Automation
 
         internal ComplexControlBody _cachedBody;
 
-        /// <summary>Public default constructor for CustomControl</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomControl"/> class.
+        /// </summary>
         public CustomControl()
         {
             Entries = new List<CustomControlEntry>();
