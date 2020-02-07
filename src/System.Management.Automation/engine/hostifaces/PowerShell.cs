@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -328,9 +330,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSInvocationSettings()
         {
-#if !CORECLR // No ApartmentState In CoreCLR
             this.ApartmentState = ApartmentState.Unknown;
-#endif
             _host = null;
             RemoteStreamOptions = 0;
             AddToHistory = false;
@@ -339,13 +339,11 @@ namespace System.Management.Automation
 
         #endregion
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread in which the command
         /// is executed.
         /// </summary>
         public ApartmentState ApartmentState { get; set; }
-#endif
 
         /// <summary>
         /// Host to use with the Runspace when the command is
@@ -642,6 +640,7 @@ namespace System.Management.Automation
             Streams = new PSDataStreams(this);
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.PowerShellCreate, "create");
         }
 
         /// <summary>
@@ -2262,9 +2261,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2323,9 +2319,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2389,9 +2382,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2450,9 +2440,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2517,9 +2504,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2583,9 +2567,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2654,9 +2635,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -2718,9 +2696,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2792,9 +2767,6 @@ namespace System.Management.Automation
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -3897,29 +3869,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This has been added as a work around for Windows8 bug 803461.
-        /// It should be used only for the PSJobProxy API.
-        ///
-        /// Resets the instance ID of the command to a new guid.
-        /// If this is not done, then there is a race condition on the server
-        /// in the following circumstances:
-        ///
-        ///   ps.BeginInvoke(...);
-        ///   ps.Stop()
-        ///   ps.Commands.Clear();
-        ///   ps.AddCommand("Foo");
-        ///   ps.Invoke();
-        ///
-        /// In these conditions, stop returns before the server is done cleaning up.
-        /// The subsequent invoke will cause an error because the guid already
-        /// identifies a command in progress.
-        /// </summary>
-        internal void GenerateNewInstanceId()
-        {
-            InstanceId = Guid.NewGuid();
-        }
-
-        /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
@@ -4484,9 +4433,6 @@ namespace System.Management.Automation
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -4553,9 +4499,10 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
 #endif
+
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
                         _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
@@ -4567,9 +4514,10 @@ namespace System.Management.Automation
                         rsToUse = _rsConnection as Runspace;
                         if (rsToUse != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
+#if !UNIX
                             VerifyThreadSettings(settings, rsToUse.ApartmentState, rsToUse.ThreadOptions, false);
 #endif
+
                             if (rsToUse.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rsToUse.RunspaceStateInfo.State);
@@ -4833,9 +4781,10 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, pool.IsRemote);
 #endif
+
                         pool.AssertPoolIsOpen();
 
                         // for executing in a remote runspace pool case
@@ -4911,9 +4860,10 @@ namespace System.Management.Automation
                         LocalRunspace rs = _rsConnection as LocalRunspace;
                         if (rs != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
+#if !UNIX
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
 #endif
+
                             if (rs.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rs.RunspaceStateInfo.State);
@@ -4962,7 +4912,8 @@ namespace System.Management.Automation
             return _invokeAsyncResult;
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
+        // Apartment thread state does not apply to non-Windows platforms.
+#if !UNIX
         /// <summary>
         /// Verifies the settings for ThreadOptions and ApartmentState.
         /// </summary>
@@ -5934,55 +5885,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-
-        #region V3 Extensions
-
-        /// <summary>
-        /// Returns a job object which can be used to
-        /// control the invocation of the command with
-        /// AsJob Parameter.
-        /// </summary>
-        /// <returns>Job object.</returns>
-        public PSJobProxy AsJobProxy()
-        {
-            // if there are no commands added
-            // throw an invalid operation exception
-            if (this.Commands.Commands.Count == 0)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandRequiresACommand);
-            }
-
-            // if there is more than one command in the
-            // command collection throw an error
-            if (this.Commands.Commands.Count > 1)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandNotSupported);
-            }
-
-            // check if the AsJob parameter has already
-            // been added. If not, add the same
-            bool found = false;
-            foreach (CommandParameter parameter in this.Commands.Commands[0].Parameters)
-            {
-                if (string.Compare(parameter.Name, "AsJob", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    found = true;
-                }
-            }
-
-            if (!found)
-            {
-                AddParameter("AsJob");
-            }
-
-            // initialize the job invoker and return the same
-            PSJobProxy job = new PSJobProxy(this.Commands.Commands[0].CommandText);
-            job.InitializeJobProxy(this.Commands, this.Runspace, this.RunspacePool);
-
-            return job;
-        }
-
-        #endregion V3 Extensions
 
 #if !CORECLR // PSMI Not Supported On CSS
         #region Win Blue Extensions

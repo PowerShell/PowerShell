@@ -14,6 +14,7 @@ using System.ComponentModel; // Win32Exception
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices; // Marshal, DllImport
 using System.Security.Permissions;
+using System.Security.AccessControl;
 using NakedWin32Handle = System.IntPtr;
 using DWORD = System.UInt32;
 
@@ -111,6 +112,40 @@ namespace Microsoft.PowerShell.Commands
             WriteError(new ErrorRecord(exception, errorId, category, targetObject));
         }
 
+        internal void SetServiceSecurityDescriptor(
+            ServiceController service,
+            string securityDescriptorSddl,
+            NakedWin32Handle hService)
+        {
+            var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
+            RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
+            var discretionaryAcl = new DiscretionaryAcl(false, false, rawDiscretionaryAcl);
+
+            byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
+            discretionaryAcl.GetBinaryForm(rawDacl, 0);
+            rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
+            byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
+            rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
+
+            bool status = NativeMethods.SetServiceObjectSecurity(
+                hService,
+                SecurityInfos.DiscretionaryAcl,
+                securityDescriptorByte);
+
+            if (!status)
+            {
+                int lastError = Marshal.GetLastWin32Error();
+                Win32Exception exception = new Win32Exception(lastError);
+                bool accessDenied = exception.NativeErrorCode == NativeMethods.ERROR_ACCESS_DENIED;
+                WriteNonTerminatingError(
+                    service,
+                    exception,
+                    nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
+                    StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, service.ServiceName, exception.Message),
+                    accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
+            }
+
+        }
         #endregion Internal
     }
     #endregion ServiceBaseCommand
@@ -535,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the get-service command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Service", DefaultParameterSetName = "Default",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113332", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096496", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public sealed class GetServiceCommand : MultipleServiceCommandBase
     {
@@ -1254,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
     /// Note that the services will be sorted before being stopped.
     /// PM confirms that this is OK.
     /// </remarks>
-    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113414")]
+    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097052")]
     [OutputType(typeof(ServiceController))]
     public sealed class StopServiceCommand : ServiceOperationBaseCommand
     {
@@ -1307,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the start-service command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113406")]
+    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097051")]
     [OutputType(typeof(ServiceController))]
     public sealed class StartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1339,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the suspend-service command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113416")]
+    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097053")]
     [OutputType(typeof(ServiceController))]
     public sealed class SuspendServiceCommand : ServiceOperationBaseCommand
     {
@@ -1372,7 +1407,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the resume-service command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Resume, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113386")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097150")]
     [OutputType(typeof(ServiceController))]
     public sealed class ResumeServiceCommand : ServiceOperationBaseCommand
     {
@@ -1406,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the restart-service command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113385")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097059")]
     [OutputType(typeof(ServiceController))]
     public sealed class RestartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1460,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the set-service command.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113399", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097148", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public class SetServiceCommand : ServiceOperationBaseCommand
     {
@@ -1543,13 +1578,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "StartupType".
+        /// "Set-Service -StartType" sets ServiceController.InputObject.StartType.
         /// Changes the starting mode of the service. Valid values for StartupType are:
         /// -- Automatic: Start when the system starts.
         /// -- Manual   : Starts only when started by a user or program.
         /// -- Disabled : Can.
         /// </summary>
         [Parameter]
-        [Alias("StartMode", "SM", "ST")]
+        [Alias("StartMode", "SM", "ST", "StartType")]
         [ValidateNotNullOrEmpty]
         public ServiceStartupType StartupType
         {
@@ -1560,9 +1596,22 @@ namespace Microsoft.PowerShell.Commands
                 startupType = value;
             }
         }
+
         // We set the initial value to an invalid value so that we can
         // distinguish when this is and is not set.
         internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
+
+        /// <summary>
+        /// Sets the SecurityDescriptorSddl of the service using a SDDL string.
+        /// </summary>
+        [Parameter]
+        [Alias("sd")]
+        [ValidateNotNullOrEmpty]
+        public string SecurityDescriptorSddl
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// The following is the definition of the input parameter "Status".
@@ -1718,8 +1767,9 @@ namespace Microsoft.PowerShell.Commands
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
-                        NativeMethods.SERVICE_CHANGE_CONFIG
+                        NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER
                         );
+
                     if (IntPtr.Zero == hService)
                     {
                         int lastError = Marshal.GetLastWin32Error();
@@ -1870,6 +1920,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
+                    if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                    {
+                        SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
+                    }
+
                     if (PassThru.IsPresent)
                     {
                         // To display the service, refreshing the service would not show the display name after updating
@@ -1937,9 +1992,9 @@ namespace Microsoft.PowerShell.Commands
 
     #region NewServiceCommand
     /// <summary>
-    /// This class implements the set-service command.
+    /// This class implements the New-Service command.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113359")]
+    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096905")]
     [OutputType(typeof(ServiceController))]
     public class NewServiceCommand : ServiceBaseCommand
     {
@@ -2034,6 +2089,18 @@ namespace Microsoft.PowerShell.Commands
         internal PSCredential credential = null;
 
         /// <summary>
+        /// Sets the SecurityDescriptorSddl of the service using a SDDL string.
+        /// </summary>
+        [Parameter]
+        [Alias("sd")]
+        [ValidateNotNullOrEmpty]
+        public string SecurityDescriptorSddl
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Other services on which the new service depends.
         /// </summary>
         /// <value></value>
@@ -2055,6 +2122,7 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
+            ServiceController service = null;
             Diagnostics.Assert(!string.IsNullOrEmpty(Name),
                 "null ServiceName");
             Diagnostics.Assert(!string.IsNullOrEmpty(BinaryPathName),
@@ -2145,7 +2213,7 @@ namespace Microsoft.PowerShell.Commands
                     hScManager,
                     Name,
                     DisplayName,
-                    NativeMethods.SERVICE_CHANGE_CONFIG,
+                    NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER,
                     NativeMethods.SERVICE_WIN32_OWN_PROCESS,
                     dwStartType,
                     NativeMethods.SERVICE_ERROR_NORMAL,
@@ -2227,11 +2295,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write the ServiceController for the new service
-                using (ServiceController service =
-                    new ServiceController(Name)) // ensure dispose
+                service = new ServiceController(Name);
+
+                if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                 {
-                    WriteObject(service);
+                    SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                 }
+
+                WriteObject(service);
             }
             finally
             {
@@ -2554,6 +2625,7 @@ namespace Microsoft.PowerShell.Commands
         internal const int ERROR_SERVICE_ALREADY_RUNNING = 1056;
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
         internal const int ERROR_INSUFFICIENT_BUFFER = 122;
+        internal const DWORD ERROR_ACCESS_DENIED = 0x5;
         internal const DWORD SC_MANAGER_CONNECT = 1;
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
         internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
@@ -2567,7 +2639,8 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_CONFIG_DESCRIPTION = 1;
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
-
+        internal const DWORD WRITE_DAC = 262144;
+        internal const DWORD WRITE_OWNER = 524288;
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 
@@ -2688,6 +2761,16 @@ namespace Microsoft.PowerShell.Commands
             [In] IntPtr lpPassword
         );
 
+
+        [DllImport(PinvokeDllNames.SetServiceObjectSecurityDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern
+        bool SetServiceObjectSecurity(
+            NakedWin32Handle hSCManager,
+            System.Security.AccessControl.SecurityInfos dwSecurityInformation,
+            byte[] lpSecurityDescriptor
+            );
+
         /// <summary>
         /// CreateJobObject API creates or opens a job object.
         /// </summary>
@@ -2705,7 +2788,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the object existed before the function call, the function
         /// returns a handle to the existing job object.
         /// </returns>
-        [DllImport(PinvokeDllNames.CreateJobObjectDllName, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
 
         /// <summary>
@@ -2720,7 +2803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>If the function succeeds, the return value is nonzero.
         /// If the function fails, the return value is zero.
         /// </returns>
-        [DllImport(PinvokeDllNames.AssignProcessToJobObjectDllName, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AssignProcessToJobObject(SafeHandle hJob, IntPtr hProcess);
 
@@ -2746,7 +2829,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>If the function succeeds, the return value is nonzero.
         /// If the function fails, the return value is zero.
         /// </returns>
-        [DllImport(PinvokeDllNames.QueryInformationJobObjectDllName, EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("Kernel32.dll", EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);

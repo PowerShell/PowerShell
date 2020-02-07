@@ -1607,20 +1607,12 @@ namespace System.Management.Automation
         {
             get
             {
-                // this is kind of our own lazy initialization logic here.
-                if (_typeResolutionState == null)
+                if (_typeResolutionState != null)
                 {
-                    if (this.Parent != null)
-                    {
-                        _typeResolutionState = this.Parent.TypeResolutionState;
-                    }
-                    else
-                    {
-                        _typeResolutionState = Language.TypeResolutionState.UsingSystem;
-                    }
+                    return _typeResolutionState;
                 }
 
-                return _typeResolutionState;
+                return Parent != null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
             }
 
             set { _typeResolutionState = value; }

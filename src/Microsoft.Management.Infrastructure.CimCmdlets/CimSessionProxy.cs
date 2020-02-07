@@ -419,7 +419,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string cimsessionComputerName = cimInstance.GetCimSessionComputerName();
             CreateSetSession(cimsessionComputerName, null, null, null, false);
-            this.isDefaultSession = (cimsessionComputerName  == ConstValue.NullComputerName);
+            this.isDefaultSession = (cimsessionComputerName == ConstValue.NullComputerName);
 
             DebugHelper.WriteLogEx("Create a temp session with computerName = {0}.", 0, cimsessionComputerName);
         }
@@ -570,7 +570,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 DebugHelper.WriteLogEx("ResourceUri {0},", 0, value);
 
-                this.options.ResourceUri= value;
+                this.options.ResourceUri = value;
             }
 
             get
@@ -606,7 +606,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             set
             {
                 DebugHelper.WriteLogEx("EnablePromptUser {0}", 0, value);
-                if(value)
+                if (value)
                 {
                     this.options.PromptUser = this.PromptUser;
                 }
@@ -1876,10 +1876,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimResultContext cimResultContext)
         {
             CimMethodResultObserver observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)
-                {
-                    ClassName = className,
-                    MethodName = methodName
-                };
+            {
+                ClassName = className,
+                MethodName = methodName
+            };
 
             observer.OnNewResult += this.ResultEventHandler;
             this.operationID = Interlocked.Increment(ref gOperationCounter);
@@ -2114,10 +2114,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.PropertyName != null)
             {
-                pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassProperties != null)
                 {
+                    pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
                     foreach (CimPropertyDeclaration decl in cimClass.CimClassProperties)
                     {
                         DebugHelper.WriteLog("--- property name : {0}", 1, decl.Name);
@@ -2138,10 +2138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.MethodName != null)
             {
-                pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassMethods != null)
                 {
+                    pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                     foreach (CimMethodDeclaration decl in cimClass.CimClassMethods)
                     {
                         DebugHelper.WriteLog("--- method name : {0}", 1, decl.Name);
@@ -2162,10 +2162,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.QualifierName != null)
             {
-                pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassQualifiers != null)
                 {
+                    pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
                     foreach (CimQualifier qualifier in cimClass.CimClassQualifiers)
                     {
                         DebugHelper.WriteLog("--- qualifier name : {0}", 1, qualifier.Name);

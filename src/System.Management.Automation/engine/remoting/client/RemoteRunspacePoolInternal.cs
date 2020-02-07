@@ -10,6 +10,7 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Tracing;
 using System.Threading;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
 #if LEGACYTELEMETRY
@@ -854,6 +855,8 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
+            // Telemetry here - remote session
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.RemoteSessionOpen, isAsync.ToString());
 #if LEGACYTELEMETRY
             TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
 #endif
@@ -1903,7 +1906,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private RunspacePoolAsyncResult _reconnectAsyncResult;  // async result object generated on CoreReconnect
         private bool _isDisposed;
 
-        private DispatchTable<Object> DispatchTable { get; }
+        private DispatchTable<object> DispatchTable { get; }
 
         private bool _canReconnect;
         private string _friendlyName = string.Empty;

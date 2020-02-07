@@ -131,6 +131,10 @@ try
             $template -f $configFilePath > $moduleFilePath
         }
 
+        AfterAll {
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
+        }
+
         It "Verifies that a NoLanguage runspace pool throws the expected 'script not allowed' error" {
 
             try
@@ -405,6 +409,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+                Remove-Module PSDiagnostics -Force -ErrorAction SilentlyContinue
             }
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "CantInvokeCallOperatorAcrossLanguageBoundaries"
@@ -465,7 +470,7 @@ try
 
         BeforeAll {
 
-            function VulnerableFunctionFromFullLanguage { Invoke-Expression $Args[0] }
+            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
 
             $TestCasesIEX = @(
                 @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";
@@ -878,6 +883,26 @@ try
         }
     }
 
+    Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = 1..1 | ForEach-Object -Parallel { $ExecutionContext.SessionState.LanguageMode }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $results | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
     Describe "Dot sourced script block functions from trusted script files should not run FullLanguage in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
@@ -901,6 +926,10 @@ try
                 TrustedFn
             }}
 '@ -f $scriptFilePath | Out-File -FilePath $scriptModulePath
+        }
+
+        AfterAll {
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies a scriptblock from a trusted script file does not run as trusted" {
@@ -946,6 +975,11 @@ try
             function ModuleFn {{ "ModuleFn: $($ExecutionContext.SessionState.LanguageMode)" }}
             Export-ModuleMember -Function "ModuleFn","ImportModuleFn"
 '@ -f $importModulePath | Out-File -FilePath $scriptModulePath
+        }
+
+        AfterAll {
+            Remove-Module $importModuleName -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies that trusted module functions run in FullLanguage" {
@@ -1003,6 +1037,7 @@ try
         AfterAll {
 
             Remove-Module -Name T1ScriptClass_System32 -Force -ErrorAction Ignore
+            Remove-Module -Name T1ScriptClass -Force -ErrorAction Ignore
         }
 
         It "Verifies that classes cannot be created in script running under constrained language" {
@@ -1161,6 +1196,31 @@ try
             }
 
             $result | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
+
+    Describe "Enter-PSHostProcess cmdlet should be disabled on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies that Enter-PSHostProcess is disabled with lock down policy" {
+
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                Enter-PSHostProcess -Id 5555 -ErrorAction Stop
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly 'EnterPSHostProcessCmdletDisabled,Microsoft.PowerShell.Commands.EnterPSHostProcessCommand'
         }
     }
 

@@ -3060,7 +3060,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
@@ -3080,13 +3080,13 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
             if (members == null)
             {
-                throw PSTraceSource.NewArgumentNullException("members");
+                throw PSTraceSource.NewArgumentNullException(nameof(members));
             }
 
             this.internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
@@ -3094,11 +3094,31 @@ namespace System.Management.Automation
             {
                 if (member == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("members");
+                    throw PSTraceSource.NewArgumentNullException(nameof(members));
                 }
 
                 this.internalMembers.Add(member.Copy());
             }
+
+            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
+            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_emptyPropertyCollection);
+            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_emptyMethodCollection);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of PSMemberSet with all the initial members in <paramref name="members"/>.
+        /// This constructor is supposed to be used in TypeTable to reuse the passed-in member collection.
+        /// Null-argument check is skipped here, so callers need to check arguments before passing in.
+        /// </summary>
+        /// <param name="name">Name for the member set.</param>
+        /// <param name="members">Members in the member set.</param>
+        internal PSMemberSet(string name, PSMemberInfoInternalCollection<PSMemberInfo> members)
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
+            Diagnostics.Assert(members != null, "Caller needs to guarantee not null.");
+
+            this.name = name;
+            this.internalMembers = members;
 
             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
             _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_emptyPropertyCollection);
@@ -3257,7 +3277,7 @@ namespace System.Management.Automation
     /// </remarks>
     internal class PSInternalMemberSet : PSMemberSet
     {
-        private readonly object _syncObject = new Object();
+        private readonly object _syncObject = new object();
         private readonly PSObject _psObject;
 
         #region Constructor
@@ -3434,13 +3454,13 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             this.name = name;
             if (referencedPropertyNames == null)
             {
-                throw PSTraceSource.NewArgumentNullException("referencedPropertyNames");
+                throw PSTraceSource.NewArgumentNullException(nameof(referencedPropertyNames));
             }
 
             ReferencedPropertyNames = new Collection<string>();
@@ -3448,11 +3468,29 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(referencedPropertyName))
                 {
-                    throw PSTraceSource.NewArgumentException("referencedPropertyNames");
+                    throw PSTraceSource.NewArgumentException(nameof(referencedPropertyNames));
                 }
 
                 ReferencedPropertyNames.Add(referencedPropertyName);
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of PSPropertySet with a name and list of property names.
+        /// This constructor is supposed to be used in TypeTable to reuse the passed-in property name list.
+        /// Null-argument check is skipped here, so callers need to check arguments before passing in.
+        /// </summary>
+        /// <param name="name">Name of the set.</param>
+        /// <param name="referencedPropertyNameList">Name of the properties in the set.</param>
+        internal PSPropertySet(string name, List<string> referencedPropertyNameList)
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
+            Diagnostics.Assert(referencedPropertyNameList != null, "Caller needs to guarantee not null.");
+
+            // We use the constructor 'public Collection(IList<T> list)' to create the collection,
+            // so that the passed-in list is directly used as the backing store of the collection.
+            this.name = name;
+            ReferencedPropertyNames = new Collection<string>(referencedPropertyNameList);
         }
 
         /// <summary>

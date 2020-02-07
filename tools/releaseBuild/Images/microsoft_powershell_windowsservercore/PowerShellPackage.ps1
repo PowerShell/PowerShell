@@ -7,11 +7,11 @@ param (
 
     [string] $branch = 'master',
 
-    [string] $location = "$pwd\powershell",
+    [string] $location = "$PWD\powershell",
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent")]
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent", "fxdependent-win-desktop")]
     [string]$Runtime = 'win7-x64',
 
     [switch] $Wait,
@@ -79,7 +79,7 @@ try{
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
         Write-Verbose "Expanding signed build..." -verbose
-        if($Runtime -eq 'fxdependent')
+        if($Runtime -like 'fxdependent*')
         {
             Expand-PSSignedBuild -BuildZip $BuildZip -SkipPwshExeCheck
         }
@@ -93,7 +93,7 @@ try{
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -ne "fxdependent"}
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*"}
 
         if($Symbols.IsPresent)
         {
@@ -111,25 +111,30 @@ try{
     {
         $pspackageParams = @{'Type'='fxdependent'}
     }
+    elseif ($Runtime -eq 'fxdependent-win-desktop')
+    {
+        $pspackageParams = @{'Type'='fxdependent-win-desktop'}
+    }
     else
     {
         $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -notlike 'fxdependent*')
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'fxdependent', 'fxdependent-win-desktop')
     {
         $pspackageParams['Type']='msix'
+        $pspackageParams['WindowsRuntime']=$Runtime
         Write-Verbose "Starting powershell packaging(msix)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
     {
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
@@ -144,7 +149,7 @@ try{
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
-    elseif (!$ComponentRegistration.IsPresent -and $Runtime -eq 'fxdependent')
+    elseif (!$ComponentRegistration.IsPresent -and $Runtime -like 'fxdependent*')
     {
         ## Add symbols for just like zip package.
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent

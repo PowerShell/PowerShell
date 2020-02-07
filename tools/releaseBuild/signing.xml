@@ -30,6 +30,7 @@
 
     <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
     <file src="__INPATHROOT__\RegisterManifest.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\RegisterManifest.ps1" />
+    <file src="__INPATHROOT__\InstallPSCorePolicyDefinitions.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\InstallPSCorePolicyDefinitions.ps1" />
     <file src="__INPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" />

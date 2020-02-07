@@ -14,8 +14,8 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # If Out-File -Encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $psDefaultParameterValues.Clone()
-        $psDefaultParameterValues = @{}
+        $oldDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues = @{}
     }
     AfterAll {
         # be sure to tidy up afterwards
@@ -23,11 +23,11 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     }
     BeforeEach {
         # start each test with a clean plate!
-        $psdefaultParameterValues.Remove("Out-File:Encoding")
+        $PSDefaultParameterValues.Remove("Out-File:Encoding")
     }
     AfterEach {
         # end each test with a clean plate!
-        $psdefaultParameterValues.Remove("Out-File:Encoding")
+        $PSDefaultParameterValues.Remove("Out-File:Encoding")
     }
 
     It "If encoding is unset, redirection should be UTF8 without bom" {
@@ -70,7 +70,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $TXT = $enc.GetBytes($asciiString)
             $CR  = $enc.GetBytes($asciiCR)
             $expectedBytes = .{ $BOM; $TXT; $CR }
-            $psdefaultparameterValues["Out-File:Encoding"] = "$encoding"
+            $PSDefaultParameterValues["Out-File:Encoding"] = "$encoding"
             $asciiString > TESTDRIVE:/file.txt
             $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
             # THE TEST
@@ -96,6 +96,15 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
 }
 
 Describe "File redirection should have 'DoComplete' called on the underlying pipeline processor" -Tags CI {
+    BeforeAll {
+        $originalErrorView = $ErrorView
+        $ErrorView = "NormalView"
+    }
+
+    AfterAll {
+        $ErrorView = $originalErrorView
+    }
+
     It "File redirection should result in the same file as Out-File" {
         $object = [pscustomobject] @{ one = 1 }
         $redirectFile = Join-Path $TestDrive fileRedirect.txt

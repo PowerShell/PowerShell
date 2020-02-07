@@ -880,12 +880,14 @@ namespace System.Management.Automation
         internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
         {
             applicationBase = Utils.DefaultPowerShellAppBase;
-            Dbg.Assert(!string.IsNullOrEmpty(applicationBase),
+            Dbg.Assert(
+                !string.IsNullOrEmpty(applicationBase),
                 string.Format(CultureInfo.CurrentCulture, "{0} is empty or null", RegistryStrings.MonadEngine_ApplicationBase));
 
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
-            Dbg.Assert(psVersion != null,
+            Dbg.Assert(
+                psVersion != null,
                 string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
 
             // Get version number in x.x.x.x format
@@ -895,19 +897,21 @@ namespace System.Management.Automation
             // culture, publickeytoken...This will break the scenarios where only one of
             // the assemblies is patched. ie., all monad assemblies should have the
             // same version number.
-
             Assembly currentAssembly = typeof(PSSnapInReader).Assembly;
-            assemblyVersion = currentAssembly.GetName().Version;
-            byte[] publicTokens = currentAssembly.GetName().GetPublicKeyToken();
+            AssemblyName assemblyName = currentAssembly.GetName();
+            assemblyVersion = assemblyName.Version;
+            byte[] publicTokens = assemblyName.GetPublicKeyToken();
             if (publicTokens.Length == 0)
             {
                 throw PSTraceSource.NewArgumentException("PublicKeyToken", MshSnapinInfo.PublicKeyTokenAccessFailed);
             }
 
             publicKeyToken = ConvertByteArrayToString(publicTokens);
+
             // save some cpu cycles by hardcoding the culture to neutral
             // assembly should never be targeted to a particular culture
             culture = "neutral";
+
             // Hardcoding the architecture MSIL as PowerShell assemblies are architecture neutral, this should
             // be changed if the assumption is broken. Preferred hardcoded string to using (for perf reasons):
             // string architecture = currentAssembly.GetName().ProcessorArchitecture.ToString()
@@ -1010,13 +1014,20 @@ namespace System.Management.Automation
 
             // create default mshsnapininfo objects..
             Collection<PSSnapInInfo> engineMshSnapins = new Collection<PSSnapInInfo>();
+            string assemblyVersionString = assemblyVersion.ToString();
 
             for (int item = 0; item < DefaultMshSnapins.Count; item++)
             {
                 DefaultPSSnapInInformation defaultMshSnapinInfo = DefaultMshSnapins[item];
 
-                string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
-                    defaultMshSnapinInfo.AssemblyName, assemblyVersion.ToString(), culture, publicKeyToken, architecture);
+                string strongName = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
+                    defaultMshSnapinInfo.AssemblyName,
+                    assemblyVersionString,
+                    culture,
+                    publicKeyToken,
+                    architecture);
 
                 Collection<string> formats = null;
                 Collection<string> types = null;
@@ -1026,8 +1037,7 @@ namespace System.Management.Automation
                     formats = smaFormats;
                     types = smaTypes;
                 }
-                else if (defaultMshSnapinInfo.AssemblyName.Equals("Microsoft.PowerShell.Commands.Diagnostics",
-                    StringComparison.OrdinalIgnoreCase))
+                else if (defaultMshSnapinInfo.AssemblyName.Equals("Microsoft.PowerShell.Commands.Diagnostics", StringComparison.OrdinalIgnoreCase))
                 {
                     types = new Collection<string>(new string[] { "GetEvent.types.ps1xml" });
                     formats = new Collection<string>(new string[] { "Event.format.ps1xml", "Diagnostics.format.ps1xml" });
@@ -1038,15 +1048,6 @@ namespace System.Management.Automation
                 }
 
                 string moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
-
-                if (File.Exists(moduleName))
-                {
-                    moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
-                }
-                else
-                {
-                    moduleName = defaultMshSnapinInfo.AssemblyName;
-                }
 
                 PSSnapInInfo defaultMshSnapin = new PSSnapInInfo(
                     defaultMshSnapinInfo.PSSnapInName,

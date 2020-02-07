@@ -6,15 +6,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Reflection;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -24,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// commands of the given name.  It returns an instance of CommandInfo for each
     /// command that is found.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113309")]
+    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096579")]
     [OutputType(typeof(AliasInfo), typeof(ApplicationInfo), typeof(FunctionInfo),
                 typeof(CmdletInfo), typeof(ExternalScriptInfo), typeof(FilterInfo),
                 typeof(string), typeof(PSObject))]
@@ -124,7 +121,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the PSSnapin/Module parameter to the cmdlet.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("PSSnapin")]
         public string[] Module
@@ -154,7 +150,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public ModuleSpecification[] FullyQualifiedModule
         {
@@ -283,7 +278,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ParameterName
         {
             get { return _parameterNames; }
@@ -311,7 +305,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSTypeName[] ParameterType
         {
             get
@@ -376,8 +369,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+#if LEGACYTELEMETRY
             _timer.Start();
-
+#endif
             base.BeginProcessing();
 
             if (ShowCommandInfo.IsPresent && Syntax.IsPresent)
@@ -396,6 +390,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            _commandsWritten.Clear();
+
             // Module and FullyQualifiedModule should not be specified at the same time.
             // Throw out terminating error if this is the case.
             if (_isModuleSpecified && _isFullyQualifiedModuleSpecified)
@@ -559,9 +555,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+#if LEGACYTELEMETRY
             _timer.Stop();
 
-#if LEGACYTELEMETRY
+            // No telemetry here - capturing the name of a command which we are not familiar with
+            // may be confidential customer information
             // We want telementry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
@@ -1450,8 +1448,9 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _nounPatterns;
         private Collection<WildcardPattern> _modulePatterns;
 
+#if LEGACYTELEMETRY
         private Stopwatch _timer = new Stopwatch();
-
+#endif
         #endregion
 
         #region ShowCommandInfo support

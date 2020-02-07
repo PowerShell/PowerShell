@@ -37,8 +37,7 @@ namespace System.Management.Automation
                     HelpCategory.Filter |
                     HelpCategory.Function |
                     HelpCategory.Configuration |
-                    HelpCategory.ScriptCommand |
-                    HelpCategory.Workflow;
+                    HelpCategory.ScriptCommand;
             }
         }
 

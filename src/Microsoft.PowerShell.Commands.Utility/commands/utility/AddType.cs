@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +20,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-
 using PathType = System.IO.Path;
 
 namespace Microsoft.PowerShell.Commands
@@ -29,7 +27,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Languages supported for code generation.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
     public enum Language
     {
         /// <summary>
@@ -63,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain.
     /// This version is based on CodeAnalysis (Roslyn).
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = FromSourceParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = FromSourceParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096601")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : PSCmdlet
     {
@@ -98,7 +95,6 @@ namespace Microsoft.PowerShell.Commands
         /// The source code of this generated method / member.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = FromMemberParameterSetName)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] MemberDefinition
         {
             get
@@ -133,7 +129,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [ValidateNotNull()]
         [Alias("Using")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
         /// <summary>
@@ -141,7 +136,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = FromPathParameterSetName)]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path
         {
             get
@@ -189,7 +183,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("PSPath", "LP")]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get
@@ -277,7 +270,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = FromAssemblyNameParameterSetName)]
         [Alias("AN")]
         [ValidateTrustedData]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] AssemblyName { get; set; }
 
         private bool _loadAssembly = false;
@@ -298,7 +290,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("RA")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ReferencedAssemblies
         {
             get { return _referencedAssemblies; }
@@ -605,10 +596,24 @@ namespace Microsoft.PowerShell.Commands
 
         #region LoadAssembly
 
-        // We now ship .Net Core's reference assemblies with PowerShell, so that Add-Type can work
+        // We now ship .NET Core's reference assemblies with PowerShell, so that Add-Type can work
         // in a predictable way and won't be broken when we move to newer version of .NET Core.
-        // The reference assemblies are located at '$PSHOME\ref'.
-        private static readonly string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
+        // The reference assemblies are located at '$PSHOME\ref' for pwsh.
+        //
+        // For applications that host PowerShell, the 'ref' folder will be deployed to the 'publish'
+        // folder, not where 'System.Management.Automation.dll' is located. So here we should use
+        // the entry assembly's location to construct the path to the 'ref' folder.
+        // For pwsh, the entry assembly is 'pwsh.dll', so the entry assembly's location is still
+        // $PSHOME.
+        // However, 'Assembly.GetEntryAssembly()' returns null when the managed code is called from
+        // unmanaged code (PowerShell WSMan remoting scenario), so in that case, we continue to use
+        // the location of 'System.Management.Automation.dll'.
+        private static readonly string s_netcoreAppRefFolder = PathType.Combine(
+            PathType.GetDirectoryName(
+                (Assembly.GetEntryAssembly() ?? typeof(PSObject).Assembly).Location),
+            "ref");
+
+        // Path to the folder where .NET Core runtime assemblies are located.
         private static readonly string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
         // These assemblies are always automatically added to ReferencedAssemblies.
@@ -625,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static readonly Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
+        private static readonly HashSet<string> s_sourceTypesCache = new HashSet<string>();
         private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
@@ -813,7 +818,6 @@ namespace Microsoft.PowerShell.Commands
         // However, this does give us a massive usability improvement, as users can just say
         // Add-Type -AssemblyName Forms (instead of System.Windows.Forms)
         // This is just long, not unmaintainable.
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         private Assembly LoadAssemblyHelper(string assemblyName)
         {
             Assembly loadedAssembly = null;
@@ -1052,7 +1056,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<string> newTypes)
         {
-            AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor(_syntaxTreesHash);
+            AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor();
             visitor.Visit(compilation.Assembly.GlobalNamespace);
 
             foreach (var symbolName in visitor.DuplicateSymbols)
@@ -1084,15 +1088,8 @@ namespace Microsoft.PowerShell.Commands
         // Visit symbols in all namespaces and collect duplicates.
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
-            private readonly int _hash;
-
             public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
             public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
-
-            public AllNamedTypeSymbolsVisitor(int hash)
-            {
-                _hash = hash;
-            }
 
             public override void VisitNamespace(INamespaceSymbol symbol)
             {
@@ -1109,12 +1106,9 @@ namespace Microsoft.PowerShell.Commands
                 // It is namespace-fully-qualified name
                 var symbolFullName = symbol.ToString();
 
-                if (s_sourceTypesCache.TryGetValue(symbolFullName, out int hash))
+                if (s_sourceTypesCache.TryGetValue(symbolFullName, out _))
                 {
-                    if (hash == _hash)
-                    {
-                        DuplicateSymbols.Add(symbolFullName);
-                    }
+                    DuplicateSymbols.Add(symbolFullName);
                 }
                 else
                 {
@@ -1127,7 +1121,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var typeName in newTypes)
             {
-                s_sourceTypesCache.Add(typeName, _syntaxTreesHash);
+                s_sourceTypesCache.Add(typeName);
             }
         }
 

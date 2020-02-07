@@ -129,4 +129,7 @@
   <data name="InvalidRegex" xml:space="preserve">
     <value>The string {0} is not a valid regular expression: {1}</value>
   </data>
+  <data name="CannotSpecifyCultureWithoutSimpleMatch" xml:space="preserve">
+    <value>You must specify -Culture parameter only with -SimpleMatch parameter.</value>
+  </data>
 </root>

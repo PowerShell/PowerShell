@@ -1993,16 +1993,27 @@ namespace System.Management.Automation
             CompletionContext context,
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
-            if (string.IsNullOrEmpty(commandName))
+            string parameterName = parameter.Name;
+
+            // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
+            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // See issue https://github.com/PowerShell/PowerShell/issues/10567
+            string actualCommandName = string.IsNullOrEmpty(commandName)
+                        ? commandAst.GetCommandName()
+                        : commandName;
+
+            if (string.IsNullOrEmpty(actualCommandName))
             {
                 return;
             }
 
-            var parameterName = parameter.Name;
-            var customCompleter = GetCustomArgumentCompleter(
-                    "CustomArgumentCompleters",
-                    new[] { commandName + ":" + parameterName, parameterName },
-                    context);
+            string parameterFullName = $"{actualCommandName}:{parameterName}";
+
+            ScriptBlock customCompleter = GetCustomArgumentCompleter(
+                "CustomArgumentCompleters",
+                new[] { parameterFullName, parameterName },
+                context);
+
             if (customCompleter != null)
             {
                 if (InvokeScriptArgumentCompleter(
@@ -4275,10 +4286,17 @@ namespace System.Management.Automation
                                                     continue;
 
                                                 var fileInfo = new FileInfo(entry);
-                                                if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                try
                                                 {
-                                                    PSObject wrapper = PSObject.AsPSObject(entry);
-                                                    psobjs.Add(wrapper);
+                                                    if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+                                                    {
+                                                        PSObject wrapper = PSObject.AsPSObject(entry);
+                                                        psobjs.Add(wrapper);
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    // do nothing if can't get file attributes
                                                 }
                                             }
                                         }
@@ -4574,7 +4592,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
 
-            var lastAst = context.RelatedAsts.Last();
+            var lastAst = context.RelatedAsts?.Last();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
 
@@ -5991,19 +6009,22 @@ namespace System.Management.Automation
             }
 
             // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
-            var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-            var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
-            foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
+            if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
             {
-                string toolTipPrefix = string.Empty;
-                if (typeAst.IsInterface)
-                    toolTipPrefix = "Interface ";
-                else if (typeAst.IsClass)
-                    toolTipPrefix = "Class ";
-                else if (typeAst.IsEnum)
-                    toolTipPrefix = "Enum ";
+                var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
+                var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
+                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
+                {
+                    string toolTipPrefix = string.Empty;
+                    if (typeAst.IsInterface)
+                        toolTipPrefix = "Interface ";
+                    else if (typeAst.IsClass)
+                        toolTipPrefix = "Class ";
+                    else if (typeAst.IsEnum)
+                        toolTipPrefix = "Enum ";
 
-                results.Add(new CompletionResult(prefix + typeAst.Name + suffix, typeAst.Name, CompletionResultType.Type, toolTipPrefix + typeAst.Name));
+                    results.Add(new CompletionResult(prefix + typeAst.Name + suffix, typeAst.Name, CompletionResultType.Type, toolTipPrefix + typeAst.Name));
+                }
             }
 
             results.Sort((c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
@@ -6012,7 +6033,10 @@ namespace System.Management.Automation
 
         private static string GetNamespaceToRemove(CompletionContext context, TypeCompletionBase completion)
         {
-            if (completion is NamespaceCompletion) { return null; }
+            if (completion is NamespaceCompletion || context.RelatedAsts == null || context.RelatedAsts.Count == 0)
+            {
+                return null;
+            }
 
             var typeCompletion = completion as TypeCompletion;
             string typeNameSpace = typeCompletion != null
@@ -6966,14 +6990,13 @@ namespace System.Management.Automation
 
         public object VisitUsingStatement(UsingStatementAst usingStatementAst) { return false; }
 
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return false; }
+
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst) { return false; }
+
         public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
             return configurationDefinitionAst.Body.Accept(this);
-        }
-
-        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst)
-        {
-            return false;
         }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
@@ -6989,6 +7012,13 @@ namespace System.Management.Automation
         {
             var expr = pipelineAst.GetPureExpression();
             return expr != null && (bool)expr.Accept(this);
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            return (bool)ternaryExpressionAst.Condition.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfTrue.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfFalse.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)

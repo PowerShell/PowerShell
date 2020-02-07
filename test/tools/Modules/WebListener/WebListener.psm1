@@ -13,7 +13,7 @@ Class WebListener
 
     [String] GetStatus()
     {
-        return $This.Job.JobStateInfo.State
+        return $this.Job.JobStateInfo.State
     }
 }
 
@@ -217,6 +217,7 @@ function Get-WebListenerUrl {
             'Compression',
             'Delay',
             'Delete',
+            'Dos',
             'Encoding',
             'Get',
             'Home',

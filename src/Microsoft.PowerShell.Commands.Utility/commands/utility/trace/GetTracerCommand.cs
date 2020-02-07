@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet that gets the TraceSource instances that are instantiated in the process.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TraceSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113333")]
+    [Cmdlet(VerbsCommon.Get, "TraceSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096707")]
     [OutputType(typeof(PSTraceSource))]
     public class GetTraceSourceCommand : TraceCommandBase
     {

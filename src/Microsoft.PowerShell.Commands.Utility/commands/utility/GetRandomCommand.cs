@@ -20,14 +20,15 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommand.RandomNumberParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(Int32), typeof(Int64), typeof(Double))]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097016", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(Int32), typeof(Int64), typeof(double))]
     public class GetRandomCommand : PSCmdlet
     {
         #region Parameter set handling
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
+        private static readonly object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
         {
@@ -275,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
         /// List from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
-        [ValidateNotNullOrEmpty]
+        [System.Management.Automation.AllowNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] InputObject { get; set; }
 
@@ -491,9 +492,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                foreach (object item in InputObject)
+                // this allows for $null to be in an array passed to InputObject
+                foreach (object item in InputObject ?? _nullInArray)
                 {
-                    if (_numberOfProcessedListItems < Count) // (3)
+                    // (3)
+                    if (_numberOfProcessedListItems < Count)
                     {
                         Debug.Assert(_chosenListItems.Count == _numberOfProcessedListItems, "Initial K elements should all be included in chosenListItems");
                         _chosenListItems.Add(item);
@@ -501,9 +504,12 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         Debug.Assert(_chosenListItems.Count == Count, "After processing K initial elements, the length of chosenItems should stay equal to K");
-                        if (Generator.Next(_numberOfProcessedListItems + 1) < Count) // (1)
+
+                        // (1)
+                        if (Generator.Next(_numberOfProcessedListItems + 1) < Count)
                         {
-                            int indexToReplace = Generator.Next(_chosenListItems.Count); // (2)
+                            // (2)
+                            int indexToReplace = Generator.Next(_chosenListItems.Count);
                             _chosenListItems[indexToReplace] = item;
                         }
                     }

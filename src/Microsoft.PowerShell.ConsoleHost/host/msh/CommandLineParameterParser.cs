@@ -173,10 +173,8 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthMacOS = 104;
 
         internal static string[] validParameters = {
-#if STAMODE
             "sta",
             "mta",
-#endif
             "command",
             "configurationname",
             "custompipename",
@@ -185,7 +183,7 @@ namespace Microsoft.PowerShell
             "file",
             "help",
             "inputformat",
-            "loadprofile",
+            "login",
             "noexit",
             "nologo",
             "noninteractive",
@@ -200,7 +198,10 @@ namespace Microsoft.PowerShell
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
-            if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
+            if (hostUI == null)
+            {
+                throw new PSArgumentNullException(nameof(hostUI));
+            }
 
             _hostUI = hostUI;
 
@@ -533,7 +534,7 @@ namespace Microsoft.PowerShell
 
                 string switchKey = switchKeyResults.SwitchKey;
 
-                if (MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
+                if (!string.IsNullOrEmpty(switchKey) && MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
                     if (!TryParseSettingFileHelper(args, ++i, parser: null))
@@ -644,7 +645,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-#if STAMODE
         internal bool StaMode
         {
             get
@@ -655,14 +655,10 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
-                    // return false;
-                    // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
                 }
             }
         }
-#endif
 
         /// <summary>
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
@@ -717,20 +713,22 @@ namespace Microsoft.PowerShell
                     _noExit = false;
                     break;
                 }
-                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+
+                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
                 }
+                else if (MatchSwitch(switchKey, "login", "l"))
+                {
+                    // This handles -Login on Windows only, where it does nothing.
+                    // On *nix, -Login is handled much earlier to improve startup performance.
+                }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
                     noexitSeen = true;
-                }
-                else if (MatchSwitch(switchKey, "loadprofile", "l"))
-                {
-                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -944,10 +942,15 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if STAMODE
-                // explicit setting of the ApartmentState Not supported on NanoServer
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
+                    if (!Platform.IsWindowsDesktop)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.STANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -958,10 +961,15 @@ namespace Microsoft.PowerShell
 
                     _staMode = true;
                 }
-                // Win8: 182409 PowerShell 3.0 should run in STA mode by default..so, consequently adding the switch -mta.
-                // Not deleting -sta for backward compatability reasons
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
+                    if (!Platform.IsWindowsDesktop)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MTANotImplemented);
+                        break;
+                    }
+
                     if (_staMode.HasValue)
                     {
                         // -sta and -mta are mutually exclusive.
@@ -972,7 +980,6 @@ namespace Microsoft.PowerShell
 
                     _staMode = false;
                 }
-#endif
                 else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
                 {
                     ++i;
@@ -1011,6 +1018,11 @@ namespace Microsoft.PowerShell
             if (_showBanner && !_showHelp)
             {
                 DisplayBanner();
+
+                if (UpdatesNotification.CanNotifyUpdates)
+                {
+                    UpdatesNotification.ShowUpdateNotification(_hostUI);
+                }
             }
 
             Dbg.Assert(
@@ -1406,15 +1418,7 @@ namespace Microsoft.PowerShell
         private bool _abortStartup;
         private bool _skipUserInit;
         private string _customPipeName;
-#if STAMODE
-        // Win8: 182409 PowerShell 3.0 should run in STA mode by default
-        // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
-        // if true, then sta is specified on the command line.
-        // if false, then mta is specified on the command line.
-        // if null, then none is specified on the command line..use default in this case
-        // default is sta.
         private bool? _staMode = null;
-#endif
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;
         private bool _noPrompt;

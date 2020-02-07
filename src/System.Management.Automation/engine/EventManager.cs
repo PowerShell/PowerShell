@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public override PSEventSubscriber SubscribeEvent(Object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent)
+        public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent)
         {
             return SubscribeEvent(source, eventName, sourceIdentifier, data, action, supportEvent, forwardEvent, 0);
         }
@@ -424,7 +424,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public override PSEventSubscriber SubscribeEvent(Object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount)
+        public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
             // Record this subscriber. This may just be a registration for engine events.
             PSEventSubscriber subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, action, supportEvent, forwardEvent, maxTriggerCount);
@@ -507,7 +507,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public override PSEventSubscriber SubscribeEvent(Object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent)
+        public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent)
         {
             return SubscribeEvent(source, eventName, sourceIdentifier, data, handlerDelegate, supportEvent, forwardEvent, 0);
         }
@@ -541,7 +541,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public override PSEventSubscriber SubscribeEvent(Object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount)
+        public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
             // Record this subscriber. This may just be a registration for engine events.
             PSEventSubscriber subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, handlerDelegate, supportEvent, forwardEvent, maxTriggerCount);
@@ -742,7 +742,7 @@ namespace System.Management.Automation
 
                 // And create an instance of the type
                 ConstructorInfo constructor =
-                    handlerType.GetConstructor(new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    handlerType.GetConstructor(new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
                 object handler = constructor.Invoke(new object[] { this, source, sourceIdentifier, data });
                 MethodInfo eventDelegate = handlerType.GetMethod("EventDelegate", BindingFlags.Public | BindingFlags.Instance);
                 handlerDelegate = eventDelegate.CreateDelegate(eventInfo.EventHandlerType, handler);
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
             }
         }
 
-        private object _actionProcessingLock = new Object();
+        private object _actionProcessingLock = new object();
         private EventAction _processingAction = null;
 
         /// <summary>
@@ -1390,14 +1390,14 @@ namespace System.Management.Automation
             // Retrieve the existing constructor
             ConstructorInfo existingConstructor =
                 typeof(PSEventHandler).GetConstructor(
-                    new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
 
             // Define the new constructor
             // public TestEventHandler(PSEventManager eventManager, Object sender, string sourceIdentifier, PSObject extraData)
             // : base(eventManager, sender, sourceIdentifier, extraData)
             ConstructorBuilder eventConstructor =
                 eventType.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,
-                    new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
+                    new Type[] { typeof(PSEventManager), typeof(object), typeof(string), typeof(PSObject) });
             ILGenerator extendedConstructor = eventConstructor.GetILGenerator();
             extendedConstructor.Emit(OpCodes.Ldarg_0);
             extendedConstructor.Emit(OpCodes.Ldarg_1);
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation
                 parameterCounter++;
             }
 
-            // public void EventDelegate(Object sender, FileSystemEventArgs e)
+            // public void EventDelegate(object sender, FileSystemEventArgs e)
             MethodBuilder eventMethod = eventType.DefineMethod("EventDelegate",
                 MethodAttributes.Public, CallingConventions.Standard, invokeSignature.ReturnType, parameterTypes);
 
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation
             methodContents.DeclareLocal(typeof(object[]));
 
             methodContents.Emit(OpCodes.Ldc_I4, parameterCount);
-            methodContents.Emit(OpCodes.Newarr, typeof(Object));
+            methodContents.Emit(OpCodes.Newarr, typeof(object));
 
             // Store the new array to the local variable 'args'
             methodContents.Emit(OpCodes.Stloc_0);
@@ -1853,11 +1853,6 @@ namespace System.Management.Automation
         public const string OnIdle = "PowerShell.OnIdle";
 
         /// <summary>
-        /// Called when a workflow job is started from a PowerShell script.
-        /// </summary>
-        public const string WorkflowJobStartEvent = "PowerShell.WorkflowJobStartEvent";
-
-        /// <summary>
         /// Called during scriptblock invocation.
         /// </summary>
         internal const string OnScriptBlockInvoke = "PowerShell.OnScriptBlockInvoke";
@@ -2069,7 +2064,7 @@ namespace System.Management.Automation
         }
         #endregion
 
-        internal void OnPSEventUnsubscribed(Object sender, PSEventUnsubscribedEventArgs e)
+        internal void OnPSEventUnsubscribed(object sender, PSEventUnsubscribedEventArgs e)
         {
             if (Unsubscribed != null)
             {
@@ -2215,12 +2210,12 @@ namespace System.Management.Automation
         /// <param name="additionalData">
         /// Additional data attached by the user to this event.
         /// </param>
-        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, Object sender, object[] originalArgs, PSObject additionalData)
+        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, object sender, object[] originalArgs, PSObject additionalData)
         {
             // Capture the first EventArgs as SourceEventArgs
             if (originalArgs != null)
             {
-                foreach (Object argument in originalArgs)
+                foreach (object argument in originalArgs)
                 {
                     EventArgs sourceEventArgs = argument as EventArgs;
                     if (sourceEventArgs != null)
@@ -2315,7 +2310,7 @@ namespace System.Management.Automation
     /// The delegate that handles notifications of new events
     /// added to the collection.
     /// </summary>
-    public delegate void PSEventReceivedEventHandler(Object sender, PSEventArgs e);
+    public delegate void PSEventReceivedEventHandler(object sender, PSEventArgs e);
 
     /// <summary>
     /// The event arguments associated with unsubscribing from an event.
@@ -2342,7 +2337,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The delegate that handles notifications of the event being unsubscribed.
     /// </summary>
-    public delegate void PSEventUnsubscribedEventHandler(Object sender, PSEventUnsubscribedEventArgs e);
+    public delegate void PSEventUnsubscribedEventHandler(object sender, PSEventUnsubscribedEventArgs e);
 
     /// <summary>
     /// This class contains the collection of events received by the
@@ -2405,7 +2400,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void OnPSEventReceived(Object sender, PSEventArgs e)
+        private void OnPSEventReceived(object sender, PSEventArgs e)
         {
             PSEventReceivedEventHandler eventHandler = PSEventReceived;
             if (eventHandler != null)

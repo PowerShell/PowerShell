@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     result.Word = sb.ToString();
                     sb.Clear();
-                    result.Delim = new String(s[i], 1);
+                    result.Delim = new string(s[i], 1);
 
                     yield return result;
                 }

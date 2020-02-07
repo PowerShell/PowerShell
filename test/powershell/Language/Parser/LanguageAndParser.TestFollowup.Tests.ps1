@@ -137,7 +137,7 @@ Describe "Assign automatic variables" -Tags "CI" {
         & { [object]$this = 1; $this } | Should -Be 1
         & { [object]$input = 1; $input } | Should -Be 1
         # Can't test PSCmdlet or PSBoundParameters, they use an internal type
-        & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should -Match Automation.InvocationInfo
+        & { [System.Management.Automation.InvocationInfo]$MyInvocation = $MyInvocation; $MyInvocation.Line } | Should -Match Automation.InvocationInfo
         & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -BeExactly 'abc'
         & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -BeExactly 'abc'
     }
@@ -304,13 +304,29 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
     }
 }
 
-Describe "Hashtable is case insensitive" -Tag CI {
-    It "When current culture is en-US-POSIX" -Skip:($IsWindows) {
+Describe "Support case-insensitive comparison in Posix locale" -Tag CI {
+    It "Hashtable is case insensitive" -Skip:($IsWindows) {
         try {
             $oldCulture = [System.Globalization.CultureInfo]::CurrentCulture
             [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::new('en-US-POSIX')
 
             @{h=1}.H | Should -Be 1 -Because 'hashtables should be case insensitive in en-US-POSIX culture'
+        }
+        finally {
+            [System.Globalization.CultureInfo]::CurrentCulture = $oldCulture
+        }
+    }
+
+    It "Wildcard support case-insensitive matching" -Skip:($IsWindows) {
+        try {
+            $oldCulture = [System.Globalization.CultureInfo]::CurrentCulture
+            [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::new('en-US-POSIX')
+
+            $wildcard1 = [WildcardPattern]::new("AbC*", [System.Management.Automation.WildcardOptions]::IgnoreCase)
+            $wildcard1.IsMatch("abcd") | Should -BeTrue
+
+            $wildcard2 = [WildcardPattern]::new("DeF", [System.Management.Automation.WildcardOptions]::IgnoreCase);
+            $wildcard2.IsMatch("def") | Should -BeTrue
         }
         finally {
             [System.Globalization.CultureInfo]::CurrentCulture = $oldCulture

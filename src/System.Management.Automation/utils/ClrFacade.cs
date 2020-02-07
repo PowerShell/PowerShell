@@ -59,8 +59,8 @@ namespace System.Management.Automation
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
             return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-                   AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-                       !TypeDefiner.DynamicClassAssemblyName.Equals(a.GetName().Name, StringComparison.Ordinal));
+                   AssemblyLoadContext.Default.Assemblies.Where(a =>
+                       !a.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal));
         }
 
         /// <summary>

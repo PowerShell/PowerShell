@@ -6,6 +6,7 @@
 0-powershell-crossplatform
 0xfeeddeadbeef
 100ms
+2.x
 2ae5d07
 32-bit
 64-bit
@@ -66,6 +67,7 @@ beta.7
 beta.8
 beta.9
 beta2
+bgelens
 Bhaal22
 bjh7242
 bool
@@ -82,6 +84,7 @@ cdxml
 celsius
 CentOS
 changelog
+changelogs
 changelog.md
 changeset
 changesets
@@ -110,6 +113,7 @@ codepage
 commanddiscovery
 commandsearch
 comobject
+composability
 config
 connect-pssession
 consolehost
@@ -173,6 +177,7 @@ disconnect-pssession
 displaydataquery
 distro
 distros
+dll
 dlls
 dlwyatt
 dockerbasedbuild
@@ -281,9 +286,11 @@ gitter
 glachancecmaisonneuve
 globbing
 GoogleTest
+GUIs
 gzip
 hackathons
 hashtable
+hashtables
 helloworld.ps1
 helpproviderwithcache
 helpproviderwithfullcache
@@ -299,6 +306,7 @@ httpbin's
 https
 hubuk
 i.e.
+idera
 ifdef'ed
 iisresetme
 ilya
@@ -317,6 +325,7 @@ interactivetesting
 interop
 interoperation
 invoke-cimmethod
+Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
 iot
@@ -327,6 +336,7 @@ isnot
 itemtype
 itpro
 jameswtruher
+Jawz84
 jazzdelightsme
 jeffbi
 jen
@@ -373,6 +383,7 @@ lynda.com
 lzybkr
 mababio
 macos
+macports
 maertendmsft
 mahawar
 markekraus
@@ -410,6 +421,7 @@ mkdir
 mklement0
 move-itemproperty
 msbuild
+msftrncs
 mshsnapinloadunload
 msi
 ms-psrp
@@ -462,6 +474,7 @@ offthewoll
 oising
 omi
 omnisharp
+OneDrive
 oneget.org
 opencover
 opencover.zip
@@ -516,7 +529,10 @@ preview.1
 preview.2
 preview.3
 preview.4
+preview.5
+preview.6
 preview1-24530-04
+preview7
 productversion
 program.cs
 prototyyppi
@@ -590,10 +606,12 @@ remove-wsmaninstance
 rename-itemproperty
 rename-localgroup
 rename-localuser
+reparse
 repo
 reportgenerator
 resgen
 responseheaders
+REST
 rest.ps1
 restart-apachehttpserver
 resx
@@ -604,6 +622,7 @@ robo210
 ronn
 rpalo
 runspace
+runspaces
 runspaceinit
 runtime
 runtimes
@@ -619,6 +638,7 @@ securestring
 seemethere
 select-xml
 semver
+serverless
 sessionid
 sessionstate
 sessionstatecontainer
@@ -699,6 +719,8 @@ timcurwick
 timestamp
 timothywlewis
 -title
+tobias
+tokenizing
 tomconte
 toolchain
 toolset
@@ -716,6 +738,8 @@ unregister-event
 unregister-packagesource
 unregister-psrepository
 unregister-pssessionconfiguration
+unregistering
+untracked
 un-versioned
 update-formatdata
 update-modulemanifest
@@ -751,6 +775,9 @@ v6.1.0
 v6.1.1
 v6.2.0
 v6.2.1
+v6.2.2
+v6.2.3
+v6.2.4
 validatenotnullorempty
 versioned
 versioning
@@ -763,6 +790,7 @@ walkthrough
 webcmdlets
 weblistener
 webrequest
+weltner
 wesholton84
 wget
 whitespace
@@ -828,8 +856,11 @@ CodeFormatter
 StyleCop
 SytzeAndr
 yashrajbharti
+Leonhardt
+tylerleonhardt
  - CHANGELOG.md
 aavdberg
+asrosent
 azkarmoulana
 chucklu
 Claustn
@@ -842,8 +873,11 @@ jeis2497052
 Jocapear
 lassehastrup
 markwragg
+nbkalex
+NeoBeum
 nycjan
 paalbra
+robdy
 SeeminglyScience
 StingyJack
 ThreeFive-O
@@ -852,9 +886,28 @@ uninstallation
 vongrippen
 yurko7
 zhenggu
+davinci26
+vedhasp
+SeeminglyScience
+eugenesmlv
+steviecoaster
+machgo
+derek-xia
+weltkante
+kilasuit
+tnieto88
+Orca88
+centreboard
+romero126
+Greg-Smulko
+danstur
+vdamewood
+MJECloud
 analytics
  - docs/debugging/README.md
 corehost
+ - docs/learning-powershell/README.md
+PSKoans
  - docs/testing-guidelines/CodeCoverageAnalysis.md
 de5f69c
  - docs/testing-guidelines/TestRoadmap.md
@@ -875,3 +928,6 @@ wpa
 wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
+ - CHANGELOG/preview.md
+ThomasNieto
+spongemike2

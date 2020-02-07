@@ -80,7 +80,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override bool SupportsVirtualTerminal
         {
-            get { return _externalUI.SupportsVirtualTerminal; }
+            get { return (_externalUI != null) ? _externalUI.SupportsVirtualTerminal : false; }
         }
 
         /// <summary>
@@ -379,6 +379,7 @@ namespace System.Management.Automation.Internal.Host
             switch (preference)
             {
                 case ActionPreference.Continue:
+                case ActionPreference.Break:
                     WriteDebugLineHelper(message);
                     break;
                 case ActionPreference.SilentlyContinue:
@@ -920,10 +921,7 @@ namespace System.Management.Automation.Internal.Host
                             defaultChoice);
                     }
 
-                    if (!defaultChoiceKeys.ContainsKey(defaultChoice))
-                    {
-                        defaultChoiceKeys.Add(defaultChoice, true);
-                    }
+                    defaultChoiceKeys.TryAdd(defaultChoice, true);
                 }
             }
 

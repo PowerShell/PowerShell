@@ -1,15 +1,14 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 Describe "Verify Markdown Links" {
     BeforeAll {
-        # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                    sudo yarn global add markdown-link-check@3.7.2
-                }
+                sudo yarn global add markdown-link-check@3.7.2
+            }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
@@ -96,20 +95,29 @@ Describe "Verify Markdown Links" {
                     it "<url> should work" -TestCases $trueFailures  {
                         param($url)
 
+                        # there could be multiple reasons why a failure is ok
+                        # check against the allowed failures
+                        $allowedFailures = [System.Net.HttpStatusCode[]](
+                            503, # Service Unavailable
+                            504  # Gateway Timeout
+                        )
+
                         $prefix = $url.Substring(0,7)
 
                         # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
                         Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
-                            # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
+                            # If invoke-WebRequest can handle the URL, re-verify, with 6 retries
                             try
                             {
-                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
+                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
-                            catch
+                            catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
-                                throw "retry of URL failed with error: $($_.Message)"
+                                if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
+                                }
                             }
                         }
                         else {

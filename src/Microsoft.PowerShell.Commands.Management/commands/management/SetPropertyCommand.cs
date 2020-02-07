@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to set the property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ItemProperty", DefaultParameterSetName = "propertyValuePathSet", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113396")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097147")]
     public class SetItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         private const string propertyValuePathSet = "propertyValuePathSet";

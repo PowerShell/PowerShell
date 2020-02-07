@@ -7,13 +7,12 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Configuration;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation.Host
 {
@@ -927,7 +926,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal static TranscriptionOption GetSystemTranscriptOption(TranscriptionOption currentTranscript)
         {
-            var transcription = Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig);
+            var transcription = InternalTestHooks.BypassGroupPolicyCaching
+                ? Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig)
+                : s_transcriptionSettingCache.Value;
+
             if (transcription != null)
             {
                 // If we have an existing system transcript for this process, use that.
@@ -947,7 +949,10 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new Object();
+        private static object s_systemTranscriptLock = new object();
+        private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
+            () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
+            isThreadSafe: true);
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
         {

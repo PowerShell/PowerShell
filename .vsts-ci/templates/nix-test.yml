@@ -1,5 +1,5 @@
 parameters:
-  pool: 'Hosted macOS'
+  pool: 'macOS-latest'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'
@@ -10,14 +10,14 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
   - pwsh: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - task: DownloadBuildArtifacts@0
@@ -30,7 +30,7 @@ jobs:
 
   - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture artifacts directory'
+    displayName: 'Capture Artifacts Directory'
     continueOnError: true
 
   - pwsh: |
@@ -40,7 +40,7 @@ jobs:
     condition: succeededOrFailed()
 
   - task: ExtractFiles@1
-    displayName: 'Extract build zip'
+    displayName: 'Extract Build ZIP'
     inputs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/build/build.zip'
       destinationFolder: '$(System.ArtifactsDirectory)/bins'
@@ -53,7 +53,7 @@ jobs:
 
   - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\bins\*" -Recurse -ErrorAction SilentlyContinue
-    displayName: 'Capture extracted build zip'
+    displayName: 'Capture Extracted Build ZIP'
     continueOnError: true
 
   - pwsh: |

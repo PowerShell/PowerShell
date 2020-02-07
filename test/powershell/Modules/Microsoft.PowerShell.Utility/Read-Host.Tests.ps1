@@ -39,7 +39,7 @@ Describe "Read-Host Test" -tag "CI" {
     }
 
     It "Read-Host doesn't enter command prompt mode" {
-        $result = "!1" | pwsh -NoProfile -c "Read-host -Prompt 'foo'"
+        $result = "!1" | & "$PSHOME/pwsh" -NoProfile -c "Read-host -Prompt 'foo'"
         if ($IsWindows) {
             # Windows write to console directly so can't capture prompt in stdout
             $expected = @('!1','!1')
@@ -47,6 +47,6 @@ Describe "Read-Host Test" -tag "CI" {
         else {
             $expected = @('foo: !1','!1')
         }
-        $result | should -BeExactly $expected
+        $result | Should -BeExactly $expected
     }
 }

@@ -1,4 +1,4 @@
-﻿@{
+@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
@@ -48,6 +48,16 @@ case "$1" in
         remove-shell "{0}"
         ;;
 esac
+'@
+
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
 '@
 
     MacOSLauncherScript = @'
@@ -132,7 +142,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".netcoreapp3.0"></group>
+            <group targetFramework=".netcoreapp3.1"></group>
         </dependencies>
     </metadata>
 </package>

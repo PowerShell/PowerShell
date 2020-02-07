@@ -6,7 +6,7 @@ using namespace System.Management.Automation.Internal
 Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
@@ -187,7 +187,7 @@ Describe "Runspace Debugging API tests" -tag CI {
     Context "PSStandaloneMonitorRunspaceInfo tests" {
         BeforeAll {
             $runspace = [runspacefactory]::CreateRunspace()
-            $runspaceType = [PSMonitorRunspaceType]::WorkflowInlineScript
+            $runspaceType = [PSMonitorRunspaceType]::InvokeCommand
             $monitorInfo = [PSStandaloneMonitorRunspaceInfo]::new($runspace)
             $instanceId = $runspace.InstanceId
             $parentDebuggerId = [guid]::newguid()

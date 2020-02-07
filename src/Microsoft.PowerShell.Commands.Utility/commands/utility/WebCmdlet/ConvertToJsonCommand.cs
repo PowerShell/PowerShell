@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading;
@@ -16,8 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
     public class ConvertToJsonCommand : PSCmdlet
     {
         /// <summary>
@@ -100,10 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
-            {
-                _inputObjects.Add(InputObject);
-            }
+            _inputObjects.Add(InputObject);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- MSI installs on Win7 and above -->
   <?define MinOSVersionSupported = "VersionNT >= 601" ?>
   <!-- The URL for add/remove programs -->
@@ -126,10 +126,15 @@
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
       <ComponentRef Id="RegistryEntries"/>
       <ComponentRef Id="SetPath"/>
+      <ComponentRef Id="Telemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <!-- Need to get the Windows product name from the registry -->
+    <Property Id="WINDOWS_PRODUCT_NAME">
+      <RegistrySearch Id="ProductName" Root="HKLM" Type="raw" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="ProductName" />
+    </Property>
     <!-- Prerequisite check for Windows Universal C runtime -->
     <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
@@ -157,16 +162,19 @@
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
               <CreateFolder/>
             </Component>
+            <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
+              <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
+            </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
-                <!-- create key for easy detection of a particular version of a powershell core package
-                     The upgrade code is used in the key because it will change when we allow SxS       -->
-                <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion"/>
-                </RegistryKey>
-                <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
-                <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
-                </RegistryKey>
+              <!-- create key for easy detection of a particular version of a powershell core package
+                    The upgrade code is used in the key because it will change when we allow SxS       -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion"/>
+              </RegistryKey>
+              <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
+              </RegistryKey>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}" KeyPath="yes">

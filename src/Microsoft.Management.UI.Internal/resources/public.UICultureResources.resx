@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ColumnPicker" xml:space="preserve">
+    <value>Select Columns...</value>
+  </data>
+  <data name="GroupTitleNone" xml:space="preserve">
+    <value>(none)</value>
+    <comment>The group title for items within a column whose value is empty/null.</comment>
+  </data>
+  <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
+    <value>Value should be of Type {0}.</value>
+    <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
+  </data>
+  <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
+    <value>The current selection is empty.</value>
+    <comment>The error validation string to present to the user when they have selected a value out of bounds.</comment>
+  </data>
+  <data name="FilterRule_Contains" xml:space="preserve">
+    <value>contains</value>
+    <comment>A filter rule that indicates a field must contain the specified value.</comment>
+  </data>
+  <data name="FilterRule_DoesNotContain" xml:space="preserve">
+    <value>does not contain</value>
+    <comment>A filter rule that indicates a field must not contain the specified value.</comment>
+  </data>
+  <data name="FilterRule_DoesNotEqual" xml:space="preserve">
+    <value>does not equal</value>
+    <comment>A filter rule that indicates a field must not equal the specified value.</comment>
+  </data>
+  <data name="FilterRule_Equals" xml:space="preserve">
+    <value>equals</value>
+    <comment>A filter rule that indicates a field must equal the specified value.</comment>
+  </data>
+  <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
+    <value>is greater than or equal to</value>
+    <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
+  </data>
+  <data name="FilterRule_IsBetween" xml:space="preserve">
+    <value>is between</value>
+    <comment>A filter rule that indicates a field must be between the specified values.</comment>
+  </data>
+  <data name="FilterRule_IsEmpty" xml:space="preserve">
+    <value>is empty</value>
+    <comment>A filter rule that indicates a field must be empty.</comment>
+  </data>
+  <data name="FilterRule_IsNotEmpty" xml:space="preserve">
+    <value>is not empty</value>
+    <comment>A filter rule that indicates a field must not be empty.</comment>
+  </data>
+  <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
+    <value>is less than or equal to</value>
+    <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
+  </data>
+  <data name="FilterRule_TextEndsWith" xml:space="preserve">
+    <value>ends with</value>
+    <comment>A filter rule that indicates a field must end with the specified value.</comment>
+  </data>
+  <data name="FilterRule_TextStartsWith" xml:space="preserve">
+    <value>starts with</value>
+    <comment>A filter rule that indicates a field must start with the specified value.</comment>
+  </data>
+  <data name="BackForwardHistory_BrowseBack_Disabled_Helptext" xml:space="preserve">
+    <value>Back</value>
+    <comment>The text representing the tool tip and help text for the Back Button in the Back Forward History control when the button is disabled</comment>
+  </data>
+  <data name="BackForwardHistory_BrowseForward_Disabled_Helptext" xml:space="preserve">
+    <value>Forward</value>
+    <comment>The text representing the tool tip and help text for the Forward Button in the Back Forward History control when the button is disabled</comment>
+  </data>
+  <data name="ErrorMessageForUnparsableDateTimeType" xml:space="preserve">
+    <value>The value must be a valid date in the following format: {0}.</value>
+    <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
+  </data>
+  <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
+    <value>The value must be a valid number.</value>
+  </data>
+  <data name="SearchBox_BackgroundText" xml:space="preserve">
+    <value>Search</value>
+    <comment>The default background text of the search box.</comment>
+  </data>
+  <data name="FlowDirection" xml:space="preserve">
+    <value>LeftToRight</value>
+    <comment>This value will be loaded at runtime to define the flow direction of WPF application.  This value should be set to "RightToLeft" for mirrored language and "LeftToRight" for others.</comment>
+  </data>
+  <data name="Ellipsis" xml:space="preserve">
+    <value>…</value>
+    <comment>An ellipsis character.</comment>
+  </data>
+  <data name="ZoomIn1Shortcut" xml:space="preserve">
+    <value>Ctrl+Add</value>
+  </data>
+  <data name="ZoomIn2Shortcut" xml:space="preserve">
+    <value>Ctrl+Shift+Add</value>
+  </data>
+  <data name="ZoomIn3Shortcut" xml:space="preserve">
+    <value>Ctrl+Plus</value>
+  </data>
+  <data name="ZoomIn4Shortcut" xml:space="preserve">
+    <value>Ctrl+Shift+Plus</value>
+  </data>
+  <data name="ZoomOut1Shortcut" xml:space="preserve">
+    <value>Ctrl+Subtract</value>
+  </data>
+  <data name="ZoomOut2Shortcut" xml:space="preserve">
+    <value>Ctrl+Shift+Subtract</value>
+  </data>
+  <data name="ZoomOut3Shortcut" xml:space="preserve">
+    <value>Ctrl+Minus</value>
+  </data>
+  <data name="ZoomOut4Shortcut" xml:space="preserve">
+    <value>Ctrl+Shift+Minus</value>
+  </data>
+</root>

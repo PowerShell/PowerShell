@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 Add-TestDynamicType
 
@@ -113,7 +114,12 @@ Describe "Select-Object" -Tags "CI" {
 	$result[0].Size              | Should -Be ($orig1 + 1)
 	$dirObject[0].Size           | Should -Be ($orig1 + 1)
 	$dirObject[$TestLength].Size | Should -Be ($orig2 + 1)
-    }
+	}
+
+	It "Should not leak 'StopUpstreamCommandsException' internal exception for stopping upstream" {
+		1,2 | Select-Object -First 1 -ErrorVariable err
+		$err | Should -BeNullOrEmpty
+	}
 }
 
 Describe "Select-Object DRT basic functionality" -Tags "CI" {
@@ -341,7 +347,28 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
-		$p = Get-Process -Id $pid | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
+		$p = Get-Process -Id $PID | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
 		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
+    }
+
+    It "Select-Object add 'Selected.*' type only once" {
+        $obj = [PSCustomObject]@{ Name = 1 }
+
+        $obj.psobject.TypeNames.Count | Should -Be 2
+        $obj.psobject.TypeNames | Should -Not -BeLike "Selected*"
+
+        $obj = $obj | Select-Object
+
+        $obj.psobject.TypeNames.Count | Should -Be 3
+        $obj.psobject.TypeNames[0] | Should -BeLike "Selected*"
+        $obj.psobject.TypeNames[1] | Should -Not -BeLike "Selected*"
+        $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
+
+        $obj = $obj | Select-Object
+
+        $obj.psobject.TypeNames.Count | Should -Be 3
+        $obj.psobject.TypeNames[0] | Should -BeLike "Selected*"
+        $obj.psobject.TypeNames[1] | Should -Not -BeLike "Selected*"
+        $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
     }
 }

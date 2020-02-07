@@ -12,6 +12,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 
 using Microsoft.PowerShell.Commands;
@@ -44,16 +45,12 @@ namespace System.Management.Automation.Remoting
         internal const string MAXRCVDCMDSIZETOKEN = "psmaximumreceiveddatasizepercommandmb";
         internal const string MAXRCVDCMDSIZETOKEN_CamelCase = "PSMaximumReceivedDataSizePerCommandMB";
         internal const string THREADOPTIONSTOKEN = "pssessionthreadoptions";
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const string THREADAPTSTATETOKEN = "pssessionthreadapartmentstate";
-#endif
         internal const string SESSIONCONFIGTOKEN = "sessionconfigurationdata";
         internal const string PSVERSIONTOKEN = "PSVersion";
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
         internal const string MODULESTOIMPORT = "ModulesToImport";
         internal const string HOSTMODE = "hostmode";
-        internal const string WORKFLOWCOREASSEMBLY = "Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
-        internal const string PSWORKFLOWMODULE = "%windir%\\system32\\windowspowershell\\v1.0\\Modules\\PSWorkflow";
         internal const string CONFIGFILEPATH = "configfilepath";
         internal const string CONFIGFILEPATH_CamelCase = "ConfigFilePath";
 
@@ -70,10 +67,7 @@ namespace System.Management.Automation.Remoting
         internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
         internal PSThreadOptions? ShellThreadOptions;
-
-#if !CORECLR // No ApartmentState In CoreCLR
-        internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
-#endif
+        internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
 
@@ -129,13 +123,11 @@ namespace System.Management.Automation.Remoting
                     ShellThreadOptions = (PSThreadOptions)LanguagePrimitives.ConvertTo(
                         optionValue, typeof(PSThreadOptions), CultureInfo.InvariantCulture);
                     break;
-#if !CORECLR // No ApartmentState In CoreCLR
                 case THREADAPTSTATETOKEN:
                     AssertValueNotAssigned(THREADAPTSTATETOKEN, ShellThreadApartmentState);
-                    ShellThreadApartmentState = (System.Threading.ApartmentState)LanguagePrimitives.ConvertTo(
-                        optionValue, typeof(System.Threading.ApartmentState), CultureInfo.InvariantCulture);
+                    ShellThreadApartmentState = (ApartmentState)LanguagePrimitives.ConvertTo(
+                        optionValue, typeof(ApartmentState), CultureInfo.InvariantCulture);
                     break;
-#endif
                 case SESSIONCONFIGTOKEN:
                     {
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);
@@ -1773,7 +1765,7 @@ namespace System.Management.Automation.Remoting
                 DISCUtils.ValidateRoleDefinitions(roleEntry);
 
                 // Go through the Roles hashtable
-                foreach (Object role in roleEntry.Keys)
+                foreach (object role in roleEntry.Keys)
                 {
                     // Check if this role applies to the connected user
                     if (roleVerifier(role.ToString()))
@@ -1862,11 +1854,11 @@ namespace System.Management.Automation.Remoting
         // Merge a role / role capability hashtable into the master configuration hashtable
         private void MergeConfigHashIntoConfigHash(IDictionary childConfigHash)
         {
-            foreach (Object customization in childConfigHash.Keys)
+            foreach (object customization in childConfigHash.Keys)
             {
                 string customizationString = customization.ToString();
 
-                ArrayList customizationValue = new ArrayList();
+                var customizationValue = new List<object>();
 
                 // First, take all values from the master config table
                 if (_configHash.ContainsKey(customizationString))
@@ -1874,7 +1866,7 @@ namespace System.Management.Automation.Remoting
                     IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(_configHash[customization]);
                     if (existingValueAsCollection != null)
                     {
-                        foreach (Object value in existingValueAsCollection)
+                        foreach (object value in existingValueAsCollection)
                         {
                             customizationValue.Add(value);
                         }
@@ -1889,7 +1881,7 @@ namespace System.Management.Automation.Remoting
                 IEnumerable newValueAsCollection = LanguagePrimitives.GetEnumerable(childConfigHash[customization]);
                 if (newValueAsCollection != null)
                 {
-                    foreach (Object value in newValueAsCollection)
+                    foreach (object value in newValueAsCollection)
                     {
                         customizationValue.Add(value);
                     }
@@ -2466,7 +2458,7 @@ namespace System.Management.Automation.Remoting
                 commandModuleNames.Add(moduleSpec.Name);
             }
 
-            foreach (Object commandObject in commands)
+            foreach (object commandObject in commands)
             {
                 if (commandObject == null)
                 {

@@ -26,7 +26,7 @@ param
     $PowerShellHome
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
@@ -124,7 +124,7 @@ function Install-PluginEndpoint {
     #                    #
     ######################
 
-    if ($PowerShellHome -ne $null)
+    if (-not [String]::IsNullOrEmpty($PowerShellHome))
     {
         $targetPsHome = $PowerShellHome
         $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'

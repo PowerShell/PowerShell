@@ -75,6 +75,12 @@ namespace Microsoft.PowerShell.Commands
         [Alias("RHV")]
         public string ResponseHeadersVariable { get; set; }
 
+        /// <summary>
+        /// Gets or sets the variable name to use for storing the status code from the response.
+        /// </summary>
+        [Parameter]
+        public string StatusCodeVariable { get; set; }
+
         #endregion Parameters
 
         #region Helper Methods
@@ -363,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
     /// Intended to work against the wide spectrum of "RESTful" web services
     /// currently deployed across the web.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217034", DefaultParameterSetName = "StandardMethod")]
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
     public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
@@ -452,6 +458,12 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldSaveToOutFile)
                 {
                     StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
+                }
+
+                if (!string.IsNullOrEmpty(StatusCodeVariable))
+                {
+                    PSVariableIntrinsics vi = SessionState.PSVariable;
+                    vi.Set(StatusCodeVariable, (int)response.StatusCode);
                 }
 
                 if (!string.IsNullOrEmpty(ResponseHeadersVariable))

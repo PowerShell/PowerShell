@@ -381,6 +381,15 @@ namespace Microsoft.PowerShell.Commands
 
                     // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
                     byteIndex += bytesUsed;
+
+                    // The behavior of decoder.Convert changed start .NET 3.1-preview2.
+                    // The change was made in https://github.com/dotnet/coreclr/pull/27229
+                    // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
+                    // Break out of the loop if all bytes have been read.
+                    if (!flush && bytesRead == byteIndex)
+                    {
+                        break;
+                    }
                 }
             } while (bytesRead != 0);
 
@@ -417,7 +426,10 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new Regex(@"<meta\s[.\n]*[^><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]");
+        private static readonly Regex s_metaexp = new Regex(
+                @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+            );
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
@@ -455,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static byte[] EncodeToBytes(String str, Encoding encoding)
+        internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
             if (encoding == null)
             {
@@ -466,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
-        internal static byte[] EncodeToBytes(String str)
+        internal static byte[] EncodeToBytes(string str)
         {
             return EncodeToBytes(str, null);
         }

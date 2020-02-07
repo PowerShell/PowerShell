@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
-    [OutputType(typeof(Byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
+    [OutputType(typeof(byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
@@ -146,7 +146,12 @@ namespace Microsoft.PowerShell.Commands
                     else if (string.IsNullOrEmpty(item))
                     {
                         // This handles the trailing slash case
-                        continue;
+                        if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
+                        {
+                            exactPath += StringLiterals.DefaultPathSeparator;
+                        }
+
+                        break;
                     }
                     else if (item.Contains('~'))
                     {
@@ -155,13 +160,26 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
+                        // Use GetFileSystemEntries to get the correct casing of this element
+                        try
+                        {
+                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            if (entries.Length > 0)
+                            {
+                                exactPath = entries.First();
+                            }
+                            else
+                            {
+                                // If previous call didn't return anything, something failed so we just return the path we were given
+                                return path;
+                            }
+                        }
+                        catch
+                        {
+                            // If we can't enumerate, we stop and just return the original path
+                            return path;
+                        }
                     }
-                }
-
-                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
-                {
-                    return exactPath + StringLiterals.DefaultPathSeparator;
                 }
 
                 return exactPath;
@@ -580,6 +598,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static bool _WNetApiAvailable = true;
+
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
@@ -590,6 +610,7 @@ namespace Microsoft.PowerShell.Commands
                 const int RESOURCETYPE_ANY = 0x00000000;
                 const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
                 const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 // By default the connection is not persisted.
                 int CONNECT_TYPE = CONNECT_NOPERSIST;
@@ -634,7 +655,19 @@ namespace Microsoft.PowerShell.Commands
                     resource.Type = RESOURCETYPE_ANY;
                     resource.Usage = RESOURCEUSAGE_CONNECTABLE;
 
-                    int code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                    int code = ERROR_NO_NETWORK;
+
+                    if (_WNetApiAvailable)
+                    {
+                        try
+                        {
+                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                        }
+                        catch (System.DllNotFoundException)
+                        {
+                            _WNetApiAvailable = false;
+                        }
+                    }
 
                     if (code != 0)
                     {
@@ -699,6 +732,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 int flags = 0;
                 string driveName;
@@ -716,7 +750,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                int code = ERROR_NO_NETWORK;
+
+                if (_WNetApiAvailable)
+                {
+                    try
+                    {
+                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                    }
+                }
 
                 if (code != 0)
                 {
@@ -769,6 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string WinGetUNCForNetworkDrive(string driveName)
         {
+            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -785,7 +832,16 @@ namespace Microsoft.PowerShell.Commands
                 driveName += ':';
 
                 // Call the windows API
-                int errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                int errorCode = ERROR_NO_NETWORK;
+
+                try
+                {
+                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                }
+                catch (System.DllNotFoundException)
+                {
+                    return null;
+                }
 
                 // error code 234 is returned whenever the required buffer size is greater
                 // than the specified buffer size.
@@ -1845,11 +1901,10 @@ namespace Microsoft.PowerShell.Commands
                                 //  a) the user has asked to with the -FollowSymLinks switch parameter and
                                 //  b) the directory pointed to by the symlink has not already been visited,
                                 //     preventing symlink loops.
-                                //  c) it is not a name surrogate making it not a symlink
+                                //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory) &&
-                                        InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(recursiveDirectory.FullName))
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2001,7 +2056,7 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -2488,7 +2543,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!exists)
                     {
-                        WriteError(new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.ItemNotFound), "ItemNotFound", ErrorCategory.ObjectNotFound, value));
+                        string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, strTargetPath);
+                        WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemNotFound", ErrorCategory.ObjectNotFound, strTargetPath));
                         return;
                     }
 
@@ -3032,13 +3088,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
                     directory.Delete();
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;
@@ -3953,6 +4014,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                         }
+                    }
+                    catch (IOException ioException)
+                    {
+                        WriteError(new ErrorRecord(ioException, "CopyFileInfoItemIOError", ErrorCategory.WriteError, file));
                     }
                 }
             }
@@ -5034,7 +5099,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Add the base path back on so that it can be used for
                             // processing
-                            if (!result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (!result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = MakePath(basePath, result);
                             }
@@ -5098,7 +5163,7 @@ namespace Microsoft.PowerShell.Commands
                             result = files.First();
 #endif
 
-                            if (result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = result.Substring(basePath.Length);
                             }
@@ -7075,6 +7140,8 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
             internal static extern int PathGetDriveNumber(string path);
 
+            private static bool _WNetApiAvailable = true;
+
             /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
             /// This implementation is based on the 'PathIsNetworkPath' API.
@@ -7093,6 +7160,11 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
+                if (!_WNetApiAvailable)
+                {
+                    return false;
+                }
+
                 // 0 - 25 corresponding to 'A' - 'Z'
                 int driveId = PathGetDriveNumber(path);
                 if (driveId >= 0 && driveId < 26)
@@ -7101,7 +7173,16 @@ namespace Microsoft.PowerShell.Commands
 
                     int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
                     StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    int errorCode = -1;
+                    try
+                    {
+                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                        return false;
+                    }
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
@@ -7703,6 +7784,8 @@ namespace Microsoft.PowerShell.Commands
 
         private const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
 
+        private const uint IO_REPARSE_TAG_APPEXECLINK = 0x8000001B;
+
         private const string NonInterpretedPathPrefix = @"\??\";
 
         private const int MAX_PATH = 260;
@@ -7711,6 +7794,7 @@ namespace Microsoft.PowerShell.Commands
         // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
+            GenericZero = 0,
             GenericRead = 0x80000000,
             GenericWrite = 0x40000000,
             GenericExecute = 0x20000000,
@@ -7790,6 +7874,17 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        private struct REPARSE_DATA_BUFFER_APPEXECLINK
+        {
+            public uint ReparseTag;
+            public ushort ReparseDataLength;
+            public ushort Reserved;
+            public uint StringCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
+            public byte[] StringList;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
@@ -7847,8 +7942,23 @@ namespace Microsoft.PowerShell.Commands
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFileHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
+        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
+        {
+            private SafeFindHandle() : base(true) { }
+
+            protected override bool ReleaseHandle()
+            {
+                return FindClose(this.handle);
+            }
+
+            [DllImport(PinvokeDllNames.FindCloseDllName)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool FindClose(IntPtr handle);
+        }
+
+        // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
         {
@@ -7890,7 +8000,11 @@ namespace Microsoft.PowerShell.Commands
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
 #if !UNIX
-                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
+                // We set accessMode parameter to zero because documentation says:
+                // If this parameter is zero, the application can query certain metadata
+                // such as file, directory, or device attributes without accessing
+                // that file or device, even if GENERIC_READ access would have been denied.
+                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericZero))
                 {
                     string linkTarget = WinInternalGetTarget(handle);
 
@@ -7955,7 +8069,11 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericRead))
+            // We set accessMode parameter to zero because documentation says:
+            // If this parameter is zero, the application can query certain metadata
+            // such as file, directory, or device attributes without accessing
+            // that file or device, even if GENERIC_READ access would have been denied.
+            using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
             {
                 int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -7988,13 +8106,23 @@ namespace Microsoft.PowerShell.Commands
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
-                    if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
-                        linkType = "SymbolicLink";
-                    else if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
-                        linkType = "Junction";
-                    else
+                    switch (reparseDataBuffer.ReparseTag)
                     {
-                        linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                        case IO_REPARSE_TAG_SYMLINK:
+                            linkType = "SymbolicLink";
+                            break;
+
+                        case IO_REPARSE_TAG_MOUNT_POINT:
+                            linkType = "Junction";
+                            break;
+
+                        case IO_REPARSE_TAG_APPEXECLINK:
+                            linkType = "AppExeCLink";
+                            break;
+
+                        default:
+                            linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                            break;
                     }
 
                     return linkType;
@@ -8025,22 +8153,27 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsNameSurrogateReparsePoint(string filePath)
+        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
         {
-#if !UNIX
-            var data = new WIN32_FIND_DATA();
-            using (SafeFileHandle handle = FindFirstFileEx(filePath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            if (!IsReparsePoint(fileInfo))
             {
-                // Name surrogates are reparse points that point to other named entities local to the filesystem (like symlinks)
-                // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
-                // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0)
+                return false;
+            }
+#if !UNIX
+            // It is a reparse point and we should check some reparse point tags.
+            var data = new WIN32_FIND_DATA();
+            using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            {
+                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/en-us/windows/win32/fileio/reparse-point-tags
+                // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
+                // (like symlinks and mount points).
+                // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
+                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
             }
 #endif
-            // true means the reparse point is a symlink
             return true;
         }
 
@@ -8204,25 +8337,33 @@ namespace Microsoft.PowerShell.Commands
                     throw new Win32Exception(lastError);
                 }
 
-                // Unmarshal to symbolic link to look for tags.
-                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
-
-                if (reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_SYMLINK && reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT)
-                    return null;
-
                 string targetDir = null;
 
-                if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
-                {
-                    targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
-                }
+                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
-                if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
+                switch (reparseDataBuffer.ReparseTag)
                 {
-                    // Since this is a junction we need to unmarshal to the correct structure.
-                    REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
+                    case IO_REPARSE_TAG_SYMLINK:
+                        targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
+                        break;
 
-                    targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
+                    case IO_REPARSE_TAG_MOUNT_POINT:
+                        REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
+                        targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
+                        break;
+
+                    case IO_REPARSE_TAG_APPEXECLINK:
+                        REPARSE_DATA_BUFFER_APPEXECLINK reparseAppExeDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_APPEXECLINK>(outBuffer);
+                        // The target file is at index 2
+                        if (reparseAppExeDataBuffer.StringCount >= 3)
+                        {
+                            string temp = Encoding.Unicode.GetString(reparseAppExeDataBuffer.StringList);
+                            targetDir = temp.Split('\0')[2];
+                        }
+                        break;
+
+                    default:
+                        return null;
                 }
 
                 if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
@@ -8546,14 +8687,14 @@ namespace System.Management.Automation.Internal
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-            [DllImport(PinvokeDllNames.FindFirstStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern SafeFindHandle FindFirstStreamW(
                 string lpFileName, StreamInfoLevels InfoLevel,
                 [In, Out, MarshalAs(UnmanagedType.LPStruct)]
                 AlternateStreamNativeData lpFindStreamData, uint dwFlags);
 
-            [DllImport(PinvokeDllNames.FindNextStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]
             internal static extern bool FindNextStreamW(

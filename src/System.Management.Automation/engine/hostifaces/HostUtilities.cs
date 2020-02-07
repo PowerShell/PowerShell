@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
             if (forCurrentUser)
             {
-                basePath = Utils.GetUserConfigurationDirectory();
+                basePath = Platform.ConfigDirectory;
             }
             else
             {

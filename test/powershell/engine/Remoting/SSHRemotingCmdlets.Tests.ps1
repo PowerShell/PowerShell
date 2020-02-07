@@ -40,3 +40,33 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
         { & $scriptBlock } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
+
+Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', 'Slow' {
+
+    BeforeAll {
+
+        # Port 49151 is IANA reserved, so it should not be in use. If type conversion fails
+        # then New-PSSession will throw before even attempting to open the session.
+        $TestCasesSSHConnection = @(
+            @{scriptBlock = {New-PSSession -ErrorAction Stop -SSHConnection @{ Port = 49151; ComputerName = [psobject]'localhost' }}; testName = 'SSHConnection can convert PSObject to string'}
+            @{scriptBlock = {New-PSSession -ErrorAction Stop -SSHConnection @{ Port = [psobject]49151; ComputerName = 'localhost' }}; testName = 'SSHConnection can convert PSObject to int'}
+        )
+    }
+
+    It "<testName>" -TestCases $TestCasesSSHConnection {
+        param($scriptBlock)
+
+        $err = $null
+        try
+        {
+            & $scriptBlock
+        }
+        catch
+        {
+            $err = $_
+        }
+        # The exact returned error id string varies depending on platform,
+        # but will always contain 'PSSessionOpenFailed'.
+        $err.FullyQualifiedErrorId | Should -Match 'PSSessionOpenFailed'
+    }
+}

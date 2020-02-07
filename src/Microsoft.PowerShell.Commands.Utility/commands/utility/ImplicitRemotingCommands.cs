@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -21,9 +20,6 @@ using System.Xml;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
-// FxCop suppressions for resource strings:
-[module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ImplicitRemotingStrings.resources", MessageId = "runspace")]
-[module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ImplicitRemotingStrings.resources", MessageId = "Runspace")]
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -33,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Export-PSSession cmdlet.
     /// Spec: TBD.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135213")]
+    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096604")]
     [OutputType(typeof(FileInfo))]
     public sealed class ExportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -156,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Import-PSSession cmdlet.
     /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command .
     /// </summary>
-    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135221")]
+    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096712")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -347,7 +343,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path(s) or name(s) of the commands to retrieve.
         /// </summary>
         [Parameter(Position = 2)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("Name")]
         public string[] CommandName
         {
@@ -383,7 +378,6 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyCollection]
         [Alias("Args")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ArgumentList
         {
             get
@@ -425,8 +419,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the PSSnapin parameter to the cmdlet.
         /// </summary>
         [Parameter]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Snapin")]
         [Alias("PSSnapin")]
         [ValidateNotNull]
         public string[] Module
@@ -455,7 +447,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [Parameter]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNull]
         public ModuleSpecification[] FullyQualifiedModule
         {
@@ -488,7 +479,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the types for which we should get formatting and output data.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 3)]
         public string[] FormatTypeName
         {
@@ -534,7 +524,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNull]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public PSSession Session { get; set; }
 
         #endregion Parameters
@@ -1210,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(parameter.Attributes == null || parameter.Attributes.Count == 0,
                         "Attributes shouldn't get rehydrated");
 
-                    // sanitize - remove type constraint that are not whitelisted
+                    // sanitize - remove type constraint that are not allowed
                     if (!IsSafeTypeConstraint(parameter.ParameterType))
                     {
                         parameter.ParameterType = null;
@@ -1372,7 +1361,6 @@ namespace Microsoft.PowerShell.Commands
                 case CommandTypes.Filter:
                 case CommandTypes.Function:
                 case CommandTypes.Script:
-                case CommandTypes.Workflow:
                     return 20;
 
                 case CommandTypes.Cmdlet:

@@ -470,14 +470,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals(RemotingConstants.SourceLength, StringComparison.OrdinalIgnoreCase);
+                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase);
             return !isRemotingPropertyName;
         }
 
         private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
 
-        private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
+        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)

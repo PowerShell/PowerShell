@@ -5,13 +5,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Security;
 using System.Management.Automation.Host;
-using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -269,6 +268,12 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Writes an object enumerated from a collection to the output pipe.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The enumerated object that needs to be written to the pipeline.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -276,7 +281,7 @@ namespace System.Management.Automation
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         private void DoWriteEnumeratedObject(object sendToPipeline)
         {
@@ -411,6 +416,12 @@ namespace System.Management.Automation
             if (WriteHelper_ShouldWrite(
                 preference, lastProgressContinueStatus))
             {
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(progressRecord);
+                }
+
                 ui.WriteProgress(sourceId, progressRecord);
             }
 
@@ -474,6 +485,12 @@ namespace System.Management.Automation
                 if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
+                }
+
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
                 if (DebugOutputPipe != null)
@@ -564,6 +581,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (VerboseOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -652,6 +675,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (WarningOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -711,6 +740,12 @@ namespace System.Management.Automation
             ActionPreference preference = InformationPreference;
             if (overrideInquire && preference == ActionPreference.Inquire)
                 preference = ActionPreference.Continue;
+
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(record);
+            }
 
             if (preference != ActionPreference.Ignore)
             {
@@ -2051,6 +2086,14 @@ namespace System.Management.Automation
 
             CmdletInvocationException e =
                 new CmdletInvocationException(errorRecord);
+
+            // If the error action preference is set to break, break immediately
+            // into the debugger
+            if (ErrorAction == ActionPreference.Break)
+            {
+                Context.Debugger?.Break(e.InnerException ?? e);
+            }
+
             // Code sees only that execution stopped
             throw ManageException(e);
         }
@@ -2338,7 +2381,8 @@ namespace System.Management.Automation
             // 913088-2005/06/06
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
-            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException))
+            // 2019/10/18 - StopUpstreamCommandsException should not be added either
+            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException) && !(e is StopUpstreamCommandsException))
             {
                 try
                 {
@@ -2551,8 +2595,12 @@ namespace System.Management.Automation
         #region Write
         internal bool UseSecurityContextRun = true;
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2571,8 +2619,12 @@ namespace System.Management.Automation
             this.OutputPipe.Add(sendToPipeline);
         }
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Enumerates and writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to enumerate and write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2594,7 +2646,9 @@ namespace System.Management.Automation
             foreach (object toConvert in enumerable)
             {
                 if (AutomationNull.Value == toConvert)
+                {
                     continue;
+                }
 
                 object converted = LanguagePrimitives.AsPSObjectOrNull(toConvert);
                 convertedList.Add(converted);
@@ -2658,6 +2712,12 @@ namespace System.Management.Automation
             if (overrideInquire && preference == ActionPreference.Inquire)
             {
                 preference = ActionPreference.Continue;
+            }
+
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(errorRecord);
             }
 
 #if CORECLR
@@ -2867,7 +2927,7 @@ namespace System.Management.Automation
         // See "User Feedback Mechanisms - Note.doc" for details.
 
         private bool _isConfirmPreferenceCached = false;
-        private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
+        private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
         /// </summary>
@@ -2898,7 +2958,7 @@ namespace System.Management.Automation
                 if (!_isConfirmPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference<ConfirmImpact>(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
                     _isConfirmPreferenceCached = true;
                 }
 
@@ -2907,7 +2967,7 @@ namespace System.Management.Automation
         }
 
         private bool _isDebugPreferenceSet = false;
-        private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
+        private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
         /// <summary>
         /// Preference setting.
@@ -2933,7 +2993,7 @@ namespace System.Management.Automation
                 {
                     bool defaultUsed = false;
 
-                    _debugPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
+                    _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -2950,13 +3010,18 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _debugPreference = value;
                 _isDebugPreferenceSet = true;
             }
         }
 
         private bool _isVerbosePreferenceCached = false;
-        private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
+        private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -2992,7 +3057,7 @@ namespace System.Management.Automation
                 if (!_isVerbosePreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _verbosePreference = Context.GetEnumPreference<ActionPreference>(
+                    _verbosePreference = Context.GetEnumPreference(
                         SpecialVariables.VerbosePreferenceVarPath,
                         _verbosePreference,
                         out defaultUsed);
@@ -3005,7 +3070,7 @@ namespace System.Management.Automation
         internal bool IsWarningActionSet { get; private set; } = false;
 
         private bool _isWarningPreferenceCached = false;
-        private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
+        private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3029,7 +3094,7 @@ namespace System.Management.Automation
                 if (!_isWarningPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _warningPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
+                    _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
                 }
 
                 return _warningPreference;
@@ -3039,7 +3104,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _warningPreference = value;
@@ -3144,7 +3209,7 @@ namespace System.Management.Automation
 
         internal bool IsDebugFlagSet { get; private set; } = false;
 
-        private bool _whatIfFlag = InitialSessionState.defaultWhatIfPreference;
+        private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
         private bool _isWhatIfPreferenceCached /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
@@ -3176,7 +3241,7 @@ namespace System.Management.Automation
 
         internal bool IsWhatIfFlagSet { get; private set; }
 
-        private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
+        private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
         private bool _isErrorActionPreferenceCached = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
@@ -3198,7 +3263,7 @@ namespace System.Management.Automation
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _errorAction = Context.GetEnumPreference<ActionPreference>(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
+                    _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
                     _isErrorActionPreferenceCached = true;
                 }
 
@@ -3209,7 +3274,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceSupportedOnlyOnWorkflow);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _errorAction = value;
@@ -3233,7 +3298,7 @@ namespace System.Management.Automation
                 if (!_isProgressPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _progressPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
+                    _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
                     _isProgressPreferenceCached = true;
                 }
 
@@ -3242,12 +3307,17 @@ namespace System.Management.Automation
 
             set
             {
+                if (value == ActionPreference.Suspend)
+                {
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+                }
+
                 _progressPreference = value;
                 _isProgressPreferenceSet = true;
             }
         }
 
-        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
+        private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
         private bool _isProgressPreferenceSet = false;
         private bool _isProgressPreferenceCached = false;
 
@@ -3265,7 +3335,7 @@ namespace System.Management.Automation
                 if (!_isInformationPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _informationPreference = Context.GetEnumPreference<ActionPreference>(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
+                    _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
                     _isInformationPreferenceCached = true;
                 }
 
@@ -3276,7 +3346,7 @@ namespace System.Management.Automation
             {
                 if (value == ActionPreference.Suspend)
                 {
-                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceErrorActionOnly);
+                    throw PSTraceSource.NewNotSupportedException(ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
                 }
 
                 _informationPreference = value;
@@ -3284,7 +3354,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
+        private ActionPreference _informationPreference = InitialSessionState.DefaultInformationPreference;
 
         internal bool IsInformationActionSet { get; private set; } = false;
 
@@ -3364,6 +3434,7 @@ namespace System.Management.Automation
                 case ActionPreference.Continue:
                 case ActionPreference.Stop:
                 case ActionPreference.Inquire:
+                case ActionPreference.Break:
                     return true;
 
                 default:
@@ -3416,6 +3487,7 @@ namespace System.Management.Automation
                 case ActionPreference.Ignore: // YesToAll
                 case ActionPreference.SilentlyContinue:
                 case ActionPreference.Continue:
+                case ActionPreference.Break:
                     return ContinueStatus.Yes;
 
                 case ActionPreference.Stop:

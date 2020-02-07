@@ -32,6 +32,12 @@ Describe "Get-ChildItem" -Tags "CI" {
                 @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
                 @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
             )
+
+            $SkipAppExeCLinks = $true
+            if ($IsWindows -and (Get-ChildItem -Path ~\AppData\Local\Microsoft\WindowsApps\*.exe -ErrorAction Ignore) -ne $null)
+            {
+                $SkipAppExeCLinks = $false
+            }
         }
 
         It "Should list the contents of the current folder" {
@@ -136,10 +142,10 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
-            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should Be 0
-            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
-            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
-            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should -Be 0
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should -Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should -Be 1
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
         }
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
@@ -165,14 +171,41 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
             $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
-            $file | Should not be $null
-            $file.Count | Should be 1
-            $file.Name | Should be "pagefile.sys"
+            $file | Should -Not -Be $null
+            $file.Count | Should -Be 1
+            $file.Name | Should -Be "pagefile.sys"
         }
 
         It "-Filter *. finds extension-less files" {
             $null = New-Item -Path TestDrive:/noextension -ItemType File
             (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
+        }
+
+        It "Understand APPEXECLINKs" -Skip:($SkipAppExeCLinks) {
+            $app = Get-ChildItem -Path ~\appdata\local\microsoft\windowsapps\*.exe | Select-Object -First 1
+            $app.Target | Should -Not -Be $app.FullName
+            $app.LinkType | Should -BeExactly 'AppExeCLink'
+        }
+
+        It "Wildcard matching behavior is the same between -Path and -Include parameters when using escape characters" {
+            $oldLocation = Get-Location
+
+            try {
+                Set-Location $TestDrive
+
+                $expectedPath = 'a`[b]'
+                $escapedPath = 'a```[b`]'
+                New-Item -Type File $expectedPath -ErrorAction SilentlyContinue > $null
+
+                $WithInclude = Get-ChildItem * -Include $escapedPath
+                $WithPath = Get-ChildItem -Path $escapedPath
+
+                $WithInclude.Name | Should -BeExactly $expectedPath
+                $WithPath.Name | Should -BeExactly $expectedPath
+
+            } finally {
+                Set-Location $oldLocation
+            }
         }
     }
 
@@ -248,7 +281,7 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
             New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType
         }
 
-        $item | Should -BeOfType "System.IO.FileSystemInfo"
+        $item | Should -BeOfType System.IO.FileSystemInfo
 
         $actualMode = [Microsoft.PowerShell.Commands.FileSystemProvider]::Mode($item)
         $actualMode | Should -BeExactly $expectedMode
