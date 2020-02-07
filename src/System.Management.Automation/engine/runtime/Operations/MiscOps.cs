@@ -3313,7 +3313,6 @@ namespace System.Management.Automation
             // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
             // See https://github.com/dotnet/runtime/issues/21690 for more information.
             // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
-
             return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
