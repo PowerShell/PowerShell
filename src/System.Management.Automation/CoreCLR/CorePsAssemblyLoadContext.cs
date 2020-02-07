@@ -239,12 +239,7 @@ namespace System.Management.Automation
             string folder = Path.GetDirectoryName(assembly.Location);
             string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
-            if (NativeLibrary.TryLoad(fullName, out IntPtr pointer))
-            {
-                return pointer;
-            }
-
-            return IntPtr.Zero;
+            return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
         }
 
         #endregion Internal_Methods
