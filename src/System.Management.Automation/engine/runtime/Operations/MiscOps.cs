@@ -3291,17 +3291,29 @@ namespace System.Management.Automation
         internal static IEnumerator GetCOMEnumerator(object obj)
         {
             object targetValue = PSObject.Base(obj);
+            try
+            {
+                var enumerator = (targetValue as IEnumerable)?.GetEnumerator();
+                if (enumerator != null)
+                {
+                    return enumerator;
+                }
+            }
+            catch (Exception)
+            {
+            }
 
             // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerable enumerable = targetValue as IEnumerable;
-            //   if (enumerable != null)
+            //   IEnumerator enumerator = targetValue as IEnumerator;
+            //   if (enumerator != null)
             //   {
-            //       var enumerator = enumerable.GetEnumerator();
+            //       enumerable.MoveNext();
             //       ...
             //   }
-            // The call to 'GetEnumerator()' throws exception because COM is not supported in .NET Core.
-            // See https://github.com/dotnet/corefx/issues/19731 for more information.
-            // When COM support is back to .NET Core, we need to change back to the original implementation.
+            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
+            // See https://github.com/dotnet/runtime/issues/21690 for more information.
+            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
+
             return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
