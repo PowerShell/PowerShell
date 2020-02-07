@@ -53,9 +53,6 @@ try {
             $group = [ADSI]"WinNT://./Users,Group"
             $members = $group.Invoke('Members')
             $names = $members | ForEach-Object { $_.GetType().InvokeMember('Name', 'GetProperty', $null, $_, $null) }
-
-            [System.Console]::WriteLine("$names")
-
             $names | Should -Contain 'INTERACTIVE'
         }
 
