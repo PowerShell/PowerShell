@@ -293,7 +293,7 @@ namespace System.Management.Automation
     public sealed class ListControlEntryItem
     {
         /// <summary>
-        /// Gets the label for this List Control Entry Item
+        /// Gets or sets the label for this List Control Entry Item
         /// If nothing is specified, then it uses the
         /// property name.
         /// </summary>
