@@ -3088,8 +3088,15 @@ namespace Microsoft.PowerShell.Commands
                 // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
                 // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
 
-                // Change the module name to match the manifest name, not the original name
+                // Initially the original module name comes from RootModule manifest property but real name comes from the module (manifest) path.
+                // Change the module name to match the manifest name, not the original name.
+                // Then do the same for all providers loaded in the module since a provider caches full name based on the module name.
                 newManifestInfo.SetName(manifestInfo.Name);
+                IEnumerable<ProviderInfo> pis = ss.Provider.GetAll().Where((pi) => { return object.ReferenceEquals(pi.Module, newManifestInfo); });
+                foreach (ProviderInfo pi in pis)
+                {
+                    pi.SetModule(manifestInfo);
+                }
 
                 // Copy in any nested modules...
                 foreach (PSModuleInfo nm in manifestInfo.NestedModules)

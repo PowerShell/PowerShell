@@ -44,9 +44,9 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available.
+        /// Gets the full name of the provider including the module name if available.
         /// </summary>
-        internal string FullName
+        public string FullName
         {
             get
             {
