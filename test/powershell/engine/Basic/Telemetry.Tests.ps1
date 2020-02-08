@@ -5,21 +5,7 @@
 # these tests aren't going to check that telemetry is being sent
 # only that we're not treating the telemetry.uuid file correctly
 
-Describe "CustomEvent resend check" {
-    It "Should resend startup event if the semaphore says we haven't sent telemetry" {
-        # base line should be true
-        $telemetryType = [Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]
-        $bindingFlags = [System.Reflection.BindingFlags]"NonPublic,Static"
-        $telemetrySent = ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
-        $telemetrySent | Should -Be $true
-        # force a resend of the startup telemetry
-        ${telemetryType}.GetMember("set_s_startupEventSent", $bindingFlags).Invoke($null, @($false))
-        $null = Get-Date
-        # now check it again, it should be true now that something has executed
-        $telemetrySent = ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
-        $telemetrySent | Should -Be $true
-    }
-}
+
 
 Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
@@ -143,6 +129,21 @@ Describe "Telemetry for shell startup" -Tag CI {
         $env:POWERSHELL_TELEMETRY_OPTOUT = $value
         $result = & $PWSH -NoProfile -Command '[Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry'
         $result | Should -Be $expectedValue
+    }
+
+    It "Should resend startup event if the semaphore says we haven't sent telemetry" {
+
+        $result = & $PWSH -c {
+            $telemetryType = [Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]
+            $bindingFlags = [System.Reflection.BindingFlags]"NonPublic,Static"
+            ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
+            # force a resend of the startup telemetry
+            $null = ${telemetryType}.GetMember("set_s_startupEventSent", $bindingFlags).Invoke($null, @($false))
+            $null = Get-Date | Out-String
+            # now check it again, it should be true now that something has executed
+            ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
+            }
+        $result | Should -Be $true,$true
     }
 
 }
