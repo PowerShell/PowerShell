@@ -3092,10 +3092,15 @@ namespace Microsoft.PowerShell.Commands
                 // Change the module name to match the manifest name, not the original name.
                 // Then do the same for all providers loaded in the module since a provider caches full name based on the module name.
                 newManifestInfo.SetName(manifestInfo.Name);
-                IEnumerable<ProviderInfo> pis = ss.Provider.GetAll().Where((pi) => { return object.ReferenceEquals(pi.Module, newManifestInfo); });
-                foreach (ProviderInfo pi in pis)
+                if (ss != null)
                 {
-                    pi.SetModule(manifestInfo);
+                    foreach (ProviderInfo pi in ss.Provider.GetAll())
+                    {
+                        if (object.ReferenceEquals(pi.Module, newManifestInfo))
+                        {
+                        pi.SetModule(manifestInfo);
+                        }
+                    }
                 }
 
                 // Copy in any nested modules...
