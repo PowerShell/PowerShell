@@ -49,7 +49,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param ($params)
         $c = Enable-WSManCredSSP @params -Force
-        $c.CredSSP | Should -Be $true
+        $c.CredSSP | Should -BeTrue
 
         $c = Get-WSManCredSSP
         if ($params.Role -eq "Client")
@@ -87,7 +87,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         $credssp.DelegateComputer = "foo", "bar"
         $credssp.DelegateComputer -join ',' | Should -Be "foo,bar"
         $credssp.Force = $true
-        $credssp.Force | Should -Be $true
+        $credssp.Force | Should -BeTrue
 
         $credssp = [Microsoft.WSMan.Management.DisableWSManCredSSPCommand]::new()
         $credssp.Role = "Server"
@@ -105,6 +105,6 @@ Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
         param ($cmdline, $cmd)
 
         $scriptBlock = [scriptblock]::Create($cmdline)
-        $scriptBlock | should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
+        $scriptBlock | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }
 }

@@ -288,7 +288,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            lock(myLock)
+            lock (myLock)
             {
                 if (status == Status.Default)
                 {

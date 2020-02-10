@@ -3584,7 +3584,7 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
             // Use at most 3 locks (we don't expect contention on that many cores anyways,
             // and typically we'll be processing just 2 or 3 files anyway, hence capacity=3.
-            ConcurrentDictionary<string, string> filesProcessed  = new ConcurrentDictionary<string, string>(
+            ConcurrentDictionary<string, string> filesProcessed = new ConcurrentDictionary<string, string>(
                     concurrencyLevel: 3,
                     capacity: 3,
                     StringComparer.OrdinalIgnoreCase);
@@ -4306,8 +4306,12 @@ param(
             }
         }
 
-        # If the pager is an application, format the output width before sending to the app.
-        if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
+        $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
+        if ($pagerCommandInfo -eq $null) {
+            $help
+        }
+        elseif ($pagerCommandInfo.CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {

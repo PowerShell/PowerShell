@@ -133,7 +133,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
 Describe "Default enablement of Experimental Features" -Tags CI {
     BeforeAll {
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        $isPreview = $PSVersionTable.GitCommitId -match "preview|daily"
 
         Function BeEnabled {
             [CmdletBinding()]

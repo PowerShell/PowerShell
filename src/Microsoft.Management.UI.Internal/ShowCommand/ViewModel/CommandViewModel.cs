@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-               return this.IsImported ? Visibility.Collapsed : Visibility.Visible;
+                return this.IsImported ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 

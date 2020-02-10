@@ -100,8 +100,8 @@ try {
                 $LocalSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignatureCorruptedScript.ps1
                 $LocalSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignedScript.ps1
                 $LocalUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalUnsignedScript.ps1
-                $PSHomeUnsignedModule = Join-Path -Path $PSHome -ChildPath 'Modules' -AdditionalChildPath 'LocalUnsignedModule', 'LocalUnsignedModule.psm1'
-                $PSHomeUntrustedModule = Join-Path -Path $PSHome -ChildPath 'Modules' -AdditionalChildPath 'LocalUntrustedModule', 'LocalUntrustedModule.psm1'
+                $PSHomeUnsignedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUnsignedModule', 'LocalUnsignedModule.psm1'
+                $PSHomeUntrustedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUntrustedModule', 'LocalUntrustedModule.psm1'
                 $TrustedSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignatureCorruptedScript.ps1
                 $TrustedSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignedScript.ps1
                 $TrustedUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedUnsignedScript.ps1
@@ -532,10 +532,10 @@ ZoneId=$FileType
 
         Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
             It "'Microsoft.PowerShell.Archive' should have a signature" {
-                $script:archiveAllCert | should not be null
+                $script:archiveAllCert | Should -Not -Be null
             }
             It "'Microsoft.PowerShell.Archive' should have a valid signature" {
-                $script:archiveCert | should not be null
+                $script:archiveCert | Should -Not -Be null
             }
         }
 
@@ -565,7 +565,7 @@ ZoneId=$FileType
 
                     $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
+                    $exception.Exception | Should -BeOfType System.Management.Automation.PSSecurityException
                 }
             }
 

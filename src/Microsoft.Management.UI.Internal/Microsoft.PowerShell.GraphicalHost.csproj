@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>Assembly containing WPF code for Out-GridView, HelpWindow, and Show-Command</Description>

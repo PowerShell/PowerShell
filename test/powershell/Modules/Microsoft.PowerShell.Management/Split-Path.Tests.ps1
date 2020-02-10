@@ -3,14 +3,20 @@
 Describe "Split-Path" -Tags "CI" {
 
     It "Should return a string object when invoked" {
-        $result = Split-Path .
-        $result | Should -BeOfType String
+        try {
+            Push-Location TestDrive:
+            $result = Split-Path .
+            $result | Should -BeOfType String
 
-        $result = Split-Path . -Leaf
-        $result | Should -BeOfType String
+            $result = Split-Path . -Leaf
+            $result | Should -BeOfType String
 
-        $result = Split-Path . -Resolve
-        $result | Should -BeOfType String
+            $result = Split-Path . -Resolve
+            $result | Should -BeOfType String
+        }
+        finally {
+            Pop-Location
+        }
     }
 
     It "Should return the name of the drive when the qualifier switch is used" {
@@ -55,7 +61,7 @@ Describe "Split-Path" -Tags "CI" {
         $actual.Count                   | Should -Be 2
         $actual[0]                      | Should -BeExactly $testFile1
         $actual[1]                      | Should -BeExactly $testFile2
-        ,$actual                        | Should -BeOfType "System.Array"
+        ,$actual                        | Should -BeOfType System.Array
     }
 
     It "Should be able to tell if a given path is an absolute path" {

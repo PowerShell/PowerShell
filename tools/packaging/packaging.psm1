@@ -38,7 +38,9 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks,
 
-        [switch] $NoSudo
+        [switch] $NoSudo,
+
+        [switch] $LTS
     )
 
     DynamicParam {
@@ -242,9 +244,9 @@ function Start-PSPackage {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
                     "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg", "tar"
+                    "rpm", "nupkg"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg", "tar"
+                    "rpm", "nupkg"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
@@ -304,6 +306,7 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
+                        LTS = $LTS
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -366,6 +369,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -379,6 +383,8 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm32"
+                    ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -392,6 +398,8 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm64"
+                    ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -405,6 +413,8 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "alpine-x64"
+                    ExcludeSymbolicLinks = $true
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -419,6 +429,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -435,6 +446,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
                 foreach ($Distro in $Script:RedhatDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -451,6 +463,7 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -487,13 +500,22 @@ function New-TarballPackage {
         [Parameter()]
         [string] $Architecture = "x64",
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $ExcludeSymbolicLinks,
+
+        [switch] $LTS
     )
 
     if ($PackageNameSuffix) {
         $packageName = "$Name-$Version-{0}-$Architecture-$PackageNameSuffix.tar.gz"
     } else {
-        $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
+        $packageName = if ($LTS) {
+            "$Name-lts-$Version-{0}-$Architecture.tar.gz"
+        }
+        else {
+            "$Name-$Version-{0}-$Architecture.tar.gz"
+        }
     }
 
     if ($Environment.IsWindows) {
@@ -515,6 +537,13 @@ function New-TarballPackage {
         }
     }
 
+    $Staging = "$PSScriptRoot/staging"
+    New-StagingFolder -StagingPath $Staging
+
+    if (-not $ExcludeSymbolicLinks.IsPresent) {
+        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
+    }
+
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
             $options = "-czf"
@@ -524,7 +553,7 @@ function New-TarballPackage {
             }
 
             try {
-                Push-Location -Path $PackageSourcePath
+                Push-Location -Path $Staging
                 tar $options $packagePath .
             } finally {
                 Pop-Location
@@ -672,7 +701,10 @@ function New-UnixPackage {
         $Force,
 
         [switch]
-        $NoSudo
+        $NoSudo,
+
+        [switch]
+        $LTS
     )
 
     DynamicParam {
@@ -758,7 +790,15 @@ function New-UnixPackage {
         $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
-        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
+        $Name = if($LTS) {
+            "powershell-lts"
+        }
+        elseif ($IsPreview) {
+            "powershell-preview"
+        }
+        else {
+            "powershell"
+        }
 
         # Verify dependencies are installed and in the path
         Test-Dependencies
@@ -770,11 +810,11 @@ function New-UnixPackage {
         $MajorVersion = $VersionMatch.Groups[1].Value
 
         # Suffix is used for side-by-side preview/release package installation
-        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
+        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } elseif ($LTS) { $MajorVersion + "-lts" } else { $MajorVersion }
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
-        if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        if ($PSCmdlet.ShouldProcess("Create staging folder")) {
             New-StagingFolder -StagingPath $Staging
         }
 
@@ -786,20 +826,17 @@ function New-UnixPackage {
         }
 
         # Destination for symlink to powershell executable
-        $Link = if ($Environment.IsLinux) {
-            if ($IsPreview) { "/usr/bin/pwsh-preview" } else { "/usr/bin/pwsh" }
-        } elseif ($Environment.IsMacOS) {
-            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
-        }
+        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
         $linkSource = "/tmp/pwsh"
 
-        if ($pscmdlet.ShouldProcess("Create package file system"))
+        if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
+            New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -833,7 +870,7 @@ function New-UnixPackage {
         if ($Type -eq "osxpkg")
         {
             Write-Log "Adding macOS launch application..."
-            if ($pscmdlet.ShouldProcess("Add macOS launch application"))
+            if ($PSCmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
                 $AppsFolder = New-MacOSLauncher -Version $Version
@@ -870,14 +907,14 @@ function New-UnixPackage {
 
         # Build package
         try {
-            if ($pscmdlet.ShouldProcess("Create $type package")) {
+            if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
                 Write-Log "Starting Cleanup for mac packaging..."
-                if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                if ($PSCmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
                 }
@@ -901,7 +938,7 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
-            if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
+            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
                 $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
             }
@@ -1228,6 +1265,47 @@ function New-AfterScripts
         $Distribution
     )
 
+    Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
+
+    if ($Environment.IsRedHatFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsMacOS) {
+        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
+        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+    }
+
+    return [PSCustomObject] @{
+        AfterInstallScript = $AfterInstallScript
+        AfterRemoveScript = $AfterRemoveScript
+    }
+}
+
+function New-PSSymbolicLinks
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Distribution,
+
+        [Parameter(Mandatory)]
+        [string]
+        $Staging
+    )
+
+    Write-Verbose -Message "PSSymLinks-Distribution: $Distribution" -Verbose
+
     if ($Environment.IsRedHatFamily) {
         switch -regex ($Distribution)
         {
@@ -1244,19 +1322,9 @@ function New-AfterScripts
                 New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
         }
-
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-
-        switch -regex ($Distribution)
+         switch -regex ($Distribution)
         {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
@@ -1269,18 +1337,12 @@ function New-AfterScripts
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
             }
+            default {
+                # Default to old behavior before this change
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
         }
-    }
-    elseif ($Environment.IsMacOS) {
-        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
-        # Handling uninstall can be done in Homebrew so we'll take advantage of that in the brew formula.
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-    }
-
-    return [PSCustomObject] @{
-        AfterInstallScript = $AfterInstallScript
-        AfterRemoveScript = $AfterRemoveScript
     }
 }
 
@@ -1347,14 +1409,16 @@ function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
-        [String]$Version
+        [String]$Version,
+
+        [switch]$LTS
     )
 
     $IsPreview = Test-IsPreview -Version $Version
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launcher application.
-    $suffix = if ($IsPreview) { "-preview" }
+    $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
     $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
     # Create folder structure for launcher application.
@@ -1381,7 +1445,7 @@ function New-MacOSLauncher
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
-    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
+    $executablepath = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
     $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
     $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
@@ -1396,6 +1460,33 @@ function New-MacOSLauncher
     $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
 
     return $appsfolder
+}
+
+function Get-PwshExecutablePath
+{
+    param(
+        [switch] $IsPreview,
+        [switch] $IsLTS
+    )
+
+    if ($IsPreview -and $IsLTS)
+    {
+        throw "Cannot be LTS and Preview"
+    }
+
+    $executableName = if ($IsPreview) {
+        "pwsh-preview"
+    } elseif ($LTS) {
+        "pwsh-lts"
+    } else {
+        "pwsh"
+    }
+
+    if ($Environment.IsLinux) {
+        "/usr/bin/$executableName"
+    } elseif ($Environment.IsMacOS) {
+        "/usr/local/bin/$executableName"
+    }
 }
 
 function Clear-MacOSLauncher
@@ -1469,7 +1560,7 @@ function New-ZipPackage
 
     if (Get-Command Compress-Archive -ErrorAction Ignore)
     {
-        if ($pscmdlet.ShouldProcess("Create zip package"))
+        if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
@@ -1618,7 +1709,7 @@ function New-ILNugetPackage
 
             if ($file -eq "Microsoft.PowerShell.SDK.dll")
             {
-                # Copy the '$PSHome\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+                # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
                 # This is to make 'Add-Type' work in application that hosts PowerShell.
 
                 $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
@@ -1745,11 +1836,15 @@ function CopyReferenceAssemblies
         [string[]] $assemblyFileList
     )
 
+    $supportedRefList = @(
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost")
+
     switch ($assemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
-            Copy-Item $ref_Utility -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        { $_ -in $supportedRefList } {
+            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+            Copy-Item $refDll -Destination $refNugetPath -Force
+            Write-Log "Copied file $refDll to $refNugetPath"
         }
 
         "Microsoft.PowerShell.SDK" {
@@ -1931,7 +2026,8 @@ function New-ReferenceAssembly
     $SMAReferenceAssembly = $null
     $assemblyNames = @(
         "System.Management.Automation",
-        "Microsoft.PowerShell.Commands.Utility"
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost"
     )
 
     foreach ($assemblyName in $assemblyNames) {
@@ -2119,10 +2215,8 @@ function GenerateBuildArguments
     $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
     $arguments += "/p:SnkFile=$SnkFilePath"
 
-    switch ($AssemblyName) {
-        "Microsoft.PowerShell.Commands.Utility" {
-            $arguments += "/p:SmaRefFile=$SMAReferencePath"
-        }
+    if ($AssemblyName -ne "System.Management.Automation") {
+        $arguments += "/p:SmaRefFile=$SMAReferencePath"
     }
 
     return $arguments
@@ -2270,7 +2364,7 @@ function New-NugetContentPackage
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
-    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+    if ($PSCmdlet.ShouldProcess("Create staging folder")) {
         New-StagingFolder -StagingPath $contentFolder
     }
 
@@ -2756,8 +2850,8 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $pwd "$packageName.wixpdb"
+    $msiLocationPath = Join-Path $PWD "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
 
     if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
     {

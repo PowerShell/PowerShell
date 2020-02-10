@@ -6,6 +6,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security;
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell;
 using Xunit;
 
 namespace PowerShell.Hosting.SDK.Tests
@@ -173,6 +174,13 @@ namespace PowerShell.Hosting.SDK.Tests
                 Assert.Equal("Joe", foo.Name);
                 Assert.Equal("Unknown", foo.Path);
             }
+        }
+
+        [Fact]
+        public static void TestConsoleShellScenario()
+        {
+            int ret = ConsoleShell.Start("Hello", string.Empty, new string[] { "-noprofile", "-c", "exit 42" });
+            Assert.Equal(42, ret);
         }
     }
 }

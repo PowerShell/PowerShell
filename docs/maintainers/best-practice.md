@@ -43,7 +43,7 @@
   1. The optional extended description is required for feature-work PRs, or regular PRs with breaking changes.
      For other PRs, it's not required but good to have based on the judgement of the maintainer.
 
-     - If a PR introduces breaking changes,
+     - If a PR introduces breaking changes from the previous stable release,
        make sure you put the tag `[breaking change]` at the first line of the extended description,
        and start the description text from the second line.
 
