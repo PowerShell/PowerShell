@@ -2033,7 +2033,7 @@ namespace Microsoft.PowerShell.Commands
         /// Internal dispose method which does the actual disposing.
         /// </summary>
         /// <param name="disposing">Whether called from dispose or finalize.</param>
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

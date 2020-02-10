@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing">
         /// if true, release all the managed objects.
         /// </param>
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

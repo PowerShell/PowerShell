@@ -729,7 +729,7 @@ namespace System.Management.Automation.Remoting.Client
                 GC.SuppressFinalize(this);
             }
 
-            private void Dispose(bool isDisposing)
+            protected virtual void Dispose(bool isDisposing)
             {
                 // Managed objects should not be deleted when this is called via the finalizer
                 // because they may have been collected already. To prevent leaking the marshalledBuffer

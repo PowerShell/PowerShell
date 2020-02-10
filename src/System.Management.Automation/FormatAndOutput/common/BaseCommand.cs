@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

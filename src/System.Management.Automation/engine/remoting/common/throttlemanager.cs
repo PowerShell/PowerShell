@@ -653,7 +653,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="disposing">If method is called from
         /// disposing of destructor</param>
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
