@@ -3098,7 +3098,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (object.ReferenceEquals(pi.Module, newManifestInfo))
                         {
-                        pi.SetModule(manifestInfo);
+                            pi.SetModule(manifestInfo);
                         }
                     }
                 }
