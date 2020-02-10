@@ -612,7 +612,7 @@ namespace System.Management.Automation.Internal
         }
 
         // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

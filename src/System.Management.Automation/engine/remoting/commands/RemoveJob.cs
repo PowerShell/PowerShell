@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         /// <param name="disposing"></param>
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
             foreach (var pair in _cleanUpActions)

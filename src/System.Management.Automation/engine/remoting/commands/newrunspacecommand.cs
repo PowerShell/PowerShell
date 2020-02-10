@@ -1200,7 +1200,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
