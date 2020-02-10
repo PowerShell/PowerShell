@@ -26,6 +26,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Diagnostics.Debug.dll'
             'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
+            'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
             'System.IO.FileSystem.AccessControl.dll'
             'System.IO.FileSystem.dll'
@@ -53,6 +54,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Loader.dll'
             'System.Runtime.Numerics.dll'
             'System.Runtime.Serialization.Formatters.dll'
+            'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.Encoding.dll'
             'System.Security.Cryptography.X509Certificates.dll'
@@ -76,8 +78,6 @@ Describe "Validate start of console host" -Tag CI {
                 'System.Security.Cryptography.Primitives.dll'
                 'System.Security.Principal.dll'
                 'System.Threading.Overlapped.dll'
-                'System.Diagnostics.TraceSource.dll'
-                'System.Runtime.Serialization.Primitives.dll'
             )
         }
         else {
