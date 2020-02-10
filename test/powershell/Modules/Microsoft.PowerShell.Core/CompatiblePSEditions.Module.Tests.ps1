@@ -330,6 +330,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
         It "Current location in Windows PS mirrors local current location" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
+            $pwdBackup = $PWD
             $location = Join-Path $TestDrive "Custom dir" (New-Guid).ToString()
             $null = New-Item -Path $location -ItemType Directory
             Push-Location -Path $location
@@ -345,7 +346,14 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
             # after WinCompat cleanup local $PWD changes should not cause errors
             Remove-module $ModuleName -Force
-            Pop-Location
+            try
+            {
+                Pop-Location
+            }
+            finally
+            {
+                Set-Location $pwdBackup
+            }
         }
     }
 

@@ -1991,7 +1991,7 @@ namespace Microsoft.PowerShell.Commands
                     this.SessionState.InvokeCommand.LocationChangedAction += SyncCurrentLocationDelegate;
 
                     // first sync has to be triggered manually
-                    SyncCurrentLocationHandler(this, new LocationChangedEventArgs(null, null, this.SessionState.Path.CurrentLocation));
+                    SyncCurrentLocationHandler(sender: this, args: new LocationChangedEventArgs(sessionState: null, oldPath: null, newPath: this.SessionState.Path.CurrentLocation));
                 }
             }
 #endif
