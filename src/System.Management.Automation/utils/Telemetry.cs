@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Telemetry
         private static string s_sessionId { get; set; }
 
         // private semaphore to determine whether we sent the startup telemetry event
-        private static bool s_startupEventSent { get; set; }
+        private static int s_startupEventSent = 0;
 
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
@@ -586,12 +586,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            // If we didn't send a startup event, it means we didn't use the console host
-            // so mark this as "hosted" to designate it as non-console host.
-            if (!s_startupEventSent)
-            {
-                SendPSCoreStartupTelemetry("hosted");
-            }
+            SendPSCoreStartupTelemetry("hosted");
 
             string metricName = metricId.ToString();
             try
@@ -655,6 +650,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="mode">The "mode" of the startup.</param>
         internal static void SendPSCoreStartupTelemetry(string mode)
         {
+            // Check if we already sent startup telemetry
+            if (Interlocked.CompareExchange(ref s_startupEventSent, 1, 0) == 1)
+            {
+                return;
+            }
+
             if (!CanSendTelemetry)
             {
                 return;
@@ -676,7 +677,6 @@ namespace Microsoft.PowerShell.Telemetry
             try
             {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
-                s_startupEventSent = true;
             }
             catch
             {

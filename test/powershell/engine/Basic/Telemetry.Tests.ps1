@@ -5,8 +5,6 @@
 # these tests aren't going to check that telemetry is being sent
 # only that we're not treating the telemetry.uuid file correctly
 
-
-
 Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
         # if the telemetry file exists, move it out of the way
@@ -133,17 +131,26 @@ Describe "Telemetry for shell startup" -Tag CI {
 
     It "Should resend startup event if the semaphore says we haven't sent telemetry" {
 
-        $result = & $PWSH -c {
+        $resultJson = & $PWSH -NoProfile -c {
             $telemetryType = [Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]
             $bindingFlags = [System.Reflection.BindingFlags]"NonPublic,Static"
-            ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
+            $initialValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
             # force a resend of the startup telemetry
-            $null = ${telemetryType}.GetMember("set_s_startupEventSent", $bindingFlags).Invoke($null, @($false))
+            $null = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].SetValue($null,0)
             $null = Get-Date | Out-String
             # now check it again, it should be true now that something has executed
-            ${telemetryType}.GetMember("get_s_startupEventSent", $bindingFlags).Invoke($null, $null)
-            }
-        $result | Should -Be $true,$true
+            $finalValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
+            @{
+                initialValue = $initialValue
+                finalValue = $finalValue
+            } | ConvertTo-Json -Compress
+        }
+
+        $result = $resultJson | ConvertFrom-Json
+
+        $result.InitialValue | Should -Be 1  -Because "Should have sent telemetry on console startup"
+
+        $result.FinalValue | Should -Be 1  -Because "Should have resent telemetry"
     }
 
 }
