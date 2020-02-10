@@ -24,7 +24,7 @@ This is a list of adopters of using PowerShell in production or in their product
 * [System Frontier](https://systemfrontier.com/solutions/powershell/) provides dynamically generated web GUIs and REST APIs for PowerShell and other scripting languages.  
   Enable non-admins like help desk and tier 1 support teams to execute secure web based tools on any platform `without admin rights`.  
   Configure flexible RBAC permissions from an intuitive interface, without a complex learning curve.  
-  Script output along with all actions are audited. Manage up to 5,000 nodes for free with the [Community Edition](https://systemfrontier.com/solutions/community-edition/).  
+  Script output along with all actions are audited. Manage up to 5,000 nodes for free with the [Community Edition](https://systemfrontier.com/solutions/community-edition/).
 * [Amazon AWS](https://aws.com) supports PowerShell in a wide variety of its products including [AWS tools for PowerShell](https://github.com/aws/aws-tools-for-powershell),
   [AWS Lambda Support For PowerShell](https://github.com/aws/aws-lambda-dotnet/tree/master/PowerShell) and [AWS PowerShell Tools for CodeBuild](https://docs.aws.amazon.com/powershell/latest/reference/items/CodeBuild_cmdlets.html)
   as well as supporting PowerShell Core in both Windows and Linux EC2 Images.
