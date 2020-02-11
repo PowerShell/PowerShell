@@ -319,6 +319,10 @@ namespace System.Management.Automation
         /// Get using values as dictionary for the Foreach-Object cmdlet, and limit the search
         /// to only the provided scriptblock and no nested scriptblocks.
         /// </summary>
+        /// <param name = "scriptBlock">Scriptblock to search</param>
+        /// <param name = "isTrustedInput">True when input is trusted</param>
+        /// <param name = "context">Execution context</param>
+        /// <returns>Dictionary of using variable map</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
             bool isTrustedInput,
@@ -416,8 +420,13 @@ namespace System.Management.Automation
                         var variableAst = usingAst.SubExpression as VariableExpressionAst;
                         if (variableAst == null)
                         {
-                            throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
-                                usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
+                            throw InterpreterError.NewInterpreterException(
+                                targetObject: null, 
+                                exceptionType: typeof(RuntimeException),
+                                errorPosition: usingAst.Extent, 
+                                resourceIdAndErrorId: "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", 
+                                resourceString: AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, 
+                                args: usingAst.Extent.Text);
                         }
 
                         string varName = variableAst.VariablePath.UserPath;
@@ -443,8 +452,13 @@ namespace System.Management.Automation
             {
                 if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
                 {
-                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
-                        usingAst.Extent, "UsingVariableIsUndefined", AutomationExceptions.UsingVariableIsUndefined, rte.ErrorRecord.TargetObject);
+                    throw InterpreterError.NewInterpreterException(
+                        targetObject: null, 
+                        exceptionType: typeof(RuntimeException),
+                        errorPosition: usingAst.Extent, 
+                        resourceIdAndErrorId: "UsingVariableIsUndefined",
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        args: rte.ErrorRecord.TargetObject);
                 }
                 else if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("CantGetUsingExpressionValueWithSpecifiedVariableDictionary", StringComparison.Ordinal))
                 {
