@@ -327,6 +327,34 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellVersionString", $null)
             }
         }
+
+        It "Current location in Windows PS mirrors local current location" -TestCases $failCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+            $pwdBackup = $PWD
+            $location = Join-Path $TestDrive "Custom dir" (New-Guid).ToString()
+            $null = New-Item -Path $location -ItemType Directory
+            Push-Location -Path $location
+            try
+            {
+                # right after module import remote $PWD should be synchronized
+                Import-Module $ModuleName -UseWindowsPowerShell
+                $s = Get-PSSession -Name WinPSCompatSession
+                (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
+
+                # after local $PWD changes remote $PWD should be synchronized
+                Set-Location -Path ..
+                (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
+
+                # after WinCompat cleanup local $PWD changes should not cause errors
+                Remove-module $ModuleName -Force
+
+                Pop-Location
+            }
+            finally
+            {
+                Set-Location $pwdBackup
+            }
+        }
     }
 
     Context "Imports from absolute path" {
