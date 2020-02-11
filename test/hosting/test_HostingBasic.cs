@@ -182,5 +182,25 @@ namespace PowerShell.Hosting.SDK.Tests
             int ret = ConsoleShell.Start("Hello", string.Empty, new string[] { "-noprofile", "-c", "exit 42" });
             Assert.Equal(42, ret);
         }
+
+        [Fact]
+        public static void TestBuiltInModules()
+        {
+            var iss = System.Management.Automation.Runspaces.InitialSessionState.CreateDefault2();
+            if (System.Management.Automation.Platform.IsWindows)
+            {
+                iss.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.RemoteSigned;
+            }
+
+            using var runspace = System.Management.Automation.Runspaces.RunspaceFactory.CreateRunspace(iss);
+            runspace.Open();
+
+            using var ps = System.Management.Automation.PowerShell.Create(runspace);
+            var results = ps.AddScript("Write-Output Hello > $null; Get-Module").Invoke();
+            Assert.Single(results);
+
+            dynamic module = results[0];
+            Assert.Equal("Microsoft.PowerShell.Utility", module.Name);
+        }
     }
 }
