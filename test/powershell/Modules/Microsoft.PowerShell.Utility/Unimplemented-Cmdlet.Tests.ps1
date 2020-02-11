@@ -3,7 +3,6 @@
 Describe "Unimplemented Utility Cmdlet Tests" -Tags "CI" {
 
     $Commands = @(
-        "Unblock-File",
         "ConvertFrom-SddlString"
     )
 

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements get-help command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113316")]
+    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096483")]
     public sealed class GetHelpCommand : PSCmdlet
     {
         /// <summary>
@@ -246,19 +246,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             _timer.Start();
-
-            if (!Online.IsPresent && UpdatableHelpSystem.ShouldPromptToUpdateHelp() && HostUtilities.IsProcessInteractive(MyInvocation) && HasInternetConnection())
-            {
-                if (ShouldContinue(HelpDisplayStrings.UpdateHelpPromptBody, HelpDisplayStrings.UpdateHelpPromptTitle))
-                {
-                    System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Update-Help").Invoke();
-#if LEGACYTELEMETRY
-                    _updatedHelp = true;
-#endif
-                }
-
-                UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
-            }
         }
 
         /// <summary>
@@ -714,15 +701,6 @@ namespace Microsoft.PowerShell.Commands
             };
 
             WriteProgress(record);
-        }
-
-        /// <summary>
-        /// Checks if we can connect to the internet.
-        /// </summary>
-        /// <returns></returns>
-        private bool HasInternetConnection()
-        {
-            return true; // TODO:CORECLR wininet.dll is not present on NanoServer
         }
 
         #region Helper methods for verification of parameters against NoLanguage mode

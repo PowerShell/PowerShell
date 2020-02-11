@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
-    [OutputType(typeof(Byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
+    [OutputType(typeof(byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
@@ -161,14 +161,22 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
-                        var entries = Directory.GetFileSystemEntries(exactPath, item);
-                        if (entries.Length > 0)
+                        try
                         {
-                            exactPath = entries.First();
+                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            if (entries.Length > 0)
+                            {
+                                exactPath = entries.First();
+                            }
+                            else
+                            {
+                                // If previous call didn't return anything, something failed so we just return the path we were given
+                                return path;
+                            }
                         }
-                        else
+                        catch
                         {
-                            // If previous call didn't return anything, something failed so we just return the path we were given
+                            // If we can't enumerate, we stop and just return the original path
                             return path;
                         }
                     }
@@ -590,6 +598,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static bool _WNetApiAvailable = true;
+
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
@@ -600,6 +610,7 @@ namespace Microsoft.PowerShell.Commands
                 const int RESOURCETYPE_ANY = 0x00000000;
                 const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
                 const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 // By default the connection is not persisted.
                 int CONNECT_TYPE = CONNECT_NOPERSIST;
@@ -644,7 +655,19 @@ namespace Microsoft.PowerShell.Commands
                     resource.Type = RESOURCETYPE_ANY;
                     resource.Usage = RESOURCEUSAGE_CONNECTABLE;
 
-                    int code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                    int code = ERROR_NO_NETWORK;
+
+                    if (_WNetApiAvailable)
+                    {
+                        try
+                        {
+                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                        }
+                        catch (System.DllNotFoundException)
+                        {
+                            _WNetApiAvailable = false;
+                        }
+                    }
 
                     if (code != 0)
                     {
@@ -709,6 +732,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 int flags = 0;
                 string driveName;
@@ -726,7 +750,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                int code = ERROR_NO_NETWORK;
+
+                if (_WNetApiAvailable)
+                {
+                    try
+                    {
+                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                    }
+                }
 
                 if (code != 0)
                 {
@@ -779,6 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string WinGetUNCForNetworkDrive(string driveName)
         {
+            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -795,7 +832,16 @@ namespace Microsoft.PowerShell.Commands
                 driveName += ':';
 
                 // Call the windows API
-                int errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                int errorCode = ERROR_NO_NETWORK;
+
+                try
+                {
+                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                }
+                catch (System.DllNotFoundException)
+                {
+                    return null;
+                }
 
                 // error code 234 is returned whenever the required buffer size is greater
                 // than the specified buffer size.
@@ -2497,7 +2543,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!exists)
                     {
-                        WriteError(new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.ItemNotFound), "ItemNotFound", ErrorCategory.ObjectNotFound, value));
+                        string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, strTargetPath);
+                        WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemNotFound", ErrorCategory.ObjectNotFound, strTargetPath));
                         return;
                     }
 
@@ -3041,13 +3088,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
                     directory.Delete();
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;
@@ -5047,7 +5099,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Add the base path back on so that it can be used for
                             // processing
-                            if (!result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (!result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = MakePath(basePath, result);
                             }
@@ -5111,7 +5163,7 @@ namespace Microsoft.PowerShell.Commands
                             result = files.First();
 #endif
 
-                            if (result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = result.Substring(basePath.Length);
                             }
@@ -7088,6 +7140,8 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
             internal static extern int PathGetDriveNumber(string path);
 
+            private static bool _WNetApiAvailable = true;
+
             /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
             /// This implementation is based on the 'PathIsNetworkPath' API.
@@ -7106,6 +7160,11 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
+                if (!_WNetApiAvailable)
+                {
+                    return false;
+                }
+
                 // 0 - 25 corresponding to 'A' - 'Z'
                 int driveId = PathGetDriveNumber(path);
                 if (driveId >= 0 && driveId < 26)
@@ -7114,7 +7173,16 @@ namespace Microsoft.PowerShell.Commands
 
                     int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
                     StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    int errorCode = -1;
+                    try
+                    {
+                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                        return false;
+                    }
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error

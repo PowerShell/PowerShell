@@ -24,6 +24,8 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         if ($IsWindows) {
             $pssession | Remove-PSSession -ErrorAction SilentlyContinue
         }
+
+        Remove-Module TestImport -Force -ErrorAction SilentlyContinue
     }
 
     BeforeEach {
@@ -71,7 +73,7 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $importModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
             $importModuleCommand.FullyQualifiedName.Count | Should -BeExactly 2
-            $importModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
+            $importModuleCommand.FullyQualifiedName | Should -BeOfType Microsoft.PowerShell.Commands.ModuleSpecification
             $importModuleCommand.FullyQualifiedName[0].Name | Should -BeExactly "foo"
             $importModuleCommand.FullyQualifiedName[0].RequiredVersion | Should -Be "0.0"
             $importModuleCommand.FullyQualifiedName[1].Name | Should -BeExactly "bar"

@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
 
   <PropertyGroup>
@@ -11,6 +11,11 @@
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!-- Have default so this builds in Visual Studio -->
+  <PropertyGroup Condition = "'$(SDKToUse)' == ''">
+    <SDKToUse>Microsoft.NET.Sdk.WindowsDesktop</SDKToUse>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />

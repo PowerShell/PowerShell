@@ -9,38 +9,38 @@ namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// Moves through search highlights built in a ParagraphBuilder
-    /// changing the color of the current highlight
+    /// changing the color of the current highlight.
     /// </summary>
     internal class ParagraphSearcher
     {
         /// <summary>
-        /// Highlight for all matches except the current
+        /// Highlight for all matches except the current.
         /// </summary>
         internal static readonly Brush HighlightBrush = Brushes.Yellow;
 
         /// <summary>
-        /// Highlight for the current match
+        /// Highlight for the current match.
         /// </summary>
         private static readonly Brush CurrentHighlightBrush = Brushes.Cyan;
 
         /// <summary>
-        /// Current match being highlighted in search
+        /// Current match being highlighted in search.
         /// </summary>
         private Run currentHighlightedMatch;
 
         /// <summary>
-        /// Initializes a new instance of the ParagraphSearcher class
+        /// Initializes a new instance of the ParagraphSearcher class.
         /// </summary>
         internal ParagraphSearcher()
         {
         }
 
         /// <summary>
-        /// Move to the next highlight starting at the <paramref name="caretPosition"/>
+        /// Move to the next highlight starting at the <paramref name="caretPosition"/>.
         /// </summary>
-        /// <param name="forward">true for next false for previous</param>
-        /// <param name="caretPosition">caret position</param>
-        /// <returns>the next highlight starting at the <paramref name="caretPosition"/></returns>
+        /// <param name="forward">True for next false for previous.</param>
+        /// <param name="caretPosition">Caret position.</param>
+        /// <returns>The next highlight starting at the <paramref name="caretPosition"/>.</returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
             Debug.Assert(caretPosition != null, "a caret position is allways valid");
@@ -94,7 +94,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Resets the search for fresh calls to MoveAndHighlightNextNextMatch
+        /// Resets the search for fresh calls to MoveAndHighlightNextNextMatch.
         /// </summary>
         internal void ResetSearch()
         {
@@ -102,10 +102,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if <paramref name="run"/> is highlighted
+        /// Returns true if <paramref name="run"/> is highlighted.
         /// </summary>
-        /// <param name="run">run to check if is highlighted</param>
-        /// <returns>true if <paramref name="run"/> is highlighted</returns>
+        /// <param name="run">Run to check if is highlighted.</param>
+        /// <returns>True if <paramref name="run"/> is highlighted.</returns>
         private static bool Ishighlighted(Run run)
         {
             if (run == null)
@@ -123,11 +123,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Get the next or previous run according to <paramref name="forward"/>
+        /// Get the next or previous run according to <paramref name="forward"/>.
         /// </summary>
-        /// <param name="currentRun">the current run</param>
-        /// <param name="forward">true for next false for previous</param>
-        /// <returns>the next or previous run according to <paramref name="forward"/></returns>
+        /// <param name="currentRun">The current run.</param>
+        /// <param name="forward">True for next false for previous.</param>
+        /// <returns>The next or previous run according to <paramref name="forward"/>.</returns>
         private static Run GetNextRun(Run currentRun, bool forward)
         {
             Bold parentBold = currentRun.Parent as Bold;
@@ -148,10 +148,10 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets the run of an inline. Inlines in a ParagrahBuilder are either a Run or a Bold
-        /// which contains a Run
+        /// which contains a Run.
         /// </summary>
-        /// <param name="inline">inline to get the run from</param>
-        /// <returns>the run of the inline</returns>
+        /// <param name="inline">Inline to get the run from.</param>
+        /// <returns>The run of the inline.</returns>
         private static Run GetRun(Inline inline)
         {
             Bold inlineBold = inline as Bold;
@@ -165,13 +165,13 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets the next highlighted run starting and including <paramref name="currentRun"/>
-        /// according to the direction specified in <paramref name="forward"/>
+        /// according to the direction specified in <paramref name="forward"/>.
         /// </summary>
-        /// <param name="currentRun">the current run</param>
-        /// <param name="forward">true for next false for previous</param>
+        /// <param name="currentRun">The current run.</param>
+        /// <param name="forward">True for next false for previous.</param>
         /// <returns>
         /// the next highlighted run starting and including <paramref name="currentRun"/>
-        /// according to the direction specified in <paramref name="forward"/>
+        /// according to the direction specified in <paramref name="forward"/>.
         /// </returns>
         private static Run GetNextMatch(Run currentRun, bool forward)
         {
@@ -189,10 +189,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the run's paragraph
+        /// Gets the run's paragraph.
         /// </summary>
-        /// <param name="run">run to get the paragraph from</param>
-        /// <returns>the run's paragraph</returns>
+        /// <param name="run">Run to get the paragraph from.</param>
+        /// <returns>The run's paragraph.</returns>
         private static Paragraph GetParagraph(Run run)
         {
             Bold parentBold = run.Parent as Bold;
@@ -202,10 +202,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if the run is the fiorst run of the paragraph
+        /// Returns true if the run is the fiorst run of the paragraph.
         /// </summary>
-        /// <param name="run">run to check</param>
-        /// <returns>true if the run is the fiorst run of the paragraph</returns>
+        /// <param name="run">Run to check.</param>
+        /// <returns>True if the run is the fiorst run of the paragraph.</returns>
         private static bool IsFirstRun(Run run)
         {
             Paragraph paragraph = GetParagraph(run);
@@ -214,11 +214,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>
+        /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>.
         /// </summary>
-        /// <param name="caretRun">run containing the caret</param>
-        /// <param name="forward">true for first false for last</param>
-        /// <returns>the first or last run in the paragraph containing <paramref name="caretRun"/></returns>
+        /// <param name="caretRun">Run containing the caret.</param>
+        /// <param name="forward">True for first false for last.</param>
+        /// <returns>The first or last run in the paragraph containing <paramref name="caretRun"/>.</returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {
             Debug.Assert(caretRun != null, "a caret run is allways valid");

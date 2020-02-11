@@ -18,9 +18,15 @@ Describe "Get-FileHash" -Tags "CI" {
     Context "Default result tests" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
-            $result.Algorithm | Should Be "SHA256"
+            $result.Algorithm | Should -Be "SHA256"
             $result.Hash | Should -Be "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c"
             $result.Path | Should -Be $testDocument
+        }
+
+        It "Should write non-terminating error if argument is a folder" {
+            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result.Count | Should -Be 1
+            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 

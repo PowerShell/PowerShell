@@ -409,10 +409,7 @@ namespace System.Management.Automation
 
                     // Collect UsingExpression value as a dictionary
                     string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
-                    if (!usingValueMap.ContainsKey(usingAstKey))
-                    {
-                        usingValueMap.Add(usingAstKey, value);
-                    }
+                    usingValueMap.TryAdd(usingAstKey, value);
                 }
             }
             catch (RuntimeException rte)
@@ -617,7 +614,7 @@ namespace System.Management.Automation
                                 var arguments = usingValue as System.Collections.IEnumerable;
                                 if (arguments != null)
                                 {
-                                    foreach (Object argument in arguments)
+                                    foreach (object argument in arguments)
                                     {
                                         _powershell.AddArgument(argument);
                                     }

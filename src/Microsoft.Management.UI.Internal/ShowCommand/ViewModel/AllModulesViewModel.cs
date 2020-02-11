@@ -21,17 +21,17 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     {
         #region Private Fields
         /// <summary>
-        /// Flag indicating a wait message is being displayed
+        /// Flag indicating a wait message is being displayed.
         /// </summary>
         private bool waitMessageDisplayed;
 
         /// <summary>
-        /// True if this ViewModel is not supposed to show common parameters
+        /// True if this ViewModel is not supposed to show common parameters.
         /// </summary>
         private bool noCommonParameter;
 
         /// <summary>
-        /// the filterName of command
+        /// the filterName of command.
         /// </summary>
         private string commandNameFilter;
 
@@ -41,42 +41,42 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private List<ModuleViewModel> modules;
 
         /// <summary>
-        /// true if a command can be run
+        /// true if a command can be run.
         /// </summary>
         private bool canRun;
 
         /// <summary>
-        /// true if a command can be copied
+        /// true if a command can be copied.
         /// </summary>
         private bool canCopy;
 
         /// <summary>
-        /// the selected module being displayed in the GUI
+        /// the selected module being displayed in the GUI.
         /// </summary>
         private ModuleViewModel selectedModule;
 
         /// <summary>
-        /// the visibility of the refresh button
+        /// the visibility of the refresh button.
         /// </summary>
         private Visibility refreshVisibility = Visibility.Collapsed;
 
         /// <summary>
-        /// Provides an extra viewModel object that allows callers to control certain aspects of the GUI
+        /// Provides an extra viewModel object that allows callers to control certain aspects of the GUI.
         /// </summary>
         private object extraViewModel;
 
         /// <summary>
-        /// private property for ZoomLevel
+        /// private property for ZoomLevel.
         /// </summary>
         private double zoomLevel = 1.0;
         #endregion
 
         #region Construction and Destructor
         /// <summary>
-        /// Initializes a new instance of the AllModulesViewModel class
+        /// Initializes a new instance of the AllModulesViewModel class.
         /// </summary>
-        /// <param name="importedModules">the loaded modules</param>
-        /// <param name="commands">commands to show</param>
+        /// <param name="importedModules">The loaded modules.</param>
+        /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
             if (commands == null || !commands.GetEnumerator().MoveNext())
@@ -88,11 +88,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Initializes a new instance of the AllModulesViewModel class
+        /// Initializes a new instance of the AllModulesViewModel class.
         /// </summary>
-        /// <param name="importedModules">the loaded modules</param>
-        /// <param name="commands">All PowerShell commands</param>
-        /// <param name="noCommonParameter">true not to show common parameters</param>
+        /// <param name="importedModules">The loaded modules.</param>
+        /// <param name="commands">All PowerShell commands.</param>
+        /// <param name="noCommonParameter">True not to show common parameters.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter)
         {
             if (commands == null)
@@ -107,35 +107,35 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region INotifyPropertyChanged Members
         /// <summary>
-        /// PropertyChanged Event
+        /// PropertyChanged Event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         /// <summary>
-        /// Indicates the selected command in the selected module needs to display the help for a command
+        /// Indicates the selected command in the selected module needs to display the help for a command.
         /// </summary>
         public event EventHandler<HelpNeededEventArgs> SelectedCommandInSelectedModuleNeedsHelp;
 
         /// <summary>
-        /// Indicates the selected command in the selected module needs to import a module for a command
+        /// Indicates the selected command in the selected module needs to import a module for a command.
         /// </summary>
         public event EventHandler<ImportModuleEventArgs> SelectedCommandInSelectedModuleNeedsImportModule;
 
         /// <summary>
-        /// Indicates the selected command in the selected module should be run
+        /// Indicates the selected command in the selected module should be run.
         /// </summary>
         public event EventHandler<CommandEventArgs> RunSelectedCommandInSelectedModule;
 
         /// <summary>
-        /// Indicates we want to refresh the viewModel
+        /// Indicates we want to refresh the viewModel.
         /// </summary>
         public event EventHandler<EventArgs> Refresh;
 
         #region Public Properties
 
         /// <summary>
-        /// Get or Sets Zoom level
+        /// Get or Sets Zoom level.
         /// </summary>
         public double ZoomLevel
         {
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the tooltip for the refresh button
+        /// Gets the tooltip for the refresh button.
         /// </summary>
         public static string RefreshTooltip
         {
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the visibility of the refresh button
+        /// Gets or sets the visibility of the refresh button.
         /// </summary>
         public Visibility RefreshVisibility
         {
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether common parameters are displayed
+        /// Gets a value indicating whether common parameters are displayed.
         /// </summary>
         public bool NoCommonParameter
         {
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the filterName of command
+        /// Gets or sets the filterName of command.
         /// </summary>
         public string CommandNameFilter
         {
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets the selected module being displayed in the GUI
+        /// Gets or sets the selected module being displayed in the GUI.
         /// </summary>
         public ModuleViewModel SelectedModule
         {
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether we can run a command
+        /// Gets a value indicating whether we can run a command.
         /// </summary>
         public bool CanRun
         {
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether we can copy a command
+        /// Gets a value indicating whether we can copy a command.
         /// </summary>
         public bool CanCopy
         {
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the visibility of the wait message
+        /// Gets the visibility of the wait message.
         /// </summary>
         public Visibility WaitMessageVisibility
         {
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the visibility of the main grid
+        /// Gets the visibility of the main grid.
         /// </summary>
         public Visibility MainGridVisibility
         {
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets a value indicating whether the main grid is displayed
+        /// Gets a value indicating whether the main grid is displayed.
         /// </summary>
         public bool MainGridDisplayed
         {
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the wait message is displayed
+        /// Gets or sets a value indicating whether the wait message is displayed.
         /// </summary>
         public bool WaitMessageDisplayed
         {
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets or sets an extra viewModel object that allows callers to control certain aspects of the GUI
+        /// Gets or sets an extra viewModel object that allows callers to control certain aspects of the GUI.
         /// </summary>
         public object ExtraViewModel
         {
@@ -377,9 +377,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Returns the selected script
+        /// Returns the selected script.
         /// </summary>
-        /// <returns>the selected script</returns>
+        /// <returns>The selected script.</returns>
         public string GetScript()
         {
             if (this.SelectedModule == null)
@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Triggers Refresh
+        /// Triggers Refresh.
         /// </summary>
         internal void OnRefresh()
         {
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// If current modules name is ALL, then return true.
         /// </summary>
-        /// <param name="name">The modules name</param>
+        /// <param name="name">The modules name.</param>
         /// <returns>Return true is the module name is ALLModulesViewModel.</returns>
         private static bool IsAll(string name)
         {
@@ -423,8 +423,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         ///     SetCanRun for IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues
         ///     SetCanCopy for SetCanCopy
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues")
@@ -479,9 +479,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Initialize AllModulesViewModel.
         /// </summary>
-        /// <param name="importedModules">All loaded modules</param>
-        /// <param name="commands">List of commands in all modules</param>
-        /// <param name="noCommonParameterInModel">Whether showing common parameter</param>
+        /// <param name="importedModules">All loaded modules.</param>
+        /// <param name="commands">List of commands in all modules.</param>
+        /// <param name="noCommonParameterInModel">Whether showing common parameter.</param>
         private void Initialization(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameterInModel)
         {
             if (commands == null)
@@ -555,9 +555,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compare two ModuleViewModel target and source.
         /// </summary>
-        /// <param name="source">The source ModuleViewModel</param>
-        /// <param name="target">The target ModuleViewModel</param>
-        /// <returns>Compare result</returns>
+        /// <param name="source">The source ModuleViewModel.</param>
+        /// <param name="target">The target ModuleViewModel.</param>
+        /// <returns>Compare result.</returns>
         private int Compare(ModuleViewModel source, ModuleViewModel target)
         {
             if (AllModulesViewModel.IsAll(source.Name) && !AllModulesViewModel.IsAll(target.Name))
@@ -574,29 +574,29 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called when the SelectedCommandNeedsHelp event is triggered in the Selected Module
+        /// Called when the SelectedCommandNeedsHelp event is triggered in the Selected Module.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_SelectedCommandNeedsHelp(object sender, HelpNeededEventArgs e)
         {
             this.OnSelectedCommandInSelectedModuleNeedsHelp(e);
         }
 
         /// <summary>
-        /// Called when the SelectedCommandNeedsImportModule event is triggered in the Selected Module
+        /// Called when the SelectedCommandNeedsImportModule event is triggered in the Selected Module.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_SelectedCommandNeedsImportModule(object sender, ImportModuleEventArgs e)
         {
             this.OnSelectedCommandInSelectedModuleNeedsImportModule(e);
         }
 
         /// <summary>
-        /// Triggers SelectedCommandInSelectedModuleNeedsHelp
+        /// Triggers SelectedCommandInSelectedModuleNeedsHelp.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         private void OnSelectedCommandInSelectedModuleNeedsHelp(HelpNeededEventArgs e)
         {
             EventHandler<HelpNeededEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsHelp;
@@ -607,9 +607,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Triggers SelectedCommandInSelectedModuleNeedsImportModule
+        /// Triggers SelectedCommandInSelectedModuleNeedsImportModule.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         private void OnSelectedCommandInSelectedModuleNeedsImportModule(ImportModuleEventArgs e)
         {
             EventHandler<ImportModuleEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsImportModule;
@@ -620,19 +620,19 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called when the RunSelectedCommand is triggered in the selected module
+        /// Called when the RunSelectedCommand is triggered in the selected module.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void SelectedModule_RunSelectedCommand(object sender, CommandEventArgs e)
         {
             this.OnRunSelectedCommandInSelectedModule(e);
         }
 
         /// <summary>
-        /// Triggers RunSelectedCommandInSelectedModule
+        /// Triggers RunSelectedCommandInSelectedModule.
         /// </summary>
-        /// <param name="e">event arguments</param>
+        /// <param name="e">Event arguments.</param>
         private void OnRunSelectedCommandInSelectedModule(CommandEventArgs e)
         {
             EventHandler<CommandEventArgs> handler = this.RunSelectedCommandInSelectedModule;
@@ -643,9 +643,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// If property changed will be notify
+        /// If property changed will be notify.
         /// </summary>
-        /// <param name="propertyName">The changed property</param>
+        /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;

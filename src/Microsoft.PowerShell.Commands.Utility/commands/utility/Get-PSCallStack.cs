@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Get-PSCallStack.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSCallStack", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113326")]
+    [Cmdlet(VerbsCommon.Get, "PSCallStack", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096705")]
     [OutputType(typeof(CallStackFrame))]
     public class GetPSCallStackCommand : PSCmdlet
     {

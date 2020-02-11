@@ -17,6 +17,12 @@
     On Windows, add the absolute destination path to the 'User' scope environment variable 'Path';
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
+.EXAMPLE
+    Install the daily build
+    .\install-powershell.ps1 -Daily
+.EXAMPLE
+    Invoke this script directly from GitHub
+    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 #>
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
@@ -48,7 +54,7 @@ param(
     [switch] $Preview
 )
 
-Set-StrictMode -Version latest
+Set-StrictMode -Version 3.0
 $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
@@ -116,9 +122,9 @@ Function Remove-Destination([string] $Destination) {
         if (Test-Path -Path "$Destination.old") {
             Remove-Item "$Destination.old" -Recurse -Force
         }
-        if ($IsWinEnv -and ($Destination -eq $PSHome)) {
+        if ($IsWinEnv -and ($Destination -eq $PSHOME)) {
             # handle the case where the updated folder is currently in use
-            Get-ChildItem -Recurse -File -Path $PSHome | ForEach-Object {
+            Get-ChildItem -Recurse -File -Path $PSHOME | ForEach-Object {
                 if ($_.extension -eq "old") {
                     Remove-Item $_
                 } else {
@@ -494,7 +500,7 @@ try {
 
     if (-not $UseMSI) {
         Write-Host "PowerShell has been installed at $Destination" -ForegroundColor Green
-        if ($Destination -eq $PSHome) {
+        if ($Destination -eq $PSHOME) {
             Write-Host "Please restart pwsh" -ForegroundColor Magenta
         }
     }

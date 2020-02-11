@@ -503,7 +503,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private object _monitorObject = new Object();
+        private object _monitorObject = new object();
 
         /// <summary>
         /// Indicates if this stream has already been disposed.

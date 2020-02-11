@@ -17,7 +17,7 @@ using Microsoft.PowerShell.Commands.ShowCommandExtension;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Interaction logic for ParameterSetControl.xaml
+    /// Interaction logic for ParameterSetControl.xaml.
     /// </summary>
     public partial class ParameterSetControl : UserControl
     {
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
         #region Construction and Destructor
         /// <summary>
-        /// Initializes a new instance of the ParameterSetControl class
+        /// Initializes a new instance of the ParameterSetControl class.
         /// </summary>
         public ParameterSetControl()
         {
@@ -69,11 +69,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Creates a CheckBox for switch parameters
+        /// Creates a CheckBox for switch parameters.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
-        /// <returns>a CheckBox for switch parameters</returns>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <returns>a CheckBox for switch parameters.</returns>
         private static CheckBox CreateCheckBox(ParameterViewModel parameterViewModel, int rowNumber)
         {
             CheckBox checkBox = new CheckBox();
@@ -104,12 +104,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a ComboBox control for input type field
+        /// Creates a ComboBox control for input type field.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
-        /// <param name="itemsSource">Control data source</param>
-        /// <returns>Return a ComboBox control</returns>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <param name="itemsSource">Control data source.</param>
+        /// <returns>Return a ComboBox control.</returns>
         private static ComboBox CreateComboBoxControl(ParameterViewModel parameterViewModel, int rowNumber, IEnumerable itemsSource)
         {
             ComboBox comboBox = new ComboBox();
@@ -142,12 +142,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a MultiSelectCombo control for input type field
+        /// Creates a MultiSelectCombo control for input type field.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
-        /// <param name="itemsSource">Control data source</param>
-        /// <returns>Return a MultiSelectCombo control</returns>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <param name="itemsSource">Control data source.</param>
+        /// <returns>Return a MultiSelectCombo control.</returns>
         private static MultipleSelectionControl CreateMultiSelectComboControl(ParameterViewModel parameterViewModel, int rowNumber, IEnumerable itemsSource)
         {
             MultipleSelectionControl multiControls = new MultipleSelectionControl();
@@ -184,11 +184,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a TextBox control for input type field
+        /// Creates a TextBox control for input type field.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
-        /// <returns>Return a TextBox control</returns>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <returns>Return a TextBox control.</returns>
         private static TextBox CreateTextBoxControl(ParameterViewModel parameterViewModel, int rowNumber)
         {
             TextBox textBox = new TextBox();
@@ -231,10 +231,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called for a newly created multiline text box to increase its height and
+        /// Called for a newly created multiline text box to increase its height and.
         /// </summary>
-        /// <param name="sender">event sender</param>
-        /// <param name="e">event arguments</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private static void MultiLineTextBox_Loaded(object sender, RoutedEventArgs e)
         {
             TextBox senderTextBox = (TextBox)sender;
@@ -251,8 +251,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// When user switch ParameterSet.It will trigger this event.
         /// This event method will renew generate all controls for current ParameterSet.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void ParameterSetControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             this.firstFocusableElement = null;
@@ -328,8 +328,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// When user trigger click on anyone CheckBox. Get value from sender.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox senderCheck = (CheckBox)sender;
@@ -341,9 +341,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region Private Method
 
         /// <summary>
-        /// Creates a RowDefinition for MainGrid
+        /// Creates a RowDefinition for MainGrid.
         /// </summary>
-        /// <returns>Return a RowDefinition object</returns>
+        /// <returns>Return a RowDefinition object.</returns>
         private RowDefinition CreateNewRow()
         {
             RowDefinition row = new RowDefinition();
@@ -352,9 +352,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Adds a control to MainGrid;
+        /// Adds a control to MainGrid;.
         /// </summary>
-        /// <param name="uiControl">Will adding UIControl</param>
+        /// <param name="uiControl">Will adding UIControl.</param>
         private void AddControlToMainGrid(UIElement uiControl)
         {
             if (this.firstFocusableElement == null && !(uiControl is Label))
@@ -366,10 +366,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Lable control and add it to MainGrid
+        /// Creates a Lable control and add it to MainGrid.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
         private void CreateAndAddLabel(ParameterViewModel parameterViewModel, int rowNumber)
         {
             Label label = this.CreateLabel(parameterViewModel, rowNumber);
@@ -377,11 +377,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Label control for input type field
+        /// Creates a Label control for input type field.
         /// </summary>
-        /// <param name="parameterViewModel">DataContext object</param>
-        /// <param name="rowNumber">Row number</param>
-        /// <returns>Return a Label control</returns>
+        /// <param name="parameterViewModel">DataContext object.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <returns>Return a Label control.</returns>
         private Label CreateLabel(ParameterViewModel parameterViewModel, int rowNumber)
         {
             Label label = new Label();

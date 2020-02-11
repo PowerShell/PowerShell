@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
-        $FullCLR = !$isCoreCLR
-        $CoreWindows = $isCoreCLR -and $IsWindows
-        $CoreUnix = $isCoreCLR -and !$IsWindows
+        $FullCLR = !$IsCoreCLR
+        $CoreWindows = $IsCoreCLR -and $IsWindows
+        $CoreUnix = $IsCoreCLR -and !$IsWindows
         $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
@@ -68,7 +68,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "gal",                              "Get-Alias",                        $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "gbp",                              "Get-PSBreakpoint",                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "gc",                               "Get-Content",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "gcb",                              "Get-Clipboard",                    $($FullCLR                               ),     "ReadOnly",             "",                     ""
+"Alias",        "gcb",                              "Get-Clipboard",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "gci",                              "Get-ChildItem",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "gcm",                              "Get-Command",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "gcs",                              "Get-PSCallStack",                  $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
@@ -124,7 +124,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "npssc",                            "New-PSSessionConfigurationFile",   $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "nsn",                              "New-PSSession",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "nv",                               "New-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "nwsn",                             "New-PSWorkflowSession",            $($FullCLR                               ),     "ReadOnly",             "",                     ""
+"Alias",        "nwsn",                             "New-PSWorkflowSession",            $($FullCLR                               ),     "",                     "",                     ""
 "Alias",        "ogv",                              "Out-GridView",                     $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Alias",        "oh",                               "Out-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "popd",                             "Pop-Location",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "AllScope",             ""
@@ -158,7 +158,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "sasv",                             "Start-Service",                    $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Alias",        "sbp",                              "Set-PSBreakpoint",                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "sc",                               "Set-Content",                      $($FullCLR                               ),     "ReadOnly",             "",                     ""
-"Alias",        "scb",                              "Set-Clipboard",                    $($FullCLR                               ),     "ReadOnly",             "",                     ""
+"Alias",        "scb",                              "Set-Clipboard",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "select",                           "Select-Object",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
 "Alias",        "set",                              "Set-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "shcm",                             "Show-Command",                     $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
@@ -259,14 +259,14 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Get-Alias",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-AuthenticodeSignature",        "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-ChildItem",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Get-Clipboard",                    "",                                 $($FullCLR                               ),     "",                     "",                     ""
-"Cmdlet",       "Get-CmsMessage",                   "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
+"Cmdlet",       "Get-Clipboard",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Get-CmsMessage",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Command",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ComputerInfo",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-ComputerRestorePoint",         "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Get-Content",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ControlPanelItem",             "",                                 $($FullCLR                               ),     "",                     "",                     ""
-"Cmdlet",       "Get-Counter",                      "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Get-Counter",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-Credential",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Culture",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Date",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
@@ -375,7 +375,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Out-Printer",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-String",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Pop-Location",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Protect-CmsMessage",               "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
+"Cmdlet",       "Protect-CmsMessage",               "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Push-Location",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Read-Host",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Receive-Job",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
@@ -407,7 +407,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Rename-ItemProperty",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Reset-ComputerMachinePassword",    "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Resolve-Path",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Restart-Computer",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Restart-Computer",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Restart-Service",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Restore-Computer",                 "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Resume-Job",                       "",                                 $($FullCLR                               ),     "",                     "",                     ""
@@ -420,7 +420,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Set-Acl",                          "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-Alias",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-AuthenticodeSignature",        "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
-"Cmdlet",       "Set-Clipboard",                    "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Set-Clipboard",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-Content",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-Date",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-ExecutionPolicy",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
@@ -451,7 +451,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Start-Sleep",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Start-Transaction",                "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Start-Transcript",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Stop-Computer",                    "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Stop-Computer",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Job",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Process",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Service",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
@@ -468,9 +468,9 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Test-PSSessionConfigurationFile",  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Test-WSMan",                       "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Trace-Command",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Unblock-File",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Unblock-File",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Undo-Transaction",                 "",                                 $($FullCLR                               ),     "",                     "",                     ""
-"Cmdlet",       "Unprotect-CmsMessage",             "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
+"Cmdlet",       "Unprotect-CmsMessage",             "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Unregister-Event",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Unregister-PSSessionConfiguration","",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Low"
 "Cmdlet",       "Update-FormatData",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
@@ -496,7 +496,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 
             # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
             # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
-            $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "PSWorkflow", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core")
+            $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core")
             $getAliases = {
                 param($moduleList)
 
@@ -523,8 +523,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
             if ($isPreview) {
                 $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
                 Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
-                $currentAliasList = pwsh -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
-                $currentCmdletList = pwsh -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
+                $currentAliasList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
+                $currentCmdletList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
             }
             else {
                 $currentAliasList = & $getAliases $moduleList

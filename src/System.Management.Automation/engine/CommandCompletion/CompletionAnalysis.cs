@@ -404,6 +404,7 @@ namespace System.Management.Automation
 
                     case TokenKind.Dot:
                     case TokenKind.ColonColon:
+                    case TokenKind.QuestionDot:
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
                         result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon);

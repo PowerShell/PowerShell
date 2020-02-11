@@ -423,11 +423,17 @@ namespace System.Management.Automation.Language
         /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 102,
 
+        /// <summary>The null conditional member access operator '?.'.</summary>
+        QuestionDot = 103,
+
+        /// <summary>The null conditional index access operator '?[]'.</summary>
+        QuestionLBracket = 104,
+
         /// <summary>
         /// The unary operator used for generalized splatting expressions.
         /// This excludes the legacy token <see cref="TokenKind.SplattedVariable"/>.
         /// </summary>
-        At = 103,
+        At = 105,
 
         #endregion Operators
 
@@ -874,9 +880,9 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
-            /*                  At  */ TokenFlags.None,
-            /*     Reserved slot 6  */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
+            /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
+            /*     QuestionLBracket */ TokenFlags.None,
+            /*                   At */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
@@ -1072,9 +1078,9 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ "?",
           /* QuestionQuestionEquals */ "??=",
             /*     QuestionQuestion */ "??",
-            /*                 At   */ "@",
-            /*    Reserved slot 6   */ string.Empty,
-            /*    Reserved slot 7   */ string.Empty,
+            /*          QuestionDot */ "?.",
+            /*     QuestionLBracket */ "?[",
+            /*                   At */ "@",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,

@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 # Helper function to wait for job to reach a running or completed state
@@ -227,7 +227,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob and Verbose stream output' {
 
         $job = Start-ThreadJob -ScriptBlock { $VerbosePreference = 'Continue'; Write-Verbose "VerboseOut" } | Wait-Job
-        $job.Verbose | Should Match "VerboseOut"
+        $job.Verbose | Should -Match "VerboseOut"
     }
 
     It 'ThreadJob and Verbose stream output' {
@@ -264,7 +264,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob Runspaces should be cleaned up at completion' {
 
         $script = $WaitForCountFnScript + @'
-
+        $WarningPreference = 'SilentlyContinue'
         try
         {
             Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
@@ -296,7 +296,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob Runspaces should be cleaned up after job removal' {
 
     $script = $WaitForCountFnScript + @'
-
+        $WarningPreference = 'SilentlyContinue'
         try {
             Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
             $rsStartCount = @(Get-Runspace).Count

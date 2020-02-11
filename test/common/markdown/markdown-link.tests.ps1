@@ -97,8 +97,10 @@ Describe "Verify Markdown Links" {
 
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
-                        # 503 = service temporarily unavailable
-                        $allowedFailures = @( 503 )
+                        $allowedFailures = [System.Net.HttpStatusCode[]](
+                            503, # Service Unavailable
+                            504  # Gateway Timeout
+                        )
 
                         $prefix = $url.Substring(0,7)
 
@@ -106,15 +108,15 @@ Describe "Verify Markdown Links" {
                         Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
-                            # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
+                            # If invoke-WebRequest can handle the URL, re-verify, with 6 retries
                             try
                             {
-                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
+                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
-                            catch
+                            catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "retry of URL failed with error: $($_.Exception.Message)"
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
                                 }
                             }
                         }

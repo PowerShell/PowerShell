@@ -23,11 +23,11 @@ Describe "CliXml test" -Tags "CI" {
             [string] $expectedError
             [string] $testFile
 
-            TestData($name, $file, $inputObj, $error)
+            TestData($name, $file, $inputObj, $errorId)
             {
                 $this.testName = $name
                 $this.inputObject = $inputObj
-                $this.expectedError = $error
+                $this.expectedError = $errorId
                 $this.testFile = $file
             }
         }
@@ -178,7 +178,7 @@ Describe "CliXml test" -Tags "CI" {
             $cred | Export-Clixml -Path $path
             $cred = Import-Clixml -Path $path
             $cred.UserName | Should -BeExactly "Foo"
-            $cred.Password | Should -BeOfType "System.Security.SecureString"
+            $cred.Password | Should -BeOfType System.Security.SecureString
         }
     }
 }

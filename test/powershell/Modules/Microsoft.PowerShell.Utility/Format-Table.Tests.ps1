@@ -812,4 +812,24 @@ A Name                                  B
             $output = [pscustomobject] @{ one = 1 } | Format-Table @{ l='one'; e='one'; width=10; alignment='center' } | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should be formatted correctly with double byte wide chars" {
+            $obj = [pscustomobject]@{
+                "哇" = "62";
+                "dbda" = "KM";
+                "消息" = "千"
+            }
+
+            $expected = @"
+
+哇 dbda 消息
+-- ---- ----
+62 KM   千
+
+
+"@
+
+            $actual = $obj | Format-Table | Out-String
+            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+        }
     }

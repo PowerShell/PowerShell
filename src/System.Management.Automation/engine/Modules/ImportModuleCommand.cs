@@ -4,11 +4,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
@@ -37,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141553")]
+    [Cmdlet(VerbsData.Import, "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096585")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportModuleCommand : ModuleCmdletBase, IDisposable
     {
@@ -51,6 +53,8 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_ViaPsrpSession = "PSSession";
         private const string ParameterSet_ViaCimSession = "CimSession";
         private const string ParameterSet_FQName_ViaPsrpSession = "FullyQualifiedNameAndPSSession";
+        private const string ParameterSet_ViaWinCompat = "WinCompat";
+        private const string ParameterSet_FQName_ViaWinCompat = "FullyQualifiedNameAndWinCompat";
 
         /// <summary>
         /// This parameter specifies whether to import to the current session state
@@ -82,6 +86,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name { set; get; } = Array.Empty<string>();
@@ -91,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_FQName, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaWinCompat, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public ModuleSpecification[] FullyQualifiedName { get; set; }
@@ -226,8 +232,15 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Skips the check on CompatiblePSEditions for modules loaded from the System32 module path.
+        /// This is mutually exclusive with UseWindowsPowerShell parameter.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSet_Name)]
+        [Parameter(ParameterSetName = ParameterSet_FQName)]
+        [Parameter(ParameterSetName = ParameterSet_ModuleInfo)]
+        [Parameter(ParameterSetName = ParameterSet_Assembly)]
+        [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession)]
         public SwitchParameter SkipEditionCheck
         {
             get { return (SwitchParameter)BaseSkipEditionCheck; }
@@ -263,6 +276,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         [Alias("Version")]
         public Version MinimumVersion
         {
@@ -277,6 +291,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         public string MaximumVersion
         {
             get
@@ -306,6 +321,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_Name)]
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession)]
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat)]
         public Version RequiredVersion
         {
             get { return BaseRequiredVersion; }
@@ -405,6 +421,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public string CimNamespace { get; set; }
+
+        /// <summary>
+        /// This parameter causes a module to be loaded into Windows PowerShell.
+        /// This is mutually exclusive with SkipEditionCheck parameter.
+        /// </summary>
+        [Parameter(ParameterSetName = ParameterSet_ViaWinCompat, Mandatory = true)]
+        [Parameter(ParameterSetName = ParameterSet_FQName_ViaWinCompat, Mandatory = true)]
+        [Alias("UseWinPS")]
+        public SwitchParameter UseWindowsPowerShell { get; set; }
 
         #endregion Cmdlet parameters
 
@@ -805,7 +830,8 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions importModuleOptions,
             IEnumerable<string> moduleNames,
             IEnumerable<ModuleSpecification> fullyQualifiedNames,
-            PSSession psSession)
+            PSSession psSession,
+            bool usingWinCompat = false)
         {
             var remotelyImportedModules = new List<PSModuleInfo>();
             if (moduleNames != null)
@@ -829,7 +855,7 @@ namespace Microsoft.PowerShell.Commands
             // Send telemetry on the imported modules
             foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, moduleInfo.Name);
+                ApplicationInsightsTelemetry.SendTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo.Name);
             }
 
             return remotelyImportedModules;
@@ -1795,11 +1821,15 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
-                        // Telemetry here - report module load
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+                        // report loading of the module in telemetry
+                        // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
+                        if (!foundModule.IsWindowsPowerShellCompatModule)
+                        {
+                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
 #if LEGACYTELEMETRY
-                        TelemetryAPI.ReportModuleLoad(foundModule);
+                            TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
+                        }
                     }
                 }
             }
@@ -1836,10 +1866,120 @@ namespace Microsoft.PowerShell.Commands
                     ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                 }
             }
+            else if (this.ParameterSetName.Equals(ParameterSet_ViaWinCompat, StringComparison.OrdinalIgnoreCase)
+                  || this.ParameterSetName.Equals(ParameterSet_FQName_ViaWinCompat, StringComparison.OrdinalIgnoreCase))
+            {
+                if (this.UseWindowsPowerShell)
+                {
+                    ImportModulesUsingWinCompat(this.Name, this.FullyQualifiedName, importModuleOptions);
+                }
+            }
             else
             {
                 Dbg.Assert(false, "Unrecognized parameter set");
             }
+        }
+
+        private bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
+        {
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
+
+            var exactModuleName = string.Empty;
+            bool match = false;
+
+            if (!string.IsNullOrEmpty(moduleName))
+            {
+                // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+                exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+            }
+            else if (moduleSpec != null)
+            {
+                exactModuleName = moduleSpec.Name;
+            }
+            
+            foreach (var deniedModuleName in moduleDenyList)
+            {
+                // use case-insensitive module name comparison
+                match = exactModuleName.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
+                if (match)
+                {
+                    string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatModuleInDenyList, exactModuleName);
+                    InvalidOperationException exception = new InvalidOperationException(errorMessage);
+                    ErrorRecord er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, exactModuleName);
+                    WriteError(er);
+                    break;
+                }
+            }
+            
+            return match;
+        }
+
+        private List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
+        {
+            List<T> filteredModuleCollection = null;
+            if (moduleCollection != null)
+            {
+                // the ModuleDeny list is cached in PowerShellConfig object
+                string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+                if (moduleDenyList?.Any() != true)
+                {
+                    filteredModuleCollection = new List<T>(moduleCollection);
+                }
+                else
+                {
+                    filteredModuleCollection = new List<T>();
+                    foreach (var module in moduleCollection)
+                    {
+                        if (!IsModuleInDenyList(moduleDenyList, module as string, module as ModuleSpecification))
+                        {
+                            filteredModuleCollection.Add(module);
+                        }
+                    }
+                }
+            }
+
+            return filteredModuleCollection;
+        }
+
+        internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
+        {
+            IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
+#if !UNIX
+            // one of the two parameters can be passed: either ModuleNames (most of the time) or ModuleSpecifications (they are used in different parameter sets)
+            List<string> filteredModuleNames = FilterModuleCollection(moduleNames);
+            List<ModuleSpecification> filteredModuleFullyQualifiedNames = FilterModuleCollection(moduleFullyQualifiedNames);
+
+            // do not setup WinCompat resources if we have no modules to import
+            if ((filteredModuleNames?.Any() != true) && (filteredModuleFullyQualifiedNames?.Any() != true))
+            {
+                return moduleProxyList;
+            }
+
+            var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
+            if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
+            {
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
+            if (WindowsPowerShellCompatRemotingSession == null)
+            {
+                return new List<PSModuleInfo>();
+            }
+
+            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+
+            foreach (PSModuleInfo moduleProxy in moduleProxyList)
+            {
+                moduleProxy.IsWindowsPowerShellCompatModule = true;
+                System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
+
+                string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
+                WriteWarning(message);
+            }
+#endif
+            return moduleProxyList;
         }
 
         private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)

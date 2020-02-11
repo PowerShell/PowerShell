@@ -3,7 +3,7 @@
 Describe "Read-Host" -Tags "Slow","Feature" {
     Context "[Console]::ReadKey() implementation on non-Windows" {
         BeforeAll {
-            $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+            $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
             $assetsDir = Join-Path -Path $PSScriptRoot -ChildPath assets
             if ($IsWindows) {
                 $ItArgs = @{ skip = $true }

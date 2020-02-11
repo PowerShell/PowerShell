@@ -34,7 +34,7 @@ namespace Microsoft.Management.UI.Internal
         #region internal fields
         #region StyleCop Suppression - generated code
         /// <summary>
-        /// The current ICollectionView being displayed
+        /// The current ICollectionView being displayed.
         /// </summary>
         internal ICollectionView CollectionView;
 
@@ -146,7 +146,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                (DispatcherOperationCallback)delegate(object arg)
+                (DispatcherOperationCallback)((arg) =>
                 {
                     if (this.IsLoaded)
                     {
@@ -154,7 +154,7 @@ namespace Microsoft.Management.UI.Internal
                     }
 
                     return null;
-                },
+                }),
                 item);
         }
 

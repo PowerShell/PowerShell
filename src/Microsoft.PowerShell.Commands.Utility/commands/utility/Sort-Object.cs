@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet("Sort",
             "Object",
-            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113403",
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097038",
             DefaultParameterSetName = "Default",
             RemotingCapability = RemotingCapability.None)]
     public sealed class SortObjectCommand : OrderObjectBase

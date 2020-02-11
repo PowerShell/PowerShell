@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet stops the asynchronously invoked remote operations.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113413")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096795")]
     [OutputType(typeof(Job))]
     public class StopJobCommand : JobCmdletBase, IDisposable
     {

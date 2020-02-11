@@ -65,7 +65,7 @@ function Add-UserToGroup
 
   $userAD = [ADSI] "WinNT://$env:computername/${username},user"
 
-  if($PsCmdlet.ParameterSetName -eq "SID")
+  if($PSCmdlet.ParameterSetName -eq "SID")
   {
     $ntAccount=ConvertTo-NtAccount $groupSid
     $group =$ntAccount.Split("\\")[1]

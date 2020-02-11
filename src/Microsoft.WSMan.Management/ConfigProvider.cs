@@ -1340,7 +1340,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                foreach (String warnings in warningMessage)
+                foreach (string warnings in warningMessage)
                 {
                     WriteWarning(warnings);
                 }
@@ -1446,6 +1446,11 @@ namespace Microsoft.WSMan.Management
 
             // Get the wsman host name to find the session object
             string host = GetHostName(path);
+            if (string.IsNullOrEmpty(host))
+            {
+                return false;
+            }
+
             string WsManURI = NormalizePath(path, host);
 
             lock (WSManHelper.AutoSession)

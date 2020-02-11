@@ -109,24 +109,17 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+#if UNIX
                 new ExperimentalFeature(
-                    name: "PSForEachObjectParallel",
-                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                    name: "PSUnixFileStat",
+                    description: "Provide unix permission information for files and directories"),
+#endif
                 new ExperimentalFeature(
-                    name: "PSTernaryOperator",
-                    description: "Support the ternary operator in PowerShell language"),
+                    name: "PSNullConditionalOperators",
+                    description: "Support the null conditional member access operators in PowerShell language"),
                 new ExperimentalFeature(
-                    name: "PSErrorView",
-                    description: "New formatting for ErrorRecord"),
-                new ExperimentalFeature(
-                    name: "PSUpdatesNotification",
-                    description: "Print notification message when new releases are available"),
-                new ExperimentalFeature(
-                    name: "PSCoalescingOperators",
-                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
-                new ExperimentalFeature(
-                    name: "PSPipelineChainOperators",
-                    description: "Allow use of && and || as operators between pipeline invocations"),
+                    name: "PSCultureInvariantReplaceOperator",
+                    description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
                     name: "PSGeneralizedSplatting",
                     description: "Preliminary support for generalized splatting, currently only inline splatting"),
