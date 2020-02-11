@@ -173,11 +173,14 @@ namespace System.Management.Automation
 
     internal class UsingExpressionAstSearcher : AstSearcher
     {
-        internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
+        internal static IEnumerable<Ast> FindAllUsingExpressions(Ast ast, bool searchNestedScriptBlocks = true)
         {
             Diagnostics.Assert(ast != null, "caller to verify arguments");
 
-            var searcher = new UsingExpressionAstSearcher(astParam => astParam is UsingExpressionAst, stopOnFirst: false, searchNestedScriptBlocks: true);
+            var searcher = new UsingExpressionAstSearcher(
+                callback: astParam => astParam is UsingExpressionAst,
+                stopOnFirst: false,
+                searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
             return searcher.Results;
         }
@@ -313,6 +316,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get using values as dictionary for the Foreach-Object cmdlet, and limit the search
+        /// to only the provided scriptblock and no nested scriptblocks.
+        /// </summary>
+        internal static Dictionary<string, object> GetUsingValuesForEachParallel(
+            ScriptBlock scriptBlock,
+            bool isTrustedInput,
+            ExecutionContext context)
+        {
+            return GetUsingValues(
+                body: scriptBlock.Ast,
+                isTrustedInput: isTrustedInput,
+                context: context,
+                variables: null,
+                filterNonUsingVariables: false,
+                searchNestedScriptBlocks: false).Item1;
+        }
+
+        /// <summary>
         /// Get using values in the dictionary form.
         /// </summary>
         internal static Dictionary<string, object> GetUsingValuesAsDictionary(ScriptBlock scriptBlock, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables)
@@ -342,11 +363,17 @@ namespace System.Management.Automation
         /// A tuple of the dictionary-form and the array-form using values.
         /// If the array-form using value is null, then there are UsingExpressions used in different scopes.
         /// </returns>
-        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(Ast body, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables, bool filterNonUsingVariables)
+        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(
+            Ast body,
+            bool isTrustedInput,
+            ExecutionContext context,
+            Dictionary<string, object> variables,
+            bool filterNonUsingVariables,
+            bool searchNestedScriptBlocks = true)
         {
             Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
 
-            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(body).ToList();
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(body, searchNestedScriptBlocks).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;

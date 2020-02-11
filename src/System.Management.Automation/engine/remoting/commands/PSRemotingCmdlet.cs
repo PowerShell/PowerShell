@@ -2433,7 +2433,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException("localScriptBlock", "Caller needs to make sure the parameter value is not null");
             }
 
-            var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(localScriptBlock.Ast);
+            var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressions(localScriptBlock.Ast);
             return allUsingExprs.Select(usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
         }
 

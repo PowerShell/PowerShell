@@ -26,6 +26,41 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $result[1] | Should -BeExactly $varArray[1]
     }
 
+    It 'Verifies in scope using variables in nested foreach-object -parallel' {
+
+        $Test = "Test1"
+        $results = 1..2 | ForEach-Object -Parallel {
+            $using:Test
+            $Test = "Test2"
+            1..2 | ForEach-Object -Parallel {
+                $using:Test
+                $Test = "Test3"
+                1..2 | ForEach-Object -Parallel {
+                    $using:Test
+                }
+            }
+        }
+        $results.Count | Should -BeExactly 14
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+        $groups['Test3'].Count | Should -BeExactly 8
+    }
+
+    It 'Verifies error for out of scope using variable in nested foreach-object -parallel' {
+
+        $Test = "TestA"
+        1..1 | ForEach-Object -Parallel {
+            $using:Test
+            # Variable '$Test' is not defined in this scope.
+            1..1 | ForEach-Object -Parallel {
+                $using:Test
+            }
+        } -ErrorVariable usingErrors 2>$null
+
+        $usingErrors[0].FullyQualifiedErrorId | Should -BeExactly 'UsingVariableIsUndefined,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
     It 'Verifies terminating error streaming' {
 
         $result = 1..1 | ForEach-Object -Parallel { throw 'Terminating Error!'; "Hello" } 2>&1
