@@ -196,11 +196,16 @@ namespace PowerShell.Hosting.SDK.Tests
             runspace.Open();
 
             using var ps = System.Management.Automation.PowerShell.Create(runspace);
-            var results = ps.AddScript("Write-Output Hello > $null; Get-Module").Invoke();
-            Assert.Single(results);
+            var results_1 = ps.AddScript("Write-Output Hello > $null; Get-Module").Invoke<System.Management.Automation.PSModuleInfo>();
+            Assert.Single(results_1);
 
-            dynamic module = results[0];
+            var module = results_1[0];
             Assert.Equal("Microsoft.PowerShell.Utility", module.Name);
+
+            ps.Commands.Clear();
+            var results_2 = ps.AddScript("Join-Path $PSHOME 'Modules' 'Microsoft.PowerShell.Utility' 'Microsoft.PowerShell.Utility.psd1'").Invoke<string>();
+            var moduleBase = results_2[0];
+            Assert.Equal(moduleBase, module.Path, ignoreCase: true);
         }
     }
 }
