@@ -204,8 +204,8 @@ namespace PowerShell.Hosting.SDK.Tests
 
             ps.Commands.Clear();
             var results_2 = ps.AddScript("Join-Path $PSHOME 'Modules' 'Microsoft.PowerShell.Utility' 'Microsoft.PowerShell.Utility.psd1'").Invoke<string>();
-            var moduleBase = results_2[0];
-            Assert.Equal(moduleBase, module.Path, ignoreCase: true);
+            var moduleManifestPath = results_2[0];
+            Assert.Equal(moduleManifestPath, module.Path, ignoreCase: true);
         }
     }
 }
