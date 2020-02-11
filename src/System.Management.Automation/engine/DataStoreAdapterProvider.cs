@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the full name of the provider including the module name if available.
         /// </summary>
-        public string FullName
+        internal string FullName
         {
             get
             {

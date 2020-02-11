@@ -62,7 +62,7 @@ namespace module {
     }
 
     It "Import a PowerShell provider with correct name" {
-        $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; (Get-PSProvider ReproModule\SamplePrv).FullName"
-        $result | Should -BeExactly "ReproModule\SamplePrv"
+        $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; Get-Item ReproModule\SamplePrv::test.txt"
+        $result.PSPath | Should -BeExactly "ReproModule\SamplePrv::test.txt"
     }
 }
