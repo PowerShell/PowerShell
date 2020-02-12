@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
         /// <param name = "context">Execution context.</param>
-        /// <returns>Dictionary of using variable map</returns>
+        /// <returns>Dictionary of using variable map.</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
             bool isTrustedInput,
