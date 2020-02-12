@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// It is not used by any other PowerShell API, and is now obsolete
     /// and should not be used if possible.
     /// </remarks>
-    [Obsolete("Formerly used in PowerShell Workflow. Use an integer or System.Management.Automation.Language.RedirectionStream instead.")]
+    [Obsolete("This enum type was used only in PowerShell Workflow and is now obsolete.", error: true)]
     public enum PowerShellStreamType
     {
         /// <summary>
