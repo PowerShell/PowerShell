@@ -34,7 +34,7 @@ function SyncGalleryToAzArtifacts {
     foreach ($package in $packages) {
         try {
             # Get module from gallery
-            $foundPackageOnGallery = Find-Package -ProviderName NuGet -Source $galleryUrl -AllVersions -Name $package.Name -Force -AllowPreReleaseVersion | Sort-Object -Property Version -Descending | Select-Object -First 1
+            $foundPackageOnGallery = Find-Package -ProviderName NuGet -Source $galleryUrl -AllVersions -Name $package.Name -Force -AllowPreReleaseVersion | SortPackage | Select-Object -First 1
             Write-Verbose -Verbose "Found module $($package.Name) - $($foundPackageOnGallery.Version) in gallery"
             $galleryPackages += $foundPackageOnGallery
         } catch {
@@ -51,7 +51,7 @@ function SyncGalleryToAzArtifacts {
             # Get module from Az Artifacts
             # There seems to be a bug in the feed with RequiredVersion matching. Adding workaround with post filtering.
             # Issue: https://github.com/OneGet/oneget/issues/397
-            $foundPackageOnAz = Find-Package -ProviderName NuGet -Source $azArtifactsUrl -AllVersions -Name $package.Name -Force -Credential $azDevOpsCreds -AllowPreReleaseVersion | Sort-Object -Property Version -Descending | Select-Object -First 1
+            $foundPackageOnAz = Find-Package -ProviderName NuGet -Source $azArtifactsUrl -AllVersions -Name $package.Name -Force -Credential $azDevOpsCreds -AllowPreReleaseVersion | SortPackage | Select-Object -First 1
             Write-Verbose -Verbose "Found module $($package.Name) - $($foundPackageOnAz.Version) in azArtifacts"
             $azArtifactsPackages += $foundPackageOnAz
         } catch {
@@ -119,6 +119,47 @@ function SyncGalleryToAzArtifacts {
     }
 
 }
+
+
+
+Function SortPackage {
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity[]]
+        $packages
+    )
+
+    Begin {
+        $allPackages = @()
+    }
+
+    Process {
+        $allPackages += $packages
+    }
+
+    End {
+        $versions = $allPackages.Version |
+        Foreach-Object { ($_ -split '-')[0] } |
+        Select-Object -Unique |
+        Sort-Object -Descending -Property Version
+
+        foreach ($version in $versions) {
+            $exactMatch = $allPackages | Where-Object {
+                Write-Verbose "testing $($_.version) -eq $version"
+                $_.version -eq $version
+            }
+
+            if ($exactMatch) {
+                Write-Output $exactMatch
+            }
+
+            $allPackages | Where-Object {
+                $_.version -like "${version}-*"
+            } | Sort-Object -Descending -Property Version | Write-Output
+        }
+    }
+}
+
 
 function NormalizeVersion {
     param ([string] $version)
