@@ -379,7 +379,7 @@ function Get-PlatformInfo {
             $versionId = if (-not $osrelease.Version_ID ) {
                 ''
             } else {
-                $osrelease.Version_ID
+                $osrelease.Version_ID.trim('"')
             }
 
             $platform = $osrelease.ID.trim('"')
