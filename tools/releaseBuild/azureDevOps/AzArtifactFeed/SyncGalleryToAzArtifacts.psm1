@@ -92,6 +92,7 @@ function SyncGalleryToAzArtifacts {
 
     # Remove dependent packages downloaded by Save-Module if there are already present in AzArtifacts feed.
     try {
+        $null = New-Item -Path $Destination -ItemType Directory -Force
         Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
         $packageNamesToKeep = @()
         $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
@@ -176,4 +177,4 @@ function NormalizeVersion {
     $sVer
 }
 
-Export-ModuleMember -Function 'SyncGalleryToAzArtifacts'
+Export-ModuleMember -Function 'SyncGalleryToAzArtifacts', 'SortPackage'

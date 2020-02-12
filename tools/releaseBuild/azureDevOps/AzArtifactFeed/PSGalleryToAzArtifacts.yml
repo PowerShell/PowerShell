@@ -7,19 +7,18 @@ resources:
 queue:
   name: Hosted VS2017
 steps:
-  - powershell: |
+  - pwsh: |
       Install-Module -Name PowerShellGet -MinimumVersion 2.0.1 -Force
-      Import-Module PowerShellGet -Force -Verbose
     displayName: Update PSGet and PackageManagement
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Import-Module -Force "$(Build.SourcesDirectory)/tools/releaseBuild/azureDevOps/AzArtifactFeed/SyncGalleryToAzArtifacts.psm1"
       SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT) -Destination $(Build.ArtifactStagingDirectory)
     displayName: Download packages from PSGallery that need to be updated
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Write-Verbose -Verbose "Packages to upload"
       if(Test-Path $(Build.ArtifactStagingDirectory)) { Get-ChildItem "$(Build.ArtifactStagingDirectory)/*.nupkg" | ForEach-Object { $_.FullName }}
     displayName: List packages to upload
