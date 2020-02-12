@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// Get using values as dictionary for the Foreach-Object cmdlet, and limit the search
         /// to only the provided scriptblock and no nested scriptblocks.
         /// </summary>
-        /// <param name = "scriptBlock">Scriptblock to search</param>
+        /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted</param>
         /// <param name = "context">Execution context</param>
         /// <returns>Dictionary of using variable map</returns>
