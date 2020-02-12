@@ -1659,6 +1659,7 @@ function New-ILNugetPackage
     }
 
     $fileList = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll",
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Commands.Utility.dll",
@@ -1672,6 +1673,7 @@ function New-ILNugetPackage
         "Microsoft.PowerShell.MarkdownRender.dll")
 
     $linuxExceptionList = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll",
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.WSMan.Management.dll",
@@ -1679,7 +1681,6 @@ function New-ILNugetPackage
 
     if ($PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
     {
-
         $refBinPath = New-TempFolder
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
@@ -1715,6 +1716,43 @@ function New-ILNugetPackage
                 $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
                 $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
                 Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
+                Write-Log "Copied the reference assembly folder to contentFiles for the SDK package"
+
+                # Copy the built-in module folders to the NuGet package, so 'dotnet publish' can deploy those modules to the $pshome module path.
+                # This is for enabling applications that hosts PowerShell to ship the built-in modules.
+
+                $winBuiltInModules = @(
+                    "CimCmdlets",
+                    "Microsoft.PowerShell.Diagnostics",
+                    "Microsoft.PowerShell.Host",
+                    "Microsoft.PowerShell.Management",
+                    "Microsoft.PowerShell.Security",
+                    "Microsoft.PowerShell.Utility",
+                    "Microsoft.WSMan.Management",
+                    "PSDiagnostics"
+                )
+
+                $unixBuiltInModules = @(
+                    "Microsoft.PowerShell.Host",
+                    "Microsoft.PowerShell.Management",
+                    "Microsoft.PowerShell.Security",
+                    "Microsoft.PowerShell.Utility"
+                )
+
+                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+
+                foreach ($module in $winBuiltInModules) {
+                    $source = Join-Path $WinFxdBinPath "Modules\$module"
+                    Copy-Item -Path $source -Destination $winModuleFolder -Recurse -Force
+                }
+
+                foreach ($module in $unixBuiltInModules) {
+                    $source = Join-Path $LinuxFxdBinPath "Modules\$module"
+                    Copy-Item -Path $source -Destination $unixModuleFolder -Recurse -Force
+                }
+
+                Write-Log "Copied the built-in modules to contentFiles for the SDK package"
             }
 
             #region nuspec
@@ -1722,6 +1760,10 @@ function New-ILNugetPackage
             $deps = [System.Collections.ArrayList]::new()
 
             switch ($fileBaseName) {
+                'Microsoft.Management.Infrastructure.CimCmdlets' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
                 'Microsoft.PowerShell.Commands.Diagnostics' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
@@ -1771,6 +1813,7 @@ function New-ILNugetPackage
                     }
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
 
                 'Microsoft.PowerShell.Security' {
