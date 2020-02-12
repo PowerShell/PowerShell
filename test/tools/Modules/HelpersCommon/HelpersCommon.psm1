@@ -365,19 +365,29 @@ function New-ComplexPassword
 }
 
 # return a specific string with regard to platform information
-function Get-PlatformInfo
-{
-    if ( $IsWindows ) {
-        return "windows"
+function Get-PlatformInfo {
+    $retObj = if ( $IsWindows ) {
+        return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
-        return "macos"
+        return @{Platform = "macos"; Version = '' }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
         if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
-            return $osrelease.ID
+
+            $versionId = if (-not $osrelease.Version_ID ) {
+                ''
+            } else {
+                $osrelease.Version_ID
+            }
+
+            $platform = $osrelease.ID.trim('"')
+
+            return @{Platform = $platform; Version = $versionId }
         }
         return "unknown"
     }
+
+    $retObj
 }

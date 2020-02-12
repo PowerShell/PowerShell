@@ -6,7 +6,11 @@ Import-Module HelpersCommon
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         $platformInfo = Get-PlatformInfo
-        if (($platformInfo -eq "alpine") -or ($platformInfo -eq "raspbian")) {
+        if (
+            ($platformInfo.Platform -eq "alpine") -or
+            ($platformInfo.Platform -eq "raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) # debian 11 has empty Version ID
+        ) {
             Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
             return
         }

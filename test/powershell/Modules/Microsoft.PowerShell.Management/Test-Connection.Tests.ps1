@@ -64,7 +64,7 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if ((Get-PlatformInfo) -match "raspbian") {
+            if ((Get-PlatformInfo).Platform -match "raspbian") {
                 $code = 11
             }
             elseif (!$IsWindows) {

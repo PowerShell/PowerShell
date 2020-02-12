@@ -28,7 +28,7 @@ Function Test-IsInvokeDscResourceEnable {
 Describe "Test PSDesiredStateConfiguration" -tags CI {
     BeforeAll {
         $MissingLibmi = $false
-        if ((Get-PlatformInfo) -match "alpine|raspbian") {
+        if ((Get-PlatformInfo).Platform -match "alpine|raspbian") {
             $MissingLibmi = $true
         }
     }

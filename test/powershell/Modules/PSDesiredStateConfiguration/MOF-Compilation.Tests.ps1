@@ -7,7 +7,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
     }
 
     BeforeAll {
-        $SkipAdditionalPlatforms = (Get-PlatformInfo) -match "alpine|raspbian"
+        $SkipAdditionalPlatforms = (Get-PlatformInfo).Platform -match "alpine|raspbian"
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
