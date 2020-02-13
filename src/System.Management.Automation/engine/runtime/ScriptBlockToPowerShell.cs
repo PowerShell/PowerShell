@@ -173,14 +173,14 @@ namespace System.Management.Automation
 
     internal class UsingExpressionAstSearcher : AstSearcher
     {
-        internal static IEnumerable<Ast> FindAllUsingExpressions(Ast ast, bool searchNestedScriptBlocks = true)
+        internal static IEnumerable<Ast> FindAllUsingExpressions(Ast ast)
         {
             Diagnostics.Assert(ast != null, "caller to verify arguments");
 
             var searcher = new UsingExpressionAstSearcher(
                 callback: astParam => astParam is UsingExpressionAst,
                 stopOnFirst: false,
-                searchNestedScriptBlocks: searchNestedScriptBlocks);
+                searchNestedScriptBlocks: true);
             ast.InternalVisit(searcher);
             return searcher.Results;
         }
@@ -317,7 +317,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get using values as dictionary for the Foreach-Object cmdlet, and limit the search
-        /// to only the provided scriptblock and no nested scriptblocks.
+        /// for nested Foreach-Object calls
         /// </summary>
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
@@ -328,13 +328,116 @@ namespace System.Management.Automation
             bool isTrustedInput,
             ExecutionContext context)
         {
-            return GetUsingValues(
-                body: scriptBlock.Ast,
-                isTrustedInput: isTrustedInput,
-                context: context,
-                variables: null,
-                filterNonUsingVariables: false,
-                searchNestedScriptBlocks: false).Item1;
+            // Using variables for Foreach-Object -Parallel use are restricted to be within the 
+            // Foreach-Object call scope. This will filter the using variable map to variables 
+            // only within the outer Foreach-Object call.
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
+            UsingExpressionAst usingAst = null;
+            var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
+            Version oldStrictVersion = null;
+            try
+            {
+                if (context != null)
+                {
+                    oldStrictVersion = context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = PSVersionInfo.PSVersion;
+                }
+
+                for (int i = 0; i < usingAsts.Count; ++i)
+                {
+                    usingAst = (UsingExpressionAst)usingAsts[i];
+                    object value = null;
+                    if (IsInForeachParallelCallingScope(usingAst))
+                    {
+                        value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
+                        usingValueMap.TryAdd(usingAstKey, value);
+                    }
+                }
+            }
+            catch (RuntimeException rte)
+            {
+                if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
+                {
+                    throw InterpreterError.NewInterpreterException(
+                        targetObject: null, 
+                        exceptionType: typeof(RuntimeException),
+                        errorPosition: usingAst.Extent, 
+                        resourceIdAndErrorId: "UsingVariableIsUndefined",
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        args: rte.ErrorRecord.TargetObject);
+                }
+            }
+            finally
+            {
+                if (context != null)
+                {
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = oldStrictVersion;
+                }
+            }
+
+            return usingValueMap;
+        }
+
+        private static bool IsInForeachParallelCallingScope(UsingExpressionAst usingAst)
+        {
+            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
+
+            // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
+            // At least one should be found since this is used only for foreach -parallel.
+            Ast currentParent = usingAst.Parent;
+            int foreachNestedCount = 0;
+            while (currentParent != null)
+            {
+                // Look for Foreach-Object outer commands
+                if (currentParent is CommandAst commandAst)
+                {
+                    bool haveName = false;
+                    bool haveParallel = false;
+                    bool haveScriptBlock = false;
+                    foreach (var commandElement in commandAst.CommandElements)
+                    {
+                        if (commandElement is StringConstantExpressionAst commandName)
+                        {
+                            if (commandName.Value.Equals("foreach", StringComparison.OrdinalIgnoreCase) ||
+                                commandName.Value.Equals("foreach-object", StringComparison.OrdinalIgnoreCase) ||
+                                commandName.Value.Equals("%"))
+                            {
+                                haveName = true;
+                            }
+                        }
+                        else if (commandElement is CommandParameterAst param)
+                        {
+                            if (param.ParameterName.StartsWith("pa", StringComparison.OrdinalIgnoreCase))
+                            {
+                                haveParallel = true;
+                            }
+                        }
+                        else if (commandElement is ScriptBlockExpressionAst)
+                        {
+                            haveScriptBlock = true;
+                        }
+                    }
+
+                    // Foreach command Ast must have expected command name, parallel parameter, and scriptblock.
+                    if (haveName && haveParallel && haveScriptBlock)
+                    {
+                        foreachNestedCount++;
+                    }
+                }
+
+                if (foreachNestedCount > 1)
+                {
+                    // This using expression Ast is outside the original calling scope.
+                    return false;
+                }
+
+                currentParent = currentParent.Parent;
+            }
+
+            Diagnostics.Assert(foreachNestedCount == 1, "We should have found at least one Foreach-Object -Parallel parent.");
+
+            return true;
         }
 
         /// <summary>
@@ -372,12 +475,11 @@ namespace System.Management.Automation
             bool isTrustedInput,
             ExecutionContext context,
             Dictionary<string, object> variables,
-            bool filterNonUsingVariables,
-            bool searchNestedScriptBlocks = true)
+            bool filterNonUsingVariables)
         {
             Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
 
-            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(body, searchNestedScriptBlocks).ToList();
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(body).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;
