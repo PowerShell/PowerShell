@@ -64,11 +64,16 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if (!$isWindows) {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
-            } else {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+            if ((Get-PlatformInfo).Platform -match "raspbian") {
+                $code = 11
             }
+            elseif (!$IsWindows) {
+                $code = -131073
+            }
+            else {
+                $code = 11001
+            }
+            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
         # In VSTS, address is 0.0.0.0
@@ -77,7 +82,7 @@ Describe "Test-Connection" -tags "CI" {
 
             $result[0].Address | Should -BeExactly $realAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
-            if ($isWindows) {
+            if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
             }
         }
@@ -94,7 +99,7 @@ Describe "Test-Connection" -tags "CI" {
             $result1.Address | Should -BeExactly $realAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
-            if (!$isWindows) {
+            if (!$IsWindows) {
                 $result1.Reply.Options.DontFragment | Should -BeFalse
                 # Depending on the network configuration any of the following should be returned
                 $result2.Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
@@ -216,7 +221,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults.Count | Should -BeGreaterThan 4
             $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
-            if ($isWindows) {
+            if ($IsWindows) {
                 $pingResults.Where( { $_.Status -eq 'Success' }, 'Default', 1 ).BufferSize | Should -Be 32
             }
         }
@@ -254,7 +259,7 @@ Describe "Test-Connection" -tags "CI" {
             $result[0].Hop | Should -Be 1
             $result[0].HopAddress | Should -BeExactly $realAddress
             $result[0].Status | Should -BeExactly "Success"
-            if (!$isWindows) {
+            if (!$IsWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
             } else {
                 $result[0].Reply.Buffer.Count | Should -Be 32
