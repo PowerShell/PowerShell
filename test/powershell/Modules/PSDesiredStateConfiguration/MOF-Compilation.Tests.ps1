@@ -9,12 +9,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
     BeforeAll {
         $platformInfo = Get-PlatformInfo
         $SkipAdditionalPlatforms =
-            ($platformInfo.Platform -eq "alpine") -or
-            ($platformInfo.Platform -eq "raspbian") -or
+            ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
             ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
 
-        $SkipAdditionalPlatforms = (Get-PlatformInfo).Platform -match "alpine|raspbian"
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'

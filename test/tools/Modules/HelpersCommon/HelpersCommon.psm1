@@ -366,7 +366,7 @@ function New-ComplexPassword
 
 # return a specific string with regard to platform information
 function Get-PlatformInfo {
-    $retObj = if ( $IsWindows ) {
+    if ( $IsWindows ) {
         return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
@@ -388,6 +388,4 @@ function Get-PlatformInfo {
         }
         return "unknown"
     }
-
-    $retObj
 }

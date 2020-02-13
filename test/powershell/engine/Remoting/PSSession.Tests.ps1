@@ -74,11 +74,12 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
         param ($scriptBlock, $expectedErrorCode)
 
         $platformInfo = Get-PlatformInfo
-        if (($platformInfo.Platform -eq "alpine") -or
-            ($platformInfo.Platform -eq "raspbian") -or
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version = '8')
+        if (
+            ($platformInfo.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
         ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
+            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
             return
         }
 

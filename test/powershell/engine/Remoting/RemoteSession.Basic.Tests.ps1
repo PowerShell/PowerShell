@@ -7,12 +7,11 @@ Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         $platformInfo = Get-PlatformInfo
         if (
-            ($platformInfo.Platform -eq "alpine") -or
-            ($platformInfo.Platform -eq "raspbian") -or
+            ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
             ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
         ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
+            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
             return
         }
 
@@ -25,12 +24,11 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
         $platformInfo = Get-PlatformInfo
         if (
-            ($platformInfo.Platform -eq "alpine") -or
-            ($platformInfo.Platform -eq "raspbian") -or
+            ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
             ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
         ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine or Raspberry Pi"
+            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
             return
         }
 
