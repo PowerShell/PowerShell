@@ -828,18 +828,12 @@ function New-UnixPackage {
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
         $linkSource = "/tmp/pwsh"
-        $linkInfo = [LinkInfo] @{
-            Source = $linkSource
-            Destination = $Link
-        }
+        $linkInfo = New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh"
 
-        $links = @($Link)
+        $links = @($LinkInfo)
         if($LTS)
         {
-            $links += [LinkInfo] @{
-                Source = $linkSource
-                Destination = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
-            }
+            $links += New-LinkInfo -LinkDestination (Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS) -LinkTarget "$Destination/pwsh"
         }
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
@@ -934,7 +928,7 @@ function New-UnixPackage {
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest"))
+                    Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
@@ -965,6 +959,35 @@ function New-UnixPackage {
         {
             throw "Failed to create $createdPackage"
         }
+    }
+}
+
+Function New-LinkInfo
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $LinkDestination,
+        [Parameter(Mandatory)]
+        [string]
+        $linkTarget
+    )
+
+    $linkDir = Join-Path -path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
+    $null = New-Item -ItemType Directory -Path $linkDir
+    $linkSource = Join-Path -Path $linkDir -ChildPath 'pwsh'
+
+    Write-Log "Creating link to target '$LinkTarget', with a temp source of '$LinkSource' and a Package Destination of '$LinkDestination'"
+    if ($PSCmdlet.ShouldProcess("Create package symbolic from $linkDestination to $linkTarget"))
+    {
+        # refers to executable, does not vary by channel
+        New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target $LinkTarget > $null
+    }
+
+    [LinkInfo] @{
+        Source = $linkSource
+        Destination = $LinkDestination
     }
 }
 
@@ -1168,8 +1191,7 @@ function Get-FpmArguments
 
     foreach($link in $LinkInfo)
     {
-        $linkArgument = "$(link.Source)=$(link.Destination)"
-        Write-Verbose "adding link argument: $linkArgument" -Verbose
+        $linkArgument = "$($link.Source)=$($link.Destination)"
         $Arguments += $linkArgument
     }
 
@@ -1498,7 +1520,7 @@ function Get-PwshExecutablePath
 
     $executableName = if ($IsPreview) {
         "pwsh-preview"
-    } elseif ($LTS) {
+    } elseif ($IsLTS) {
         "pwsh-lts"
     } else {
         "pwsh"
