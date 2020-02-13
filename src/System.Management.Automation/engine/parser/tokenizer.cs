@@ -1460,17 +1460,28 @@ namespace System.Management.Automation.Language
 
             switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'e': return '\u001b';
-                case 'f': return '\f';
-                case 'n': return '\n';
-                case 'r': return '\r';
-                case 't': return '\t';
-                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
-                case 'v': return '\v';
-                default: return c;
+                case '0':
+                    return '\0';
+                case 'a':
+                    return '\a';
+                case 'b':
+                    return '\b';
+                case 'e':
+                    return '\u001b';
+                case 'f':
+                    return '\f';
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'u':
+                    return ScanUnicodeEscape(out surrogateCharacter);
+                case 'v':
+                    return '\v';
+                default:
+                    return c;
             }
         }
 
@@ -3557,8 +3568,9 @@ namespace System.Management.Automation.Language
             {
                 try
                 {
-                    NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
-                                         NumberStyles.AllowExponent;
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent;
 
                     if (real)
                     {
@@ -3685,9 +3697,40 @@ namespace System.Management.Automation.Language
                             }
 
                             // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                strNum = strNum.Slice(1);
+                                var expectedLength = suffix switch
+                                {
+                                    NumberSuffixFlags.SignedByte => 2,
+                                    NumberSuffixFlags.Short => 4,
+                                    NumberSuffixFlags.Long => 16,
+                                    // No suffix flag can mean int or long depending on input string length
+                                    _ => strNum.Length < 16 ? 8 : 16
+                                };
+
+                                if (strNum.Length == expectedLength)
+                                {
+                                    strNum = strNum.Slice(1);
+                                }
+                            }
+
+
+                            // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                            {
+                                var expectedLength = suffix switch
+                                {
+                                    NumberSuffixFlags.SignedByte => 2,
+                                    NumberSuffixFlags.Short => 4,
+                                    NumberSuffixFlags.Long => 16,
+                                    // No suffix flag can mean int or long depending on input string length
+                                    _ => strNum.Length < 16 ? 8 : 16
+                                };
+
+                                if (strNum.Length == expectedLength)
+                                {
+                                    strNum = strNum.Slice(1);
+                                }
                             }
 
                             style = NumberStyles.AllowHexSpecifier;
@@ -4988,7 +5031,8 @@ namespace System.Management.Automation.Language
                         _currentIndex = _tokenStart;
                         c = GetChar();
 
-                        if (strNum == null) { return ScanGenericToken(c); }
+                        if (strNum == null)
+                        { return ScanGenericToken(c); }
                     }
 
                     return NewToken(TokenKind.Exclaim);
