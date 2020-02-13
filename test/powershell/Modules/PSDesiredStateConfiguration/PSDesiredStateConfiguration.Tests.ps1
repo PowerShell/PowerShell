@@ -28,9 +28,9 @@ Function Test-IsInvokeDscResourceEnable {
 Describe "Test PSDesiredStateConfiguration" -tags CI {
     BeforeAll {
         $MissingLibmi = $false
-        $platform = Get-Platform
+        $platformInfo = Get-PlatformInfo
         if (
-            ($platform.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
             ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
         ) {
