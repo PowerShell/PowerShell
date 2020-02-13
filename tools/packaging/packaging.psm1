@@ -828,10 +828,18 @@ function New-UnixPackage {
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
         $linkSource = "/tmp/pwsh"
+        $linkInfo = [LinkInfo] @{
+            Source = $linkSource
+            Destination = $Link
+        }
+
         $links = @($Link)
         if($LTS)
         {
-            $links += Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
+            $links += [LinkInfo] @{
+                Source = $linkSource
+                Destination = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
+            }
         }
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
@@ -904,8 +912,7 @@ function New-UnixPackage {
             -Destination $Destination `
             -ManGzipFile $ManGzipInfo.GzipFile `
             -ManDestination $ManGzipInfo.ManFile `
-            -LinkSource $LinkSource `
-            -LinkDestination $Link `
+            -LinkInfo $Links `
             -AppsFolder $AppsFolder `
             -Distribution $DebDistro `
             -ErrorAction Stop
