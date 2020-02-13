@@ -826,8 +826,13 @@ function New-UnixPackage {
         }
 
         # Destination for symlink to powershell executable
-        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
+        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
         $linkSource = "/tmp/pwsh"
+        $links = @($Link)
+        if($LTS)
+        {
+            $links += Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
+        }
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
@@ -1027,6 +1032,13 @@ function New-MacOsDistributionPackage
 
     return (Get-Item $newPackagePath)
 }
+
+Class LinkInfo
+{
+    [string] $Source
+    [string] $Destination
+}
+
 function Get-FpmArguments
 {
     param(
@@ -1060,10 +1072,7 @@ function Get-FpmArguments
         [String]$ManDestination,
 
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
-        [String]$LinkSource,
-
-        [Parameter(Mandatory,HelpMessage='Destination for symlink to powershell executable')]
-        [String]$LinkDestination,
+        [LinkInfo[]]$LinkInfo,
 
         [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
         [ValidateScript({
@@ -1147,9 +1156,15 @@ function Get-FpmArguments
 
     $Arguments += @(
         "$Staging/=$Destination/",
-        "$ManGzipFile=$ManDestination",
-        "$LinkSource=$LinkDestination"
+        "$ManGzipFile=$ManDestination"
     )
+
+    foreach($link in $LinkInfo)
+    {
+        $linkArgument = "$(link.Source)=$(link.Destination)"
+        Write-Verbose "adding link argument: $linkArgument" -Verbose
+        $Arguments += $linkArgument
+    }
 
     if ($AppsFolder)
     {
