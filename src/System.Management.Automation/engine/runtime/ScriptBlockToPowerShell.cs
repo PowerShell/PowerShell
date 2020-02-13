@@ -346,10 +346,9 @@ namespace System.Management.Automation
                 for (int i = 0; i < usingAsts.Count; ++i)
                 {
                     usingAst = (UsingExpressionAst)usingAsts[i];
-                    object value = null;
                     if (IsInForeachParallelCallingScope(usingAst))
                     {
-                        value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
                         usingValueMap.TryAdd(usingAstKey, value);
                     }
