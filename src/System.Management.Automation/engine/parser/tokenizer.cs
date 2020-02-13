@@ -3708,26 +3708,6 @@ namespace System.Management.Automation.Language
                                     _ => strNum.Length < 16 ? 8 : 16
                                 };
 
-                                if (strNum.Length == expectedLength)
-                                {
-                                    strNum = strNum.Slice(1);
-                                }
-                            }
-
-
-                            // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
-                            {
-                                var expectedLength = suffix switch
-                                {
-                                    NumberSuffixFlags.SignedByte => 2,
-                                    NumberSuffixFlags.Short => 4,
-                                    NumberSuffixFlags.Long => 16,
-                                    // No suffix flag can mean int or long depending on input string length
-                                    _ => strNum.Length < 16 ? 8 : 16
-                                };
-
-                                // Add one to account for the added 0 from ScanNumberHelper
                                 if (strNum.Length == expectedLength + 1)
                                 {
                                     strNum = strNum.Slice(1);
