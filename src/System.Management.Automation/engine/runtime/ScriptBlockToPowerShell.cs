@@ -392,9 +392,6 @@ namespace System.Management.Automation
                 // Look for Foreach-Object outer commands
                 if (currentParent is CommandAst commandAst)
                 {
-                    bool haveName = false;
-                    bool haveParallel = false;
-                    bool haveScriptBlock = false;
                     foreach (var commandElement in commandAst.CommandElements)
                     {
                         if (commandElement is StringConstantExpressionAst commandName)
@@ -403,26 +400,15 @@ namespace System.Management.Automation
                                 commandName.Value.Equals("foreach-object", StringComparison.OrdinalIgnoreCase) ||
                                 commandName.Value.Equals("%"))
                             {
-                                haveName = true;
+                                // Verify this is foreach-object with parallel parameter set.
+                                var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                                if (bindingResult.BoundParameters.ContainsKey("Parallel"))
+                                {
+                                    foreachNestedCount++;
+                                    break;
+                                }
                             }
                         }
-                        else if (commandElement is CommandParameterAst param)
-                        {
-                            if (param.ParameterName.StartsWith("pa", StringComparison.OrdinalIgnoreCase))
-                            {
-                                haveParallel = true;
-                            }
-                        }
-                        else if (commandElement is ScriptBlockExpressionAst)
-                        {
-                            haveScriptBlock = true;
-                        }
-                    }
-
-                    // Foreach command Ast must have expected command name, parallel parameter, and scriptblock.
-                    if (haveName && haveParallel && haveScriptBlock)
-                    {
-                        foreachNestedCount++;
                     }
                 }
 
@@ -434,8 +420,6 @@ namespace System.Management.Automation
 
                 currentParent = currentParent.Parent;
             }
-
-            Diagnostics.Assert(foreachNestedCount == 1, "We should have found at least one Foreach-Object -Parallel parent.");
 
             return true;
         }
