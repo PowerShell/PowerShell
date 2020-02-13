@@ -3727,7 +3727,8 @@ namespace System.Management.Automation.Language
                                     _ => strNum.Length < 16 ? 8 : 16
                                 };
 
-                                if (strNum.Length == expectedLength)
+                                // Add one to account for the added 0 from ScanNumberHelper
+                                if (strNum.Length == expectedLength + 1)
                                 {
                                     strNum = strNum.Slice(1);
                                 }
