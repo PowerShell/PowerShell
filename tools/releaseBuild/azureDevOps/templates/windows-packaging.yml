@@ -6,7 +6,7 @@ parameters:
 
 jobs:
 - job: sign_windows_${{ parameters.Architecture }}
-  displayName: Sign Windows - ${{ parameters.Architecture }}
+  displayName: Package Windows - ${{ parameters.Architecture }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
