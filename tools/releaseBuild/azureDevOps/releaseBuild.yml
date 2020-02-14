@@ -39,36 +39,60 @@ jobs:
 
 - template: templates/mac.yml
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x64
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x86
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm64
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: fxdependent
 
-- template: templates/windows-component-governance.yml
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x64
+    parentJob: build_windows_x64
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x86
+    parentJob: build_windows_x86
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm
+    parentJob: build_windows_arm
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm64
+    parentJob: build_windows_arm64
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: fxdependent
+    parentJob: build_windows_fxdependent
+
 
 - template: templates/windows-package-signing.yml
   parameters:
     parentJobs:
-      - build_windows_x64
-      - build_windows_x86
-      - build_windows_arm
-      - build_windows_arm64
-      - build_windows_fxdependent
+      - sign_windows_x64
+      - sign_windows_x86
+      - sign_windows_arm
+      - sign_windows_arm64
+      - sign_windows_fxdependent
 
 - template: templates/mac-package-signing.yml
 
