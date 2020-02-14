@@ -827,20 +827,14 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
-        $linkSource = "/tmp/pwsh"
-        $linkInfo = New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh"
+        $links = @(New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh")
 
-        $links = @($LinkInfo)
-        if($LTS)
-        {
-            $links += New-LinkInfo -LinkDestination (Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS) -LinkTarget "$Destination/pwsh"
+        if($LTS) {
+            $links += New-LinkInfo -LinkDestination (Get-PwshExecutablePath -IsLTS:$LTS) -LinkTarget "$Destination/pwsh"
         }
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
-            # refers to executable, does not vary by channel
-            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
-
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
             New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
