@@ -439,7 +439,7 @@ function Invoke-CIFinish
         [string] $NuGetKey
     )
 
-    if($IsLinux -or $IsMacOS)
+    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage -NugetKey $NugetKey
     }

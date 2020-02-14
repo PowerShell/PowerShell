@@ -826,14 +826,15 @@ function New-UnixPackage {
         }
 
         # Destination for symlink to powershell executable
-        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview -IsLTS:$LTS
-        $linkSource = "/tmp/pwsh"
+        $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
+        $links = @(New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh")
+
+        if($LTS) {
+            $links += New-LinkInfo -LinkDestination (Get-PwshExecutablePath -IsLTS:$LTS) -LinkTarget "$Destination/pwsh"
+        }
 
         if ($pscmdlet.ShouldProcess("Create package file system"))
         {
-            # refers to executable, does not vary by channel
-            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
-
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
             New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
@@ -899,8 +900,7 @@ function New-UnixPackage {
             -Destination $Destination `
             -ManGzipFile $ManGzipInfo.GzipFile `
             -ManDestination $ManGzipInfo.ManFile `
-            -LinkSource $LinkSource `
-            -LinkDestination $Link `
+            -LinkInfo $Links `
             -AppsFolder $AppsFolder `
             -Distribution $DebDistro `
             -ErrorAction Stop
@@ -922,7 +922,7 @@ function New-UnixPackage {
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest"))
+                    Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
@@ -953,6 +953,35 @@ function New-UnixPackage {
         {
             throw "Failed to create $createdPackage"
         }
+    }
+}
+
+Function New-LinkInfo
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $LinkDestination,
+        [Parameter(Mandatory)]
+        [string]
+        $linkTarget
+    )
+
+    $linkDir = Join-Path -path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
+    $null = New-Item -ItemType Directory -Path $linkDir
+    $linkSource = Join-Path -Path $linkDir -ChildPath 'pwsh'
+
+    Write-Log "Creating link to target '$LinkTarget', with a temp source of '$LinkSource' and a Package Destination of '$LinkDestination'"
+    if ($PSCmdlet.ShouldProcess("Create package symbolic from $linkDestination to $linkTarget"))
+    {
+        # refers to executable, does not vary by channel
+        New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target $LinkTarget > $null
+    }
+
+    [LinkInfo] @{
+        Source = $linkSource
+        Destination = $LinkDestination
     }
 }
 
@@ -1027,6 +1056,13 @@ function New-MacOsDistributionPackage
 
     return (Get-Item $newPackagePath)
 }
+
+Class LinkInfo
+{
+    [string] $Source
+    [string] $Destination
+}
+
 function Get-FpmArguments
 {
     param(
@@ -1060,10 +1096,7 @@ function Get-FpmArguments
         [String]$ManDestination,
 
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
-        [String]$LinkSource,
-
-        [Parameter(Mandatory,HelpMessage='Destination for symlink to powershell executable')]
-        [String]$LinkDestination,
+        [LinkInfo[]]$LinkInfo,
 
         [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
         [ValidateScript({
@@ -1147,9 +1180,14 @@ function Get-FpmArguments
 
     $Arguments += @(
         "$Staging/=$Destination/",
-        "$ManGzipFile=$ManDestination",
-        "$LinkSource=$LinkDestination"
+        "$ManGzipFile=$ManDestination"
     )
+
+    foreach($link in $LinkInfo)
+    {
+        $linkArgument = "$($link.Source)=$($link.Destination)"
+        $Arguments += $linkArgument
+    }
 
     if ($AppsFolder)
     {
@@ -1476,7 +1514,7 @@ function Get-PwshExecutablePath
 
     $executableName = if ($IsPreview) {
         "pwsh-preview"
-    } elseif ($LTS) {
+    } elseif ($IsLTS) {
         "pwsh-lts"
     } else {
         "pwsh"
