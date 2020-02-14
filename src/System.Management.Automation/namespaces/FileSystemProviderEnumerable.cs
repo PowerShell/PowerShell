@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #nullable enable
 using System;
@@ -40,9 +39,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal FindPredicate? ShouldRecursePredicate { get; set; }
 
-        internal FindPredicate? ShouldOnPredicate { get; set; }
-
         internal OnDirectoryFinishedDelegate? OnDirectoryFinishedAction { get; set; }
+
+        internal ContinueOnErrorPredicate? ShouldContinueOnErrorPredicate { get; set; }
 
         public IEnumerator<TResult> GetEnumerator()
         {
@@ -61,6 +60,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="directory">The path of the directory that finished.</param>
         internal delegate void OnDirectoryFinishedDelegate(ReadOnlySpan<char> directory);
+
+        /// <summary>
+        /// Delegate for calling whenever on I/O error.
+        /// </summary>
+        /// <param name="error">I/O error code.</param>
+        internal delegate bool ContinueOnErrorPredicate(int error);
 
         /// <summary>
         /// Delegate for transforming raw find data into a result.
@@ -84,6 +89,9 @@ namespace Microsoft.PowerShell.Commands
                 => _enumerable.ShouldIncludePredicate?.Invoke(ref entry) ?? true;
             protected override void OnDirectoryFinished(ReadOnlySpan<char> directory)
                 => _enumerable.OnDirectoryFinishedAction?.Invoke(directory);
+            protected override bool ContinueOnError(int error)
+                // Here _enumerable can be still null because base constructor can throw 'access denied' before we assign _enumerable.
+                => _enumerable?.ShouldContinueOnErrorPredicate?.Invoke(error) ?? false;
         }
     }
 }

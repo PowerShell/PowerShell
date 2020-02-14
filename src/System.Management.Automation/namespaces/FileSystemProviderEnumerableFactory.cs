@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file ref the project root for more information.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #nullable enable
 using System;
@@ -32,7 +31,17 @@ namespace Microsoft.PowerShell.Commands
             };
         }
 
-        private static IEnumerable<string> GetNames(
+        private static int GetHRForWin32Error(int dwLastError)
+        {
+            if ((dwLastError & 0x80000000) == 0x80000000)
+            {
+                return dwLastError;
+            }
+
+            return (dwLastError & 0x0000FFFF) | unchecked((int)0x80070000);
+        }
+
+         private static IEnumerable<string> GetNames(
             CmdletProvider providerInstance,
             string directory,
             string expression,
@@ -47,8 +56,27 @@ namespace Microsoft.PowerShell.Commands
             CmdletProviderContext context,
             EnumerationOptions options)
         {
+            int errorCode = 0;
+
             bool FileSystemEntryFilter(ref FileSystemEntry entry)
             {
+                if (errorCode != 0)
+                {
+                    // While enumerating we can get an error.
+                    // In the case ShouldContinueOnErrorPredicate set the error code.
+                    // The error can be either 'access denied' or 'path not found'.
+                    Exception? exc = System.Runtime.InteropServices.Marshal.GetExceptionForHR(GetHRForWin32Error(errorCode));
+                    errorCode = 0;
+                    if (exc is UnauthorizedAccessException)
+                    {
+                        context.WriteError(new ErrorRecord(exc, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, entry.ToFullPath()));
+                    }
+                    else
+                    {
+                        context.WriteError(new ErrorRecord(exc, "DirIOError", ErrorCategory.ReadError, entry.ToFullPath()));
+                    }
+                }
+
                 if ((returnContainers == ReturnContainers.ReturnAllContainers) && entry.Attributes.HasFlag(FileAttributes.Directory))
                 {
                     return true;
@@ -142,12 +170,18 @@ namespace Microsoft.PowerShell.Commands
                                 return false;
                             }
 
-                            //depth--;
-
                             return true;
                         }
 
                         return false;
+                    },
+
+                ShouldContinueOnErrorPredicate = (int error) =>
+                    {
+                        // We can not write user-friendly error message for current path because we can not get its value in the method.
+                        // So we save the error code to process it later (in FileSystemEntryFilter() method) and suppress throw.
+                        errorCode = error;
+                        return true;
                     },
 
                 OnDirectoryFinishedAction = (ReadOnlySpan<char> directory) =>
@@ -257,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
                         filterHidden,
                         tracker,
                         depth,
-                        childNamesContext,
+                        context,
                         new System.IO.EnumerationOptions { RecurseSubdirectories = recurse, MatchType = MatchType.Win32, AttributesToSkip = 0, IgnoreInaccessible = false }))
                 {
                     context.WriteObject(result);
