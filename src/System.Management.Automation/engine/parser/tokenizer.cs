@@ -5013,7 +5013,9 @@ namespace System.Management.Automation.Language
                         c = GetChar();
 
                         if (strNum == null)
-                        { return ScanGenericToken(c); }
+                        {
+                            return ScanGenericToken(c);
+                        }
                     }
 
                     return NewToken(TokenKind.Exclaim);
