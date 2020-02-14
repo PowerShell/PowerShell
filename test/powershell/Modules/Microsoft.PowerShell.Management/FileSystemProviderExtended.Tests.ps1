@@ -458,7 +458,7 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 
     Context 'Validate Get-ChildItem -Path -Include' {
-        It 'Get-ChildItem -Path $-Include "*.txt"' -Pending:$true {    # Pending due to a bug
+        It 'Get-ChildItem -Path -Include "*.txt"' -Pending:$true {    # Pending due to a bug
             $result = Get-ChildItem -Path $rootDir -Include "*.txt"
             $result.Count | Should -Be 1
             $result | Should -BeOfType System.IO.FileInfo
@@ -655,6 +655,30 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Count | Should -Be 3
             $result.Where({ $_.Name -like "*.txt" }) | Should -BeNullOrEmpty
             $result.Where({ $_.Name -like "*2.*" -or $_.Name -like "*3.*" }) | Should -BeOfType System.IO.FileInfo
+        }
+    }
+
+    Context 'Validate Get-ChildItem -Path for path that access denied' {
+        It 'Get-ChildItem writes an error if root path is not accessable' -Skip:(!$IsWindows) {
+            $path = "C:\Windows\System32\spool\SERVERS"
+            $errorId = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"
+            { Get-ChildItem -Path $path -ErrorAction Stop } | Should -Throw -ErrorId $errorId
+            { Get-ChildItem -Path $path -Recurse -ErrorAction Stop } | Should -Throw -ErrorId $errorId
+            { Get-ChildItem -Path $path -Name -ErrorAction Stop } | Should -Throw -ErrorId $errorId
+            { Get-ChildItem -Path $path -Recurse -Name -ErrorAction Stop } | Should -Throw -ErrorId "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.GetChildItemCommand"
+        }
+
+        It 'Get-ChildItem returns unaccessable folders and writes errors' -Skip:(!$IsWindows) {
+            $path = "C:\Windows\System32\spool"
+            $result1 = Get-ChildItem -Path $path -Recurse -ErrorAction SilentlyContinue -ErrorVariable error1 | Select-Object -ExpandProperty Name
+            $result1 | Should -Contain "SERVERS"
+            $error1.Count | Should -BeGreaterThan 0
+            $error1[0].FullyQualifiedErrorId | Should -BeExactly "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"
+
+            $result2 = Get-ChildItem -Path $path -Recurse -Name -ErrorAction SilentlyContinue -ErrorVariable error2
+            $result2 | Should -Contain "SERVERS"
+            $error2.Count | Should -BeGreaterThan 0
+            $error2[0].FullyQualifiedErrorId | Should -BeExactly "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"
         }
     }
 }
