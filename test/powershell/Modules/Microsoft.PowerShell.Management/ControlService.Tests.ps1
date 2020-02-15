@@ -6,9 +6,33 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     if ( -not $IsWindows ) {
         $PSDefaultParameterValues["it:skip"] = $true
     }
+    if ($IsWindows) {
+      $testservicename1 = "testrawservice1"
+      $testservicename2 = "testrawservice2"
+      $svcbinaryname    = "TestRawService"
+      $svccmd = Get-Command $svcbinaryname
+      $svccmd | Should -Not -BeNullOrEmpty
+      $svcfullpath = $svccmd.Path
+      $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
+      $testservice1 | Should -Not -BeNullOrEmpty
+      $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
+      $testservice2 | Should -Not -BeNullOrEmpty
+    }
   }
   AfterAll {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    if ($IsWindows) {
+      Stop-Process -Name $svcbinaryname -Force
+      Stop-Service $testservicename2
+      Stop-Service $testservicename1
+      Remove-Service $testservicename2
+      Remove-Service $testservicename1
+    }
+  }
+
+  It "Stop-Service fails" {
+    Start-Service $testservicename2
+    Stop-Service $testservicename1 -Force
   }
 
   It "StopServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
