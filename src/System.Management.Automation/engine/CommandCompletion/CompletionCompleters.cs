@@ -1687,7 +1687,7 @@ namespace System.Management.Automation
 
                 string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(parameterType);
                 string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                string[] enumArray = enumString.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+                string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
                 string wordToComplete = context.WordToComplete;
                 string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -6151,7 +6151,7 @@ namespace System.Management.Automation
 
                     string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(typeof(SwitchFlags));
                     string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                    string[] enumArray = enumString.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                     var enumList = new List<string>();
@@ -6626,7 +6626,7 @@ namespace System.Management.Automation
                     string tooltip = memberInfo.ToString();
                     if (tooltip.IndexOf("),", StringComparison.Ordinal) != -1)
                     {
-                        var overloads = tooltip.Split(new[] { ")," }, StringSplitOptions.RemoveEmptyEntries);
+                        var overloads = tooltip.Split("),", StringSplitOptions.RemoveEmptyEntries);
                         var newTooltip = new StringBuilder();
                         foreach (var overload in overloads)
                         {

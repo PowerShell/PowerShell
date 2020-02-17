@@ -71,7 +71,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                _probingPaths = basePaths.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string basePath = _probingPaths[i];
