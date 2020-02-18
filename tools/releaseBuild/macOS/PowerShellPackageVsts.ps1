@@ -43,6 +43,7 @@ if ($Build.IsPresent) {
         $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
         $LTS = $metadata.LTSRelease
 
+        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
     }
 }
 
