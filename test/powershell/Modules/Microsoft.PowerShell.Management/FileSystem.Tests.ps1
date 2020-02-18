@@ -1462,7 +1462,7 @@ Describe "Verify sub-directory creation under root" -Tag 'CI','RequireSudoOnUnix
         }
     }
 
-    It "Can create a sub directory under root path" {
+    It "Can create a sub directory under root path" -Skip:$IsMacOs {
         New-Item -Path $dirPath -ItemType Directory -Force > $null
         $dirPath | Should -Exist
     }
