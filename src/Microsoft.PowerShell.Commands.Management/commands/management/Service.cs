@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell.Commands
                             service,
                             exception,
                             "CouldNotRemoveService",
-                            ServiceResources.CouldNotSetService,
+                            ServiceResources.CouldNotRemoveService,
                             ErrorCategory.PermissionDenied);
                         return;
                     }
