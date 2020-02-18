@@ -1151,13 +1151,7 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            try {
-                                                $windowWidth = [Console]::WindowWidth
-                                            }
-                                            catch {
-                                                # fails if there is no console
-                                                $windowWidth = 120
-                                            }
+                                            $windowWidth = $Host.UI.RawUI.WindowSize.Width
 
                                             if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()

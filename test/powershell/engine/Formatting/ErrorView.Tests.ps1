@@ -91,7 +91,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         It "Long exception message gets rendered" {
 
             $msg = "1234567890"
-            while ($msg.Length -le [Console]::WindowWidth)
+            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width)
             {
                 $msg += $msg
             }
