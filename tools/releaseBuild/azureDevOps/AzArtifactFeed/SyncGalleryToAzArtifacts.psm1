@@ -145,7 +145,7 @@ Function CompareVersions {
     } elseif ($lt.IsPresent) {
         return $DifferencePackage -eq $latest
     } else {
-        throw "Unknow parameter set"
+        throw "Unknown parameter set"
     }
 }
 
