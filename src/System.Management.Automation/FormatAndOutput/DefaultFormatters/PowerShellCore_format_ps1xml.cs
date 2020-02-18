@@ -1168,9 +1168,17 @@ namespace System.Management.Automation.Runspaces
                                                 while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
                                                     $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()

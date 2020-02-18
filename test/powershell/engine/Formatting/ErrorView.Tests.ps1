@@ -87,6 +87,18 @@ Describe 'Tests for $ErrorView' -Tag CI {
             # validate line number is shown
             $e | Should -BeLike '* 2 *'
         }
+
+        It "Long exception message gets rendered" {
+
+            $msg = "1234567890"
+            while ($msg.Length -le [Console]::WindowWidth)
+            {
+                $msg += $msg
+            }
+
+            $e = & "$PSHOME/pwsh" -noprofile -command "throw '$msg'" | Out-String
+            $e | Should -BeLike "*$msg*"
+        }
     }
 
     Context 'NormalView tests' {
