@@ -503,12 +503,7 @@ function New-TarballPackage {
     if ($PackageNameSuffix) {
         $packageName = "$Name-$Version-{0}-$Architecture-$PackageNameSuffix.tar.gz"
     } else {
-        $packageName = if ($LTS) {
-            "$Name-lts-$Version-{0}-$Architecture.tar.gz"
-        }
-        else {
-            "$Name-$Version-{0}-$Architecture.tar.gz"
-        }
+        $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
     }
 
     if ($Environment.IsWindows) {
