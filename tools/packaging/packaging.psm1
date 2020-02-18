@@ -306,7 +306,6 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
-                        LTS = $LTS
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -369,7 +368,6 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -384,7 +382,6 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
-                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -399,7 +396,6 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
-                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -414,7 +410,6 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
-                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -502,9 +497,7 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks,
-
-        [switch] $LTS
+        [switch] $ExcludeSymbolicLinks
     )
 
     if ($PackageNameSuffix) {
