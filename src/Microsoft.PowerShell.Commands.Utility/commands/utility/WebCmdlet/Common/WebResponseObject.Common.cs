@@ -18,13 +18,13 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Gets or protected sets the Content property.
+        /// Gets or protected sets the response body content.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
 
         /// <summary>
-        /// Gets the StatusCode property.
+        /// Gets the response status code.
         /// </summary>
         public int StatusCode
         {
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the StatusDescription property.
+        /// Gets the response status description.
         /// </summary>
         public string StatusDescription
         {
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
 
         private MemoryStream _rawContentStream;
         /// <summary>
-        /// Gets the RawContentStream property.
+        /// Gets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
         public MemoryStream RawContentStream
         {
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the RawContentLength property.
+        /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
         /// </summary>
         public long RawContentLength
         {
@@ -57,8 +57,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or protected sets the RawContent property.
+        /// Gets or protected sets the full response content.
         /// </summary>
+        /// <value>
+        /// Full response content, including the HTTP status line, headers, and body.
+        /// </value>
         public string RawContent { get; protected set; }
 
         #endregion Properties
