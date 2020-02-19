@@ -204,8 +204,15 @@ function Test-IsPreview
     param(
         [parameter(Mandatory)]
         [string]
-        $Version
+        $Version,
+
+        [switch]$IsLTS
     )
+
+    if ($IsLTS.IsPresent) {
+        ## If we are building a LTS package, then never consider it preview.
+        return $false
+    }
 
     return $Version -like '*-*'
 }
