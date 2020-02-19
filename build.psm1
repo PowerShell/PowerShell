@@ -210,14 +210,12 @@ function Test-IsPreview
         [switch]$IsLTS
     )
 
-    $isPreview = $Version -like '*-*'
-    if ($IsLTS.IsPresent)
-    {
-        ## If we use a preview version as a LTS package, then don't consider it preview.
-        $isPreview = $isPreview -and !$IsLTS
+    if ($IsLTS.IsPresent) {
+        ## If we are building a LTS package, then never consider it preview.
+        return $false
     }
 
-    return $isPreview
+    return $Version -like '*-*'
 }
 
 <#
