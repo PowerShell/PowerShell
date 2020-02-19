@@ -1098,7 +1098,7 @@ namespace Microsoft.WSMan.Management
                         string Line = _sr.ReadLine();
                         if (Line.Contains("="))
                         {
-                            string[] arr = Line.Split('=', 2);
+                            string[] arr = Line.Split('=', count: 2);
                             if (!ResourceValueCache.ContainsKey(arr[0].Trim()))
                             {
                                 string value = arr[1].TrimStart('"').TrimEnd('"');
