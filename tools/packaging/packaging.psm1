@@ -775,7 +775,7 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        $IsPreview = Test-IsPreview -Version $Version
+        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
 
         # Preview versions have preview in the name
         $Name = if($LTS) {
@@ -1440,7 +1440,7 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launcher application.
