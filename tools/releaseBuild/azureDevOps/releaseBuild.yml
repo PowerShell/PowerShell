@@ -141,7 +141,9 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      @{ ReleaseVersion = "$(Version)" } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease
+      @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
       Get-Content "$(Build.StagingDirectory)\release.json"
       Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
     displayName: Create and upload release.json file to build artifact
