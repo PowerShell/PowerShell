@@ -141,4 +141,16 @@
   <data name="CannotEncryptSecureString" xml:space="preserve">
     <value>Session key not available to encrypt secure string.</value>
   </data>
+  <data name="InvalidOffset" xml:space="preserve">
+    <value>Invalid buffer offset.</value>
+  </data>
+  <data name="InvalidPublicKey" xml:space="preserve">
+    <value>Invalid public key data.</value>
+  </data>
+  <data name="CannotImportPublicKey" xml:space="preserve">
+    <value>Cannot import public key.</value>
+  </data>
+  <data name="InvalidSessionKey" xml:space="preserve">
+    <value>Invalid session key data.</value>
+  </data>
 </root>
