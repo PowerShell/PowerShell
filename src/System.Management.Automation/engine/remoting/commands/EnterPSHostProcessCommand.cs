@@ -765,7 +765,6 @@ namespace Microsoft.PowerShell.Commands
             private set;
         }
 
-#if !CORECLR
         /// <summary>
         /// Main window title of the process.
         /// </summary>
@@ -774,7 +773,6 @@ namespace Microsoft.PowerShell.Commands
             get;
             private set;
         }
-#endif
 
         #endregion
 
@@ -794,7 +792,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
-#if !CORECLR
             MainWindowTitle = string.Empty;
             try
             {
@@ -803,7 +800,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException) { }
             catch (InvalidOperationException) { }
-#endif
 
             this.ProcessName = processName;
             this.ProcessId = processId;
