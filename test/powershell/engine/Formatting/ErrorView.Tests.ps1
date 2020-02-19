@@ -96,7 +96,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $msg += $msg
             }
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "throw '$msg'" | Out-String
+            $e = { throw "$msg" } | Should -Throw $msg -PassThru | Out-String
             $e | Should -BeLike "*$msg*"
         }
     }
