@@ -823,12 +823,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message">Message to log.</param>
         internal void LogMessage(string message)
         {
-#if !CORECLR // TODO:CORECLR Uncomment when we add PSEtwLog support
-            List<string> details = new List<string>();
-
-            details.Add(message);
+            List<string> details = new List<string>() { message };
             PSEtwLog.LogPipelineExecutionDetailEvent(MshLog.GetLogContext(Context, Context.CurrentCommandProcessor.Command.MyInvocation), details);
-#endif
         }
 
         #endregion

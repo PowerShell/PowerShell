@@ -243,9 +243,6 @@ namespace System.Management.Automation.Remoting
             readerSettings.IgnoreProcessingInstructions = true;
             readerSettings.MaxCharactersInDocument = 10000;
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
-            readerSettings.XmlResolver = null;
-#endif
 
             using (XmlReader reader = XmlReader.Create(new StringReader(initializationParameters), readerSettings))
             {
