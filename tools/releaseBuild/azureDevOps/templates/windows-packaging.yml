@@ -127,7 +127,7 @@ jobs:
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
-       New-Item -ItemType Directory -Path $(System.ArtifactsDirectory)\signedZip -Force
+       New-Item -ItemType Directory -Path $(System.ArtifactsDirectory)\signed -Force
     displayName: 'Create empty signed folder'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
