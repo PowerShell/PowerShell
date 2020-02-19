@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _inputFields;
 
         /// <summary>
-        /// Gets the HTML input elements parsed from <see cref="Content"/>.
+        /// Gets the HTML input field elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection InputFields
         {
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _links;
 
         /// <summary>
-        /// Gets the HTML a elements parsed from <see cref="Content"/>.
+        /// Gets the HTML a link elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection Links
         {
