@@ -697,6 +697,7 @@ namespace System.Management.Automation
 
             Name = name;
             Control = control;
+            InstanceId = Guid.NewGuid();
         }
     }
 
