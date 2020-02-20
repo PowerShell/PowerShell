@@ -1896,7 +1896,7 @@ namespace System.Management.Automation.Remoting
         private string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
-            if (roleCapability.IndexOf('\\') != -1)
+            if (roleCapability.Contains('\\'))
             {
                 string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
                 moduleName = components[0];

@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>Return match result.</returns>
         private static bool MatchesEvenIfInPlural(string commandName, string filter)
         {
-            if (commandName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1)
+            if (commandName.Contains(filter, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

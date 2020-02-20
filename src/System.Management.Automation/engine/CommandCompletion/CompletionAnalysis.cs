@@ -1564,7 +1564,7 @@ namespace System.Management.Automation
                         result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
 
                         // Try command name completion only if the text contains '-'
-                        if (wordToComplete.IndexOf('-') != -1)
+                        if (wordToComplete.Contains('-'))
                         {
                             var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
                             if (commandNameResult != null && commandNameResult.Count > 0)

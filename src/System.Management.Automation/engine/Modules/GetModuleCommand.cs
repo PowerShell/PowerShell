@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var n in names)
                 {
-                    if (n.IndexOf(StringLiterals.DefaultPathSeparator) != -1 || n.IndexOf(StringLiterals.AlternatePathSeparator) != -1)
+                    if (n.Contains(StringLiterals.DefaultPathSeparator) || n.Contains(StringLiterals.AlternatePathSeparator))
                     {
                         string errorMessage = StringUtil.Format(stringFormat, n);
                         var argumentException = new ArgumentException(errorMessage);
