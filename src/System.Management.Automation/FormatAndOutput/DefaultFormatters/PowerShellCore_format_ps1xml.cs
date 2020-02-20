@@ -1151,12 +1151,10 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            try {
-                                                $windowWidth = [Console]::WindowWidth
-                                            }
-                                            catch {
-                                                # fails if there is no console
-                                                $windowWidth = 120
+
+                                            $windowWidth = 120
+                                            if ($Host.UI.RawUI -ne $null) {
+                                                $windowWidth = $Host.UI.RawUI.WindowSize.Width
                                             }
 
                                             if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
@@ -1168,9 +1166,17 @@ namespace System.Management.Automation.Runspaces
                                                 while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
                                                     $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
