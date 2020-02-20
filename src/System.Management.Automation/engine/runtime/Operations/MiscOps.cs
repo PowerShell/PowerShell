@@ -1575,15 +1575,23 @@ namespace System.Management.Automation
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            bool oldIsStopping = lpl.Stopper.IsStopping;
-            lpl.Stopper.IsStopping = false;
-            return oldIsStopping;
+            if (lpl != null)
+            {
+                bool oldIsStopping = lpl.Stopper.IsStopping;
+                lpl.Stopper.IsStopping = false;
+                return oldIsStopping;
+            }
+
+            return false;
         }
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            lpl.Stopper.IsStopping = oldIsStopping;
+            if (lpl != null)
+            {
+                lpl.Stopper.IsStopping = oldIsStopping;
+            }
         }
 
         internal static void CheckActionPreference(FunctionContext funcContext, Exception exception)
