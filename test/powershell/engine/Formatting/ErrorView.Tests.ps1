@@ -4,7 +4,7 @@
 Describe 'Tests for $ErrorView' -Tag CI {
 
     It '$ErrorView is an enum' {
-        $ErrorView | Should -BeOfType [System.Management.Automation.ErrorView]
+        $ErrorView | Should -BeOfType System.Management.Automation.ErrorView
     }
 
     It '$ErrorView should have correct default value' {
@@ -88,10 +88,16 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -BeLike '* 2 *'
         }
 
-        It "Position message does not contain line information" {
+        It "Long exception message gets rendered" {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
-            $e | Should -Not -BeLike "*At line*"
+            $msg = "1234567890"
+            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width)
+            {
+                $msg += $msg
+            }
+
+            $e = { throw "$msg" } | Should -Throw $msg -PassThru | Out-String
+            $e | Should -BeLike "*$msg*"
         }
     }
 
