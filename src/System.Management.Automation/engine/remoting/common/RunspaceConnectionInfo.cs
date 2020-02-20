@@ -2548,7 +2548,12 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                // Create process start command line with filename and argument list.
+                var cmdLine = string.Format(
+                    CultureInfo.InvariantCulture, 
+                    @"""{0}"" {1}", 
+                    startInfo.FileName,
+                    string.Join(' ', startInfo.ArgumentList));
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
