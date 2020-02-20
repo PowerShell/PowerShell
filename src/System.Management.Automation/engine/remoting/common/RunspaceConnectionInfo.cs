@@ -2553,7 +2553,7 @@ namespace System.Management.Automation.Runspaces
                     CultureInfo.InvariantCulture, 
                     @"""{0}"" {1}", 
                     startInfo.FileName,
-                    String.Join(' ', startInfo.ArgumentList));
+                    string.Join(' ', startInfo.ArgumentList));
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
