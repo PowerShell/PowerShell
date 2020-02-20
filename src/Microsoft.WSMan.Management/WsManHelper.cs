@@ -1101,7 +1101,7 @@ namespace Microsoft.WSMan.Management
                             string[] arr = Line.Split('=', count: 2);
                             if (!ResourceValueCache.ContainsKey(arr[0].Trim()))
                             {
-                                string value = arr[1].TrimStart('"').TrimEnd('"');
+                                string value = arr[1].Trim('"');
                                 ResourceValueCache.Add(arr[0].Trim(), value.Trim());
                             }
                         }
