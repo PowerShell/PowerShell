@@ -771,8 +771,7 @@ namespace System.Management.Automation
                 {
                     do // false loop
                     {
-                        ProviderInvocationException pie = e as ProviderInvocationException;
-                        if (pie != null)
+                        if (e is ProviderInvocationException pie)
                         {
                             // If a ProviderInvocationException occurred,
                             // discard the ProviderInvocationException and
@@ -799,8 +798,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        RuntimeException rte = e as RuntimeException;
-                        if (rte != null && rte.WasThrownFromThrowStatement)
+                        if (e is RuntimeException rte && rte.WasThrownFromThrowStatement)
                         {
                             // do not rewrap a script based throw
                             break;
@@ -944,8 +942,7 @@ namespace System.Management.Automation
                 // 2004/03/05-JonN Look into using metadata to check
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
-                IDisposable id = Command as IDisposable;
-                if (id != null)
+                if (Command is IDisposable id)
                 {
                     id.Dispose();
                 }

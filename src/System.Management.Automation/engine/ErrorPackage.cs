@@ -1301,8 +1301,7 @@ namespace System.Management.Automation
             string exceptionMessage = null;
             if (serializedException != null)
             {
-                PSPropertyInfo messageProperty = serializedException.Properties["Message"] as PSPropertyInfo;
-                if (messageProperty != null)
+                if (serializedException.Properties["Message"] is PSPropertyInfo messageProperty)
                 {
                     exceptionMessage = messageProperty.Value as string;
                 }
@@ -1661,14 +1660,12 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
-            if (scriptInfo != null)
+            if (commandInfo is IScriptCommandInfo scriptInfo)
             {
                 return commandInfo.Name;
             }
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo == null)
+            if (!(commandInfo is CmdletInfo cmdletInfo))
             {
                 return string.Empty;
             }

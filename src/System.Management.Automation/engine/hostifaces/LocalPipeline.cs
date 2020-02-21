@@ -490,8 +490,7 @@ namespace System.Management.Automation.Runspaces
                         }
                     }
 
-                    PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
-                    if (eventManager != null)
+                    if (LocalRunspace.Events is PSLocalEventManager eventManager)
                     {
                         eventManager.ProcessPendingActions();
                     }
@@ -565,9 +564,7 @@ namespace System.Management.Automation.Runspaces
                 // Set up pipeline internal host if it is available.
                 if (InvocationSettings != null && InvocationSettings.Host != null)
                 {
-                    InternalHost internalHost = InvocationSettings.Host as InternalHost;
-
-                    if (internalHost != null) // if we are given an internal host, use the external host
+                    if (InvocationSettings.Host is InternalHost internalHost) // if we are given an internal host, use the external host
                     {
                         LocalRunspace.ExecutionContext.InternalHost.SetHostRef(internalHost.ExternalHost);
                     }
@@ -938,21 +935,18 @@ namespace System.Management.Automation.Runspaces
                 commandInfo = ((AliasInfo)commandInfo).ReferencedCommand;
             }
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 return new CommandProcessor(cmdletInfo, LocalRunspace.ExecutionContext);
             }
 
-            IScriptCommandInfo functionInfo = commandInfo as IScriptCommandInfo;
-            if (functionInfo != null)
+            if (commandInfo is IScriptCommandInfo functionInfo)
             {
                 return new CommandProcessor(functionInfo, LocalRunspace.ExecutionContext,
                     useLocalScope: false, fromScriptFile: false, sessionState: LocalRunspace.ExecutionContext.EngineSessionState);
             }
 
-            ApplicationInfo applicationInfo = commandInfo as ApplicationInfo;
-            if (applicationInfo != null)
+            if (commandInfo is ApplicationInfo applicationInfo)
             {
                 return new NativeCommandProcessor(applicationInfo, LocalRunspace.ExecutionContext);
             }

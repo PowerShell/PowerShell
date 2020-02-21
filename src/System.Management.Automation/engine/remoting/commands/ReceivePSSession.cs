@@ -455,8 +455,7 @@ namespace Microsoft.PowerShell.Commands
                 if (shellUri != null)
                 {
                     // Compare with returned shell Uri in connection info.
-                    WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
-                    if (wsmanConnectionInfo != null &&
+                    if (runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo &&
                         !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -1155,8 +1154,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-            if (remoteRunspace == null)
+            if (!(session.Runspace is RemoteRunspace remoteRunspace))
             {
                 return null;
             }
@@ -1191,9 +1189,8 @@ namespace Microsoft.PowerShell.Commands
         private PSRemotingJob FindJobForSession(PSSession session)
         {
             PSRemotingJob job = null;
-            RemoteRunspace remoteSessionRunspace = session.Runspace as RemoteRunspace;
 
-            if (remoteSessionRunspace == null ||
+            if (!(session.Runspace is RemoteRunspace remoteSessionRunspace) ||
                 remoteSessionRunspace.RemoteCommand != null)
             {
                 // The provided session is created for *reconstruction* and we

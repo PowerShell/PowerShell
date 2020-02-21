@@ -104,8 +104,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException te)
             {
                 // First check if this is a severe exception.
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (!(te.InnerException is COMException innerCom) || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     string message = te.InnerException == null ? te.Message : te.InnerException.Message;
                     throw new MethodInvocationException(

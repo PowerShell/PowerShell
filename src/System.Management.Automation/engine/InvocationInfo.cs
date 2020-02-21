@@ -76,8 +76,7 @@ namespace System.Management.Automation
             // Populate the history ID of this command
             if (contextToUse != null)
             {
-                Runspaces.LocalRunspace localRunspace = contextToUse.CurrentRunspace as Runspaces.LocalRunspace;
-                if (localRunspace != null && localRunspace.History != null)
+                if (contextToUse.CurrentRunspace is Runspaces.LocalRunspace localRunspace && localRunspace.History != null)
                 {
                     HistoryId = localRunspace.History.GetNextHistoryId();
                 }
@@ -431,8 +430,7 @@ namespace System.Management.Automation
             RemotingEncoder.AddNoteProperty<string>(psObject, "InvocationInfo_ScriptName", () => this.ScriptName);
             RemotingEncoder.AddNoteProperty<object>(psObject, "InvocationInfo_UnboundArguments", () => this.UnboundArguments);
 
-            ScriptExtent extent = DisplayScriptPosition as ScriptExtent;
-            if (extent != null)
+            if (DisplayScriptPosition is ScriptExtent extent)
             {
                 extent.ToPSObjectForRemoting(psObject);
                 RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => true);

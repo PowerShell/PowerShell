@@ -446,10 +446,9 @@ namespace System.Management.Automation
 
             foreach (TableRowItemDefinition itemdef in rowdefinition.rowItemDefinitionList)
             {
-                FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
                 TableControlColumn column;
 
-                if (fpt != null)
+                if (itemdef.formatTokenList[0] is FieldPropertyToken fpt)
                 {
                     column = new TableControlColumn(fpt.expression.expressionValue, itemdef.alignment,
                                     fpt.expression.isScriptBlock, fpt.fieldFormattingDirective.formatString);

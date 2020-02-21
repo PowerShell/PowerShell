@@ -561,15 +561,13 @@ namespace System.Management.Automation
             if (errorList.Count > 0)
             {
                 string exceptionThrown;
-                ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
-                if (lastErrorRecord != null)
+                if (errorList[0] is ErrorRecord lastErrorRecord)
                 {
                     exceptionThrown = lastErrorRecord.ToString();
                 }
                 else
                 {
-                    Exception lastException = errorList[0] as Exception;
-                    if (lastException != null)
+                    if (errorList[0] is Exception lastException)
                     {
                         exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
                     }
@@ -1145,8 +1143,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private bool ResetRunspaceState()
         {
-            LocalRunspace runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
-            if ((runspaceToReset == null) || (RunspacePool.GetMaxRunspaces() > 1))
+            if ((!(_rsToUseForSteppablePipeline is LocalRunspace runspaceToReset)) || (RunspacePool.GetMaxRunspaces() > 1))
             {
                 return false;
             }
@@ -1329,8 +1326,7 @@ namespace System.Management.Automation
                 }
 
                 DebuggerResumeAction? resumeAction = null;
-                PSObject resumeObject = command.Parameters[0].Value as PSObject;
-                if (resumeObject != null)
+                if (command.Parameters[0].Value is PSObject resumeObject)
                 {
                     try
                     {
@@ -1357,8 +1353,7 @@ namespace System.Management.Automation
                 }
 
                 DebugModes? mode = null;
-                PSObject modeObject = command.Parameters[0].Value as PSObject;
-                if (modeObject != null)
+                if (command.Parameters[0].Value is PSObject modeObject)
                 {
                     try
                     {
@@ -1400,8 +1395,7 @@ namespace System.Management.Automation
                 }
 
                 UnhandledBreakpointProcessingMode? mode = null;
-                PSObject modeObject = command.Parameters[0].Value as PSObject;
-                if (modeObject != null)
+                if (command.Parameters[0].Value is PSObject modeObject)
                 {
                     try
                     {
@@ -2639,8 +2633,7 @@ namespace System.Management.Automation
         private bool IsDebuggingSupported()
         {
             // Restriction only occurs on a (non-pushed) local runspace.
-            LocalRunspace localRunspace = _runspace as LocalRunspace;
-            if (localRunspace != null)
+            if (_runspace is LocalRunspace localRunspace)
             {
                 CmdletInfo cmdletInfo = localRunspace.ExecutionContext.EngineSessionState.GetCmdlet(SetPSBreakCommandText);
                 if ((cmdletInfo != null) && (cmdletInfo.Visibility != SessionStateEntryVisibility.Public))
@@ -2770,8 +2763,7 @@ namespace System.Management.Automation
 
         internal int GetBreakpointCount()
         {
-            ScriptDebugger scriptDebugger = _wrappedDebugger.Value as ScriptDebugger;
-            if (scriptDebugger != null)
+            if (_wrappedDebugger.Value is ScriptDebugger scriptDebugger)
             {
                 return scriptDebugger.GetBreakpoints().Count;
             }

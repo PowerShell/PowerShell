@@ -94,11 +94,9 @@ namespace System.Management.Automation.Remoting
             bool hostAllowSetShouldExit = false;
             if (clientHost != null)
             {
-                PSObject hostPrivateData = clientHost.PrivateData as PSObject;
-                if (hostPrivateData != null)
+                if (clientHost.PrivateData is PSObject hostPrivateData)
                 {
-                    PSNoteProperty allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
-                    hostAllowSetShouldExit = (allowSetShouldExit != null && allowSetShouldExit.Value is bool) ?
+                    hostAllowSetShouldExit = (hostPrivateData.Properties["AllowSetShouldExitFromRemote"] is PSNoteProperty allowSetShouldExit && allowSetShouldExit.Value is bool) ?
                         (bool)allowSetShouldExit.Value : false;
                 }
             }
@@ -134,8 +132,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private bool IsRunspacePushed(PSHost host)
         {
-            IHostSupportsInteractiveSession host2 = host as IHostSupportsInteractiveSession;
-            if (host2 == null) { return false; }
+            if (!(host is IHostSupportsInteractiveSession host2))
+            { return false; }
 
             // IsRunspacePushed can throw (not implemented exception)
             try

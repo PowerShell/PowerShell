@@ -140,8 +140,7 @@ namespace System.Management.Automation
         {
             object result = parameter.Value;
 
-            var compiledDefault = result as Compiler.DefaultValueExpressionWrapper;
-            if (compiledDefault != null)
+            if (result is Compiler.DefaultValueExpressionWrapper compiledDefault)
             {
                 result = compiledDefault.GetValue(Context, Script.SessionStateInternal, implicitUsingParameters);
             }

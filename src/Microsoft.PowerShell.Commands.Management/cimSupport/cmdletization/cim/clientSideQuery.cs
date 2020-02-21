@@ -36,8 +36,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (wildcardsEnabled)
                 {
-                    var propertyValueAsString = propertyValue as string;
-                    if ((propertyValueAsString != null) && (WildcardPattern.ContainsWildcardCharacters(propertyValueAsString)))
+                    if ((propertyValue is string propertyValueAsString) && (WildcardPattern.ContainsWildcardCharacters(propertyValueAsString)))
                     {
                         this.ErrorMessageGenerator =
                             (queryDescription, className) => GetErrorMessageForNotFound_ForWildcard(this.PropertyName, this.PropertyValue, className);
@@ -464,8 +463,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
                 else
                 {
-                    string expectedPropertyValueAsString = cimTypedExpectedPropertyValue as string;
-                    if (expectedPropertyValueAsString != null && WildcardPattern.ContainsWildcardCharacters(expectedPropertyValueAsString))
+                    if (cimTypedExpectedPropertyValue is string expectedPropertyValueAsString && WildcardPattern.ContainsWildcardCharacters(expectedPropertyValueAsString))
                     {
                         return BehaviorOnNoMatch.SilentlyContinue;
                     }
@@ -502,8 +500,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     actualPropertyValue = actualPropertyValue.ToString();
                 }
 
-                var expectedPropertyValueAsString = expectedPropertyValue as string;
-                if (expectedPropertyValueAsString != null)
+                if (expectedPropertyValue is string expectedPropertyValueAsString)
                 {
                     var actualPropertyValueAsString = (string)actualPropertyValue;
                     return actualPropertyValueAsString.Equals(expectedPropertyValueAsString, StringComparison.OrdinalIgnoreCase);
@@ -568,8 +565,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (!(expectedPropertyValue is IComparable expectedComparable))
                     {
                         return false;
                     }
@@ -604,8 +600,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (!(actualPropertyValue is IComparable actualComparable))
                     {
                         return false;
                     }

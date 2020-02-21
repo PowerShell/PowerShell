@@ -2091,8 +2091,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimClass cimClass = writeResultObject.Result as CimClass;
-            if (cimClass == null)
+            if (!(writeResultObject.Result is CimClass cimClass))
             {
                 return true;
             }
@@ -2245,8 +2244,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimInstance cimInstance = writeResultObject.Result as CimInstance;
-            if (cimInstance == null)
+            if (!(writeResultObject.Result is CimInstance cimInstance))
             {
                 return true;
             }

@@ -1055,8 +1055,7 @@ namespace System.Management.Automation
             }
             else if (outputValue.Stream == MinishellStream.Progress)
             {
-                PSObject temp = outputValue.Data as PSObject;
-                if (temp != null)
+                if (outputValue.Data is PSObject temp)
                 {
                     long sourceId = 0;
                     PSMemberInfo info = temp.Properties["SourceId"];

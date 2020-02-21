@@ -737,22 +737,18 @@ namespace System.Management.Automation.Help
                 List<PSObject> navigationLinkValues = new List<PSObject> { navigationLinkObj };
 
                 // check if obj already has relatedLinks property
-                PSNoteProperty relatedLinksPO = obj.Properties["relatedLinks"] as PSNoteProperty;
-                if ((relatedLinksPO != null) && (relatedLinksPO.Value != null))
+                if ((obj.Properties["relatedLinks"] is PSNoteProperty relatedLinksPO) && (relatedLinksPO.Value != null))
                 {
                     PSObject relatedLinksValue = PSObject.AsPSObject(relatedLinksPO.Value);
-                    PSNoteProperty navigationLinkPO = relatedLinksValue.Properties["navigationLink"] as PSNoteProperty;
-                    if ((navigationLinkPO != null) && (navigationLinkPO.Value != null))
+                    if ((relatedLinksValue.Properties["navigationLink"] is PSNoteProperty navigationLinkPO) && (navigationLinkPO.Value != null))
                     {
-                        PSObject navigationLinkValue = navigationLinkPO.Value as PSObject;
-                        if (navigationLinkValue != null)
+                        if (navigationLinkPO.Value is PSObject navigationLinkValue)
                         {
                             navigationLinkValues.Add(navigationLinkValue);
                         }
                         else
                         {
-                            PSObject[] navigationLinkValueArray = navigationLinkPO.Value as PSObject[];
-                            if (navigationLinkValueArray != null)
+                            if (navigationLinkPO.Value is PSObject[] navigationLinkValueArray)
                             {
                                 foreach (var psObject in navigationLinkValueArray)
                                 {
@@ -784,9 +780,7 @@ namespace System.Management.Automation.Help
 
             foreach (Attribute attribute in attributes)
             {
-                ParameterAttribute paramAttribute = (object)attribute as ParameterAttribute;
-
-                if (paramAttribute != null)
+                if ((object)attribute is ParameterAttribute paramAttribute)
                 {
                     paramAttributes.Add(paramAttribute);
                 }
@@ -806,9 +800,7 @@ namespace System.Management.Automation.Help
 
             foreach (Attribute attribute in attributes)
             {
-                ValidateSetAttribute validateSetAttribute = (object)attribute as ValidateSetAttribute;
-
-                if (validateSetAttribute != null)
+                if ((object)attribute is ValidateSetAttribute validateSetAttribute)
                 {
                     validateSetAttributes.Add(validateSetAttribute);
                 }

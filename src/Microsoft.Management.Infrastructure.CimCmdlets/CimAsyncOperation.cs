@@ -348,16 +348,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected object GetBaseObject(object value)
         {
-            PSObject psObject = value as PSObject;
-            if (psObject == null)
+            if (!(value is PSObject psObject))
             {
                 return value;
             }
             else
             {
                 object baseObject = psObject.BaseObject;
-                var arrayObject = baseObject as object[];
-                if (arrayObject == null)
+                if (!(baseObject is object[] arrayObject))
                 {
                     return baseObject;
                 }
@@ -384,12 +382,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
-            PSReference cimReference = value as PSReference;
-            if (cimReference != null)
+            if (value is PSReference cimReference)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                CimInstance cimInstance = baseObject as CimInstance;
-                if (cimInstance == null)
+                if (!(baseObject is CimInstance cimInstance))
                 {
                     return null;
                 }
@@ -399,8 +395,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                object[] cimReferenceArray = value as object[];
-                if (cimReferenceArray == null)
+                if (!(value is object[] cimReferenceArray))
                 {
                     return null;
                 }
@@ -412,8 +407,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    PSReference tempCimReference = cimReferenceArray[i] as PSReference;
-                    if (tempCimReference == null)
+                    if (!(cimReferenceArray[i] is PSReference tempCimReference))
                     {
                         return null;
                     }

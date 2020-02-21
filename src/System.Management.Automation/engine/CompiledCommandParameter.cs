@@ -437,8 +437,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
-            if (validateAttr != null)
+            if (attribute is ValidateArgumentsAttribute validateAttr)
             {
                 if (validationAttributes == null)
                     validationAttributes = new Collection<ValidateArgumentsAttribute>();
@@ -451,8 +450,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            AliasAttribute aliasAttr = attribute as AliasAttribute;
-            if (aliasAttr != null)
+            if (attribute is AliasAttribute aliasAttr)
             {
                 if (aliases == null)
                 {
@@ -470,8 +468,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
-            if (argumentAttr != null)
+            if (attribute is ArgumentTransformationAttribute argumentAttr)
             {
                 if (argTransformationAttributes == null)
                     argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
@@ -479,36 +476,31 @@ namespace System.Management.Automation
                 return;
             }
 
-            AllowNullAttribute allowNullAttribute = attribute as AllowNullAttribute;
-            if (allowNullAttribute != null)
+            if (attribute is AllowNullAttribute allowNullAttribute)
             {
                 this.AllowsNullArgument = true;
                 return;
             }
 
-            AllowEmptyStringAttribute allowEmptyStringAttribute = attribute as AllowEmptyStringAttribute;
-            if (allowEmptyStringAttribute != null)
+            if (attribute is AllowEmptyStringAttribute allowEmptyStringAttribute)
             {
                 this.AllowsEmptyStringArgument = true;
                 return;
             }
 
-            AllowEmptyCollectionAttribute allowEmptyCollectionAttribute = attribute as AllowEmptyCollectionAttribute;
-            if (allowEmptyCollectionAttribute != null)
+            if (attribute is AllowEmptyCollectionAttribute allowEmptyCollectionAttribute)
             {
                 this.AllowsEmptyCollectionArgument = true;
                 return;
             }
 
-            ObsoleteAttribute obsoleteAttr = attribute as ObsoleteAttribute;
-            if (obsoleteAttr != null)
+            if (attribute is ObsoleteAttribute obsoleteAttr)
             {
                 ObsoleteAttribute = obsoleteAttr;
                 return;
             }
 
-            PSTypeNameAttribute psTypeNameAttribute = attribute as PSTypeNameAttribute;
-            if (psTypeNameAttribute != null)
+            if (attribute is PSTypeNameAttribute psTypeNameAttribute)
             {
                 this.PSTypeName = psTypeNameAttribute.PSTypeName;
             }

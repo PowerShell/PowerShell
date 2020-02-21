@@ -1703,15 +1703,13 @@ namespace System.Management.Automation.Remoting.Client
         internal override void ProcessPrivateData(object privateData)
         {
             // Raise the Robust
-            ConnectionStatusEventArgs rcArgs = privateData as ConnectionStatusEventArgs;
-            if (rcArgs != null)
+            if (privateData is ConnectionStatusEventArgs rcArgs)
             {
                 RaiseRobustConnectionNotification(rcArgs);
                 return;
             }
 
-            CompletionEventArgs completionArgs = privateData as CompletionEventArgs;
-            if (completionArgs != null)
+            if (privateData is CompletionEventArgs completionArgs)
             {
                 switch (completionArgs.Notification)
                 {

@@ -193,8 +193,7 @@ namespace System.Management.Automation
 
         private void PerformSecurityChecks()
         {
-            var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null)
+            if (!(Ast is ScriptBlockAst scriptBlockAst))
             {
                 // Checks are only needed at the top level.
                 return;
@@ -263,14 +262,12 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
-                if (pipelineAst == null)
+                if (!(endBlock.Statements[0] is PipelineAst pipelineAst))
                 {
                     return false;
                 }
 
-                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
-                if (hashtableAst == null)
+                if (!(pipelineAst.GetPureExpression() is HashtableAst hashtableAst))
                 {
                     return false;
                 }
@@ -356,8 +353,7 @@ namespace System.Management.Automation
             // Use _ast instead of Ast
             //  If we access Ast, we may parse a "delay parsed" script block unnecessarily
             //  if _ast is null - it can't be a configuration as there is no way to create a configuration that way
-            var scriptBlockAst = _ast as ScriptBlockAst;
-            return scriptBlockAst != null && scriptBlockAst.IsConfiguration;
+            return _ast is ScriptBlockAst scriptBlockAst && scriptBlockAst.IsConfiguration;
         }
 
         internal bool HasSuspiciousContent
@@ -495,8 +491,7 @@ namespace System.Management.Automation
                 return sbAst.ToStringForSerialization();
             }
 
-            var generatedMemberFunctionAst = _ast as CompilerGeneratedMemberFunctionAst;
-            if (generatedMemberFunctionAst != null)
+            if (_ast is CompilerGeneratedMemberFunctionAst generatedMemberFunctionAst)
             {
                 return generatedMemberFunctionAst.Extent.Text;
             }
@@ -657,8 +652,7 @@ namespace System.Management.Automation
             Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             FunctionDefinitionAst funcDefn = null;
-            var sbAst = Ast as ScriptBlockAst;
-            if (sbAst == null)
+            if (!(Ast is ScriptBlockAst sbAst))
             {
                 funcDefn = (FunctionDefinitionAst)Ast;
                 sbAst = funcDefn.Body;
@@ -758,8 +752,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
 
-            var pipeAst = statements[0] as PipelineAst;
-            if (pipeAst == null)
+            if (!(statements[0] is PipelineAst pipeAst))
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }

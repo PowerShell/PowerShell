@@ -216,8 +216,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (exception is IContainsErrorRecord icer && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -418,8 +417,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (exception is IContainsErrorRecord icer && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -609,8 +607,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (exception is IContainsErrorRecord icer && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -808,9 +805,7 @@ namespace System.Management.Automation
                 logContext.User = Logging.UnknownUserName;
             }
 
-            System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
-                    executionContext.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-            if (psSenderInfo != null)
+            if (executionContext.SessionState.PSVariable.GetValue("PSSenderInfo") is System.Management.Automation.Remoting.PSSenderInfo psSenderInfo)
             {
                 logContext.ConnectedUser = psSenderInfo.UserInfo.Identity.Name;
             }

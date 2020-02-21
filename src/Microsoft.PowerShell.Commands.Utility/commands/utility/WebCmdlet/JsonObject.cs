@@ -577,15 +577,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        IDictionary dict = obj as IDictionary;
-                        if (dict != null)
+                        if (obj is IDictionary dict)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
-                            IEnumerable enumerable = obj as IEnumerable;
-                            if (enumerable != null)
+                            if (obj is IEnumerable enumerable)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
                             }
@@ -620,9 +618,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
         {
-            PSObject pso = psObj as PSObject;
-
-            if (pso == null)
+            if (!(psObj is PSObject pso))
             {
                 return obj;
             }
@@ -634,9 +630,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool wasDictionary = true;
-            IDictionary dict = obj as IDictionary;
 
-            if (dict == null)
+            if (!(obj is IDictionary dict))
             {
                 wasDictionary = false;
                 dict = new Dictionary<string, object>();

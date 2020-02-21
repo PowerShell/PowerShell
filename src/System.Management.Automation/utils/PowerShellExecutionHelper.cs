@@ -181,9 +181,8 @@ namespace System.Management.Automation
 
             try
             {
-                PSObject pso = obj as PSObject;
                 string result;
-                if (pso != null)
+                if (obj is PSObject pso)
                 {
                     object baseObject = pso.BaseObject;
                     if (baseObject != null && !(baseObject is PSCustomObject))

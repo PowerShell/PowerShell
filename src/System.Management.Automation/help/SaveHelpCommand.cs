@@ -431,8 +431,7 @@ namespace Microsoft.PowerShell.Commands
             object argument = PSObject.Base(inputData);
 
             // deal with scalar string argument
-            var strArg = argument as string;
-            if (strArg != null)
+            if (argument is string strArg)
             {
                 return new PSModuleInfo(name: strArg, path: null, context: null, sessionState: null);
             }

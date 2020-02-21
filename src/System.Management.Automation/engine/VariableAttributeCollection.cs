@@ -119,8 +119,7 @@ namespace System.Management.Automation
             object variableValue = _variable.Value;
 
             // Perform transformation before validating
-            ArgumentTransformationAttribute argumentTransformation = item as ArgumentTransformationAttribute;
-            if (argumentTransformation != null)
+            if (item is ArgumentTransformationAttribute argumentTransformation)
             {
                 // Get an EngineIntrinsics instance using the context of the thread.
 

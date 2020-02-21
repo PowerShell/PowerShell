@@ -92,8 +92,7 @@ namespace System.Management.Automation.Remoting
                 // This is trusted input as long as we're in FullLanguage mode
                 // and if we are not in a loopback configuration mode, in which case we always force remote script commands
                 // to be parsed and evaluated on the remote session (not in the current local session).
-                RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isConfiguredLoopback = (_runspaceRef.Value is RemoteRunspace remoteRunspace) ? remoteRunspace.IsConfiguredLoopBack : false;
                 bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
@@ -216,8 +215,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add robust connection callback if this is a pushed runspace.
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;
-            if (this.IsRunspaceOverridden && remotePipeline != null)
+            if (this.IsRunspaceOverridden && pipeline is RemotePipeline remotePipeline)
             {
                 PowerShell shell = remotePipeline.PowerShell;
                 if (shell.RemotePowerShell != null)
@@ -229,9 +227,7 @@ namespace System.Management.Automation.Remoting
                 // Add callback to write robust connection errors from stream.
                 shell.ErrorBuffer.DataAdded += (sender, eventArgs) =>
                 {
-                    RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-                    PSDataCollection<ErrorRecord> erBuffer = sender as PSDataCollection<ErrorRecord>;
-                    if (remoteRunspace != null && erBuffer != null &&
+                    if (_runspaceRef.Value is RemoteRunspace remoteRunspace && sender is PSDataCollection<ErrorRecord> erBuffer &&
                         remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host != null)
                     {
                         Collection<ErrorRecord> erRecords = erBuffer.ReadAll();
@@ -382,8 +378,7 @@ namespace System.Management.Automation.Remoting
 
         private void WriteRCFailedError()
         {
-            RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-            if (remoteRunspace != null &&
+            if (_runspaceRef.Value is RemoteRunspace remoteRunspace &&
                 remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host != null)
             {
                 remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host.UI.WriteErrorLine(
@@ -397,8 +392,7 @@ namespace System.Management.Automation.Remoting
             string computerName,
             int totalSeconds)
         {
-            RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (_runspaceRef.Value is RemoteRunspace remoteRunspace)
             {
                 s_RCProgress.StartProgress(
                     sourceId,

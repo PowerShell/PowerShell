@@ -1123,8 +1123,7 @@ namespace System.Management.Automation.Runspaces
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
-            WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (wsCI == null)
+            if (!(rsCI is WSManConnectionInfo wsCI))
             {
                 return defaultValue;
             }
@@ -2055,8 +2054,7 @@ namespace System.Management.Automation.Runspaces
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
-                if (cmdInfo != null)
+                if (context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) is ApplicationInfo cmdInfo)
                 {
                     filePath = cmdInfo.Path;
                 }

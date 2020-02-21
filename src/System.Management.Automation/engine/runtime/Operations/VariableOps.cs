@@ -250,9 +250,7 @@ namespace System.Management.Automation
 
         private static UsingResult GetUsingValueFromTuple(MutableTuple tuple, string usingExpressionKey, int index)
         {
-            var boundParameters =
-                tuple.GetAutomaticVariable(AutomaticVariable.PSBoundParameters) as PSBoundParametersDictionary;
-            if (boundParameters != null)
+            if (tuple.GetAutomaticVariable(AutomaticVariable.PSBoundParameters) is PSBoundParametersDictionary boundParameters)
             {
                 var implicitUsingParameters = boundParameters.ImplicitUsingParameters;
                 if (implicitUsingParameters != null)

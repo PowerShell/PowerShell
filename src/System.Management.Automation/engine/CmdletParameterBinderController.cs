@@ -200,8 +200,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void BindCommandLineParametersNoValidation(Collection<CommandParameterInternal> arguments)
         {
-            var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-            if (psCompiledScriptCmdlet != null)
+            if (this.Command is PSScriptCmdlet psCompiledScriptCmdlet)
             {
                 psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
@@ -407,8 +406,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    ScriptBlock scriptBlockArg = argumentValue as ScriptBlock;
-                    if (scriptBlockArg != null)
+                    if (argumentValue is ScriptBlock scriptBlockArg)
                     {
                         // Get the current binding state, and pass it to the ScriptBlock as the argument
                         // The 'arg' includes HashSet properties 'BoundParameters', 'BoundPositionalParameters',
@@ -631,8 +629,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
-                string key = entry.Key as string;
-                if (key == null)
+                if (!(entry.Key is string key))
                 {
                     continue;
                 }
@@ -1705,9 +1702,8 @@ namespace System.Management.Automation
                 {
                     s_tracer.WriteLine("The Cmdlet supports the dynamic parameter interface");
 
-                    IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
-                    if (dynamicParameterCmdlet != null)
+                    if (this.Command is IDynamicParameters dynamicParameterCmdlet)
                     {
                         if (_dynamicParameterBinder == null)
                         {
@@ -1722,7 +1718,8 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
                             {
-                                if (e is ProviderInvocationException) { throw; }
+                                if (e is ProviderInvocationException)
+                                { throw; }
 
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -1752,8 +1749,7 @@ namespace System.Management.Automation
 
                                 InternalParameterMetadata dynamicParameterMetadata;
 
-                                RuntimeDefinedParameterDictionary runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
-                                if (runtimeParamDictionary != null)
+                                if (dynamicParamBindableObject is RuntimeDefinedParameterDictionary runtimeParamDictionary)
                                 {
                                     // Generate the type metadata for the runtime-defined parameters
                                     dynamicParameterMetadata =
@@ -4410,8 +4406,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in dictionary)
             {
-                var entryKey = entry.Key as string;
-                if (entryKey != null)
+                if (entry.Key is string entryKey)
                 {
                     string key = entryKey.Trim();
                     string cmdletName = null;
@@ -4477,8 +4472,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("key");
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return false; }
+            if (!(key is string strKey))
+            { return false; }
 
             string keyAfterTrim = strKey.Trim();
             return base.ContainsKey(keyAfterTrim);
@@ -4504,8 +4499,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("key");
             }
 
-            var strKey = key as string;
-            if (strKey == null)
+            if (!(key is string strKey))
             {
                 throw PSTraceSource.NewArgumentException("key", ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
@@ -4550,8 +4544,8 @@ namespace System.Management.Automation
             {
                 if (key == null) { throw PSTraceSource.NewArgumentNullException("key"); }
 
-                var strKey = key as string;
-                if (strKey == null) { return null; }
+                if (!(key is string strKey))
+                { return null; }
 
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
@@ -4574,8 +4568,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("key");
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return; }
+            if (!(key is string strKey))
+            { return; }
 
             string keyAfterTrim = strKey.Trim();
             if (base.ContainsKey(keyAfterTrim))

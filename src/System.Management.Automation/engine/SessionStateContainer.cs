@@ -1807,8 +1807,7 @@ namespace System.Management.Automation
 
                         foreach (PSObject filteredChildName in filteredChildNameObjects)
                         {
-                            string filteredName = filteredChildName.BaseObject as string;
-                            if (filteredName != null)
+                            if (filteredChildName.BaseObject is string filteredName)
                             {
                                 filteredChildNameDictionary[filteredName] = true;
                             }
@@ -1830,9 +1829,8 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string childName = childNameObjects[index].BaseObject as string;
 
-                    if (childName == null)
+                    if (!(childNameObjects[index].BaseObject is string childName))
                     {
                         continue;
                     }
@@ -2570,9 +2568,8 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string name = result.BaseObject as string;
 
-                    if (name == null)
+                    if (!(result.BaseObject is string name))
                     {
                         continue;
                     }
@@ -2620,9 +2617,8 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            string name = result.BaseObject as string;
 
-                            if (name == null)
+                            if (!(result.BaseObject is string name))
                             {
                                 continue;
                             }

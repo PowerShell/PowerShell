@@ -829,8 +829,7 @@ namespace System.Management.Automation.Remoting
             Version psClientVersion = null;
             if (_senderInfo.ApplicationArguments != null && _senderInfo.ApplicationArguments.ContainsKey("PSversionTable"))
             {
-                var value = PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) as PSPrimitiveDictionary;
-                if (value != null)
+                if (PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) is PSPrimitiveDictionary value)
                 {
                     if (value.ContainsKey("WSManStackVersion"))
                     {

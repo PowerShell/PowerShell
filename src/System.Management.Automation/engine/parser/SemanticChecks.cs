@@ -55,8 +55,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var fnMemberAst = currentMember as FunctionMemberAst;
-            return fnMemberAst != null ? fnMemberAst.IsStatic : ((PropertyMemberAst)currentMember).IsStatic;
+            return currentMember is FunctionMemberAst fnMemberAst ? fnMemberAst.IsStatic : ((PropertyMemberAst)currentMember).IsStatic;
         }
 
         private bool IsValidAttributeArgument(Ast ast, IsConstantValueVisitor visitor)
@@ -131,8 +130,7 @@ namespace System.Management.Automation.Language
             AttributeTargets attributeTargets = default(AttributeTargets);
 
             var parent = attributeAst.Parent;
-            TypeDefinitionAst typeDefinitionAst = parent as TypeDefinitionAst;
-            if (typeDefinitionAst != null)
+            if (parent is TypeDefinitionAst typeDefinitionAst)
             {
                 checkingAttributeOnClass = true;
                 attributeTargets = typeDefinitionAst.IsClass
@@ -148,8 +146,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                var functionMemberAst = parent as FunctionMemberAst;
-                if (functionMemberAst != null)
+                if (parent is FunctionMemberAst functionMemberAst)
                 {
                     checkingAttributeOnClass = true;
                     attributeTargets = functionMemberAst.IsConstructor
@@ -603,8 +600,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
 
-                var loop = parent as LoopStatementAst;
-                if (loop != null)
+                if (parent is LoopStatementAst loop)
                 {
                     if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? string.Empty))
                         break;
@@ -641,11 +637,9 @@ namespace System.Management.Automation.Language
                         break;
                 }
 
-                var stmtBlock = parent as StatementBlockAst;
-                if (stmtBlock != null)
+                if (parent is StatementBlockAst stmtBlock)
                 {
-                    var tryStatementAst = stmtBlock.Parent as TryStatementAst;
-                    if (tryStatementAst != null && tryStatementAst.Finally == stmtBlock)
+                    if (stmtBlock.Parent is TryStatementAst tryStatementAst && tryStatementAst.Finally == stmtBlock)
                     {
                         _parser.ReportError(ast.Extent,
                             nameof(ParserStrings.ControlLeavingFinally),
@@ -665,8 +659,7 @@ namespace System.Management.Automation.Language
                 return string.Empty;
             }
 
-            var str = expr as StringConstantExpressionAst;
-            return str != null ? str.Value : null;
+            return expr is StringConstantExpressionAst str ? str.Value : null;
         }
 
         public override AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst)
@@ -689,8 +682,7 @@ namespace System.Management.Automation.Language
 
         private void CheckForReturnStatement(ReturnStatementAst ast)
         {
-            var functionMemberAst = _memberScopeStack.Peek() as FunctionMemberAst;
-            if (functionMemberAst == null)
+            if (!(_memberScopeStack.Peek() is FunctionMemberAst functionMemberAst))
             {
                 return;
             }
@@ -730,9 +722,8 @@ namespace System.Management.Automation.Language
         /// <param name="reportError">The action called to report any errors.</param>
         private void CheckAssignmentTarget(ExpressionAst ast, bool simpleAssignment, Action<Ast> reportError)
         {
-            ArrayLiteralAst arrayLiteralAst = ast as ArrayLiteralAst;
             Ast errorAst = null;
-            if (arrayLiteralAst != null)
+            if (ast is ArrayLiteralAst arrayLiteralAst)
             {
                 if (simpleAssignment)
                 {
@@ -745,8 +736,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                ParenExpressionAst parenExpressionAst = ast as ParenExpressionAst;
-                if (parenExpressionAst != null)
+                if (ast is ParenExpressionAst parenExpressionAst)
                 {
                     ExpressionAst expr = parenExpressionAst.Pipeline.GetPureExpression();
                     if (expr == null)
@@ -779,8 +769,7 @@ namespace System.Management.Automation.Language
                     Type lastConvertType = null;
                     while (expr is AttributedExpressionAst)
                     {
-                        var convertExpr = expr as ConvertExpressionAst;
-                        if (convertExpr != null)
+                        if (expr is ConvertExpressionAst convertExpr)
                         {
                             converts += 1;
                             lastConvertType = convertExpr.Type.TypeName.GetReflectionType();
@@ -807,8 +796,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var varExprAst = expr as VariableExpressionAst;
-                        if (varExprAst != null)
+                        if (expr is VariableExpressionAst varExprAst)
                         {
                             var varPath = varExprAst.VariablePath;
                             if (varPath.IsVariable && varPath.IsAnyLocal())
@@ -923,11 +911,9 @@ namespace System.Management.Automation.Language
                 bool multipleRefs = false;
                 while (true)
                 {
-                    var childAttrExpr = child as AttributedExpressionAst;
-                    if (childAttrExpr != null)
+                    if (child is AttributedExpressionAst childAttrExpr)
                     {
-                        var childConvert = childAttrExpr as ConvertExpressionAst;
-                        if (childConvert != null && typeof(PSReference) == childConvert.Type.TypeName.GetReflectionType())
+                        if (childAttrExpr is ConvertExpressionAst childConvert && typeof(PSReference) == childConvert.Type.TypeName.GetReflectionType())
                         {
                             multipleRefs = true;
                             _parser.ReportError(childConvert.Type.Extent,
@@ -946,8 +932,7 @@ namespace System.Management.Automation.Language
                 var parent = convertExpressionAst.Parent as AttributedExpressionAst;
                 while (parent != null)
                 {
-                    var parentConvert = parent as ConvertExpressionAst;
-                    if (parentConvert != null && !multipleRefs)
+                    if (parent is ConvertExpressionAst parentConvert && !multipleRefs)
                     {
                         if (typeof(PSReference) == parentConvert.Type.TypeName.GetReflectionType())
                         {
@@ -960,8 +945,7 @@ namespace System.Management.Automation.Language
                         bool skipError = false;
                         while (ast != null)
                         {
-                            var statementAst = ast as AssignmentStatementAst;
-                            if (statementAst != null)
+                            if (ast is AssignmentStatementAst statementAst)
                             {
                                 skipError = statementAst.Left.Find(ast1 => ast1 == convertExpressionAst, searchNestedScriptBlocks: true) != null;
                                 break;
@@ -1022,14 +1006,12 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            var memberExpr = exprAst as MemberExpressionAst;
-            if (memberExpr != null && !(memberExpr is InvokeMemberExpressionAst) && (memberExpr.Member is StringConstantExpressionAst))
+            if (exprAst is MemberExpressionAst memberExpr && !(memberExpr is InvokeMemberExpressionAst) && (memberExpr.Member is StringConstantExpressionAst))
             {
                 return CheckUsingExpression(memberExpr.Expression);
             }
 
-            var indexExpr = exprAst as IndexExpressionAst;
-            if (indexExpr != null)
+            if (exprAst is IndexExpressionAst indexExpr)
             {
                 if (!IsValidAttributeArgument(indexExpr.Index, s_isConstantAttributeArgVisitor))
                 {
@@ -1096,8 +1078,7 @@ namespace System.Management.Automation.Language
             HashSet<string> keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var entry in hashtableAst.KeyValuePairs)
             {
-                var keyStrAst = entry.Item1 as ConstantExpressionAst;
-                if (keyStrAst != null)
+                if (entry.Item1 is ConstantExpressionAst keyStrAst)
                 {
                     var keyStr = keyStrAst.Value.ToString();
                     if (keys.Contains(keyStr))
@@ -1249,8 +1230,7 @@ namespace System.Management.Automation.Language
                     //
                     // Find nearest ancestor NamedBlockAst
                     //
-                    var namedBlockedAst = ast as NamedBlockAst;
-                    if ((namedBlockedAst != null) && (statementAst != null) && (ancestorNodeLevel == 2))
+                    if ((ast is NamedBlockAst namedBlockedAst) && (statementAst != null) && (ancestorNodeLevel == 2))
                     {
                         int index = namedBlockedAst.Statements.IndexOf(statementAst);
                         if (index > 0)
@@ -1258,18 +1238,15 @@ namespace System.Management.Automation.Language
                             //
                             // Check if previous Statement is CommandAst
                             //
-                            var pipelineAst = namedBlockedAst.Statements[index - 1] as PipelineAst;
-                            if (pipelineAst != null && pipelineAst.PipelineElements.Count == 1)
+                            if (namedBlockedAst.Statements[index - 1] is PipelineAst pipelineAst && pipelineAst.PipelineElements.Count == 1)
                             {
-                                var commandAst = pipelineAst.PipelineElements[0] as CommandAst;
-                                if (commandAst != null &&
+                                if (pipelineAst.PipelineElements[0] is CommandAst commandAst &&
                                     commandAst.CommandElements.Count <= 2 &&
                                     commandAst.DefiningKeyword == null)
                                 {
                                     // Here indicates a CommandAst followed by a ScriptBlockExpression,
                                     // which is invalid if the DSC resource is not defined
-                                    var commandNameAst = commandAst.CommandElements[0] as StringConstantExpressionAst;
-                                    if (commandNameAst != null)
+                                    if (commandAst.CommandElements[0] is StringConstantExpressionAst commandNameAst)
                                     {
                                         _parser.ReportError(commandNameAst.Extent,
                                             nameof(ParserStrings.ResourceNotDefined),
@@ -1357,16 +1334,14 @@ namespace System.Management.Automation.Language
             }
 
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
-            HashtableAst hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
-            if (hashtable != null)
+            if (dynamicKeywordStatementAst.BodyExpression is HashtableAst hashtable)
             {
                 //
                 // If it's a hash table, validate that only valid members have been specified.
                 //
                 foreach (var keyValueTuple in hashtable.KeyValuePairs)
                 {
-                    var propName = keyValueTuple.Item1 as StringConstantExpressionAst;
-                    if (propName == null)
+                    if (!(keyValueTuple.Item1 is StringConstantExpressionAst propName))
                     {
                         _parser.ReportError(keyValueTuple.Item1.Extent,
                             nameof(ParserStrings.ConfigurationInvalidPropertyName),
@@ -1440,8 +1415,7 @@ namespace System.Management.Automation.Language
 
         public void PostVisit(Ast ast)
         {
-            var scriptBlockAst = ast as ScriptBlockAst;
-            if (scriptBlockAst != null)
+            if (ast is ScriptBlockAst scriptBlockAst)
             {
                 if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
                 {
@@ -1483,9 +1457,7 @@ namespace System.Management.Automation.Language
 
             foreach (var member in typeDefinitionAst.Members)
             {
-                var functionMemberAst = member as FunctionMemberAst;
-
-                if (functionMemberAst != null)
+                if (member is FunctionMemberAst functionMemberAst)
                 {
                     CheckSet(functionMemberAst, ref hasSet);
                     CheckGet(parser, functionMemberAst, ref hasGet);
@@ -1580,8 +1552,7 @@ namespace System.Management.Automation.Language
 
             foreach (var baseType in typeDefinitionAst.BaseTypes)
             {
-                var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null)
+                if (!(baseType.TypeName is TypeName baseTypeName))
                 {
                     continue;
                 }
@@ -1594,8 +1565,7 @@ namespace System.Management.Automation.Language
 
                 foreach (var member in baseTypeDefinitionAst.Members)
                 {
-                    var functionMemberAst = member as FunctionMemberAst;
-                    if (functionMemberAst != null)
+                    if (member is FunctionMemberAst functionMemberAst)
                     {
                         CheckSet(functionMemberAst, ref hasSet);
                         CheckGet(parser, functionMemberAst, ref hasGet);
@@ -1632,6 +1602,7 @@ namespace System.Management.Automation.Language
             {
                 if (functionMemberAst.ReturnType != null)
                 {
+#pragma warning disable IDE0019 // Use pattern matching
                     // Return type is of the class we're defined in
                     // it must return the class type, or array of the class type.
                     var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
@@ -1639,12 +1610,12 @@ namespace System.Management.Automation.Language
                         (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
                             TypeName;
                     if (typeName == null || typeName._typeDefinitionAst != functionMemberAst.Parent)
-                    {
-                        parser.ReportError(functionMemberAst.Extent,
+                    {                        parser.ReportError(functionMemberAst.Extent,
                             nameof(ParserStrings.DscResourceInvalidGetMethod),
                             ParserStrings.DscResourceInvalidGetMethod,
                             ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                     }
+#pragma warning restore IDE0019 // Use pattern matching
                 }
                 else
                 {
@@ -1710,8 +1681,7 @@ namespace System.Management.Automation.Language
                                 var propertyType = propertyMemberAst.PropertyType;
                                 if (propertyType != null)
                                 {
-                                    TypeName typeName = propertyType.TypeName as TypeName;
-                                    if (typeName != null)
+                                    if (propertyType.TypeName is TypeName typeName)
                                     {
                                         var type = typeName.GetReflectionType();
                                         if (type != null)

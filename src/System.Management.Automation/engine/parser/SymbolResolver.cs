@@ -65,8 +65,7 @@ namespace System.Management.Automation.Language
             _variableTable = new Dictionary<string, Ast>(StringComparer.OrdinalIgnoreCase);
             foreach (var member in typeDefinition.Members)
             {
-                var propertyMember = member as PropertyMemberAst;
-                if (propertyMember != null)
+                if (member is PropertyMemberAst propertyMember)
                 {
                     // Duplicate members are an error, but we catch that later after all types
                     // have been resolved.  We could report errors for properties here, but
@@ -254,8 +253,7 @@ namespace System.Management.Automation.Language
         {
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
-                TypeDefinitionAst ast = _scopes[i]._ast as TypeDefinitionAst;
-                if (ast != null)
+                if (_scopes[i]._ast is TypeDefinitionAst ast)
                 {
                     return ast;
                 }
@@ -379,8 +377,7 @@ namespace System.Management.Automation.Language
                     var variableExpressionAst = expression as VariableExpressionAst;
                     while (variableExpressionAst == null && expression != null)
                     {
-                        var convertExpressionAst = expression as ConvertExpressionAst;
-                        if (convertExpressionAst != null)
+                        if (expression is ConvertExpressionAst convertExpressionAst)
                         {
                             expression = convertExpressionAst.Child;
                             variableExpressionAst = convertExpressionAst.Child as VariableExpressionAst;
@@ -394,8 +391,7 @@ namespace System.Management.Automation.Language
                     if (variableExpressionAst != null && variableExpressionAst.VariablePath.IsVariable)
                     {
                         var ast = _symbolTable.LookupVariable(variableExpressionAst.VariablePath);
-                        var propertyMember = ast as PropertyMemberAst;
-                        if (propertyMember != null)
+                        if (ast is PropertyMemberAst propertyMember)
                         {
                             if (propertyMember.IsStatic)
                             {
@@ -589,22 +585,19 @@ namespace System.Management.Automation.Language
         private bool DispatchTypeName(ITypeName type, int genericArgumentCount, bool isAttribute)
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
-            var typeName = type as TypeName;
-            if (typeName != null)
+            if (type is TypeName typeName)
             {
                 return VisitTypeName(typeName, genericArgumentCount, isAttribute);
             }
             else
             {
-                var arrayTypeName = type as ArrayTypeName;
-                if (arrayTypeName != null)
+                if (type is ArrayTypeName arrayTypeName)
                 {
                     return VisitArrayTypeName(arrayTypeName);
                 }
                 else
                 {
-                    var genericTypeName = type as GenericTypeName;
-                    if (genericTypeName != null)
+                    if (type is GenericTypeName genericTypeName)
                     {
                         return VisitGenericTypeName(genericTypeName);
                     }

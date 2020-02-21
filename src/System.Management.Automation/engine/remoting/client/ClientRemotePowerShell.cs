@@ -430,8 +430,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     bool terminateSession = false;
                     if (stateInfo.State == PSInvocationState.Failed)
                     {
-                        PSRemotingTransportException remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
-                        terminateSession = (remotingTransportException != null) &&
+                        terminateSession = (stateInfo.Reason is PSRemotingTransportException remotingTransportException) &&
                                            (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
                     }
 
@@ -474,8 +473,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="ex">Exception.</param>
         private void CheckAndCloseRunspaceAfterStop(Exception ex)
         {
-            PSRemotingTransportException transportException = ex as PSRemotingTransportException;
-            if (transportException != null &&
+            if (ex is PSRemotingTransportException transportException &&
                 (transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_CONNECT ||
                  transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE ||
                  transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST))
@@ -651,8 +649,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
-                    RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = (args is RemoteSessionStateEventArgs sessionEventArgs) ? sessionEventArgs.SessionStateInfo.Reason : null;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 

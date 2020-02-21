@@ -32,16 +32,14 @@ namespace System.Management.Automation
                                                        CommandRedirection[] redirections,
                                                        ExecutionContext context)
         {
-            var commandAst = commandBaseAst as CommandAst;
-            var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
+            var invocationToken = commandBaseAst is CommandAst commandAst ? commandAst.InvocationOperator : TokenKind.Unknown;
             bool dotSource = invocationToken == TokenKind.Dot;
             SessionStateInternal commandSessionState = null;
             int commandIndex = 0;
 
             Diagnostics.Assert(commandElements[0].ArgumentSpecified && !commandElements[0].ParameterNameSpecified,
                 "Compiler will pass first parameter as an argument.");
-            var mi = PSObject.Base(commandElements[0].ArgumentValue) as PSModuleInfo;
-            if (mi != null)
+            if (PSObject.Base(commandElements[0].ArgumentValue) is PSModuleInfo mi)
             {
                 if (mi.ModuleType == ModuleType.Binary && mi.SessionState == null)
                 {
@@ -89,15 +87,13 @@ namespace System.Management.Automation
 
             string invocationName = (dotSource) ? "." : invocationToken == TokenKind.Ampersand ? "&" : null;
             CommandProcessorBase commandProcessor;
-            var scriptBlock = command as ScriptBlock;
-            if (scriptBlock != null)
+            if (command is ScriptBlock scriptBlock)
             {
                 commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, !dotSource, commandSessionState);
             }
             else
             {
-                var commandInfo = command as CommandInfo;
-                if (commandInfo != null)
+                if (command is CommandInfo commandInfo)
                 {
                     commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, context.EngineSessionState.CurrentScope.ScopeOrigin, !dotSource, commandSessionState);
                 }
@@ -321,8 +317,7 @@ namespace System.Management.Automation
                 markUntrustedData = ExecutionContext.IsMarkedAsUntrusted(splattedValue);
             }
 
-            IDictionary splattedTable = splattedValue as IDictionary;
-            if (splattedTable != null)
+            if (splattedValue is IDictionary splattedTable)
             {
                 foreach (DictionaryEntry de in splattedTable)
                 {
@@ -342,8 +337,7 @@ namespace System.Management.Automation
             }
             else
             {
-                IEnumerable enumerableValue = splattedValue as IEnumerable;
-                if (enumerableValue != null)
+                if (splattedValue is IEnumerable enumerableValue)
                 {
                     foreach (object obj in enumerableValue)
                     {
@@ -364,8 +358,7 @@ namespace System.Management.Automation
 
         private static CommandParameterInternal SplatEnumerableElement(object splattedArgument, Ast splatAst)
         {
-            var psObject = splattedArgument as PSObject;
-            if (psObject != null)
+            if (splattedArgument is PSObject psObject)
             {
                 var prop = psObject.Properties[ScriptParameterBinderController.NotePropertyNameForSplattingParametersInArgs];
                 var baseObj = psObject.BaseObject;
@@ -606,8 +599,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var objAsArray = obj as object[];
-            return objAsArray != null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
+            return obj is object[] objAsArray ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
         }
 
         internal static object[] CheckAutomationNullInCommandArgumentArray(object[] objArray)
@@ -683,8 +675,7 @@ namespace System.Management.Automation
                     var commandParameters = new List<CommandParameterInternal>();
                     foreach (var commandElement in commandAst.CommandElements)
                     {
-                        var commandParameterAst = commandElement as CommandParameterAst;
-                        if (commandParameterAst != null)
+                        if (commandElement is CommandParameterAst commandParameterAst)
                         {
                             commandParameters.Add(GetCommandParameter(commandParameterAst, isTrusted, context));
                             continue;
@@ -769,8 +760,7 @@ namespace System.Management.Automation
 
         private static CommandRedirection GetCommandRedirection(RedirectionAst redirectionAst, bool isTrusted, ExecutionContext context)
         {
-            var fileRedirection = redirectionAst as FileRedirectionAst;
-            if (fileRedirection != null)
+            if (redirectionAst is FileRedirectionAst fileRedirection)
             {
                 object fileName = Compiler.GetExpressionValue(fileRedirection.Location, isTrusted, context);
                 return new FileRedirection(fileRedirection.FromStream, fileRedirection.Append, fileName.ToString());
@@ -1273,8 +1263,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                var rte = exception as RuntimeException;
-                if (rte == null)
+                if (!(exception is RuntimeException rte))
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1501,8 +1490,7 @@ namespace System.Management.Automation
                 //     CmdletInvocationException - to cover cmdlets like Invoke-Expression
                 if (current.Rank > 0)
                 {
-                    var apse = rte as ActionPreferenceStopException;
-                    if (apse != null)
+                    if (rte is ActionPreferenceStopException apse)
                     {
                         var exceptionToPass = apse.ErrorRecord.Exception;
 
@@ -1600,8 +1588,7 @@ namespace System.Management.Automation
                 exception = exception.InnerException;
             }
 
-            var rte = exception as RuntimeException;
-            if (rte == null)
+            if (!(exception is RuntimeException rte))
             {
                 rte = ConvertToRuntimeException(exception, funcContext.CurrentPosition);
             }
@@ -1974,8 +1961,7 @@ namespace System.Management.Automation
         {
             result = PSObject.Base(result);
 
-            RuntimeException runtimeException = result as RuntimeException;
-            if (runtimeException != null)
+            if (result is RuntimeException runtimeException)
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 runtimeException.WasThrownFromThrowStatement = true;
@@ -1983,8 +1969,7 @@ namespace System.Management.Automation
                 return runtimeException;
             }
 
-            ErrorRecord er = result as ErrorRecord;
-            if (er != null)
+            if (result is ErrorRecord er)
             {
                 runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
@@ -1992,8 +1977,7 @@ namespace System.Management.Automation
                 return runtimeException;
             }
 
-            Exception exception = result as Exception;
-            if (exception != null)
+            if (result is Exception exception)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
                 runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
@@ -2016,11 +2000,9 @@ namespace System.Management.Automation
 
         internal static RuntimeException ConvertToRuntimeException(Exception exception, IScriptExtent extent)
         {
-            RuntimeException runtimeException = exception as RuntimeException;
-            if (runtimeException == null)
+            if (!(exception is RuntimeException runtimeException))
             {
-                var icer = exception as IContainsErrorRecord;
-                var er = icer != null
+                var er = exception is IContainsErrorRecord icer
                              ? icer.ErrorRecord
                              : new ErrorRecord(exception, exception.GetType().FullName, ErrorCategory.OperationStopped, null);
                 runtimeException = new RuntimeException(exception.Message, exception, er);
@@ -2122,8 +2104,7 @@ namespace System.Management.Automation
                 // We recurse and relying on one of the recursive calls to throw, or if none do,
                 // then we just throw on the top level typeName.
 
-                var genericTypeName = typeName as GenericTypeName;
-                if (genericTypeName != null)
+                if (typeName is GenericTypeName genericTypeName)
                 {
                     var generic = genericTypeName.GetGenericType(ResolveTypeName(genericTypeName.TypeName, errorPos));
                     var typeArgs = (from arg in genericTypeName.GenericArguments select ResolveTypeName(arg, errorPos)).ToArray();
@@ -2142,9 +2123,8 @@ namespace System.Management.Automation
                     }
                 }
 
-                var arrayTypeName = typeName as ArrayTypeName;
 
-                if (arrayTypeName != null)
+                if (typeName is ArrayTypeName arrayTypeName)
                 {
                     ResolveTypeName(arrayTypeName.ElementType, errorPos);
                 }
@@ -2300,8 +2280,7 @@ namespace System.Management.Automation
                     {
                         var field = p.GetValue(null);
                         // field can be one of two types: SessionStateKeeper or ScriptBlockMemberMethodWrapper
-                        var methodWrapper = field as ScriptBlockMemberMethodWrapper;
-                        if (methodWrapper != null)
+                        if (field is ScriptBlockMemberMethodWrapper methodWrapper)
                         {
                             methodWrapper.InitAtRuntime();
                         }
@@ -2332,8 +2311,7 @@ namespace System.Management.Automation
                                                         string str,
                                                         ExecutionContext context)
         {
-            WildcardPattern wildcard = condition as WildcardPattern;
-            if (wildcard != null)
+            if (condition is WildcardPattern wildcard)
             {
                 // If case sensitivity doesn't agree between the existing wildcard pattern and the switch mode,
                 // make a new wildcard pattern that agrees with the switch.
@@ -2429,8 +2407,7 @@ namespace System.Management.Automation
         {
             try
             {
-                FileInfo file = obj as FileInfo;
-                string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
+                string filePath = obj is FileInfo file ? file.FullName : PSObject.ToStringParser(context, obj);
 
                 if (string.IsNullOrEmpty(filePath))
                 {
@@ -2842,8 +2819,7 @@ namespace System.Management.Automation
             // If the expression is a script block, it will be executed in the current scope
             // once on each element.
             var result = new Collection<PSObject>();
-            ScriptBlock sb = expression as ScriptBlock;
-            if (sb != null)
+            if (expression is ScriptBlock sb)
             {
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
@@ -2879,8 +2855,7 @@ namespace System.Management.Automation
                 {
                     object current = Current(enumerator);
                     object basedCurrent = PSObject.Base(current);
-                    Hashtable ht = basedCurrent as Hashtable;
-                    if (ht != null)
+                    if (basedCurrent is Hashtable ht)
                     {
                         // special case hashtables since we don't want to hit a method name
                         switch (numArgs)
@@ -2952,8 +2927,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            var method = member as PSMethodInfo;
-                            if (method != null)
+                            if (member is PSMethodInfo method)
                             {
                                 // It's a method so check language modes to see if it's allowed.
 
@@ -3008,8 +2982,7 @@ namespace System.Management.Automation
 
         internal static object SlicingIndex(object target, IEnumerator indexes, Func<object, object, object> indexer)
         {
-            var fakeEnumerator = indexes as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (indexes is NonEnumerableObjectEnumerator fakeEnumerator)
             {
                 // We have a non-enumerable object, we're trying to slice index with it.  It really should have
                 // been a single index, so we don't want to return an array, we just want to return the indexed value.
@@ -3140,8 +3113,7 @@ namespace System.Management.Automation
                 catch (TargetInvocationException tie)
                 {
                     // If we tried to invoke a method that didn't exist, then we'll try enumerating the object and call the method on it's members.
-                    RuntimeException rte = tie.InnerException as RuntimeException;
-                    if (rte != null && rte.ErrorRecord.FullyQualifiedErrorId.Equals(ParserOps.MethodNotFoundErrorId, StringComparison.Ordinal))
+                    if (tie.InnerException is RuntimeException rte && rte.ErrorRecord.FullyQualifiedErrorId.Equals(ParserOps.MethodNotFoundErrorId, StringComparison.Ordinal))
                     {
                         var nestedEnumerator = LanguagePrimitives.GetEnumerator(current);
                         if (nestedEnumerator != null)
@@ -3199,8 +3171,7 @@ namespace System.Management.Automation
 
         internal static object Multiply(IEnumerator enumerator, uint times)
         {
-            var fakeEnumerator = enumerator as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (enumerator is NonEnumerableObjectEnumerator fakeEnumerator)
             {
                 // We have a non-enumerable object, we're trying to multiply something to it.  Generate an error
                 // (or on the off chance that there is an implicit op, call that).
@@ -3410,16 +3381,14 @@ namespace System.Management.Automation
         {
             // We have a non-enumerable object, we're trying to add something to it.  Generate an error
             // (or on the off chance that there is an implicit op, call that).
-            var fakeEnumerator2 = rhs as NonEnumerableObjectEnumerator;
             return ParserOps.ImplicitOp(fakeEnumerator.GetNonEnumerableObject(),
-                                        fakeEnumerator2 != null ? fakeEnumerator2.GetNonEnumerableObject() : rhs,
+                                        rhs is NonEnumerableObjectEnumerator fakeEnumerator2 ? fakeEnumerator2.GetNonEnumerableObject() : rhs,
                                         "op_Addition", null, "+");
         }
 
         internal static object AddEnumerable(ExecutionContext context, IEnumerator lhs, IEnumerator rhs)
         {
-            var fakeEnumerator = lhs as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (lhs is NonEnumerableObjectEnumerator fakeEnumerator)
             {
                 return AddFakeEnumerable(fakeEnumerator, rhs);
             }
@@ -3441,8 +3410,7 @@ namespace System.Management.Automation
 
         internal static object AddObject(ExecutionContext context, IEnumerator lhs, object rhs)
         {
-            var fakeEnumerator = lhs as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (lhs is NonEnumerableObjectEnumerator fakeEnumerator)
             {
                 return AddFakeEnumerable(fakeEnumerator, rhs);
             }
@@ -3461,8 +3429,7 @@ namespace System.Management.Automation
 
         internal static object Compare(IEnumerator enumerator, object valueToCompareTo, Func<object, object, bool> compareDelegate)
         {
-            var fakeEnumerator = enumerator as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (enumerator is NonEnumerableObjectEnumerator fakeEnumerator)
             {
                 return compareDelegate(fakeEnumerator.GetNonEnumerableObject(), valueToCompareTo) ? Boxed.True : Boxed.False;
             }
@@ -3493,8 +3460,7 @@ namespace System.Management.Automation
             {
                 if (dispose)
                 {
-                    var disposable = enumerator as IDisposable;
-                    if (disposable != null)
+                    if (enumerator is IDisposable disposable)
                     {
                         disposable.Dispose();
                     }

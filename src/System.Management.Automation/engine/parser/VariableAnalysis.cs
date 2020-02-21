@@ -267,8 +267,7 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitCommand(CommandAst commandAst)
         {
-            var commandName = commandAst.CommandElements[0] as StringConstantExpressionAst;
-            if (commandName != null && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
+            if (commandAst.CommandElements[0] is StringConstantExpressionAst commandName && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
             {
                 // TODO: psuedo-bind the command invocation to figure out the variable and only force that variable to be unoptimized
                 _disableOptimizations = true;
@@ -743,8 +742,7 @@ namespace System.Management.Automation.Language
 
         private static void FixTupleIndex(Ast ast, int newIndex)
         {
-            var variableAst = ast as VariableExpressionAst;
-            if (variableAst != null)
+            if (ast is VariableExpressionAst variableAst)
             {
                 if (variableAst.TupleIndex != ForceDynamic)
                 {
@@ -753,8 +751,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                var dataStatementAst = ast as DataStatementAst;
-                if (dataStatementAst != null)
+                if (ast is DataStatementAst dataStatementAst)
                 {
                     if (dataStatementAst.TupleIndex != ForceDynamic)
                     {
@@ -766,8 +763,7 @@ namespace System.Management.Automation.Language
 
         private static void FixAssigned(Ast ast, VariableAnalysisDetails details)
         {
-            var variableAst = ast as VariableExpressionAst;
-            if (variableAst != null && details.Assigned)
+            if (ast is VariableExpressionAst variableAst && details.Assigned)
             {
                 variableAst.Assigned = true;
             }
@@ -777,8 +773,7 @@ namespace System.Management.Automation.Language
         {
             foreach (var ast in block._asts)
             {
-                var variableExpressionAst = ast as VariableExpressionAst;
-                if (variableExpressionAst != null)
+                if (ast is VariableExpressionAst variableExpressionAst)
                 {
                     var varPath = variableExpressionAst.VariablePath;
                     if (varPath.IsAnyLocal())
@@ -801,8 +796,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                var assignmentTarget = ast as AssignmentTarget;
-                if (assignmentTarget != null)
+                if (ast is AssignmentTarget assignmentTarget)
                 {
                     if (assignmentTarget._targetAst != null)
                     {
@@ -816,8 +810,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                var dataStatementAst = ast as DataStatementAst;
-                if (dataStatementAst != null)
+                if (ast is DataStatementAst dataStatementAst)
                 {
                     var details = CheckLHSAssignVar(dataStatementAst.Variable, assignedBitArray, typeof(object));
                     dataStatementAst.TupleIndex = details.LocalTupleIndex;
@@ -831,9 +824,8 @@ namespace System.Management.Automation.Language
 
         private void CheckLHSAssign(ExpressionAst lhs, BitArray assignedBitArray)
         {
-            var convertExpr = lhs as ConvertExpressionAst;
             Type convertType = null;
-            if (convertExpr != null)
+            if (lhs is ConvertExpressionAst convertExpr)
             {
                 lhs = convertExpr.Child;
                 convertType = convertExpr.StaticType;
@@ -1412,8 +1404,7 @@ namespace System.Management.Automation.Language
                 label.Accept(this);
                 if (_loopTargets.Any())
                 {
-                    var labelStrAst = label as StringConstantExpressionAst;
-                    if (labelStrAst != null)
+                    if (label is StringConstantExpressionAst labelStrAst)
                     {
                         targetBlock = (from t in _loopTargets
                                        where t.Label.Equals(labelStrAst.Value, StringComparison.OrdinalIgnoreCase)
@@ -1490,8 +1481,7 @@ namespace System.Management.Automation.Language
 
         private static IEnumerable<ExpressionAst> GetAssignmentTargets(ExpressionAst expressionAst)
         {
-            var parenExpr = expressionAst as ParenExpressionAst;
-            if (parenExpr != null)
+            if (expressionAst is ParenExpressionAst parenExpr)
             {
                 foreach (var e in GetAssignmentTargets(parenExpr.Pipeline.GetPureExpression()))
                 {
@@ -1500,8 +1490,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                var arrayLiteral = expressionAst as ArrayLiteralAst;
-                if (arrayLiteral != null)
+                if (expressionAst is ArrayLiteralAst arrayLiteral)
                 {
                     foreach (var e in arrayLiteral.Elements.SelectMany(GetAssignmentTargets))
                     {

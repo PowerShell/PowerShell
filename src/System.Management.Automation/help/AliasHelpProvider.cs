@@ -196,9 +196,8 @@ namespace System.Management.Automation
                         yield break;
                     }
 
-                    AliasInfo alias = current as AliasInfo;
 
-                    if (alias != null)
+                    if (current is AliasInfo alias)
                     {
                         string name = alias.Name;
                         HelpRequest exactMatchHelpRequest = helpRequest.Clone();
@@ -235,9 +234,8 @@ namespace System.Management.Automation
                         yield break;
                     }
 
-                    AliasInfo alias = current as AliasInfo;
 
-                    if (alias != null)
+                    if (current is AliasInfo alias)
                     {
                         string name = alias.Name;
 

@@ -259,9 +259,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -299,9 +298,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -330,9 +328,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -370,9 +367,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -404,9 +400,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -444,9 +439,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -490,9 +484,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -537,9 +530,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -571,9 +563,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -610,9 +601,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -648,9 +638,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -691,9 +680,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -733,9 +721,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -780,9 +767,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -822,9 +808,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -869,9 +854,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -902,9 +886,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -937,9 +920,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -966,9 +948,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1001,9 +982,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -1027,9 +1007,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1062,9 +1041,8 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -1813,8 +1791,7 @@ namespace System.Management.Automation.Provider
             // Move the TypeNames to the wrapping object if the wrapped object
             // was an PSObject
 
-            PSObject mshObj = item as PSObject;
-            if (mshObj != null)
+            if (item is PSObject mshObj)
             {
                 result.InternalTypeNames = new ConsolidatedString(mshObj.InternalTypeNames);
             }
@@ -1829,8 +1806,7 @@ namespace System.Management.Automation.Provider
 
             // Now get the parent path and child name
 
-            NavigationCmdletProvider navProvider = this as NavigationCmdletProvider;
-            if (navProvider != null && path != null)
+            if (this is NavigationCmdletProvider navProvider && path != null)
             {
                 // Get the parent path
 

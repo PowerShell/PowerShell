@@ -653,8 +653,7 @@ namespace System.Management.Automation.Language
                     Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression), bindingRestrictions).WriteToDebugLog(this);
             }
 
-            var enumerable = targetValue as IEnumerable;
-            if (enumerable != null)
+            if (targetValue is IEnumerable enumerable)
             {
                 // Normally it's safe to just call IEnumerable.GetEnumerator, but in some rare cases, the
                 // non-generic implementation throws or returns null, so we'll just avoid that problem and
@@ -678,8 +677,7 @@ namespace System.Management.Automation.Language
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
 
-            var enumerator = targetValue as IEnumerator;
-            if (enumerator != null)
+            if (targetValue is IEnumerator enumerator)
             {
                 return (new DynamicMetaObject(
                     MaybeDebase(this, e => e.Cast(typeof(IEnumerator)), target),
@@ -746,16 +744,15 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator PSObjectNotEnumerableRule(CallSite site, object obj)
         {
-            var psobj = obj as PSObject;
-            return psobj != null && obj != AutomationNull.Value
+            return obj is PSObject psobj && obj != AutomationNull.Value
                 ? NotEnumerableRule(site, PSObject.Base(obj))
                 : ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
 
         private static IEnumerator ArrayRule(CallSite site, object obj)
         {
-            var array = obj as Array;
-            if (array != null) return array.GetEnumerator();
+            if (obj is Array array)
+                return array.GetEnumerator();
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
 
@@ -766,8 +763,8 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator PSObjectStringRule(CallSite site, object obj)
         {
-            var psobj = obj as PSObject;
-            if (psobj != null && PSObject.Base(psobj) is string) return null;
+            if (obj is PSObject psobj && PSObject.Base(psobj) is string)
+                return null;
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
     }
@@ -969,8 +966,7 @@ namespace System.Management.Automation.Language
                 return this.DeferForPSObject(target).WriteToDebugLog(this);
             }
 
-            var iList = target.Value as IList;
-            if (iList != null)
+            if (target.Value is IList iList)
             {
                 // 3 possibilities - too few, exact, or too many elements.
 
@@ -1239,8 +1235,7 @@ namespace System.Management.Automation.Language
             object memberNameValue = PSObject.Base(memberNameArg.Value);
 
             Expression bindingStrExpr;
-            var memberName = memberNameValue as string;
-            if (memberName != null)
+            if (memberNameValue is string memberName)
             {
                 if (memberNameArg.Value is PSObject)
                 {
@@ -1433,8 +1428,7 @@ namespace System.Management.Automation.Language
             object memberNameValue = PSObject.Base(memberNameArg.Value);
 
             Expression bindingStrExpr;
-            var memberName = memberNameValue as string;
-            if (memberName != null)
+            if (memberNameValue is string memberName)
             {
                 if (memberNameArg.Value is PSObject)
                 {
@@ -1884,8 +1878,7 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(ExpressionCache.NullConstant, target.PSGetTypeRestriction()).WriteToDebugLog(this);
             }
 
-            var psobj = value as PSObject;
-            if (psobj != null)
+            if (value is PSObject psobj)
             {
                 var restrictions = BindingRestrictions.GetTypeRestriction(target.Expression, psobj.GetType());
                 var expr = target.Expression;
@@ -2010,8 +2003,8 @@ namespace System.Management.Automation.Language
 
         private static object PSObjectStringRule(CallSite site, object obj)
         {
-            var psobj = obj as PSObject;
-            if (psobj != null && psobj.BaseObject is string) return obj;
+            if (obj is PSObject psobj && psobj.BaseObject is string)
+                return obj;
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
@@ -5205,16 +5198,14 @@ namespace System.Management.Automation.Language
 
                 // The most common case - we're getting some property.  We can optimize many different kinds
                 // of property accessors, so we special case each possibility.
-                var propertyInfo = memberInfo as PSPropertyInfo;
-                if (propertyInfo != null)
+                if (memberInfo is PSPropertyInfo propertyInfo)
                 {
                     if (!propertyInfo.IsGettable)
                     {
                         return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                     }
 
-                    var property = propertyInfo as PSProperty;
-                    if (property != null)
+                    if (propertyInfo is PSProperty property)
                     {
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
@@ -5250,15 +5241,13 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    var scriptProperty = propertyInfo as PSScriptProperty;
-                    if (scriptProperty != null)
+                    if (propertyInfo is PSScriptProperty scriptProperty)
                     {
                         expr = Expression.Call(Expression.Constant(scriptProperty, typeof(PSScriptProperty)),
                                                CachedReflectionInfo.PSScriptProperty_InvokeGetter, target.Expression.Cast(typeof(object)));
                     }
 
-                    var codeProperty = propertyInfo as PSCodeProperty;
-                    if (codeProperty != null)
+                    if (propertyInfo is PSCodeProperty codeProperty)
                     {
                         Diagnostics.Assert(codeProperty.GetterCodeReference != null, "CodeProperty isn't gettable, should have generated error code above.");
                         Diagnostics.Assert(codeProperty.GetterCodeReference.IsStatic, "CodeProperty should be a static method.");
@@ -5267,8 +5256,7 @@ namespace System.Management.Automation.Language
                             false, PSInvokeMemberBinder.MethodInvocationType.Getter);
                     }
 
-                    var noteProperty = propertyInfo as PSNoteProperty;
-                    if (noteProperty != null)
+                    if (propertyInfo is PSNoteProperty noteProperty)
                     {
                         Diagnostics.Assert(!noteProperty.IsSettable, "If the note is settable, incorrect code is generated.");
                         expr = Expression.Property(Expression.Constant(propertyInfo, typeof(PSNoteProperty)), CachedReflectionInfo.PSNoteProperty_Value);
@@ -5360,8 +5348,7 @@ namespace System.Management.Automation.Language
             var value = target.Value;
 
             // If the target value is actually a deserialized PSObject, we should use the original value
-            var psobj = value as PSObject;
-            if (psobj != null && psobj != AutomationNull.Value && !psobj.IsDeserialized)
+            if (value is PSObject psobj && psobj != AutomationNull.Value && !psobj.IsDeserialized)
             {
                 expr = Expression.Call(CachedReflectionInfo.PSObject_Base, expr);
                 value = PSObject.Base(value);
@@ -5620,8 +5607,7 @@ namespace System.Management.Automation.Language
             //   See the comments about 'three interesting cases' in PSInvokeMemberBinder.FallbackInvokeMember for more info.
             //
             // - If not, we want to use the base object, so that we might generate optimized code.
-            var psobj = target.Value as PSObject;
-            bool isTargetDeserializedObject = (psobj != null) && (psobj.IsDeserialized);
+            bool isTargetDeserializedObject = (target.Value is PSObject psobj) && (psobj.IsDeserialized);
             object value = isTargetDeserializedObject ? target.Value : PSObject.Base(target.Value);
 
             var adapterSet = PSObject.GetMappedAdapter(value, typeTable);
@@ -5650,8 +5636,7 @@ namespace System.Management.Automation.Language
                 aliasRestrictions.Add(versionRestriction);
             }
 
-            var alias = memberInfo as PSAliasProperty;
-            if (alias != null)
+            if (memberInfo is PSAliasProperty alias)
             {
                 aliasConversionType = alias.ConversionType;
                 if (aliasRestrictions == null)
@@ -5722,8 +5707,7 @@ namespace System.Management.Automation.Language
 
                 if (candidateMethods != null && candidateMethods.Count > 0)
                 {
-                    var psMethodInfo = memberInfo as PSMethod;
-                    if (psMethodInfo != null)
+                    if (memberInfo is PSMethod psMethodInfo)
                     {
                         var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
                         candidateMethods.AddRange(cacheEntry._methodInformationStructures.Select(e => e._method));
@@ -6144,19 +6128,16 @@ namespace System.Management.Automation.Language
                     restrictions)).WriteToDebugLog(this);
             }
 
-            var psPropertyInfo = memberInfo as PSPropertyInfo;
-            if (psPropertyInfo != null)
+            if (memberInfo is PSPropertyInfo psPropertyInfo)
             {
                 if (!psPropertyInfo.IsSettable)
                 {
                     return GeneratePropertyAssignmentException(restrictions).WriteToDebugLog(this);
                 }
 
-                var psProperty = psPropertyInfo as PSProperty;
-                if (psProperty != null)
+                if (psPropertyInfo is PSProperty psProperty)
                 {
-                    var data = psProperty.adapterData as DotNetAdapter.PropertyCacheEntry;
-                    if (data != null)
+                    if (psProperty.adapterData is DotNetAdapter.PropertyCacheEntry data)
                     {
                         Expression expr;
 
@@ -6301,8 +6282,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                var codeProperty = psPropertyInfo as PSCodeProperty;
-                if (codeProperty != null)
+                if (psPropertyInfo is PSCodeProperty codeProperty)
                 {
                     var setterMethod = codeProperty.SetterCodeReference;
                     var parameters = setterMethod.GetParameters();
@@ -6340,8 +6320,7 @@ namespace System.Management.Automation.Language
                         restrictions).WriteToDebugLog(this);
                 }
 
-                var scriptProperty = psPropertyInfo as PSScriptProperty;
-                if (scriptProperty != null)
+                if (psPropertyInfo is PSScriptProperty scriptProperty)
                 {
                     // Invoke Setter
 
@@ -6713,8 +6692,7 @@ namespace System.Management.Automation.Language
             // defined in the TypeTable will only get affected by the PSTypeNames.
             if (methodInfo is PSMethod || methodInfo is PSParameterizedProperty)
             {
-                var psObj = target.Value as PSObject;
-                if (psObj != null && (targetValue.GetType() == typeof(Hashtable) || targetValue.GetType() == typeof(ArrayList)))
+                if (target.Value is PSObject psObj && (targetValue.GetType() == typeof(Hashtable) || targetValue.GetType() == typeof(ArrayList)))
                 {
                     // If we get here, then the target value should have 'isDeserialized == false', otherwise we cannot get a .NET methodInfo
                     // from _getMemberBinder.GetPSMemberInfo(). This is because when 'isDeserialized' is true, we use the PSObject to find the
@@ -6727,8 +6705,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            var psMethod = methodInfo as PSMethod;
-            if (psMethod != null)
+            if (methodInfo is PSMethod psMethod)
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
 
@@ -6736,8 +6713,7 @@ namespace System.Management.Automation.Language
                     data._methodInformationStructures, typeof(MethodException)).WriteToDebugLog(this);
             }
 
-            var scriptMethod = methodInfo as PSScriptMethod;
-            if (scriptMethod != null)
+            if (methodInfo is PSScriptMethod scriptMethod)
             {
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.PSScriptMethod_InvokeScript,
@@ -6749,8 +6725,7 @@ namespace System.Management.Automation.Language
                     restrictions).WriteToDebugLog(this);
             }
 
-            var codeMethod = methodInfo as PSCodeMethod;
-            if (codeMethod != null)
+            if (methodInfo is PSCodeMethod codeMethod)
             {
                 Expression expr = InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary);
                 if (codeMethod.CodeReference.ReturnType == typeof(void))
@@ -6765,8 +6740,7 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
             }
 
-            var parameterizedProperty = methodInfo as PSParameterizedProperty;
-            if (parameterizedProperty != null)
+            if (methodInfo is PSParameterizedProperty parameterizedProperty)
             {
                 var p = (DotNetAdapter.ParameterizedPropertyCacheEntry)parameterizedProperty.adapterData;
                 return InvokeDotNetMethod(CallInfo, Name, _invocationConstraints, _propertySetter ? MethodInvocationType.Setter : MethodInvocationType.Ordinary, target, args, restrictions,

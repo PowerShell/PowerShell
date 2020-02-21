@@ -33,16 +33,14 @@ namespace System.Management.Automation
 
         private HelpCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
         {
-            FunctionInfo fi = commandInfo as FunctionInfo;
-            if (fi != null)
+            if (commandInfo is FunctionInfo fi)
             {
                 _scriptBlock = fi.ScriptBlock;
                 _commandName = fi.Name;
             }
             else
             {
-                ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
-                if (si != null)
+                if (commandInfo is ExternalScriptInfo si)
                 {
                     _scriptBlock = si.ScriptBlock;
                     _commandName = si.Path;
@@ -308,8 +306,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    var wrapper = defaultValue as Compiler.DefaultValueExpressionWrapper;
-                    if (wrapper != null)
+                    if (defaultValue is Compiler.DefaultValueExpressionWrapper wrapper)
                     {
                         defaultValueStr = wrapper.Expression.Extent.Text;
                     }

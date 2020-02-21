@@ -384,8 +384,7 @@ namespace System.Management.Automation
 
                     if (variables != null)
                     {
-                        var variableAst = usingAst.SubExpression as VariableExpressionAst;
-                        if (variableAst == null)
+                        if (!(usingAst.SubExpression is VariableExpressionAst variableAst))
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
@@ -471,8 +470,7 @@ namespace System.Management.Automation
             {
                 current = current.Parent;
 
-                var sbAst = current as ScriptBlockAst;
-                if (sbAst != null)
+                if (current is ScriptBlockAst sbAst)
                 {
                     // We find the closest parent ScriptBlockAst of the current UsingExpression, which represents the scope
                     // that the current UsingExpression is in.
@@ -494,8 +492,7 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                var funcAst = current as FunctionDefinitionAst;
-                if (funcAst != null)
+                if (current is FunctionDefinitionAst funcAst)
                 {
                     // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression
                     // must be in 'Parameters' property of this FunctionDefinitionAst.
@@ -587,13 +584,11 @@ namespace System.Management.Automation
             // Now the parameters and arguments.
             foreach (var ast in commandAst.CommandElements.Skip(1))
             {
-                var exprAst = ast as ExpressionAst;
-                if (exprAst != null)
+                if (ast is ExpressionAst exprAst)
                 {
                     VariableExpressionAst variableAst = null;
 
-                    var usingExprAst = ast as UsingExpressionAst;
-                    if (usingExprAst != null)
+                    if (ast is UsingExpressionAst usingExprAst)
                     {
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingExprAst);
                         object usingValue = _usingValueMap[usingAstKey];
@@ -601,16 +596,14 @@ namespace System.Management.Automation
                         if (variableAst != null && variableAst.Splatted)
                         {
                             // Support the splatting of a dictionary
-                            var parameters = usingValue as System.Collections.IDictionary;
-                            if (parameters != null)
+                            if (usingValue is System.Collections.IDictionary parameters)
                             {
                                 _powershell.AddParameters(parameters);
                             }
                             else
                             {
                                 // Support the splatting of an array
-                                var arguments = usingValue as System.Collections.IEnumerable;
-                                if (arguments != null)
+                                if (usingValue is System.Collections.IEnumerable arguments)
                                 {
                                     foreach (object argument in arguments)
                                     {
@@ -639,9 +632,8 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        var constantExprAst = ast as ConstantExpressionAst;
                         object argument;
-                        if (constantExprAst != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType)))
+                        if (ast is ConstantExpressionAst constantExprAst && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType)))
                         {
                             var commandArgumentText = constantExprAst.Extent.Text;
                             argument = constantExprAst.Value;
@@ -688,9 +680,8 @@ namespace System.Management.Automation
 
         private string GetCommandName(CommandElementAst commandNameAst, bool isTrustedInput)
         {
-            var exprAst = commandNameAst as ExpressionAst;
             string commandName;
-            if (exprAst != null)
+            if (commandNameAst is ExpressionAst exprAst)
             {
                 var value = GetExpressionValue(exprAst, isTrustedInput);
                 if (value == null)

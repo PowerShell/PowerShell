@@ -941,8 +941,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
-                return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
+                return (_transportManager is WSManClientSessionTransportManager wsmanTransportManager) ? wsmanTransportManager.SupportsDisconnect : false;
             }
         }
 

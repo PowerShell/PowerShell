@@ -203,15 +203,13 @@ namespace System.Management.Automation.Remoting
             // Figure out if we need to close the remote runspace. Return null if we don't.
 
             // Are we a Start-PSSession enabled host?
-            IHostSupportsInteractiveSession host = clientHost as IHostSupportsInteractiveSession;
-            if (host == null || !host.IsRunspacePushed)
+            if (!(clientHost is IHostSupportsInteractiveSession host) || !host.IsRunspacePushed)
             {
                 return null;
             }
 
             // Now inspect the runspace.
-            RemoteRunspace remoteRunspace = host.Runspace as RemoteRunspace;
-            if (remoteRunspace == null || !remoteRunspace.ShouldCloseOnPop)
+            if (!(host.Runspace is RemoteRunspace remoteRunspace) || !remoteRunspace.ShouldCloseOnPop)
             {
                 return null;
             }

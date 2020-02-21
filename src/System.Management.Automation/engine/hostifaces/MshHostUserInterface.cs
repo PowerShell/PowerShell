@@ -245,8 +245,7 @@ namespace System.Management.Automation.Host
             {
                 // If we have access to a runspace, use the transcription data for that runspace.
                 // This is important when you have multiple runspaces within a host.
-                LocalRunspace localRunspace = Runspace.DefaultRunspace as LocalRunspace;
-                if (localRunspace != null)
+                if (Runspace.DefaultRunspace is LocalRunspace localRunspace)
                 {
                     _volatileTranscriptionData = localRunspace.TranscriptionData;
                     if (_volatileTranscriptionData != null)
@@ -327,8 +326,7 @@ namespace System.Management.Automation.Host
                 commandName = invocation.InvocationName;
 
                 // Do not transcribe Out-Default
-                CmdletInfo invocationCmdlet = invocation.MyCommand as CmdletInfo;
-                if (invocationCmdlet != null)
+                if (invocation.MyCommand is CmdletInfo invocationCmdlet)
                 {
                     if (invocationCmdlet.ImplementingType == typeof(Microsoft.PowerShell.Commands.OutDefaultCommand))
                     {
@@ -484,8 +482,7 @@ namespace System.Management.Automation.Host
 
                     if (value != null)
                     {
-                        var arrayValue = value as object[];
-                        string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
+                        string valueString = value is object[] arrayValue ? string.Join(", ", arrayValue) : value.ToString();
                         versionInfoFooter.AppendLine(versionKey + ": " + valueString);
                     }
                 }

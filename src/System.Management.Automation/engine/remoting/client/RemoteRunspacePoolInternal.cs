@@ -1075,9 +1075,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((!(asyncResult is RunspacePoolAsyncResult rsAsyncResult)) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1185,9 +1184,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((!(asyncResult is RunspacePoolAsyncResult rsAsyncResult)) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1248,10 +1246,8 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            WSManConnectionInfo wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
-
             // Disconnect-Connect currently only supported by WSMan.
-            if (wsmanConnectionInfoParam == null)
+            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
             {
                 throw new NotSupportedException();
             }
@@ -1382,8 +1378,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspBufferMode != null)
             {
-                string bufferingMode = pspBufferMode.Value as string;
-                if (bufferingMode != null)
+                if (pspBufferMode.Value is string bufferingMode)
                 {
                     if (Enum.TryParse<OutputBufferingMode>(bufferingMode, out OutputBufferingMode outputBufferingMode))
                     {
@@ -1395,8 +1390,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspResourceUri != null)
             {
-                string strShellUri = pspResourceUri.Value as string;
-                if (strShellUri != null)
+                if (pspResourceUri.Value is string strShellUri)
                 {
                     wsmanConnectionInfo.ShellUri = strShellUri;
                 }
@@ -1404,8 +1398,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspLocale != null)
             {
-                string localString = pspLocale.Value as string;
-                if (localString != null)
+                if (pspLocale.Value is string localString)
                 {
                     try
                     {
@@ -1418,8 +1411,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspDataLocale != null)
             {
-                string dataLocalString = pspDataLocale.Value as string;
-                if (dataLocalString != null)
+                if (pspDataLocale.Value is string dataLocalString)
                 {
                     try
                     {
@@ -1432,8 +1424,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspCompressionMode != null)
             {
-                string compressionModeString = pspCompressionMode.Value as string;
-                if (compressionModeString != null)
+                if (pspCompressionMode.Value is string compressionModeString)
                 {
                     wsmanConnectionInfo.UseCompression = compressionModeString.Equals("NoCompression", StringComparison.OrdinalIgnoreCase)
                         ? false : true;
@@ -1442,8 +1433,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspEncoding != null)
             {
-                string encodingString = pspEncoding.Value as string;
-                if (encodingString != null)
+                if (pspEncoding.Value is string encodingString)
                 {
                     wsmanConnectionInfo.UseUTF16 = encodingString.Equals("UTF16", StringComparison.OrdinalIgnoreCase)
                         ? true : false;
@@ -1452,8 +1442,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspProfile != null)
             {
-                string machineProfileLoadedString = pspProfile.Value as string;
-                if (machineProfileLoadedString != null)
+                if (pspProfile.Value is string machineProfileLoadedString)
                 {
                     wsmanConnectionInfo.NoMachineProfile = machineProfileLoadedString.Equals("Yes", StringComparison.OrdinalIgnoreCase)
                         ? false : true;
@@ -1479,8 +1468,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspIdleTimeOut != null && pspShellInactivity != null)
             {
-                string shellInactivityString = pspShellInactivity.Value as string;
-                if ((shellInactivityString != null) &&
+                if ((pspShellInactivity.Value is string shellInactivityString) &&
                     GetTimeIntValue(pspIdleTimeOut.Value as string, out int idleTimeout))
                 {
                     try
@@ -1773,8 +1761,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs"></param>
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (_connectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
                 URIRedirectionReported.SafeInvoke(this, eventArgs);
@@ -1820,8 +1807,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-                if (wsmanConnectionInfo != null)
+                if (_connectionInfo is WSManConnectionInfo wsmanConnectionInfo)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
                         ((WSManConnectionInfo)eventArgs.ConnectionInfo).OutputBufferingMode;
@@ -1835,8 +1821,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void ResetDisconnectedOnExpiresOn()
         {
             // Reset DisconnectedOn/ExpiresOn
-            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
+            if (_connectionInfo is WSManConnectionInfo wsManConnectionInfo)
             {
                 wsManConnectionInfo.NullDisconnectedExpiresOn();
             }
@@ -1845,8 +1830,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void UpdateDisconnectedExpiresOn()
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
-            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
+            if (_connectionInfo is WSManConnectionInfo wsManConnectionInfo)
             {
                 wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
             }

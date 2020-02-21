@@ -160,8 +160,7 @@ namespace System.Management.Automation
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
             }
 
-            var remoteRunspace = powershell.Runspace as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (powershell.Runspace is RemoteRunspace remoteRunspace)
             {
                 // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
@@ -237,8 +236,7 @@ namespace System.Management.Automation
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
             }
 
-            var remoteRunspace = powershell.Runspace as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (powershell.Runspace is RemoteRunspace remoteRunspace)
             {
                 // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
@@ -404,8 +402,7 @@ namespace System.Management.Automation
 
             if (output.Count == 1)
             {
-                var commandCompletion = output[0].BaseObject as CommandCompletion;
-                if (commandCompletion != null)
+                if (output[0].BaseObject is CommandCompletion commandCompletion)
                 {
                     return commandCompletion;
                 }
@@ -451,8 +448,7 @@ namespace System.Management.Automation
                 if (results.Count == 1)
                 {
                     var result = PSObject.Base(results[0]);
-                    var commandCompletion = result as CommandCompletion;
-                    if (commandCompletion != null)
+                    if (result is CommandCompletion commandCompletion)
                     {
                         return commandCompletion;
                     }
@@ -488,8 +484,7 @@ namespace System.Management.Automation
                 if (results.Count == 1)
                 {
                     var result = PSObject.Base(results[0]);
-                    var commandCompletion = result as CommandCompletion;
-                    if (commandCompletion != null)
+                    if (result is CommandCompletion commandCompletion)
                     {
                         return commandCompletion;
                     }
@@ -651,8 +646,7 @@ namespace System.Management.Automation
                 results = new List<CompletionResult>();
                 foreach (var oldResult in oldResults)
                 {
-                    var completionResult = PSObject.Base(oldResult) as CompletionResult;
-                    if (completionResult == null)
+                    if (!(PSObject.Base(oldResult) is CompletionResult completionResult))
                     {
                         var oldResultStr = oldResult.ToString();
 
@@ -1100,14 +1094,12 @@ namespace System.Management.Automation
 
                 foreach (PSObject t in paths)
                 {
-                    var pathsArray = t.BaseObject as IList;
-                    if (pathsArray != null && pathsArray.Count == 3)
+                    if (t.BaseObject is IList pathsArray && pathsArray.Count == 3)
                     {
                         object objectPath = pathsArray[0];
-                        PSObject item = pathsArray[1] as PSObject;
                         object convertedPath = pathsArray[1];
 
-                        if (objectPath == null || item == null || convertedPath == null)
+                        if (objectPath == null || !(pathsArray[1] is PSObject item) || convertedPath == null)
                         {
                             continue;
                         }

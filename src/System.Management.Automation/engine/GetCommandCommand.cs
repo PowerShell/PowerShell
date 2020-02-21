@@ -653,8 +653,7 @@ namespace Microsoft.PowerShell.Commands
                 // Get the noun and verb to check...
                 string verb;
                 string noun;
-                CmdletInfo cmdlet = command as CmdletInfo;
-                if (cmdlet != null)
+                if (command is CmdletInfo cmdlet)
                 {
                     verb = cmdlet.Verb;
                     noun = cmdlet.Noun;
@@ -1030,29 +1029,25 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                ApplicationInfo appInfo = info as ApplicationInfo;
-                if (appInfo != null)
+                if (info is ApplicationInfo appInfo)
                 {
                     key = appInfo.Path;
                     break;
                 }
 
-                CmdletInfo cmdletInfo = info as CmdletInfo;
-                if (cmdletInfo != null)
+                if (info is CmdletInfo cmdletInfo)
                 {
                     key = cmdletInfo.FullName;
                     break;
                 }
 
-                ScriptInfo scriptInfo = info as ScriptInfo;
-                if (scriptInfo != null)
+                if (info is ScriptInfo scriptInfo)
                 {
                     key = scriptInfo.Definition;
                     break;
                 }
 
-                ExternalScriptInfo externalScriptInfo = info as ExternalScriptInfo;
-                if (externalScriptInfo != null)
+                if (info is ExternalScriptInfo externalScriptInfo)
                 {
                     key = externalScriptInfo.Path;
                     break;
@@ -1229,8 +1224,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (ArgumentList != null)
                     {
-                        AliasInfo ai = current as AliasInfo;
-                        if (ai != null)
+                        if (current is AliasInfo ai)
                         {
                             // If the matching command was an alias, then use the resolved command
                             // instead of the alias...

@@ -366,13 +366,11 @@ namespace System.Management.Automation
 
                         for (int i = 0; i < Arguments.Length - 1; i++)
                         {
-                            var arg = Arguments[i] as string;
-                            if (arg != null &&
+                            if (Arguments[i] is string arg &&
                                 (arg.Equals("-Path", StringComparison.OrdinalIgnoreCase) ||
                                 (arg.Equals("-LiteralPath", StringComparison.OrdinalIgnoreCase))))
                             {
-                                var path = Arguments[i + 1] as string;
-                                if (path != null)
+                                if (Arguments[i + 1] is string path)
                                 {
                                     Context.SessionState.Path.GetResolvedProviderPathFromPSPath(path, true, out provider);
                                 }

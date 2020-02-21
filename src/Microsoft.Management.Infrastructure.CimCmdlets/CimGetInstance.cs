@@ -285,8 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static bool IsClassNameQuerySet(CimBaseCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
-            GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
-            if (cmd != null)
+            if (cmdlet is GetCimInstanceCommand cmd)
             {
                 if (cmd.QueryDialect != null || cmd.SelectProperties != null || cmd.Filter != null)
                 {
@@ -300,8 +299,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected static string CreateQuery(CimBaseCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
-            GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
-            if (cmd != null)
+            if (cmdlet is GetCimInstanceCommand cmd)
             {
                 StringBuilder propertyList = new StringBuilder();
                 if (cmd.SelectProperties == null)

@@ -240,8 +240,7 @@ namespace System.Management.Automation.Internal
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                string varName = arguments as string;
-                if (varName != null)
+                if (arguments is string varName)
                 {
                     if (varName.StartsWith('+'))
                     {

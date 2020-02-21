@@ -630,8 +630,7 @@ namespace System.Management.Automation
                 List<PSTypeName> result = new List<PSTypeName>();
                 foreach (Attribute attribute in Attributes)
                 {
-                    OutputTypeAttribute outputType = attribute as OutputTypeAttribute;
-                    if (outputType != null)
+                    if (attribute is OutputTypeAttribute outputType)
                     {
                         result.AddRange(outputType.Type);
                     }
@@ -1169,8 +1168,7 @@ namespace System.Management.Automation
                 // Start the pipeline, if the command calling this pipeline is
                 // not expecting input (as indicated by it's position in the pipeline
                 // then neither should we.
-                MshCommandRuntime crt = commandRuntime as MshCommandRuntime;
-                if (crt != null)
+                if (commandRuntime is MshCommandRuntime crt)
                 {
                     if (crt.OutputPipe != null)
                     {

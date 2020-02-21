@@ -119,9 +119,8 @@ namespace Microsoft.PowerShell.Commands
                                                         "SetSecurityDescriptor_FileNotFound"));
             }
 
-            FileSystemSecurity sd = securityDescriptor as FileSystemSecurity;
 
-            if (sd == null)
+            if (!(securityDescriptor is FileSystemSecurity sd))
             {
                 throw PSTraceSource.NewArgumentException("securityDescriptor");
             }

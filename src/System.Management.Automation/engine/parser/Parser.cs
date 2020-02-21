@@ -240,9 +240,8 @@ namespace System.Management.Automation.Language
             var tokenizer = (new Parser())._tokenizer;
             tokenizer.Initialize(null, str, null);
             tokenizer.AllowSignedNumbers = true;
-            var token = tokenizer.NextToken() as NumberToken;
 
-            if (token == null || !tokenizer.IsAtEndOfScript(token.Extent))
+            if (!(tokenizer.NextToken() is NumberToken token) || !tokenizer.IsAtEndOfScript(token.Extent))
             {
                 if (shouldTryCoercion)
                 {
@@ -315,8 +314,7 @@ namespace System.Management.Automation.Language
                 context.SetVariable(SpecialVariables.FirstTokenVarPath, _previousFirstTokenText);
                 if (!IgnoreTokenWhenUpdatingPreviousFirstLast(firstToken))
                 {
-                    var stringToken = firstToken as StringToken;
-                    _previousFirstTokenText = stringToken != null
+                    _previousFirstTokenText = firstToken is StringToken stringToken
                         ? stringToken.Value
                         : firstToken.Text;
                 }
@@ -326,8 +324,7 @@ namespace System.Management.Automation.Language
                 var lastToken = _tokenizer.LastToken;
                 if (!IgnoreTokenWhenUpdatingPreviousFirstLast(lastToken))
                 {
-                    var stringToken = lastToken as StringToken;
-                    _previousLastTokenText = stringToken != null
+                    _previousLastTokenText = lastToken is StringToken stringToken
                         ? stringToken.Value
                         : lastToken.Text;
                 }
@@ -612,20 +609,17 @@ namespace System.Management.Automation.Language
             {
                 if (obj != null)
                 {
-                    var token = obj as Token;
-                    if (token != null)
+                    if (obj is Token token)
                     {
                         return token.Extent;
                     }
 
-                    var ast = obj as Ast;
-                    if (ast != null)
+                    if (obj is Ast ast)
                     {
                         return ast.Extent;
                     }
 
-                    var typename = obj as ITypeName;
-                    if (typename != null)
+                    if (obj is ITypeName typename)
                     {
                         return typename.Extent;
                     }
@@ -668,15 +662,13 @@ namespace System.Management.Automation.Language
             {
                 if (obj != null)
                 {
-                    Ast ast = obj as Ast;
-                    if (ast != null)
+                    if (obj is Ast ast)
                     {
                         yield return ast;
                     }
                     else
                     {
-                        var enumerable = obj as IEnumerable<Ast>;
-                        if (enumerable != null)
+                        if (obj is IEnumerable<Ast> enumerable)
                         {
                             foreach (var ast2 in enumerable)
                             {
@@ -728,8 +720,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var pipelineAst = statements[0] as PipelineAst;
-            if (pipelineAst == null)
+            if (!(statements[0] is PipelineAst pipelineAst))
             {
                 return false;
             }
@@ -740,8 +731,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var hashTableAst = expr as HashtableAst;
-            if (hashTableAst == null)
+            if (!(expr is HashtableAst hashTableAst))
             {
                 return false;
             }
@@ -817,10 +807,9 @@ namespace System.Management.Automation.Language
                         result = new List<UsingStatementAst>();
                     }
 
-                    var usingStatement = statement as UsingStatementAst;
                     // otherwise returned statement is ErrorStatementAst.
                     // We ignore it here, because error already reported to the parser.
-                    if (usingStatement != null)
+                    if (statement is UsingStatementAst usingStatement)
                     {
                         result.Add(usingStatement);
                     }
@@ -885,8 +874,7 @@ namespace System.Management.Automation.Language
             {
                 foreach (AttributeBaseAst attr in candidateAttributes)
                 {
-                    AttributeAst attribute = attr as AttributeAst;
-                    if (attribute != null)
+                    if (attr is AttributeAst attribute)
                     {
                         attributes.Add(attribute);
                     }
@@ -1868,8 +1856,7 @@ namespace System.Management.Automation.Language
 
                 _tokenizer.CheckAstIsBeforeSignature(statement);
 
-                var trapStatementAst = statement as TrapStatementAst;
-                if (trapStatementAst != null)
+                if (statement is TrapStatementAst trapStatementAst)
                 {
                     traps.Add(trapStatementAst);
                 }
@@ -2776,9 +2763,8 @@ namespace System.Management.Automation.Language
                         errorAsts.Add(clauseBody);
                         endErrorStatement = clauseBody.Extent;
 
-                        var clauseConditionString = clauseCondition as StringConstantExpressionAst;
 
-                        if (clauseConditionString != null &&
+                        if (clauseCondition is StringConstantExpressionAst clauseConditionString &&
                             clauseConditionString.StringConstantType == StringConstantType.BareWord &&
                             clauseConditionString.Value.Equals("default", StringComparison.OrdinalIgnoreCase))
                         {
@@ -3064,12 +3050,13 @@ namespace System.Management.Automation.Language
 
                 #region "Add Configuration Keywords"
 
+                #region "Add Configuration Keywords"
+
                 // If the configuration name is a constant string, then
                 // if we're not at the top level, we'll add it to the list of configuration resource keywords.
                 // If we are at the top level, then we'll add it to the list of keywords defined in this
                 // parse so it can be used as a resource in subsequent config statements.
-                var scAst = configurationName as StringConstantExpressionAst;
-                if (scAst != null)
+                if (configurationName is StringConstantExpressionAst scAst)
                 {
                     var keywordToAddForThisConfigurationStatement = new System.Management.Automation.Language.DynamicKeyword
                     {
@@ -3097,8 +3084,7 @@ namespace System.Management.Automation.Language
                     keywordToAddForThisConfigurationStatement.Properties.Add(RunAsProp.Name, RunAsProp);
 
                     // Extract the parameters, if any and them to the keyword definition.
-                    var sbeAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
-                    if (sbeAst != null)
+                    if (configurationBodyScriptBlock is ScriptBlockExpressionAst sbeAst)
                     {
                         var pList = sbeAst.ScriptBlock.ParamBlock;
                         if (pList != null)
@@ -3111,15 +3097,13 @@ namespace System.Management.Automation.Language
                                 {
                                     foreach (var attr in parm.Attributes)
                                     {
-                                        var typeConstraint = attr as TypeConstraintAst;
-                                        if (typeConstraint != null)
+                                        if (attr is TypeConstraintAst typeConstraint)
                                         {
                                             keywordProp.TypeConstraint = typeConstraint.TypeName.Name;
                                             continue;
                                         }
 
-                                        var aAst = attr as AttributeAst;
-                                        if (aAst != null)
+                                        if (attr is AttributeAst aAst)
                                         {
                                             if (string.Equals(aAst.TypeName.Name, "Parameter", StringComparison.OrdinalIgnoreCase))
                                             {
@@ -3135,8 +3119,7 @@ namespace System.Management.Automation.Language
                                                             }
                                                             else if (na.Argument != null)
                                                             {
-                                                                ConstantExpressionAst ceAst = na.Argument as ConstantExpressionAst;
-                                                                if (ceAst != null)
+                                                                if (na.Argument is ConstantExpressionAst ceAst)
                                                                 {
                                                                     keywordProp.Mandatory = System.Management.Automation.LanguagePrimitives.IsTrue(ceAst.Value);
                                                                 }
@@ -3855,9 +3838,8 @@ namespace System.Management.Automation.Language
                         //   }
                         // } # we don't want to simple report an unexpected token here, it would be super-confusing.
 
-                        InvokeMemberExpressionAst instanceInvokeMemberExpressionAst = instanceName as InvokeMemberExpressionAst;
 
-                        if (instanceInvokeMemberExpressionAst != null &&
+                        if (instanceName is InvokeMemberExpressionAst instanceInvokeMemberExpressionAst &&
                             instanceInvokeMemberExpressionAst.Arguments.Count == 1 &&
                             instanceInvokeMemberExpressionAst.Arguments[0] is ScriptBlockExpressionAst &&
                             // the last condition checks that there is no space between "method" name and '{'
@@ -4340,8 +4322,7 @@ namespace System.Management.Automation.Language
                         startExtent = attribute.Extent;
                     }
 
-                    var attributeAst = attribute as AttributeAst;
-                    if (attributeAst != null)
+                    if (attribute is AttributeAst attributeAst)
                     {
                         attributeList.Add(attributeAst);
                     }
@@ -4513,9 +4494,8 @@ namespace System.Management.Automation.Language
             if (TryUseTokenAsSimpleName(token))
             {
                 SkipToken();
-                var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
 
-                if (functionDefinition == null)
+                if (!(MethodDeclarationRule(token, className, staticToken != null) is FunctionDefinitionAst functionDefinition))
                 {
                     // TODO: better error recovery - shouldn't assume this was the last class member
                     Diagnostics.Assert(ErrorList.Count > 0, "Should be an error if we don't have a function");
@@ -5441,8 +5421,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
 
-                var typeConstraintAst = type as TypeConstraintAst;
-                if (typeConstraintAst == null)
+                if (!(type is TypeConstraintAst typeConstraintAst))
                 {
                     // Presumably we parsed an attribute instead of a type.  Put it back and let the code
                     // below report a missing catch clause body.  The attribute might belong to something that
@@ -6279,10 +6258,9 @@ namespace System.Management.Automation.Language
                         }
 
                         var genericToken = (StringToken)token;
-                        var expandableToken = genericToken as StringExpandableToken;
                         // A command name w/o invocation operator is not expandable even if the token has expandable parts
                         // If we have seen an invocation operator, the command name is expandable.
-                        if (expandableToken != null && context != CommandArgumentContext.CommandName)
+                        if (genericToken is StringExpandableToken expandableToken && context != CommandArgumentContext.CommandName)
                         {
                             var nestedExpressions = ParseNestedExpressions(expandableToken);
                             exprAst = new ExpandableStringExpressionAst(expandableToken, expandableToken.Value,
@@ -6544,8 +6522,7 @@ namespace System.Management.Automation.Language
                                 var ast = GetCommandArgument(context, token);
 
                                 // If this is the special verbatim argument syntax, look for the next element
-                                StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                if ((token is StringToken argumentToken) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                 {
                                     elements.Add(ast);
                                     endExtent = ast.Extent;
@@ -7124,9 +7101,7 @@ namespace System.Management.Automation.Language
 
                 for (int i = attributes.Count - 2; i >= 0; --i)
                 {
-                    var typeConstraint = attributes[i] as TypeConstraintAst;
-
-                    expr = typeConstraint != null
+                    expr = attributes[i] is TypeConstraintAst typeConstraint
                                 ? new ConvertExpressionAst(ExtentOf(typeConstraint, expr), typeConstraint, expr)
                                 : new AttributedExpressionAst(ExtentOf(attributes[i], expr), attributes[i], expr);
                 }
@@ -7556,12 +7531,12 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(!token.HasError || ErrorList.Any(), "No nested tokens should have unreported errors.");
 
                 ExpressionAst exprAst;
-                var varToken = token as VariableToken;
 
-                if (varToken != null)
+                if (token is VariableToken varToken)
                 {
                     exprAst = CheckUsingVariable(varToken, false);
-                    if (_savingTokens) { newNestedTokens.Add(varToken); }
+                    if (_savingTokens)
+                    { newNestedTokens.Add(varToken); }
                 }
                 // Enable if we decide we still need to support
                 //     "${}"  or "$var:"
@@ -7581,7 +7556,8 @@ namespace System.Management.Automation.Language
                     {
                         ts = _tokenizer.StartNestedScan((UnscannedSubExprToken)token);
                         exprAst = PrimaryExpressionRule(withMemberAccess: true);
-                        if (_savingTokens) { newNestedTokens.AddRange(_tokenizer.TokenList); }
+                        if (_savingTokens)
+                        { newNestedTokens.AddRange(_tokenizer.TokenList); }
                     }
                     finally
                     {

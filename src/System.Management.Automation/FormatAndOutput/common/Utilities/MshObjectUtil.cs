@@ -114,8 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="obj">Object to extract the IEnumerable from.</param>
         internal static IEnumerable GetEnumerable(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj != null)
+            if (obj is PSObject mshObj)
             {
                 obj = mshObj.BaseObject;
             }
@@ -220,8 +219,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     IEnumerator enumerator = e.GetEnumerator();
                     if (enumerator != null)
                     {
-                        IBlockingEnumerator<object> be = enumerator as IBlockingEnumerator<object>;
-                        if (be != null)
+                        if (enumerator is IBlockingEnumerator<object> be)
                         {
                             while (be.MoveNext(false))
                             {
@@ -388,8 +386,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (standardMembersSet != null)
             {
-                PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (defaultDisplayPropertySet != null)
+                if (standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] is PSPropertySet defaultDisplayPropertySet)
                 {
                     List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
                     foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
@@ -427,8 +424,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (standardMembersSet != null)
             {
-                PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (defaultDisplayProperty != null)
+                if (standardMembersSet.Members[TypeTable.DefaultDisplayProperty] is PSNoteProperty defaultDisplayProperty)
                 {
                     string expressionString = defaultDisplayProperty.Value.ToString();
                     if (string.IsNullOrEmpty(expressionString))

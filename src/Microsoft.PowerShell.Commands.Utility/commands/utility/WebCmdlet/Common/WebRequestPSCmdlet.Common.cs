@@ -1202,8 +1202,7 @@ namespace Microsoft.PowerShell.Commands
                 object content = Body;
 
                 // make sure we're using the base object of the body, not the PSObject wrapper
-                PSObject psBody = Body as PSObject;
-                if (psBody != null)
+                if (Body is PSObject psBody)
                 {
                     content = psBody.BaseObject;
                 }
@@ -1733,8 +1732,7 @@ namespace Microsoft.PowerShell.Commands
                 return 0;
 
             byte[] bytes = null;
-            XmlDocument doc = xmlNode as XmlDocument;
-            if (doc != null && (doc.FirstChild as XmlDeclaration) != null)
+            if (xmlNode is XmlDocument doc && (doc.FirstChild as XmlDeclaration) != null)
             {
                 XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);

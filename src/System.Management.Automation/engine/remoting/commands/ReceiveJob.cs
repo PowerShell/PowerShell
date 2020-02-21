@@ -350,10 +350,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (Job job in _jobs)
                         {
-                            PSRemotingJob remoteJob =
-                                        job as PSRemotingJob;
-
-                            if (remoteJob == null)
+                            if (!(job is PSRemotingJob remoteJob))
                             {
                                 string message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
 
@@ -383,11 +380,9 @@ namespace Microsoft.PowerShell.Commands
                         foreach (Job job in _jobs)
                         {
                             // the job can either be a remoting job or another one
-                            PSRemotingJob remoteJob =
-                                        job as PSRemotingJob;
 
                             // ComputerName parameter can only be used with remoting jobs
-                            if (remoteJob == null)
+                            if (!(job is PSRemotingJob remoteJob))
                             {
                                 string message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
 
@@ -705,8 +700,7 @@ namespace Microsoft.PowerShell.Commands
             // we have a better way of handling blocked state logic
             // for remoting jobs, so use that if job is a remoting
             // job
-            PSRemotingChildJob remotingChildJob = job as PSRemotingChildJob;
-            if (remotingChildJob != null)
+            if (job is PSRemotingChildJob remotingChildJob)
             {
                 remotingChildJob.UnblockJob();
             }
@@ -746,8 +740,7 @@ namespace Microsoft.PowerShell.Commands
             // job is re-connected.
             if (job.JobStateInfo.State == JobState.Disconnected)
             {
-                PSRemotingChildJob remotingChildJob = job as PSRemotingChildJob;
-                if (remotingChildJob != null && remotingChildJob.DisconnectedAndBlocked)
+                if (job is PSRemotingChildJob remotingChildJob && remotingChildJob.DisconnectedAndBlocked)
                 {
                     return;
                 }
@@ -802,8 +795,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ErrorRecord e in errorRecords)
                 {
                     if (e == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         e.PreserveInvocationInfoOnce = true;
                         mshCommandRuntime.WriteError(e, true);
@@ -815,8 +807,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (VerboseRecord v in verboseRecords)
                 {
                     if (v == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         mshCommandRuntime.WriteVerbose(v, true);
                     }
@@ -827,8 +818,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (DebugRecord d in debugRecords)
                 {
                     if (d == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         mshCommandRuntime.WriteDebug(d, true);
                     }
@@ -839,8 +829,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (WarningRecord w in warningRecords)
                 {
                     if (w == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         mshCommandRuntime.WriteWarning(w, true);
                     }
@@ -851,8 +840,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ProgressRecord p in progressRecords)
                 {
                     if (p == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         mshCommandRuntime.WriteProgress(p, true);
                     }
@@ -863,8 +851,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (InformationRecord p in informationRecords)
                 {
                     if (p == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
+                    if (CommandRuntime is MshCommandRuntime mshCommandRuntime)
                     {
                         mshCommandRuntime.WriteInformation(p, true);
                     }
@@ -879,8 +866,7 @@ namespace Microsoft.PowerShell.Commands
         private void WriteReasonError(Job job)
         {
             // Write better error for the remoting case and generic error for the other case
-            PSRemotingChildJob child = job as PSRemotingChildJob;
-            if (child != null && child.FailureErrorRecord != null)
+            if (job is PSRemotingChildJob child && child.FailureErrorRecord != null)
             {
                 _results.Add(new PSStreamObject(PSStreamObjectType.Error, child.FailureErrorRecord, child.InstanceId));
             }
@@ -1405,8 +1391,7 @@ namespace Microsoft.PowerShell.Commands
                                      "Job has data and is being removed.");
             }
 
-            Job2 job2 = job as Job2;
-            if (job2 != null)
+            if (job is Job2 job2)
             {
 #pragma warning disable 56500
                 try

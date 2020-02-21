@@ -257,7 +257,6 @@ namespace System.Management.Automation
         {
             // Check the provider capabilities before globbing
             providerInstance = _sessionState.Internal.GetProviderInstance(providerId);
-            ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
             ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
 
             Collection<string> stringResult = new Collection<string>();
@@ -287,7 +286,7 @@ namespace System.Management.Automation
                 {
                     s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
 
-                    if (containerCmdletProvider != null)
+                    if (providerInstance is ContainerCmdletProvider containerCmdletProvider)
                     {
                         // Since it is really a provider-internal path, use provider-to-provider globbing
                         // and then add back on the provider ID.
@@ -2241,8 +2240,7 @@ namespace System.Management.Automation
                         context);
             }
 
-            NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
-            if (navigationProvider != null)
+            if (providerInstance is NavigationCmdletProvider navigationProvider)
             {
                 string rootedPath = _sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
                 string normalizedRelativePath = navigationProvider.ContractRelativePath(rootedPath, context.Drive.Root, false, context);

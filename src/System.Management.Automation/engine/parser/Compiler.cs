@@ -1191,8 +1191,7 @@ namespace System.Management.Automation.Language
         {
             for (int index = 0; index < conversions.Count; index++)
             {
-                var typeConstraint = conversions[index] as TypeConstraintAst;
-                if (typeConstraint != null)
+                if (conversions[index] is TypeConstraintAst typeConstraint)
                 {
                     expr = ConvertValue(typeConstraint, expr);
                 }
@@ -1502,8 +1501,7 @@ namespace System.Management.Automation.Language
             }
             else if (ast.PositionalArguments.Count == 1)
             {
-                var typeArg = ast.PositionalArguments[0] as TypeExpressionAst;
-                if (typeArg != null)
+                if (ast.PositionalArguments[0] is TypeExpressionAst typeArg)
                 {
                     var type = TypeOps.ResolveTypeName(typeArg.TypeName, typeArg.Extent);
                     result = new OutputTypeAttribute(type);
@@ -1520,8 +1518,7 @@ namespace System.Management.Automation.Language
                 for (int i = 0; i < ast.PositionalArguments.Count; i++)
                 {
                     var positionalArgument = ast.PositionalArguments[i];
-                    var typeArg = positionalArgument as TypeExpressionAst;
-                    args[i] = typeArg != null
+                    args[i] = positionalArgument is TypeExpressionAst typeArg
                         ? TypeOps.ResolveTypeName(typeArg.TypeName, typeArg.Extent)
                         : positionalArgument.Accept(s_cvv);
                 }
@@ -1716,8 +1713,7 @@ namespace System.Management.Automation.Language
             {
                 // Unwrap the wrapped exception
                 var innerException = tie.InnerException;
-                var rte = innerException as RuntimeException;
-                if (rte == null)
+                if (!(innerException is RuntimeException rte))
                 {
                     rte = InterpreterError.NewInterpreterExceptionWithInnerException(
                         null,
@@ -1942,8 +1938,7 @@ namespace System.Management.Automation.Language
 
             LocalVariablesParameter = Expression.Variable(LocalVariablesTupleType, "locals");
 
-            var functionMemberAst = ast as FunctionMemberAst;
-            if (functionMemberAst != null)
+            if (ast is FunctionMemberAst functionMemberAst)
             {
                 CompilingMemberFunction = true;
                 MemberFunctionReturnType = functionMemberAst.GetReturnType();
@@ -1963,8 +1958,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                var generatedMemberFunctionAst = ast as CompilerGeneratedMemberFunctionAst;
-                if (generatedMemberFunctionAst != null)
+                if (ast is CompilerGeneratedMemberFunctionAst generatedMemberFunctionAst)
                 {
                     CompilingMemberFunction = true;
                     SpecialMemberFunctionType = generatedMemberFunctionAst.Type;
@@ -2071,8 +2065,7 @@ namespace System.Management.Automation.Language
 
             // Can't be exposed to untrusted input - exposing private variable names / etc. could be
             // information disclosure.
-            var variableAst = expressionAst as VariableExpressionAst;
-            if (variableAst != null)
+            if (expressionAst is VariableExpressionAst variableAst)
             {
                 // We can avoid creating a lambda for the common case of a simple variable expression.
                 return VariableOps.GetVariableValue(variableAst.VariablePath, context, variableAst);
@@ -2301,8 +2294,7 @@ namespace System.Management.Automation.Language
             CaptureAstContext context,
             MergeRedirectExprs generateRedirectExprs)
         {
-            var commandExpressionAst = stmt as CommandExpressionAst;
-            if (commandExpressionAst != null)
+            if (stmt is CommandExpressionAst commandExpressionAst)
             {
                 if (commandExpressionAst.Redirections.Count > 0)
                 {
@@ -2312,8 +2304,7 @@ namespace System.Management.Automation.Language
                 return Compile(commandExpressionAst.Expression);
             }
 
-            var assignmentStatementAst = stmt as AssignmentStatementAst;
-            if (assignmentStatementAst != null)
+            if (stmt is AssignmentStatementAst assignmentStatementAst)
             {
                 var expr = Compile(assignmentStatementAst);
                 if (stmt.Parent is StatementBlockAst)
@@ -2324,9 +2315,8 @@ namespace System.Management.Automation.Language
                 return expr;
             }
 
-            var pipelineAst = stmt as PipelineAst;
             // If it's a pipeline that isn't being backgrounded, try to optimize expression
-            if (pipelineAst != null && !pipelineAst.Background)
+            if (stmt is PipelineAst pipelineAst && !pipelineAst.Background)
             {
                 var expr = pipelineAst.GetPureExpression();
                 if (expr != null)
@@ -2391,8 +2381,7 @@ namespace System.Management.Automation.Language
 
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
-            var funcDefn = scriptBlockAst.Parent as FunctionDefinitionAst;
-            var funcName = (funcDefn != null) ? funcDefn.Name : "<ScriptBlock>";
+            var funcName = (scriptBlockAst.Parent is FunctionDefinitionAst funcDefn) ? funcDefn.Name : "<ScriptBlock>";
 
             var rootForDefiningTypesAndUsings = scriptBlockAst.Find(ast => ast is TypeDefinitionAst || ast is UsingStatementAst, true) != null
                 ? scriptBlockAst
@@ -3452,8 +3441,7 @@ namespace System.Management.Automation.Language
             MergeRedirectExprs generateRedirectExprs = null)
         {
             var arrayLHS = assignmentStatementAst.Left as ArrayLiteralAst;
-            var parenExpressionAst = assignmentStatementAst.Left as ParenExpressionAst;
-            if (parenExpressionAst != null)
+            if (assignmentStatementAst.Left is ParenExpressionAst parenExpressionAst)
             {
                 arrayLHS = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
             }
@@ -3929,13 +3917,11 @@ namespace System.Management.Automation.Language
             }
 
             Expression result = null;
-            var parenExpr = commandExpr.Expression as ParenExpressionAst;
-            if (parenExpr != null)
+            if (commandExpr.Expression is ParenExpressionAst parenExpr)
             {
                 // Special processing for paren expressions that capture output.
                 // Insert any merge redirect expressions during paren expression compilation.
-                var assignmentStatementAst = parenExpr.Pipeline as AssignmentStatementAst;
-                if (assignmentStatementAst != null)
+                if (parenExpr.Pipeline is AssignmentStatementAst assignmentStatementAst)
                 {
                     result = CompileAssignment(
                         assignmentStatementAst,
@@ -4075,8 +4061,7 @@ namespace System.Management.Automation.Language
         public object VisitFileRedirection(FileRedirectionAst fileRedirectionAst)
         {
             Expression fileNameExpr;
-            var strConst = fileRedirectionAst.Location as StringConstantExpressionAst;
-            if (strConst != null)
+            if (fileRedirectionAst.Location is StringConstantExpressionAst strConst)
             {
                 // When the filename is a constant, we still must generate a new FileRedirection
                 // at runtime because we can't keep a cached object in the closure because the object
@@ -4117,14 +4102,12 @@ namespace System.Management.Automation.Language
                     var splatTest = element;
                     bool splatted = false;
 
-                    UsingExpressionAst usingExpression = element as UsingExpressionAst;
-                    if (usingExpression != null)
+                    if (element is UsingExpressionAst usingExpression)
                     {
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
-                    if (variableExpression != null)
+                    if (splatTest is VariableExpressionAst variableExpression)
                     {
                         splatted = variableExpression.Splatted;
                     }
@@ -5014,8 +4997,7 @@ namespace System.Management.Automation.Language
         {
             if (condExpr != null)
             {
-                var binaryExpr = condExpr as BinaryExpressionAst;
-                if (binaryExpr != null && binaryExpr.Operator == TokenKind.DotDot)
+                if (condExpr is BinaryExpressionAst binaryExpr && binaryExpr.Operator == TokenKind.DotDot)
                 {
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
@@ -5445,8 +5427,7 @@ namespace System.Management.Automation.Language
                 labelExpr = Compile(label);
                 if (_loopTargets.Count > 0)
                 {
-                    var labelStrAst = label as StringConstantExpressionAst;
-                    if (labelStrAst != null)
+                    if (label is StringConstantExpressionAst labelStrAst)
                     {
                         labelTarget = (from t in _loopTargets
                                        where t.Label.Equals(labelStrAst.Value, StringComparison.OrdinalIgnoreCase)
@@ -5513,7 +5494,6 @@ namespace System.Management.Automation.Language
             if (returnStatementAst.Pipeline != null)
             {
                 var pipe = returnStatementAst.Pipeline;
-                var assignmentStatementAst = pipe as AssignmentStatementAst;
 
                 Expression returnValue;
                 if (CompilingMemberFunction)
@@ -5537,7 +5517,7 @@ namespace System.Management.Automation.Language
                                             returnExpr);
                 }
 
-                returnValue = assignmentStatementAst != null
+                returnValue = pipe is AssignmentStatementAst assignmentStatementAst
                     ? CallAddPipe(CompileAssignment(assignmentStatementAst), s_getCurrentPipe)
                     : Compile(pipe);
 
@@ -5898,14 +5878,12 @@ namespace System.Management.Automation.Language
 
         private static Expression GetLikeRHSOperand(WildcardOptions options, Expression expr)
         {
-            var constExpr = expr as ConstantExpression;
-            if (constExpr == null)
+            if (!(expr is ConstantExpression constExpr))
             {
                 return expr;
             }
 
-            var val = constExpr.Value as string;
-            if (val == null)
+            if (!(constExpr.Value is string val))
             {
                 return expr;
             }
@@ -6028,9 +6006,8 @@ namespace System.Management.Automation.Language
             }
 
             var typeName = convertExpressionAst.Type.TypeName;
-            var hashTableAst = convertExpressionAst.Child as HashtableAst;
             Expression childExpr = null;
-            if (hashTableAst != null)
+            if (convertExpressionAst.Child is HashtableAst hashTableAst)
             {
                 var temp = NewTemp(typeof(OrderedDictionary), "orderedDictionary");
                 if (typeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
@@ -6054,8 +6031,7 @@ namespace System.Management.Automation.Language
 
             if (convertExpressionAst.IsRef())
             {
-                var varExpr = convertExpressionAst.Child as VariableExpressionAst;
-                if (varExpr != null && varExpr.VariablePath.IsVariable && !varExpr.IsConstantVariable())
+                if (convertExpressionAst.Child is VariableExpressionAst varExpr && varExpr.VariablePath.IsVariable && !varExpr.IsConstantVariable())
                 {
                     // We'll wrap the variable in a PSReference, but not the constant variables ($true, $false, $null) because those
                     // can't be changed.
@@ -6211,8 +6187,7 @@ namespace System.Management.Automation.Language
                 var type = ((TypeExpressionAst)memberExpressionAst.Expression).TypeName.GetReflectionType();
                 if (type != null && !type.IsGenericTypeDefinition)
                 {
-                    var member = memberExpressionAst.Member as StringConstantExpressionAst;
-                    if (member != null)
+                    if (memberExpressionAst.Member is StringConstantExpressionAst member)
                     {
                         // We skip Methods because the adapter wraps them in a PSMethod and it's not a common scenario.
                         var memberInfo = type.GetMember(
@@ -6260,8 +6235,7 @@ namespace System.Management.Automation.Language
             var target = CompileExpressionOperand(memberExpressionAst.Expression);
 
             // If the ?. operator is used for null conditional check, add the null conditional expression.
-            var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
-            Expression memberAccessExpr = memberNameAst != null
+            Expression memberAccessExpr = memberExpressionAst.Member is StringConstantExpressionAst memberNameAst
                 ? DynamicExpression.Dynamic(PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
                 : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
 
@@ -6345,8 +6319,7 @@ namespace System.Management.Automation.Language
             var target = CompileExpressionOperand(invokeMemberExpressionAst.Expression);
             var args = CompileInvocationArguments(invokeMemberExpressionAst.Arguments);
 
-            var memberNameAst = invokeMemberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (invokeMemberExpressionAst.Member is StringConstantExpressionAst memberNameAst)
             {
                 return InvokeMember(
                     memberNameAst.Value,
@@ -6372,8 +6345,7 @@ namespace System.Management.Automation.Language
             {
                 if (subExpr.Statements.Count == 1)
                 {
-                    var pipelineBase = subExpr.Statements[0] as PipelineBaseAst;
-                    if (pipelineBase != null)
+                    if (subExpr.Statements[0] is PipelineBaseAst pipelineBase)
                     {
                         pureExprAst = pipelineBase.GetPureExpression();
                         if (pureExprAst != null)
@@ -6473,9 +6445,8 @@ namespace System.Management.Automation.Language
         public object VisitParenExpression(ParenExpressionAst parenExpressionAst)
         {
             var pipe = parenExpressionAst.Pipeline;
-            var assignmentStatementAst = pipe as AssignmentStatementAst;
 
-            if (assignmentStatementAst != null)
+            if (pipe is AssignmentStatementAst assignmentStatementAst)
             {
                 return CompileAssignment(assignmentStatementAst);
             }
@@ -6579,8 +6550,7 @@ namespace System.Management.Automation.Language
             temps.Add(targetTemp);
             CachedTarget = targetTemp;
             exprs.Add(Expression.Assign(targetTemp, target));
-            var memberNameAst = MemberExpression.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (MemberExpression.Member is StringConstantExpressionAst memberNameAst)
             {
                 string name = memberNameAst.Value;
                 return DynamicExpression.Dynamic(PSGetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp);
@@ -6596,8 +6566,7 @@ namespace System.Management.Automation.Language
 
         public Expression SetValue(Compiler compiler, Expression rhs)
         {
-            var memberNameAst = MemberExpression.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (MemberExpression.Member is StringConstantExpressionAst memberNameAst)
             {
                 string name = memberNameAst.Value;
                 return DynamicExpression.Dynamic(
@@ -6661,8 +6630,7 @@ namespace System.Management.Automation.Language
             int tempsIndex = temps.Count;
             temps.AddRange(_argExprTemps);
 
-            var memberNameAst = InvokeMemberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (InvokeMemberExpressionAst.Member is StringConstantExpressionAst memberNameAst)
             {
                 return compiler.InvokeMember(memberNameAst.Value, constraints, _targetExprTemp, _argExprTemps, @static: false, propertySet: false);
             }
@@ -6680,10 +6648,9 @@ namespace System.Management.Automation.Language
         {
             var constraints = Compiler.GetInvokeMemberConstraints(InvokeMemberExpressionAst);
 
-            var memberNameAst = InvokeMemberExpressionAst.Member as StringConstantExpressionAst;
             var target = GetTargetExpr(compiler);
             var args = GetArgumentExprs(compiler);
-            if (memberNameAst != null)
+            if (InvokeMemberExpressionAst.Member is StringConstantExpressionAst memberNameAst)
             {
                 return compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
             }
@@ -6725,10 +6692,9 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(_targetExprTemp, targetExpr));
 
             var index = IndexExpressionAst.Index;
-            var arrayLiteral = index as ArrayLiteralAst;
             var constraints = GetInvocationConstraints();
             Expression result;
-            if (arrayLiteral != null)
+            if (index is ArrayLiteralAst arrayLiteral)
             {
                 // If assignment to slices were allowed, we'd need to save the elements in temps
                 // like we do when doing normal assignment (below).  But it's not allowed, so it
@@ -6758,11 +6724,10 @@ namespace System.Management.Automation.Language
             var temp = Expression.Variable(rhs.Type);
 
             var index = IndexExpressionAst.Index;
-            var arrayLiteral = index as ArrayLiteralAst;
             var constraints = GetInvocationConstraints();
             var targetExpr = GetTargetExpr(compiler);
             Expression setExpr;
-            if (arrayLiteral != null)
+            if (index is ArrayLiteralAst arrayLiteral)
             {
                 setExpr = DynamicExpression.Dynamic(
                                                 PSSetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
@@ -6806,8 +6771,7 @@ namespace System.Management.Automation.Language
                 Expression indexedRHS = Expression.Call(rhsTemp, CachedReflectionInfo.IList_get_Item, ExpressionCache.Constant(i));
                 var lhsElement = ArrayLiteral.Elements[i];
                 var nestedArrayLHS = lhsElement as ArrayLiteralAst;
-                var parenExpressionAst = lhsElement as ParenExpressionAst;
-                if (parenExpressionAst != null)
+                if (lhsElement is ParenExpressionAst parenExpressionAst)
                 {
                     nestedArrayLHS = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
                 }
@@ -6857,8 +6821,7 @@ namespace System.Management.Automation.Language
             foreach (var expr in _exprs)
             {
                 compiler.CompileAsVoid(expr);
-                var enterLoopExpression = expr as EnterLoopExpression;
-                if (enterLoopExpression != null)
+                if (expr is EnterLoopExpression enterLoopExpression)
                 {
                     enterLoop = enterLoopExpression.EnterLoopInstruction;
                 }

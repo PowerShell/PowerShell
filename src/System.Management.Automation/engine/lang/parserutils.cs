@@ -545,8 +545,7 @@ namespace System.Management.Automation
                 limit = FixNum(args[1], errorPosition);
             if (args.Length >= 3 && args[2] != null)
             {
-                string args2asString = args[2] as string;
-                if (args2asString == null || !string.IsNullOrEmpty(args2asString))
+                if (!(args[2] is string args2asString) || !string.IsNullOrEmpty(args2asString))
                 {
                     options = ConvertTo<SplitOptions>(args[2], errorPosition);
                     if (predicate != null)
@@ -920,8 +919,7 @@ namespace System.Management.Automation
             object substitute = string.Empty;
 
             rval = PSObject.Base(rval);
-            IList rList = rval as IList;
-            if (rList != null)
+            if (rval is IList rList)
             {
                 if (rList.Count > 2)
                 {
@@ -951,8 +949,7 @@ namespace System.Management.Automation
                 rreOptions = RegexOptions.IgnoreCase;
             }
 
-            Regex rr = pattern as Regex;
-            if (rr == null)
+            if (!(pattern is Regex rr))
             {
                 try
                 {
@@ -1127,8 +1124,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator.</returns>
         internal static object LikeOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, TokenKind @operator)
         {
-            var wcp = rval as WildcardPattern;
-            if (wcp == null)
+            if (!(rval is WildcardPattern wcp))
             {
                 var ignoreCase = @operator == TokenKind.Ilike || @operator == TokenKind.Inotlike;
                 wcp = WildcardPattern.Get(PSObject.ToStringParser(context, rval),
@@ -1177,8 +1173,7 @@ namespace System.Management.Automation
 
             // if passed an explicit regex, just use it
             // otherwise compile the expression.
-            Regex r = PSObject.Base(rval) as Regex;
-            if (r == null)
+            if (!(PSObject.Base(rval) is Regex r))
             {
                 // In this situation, creation of Regex should not fail. We are not
                 // processing ArgumentException in this case.
@@ -1468,8 +1463,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj.GetType().FullName;
             }
@@ -1573,9 +1567,7 @@ namespace System.Management.Automation
                 // not really a method call.
                 if (valueToSet != AutomationNull.Value)
                 {
-                    PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
-
-                    if (propertyToSet == null)
+                    if (!(targetMethod is PSParameterizedProperty propertyToSet))
                     {
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);
@@ -1586,8 +1578,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    PSMethod adaptedMethod = targetMethod as PSMethod;
-                    if (adaptedMethod != null)
+                    if (targetMethod is PSMethod adaptedMethod)
                     {
                         return adaptedMethod.Invoke(invocationConstraints, paramArray);
                     }
@@ -1940,8 +1931,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var icer = exception as IContainsErrorRecord;
-            if (icer != null)
+            if (exception is IContainsErrorRecord icer)
             {
                 var errorRecord = icer.ErrorRecord;
                 var invocationInfo = errorRecord.InvocationInfo;

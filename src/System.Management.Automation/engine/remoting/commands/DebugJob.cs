@@ -297,8 +297,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_debugCollection.IsOpen)
             {
-                PSStreamObject streamObject = dataAddingArgs.ItemAdded as PSStreamObject;
-                if (streamObject != null)
+                if (dataAddingArgs.ItemAdded is PSStreamObject streamObject)
                 {
                     try
                     {

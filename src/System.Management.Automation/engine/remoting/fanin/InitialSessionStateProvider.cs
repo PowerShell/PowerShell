@@ -826,8 +826,7 @@ namespace System.Management.Automation.Remoting
             {
                 foreach (var module in sessionConfigurationData.ModulesToImportInternal)
                 {
-                    var moduleName = module as string;
-                    if (moduleName != null)
+                    if (module is string moduleName)
                     {
                         moduleName = Environment.ExpandEnvironmentVariables(moduleName);
 
@@ -835,8 +834,7 @@ namespace System.Management.Automation.Remoting
                     }
                     else
                     {
-                        var moduleSpec = module as ModuleSpecification;
-                        if (moduleSpec != null)
+                        if (module is ModuleSpecification moduleSpec)
                         {
                             var modulesToImport = new Collection<ModuleSpecification> { moduleSpec };
                             sessionState.ImportPSModule(modulesToImport);
@@ -1118,9 +1116,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            Hashtable hash = obj as Hashtable;
-
-            if (hash == null)
+            if (!(obj is Hashtable hash))
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtable, key, path));
                 return false;
@@ -1643,8 +1639,7 @@ namespace System.Management.Automation.Remoting
                 // Each role capability in the role definition item should contain a hash table with allowed role capability key.
                 //
 
-                IDictionary roleDefinition = roleDefinitions[roleKey] as IDictionary;
-                if (roleDefinition == null)
+                if (!(roleDefinitions[roleKey] is IDictionary roleDefinition))
                 {
                     var invalidOperationEx = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, roleKey));
@@ -1655,8 +1650,7 @@ namespace System.Management.Automation.Remoting
                 foreach (var key in roleDefinition.Keys)
                 {
                     // Ensure each role capability key is valid.
-                    string roleCapabilityKey = key as string;
-                    if (roleCapabilityKey == null)
+                    if (!(key is string roleCapabilityKey))
                     {
                         var invalidOperationEx = new PSInvalidOperationException(
                             string.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKeyType, key.GetType().FullName));
@@ -1747,8 +1741,7 @@ namespace System.Management.Automation.Remoting
             if (_configHash.ContainsKey(ConfigFileConstants.RoleDefinitions))
             {
                 // Extract the 'Roles' hashtable
-                IDictionary roleEntry = _configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
-                if (roleEntry == null)
+                if (!(_configHash[ConfigFileConstants.RoleDefinitions] is IDictionary roleEntry))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, _configHash["Roles"].GetType().FullName);
                     PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -1766,9 +1759,8 @@ namespace System.Management.Automation.Remoting
                     if (roleVerifier(role.ToString()))
                     {
                         // Extract their specific configuration
-                        IDictionary roleCustomizations = roleEntry[role] as IDictionary;
 
-                        if (roleCustomizations == null)
+                        if (!(roleEntry[role] is IDictionary roleCustomizations))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, role.ToString());
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -2061,8 +2053,7 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            Hashtable moduleHash = module as Hashtable;
-                            if (moduleHash != null)
+                            if (module is Hashtable moduleHash)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
                             }
@@ -2471,8 +2462,7 @@ namespace System.Management.Automation.Remoting
                     // If it's a hashtable, it represents a customization to a cmdlet.
                     // (I.e.: Exposed parameter with ValidateSet and / or ValidatePattern)
                     // Collect these so that we can post-process them.
-                    IDictionary commandModification = commandObject as IDictionary;
-                    if (commandModification != null)
+                    if (commandObject is IDictionary commandModification)
                     {
                         ProcessCommandModification(commandModifications, commandModification);
                     }
@@ -2540,8 +2530,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Ensure we have the hashtable representing the current parameter being modified
                 string parameterName = parameter["Name"].ToString();
-                Hashtable currentParameterModification = parameterModifications[parameterName] as Hashtable;
-                if (currentParameterModification == null)
+                if (!(parameterModifications[parameterName] is Hashtable currentParameterModification))
                 {
                     currentParameterModification = new Hashtable(StringComparer.OrdinalIgnoreCase);
                     parameterModifications[parameterName] = currentParameterModification;
@@ -2776,9 +2765,8 @@ namespace System.Management.Automation.Remoting
         internal static Hashtable[] TryGetHashtableArray(object hashObj)
         {
             // Scalar case
-            Hashtable hashtable = hashObj as Hashtable;
 
-            if (hashtable != null)
+            if (hashObj is Hashtable hashtable)
             {
                 return new[] { hashtable };
             }
@@ -2789,17 +2777,14 @@ namespace System.Management.Automation.Remoting
             if (hashArray == null)
             {
                 // 2. Convert from object array
-                object[] objArray = hashObj as object[];
 
-                if (objArray != null)
+                if (hashObj is object[] objArray)
                 {
                     hashArray = new Hashtable[objArray.Length];
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        Hashtable hash = objArray[i] as Hashtable;
-
-                        if (hash == null)
+                        if (!(objArray[i] is Hashtable hash))
                         {
                             return null;
                         }
@@ -2819,14 +2804,11 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal static string[] TryGetStringArray(object hashObj)
         {
-            object[] objs = hashObj as object[];
-
-            if (objs == null)
+            if (!(hashObj is object[] objs))
             {
                 // Scalar case
-                object obj = hashObj as object;
 
-                if (obj != null)
+                if (hashObj is object obj)
                 {
                     return new string[] { obj.ToString() };
                 }
@@ -2848,8 +2830,7 @@ namespace System.Management.Automation.Remoting
 
         internal static T[] TryGetObjectsOfType<T>(object hashObj, IEnumerable<Type> types) where T : class
         {
-            object[] objs = hashObj as object[];
-            if (objs == null)
+            if (!(hashObj is object[] objs))
             {
                 // Scalar case
                 object obj = hashObj;

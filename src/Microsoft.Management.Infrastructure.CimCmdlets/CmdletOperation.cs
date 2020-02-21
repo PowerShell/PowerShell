@@ -231,8 +231,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (sendToPipeline is CimInstance)
             {
-                CimSetCimInstanceContext setContext = context as CimSetCimInstanceContext;
-                if (setContext != null)
+                if (context is CimSetCimInstanceContext setContext)
                 {
                     if ((string.Compare(setContext.ParameterSetName, CimBaseCommand.QueryComputerSet, StringComparison.OrdinalIgnoreCase) == 0) ||
                         (string.Compare(setContext.ParameterSetName, CimBaseCommand.QuerySessionSet, StringComparison.OrdinalIgnoreCase) == 0))

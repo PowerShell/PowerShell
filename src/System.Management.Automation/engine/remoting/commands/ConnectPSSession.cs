@@ -624,8 +624,7 @@ namespace Microsoft.PowerShell.Commands
                     bool writeError = true;
                     if (_queryRunspaces == null)
                     {
-                        PSRemotingTransportException transportException = eArgs.RunspaceStateInfo.Reason as PSRemotingTransportException;
-                        if (transportException != null &&
+                        if (eArgs.RunspaceStateInfo.Reason is PSRemotingTransportException transportException &&
                             transportException.ErrorCode == WSManNativeApi.ERROR_WSMAN_INUSE_CANNOT_RECONNECT)
                         {
                             lock (s_LockObject)
@@ -710,8 +709,7 @@ namespace Microsoft.PowerShell.Commands
                     if (e != null && !string.IsNullOrEmpty(e.Message))
                     {
                         // Update fully qualified error Id if we have a transport error.
-                        PSRemotingTransportException transportException = e as PSRemotingTransportException;
-                        if (transportException != null)
+                        if (e is PSRemotingTransportException transportException)
                         {
                             FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(transportException.ErrorCode, FQEID);
                         }

@@ -234,8 +234,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Push the remote runspace on the local host.
-            IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
-            if (host == null)
+            if (!(this.Host is IHostSupportsInteractiveSession host))
             {
                 WriteError(
                     new ErrorRecord(
@@ -268,13 +267,11 @@ namespace Microsoft.PowerShell.Commands
             // for the console host and Graphical PowerShell host
             // we want to skip pushing into the the runspace if
             // the host is in a nested prompt
-            System.Management.Automation.Internal.Host.InternalHost chost =
-                this.Host as System.Management.Automation.Internal.Host.InternalHost;
 
             if (!IsParameterSetForVM() &&
                 !IsParameterSetForContainer() &&
                 !IsParameterSetForVMContainerSession() &&
-                chost != null && chost.HostInNestedPrompt())
+                this.Host is System.Management.Automation.Internal.Host.InternalHost chost && chost.HostInNestedPrompt())
             {
                 ThrowTerminatingError(new ErrorRecord(
                     new InvalidOperationException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HostInNestedPrompt)),
@@ -550,8 +547,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
-            if (host == null)
+            if (!(this.Host is IHostSupportsInteractiveSession host))
             {
                 WriteError(
                     new ErrorRecord(
@@ -622,10 +618,8 @@ namespace Microsoft.PowerShell.Commands
             // set the transport message in the error detail so that
             // the user can directly get to see the message without
             // having to mine through the error record details
-            PSRemotingTransportException transException =
-                        exception as PSRemotingTransportException;
             string errorDetails = null;
-            if ((transException != null) &&
+            if ((exception is PSRemotingTransportException transException) &&
                 (transException.ErrorCode ==
                     System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED))
             {
@@ -862,9 +856,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (Job childJob in repJob.ChildJobs)
                 {
-                    PSRemotingChildJob remotingChildJob = childJob as PSRemotingChildJob;
-
-                    if (remotingChildJob != null &&
+                    if (childJob is PSRemotingChildJob remotingChildJob &&
                         remotingChildJob.Runspace != null &&
                         remotingChildJob.JobStateInfo.State == JobState.Running &&
                         remotingChildJob.Runspace.InstanceId.Equals(id))
@@ -1354,9 +1346,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void ContinueCommand(RemoteRunspace remoteRunspace, Pipeline cmd, PSHost host, bool inDebugMode, System.Management.Automation.ExecutionContext context)
         {
-            RemotePipeline remotePipeline = cmd as RemotePipeline;
-
-            if (remotePipeline != null)
+            if (cmd is RemotePipeline remotePipeline)
             {
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
@@ -1372,8 +1362,7 @@ namespace Microsoft.PowerShell.Commands
                     ps.AddCommand(outDefaultCommand);
                     IAsyncResult async = ps.BeginInvoke<PSObject>(input, settings, null, null);
 
-                    RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
-                    if (remoteDebugger != null)
+                    if (remoteRunspace.Debugger is RemoteDebugger remoteDebugger)
                     {
                         // Update client with breakpoint information from pushed runspace.
                         // Information will be passed to the client via the Debugger.BreakpointUpdated event.

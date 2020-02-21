@@ -447,8 +447,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string resultObjectPSType = null;
             PSObject resultObject = null;
-            CimMethodResult methodResult = value as CimMethodResult;
-            if (methodResult != null)
+            if (value is CimMethodResult methodResult)
             {
                 resultObjectPSType = PSTypeCimMethodResult;
                 resultObject = new PSObject();
@@ -459,8 +458,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                CimMethodStreamedResult methodStreamedResult = value as CimMethodStreamedResult;
-                if (methodStreamedResult != null)
+                if (value is CimMethodStreamedResult methodStreamedResult)
                 {
                     resultObjectPSType = PSTypeCimMethodStreamedResult;
                     resultObject = new PSObject();

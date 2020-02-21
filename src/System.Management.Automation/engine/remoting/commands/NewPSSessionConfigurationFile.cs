@@ -1001,9 +1001,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string varString = _variableDefinitions as string;
-
-                    if (varString != null)
+                    if (_variableDefinitions is string varString)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                             varString, streamWriter, false));
@@ -1740,9 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string varString = _variableDefinitions as string;
-
-                    if (varString != null)
+                    if (_variableDefinitions is string varString)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                             varString, streamWriter, false));
@@ -1947,8 +1943,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                IDictionary tableValue = table[key] as IDictionary;
-                if (tableValue != null)
+                if (table[key] is IDictionary tableValue)
                 {
                     sb.Append(CombineHashtable(tableValue, writer, indent + 1));
                     continue;
@@ -2002,8 +1997,7 @@ namespace Microsoft.PowerShell.Commands
             sb.Append(QuoteName(key));
             sb.Append(" = ");
 
-            object[] values = keyObject as object[];
-            if (values != null)
+            if (keyObject is object[] values)
             {
                 for (int i = 0; i < values.Length;)
                 {
@@ -2027,15 +2021,13 @@ namespace Microsoft.PowerShell.Commands
 
         private static void WriteRequiredGroup(object value, StringBuilder sb)
         {
-            string strValue = value as string;
-            if (strValue != null)
+            if (value is string strValue)
             {
                 sb.Append(QuoteName(strValue));
             }
             else
             {
-                Hashtable subTable = value as Hashtable;
-                if (subTable != null)
+                if (value is Hashtable subTable)
                 {
                     sb.Append(CombineRequiredGroupsHash(subTable));
                 }

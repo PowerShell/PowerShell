@@ -342,8 +342,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (source is PSObject moSource && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -708,8 +707,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo property = info as PSPropertyInfo;
-                if (property == null)
+                if (!(info is PSPropertyInfo property))
                 {
                     continue;
                 }

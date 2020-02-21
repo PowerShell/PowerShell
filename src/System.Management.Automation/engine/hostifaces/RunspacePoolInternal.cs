@@ -621,9 +621,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((!(asyncResult is RunspacePoolAsyncResult rsAsyncResult)) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -688,9 +687,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((!(asyncResult is RunspacePoolAsyncResult rsAsyncResult)) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -896,10 +894,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            GetRunspaceAsyncResult grsAsyncResult =
-                asyncResult as GetRunspaceAsyncResult;
 
-            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
+            if ((!(asyncResult is GetRunspaceAsyncResult grsAsyncResult)) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -935,10 +931,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            GetRunspaceAsyncResult grsAsyncResult =
-                asyncResult as GetRunspaceAsyncResult;
 
-            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
+            if ((!(asyncResult is GetRunspaceAsyncResult grsAsyncResult)) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
                                                          RunspacePoolStrings.AsyncResultNotOwned,

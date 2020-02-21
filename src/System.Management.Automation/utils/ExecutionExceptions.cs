@@ -62,8 +62,7 @@ namespace System.Management.Automation
             }
             // invocationInfo may be null
 
-            IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (innerException is IContainsErrorRecord icer && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }

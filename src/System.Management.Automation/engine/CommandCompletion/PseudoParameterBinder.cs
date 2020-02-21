@@ -487,22 +487,19 @@ namespace System.Management.Automation.Language
                     object constantValue = null;
 
                     // This is a single argument
-                    AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
-                    if (argumentAstPair != null)
+                    if (bindingInfo.BoundArguments[item.Key] is AstPair argumentAstPair)
                     {
                         value = argumentAstPair.Argument;
                     }
 
                     // This is a parameter that took an argument, as well as ValueFromRemainingArguments.
                     // Merge the arguments into a single fake argument.
-                    AstArrayPair argumentAstArrayPair = bindingInfo.BoundArguments[item.Key] as AstArrayPair;
-                    if (argumentAstArrayPair != null)
+                    if (bindingInfo.BoundArguments[item.Key] is AstArrayPair argumentAstArrayPair)
                     {
                         List<ExpressionAst> arguments = new List<ExpressionAst>();
                         foreach (ExpressionAst expression in argumentAstArrayPair.Argument)
                         {
-                            ArrayLiteralAst expressionArray = expression as ArrayLiteralAst;
-                            if (expressionArray != null)
+                            if (expression is ArrayLiteralAst expressionArray)
                             {
                                 foreach (ExpressionAst newExpression in expressionArray.Elements)
                                 {
@@ -615,8 +612,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                CommandParameterAst parameter = commandElement as CommandParameterAst;
-                if (parameter != null)
+                if (commandElement is CommandParameterAst parameter)
                 {
                     if (currentParameter != null)
                     {
@@ -752,8 +748,7 @@ namespace System.Management.Automation.Language
             {
                 _value = value;
 
-                ConstantExpressionAst constantValueAst = value as ConstantExpressionAst;
-                if (constantValueAst != null)
+                if (value is ConstantExpressionAst constantValueAst)
                 {
                     this.ConstantValue = constantValueAst.Value;
                 }
@@ -1210,8 +1205,7 @@ namespace System.Management.Automation.Language
                 // Pre-processing the arguments -- command arguments
                 for (commandIndex++; commandIndex < _commandElements.Count; commandIndex++)
                 {
-                    var parameter = _commandElements[commandIndex] as CommandParameterAst;
-                    if (parameter != null)
+                    if (_commandElements[commandIndex] is CommandParameterAst parameter)
                     {
                         if (argumentsToGetDynamicParameters != null)
                         {
@@ -1226,16 +1220,14 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        if (_commandElements[commandIndex] is StringConstantExpressionAst dash && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                         {
                             // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
                             // and we don't want it be treated as an argument
                             continue;
                         }
 
-                        var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
+                        if (_commandElements[commandIndex] is ExpressionAst expressionArgument)
                         {
                             argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
 

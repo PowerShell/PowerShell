@@ -88,9 +88,6 @@ namespace System.Management.Automation
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
-
             string cmdNameWithoutPrefix = null;
             bool testWithoutPrefix = false;
 
@@ -113,14 +110,14 @@ namespace System.Management.Automation
                 {
                     foreach (PSModuleInfo nestedModule in commandInfo.Module.NestedModules)
                     {
-                        if (cmdletInfo != null &&
+                        if (commandInfo is CmdletInfo cmdletInfo &&
                              (nestedModule.ExportedCmdlets.ContainsKey(commandInfo.Name) ||
                                (testWithoutPrefix && nestedModule.ExportedCmdlets.ContainsKey(cmdNameWithoutPrefix))))
                         {
                             nestedModulePath = nestedModule.Path;
                             break;
                         }
-                        else if (scriptCommandInfo != null &&
+                        else if (commandInfo is IScriptCommandInfo scriptCommandInfo &&
                                   (nestedModule.ExportedFunctions.ContainsKey(commandInfo.Name) ||
                                     (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix))))
                         {
@@ -136,9 +133,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
 
-            if (cmdletInfo != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 return cmdletInfo.FullName;
             }
@@ -765,9 +761,8 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
 
-            if (commandHelpInfo == null)
+            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -897,11 +892,10 @@ namespace System.Management.Automation
             Dbg.Assert(cmdInfo != null, "cmdInfo cannot be null");
 
             MamlCommandHelpInfo result = null;
-            MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,
-                        Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
-                        cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-            if (originalHelpInfo != null)
+            if (GetFromCommandCache(helpIdentifier,
+                        Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
+                        cmdInfo.HelpCategory) is MamlCommandHelpInfo originalHelpInfo)
             {
                 result = originalHelpInfo.Copy();
                 // command's name can be changed using -Prefix while importing module.To give better user experience for

@@ -92,8 +92,7 @@ namespace System.Management.Automation.Remoting
 
             _transportManager.RobustConnectionNotification += new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
 
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (_connectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
                 // only WSMan transport supports redirection
 
@@ -299,8 +298,7 @@ namespace System.Management.Automation.Remoting
             // once session is established.. start receiving data (if not already done and only apples to wsmanclientsessionTM)
             if (arg.SessionStateInfo.State == RemoteSessionState.Established)
             {
-                WSManClientSessionTransportManager tm = _transportManager as WSManClientSessionTransportManager;
-                if (tm != null)
+                if (_transportManager is WSManClientSessionTransportManager tm)
                 {
                     tm.AdjustForProtocolVariations(_session.ServerProtocolVersion);
                     tm.StartReceivingData();
@@ -466,8 +464,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(e != null, "HandleTransportError expects non-null eventargs");
             // handle uri redirections
-            PSRemotingTransportRedirectException redirectException = e.Exception as PSRemotingTransportRedirectException;
-            if ((redirectException != null) && (_maxUriRedirectionCount > 0))
+            if ((e.Exception is PSRemotingTransportRedirectException redirectException) && (_maxUriRedirectionCount > 0))
             {
                 Exception exception = null;
 

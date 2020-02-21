@@ -665,9 +665,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                ProviderRemoveItemDynamicParameters dp =
-                    DynamicParameters as ProviderRemoveItemDynamicParameters;
-                if (dp != null)
+                if (DynamicParameters is ProviderRemoveItemDynamicParameters dp)
                 {
                     if (dp.DeleteKey)
                     {
@@ -826,9 +824,8 @@ namespace Microsoft.PowerShell.Commands
                 object store = GetItemAtPath(destination, false, out bool isDestContainer);
 
                 X509Certificate2 certificate = cert as X509Certificate2;
-                X509NativeStore certstore = store as X509NativeStore;
 
-                if (certstore != null)
+                if (store is X509NativeStore certstore)
                 {
                     certstore.Open(true);
 
@@ -1008,15 +1005,13 @@ namespace Microsoft.PowerShell.Commands
 
             if ((item != null) && isContainer)
             {
-                X509StoreLocation storeLocation = item as X509StoreLocation;
-                if (storeLocation != null)
+                if (item is X509StoreLocation storeLocation)
                 {
                     result = storeLocation.StoreNames.Count > 0;
                 }
                 else
                 {
-                    X509NativeStore store = item as X509NativeStore;
-                    if (store != null)
+                    if (item is X509NativeStore store)
                     {
                         store.Open(IncludeArchivedCerts());
                         IntPtr certContext = store.GetFirstCert();
@@ -1202,15 +1197,13 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    X509StoreLocation storeLocation = item as X509StoreLocation;
-                    if (storeLocation != null)  // store location
+                    if (item is X509StoreLocation storeLocation)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
                     else // store
                     {
-                        X509NativeStore store = item as X509NativeStore;
-                        if (store != null)
+                        if (item is X509NativeStore store)
                         {
                             // create X509Store
                             X509Store outStore = new X509Store(
@@ -2601,9 +2594,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                CertificateProviderCodeSigningDynamicParameters dp =
-                    DynamicParameters as CertificateProviderCodeSigningDynamicParameters;
-                if (dp != null)
+                if (DynamicParameters is CertificateProviderCodeSigningDynamicParameters dp)
                 {
                     if (dp.CodeSigningCert)
                     {
@@ -3149,8 +3140,7 @@ namespace Microsoft.PowerShell.Commands
                 // Filter to the OID for EKU
                 if (extension.Oid.Value == "2.5.29.37")
                 {
-                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                    if (ext != null)
+                    if (extension is X509EnhancedKeyUsageExtension ext)
                     {
                         OidCollection oids = ext.EnhancedKeyUsages;
                         foreach (Oid oid in oids)

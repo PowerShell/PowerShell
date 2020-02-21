@@ -188,8 +188,7 @@ namespace System.Management.Automation.Internal
 
         private string GetCommand(Exception exception)
         {
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (exception is IContainsErrorRecord icer && icer.ErrorRecord != null)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
             return string.Empty;
@@ -255,9 +254,7 @@ namespace System.Management.Automation.Internal
 
             foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                MshCommandRuntime cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
-
-                if (cmdRuntime != null && cmdRuntime.LogPipelineExecutionDetail)
+                if (commandProcessor.Command.commandRuntime is MshCommandRuntime cmdRuntime && cmdRuntime.LogPipelineExecutionDetail)
                     return true;
             }
 
@@ -365,8 +362,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
+                if (!(_commands[readFromCommand - 1] is CommandProcessorBase prevcommandProcessor) || prevcommandProcessor.CommandRuntime == null)
                 {
                     // "PipelineProcessor.AddCommand(): previous request object == null"
                     throw PSTraceSource.NewInvalidOperationException();
@@ -1326,9 +1322,7 @@ namespace System.Management.Automation.Internal
                             if (commandProcessor.Command != null)
                                 myInvocation = commandProcessor.Command.MyInvocation;
 
-                            ProviderInvocationException pie =
-                                e as ProviderInvocationException;
-                            if (pie != null)
+                            if (e is ProviderInvocationException pie)
                             {
                                 e = new CmdletProviderInvocationException(
                                     pie,

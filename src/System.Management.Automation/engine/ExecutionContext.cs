@@ -433,8 +433,7 @@ namespace System.Management.Automation
                     // This could result in a recursion if psRef.Value points to itself directly or indirectly, so we check if psRef.Value is already
                     // marked before making a recursive call. The additional check adds extra overhead for handling PSReference object, but it should
                     // be rare in practice.
-                    var psRef = baseValue as PSReference;
-                    if (psRef != null && !IsMarkedAsUntrusted(psRef.Value))
+                    if (baseValue is PSReference psRef && !IsMarkedAsUntrusted(psRef.Value))
                     {
                         MarkObjectAsUntrusted(psRef.Value);
                     }
@@ -586,8 +585,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    string valString = val as string;
-                    if (valString != null)
+                    if (val is string valString)
                     {
                         result = (T)Enum.Parse(typeof(T), valString, true);
                         defaultUsed = false;
@@ -875,8 +873,7 @@ namespace System.Management.Automation
             }
 
             object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
-            if (arraylist == null)
+            if (!(old is ArrayList arraylist))
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -890,9 +887,8 @@ namespace System.Management.Automation
                 if (arraylist[0] == obj)
                     return;
                 // otherwise check the exception members of the error records...
-                ErrorRecord er1 = arraylist[0] as ErrorRecord;
 
-                if (er1 != null && objAsErrorRecord != null && er1.Exception == objAsErrorRecord.Exception)
+                if (arraylist[0] is ErrorRecord er1 && objAsErrorRecord != null && er1.Exception == objAsErrorRecord.Exception)
                     return;
             }
 
@@ -1482,9 +1478,8 @@ namespace System.Management.Automation
                 if (IsModuleCommandCurrentlyRunning(out Cmdlet currentRunningModuleCommand, out string errorId))
                 {
                     ErrorRecord error = null;
-                    var rte = e as RuntimeException;
 
-                    error = rte != null
+                    error = e is RuntimeException rte
                         ? new ErrorRecord(rte.ErrorRecord, rte)
                         : new ErrorRecord(e, errorId, ErrorCategory.OperationStopped, null);
 

@@ -70,9 +70,8 @@ namespace Microsoft.PowerShell.Commands
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
 
-            MshCommandRuntime mrt = this.CommandRuntime as MshCommandRuntime;
 
-            if (mrt != null)
+            if (this.CommandRuntime is MshCommandRuntime mrt)
             {
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }

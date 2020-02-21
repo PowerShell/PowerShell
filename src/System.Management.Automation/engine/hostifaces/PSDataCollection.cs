@@ -336,9 +336,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("info");
             }
 
-            IList<T> listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
 
-            if (listToUse == null)
+            if (!(info.GetValue("Data", typeof(IList<T>)) is IList<T> listToUse))
             {
                 throw PSTraceSource.NewArgumentNullException("info");
             }

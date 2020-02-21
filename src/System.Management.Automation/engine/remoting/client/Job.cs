@@ -750,12 +750,10 @@ namespace System.Management.Automation
 
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
-            RuntimeException runtimeException = errorRecord.Exception as RuntimeException;
-            if (runtimeException == null)
+            if (!(errorRecord.Exception is RuntimeException runtimeException))
                 return null;
 
-            RemoteException remoteException = runtimeException as RemoteException;
-            if (remoteException == null)
+            if (!(runtimeException is RemoteException remoteException))
                 return null;
 
             PSPropertyInfo wasThrownFromThrow =
@@ -1907,8 +1905,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child == null) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1931,8 +1929,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child == null) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1955,8 +1953,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child == null) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);
@@ -2298,8 +2296,7 @@ namespace System.Management.Automation
                 _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
-                    PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (rJob != null)
+                    if (job is PSRemotingChildJob rJob)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -2771,8 +2768,7 @@ namespace System.Management.Automation
             _remotePipeline = helper.Pipeline as RemotePipeline;
             _throttleManager = throttleManager;
 
-            RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-            if ((remoteRS != null) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
+            if ((Runspace is RemoteRunspace remoteRS) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
             {
                 remoteRS.URIRedirectionReported += HandleURIDirectionReported;
             }
@@ -2947,8 +2943,7 @@ namespace System.Management.Automation
                 _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
-                    PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (rJob != null)
+                    if (job is PSRemotingChildJob rJob)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -2973,8 +2968,7 @@ namespace System.Management.Automation
         {
             get
             {
-                RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-                return (remoteRS != null) ? remoteRS.CanDisconnect : false;
+                return (Runspace is RemoteRunspace remoteRS) ? remoteRS.CanDisconnect : false;
             }
         }
 
@@ -3087,8 +3081,7 @@ namespace System.Management.Automation
 
             foreach (object errorData in error)
             {
-                ErrorRecord er = errorData as ErrorRecord;
-                if (er != null)
+                if (errorData is ErrorRecord er)
                 {
                     OriginInfo originInfo = new OriginInfo(reader.ComputerName, reader.RunspaceId);
 
@@ -3122,9 +3115,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">The event args.</param>
         private void HandleHostCalls(object sender, EventArgs eventArgs)
         {
-            ObjectStream hostCallsStream = sender as ObjectStream;
-
-            if (hostCallsStream != null)
+            if (sender is ObjectStream hostCallsStream)
             {
                 Collection<object> hostCallMethodExecutors =
                     hostCallsStream.NonBlockingRead(hostCallsStream.Count);
@@ -3389,10 +3380,8 @@ namespace System.Management.Automation
                 failureException = pipeline.PipelineStateInfo.Reason;
                 if (failureException != null)
                 {
-                    RemoteException rException = failureException as RemoteException;
-
                     ErrorRecord errorRecord = null;
-                    if (rException != null)
+                    if (failureException is RemoteException rException)
                     {
                         errorRecord = rException.ErrorRecord;
 
@@ -4084,8 +4073,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
-            RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
+            if (_wrappedDebugger is RemoteDebugger remoteDebugger)
             {
                 remoteDebugger.CheckStateAndRaiseStopEvent();
             }
@@ -4207,8 +4195,7 @@ namespace System.Management.Automation
             {
                 ExecutionCmdletHelper helper = operation as ExecutionCmdletHelper;
 
-                RemoteRunspace remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
-                if (remoteRS != null)
+                if (helper.Pipeline.Runspace is RemoteRunspace remoteRS)
                 {
                     remoteRS.StateChanged += HandleRunspaceStateChanged;
 
@@ -4256,8 +4243,7 @@ namespace System.Management.Automation
             foreach (ExecutionCmdletHelper helper in _helpers)
             {
                 // cleanup remote runspace related handlers
-                RemoteRunspace remoteRS = helper.PipelineRunspace as RemoteRunspace;
-                if (remoteRS != null)
+                if (helper.PipelineRunspace is RemoteRunspace remoteRS)
                 {
                     remoteRS.StateChanged -= HandleRunspaceStateChanged;
                     remoteRS.URIRedirectionReported -= HandleURIDirectionReported;
@@ -4429,10 +4415,9 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         private void HandleRunspaceStateChanged(object sender, RunspaceStateEventArgs e)
         {
-            RemoteRunspace remoteRS = sender as RemoteRunspace;
             // remote runspace must be connected (or connection failed)
             // we dont need URI redirection any more..so clear it
-            if (remoteRS != null)
+            if (sender is RemoteRunspace remoteRS)
             {
                 if (e.RunspaceStateInfo.State != RunspaceState.Opening)
                 {

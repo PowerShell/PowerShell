@@ -368,8 +368,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    CmdletInfo cmdlet = this as CmdletInfo;
-                    if (cmdlet != null && cmdlet.PSSnapIn != null)
+                    if (this is CmdletInfo cmdlet && cmdlet.PSSnapIn != null)
                     {
                         moduleName = cmdlet.PSSnapInName;
                     }
@@ -486,8 +485,7 @@ namespace System.Management.Automation
 
         private void OnGetMergedCommandParameterMetadataSafelyEventHandler(object sender, PSEventArgs args)
         {
-            var eventArgs = args.SourceEventArgs as GetMergedCommandParameterMetadataSafelyEventArgs;
-            if (eventArgs != null)
+            if (args.SourceEventArgs is GetMergedCommandParameterMetadataSafelyEventArgs eventArgs)
             {
                 try
                 {
@@ -522,8 +520,7 @@ namespace System.Management.Automation
             }
             else
             {
-                IScriptCommandInfo scriptCommand = this as IScriptCommandInfo;
-                processor = scriptCommand != null
+                processor = this is IScriptCommandInfo scriptCommand
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
                     : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
@@ -824,8 +821,7 @@ namespace System.Management.Automation
             }
             else
             {
-                var t = typeName as TypeName;
-                if (t != null && t._typeDefinitionAst != null)
+                if (typeName is TypeName t && t._typeDefinitionAst != null)
                 {
                     TypeDefinitionAst = t._typeDefinitionAst;
                     Name = TypeDefinitionAst.Name;

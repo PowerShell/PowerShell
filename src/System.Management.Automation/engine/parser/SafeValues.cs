@@ -481,8 +481,7 @@ namespace System.Management.Automation.Language
         //
         private object GetSingleValueFromTarget(object target, object index)
         {
-            var targetString = target as string;
-            if (targetString != null)
+            if (target is string targetString)
             {
                 var offset = (int)index;
                 if (Math.Abs(offset) >= targetString.Length)
@@ -493,8 +492,7 @@ namespace System.Management.Automation.Language
                 return offset >= 0 ? targetString[offset] : targetString[targetString.Length + offset];
             }
 
-            var targetArray = target as object[];
-            if (targetArray != null)
+            if (target is object[] targetArray)
             {
                 // this can throw, that just gets percolated back
                 var offset = (int)index;
@@ -506,8 +504,7 @@ namespace System.Management.Automation.Language
                 return offset >= 0 ? targetArray[offset] : targetArray[targetArray.Length + offset];
             }
 
-            var targetHashtable = target as Hashtable;
-            if (targetHashtable != null)
+            if (target is Hashtable targetHashtable)
             {
                 return targetHashtable[index];
             }
@@ -518,8 +515,7 @@ namespace System.Management.Automation.Language
 
         private object GetIndexedValueFromTarget(object target, object index)
         {
-            var indexArray = index as object[];
-            return indexArray != null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
+            return index is object[] indexArray ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
         }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -569,7 +565,6 @@ namespace System.Management.Automation.Language
                 // fortunately, at this point, we're dealing with strings, so whatever the result
                 // from the ToString method of the array (or scalar) elements, that's symmetrical with
                 // a standard scriptblock invocation behavior
-                var resultArray = result as object[];
 
                 // In this environment, we can't use $OFS as we might expect. Retrieving OFS
                 // might possibly leak server side info which we don't want, so we'll
@@ -577,7 +572,7 @@ namespace System.Management.Automation.Language
                 // Also, this will not call any script implementations of ToString (ala types.clixml)
                 // This *will* result in a different result in those cases. However, to execute some
                 // arbitrary script at this stage would be opening ourselves up to an attack
-                if (resultArray != null)
+                if (result is object[] resultArray)
                 {
                     object[] subExpressionResult = new object[resultArray.Length];
                     for (int subExpressionOffset = 0;
@@ -585,8 +580,7 @@ namespace System.Management.Automation.Language
                         subExpressionOffset++)
                     {
                         // check to see if there is an array in our array,
-                        object[] subResult = resultArray[subExpressionOffset] as object[];
-                        if (subResult != null)
+                        if (resultArray[subExpressionOffset] is object[] subResult)
                         {
                             subExpressionResult[subExpressionOffset] = string.Join(ofs, subResult);
                         }

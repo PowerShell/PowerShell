@@ -825,9 +825,7 @@ namespace System.Management.Automation
             Runspace rs = DataStructureHandler.RunspaceUsedToInvokePowerShell;
             if (rs != null)
             {
-                PSLocalEventManager events = (object)rs.Events as PSLocalEventManager;
-
-                if (events != null)
+                if ((object)rs.Events is PSLocalEventManager events)
                 {
                     foreach (PSEventSubscriber subscriber in events.Subscribers)
                     {

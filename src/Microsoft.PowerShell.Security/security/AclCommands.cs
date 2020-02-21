@@ -208,8 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -248,8 +247,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -295,8 +293,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Get DACL
             AuthorizationRuleCollection dacl;
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (sd is CommonObjectSecurity cos)
             {
                 dacl = cos.GetAccessRules(true, true, typeof(NTAccount));
             }
@@ -333,8 +330,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             AuthorizationRuleCollection sacl;
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (sd is CommonObjectSecurity cos)
             {
                 sacl = cos.GetAuditRules(true, true, typeof(NTAccount));
             }
@@ -588,8 +584,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -1339,14 +1334,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (methodInfo != null)
                 {
-                    CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
                     if (aclObjectSecurity != null)
                     {
                         sddl = aclObjectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All);
                     }
-                    else if (aclCommonSD != null)
+                    else if (_securityDescriptor is CommonSecurityDescriptor aclCommonSD)
                     {
                         sddl = aclCommonSD.GetSddlForm(AccessControlSections.All);
                     }

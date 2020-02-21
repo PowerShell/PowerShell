@@ -47,9 +47,7 @@ namespace System.Management.Automation
         {
             get
             {
-                PSVariable variable = _value as PSVariable;
-
-                if (variable != null)
+                if (_value is PSVariable variable)
                 {
                     return variable.Value;
                 }
@@ -59,9 +57,7 @@ namespace System.Management.Automation
 
             set
             {
-                PSVariable variable = _value as PSVariable;
-
-                if (variable != null)
+                if (_value is PSVariable variable)
                 {
                     variable.Value = value;
                     return;

@@ -298,20 +298,18 @@ namespace System.Management.Automation.Language
 
             while (current != null && !stopScanning)
             {
-                ScriptBlockAst scriptBlock = current as ScriptBlockAst;
-                if (scriptBlock != null)
+                if (current is ScriptBlockAst scriptBlock)
                 {
                     // See if this uses the workflow keyword
-                    FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
-                    if ((functionDefinition != null))
+                    if ((scriptBlock.Parent is FunctionDefinitionAst functionDefinition))
                     {
                         stopScanning = true;
-                        if (functionDefinition.IsWorkflow) { return true; }
+                        if (functionDefinition.IsWorkflow)
+                        { return true; }
                     }
                 }
 
-                CommandAst commandAst = current as CommandAst;
-                if (commandAst != null &&
+                if (current is CommandAst commandAst &&
                     string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
                     this != commandAst)
                 {
@@ -366,8 +364,7 @@ namespace System.Management.Automation.Language
 
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
-                var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && !(functionDefinitionAst.Parent is FunctionMemberAst))
+                if (ast is FunctionDefinitionAst functionDefinitionAst && !(functionDefinitionAst.Parent is FunctionMemberAst))
                     break;
                 ast = ast.Parent;
             }
@@ -1231,8 +1228,7 @@ namespace System.Management.Automation.Language
                 // We are done processing the section that we care about
                 if (astStartOffset >= endOffset) { break; }
 
-                var varAst = ast as VariableExpressionAst;
-                if (varAst != null)
+                if (ast is VariableExpressionAst varAst)
                 {
                     string varName = varAst.VariablePath.UserPath;
                     string varSign = varAst.Splatted ? "@" : "$";
@@ -1311,8 +1307,7 @@ namespace System.Management.Automation.Language
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
 
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 if (action == AstVisitAction.Continue)
                 {
@@ -1786,8 +1781,7 @@ namespace System.Management.Automation.Language
 
             if (!unnamed)
             {
-                var statementsExtent = statementBlock.Extent as InternalScriptExtent;
-                if (statementsExtent != null)
+                if (statementBlock.Extent is InternalScriptExtent statementsExtent)
                 {
                     this.OpenCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.StartOffset, statementsExtent.StartOffset + 1);
                     this.CloseCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.EndOffset - 1, statementsExtent.EndOffset);
@@ -2643,15 +2637,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitTypeDefinition(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitTypeDefinition(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitTypeDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -2891,15 +2883,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitUsingStatement(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitUsingStatement(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitUsingStatement(this);
                 if (action != AstVisitAction.Continue)
@@ -3119,15 +3109,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitPropertyMember(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitPropertyMember(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitPropertyMember(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3142,7 +3130,8 @@ namespace System.Management.Automation.Language
                     {
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
-                        if (action != AstVisitAction.Continue) break;
+                        if (action != AstVisitAction.Continue)
+                            break;
                     }
                 }
 
@@ -3338,15 +3327,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitFunctionMember(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitFunctionMember(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitFunctionMember(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3357,7 +3344,8 @@ namespace System.Management.Automation.Language
                     {
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
-                        if (action != AstVisitAction.Continue) break;
+                        if (action != AstVisitAction.Continue)
+                            break;
                     }
                 }
 
@@ -3430,8 +3418,7 @@ namespace System.Management.Automation.Language
         {
             if (ReturnType == null)
                 return true;
-            var typeName = ReturnType.TypeName as TypeName;
-            return typeName == null ? false : typeName.IsType(typeof(void));
+            return !(ReturnType.TypeName is TypeName typeName) ? false : typeName.IsType(typeof(void));
         }
 
         internal Type GetReturnType()
@@ -5595,8 +5582,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            CommandExpressionAst expr = PipelineElements[0] as CommandExpressionAst;
-            if (expr != null && !expr.Redirections.Any())
+            if (PipelineElements[0] is CommandExpressionAst expr && !expr.Redirections.Any())
             {
                 return expr.Expression;
             }
@@ -5865,8 +5851,7 @@ namespace System.Management.Automation.Language
         /// <returns>The command name, if known, null otherwise.</returns>
         public string GetCommandName()
         {
-            var name = CommandElements[0] as StringConstantExpressionAst;
-            return name != null ? name.Value : null;
+            return CommandElements[0] is StringConstantExpressionAst name ? name.Value : null;
         }
 
         /// <summary>
@@ -6223,14 +6208,11 @@ namespace System.Management.Automation.Language
 
             // If the assignment is just an expression and the expression is not backgrounded then
             // remove the pipeline wrapping the expression.
-            var pipelineAst = right as PipelineAst;
-            if (pipelineAst != null && !pipelineAst.Background)
+            if (right is PipelineAst pipelineAst && !pipelineAst.Background)
             {
                 if (pipelineAst.PipelineElements.Count == 1)
                 {
-                    var commandExpressionAst = pipelineAst.PipelineElements[0] as CommandExpressionAst;
-
-                    if (commandExpressionAst != null)
+                    if (pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst)
                     {
                         right = commandExpressionAst;
                         right.ClearParent();
@@ -6284,8 +6266,7 @@ namespace System.Management.Automation.Language
         /// <returns>All of the expressions assigned by the assignment statement.</returns>
         public IEnumerable<ExpressionAst> GetAssignmentTargets()
         {
-            var arrayExpression = Left as ArrayLiteralAst;
-            if (arrayExpression != null)
+            if (Left is ArrayLiteralAst arrayExpression)
             {
                 foreach (var element in arrayExpression.Elements)
                 {
@@ -6417,15 +6398,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitConfigurationDefinition(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitConfigurationDefinition(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitConfigurationDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -6619,8 +6598,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         private static bool IsImportCommand(StatementAst stmt, List<Tuple<string[], ModuleSpecification[], Version>> resourceModulePairsToImport)
         {
-            var dkwsAst = stmt as DynamicKeywordStatementAst;
-            if (dkwsAst == null || !dkwsAst.Keyword.Keyword.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase))
+            if (!(stmt is DynamicKeywordStatementAst dkwsAst) || !dkwsAst.Keyword.Keyword.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -6874,15 +6852,13 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitDynamicKeywordStatement(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitDynamicKeywordStatement(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitDynamicKeywordStatement(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -6977,7 +6953,6 @@ namespace System.Management.Automation.Language
             }
 
             ExpressionAst expr = BodyExpression;
-            HashtableAst hashtable = expr as HashtableAst;
             if (Keyword.DirectCall)
             {
                 // If this keyword takes a name, then add it as the parameter -InstanceName
@@ -6996,7 +6971,7 @@ namespace System.Management.Automation.Language
                 // in the hash literal expression and map them to parameters.
                 // We've already checked to make sure that they're all valid names.
                 //
-                if (hashtable != null)
+                if (expr is HashtableAst hashtable)
                 {
                     bool isHashtableValid = true;
                     //
@@ -7004,8 +6979,7 @@ namespace System.Management.Automation.Language
                     //
                     foreach (var keyValueTuple in hashtable.KeyValuePairs)
                     {
-                        var propName = keyValueTuple.Item1 as StringConstantExpressionAst;
-                        if (propName == null)
+                        if (!(keyValueTuple.Item1 is StringConstantExpressionAst propName))
                         {
                             isHashtableValid = false;
                             break;
@@ -7188,20 +7162,17 @@ namespace System.Management.Automation.Language
                 PSTraceSource.NewInvalidOperationException();
             }
 
-            var commandExpr = this.Parent as CommandExpressionAst;
-            if (commandExpr == null)
+            if (!(this.Parent is CommandExpressionAst commandExpr))
             {
                 return false;
             }
 
-            var pipelineAst = commandExpr.Parent as PipelineAst;
-            if (pipelineAst == null || pipelineAst.PipelineElements.Count > 1)
+            if (!(commandExpr.Parent is PipelineAst pipelineAst) || pipelineAst.PipelineElements.Count > 1)
             {
                 return false;
             }
 
-            var parenExpressionAst = pipelineAst.Parent as ParenExpressionAst;
-            if (parenExpressionAst != null)
+            if (pipelineAst.Parent is ParenExpressionAst parenExpressionAst)
             {
                 return parenExpressionAst.ShouldPreserveOutputInCaseOfException();
             }
@@ -7701,8 +7672,7 @@ namespace System.Management.Automation.Language
             var attributes = GetAttributes();
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
-            var variableExpr = assignableValue as VariableExpressionAst;
-            if (variableExpr == null)
+            if (!(assignableValue is VariableExpressionAst variableExpr))
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -7784,8 +7754,7 @@ namespace System.Management.Automation.Language
 
         IAssignableValue ISupportsAssignment.GetAssignableValue()
         {
-            var varExpr = Child as VariableExpressionAst;
-            if (varExpr != null && varExpr.TupleIndex >= 0)
+            if (Child is VariableExpressionAst varExpr && varExpr.TupleIndex >= 0)
             {
                 // In the common case of a single cast on the lhs of an assignment, we may have saved the type of the
                 // variable in the mutable tuple, so conversions will get generated elsewhere, and we can just use
@@ -8064,8 +8033,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             AstVisitAction action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitBaseCtorInvokeMemberExpression(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -8079,8 +8047,7 @@ namespace System.Management.Automation.Language
 
         internal override object Accept(ICustomAstVisitor visitor)
         {
-            var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
+            return visitor is ICustomAstVisitor2 visitor2 ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
         }
     }
 
@@ -8251,8 +8218,7 @@ namespace System.Management.Automation.Language
             bool hasExplicitCtor = false;
             foreach (var member in _typeDefinitionAst.Members)
             {
-                var function = member as FunctionMemberAst;
-                if (function != null)
+                if (member is FunctionMemberAst function)
                 {
                     if (function.IsConstructor)
                     {
@@ -8345,8 +8311,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as TypeName;
-            if (other == null)
+            if (!(obj is TypeName other))
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
@@ -8664,8 +8629,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as GenericTypeName;
-            if (other == null)
+            if (!(obj is GenericTypeName other))
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -8890,8 +8854,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ArrayTypeName;
-            if (other == null)
+            if (!(obj is ArrayTypeName other))
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -8992,8 +8955,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ReflectionTypeName;
-            if (other == null)
+            if (!(obj is ReflectionTypeName other))
                 return false;
             return _type == other._type;
         }
@@ -9525,8 +9487,7 @@ namespace System.Management.Automation.Language
             }
 
             var ast = Language.Parser.ScanString(value);
-            var expandableStringAst = ast as ExpandableStringExpressionAst;
-            if (expandableStringAst != null)
+            if (ast is ExpandableStringExpressionAst expandableStringAst)
             {
                 this.FormatExpression = expandableStringAst.FormatExpression;
                 this.NestedExpressions = expandableStringAst.NestedExpressions;
@@ -10162,10 +10123,9 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         private static VariableExpressionAst ExtractUsingVariableImpl(ExpressionAst expression)
         {
-            var usingExpr = expression as UsingExpressionAst;
             VariableExpressionAst variableExpr;
 
-            if (usingExpr != null)
+            if (expression is UsingExpressionAst usingExpr)
             {
                 variableExpr = usingExpr.SubExpression as VariableExpressionAst;
                 if (variableExpr != null)
@@ -10176,8 +10136,7 @@ namespace System.Management.Automation.Language
                 return ExtractUsingVariableImpl(usingExpr.SubExpression);
             }
 
-            var indexExpr = expression as IndexExpressionAst;
-            if (indexExpr != null)
+            if (expression is IndexExpressionAst indexExpr)
             {
                 variableExpr = indexExpr.Target as VariableExpressionAst;
                 if (variableExpr != null)
@@ -10188,8 +10147,7 @@ namespace System.Management.Automation.Language
                 return ExtractUsingVariableImpl(indexExpr.Target);
             }
 
-            var memberExpr = expression as MemberExpressionAst;
-            if (memberExpr != null)
+            if (expression is MemberExpressionAst memberExpr)
             {
                 variableExpr = memberExpr.Expression as VariableExpressionAst;
                 if (variableExpr != null)

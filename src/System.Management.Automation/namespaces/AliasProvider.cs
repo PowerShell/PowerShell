@@ -155,8 +155,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = item;
 
-            AliasInfo aliasInfo = item as AliasInfo;
-            if (aliasInfo != null)
+            if (item is AliasInfo aliasInfo)
             {
                 value = aliasInfo.Definition;
             }
@@ -210,8 +209,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 do // false loop
                 {
-                    string stringValue = value as string;
-                    if (stringValue != null)
+                    if (value is string stringValue)
                     {
                         if (dynamicParametersSpecified)
                         {
@@ -225,8 +223,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    AliasInfo alias = value as AliasInfo;
-                    if (alias != null)
+                    if (value is AliasInfo alias)
                     {
                         AliasInfo newAliasInfo =
                             new AliasInfo(
@@ -296,8 +293,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            AliasInfo aliasInfo = item as AliasInfo;
-            if (aliasInfo != null)
+            if (item is AliasInfo aliasInfo)
             {
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))

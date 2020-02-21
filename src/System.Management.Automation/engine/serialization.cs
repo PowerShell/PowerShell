@@ -693,8 +693,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            PSObject pso = o as PSObject;
-            if (pso != null)
+            if (o is PSObject pso)
             {
                 IEnumerable<string> typeNames = pso.InternalTypeNames;
                 if (typeNames != null)
@@ -1171,8 +1170,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (source is PSObject moSource && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -1462,23 +1460,20 @@ namespace System.Management.Automation
             {
                 do // false loop
                 {
-                    CimInstance cimInstance = mshSource.ImmediateBaseObject as CimInstance;
-                    if (cimInstance != null)
+                    if (mshSource.ImmediateBaseObject is CimInstance cimInstance)
                     {
                         isCimInstance = true;
                         break;
                     }
 
-                    ErrorRecord errorRecord = mshSource.ImmediateBaseObject as ErrorRecord;
-                    if (errorRecord != null)
+                    if (mshSource.ImmediateBaseObject is ErrorRecord errorRecord)
                     {
                         errorRecord.ToPSObjectForRemoting(mshSource);
                         isErrorRecord = true;
                         break;
                     }
 
-                    InformationalRecord informationalRecord = mshSource.ImmediateBaseObject as InformationalRecord;
-                    if (informationalRecord != null)
+                    if (mshSource.ImmediateBaseObject is InformationalRecord informationalRecord)
                     {
                         informationalRecord.ToPSObjectForRemoting(mshSource);
                         isInformationalRecord = true;
@@ -1975,8 +1970,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                PSProperty prop = info as PSProperty;
-                if (prop == null)
+                if (!(info is PSProperty prop))
                 {
                     continue;
                 }
@@ -3198,8 +3192,7 @@ namespace System.Management.Automation
 
             if (deserializedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
-                string psComputerNameValue = deserializedProperty.Value as string;
-                if (psComputerNameValue != null)
+                if (deserializedProperty.Value is string psComputerNameValue)
                 {
                     cimInstance.SetCimSessionComputerName(psComputerNameValue);
                 }
@@ -3320,32 +3313,28 @@ namespace System.Management.Automation
 
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
-                PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
-                if (namespaceProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] is PSPropertyInfo namespaceProperty))
                 {
                     return null;
                 }
 
                 string cimNamespace = namespaceProperty.Value as string;
 
-                PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
-                if (classNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] is PSPropertyInfo classNameProperty))
                 {
                     return null;
                 }
 
                 string cimClassName = classNameProperty.Value as string;
 
-                PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
-                if (computerNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] is PSPropertyInfo computerNameProperty))
                 {
                     return null;
                 }
 
                 string computerName = computerNameProperty.Value as string;
 
-                PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
-                if (hashCodeProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] is PSPropertyInfo hashCodeProperty))
                 {
                     return null;
                 }
@@ -3375,8 +3364,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo miXmlProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimMiXmlProperty] as PSPropertyInfo;
-                if ((miXmlProperty == null) || (miXmlProperty.Value == null))
+                if ((!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimMiXmlProperty] is PSPropertyInfo miXmlProperty)) || (miXmlProperty.Value == null))
                 {
                     return null;
                 }
@@ -3441,13 +3429,11 @@ namespace System.Management.Automation
 
             // process __InstanceMetadata
             HashSet<string> namesOfModifiedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            PSPropertyInfo instanceMetadataProperty = deserializedObject.InstanceMembers[CimInstanceMetadataProperty] as PSPropertyInfo;
-            if ((instanceMetadataProperty != null) && (instanceMetadataProperty.Value != null))
+            if ((deserializedObject.InstanceMembers[CimInstanceMetadataProperty] is PSPropertyInfo instanceMetadataProperty) && (instanceMetadataProperty.Value != null))
             {
                 PSObject instanceMetadata = PSObject.AsPSObject(instanceMetadataProperty.Value);
 
-                PSPropertyInfo modifiedPropertiesProperty = instanceMetadata.InstanceMembers[CimModifiedProperties] as PSPropertyInfo;
-                if ((modifiedPropertiesProperty != null) && (modifiedPropertiesProperty.Value != null))
+                if ((instanceMetadata.InstanceMembers[CimModifiedProperties] is PSPropertyInfo modifiedPropertiesProperty) && (modifiedPropertiesProperty.Value != null))
                 {
                     string modifiedPropertiesString = modifiedPropertiesProperty.Value.ToString();
                     foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(Utils.Separators.Space))
@@ -3462,8 +3448,7 @@ namespace System.Management.Automation
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
-                    PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                    if (deserializedProperty == null)
+                    if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                     {
                         continue;
                     }
@@ -3483,8 +3468,7 @@ namespace System.Management.Automation
             // process properties that were originally "extended" properties
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
-                PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                if (deserializedProperty == null)
+                if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                 {
                     continue;
                 }
@@ -3692,8 +3676,7 @@ namespace System.Management.Automation
 
             ReadEndElement();
 
-            PSObject immediateBasePso = dso.ImmediateBaseObject as PSObject;
-            if (immediateBasePso != null)
+            if (dso.ImmediateBaseObject is PSObject immediateBasePso)
             {
                 PSObject.CopyDeserializerFields(source: immediateBasePso, target: dso);
             }
@@ -4871,8 +4854,7 @@ namespace System.Management.Automation
             string message = StringUtil.Format(resourceString, args);
 
             XmlException ex = null;
-            IXmlLineInfo xmlLineInfo = _reader as IXmlLineInfo;
-            if (xmlLineInfo != null)
+            if (_reader is IXmlLineInfo xmlLineInfo)
             {
                 if (xmlLineInfo.HasLineInfo())
                 {
@@ -5575,8 +5557,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            PSAliasProperty alias = property as PSAliasProperty;
-            if (alias != null)
+            if (property is PSAliasProperty alias)
             {
                 property = alias.ReferencedMember as PSPropertyInfo;
             }
@@ -5895,8 +5876,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in other)
             {
-                Hashtable valueAsHashtable = PSObject.Base(entry.Value) as Hashtable;
-                if (valueAsHashtable != null)
+                if (PSObject.Base(entry.Value) is Hashtable valueAsHashtable)
                 {
                     this.Add(entry.Key, new PSPrimitiveDictionary(valueAsHashtable));
                 }
@@ -5923,8 +5903,7 @@ namespace System.Management.Automation
         private string VerifyKey(object key)
         {
             key = PSObject.Base(key);
-            string keyAsString = key as string;
-            if (keyAsString == null)
+            if (!(key is string keyAsString))
             {
                 string message = StringUtil.Format(Serialization.PrimitiveHashtableInvalidKey,
                     key.GetType().FullName);
@@ -7143,8 +7122,7 @@ namespace Microsoft.PowerShell
             Collection<Breakpoint> breakpoints = new Collection<Breakpoint>();
             foreach (var item in GetPropertyValue<ArrayList>(pso, "Breakpoints"))
             {
-                Breakpoint bp = item as Breakpoint;
-                if (bp != null)
+                if (item is Breakpoint bp)
                 {
                     breakpoints.Add(bp);
                 }
@@ -7261,8 +7239,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
-            if (parameterSetMetadata == null)
+            if (!(instance.BaseObject is ParameterSetMetadata parameterSetMetadata))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -7283,8 +7260,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
-            if (dbgStopEventArgs == null)
+            if (!(instance.BaseObject is DebuggerStopEventArgs dbgStopEventArgs))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -7543,8 +7519,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
-            FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
-            if (formatViewDefinition == null)
+            if (!(instance.BaseObject is FormatViewDefinition formatViewDefinition))
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }

@@ -455,8 +455,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            var _interactiveHost = this.Host as IHostSupportsInteractiveSession;
-            if (_interactiveHost == null)
+            if (!(this.Host is IHostSupportsInteractiveSession _interactiveHost))
             {
                 WriteError(
                     new ErrorRecord(

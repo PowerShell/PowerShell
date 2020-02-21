@@ -587,9 +587,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("info");
             }
 
-            string serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
-            if (serializedData == null)
+            if (!(info.GetValue("CliXml", typeof(string)) is string serializedData))
             {
                 throw PSTraceSource.NewArgumentNullException("info");
             }
@@ -987,8 +986,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj;
             }
@@ -1072,8 +1070,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
-            var pso = obj as PSObject;
-            if (pso == null)
+            if (!(obj is PSObject pso))
             {
                 return obj;
             }
@@ -1305,10 +1302,9 @@ namespace System.Management.Automation
                 return true;
             }
 
-            PSObject mshObj = obj as PSObject;
 
             #region plain object
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 if (obj == null)
                 {
@@ -1352,14 +1348,16 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
+                #endregion recurse
+                #region object ToString
                 #endregion recurse
 
                 #region object ToString
 
-                IFormattable objFormattable = obj as IFormattable;
                 try
                 {
-                    if (objFormattable == null)
+                    if (!(obj is IFormattable objFormattable))
                     {
                         Type type = obj as Type;
                         if (type != null)
@@ -1498,10 +1496,9 @@ namespace System.Management.Automation
                 return baseObjString;
             }
 
-            IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
-                var result = msjObjFormattable == null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
+                var result = !(baseObject is IFormattable msjObjFormattable) ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
 
                 return result ?? string.Empty;
             }
@@ -1860,8 +1857,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
-            if (note == null)
+            if (!(settings.Members[noteName] is PSNoteProperty note))
             {
                 return defaultValue;
             }

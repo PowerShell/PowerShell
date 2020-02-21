@@ -244,9 +244,8 @@ namespace System.Management.Automation
                     }
                 }
 
-                HelpFileHelpInfo helpInfo = GetCache(file) as HelpFileHelpInfo;
 
-                if (helpInfo != null)
+                if (GetCache(file) is HelpFileHelpInfo helpInfo)
                 {
                     if (searchOnlyContent)
                     {

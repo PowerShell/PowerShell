@@ -383,8 +383,7 @@ namespace System.Management.Automation.Language
                 ast,
                 ast_ =>
                 {
-                    var varAst = ast_ as VariableExpressionAst;
-                    if (varAst != null)
+                    if (ast_ is VariableExpressionAst varAst)
                     {
                         return varAst.VariablePath.IsVariable &&
                                varAst.VariablePath.UnqualifiedPath.Equals(SpecialVariables.Input,

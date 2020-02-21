@@ -1617,8 +1617,7 @@ namespace System.Management.Automation
             if (arg != null)
             {
                 arg = PSObject.Base(arg);
-                object[] argAsArray = arg as object[];
-                if (argAsArray != null && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
+                if (arg is object[] argAsArray && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
                 {
                     Type firstType = PSObject.Base(argAsArray[0]).GetType();
                     bool allSameType = true;
@@ -1658,8 +1657,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        PSObject originalArgumentObj = originalArgument as PSObject;
-                        if (originalArgumentObj == null)
+                        if (!(originalArgument is PSObject originalArgumentObj))
                         {
                             continue;
                         }
@@ -1885,8 +1883,7 @@ namespace System.Management.Automation
                 return reference.Value;
             }
 
-            PSObject mshObj = obj as PSObject;
-            if (mshObj != null)
+            if (obj is PSObject mshObj)
             {
                 reference = mshObj.BaseObject as PSReference;
             }
@@ -1911,8 +1908,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("resultType");
                 }
 
-                PSObject mshObj = valueToConvert as PSObject;
-                if (mshObj != null)
+                if (valueToConvert is PSObject mshObj)
                 {
                     if (resultType == typeof(object))
                     {
@@ -3567,8 +3563,7 @@ namespace System.Management.Automation
                 : GetInstancePropertyReflectionTable(type);
             for (int i = 0; i < propertyTable._memberCollection.Count; i++)
             {
-                var propertyCacheEntry = propertyTable._memberCollection[i] as PropertyCacheEntry;
-                if (propertyCacheEntry != null)
+                if (propertyTable._memberCollection[i] is PropertyCacheEntry propertyCacheEntry)
                     yield return propertyCacheEntry._member;
             }
 
@@ -3577,8 +3572,7 @@ namespace System.Management.Automation
                 : GetInstanceMethodReflectionTable(type);
             for (int i = 0; i < methodTable._memberCollection.Count; i++)
             {
-                var method = methodTable._memberCollection[i] as MethodCacheEntry;
-                if (method != null && !method[0]._method.IsSpecialName)
+                if (methodTable._memberCollection[i] is MethodCacheEntry method && !method[0]._method.IsSpecialName)
                 {
                     yield return method;
                 }
@@ -3723,8 +3717,7 @@ namespace System.Management.Automation
 
         protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            var idmop = obj as IDynamicMetaObjectProvider;
-            if (idmop == null || obj is PSObject)
+            if (!(obj is IDynamicMetaObjectProvider idmop) || obj is PSObject)
             {
                 return null;
             }
@@ -3838,8 +3831,7 @@ namespace System.Management.Automation
 
         internal void AddAllDynamicMembers<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
         {
-            var idmop = obj as IDynamicMetaObjectProvider;
-            if (idmop == null || obj is PSObject)
+            if (!(obj is IDynamicMetaObjectProvider idmop) || obj is PSObject)
             {
                 return;
             }
@@ -3857,8 +3849,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
-            if (entry == null)
+            if (!(property.adapterData is PropertyCacheEntry entry))
             {
                 return false;
             }
@@ -4931,8 +4922,7 @@ namespace System.Management.Automation
             PSObject mshObj = (PSObject)obj;
             foreach (PSMemberInfo member in mshObj.Members)
             {
-                T memberAsT = member as T;
-                if (memberAsT != null)
+                if (member is T memberAsT)
                 {
                     returnValue.Add(memberAsT);
                 }
@@ -5006,8 +4996,7 @@ namespace System.Management.Automation
             var returnValue = new PSMemberInfoInternalCollection<T>();
             foreach (PSMemberInfo member in ((PSMemberSet)obj).Members)
             {
-                T memberAsT = member as T;
-                if (memberAsT != null)
+                if (member is T memberAsT)
                 {
                     returnValue.Add(memberAsT);
                 }
@@ -5375,8 +5364,7 @@ namespace System.Management.Automation
 
         private static object GetNodeObject(XmlNode node)
         {
-            XmlText text = node as XmlText;
-            if (text != null)
+            if (node is XmlText text)
             {
                 return text.InnerText;
             }
@@ -5402,8 +5390,7 @@ namespace System.Management.Automation
                 return node.InnerText;
             }
 
-            XmlAttribute attribute = node as XmlAttribute;
-            if (attribute != null)
+            if (node is XmlAttribute attribute)
             {
                 return attribute.Value;
             }
@@ -5454,8 +5441,7 @@ namespace System.Management.Automation
             }
 
             XmlNode node = nodes[0];
-            XmlText text = node as XmlText;
-            if (text != null)
+            if (node is XmlText text)
             {
                 text.InnerText = valueString;
                 return;
@@ -5484,8 +5470,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            XmlAttribute attribute = node as XmlAttribute;
-            if (attribute != null)
+            if (node is XmlAttribute attribute)
             {
                 attribute.Value = valueString;
                 return;

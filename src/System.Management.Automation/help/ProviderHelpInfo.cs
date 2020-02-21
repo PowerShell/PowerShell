@@ -95,8 +95,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
-                if (descriptionItems == null || descriptionItems.Count == 0)
+                if (!(FullHelp.Properties["DetailedDescription"].Value is IList descriptionItems) || descriptionItems.Count == 0)
                 {
                     return string.Empty;
                 }

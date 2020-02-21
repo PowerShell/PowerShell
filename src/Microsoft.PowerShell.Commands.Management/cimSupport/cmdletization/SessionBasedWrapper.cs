@@ -493,8 +493,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return this.Session;
             }
 
-            var sessionBoundQueryBuilder = queryBuilder as ISessionBoundQueryBuilder<TSession>;
-            if (sessionBoundQueryBuilder != null)
+            if (queryBuilder is ISessionBoundQueryBuilder<TSession> sessionBoundQueryBuilder)
             {
                 TSession sessionOfTheQueryBuilder = sessionBoundQueryBuilder.GetTargetSession();
                 if (sessionOfTheQueryBuilder != null)

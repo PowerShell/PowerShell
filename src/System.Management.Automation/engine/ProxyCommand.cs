@@ -262,8 +262,7 @@ namespace System.Management.Automation
         {
             string text = null;
 
-            PSObject psobj = obj as PSObject;
-            if (psobj != null)
+            if (obj is PSObject psobj)
             {
                 text = GetProperty<string>(psobj, "Text");
             }

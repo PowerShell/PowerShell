@@ -369,9 +369,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PSSession psSession in psSessions.Values)
             {
-                WSManConnectionInfo wsManConnectionInfo = psSession.Runspace.ConnectionInfo as WSManConnectionInfo;
-
-                if ((wsManConnectionInfo != null) && (wsManConnectionInfo.IsLocalhostAndNetworkAccess))
+                if ((psSession.Runspace.ConnectionInfo is WSManConnectionInfo wsManConnectionInfo) && (wsManConnectionInfo.IsLocalhostAndNetworkAccess))
                 {
                     sb.Append(psSession.Name + ", ");
                 }

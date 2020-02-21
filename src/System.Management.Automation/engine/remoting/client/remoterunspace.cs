@@ -972,9 +972,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
-
-                if ((containerConnectionInfo != null) &&
+                if ((_connectionInfo is ContainerConnectionInfo containerConnectionInfo) &&
                     (containerConnectionInfo.ContainerProc.RuntimeId == Guid.Empty))
                 {
                     returnCaps |= RunspaceCapability.NamedPipeTransport;
@@ -1280,9 +1278,7 @@ namespace System.Management.Automation
             DebugModes hostDebugMode = DebugModes.Default;
             try
             {
-                IHostSupportsInteractiveSession interactiveHost =
-                    RunspacePool.RemoteRunspacePoolInternal.Host as IHostSupportsInteractiveSession;
-                if (interactiveHost != null &&
+                if (RunspacePool.RemoteRunspacePoolInternal.Host is IHostSupportsInteractiveSession interactiveHost &&
                     interactiveHost.Runspace != null &&
                     interactiveHost.Runspace.Debugger != null)
                 {
@@ -1588,8 +1584,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs"></param>
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (_connectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
                 // change the runspace's uri to the new URI.
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
@@ -1630,8 +1625,7 @@ namespace System.Management.Automation
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-                if (wsmanConnectionInfo != null)
+                if (_connectionInfo is WSManConnectionInfo wsmanConnectionInfo)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
                         ((WSManConnectionInfo)eventArgs.ConnectionInfo).OutputBufferingMode;
@@ -1644,8 +1638,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdateDisconnectExpiresOn()
         {
-            WSManConnectionInfo wsmanConnectionInfo = RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
                 this.DisconnectedOn = wsmanConnectionInfo.DisconnectedOn;
                 this.ExpiresOn = wsmanConnectionInfo.ExpiresOn;
@@ -1740,10 +1733,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void AbortOpen()
         {
-            System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
-                RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
-
-            if (transportManager != null)
+            if (RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager is System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager)
             {
                 transportManager.AbortConnect();
             }
@@ -1919,8 +1909,7 @@ namespace System.Management.Automation
                         {
                             if (item == null) { return; }
 
-                            DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
-                            if (dbgCmd != null)
+                            if (item.BaseObject is DebuggerCommand dbgCmd)
                             {
                                 bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
                                 results = new DebuggerCommandResults(dbgCmd.ResumeAction, executedByDebugger);
@@ -1943,8 +1932,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     executionError = true;
-                    RemoteException re = e as RemoteException;
-                    if ((re != null) && (re.ErrorRecord != null))
+                    if ((e is RemoteException re) && (re.ErrorRecord != null))
                     {
                         // Allow the IncompleteParseException to throw so that the console
                         // can handle here strings and continued parsing.
@@ -2589,8 +2577,7 @@ namespace System.Management.Automation
             // Raise BreakpointUpdated event to client for each breakpoint.
             foreach (PSObject obj in breakpoints)
             {
-                Breakpoint breakpoint = obj.BaseObject as Breakpoint;
-                if (breakpoint != null)
+                if (obj.BaseObject is Breakpoint breakpoint)
                 {
                     RaiseBreakpointUpdatedEvent(
                         new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Set, _breakpointCount));
@@ -2712,8 +2699,7 @@ namespace System.Management.Automation
                 SetRemoteDebug(true, RunspaceAvailability.RemoteDebug);
 
                 // Raise event and wait for response.
-                DebuggerStopEventArgs args = state as DebuggerStopEventArgs;
-                if (args != null)
+                if (state is DebuggerStopEventArgs args)
                 {
                     if (IsDebuggerStopEventSubscribed())
                     {
@@ -2773,9 +2759,8 @@ namespace System.Management.Automation
         private void HandleForwardedDebuggerBreakpointUpdatedEvent(object sender, PSEventArgs e)
         {
             Dbg.Assert(e.SourceArgs.Length == 1, "Forwarded debugger breakpoint event args must always contain one SourceArgs item.");
-            BreakpointUpdatedEventArgs bpArgs = e.SourceArgs[0] as BreakpointUpdatedEventArgs;
 
-            if (bpArgs != null)
+            if (e.SourceArgs[0] is BreakpointUpdatedEventArgs bpArgs)
             {
                 UpdateBreakpointCount(bpArgs.BreakpointCount);
                 base.RaiseBreakpointUpdatedEvent(bpArgs);

@@ -377,8 +377,7 @@ namespace System.Management.Automation.Language
                     {
                         // All PS classes are TypeName instances.
                         // For PS classes we cannot use reflection API, because type is not created yet.
-                        var baseTypeName = firstBaseTypeAst.TypeName as TypeName;
-                        if (baseTypeName != null)
+                        if (firstBaseTypeAst.TypeName is TypeName baseTypeName)
                         {
                             _baseClassHasDefaultCtor = baseTypeName.HasDefaultCtor();
                         }
@@ -483,8 +482,7 @@ namespace System.Management.Automation.Language
 
                 foreach (var member in _typeDefinitionAst.Members)
                 {
-                    var propertyMemberAst = member as PropertyMemberAst;
-                    if (propertyMemberAst != null)
+                    if (member is PropertyMemberAst propertyMemberAst)
                     {
                         DefineProperty(propertyMemberAst);
                         if (propertyMemberAst.InitialValue != null)
@@ -1079,13 +1077,11 @@ namespace System.Management.Automation.Language
                         // The expression may have multiple member expressions, e.g. [E]::e1 + [E]::e2
                         foreach (var memberExpr in initExpr.FindAll(ast => ast is MemberExpressionAst, false))
                         {
-                            var typeExpr = ((MemberExpressionAst)memberExpr).Expression as TypeExpressionAst;
-                            if (typeExpr != null)
+                            if (((MemberExpressionAst)memberExpr).Expression is TypeExpressionAst typeExpr)
                             {
                                 // We only want to add edges for enums being defined in the current scope.
                                 // We detect this by seeing if the ast is in our graph or not.
-                                var typeName = typeExpr.TypeName as TypeName;
-                                if (typeName != null
+                                if (typeExpr.TypeName is TypeName typeName
                                     && typeName._typeDefinitionAst != null
                                     && typeName._typeDefinitionAst != helper._enumDefinitionAst  // Don't add self edges
                                     && graph.ContainsKey(typeName._typeDefinitionAst))
@@ -1405,8 +1401,7 @@ namespace System.Management.Automation.Language
                 if (parent is IParameterMetadataProvider)
                 {
                     nameParts = nameParts ?? new List<string>();
-                    var fnDefn = parent.Parent as FunctionDefinitionAst;
-                    if (fnDefn != null)
+                    if (parent.Parent is FunctionDefinitionAst fnDefn)
                     {
                         parent = fnDefn;
                         nameParts.Add(fnDefn.Name);

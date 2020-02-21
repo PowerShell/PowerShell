@@ -628,8 +628,7 @@ namespace System.Management.Automation
             RunningExtraCommands = false;
             _psCommand = command;
             _psCommand.Owner = this;
-            RemoteRunspace remoteRunspace = rsConnection as RemoteRunspace;
-            _rsConnection = remoteRunspace != null ? remoteRunspace.RunspacePool : rsConnection;
+            _rsConnection = rsConnection is RemoteRunspace remoteRunspace ? remoteRunspace.RunspacePool : rsConnection;
             InstanceId = Guid.NewGuid();
             InvocationStateInfo = new PSInvocationStateInfo(PSInvocationState.NotStarted, null);
             OutputBuffer = null;
@@ -1352,9 +1351,7 @@ namespace System.Management.Automation
 
                 foreach (DictionaryEntry entry in parameters)
                 {
-                    string parameterName = entry.Key as string;
-
-                    if (parameterName == null)
+                    if (!(entry.Key is string parameterName))
                     {
                         throw PSTraceSource.NewArgumentException("parameters", PowerShellStrings.KeyMustBeString);
                     }
@@ -1833,9 +1830,7 @@ namespace System.Management.Automation
         /// </summary>
         private void SetRunspace(Runspace runspace, bool owner)
         {
-            RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-
-            if (remoteRunspace == null)
+            if (!(runspace is RemoteRunspace remoteRunspace))
             {
                 _rsConnection = runspace;
             }
@@ -2101,8 +2096,7 @@ namespace System.Management.Automation
                 SetStateChanged(new PSInvocationStateInfo(PSInvocationState.Failed, exception));
 
                 // re-throw the exception
-                InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
-                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
+                if (exception is InvalidRunspacePoolStateException poolException && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
@@ -3307,9 +3301,7 @@ namespace System.Management.Automation
         /// </exception>
         private IAsyncResult BeginBatchInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
-            PSDataCollection<PSObject> asyncOutput = (object)output as PSDataCollection<PSObject>;
-
-            if (asyncOutput == null)
+            if (!((object)output is PSDataCollection<PSObject> asyncOutput))
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
@@ -3319,8 +3311,7 @@ namespace System.Management.Automation
                 SetupAsyncBatchExecution();
             }
 
-            RunspacePool pool = _rsConnection as RunspacePool;
-            if ((pool != null) && (pool.IsRemote))
+            if ((_rsConnection is RunspacePool pool) && (pool.IsRemote))
             {
                 // Server supports batch invocation, in this case, we just send everything to the server and return immediately
                 if (ServerSupportsBatchInvocation())
@@ -3612,9 +3603,7 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         private void AppendExceptionToErrorStream(Exception e)
         {
-            IContainsErrorRecord er = e as IContainsErrorRecord;
-
-            if (er != null && er.ErrorRecord != null)
+            if (e is IContainsErrorRecord er && er.ErrorRecord != null)
             {
                 this.Streams.Error.Add(er.ErrorRecord);
             }
@@ -3652,9 +3641,8 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("asyncResult");
                 }
 
-                PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-                if ((psAsyncResult == null) ||
+                if ((!(asyncResult is PowerShellAsyncResult psAsyncResult)) ||
                     (psAsyncResult.OwnerId != InstanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
@@ -3755,9 +3743,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
-            PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-            if ((psAsyncResult == null) ||
+            if ((!(asyncResult is PowerShellAsyncResult psAsyncResult)) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
                 (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
             {
@@ -4149,8 +4136,7 @@ namespace System.Management.Automation
             // The Pipeline class takes care of updating local runspaces.
             // Don't update for RemoteRunspace and nested PowerShell since this is used
             // only internally by the remote debugger.
-            RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
-            if (remoteRunspace != null && !this.IsNested)
+            if (_runspace is RemoteRunspace remoteRunspace && !this.IsNested)
             {
                 _runspace.UpdateRunspaceAvailability(InvocationStateInfo.State, true, InstanceId);
             }
@@ -4486,8 +4472,6 @@ namespace System.Management.Automation
         /// <param name="settings">Invocation settings.</param>
         private void CoreInvokeHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            RunspacePool pool = _rsConnection as RunspacePool;
-
             // Prepare the environment...non-remoting case.
             Prepare<TInput, TOutput>(input, output, settings, true);
 
@@ -4497,7 +4481,7 @@ namespace System.Management.Automation
                 Runspace rsToUse = null;
                 if (!IsNested)
                 {
-                    if (pool != null)
+                    if (_rsConnection is RunspacePool pool)
                     {
 #if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
@@ -4552,9 +4536,8 @@ namespace System.Management.Automation
                 SetStateChanged(new PSInvocationStateInfo(PSInvocationState.Failed, exception));
 
                 // re-throw the exception
-                InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
 
-                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
+                if (exception is InvalidRunspacePoolStateException poolException && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
@@ -4617,8 +4600,7 @@ namespace System.Management.Automation
             }
 
             SetHadErrors(false);
-            RunspacePool pool = _rsConnection as RunspacePool;
-            if ((pool != null) && (pool.IsRemote))
+            if ((_rsConnection is RunspacePool pool) && (pool.IsRemote))
             {
                 if (ServerSupportsBatchInvocation())
                 {
@@ -4693,9 +4675,8 @@ namespace System.Management.Automation
                             // If we get here, then ErrorActionPreference is either Continue,
                             // SilentlyContinue, or Inquire (Continue), so we just continue....
 
-                            IContainsErrorRecord er = e as IContainsErrorRecord;
 
-                            if (er != null && er.ErrorRecord != null)
+                            if (e is IContainsErrorRecord er && er.ErrorRecord != null)
                             {
                                 this.Streams.Error.Add(er.ErrorRecord);
                             }
@@ -4857,8 +4838,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        LocalRunspace rs = _rsConnection as LocalRunspace;
-                        if (rs != null)
+                        if (_rsConnection is LocalRunspace rs)
                         {
 #if !UNIX
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
@@ -4899,9 +4879,8 @@ namespace System.Management.Automation
                 _invokeAsyncResult = null;
                 SetStateChanged(new PSInvocationStateInfo(PSInvocationState.Failed, exception));
                 // re-throw the exception
-                InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
 
-                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
+                if (exception is InvalidRunspacePoolStateException poolException && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
@@ -5124,9 +5103,8 @@ namespace System.Management.Automation
             RaiseStateChangeEvent(InvocationStateInfo.Clone());
 
             bool shouldRunStopHelper = false;
-            RunspacePool pool = _rsConnection as RunspacePool;
 
-            if (pool != null && pool.IsRemote)
+            if (_rsConnection is RunspacePool pool && pool.IsRemote)
             {
                 if ((RemotePowerShell != null) && RemotePowerShell.Initialized)
                 {
@@ -5168,8 +5146,7 @@ namespace System.Management.Automation
 
         private void ReleaseDebugger()
         {
-            LocalRunspace localRunspace = _runspace as LocalRunspace;
-            if (localRunspace != null)
+            if (_runspace is LocalRunspace localRunspace)
             {
                 localRunspace.ReleaseDebugger();
             }
@@ -5301,8 +5278,7 @@ namespace System.Management.Automation
 
         private RemoteRunspacePoolInternal GetRemoteRunspacePoolInternal()
         {
-            RunspacePool runspacePool = _rsConnection as RunspacePool;
-            return (runspacePool != null) ? (runspacePool.RemoteRunspacePoolInternal) : null;
+            return (_rsConnection is RunspacePool runspacePool) ? (runspacePool.RemoteRunspacePoolInternal) : null;
         }
 
         #endregion
@@ -5384,8 +5360,7 @@ namespace System.Management.Automation
                 try
                 {
                     // Set the host for this local runspace if user specified one.
-                    LocalRunspace rs = rsToUse as LocalRunspace;
-                    if (rs == null)
+                    if (!(rsToUse is LocalRunspace rs))
                     {
                         lock (_shell._syncObject)
                         {
@@ -5663,8 +5638,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        RunspacePool pool = _shell._rsConnection as RunspacePool;
-                        if (pool != null)
+                        if (_shell._rsConnection is RunspacePool pool)
                         {
                             pool.ReleaseRunspace(CurrentlyRunningPipeline.Runspace);
                         }

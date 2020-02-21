@@ -256,8 +256,7 @@ namespace System.Management.Automation.Remoting
             // we are able to preserve the exception as well as the stack trace.
 
             ErrorRecord errorRecord = null;
-            IContainsErrorRecord containsErrorRecord = exception as IContainsErrorRecord;
-            if (containsErrorRecord == null)
+            if (!(exception is IContainsErrorRecord containsErrorRecord))
             {
                 // If this is a .NET exception then wrap in an ErrorRecord.
                 errorRecord = new ErrorRecord(exception, "RemoteHostExecutionException", ErrorCategory.NotSpecified, null);

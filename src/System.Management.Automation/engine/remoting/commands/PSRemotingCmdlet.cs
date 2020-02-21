@@ -3923,8 +3923,7 @@ namespace Microsoft.PowerShell.Commands
                         if (shellUri != null)
                         {
                             // Compare with returned shell Uri in connection info.
-                            WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
-                            if (wsmanConnectionInfo != null &&
+                            if (runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo &&
                                 !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                             {
                                 continue;

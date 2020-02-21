@@ -573,8 +573,7 @@ namespace System.Management.Automation.Runspaces
             DebugPreference processDebugPreference = null;
             if (debugPreference != null)
             {
-                PSObject debugPreferencePsObject = debugPreference as PSObject;
-                if (debugPreferencePsObject != null)
+                if (debugPreference is PSObject debugPreferencePsObject)
                 {
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
                 }

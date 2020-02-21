@@ -281,10 +281,7 @@ namespace Microsoft.PowerShell.Commands
                 bool valueSet = false;
                 if (DynamicParameters != null)
                 {
-                    RegistryProviderSetItemDynamicParameter dynParams =
-                        DynamicParameters as RegistryProviderSetItemDynamicParameter;
-
-                    if (dynParams != null)
+                    if (DynamicParameters is RegistryProviderSetItemDynamicParameter dynParams)
                     {
                         try
                         {
@@ -1876,10 +1873,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                RegistryProviderSetItemDynamicParameter dynParams =
-                    DynamicParameters as RegistryProviderSetItemDynamicParameter;
-
-                if (dynParams != null)
+                if (DynamicParameters is RegistryProviderSetItemDynamicParameter dynParams)
                 {
                     kind = dynParams.Type;
                 }

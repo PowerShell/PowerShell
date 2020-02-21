@@ -442,8 +442,7 @@ namespace System.Management.Automation
         {
             bool result = true;
 
-            ValidateArgumentsAttribute validationAttribute = attribute as ValidateArgumentsAttribute;
-            if (validationAttribute != null)
+            if (attribute is ValidateArgumentsAttribute validationAttribute)
             {
                 try
                 {
@@ -502,9 +501,7 @@ namespace System.Management.Automation
 
             foreach (Attribute attribute in attributes)
             {
-                ArgumentTransformationAttribute transformationAttribute =
-                    attribute as ArgumentTransformationAttribute;
-                if (transformationAttribute != null)
+                if (attribute is ArgumentTransformationAttribute transformationAttribute)
                 {
                     result = transformationAttribute.TransformInternal(engine, result);
                 }

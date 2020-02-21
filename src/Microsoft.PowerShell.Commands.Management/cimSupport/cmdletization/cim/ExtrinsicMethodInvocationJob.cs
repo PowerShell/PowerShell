@@ -66,8 +66,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 methodParameter.Value = dotNetValue;
                 cmdletOutput.Add(methodParameter.Name, methodParameter);
 
-                var cimInstances = dotNetValue as CimInstance[];
-                if (cimInstances != null)
+                if (dotNetValue is CimInstance[] cimInstances)
                 {
                     foreach (var instance in cimInstances)
                     {
@@ -75,8 +74,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     }
                 }
 
-                var cimInstance = dotNetValue as CimInstance;
-                if (cimInstance != null)
+                if (dotNetValue is CimInstance cimInstance)
                 {
                     CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 }
@@ -191,15 +189,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ExceptionSafeWrapper(
                     delegate
                     {
-                        var methodResult = item as CimMethodResult;
-                        if (methodResult != null)
+                        if (item is CimMethodResult methodResult)
                         {
                             this.OnNext(methodResult);
                             return;
                         }
 
-                        var streamedResult = item as CimMethodStreamedResult;
-                        if (streamedResult != null)
+                        if (item is CimMethodStreamedResult streamedResult)
                         {
                             this.OnNext(streamedResult);
                             return;

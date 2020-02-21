@@ -102,8 +102,7 @@ namespace System.Management.Automation
 
             // For maml2: Add as collection or single item. No-op if
             PSPropertyInfo propertyInfo2 = GetPropertyInfo(maml2, parametersPath);
-            var array = propertyInfo2.Value as Array;
-            if (array != null)
+            if (propertyInfo2.Value is Array array)
             {
                 maml2items.AddRange(array as IEnumerable<object>);
             }
@@ -242,8 +241,7 @@ namespace System.Management.Automation
 
             if (propertyInfo2 != null)
             {
-                var array = propertyInfo2.Value as Array;
-                if (array != null)
+                if (propertyInfo2.Value is Array array)
                 {
                     items.AddRange(propertyInfo2.Value as IEnumerable<object>);
                 }
@@ -262,8 +260,7 @@ namespace System.Management.Automation
             {
                 if (!shouldOverride)
                 {
-                    var array = propertyInfo1.Value as Array;
-                    if (array != null)
+                    if (propertyInfo1.Value is Array array)
                     {
                         items.AddRange(propertyInfo1.Value as IEnumerable<object>);
                     }

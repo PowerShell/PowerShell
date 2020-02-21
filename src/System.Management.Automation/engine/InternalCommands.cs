@@ -717,8 +717,7 @@ namespace Microsoft.PowerShell.Commands
                 if (member is PSMethodInfo)
                 {
                     // first we check if the member is a ParameterizedProperty
-                    PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
-                    if (targetParameterizedProperty != null)
+                    if (member is PSParameterizedProperty targetParameterizedProperty)
                     {
                         // should process
                         string propertyAction = string.Format(CultureInfo.InvariantCulture,
@@ -757,8 +756,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception ex)
                     {
-                        MethodException mex = ex as MethodException;
-                        if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
+                        if (ex is MethodException mex && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                         {
                             WriteObject(targetMethod.Value);
                         }
@@ -1094,8 +1092,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(objInString))
             {
-                var psobj = obj as PSObject;
-                objInString = psobj != null ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
+                objInString = obj is PSObject psobj ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
             }
 
             return objInString;
@@ -1109,11 +1106,10 @@ namespace Microsoft.PowerShell.Commands
         private bool GetValueFromIDictionaryInput()
         {
             object target = PSObject.Base(_inputObject);
-            IDictionary hash = target as IDictionary;
 
             try
             {
-                if (hash != null && hash.Contains(_propertyOrMethodName))
+                if (target is IDictionary hash && hash.Contains(_propertyOrMethodName))
                 {
                     string keyAction = string.Format(
                         CultureInfo.InvariantCulture,
@@ -1997,8 +1993,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object GetLikeRHSOperand(object operand)
         {
-            var val = operand as string;
-            if (val == null)
+            if (!(operand is string val))
             {
                 return operand;
             }
@@ -2184,8 +2179,7 @@ namespace Microsoft.PowerShell.Commands
                     case TokenKind.Is:
                     case TokenKind.IsNot:
                         // users might input [int], [string] as they do when using scripts
-                        var strValue = _convertedValue as string;
-                        if (strValue != null)
+                        if (_convertedValue is string strValue)
                         {
                             var typeLength = strValue.Length;
                             if (typeLength > 2 && strValue[0] == '[' && strValue[typeLength - 1] == ']')
@@ -2327,10 +2321,9 @@ namespace Microsoft.PowerShell.Commands
             // return that, otherwise fall through and see if there is an
             // underlying member corresponding to the key...
             object target = PSObject.Base(_inputObject);
-            IDictionary hash = target as IDictionary;
             try
             {
-                if (hash != null && hash.Contains(_property))
+                if (target is IDictionary hash && hash.Contains(_property))
                 {
                     return hash[_property];
                 }
@@ -2640,8 +2633,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 object version = PSObject.Base(inputData);
 
-                string versionStr = version as string;
-                if (versionStr != null)
+                if (version is string versionStr)
                 {
                     if (versionStr.Equals("latest", StringComparison.OrdinalIgnoreCase))
                     {

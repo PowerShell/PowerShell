@@ -243,8 +243,7 @@ namespace System.Management.Automation
                 {
                     foreach (object o in _associatedShells.Values)
                     {
-                        ServerPowerShellDataStructureHandler result = o as ServerPowerShellDataStructureHandler;
-                        if (result != null)
+                        if (o is ServerPowerShellDataStructureHandler result)
                         {
                             return result;
                         }

@@ -753,8 +753,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
                 {
-                    SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
+                    if ((getHelpEntry is SessionStateCmdletEntry getHelpCmdlet) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
                     {
                         return true;
                     }
@@ -783,10 +782,9 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
-            if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
+            if ((!(PSObject.Base(commandInfoPSObject) is CommandInfo cmdInfo)) || (string.IsNullOrEmpty(cmdInfo.Name)))
             {
                 return string.Empty;
             }
@@ -803,8 +801,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            AliasInfo aliasInfo = cmdInfo as AliasInfo;
-            if ((aliasInfo != null) &&
+            if ((cmdInfo is AliasInfo aliasInfo) &&
                 (aliasInfo.ExternalCommandMetadata != null) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
             {

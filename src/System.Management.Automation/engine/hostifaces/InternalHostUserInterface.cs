@@ -839,13 +839,11 @@ namespace System.Management.Automation.Internal.Host
                 ThrowPromptNotInteractive(message);
             }
 
-            IHostUISupportsMultipleChoiceSelection hostForMultipleChoices =
-                _externalUI as IHostUISupportsMultipleChoiceSelection;
 
             Collection<int> result = null;
             try
             {
-                if (hostForMultipleChoices == null)
+                if (!(_externalUI is IHostUISupportsMultipleChoiceSelection hostForMultipleChoices))
                 {
                     // host did not implement this new interface..
                     // so work with V1 host API to get the behavior..

@@ -117,8 +117,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             ErrorRecord errorRecord = (ErrorRecord)this.Value;
                             errorRecord.PreserveInvocationInfoOnce = true;
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                             }
@@ -130,8 +129,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             string debug = (string)Value;
                             DebugRecord debugRecord = new DebugRecord(debug);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                             }
@@ -143,8 +141,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             string warning = (string)Value;
                             WarningRecord warningRecord = new WarningRecord(warning);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                             }
@@ -156,8 +153,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             string verbose = (string)Value;
                             VerboseRecord verboseRecord = new VerboseRecord(verbose);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                             }
@@ -167,8 +163,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Progress:
                         {
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteProgress((ProgressRecord)Value, overrideInquire);
                             }
@@ -178,8 +173,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Information:
                         {
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.WriteInformation((InformationRecord)Value, overrideInquire);
                             }
@@ -190,8 +184,7 @@ namespace System.Management.Automation.Remoting.Internal
                     case PSStreamObjectType.WarningRecord:
                         {
                             WarningRecord warningRecord = (WarningRecord)Value;
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                             {
                                 mshCommandRuntime.AppendWarningVarList(warningRecord);
                             }
@@ -271,8 +264,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         if (instanceId != Guid.Empty)
                         {
-                            PSObject o = Value as PSObject;
-                            if (o != null)
+                            if (Value is PSObject o)
                                 AddSourceJobNoteProperty(o, instanceId);
                         }
 
@@ -284,9 +276,8 @@ namespace System.Management.Automation.Remoting.Internal
                 case PSStreamObjectType.Error:
                     {
                         ErrorRecord errorRecord = (ErrorRecord)this.Value;
-                        RemotingErrorRecord remoteErrorRecord = errorRecord as RemotingErrorRecord;
 
-                        if (remoteErrorRecord == null)
+                        if (!(errorRecord is RemotingErrorRecord remoteErrorRecord))
                         {
                             // if we get a base ErrorRecord object, check if the computerName is
                             // populated in the RecommendedAction field
@@ -306,8 +297,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         errorRecord.PreserveInvocationInfoOnce = true;
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                         }
@@ -319,8 +309,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         string warning = (string)Value;
                         WarningRecord warningRecord = new WarningRecord(warning);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                         }
@@ -332,8 +321,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         string verbose = (string)Value;
                         VerboseRecord verboseRecord = new VerboseRecord(verbose);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                         }
@@ -345,8 +333,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         ProgressRecord progressRecord = (ProgressRecord)Value;
 
-                        RemotingProgressRecord remotingProgressRecord = progressRecord as RemotingProgressRecord;
-                        if (remotingProgressRecord == null)
+                        if (!(progressRecord is RemotingProgressRecord remotingProgressRecord))
                         {
                             GetIdentifierInfo(progressRecord.CurrentOperation, out Guid jobInstanceId,
                                               out string computerName);
@@ -358,8 +345,7 @@ namespace System.Management.Automation.Remoting.Internal
                             progressRecord = remotingProgressRecord;
                         }
 
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteProgress(progressRecord, overrideInquire);
                         }
@@ -371,8 +357,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         string debug = (string)Value;
                         DebugRecord debugRecord = new DebugRecord(debug);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                         }
@@ -383,9 +368,8 @@ namespace System.Management.Automation.Remoting.Internal
                 case PSStreamObjectType.Information:
                     {
                         InformationRecord informationRecord = (InformationRecord)this.Value;
-                        RemotingInformationRecord remoteInformationRecord = informationRecord as RemotingInformationRecord;
 
-                        if (remoteInformationRecord == null)
+                        if (!(informationRecord is RemotingInformationRecord remoteInformationRecord))
                         {
                             // if we get a base InformationRecord object, check if the computerName is
                             // populated in the Source field
@@ -402,8 +386,7 @@ namespace System.Management.Automation.Remoting.Internal
                             informationRecord = remoteInformationRecord;
                         }
 
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (cmdlet.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             mshCommandRuntime.WriteInformation(informationRecord, overrideInquire);
                         }

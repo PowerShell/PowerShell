@@ -65,8 +65,7 @@ namespace System.Management.Automation
         {
             try
             {
-                object[] formatArgsArray = formatArgs as object[];
-                return formatArgsArray != null
+                return formatArgs is object[] formatArgsArray
                            ? StringUtil.Format(formatString, formatArgsArray)
                            : StringUtil.Format(formatString, formatArgs);
             }

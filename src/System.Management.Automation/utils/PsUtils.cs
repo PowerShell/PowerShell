@@ -385,8 +385,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            var retResult = evaluationResult as Hashtable;
-            if (retResult == null)
+            if (!(evaluationResult is Hashtable retResult))
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -432,14 +431,12 @@ namespace System.Management.Automation
             var pipeline = ast.GetSimplePipeline(false, out string unused1, out string unused2);
             if (pipeline != null)
             {
-                var hashtableAst = pipeline.GetPureExpression() as HashtableAst;
-                if (hashtableAst != null)
+                if (pipeline.GetPureExpression() is HashtableAst hashtableAst)
                 {
                     var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
                     foreach (var pair in hashtableAst.KeyValuePairs)
                     {
-                        var key = pair.Item1 as StringConstantExpressionAst;
-                        if (key != null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                        if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                         {
                             try
                             {
@@ -534,16 +531,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            PSObject mo = dso as PSObject;
-            if (mo == null)
+            if (!(dso is PSObject mo))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            var argsList = mo.BaseObject as ArrayList;
-            if (argsList == null)
+            if (!(mo.BaseObject is ArrayList argsList))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.

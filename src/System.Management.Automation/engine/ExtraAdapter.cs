@@ -191,9 +191,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            PropertyValueCollection values = property.adapterData as PropertyValueCollection;
-
-            if (values != null)
+            if (property.adapterData is PropertyValueCollection values)
             {
                 // This means GetMember returned PropertyValueCollection
                 try

@@ -148,10 +148,9 @@ namespace Microsoft.PowerShell.Commands
                                                                    job.Command, job.Id);
                 if (ShouldProcess(targetString, VerbsLifecycle.Stop))
                 {
-                    Job2 job2 = job as Job2;
                     // if it is a Job2, then async is supported
                     // stop the job asynchronously
-                    if (job2 != null)
+                    if (job is Job2 job2)
                     {
                         _cleanUpActions.Add(job2, HandleStopJobCompleted);
                         job2.StopJobCompleted += HandleStopJobCompleted;
@@ -218,8 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 _errorsToWrite.Add(new ErrorRecord(eventArgs.Error, "StopJobError", ErrorCategory.ReadError, job));
             }
 
-            var parentJob = job as ContainerParentJob;
-            if (parentJob != null && parentJob.ExecutionError.Count > 0)
+            if (job is ContainerParentJob parentJob && parentJob.ExecutionError.Count > 0)
             {
                 foreach (
                     var e in

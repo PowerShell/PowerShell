@@ -404,8 +404,7 @@ namespace System.Management.Automation
 
             // The passed-in COM object could already be a IEnumVARIANT interface.
             // e.g. user call '_NewEnum()' on a COM collection interface.
-            var enumVariant = comObject as COM.IEnumVARIANT;
-            return enumVariant != null ? new ComEnumerator(enumVariant) : null;
+            return comObject is COM.IEnumVARIANT enumVariant ? new ComEnumerator(enumVariant) : null;
         }
     }
 }

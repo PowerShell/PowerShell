@@ -555,8 +555,7 @@ namespace Microsoft.PowerShell.Commands
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                string notePropertyName = arguments as string;
-                if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out PSMemberTypes memberType))
+                if (arguments is string notePropertyName && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out PSMemberTypes memberType))
                 {
                     switch (memberType)
                     {

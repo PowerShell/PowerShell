@@ -226,8 +226,7 @@ namespace System.Management.Automation
                     return true;
             }
 
-            var externalScript = commandInfo as ExternalScriptInfo;
-            if (externalScript != null)
+            if (commandInfo is ExternalScriptInfo externalScript)
             {
                 if (externalScript.Path.Equals(Command, StringComparison.OrdinalIgnoreCase))
                     return true;

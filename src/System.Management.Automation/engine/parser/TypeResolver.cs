@@ -430,8 +430,7 @@ namespace System.Management.Automation.Language
             if (exception != null)
             {
                 // AmbiguousTypeException is for internal representation only.
-                var ambiguousException = exception as AmbiguousTypeException;
-                if (ambiguousException != null)
+                if (exception is AmbiguousTypeException ambiguousException)
                 {
                     exception = new PSInvalidCastException("AmbiguousTypeReference", exception,
                     ParserStrings.AmbiguousTypeReference, ambiguousException.TypeName.Name,
@@ -461,8 +460,7 @@ namespace System.Management.Automation.Language
         internal static Type ResolveITypeName(ITypeName iTypeName, out Exception exception)
         {
             exception = null;
-            var typeName = iTypeName as TypeName;
-            if (typeName == null)
+            if (!(iTypeName is TypeName typeName))
             {
                 // The type is something more complicated - generic or array.
                 try
@@ -614,9 +612,8 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
 
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)

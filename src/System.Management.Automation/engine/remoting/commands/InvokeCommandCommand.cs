@@ -861,8 +861,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (session.Runspace.RunspaceAvailability != RunspaceAvailability.Available)
                     {
                         // Check to see if this is a steppable pipeline case.
-                        RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-                        if ((remoteRunspace != null) &&
+                        if ((session.Runspace is RemoteRunspace remoteRunspace) &&
                             (remoteRunspace.RunspaceAvailability == RunspaceAvailability.Busy) &&
                             (remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId)))
                         {
@@ -974,8 +973,7 @@ namespace Microsoft.PowerShell.Commands
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
                         {
-                            PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
-                            if (table != null)
+                            if ((object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] is PSPrimitiveDictionary table)
                             {
                                 Version version = (object)table[PSVersionInfo.PSRemotingProtocolVersionName] as Version;
 
@@ -1007,8 +1005,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1560,15 +1557,13 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     object rsConnection = ps.GetRunspaceConnection();
-                    RunspacePool rsPool = rsConnection as RunspacePool;
-                    if (rsPool != null)
+                    if (rsConnection is RunspacePool rsPool)
                     {
                         oldRunspacePool = rsPool;
                     }
                     else
                     {
-                        RemoteRunspace remoteRs = rsConnection as RemoteRunspace;
-                        if (remoteRs != null)
+                        if (rsConnection is RemoteRunspace remoteRs)
                         {
                             oldRunspacePool = remoteRs.RunspacePool;
                         }
@@ -1750,8 +1745,7 @@ namespace Microsoft.PowerShell.Commands
                             // Write warnings to user about each disconnect.
                             foreach (var cjob in rtnJob.ChildJobs)
                             {
-                                PSRemotingChildJob childJob = cjob as PSRemotingChildJob;
-                                if (childJob != null)
+                                if (cjob is PSRemotingChildJob childJob)
                                 {
                                     // Get session for this job.
                                     PSSession session = GetPSSession(childJob.Runspace.InstanceId);
@@ -1958,18 +1952,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="streamObject">Stream object to process.</param>
         private void PreProcessStreamObject(PSStreamObject streamObject)
         {
-            ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
-
             //
             // In case of PSDirectException, we should output the precise error message
             // in inner exception instead of the generic one in outer exception.
             //
-            if ((errorRecord != null) &&
+            if ((streamObject.Value is ErrorRecord errorRecord) &&
                 (errorRecord.Exception != null) &&
                 (errorRecord.Exception.InnerException != null))
             {
-                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
-                if (ex != null)
+                if (errorRecord.Exception.InnerException is PSDirectException ex)
                 {
                     streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException,
                                                          errorRecord.FullyQualifiedErrorId,

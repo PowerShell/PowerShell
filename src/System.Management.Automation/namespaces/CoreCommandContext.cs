@@ -470,9 +470,7 @@ namespace System.Management.Automation
             {
                 if ((_command != null) && (_command.CommandRuntime != null))
                 {
-                    MshCommandRuntime mshRuntime = _command.CommandRuntime as MshCommandRuntime;
-
-                    if (mshRuntime != null)
+                    if (_command.CommandRuntime is MshCommandRuntime mshRuntime)
                     {
                         return mshRuntime.UseTransaction;
                     }

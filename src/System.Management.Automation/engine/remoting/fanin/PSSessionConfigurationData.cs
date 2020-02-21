@@ -192,8 +192,7 @@ namespace System.Management.Automation.Remoting
                         object[] modulesToImport = optionValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                         foreach (var module in modulesToImport)
                         {
-                            var s = module as string;
-                            if (s != null)
+                            if (module is string s)
                             {
                                 _modulesToImport.Add(s.Trim());
 

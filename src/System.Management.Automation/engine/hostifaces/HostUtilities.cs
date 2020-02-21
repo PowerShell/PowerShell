@@ -307,8 +307,8 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            LocalRunspace localRunspace = runspace as LocalRunspace;
-            if (localRunspace == null) { return new List<string>(); }
+            if (!(runspace is LocalRunspace localRunspace))
+            { return new List<string>(); }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
@@ -410,8 +410,7 @@ namespace System.Management.Automation
                 {
                     object result = null;
 
-                    ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
-                    if (evaluator == null)
+                    if (!(suggestion["Rule"] is ScriptBlock evaluator))
                     {
                         suggestion["Enabled"] = false;
 
@@ -462,8 +461,7 @@ namespace System.Management.Automation
                     {
                         if (lastError != null)
                         {
-                            Exception lastException = lastError as Exception;
-                            if (lastException != null)
+                            if (lastError is Exception lastException)
                             {
                                 matchText = lastException.Message;
                             }
@@ -688,10 +686,9 @@ namespace System.Management.Automation
                 return basePrompt;
             }
 
-            SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
 
             // Usernames are case-sensitive on Unix systems
-            if (sshConnectionInfo != null &&
+            if (runspace.ConnectionInfo is SSHConnectionInfo sshConnectionInfo &&
                 !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
                 !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {

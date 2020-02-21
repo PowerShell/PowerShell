@@ -472,15 +472,12 @@ namespace Microsoft.PowerShell.Commands
                         // set the transport message in the error detail so that
                         // the user can directly get to see the message without
                         // having to mine through the error record details
-                        PSRemotingTransportException transException =
-                            reason as PSRemotingTransportException;
                         string errorDetails = null;
                         int transErrorCode = 0;
-                        if (transException != null)
+                        if (reason is PSRemotingTransportException transException)
                         {
-                            OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
                             transErrorCode = transException.ErrorCode;
-                            if (senderAsOp != null)
+                            if (sender is OpenRunspaceOperation senderAsOp)
                             {
                                 string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
@@ -515,13 +512,10 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // add host identification information in data structure handler message
-                        PSRemotingDataStructureException protoException = reason as PSRemotingDataStructureException;
 
-                        if (protoException != null)
+                        if (reason is PSRemotingDataStructureException protoException)
                         {
-                            OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
-
-                            if (senderAsOp != null)
+                            if (sender is OpenRunspaceOperation senderAsOp)
                             {
                                 string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
@@ -557,8 +551,7 @@ namespace Microsoft.PowerShell.Commands
                             if ((errorRecord.Exception != null) &&
                                 (errorRecord.Exception.InnerException != null))
                             {
-                                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
-                                if (ex != null)
+                                if (errorRecord.Exception.InnerException is PSDirectException ex)
                                 {
                                     errorRecord = new ErrorRecord(errorRecord.Exception.InnerException,
                                                                   errorRecord.FullyQualifiedErrorId,
@@ -669,10 +662,9 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // WSMan case
-                            WSManConnectionInfo originalWSManConnectionInfo = remoteRunspace.ConnectionInfo as WSManConnectionInfo;
                             WSManConnectionInfo newWSManConnectionInfo = null;
 
-                            if (originalWSManConnectionInfo != null)
+                            if (remoteRunspace.ConnectionInfo is WSManConnectionInfo originalWSManConnectionInfo)
                             {
                                 newWSManConnectionInfo = originalWSManConnectionInfo.Copy();
                                 newWSManConnectionInfo.EnableNetworkAccess = (newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess) ? true : false;

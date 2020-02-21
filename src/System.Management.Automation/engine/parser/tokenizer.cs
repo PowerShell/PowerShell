@@ -1892,14 +1892,13 @@ namespace System.Management.Automation.Language
             {
                 var requiresExtent = new InternalScriptExtent(_positionHelper, token.Extent.StartOffset + 1, token.Extent.EndOffset);
                 var state = StartNestedScan(new UnscannedSubExprToken(requiresExtent, TokenFlags.None, requiresExtent.Text, null));
-                var commandAst = _parser.CommandRule(forDynamicKeyword: false) as CommandAst;
                 _parser._ungotToken = null;
                 FinishNestedScan(state);
 
                 string snapinName = null;
                 Version snapinVersion = null;
 
-                if (commandAst != null)
+                if (_parser.CommandRule(forDynamicKeyword: false) is CommandAst commandAst)
                 {
                     var commandName = commandAst.GetCommandName();
                     if (!string.Equals(commandName, "requires", StringComparison.OrdinalIgnoreCase))
@@ -1912,9 +1911,7 @@ namespace System.Management.Automation.Language
                     var snapinSpecified = false;
                     for (int i = 1; i < commandAst.CommandElements.Count; i++)
                     {
-                        var parameter = commandAst.CommandElements[i] as CommandParameterAst;
-
-                        if (parameter != null &&
+                        if (commandAst.CommandElements[i] is CommandParameterAst parameter &&
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
@@ -1929,8 +1926,7 @@ namespace System.Management.Automation.Language
 
                     for (int i = 1; i < commandAst.CommandElements.Count; i++)
                     {
-                        var parameter = commandAst.CommandElements[i] as CommandParameterAst;
-                        if (parameter != null)
+                        if (commandAst.CommandElements[i] is CommandParameterAst parameter)
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,

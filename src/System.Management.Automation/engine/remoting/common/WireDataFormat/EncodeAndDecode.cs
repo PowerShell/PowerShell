@@ -1548,8 +1548,7 @@ namespace System.Management.Automation
             Dbg.Assert(exception != null, "Caller should validate the data");
 
             ErrorRecord er = null;
-            IContainsErrorRecord cer = exception as IContainsErrorRecord;
-            if (cer != null)
+            if (exception is IContainsErrorRecord cer)
             {
                 er = cer.ErrorRecord;
                 // Exception inside the error record is ParentContainsErrorRecordException which
@@ -2088,8 +2087,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.DecodingErrorForPowerShellStateInfo);
@@ -2357,9 +2355,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.CantCastRemotingDataToPSObject, data.GetType().FullName);
