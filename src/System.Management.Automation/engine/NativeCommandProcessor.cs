@@ -297,7 +297,7 @@ namespace System.Management.Automation
             // to know if output is redirected before we can bind parameters.
             if (!_isMiniShell)
             {
-                this.NativeParameterBinderController.BindParameters(arguments);
+                this.NativeParameterBinderController.BindParameters(_arguments);
             }
 
             try
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
-                mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
+                mpc.BindParameters(_arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
@@ -1434,9 +1434,9 @@ namespace System.Management.Automation
         /// </remarks>
         private bool IsMiniShell()
         {
-            for (int i = 0; i < arguments.Count; i++)
+            for (int i = 0; i < _arguments.Count; i++)
             {
-                CommandParameterInternal arg = arguments[i];
+                CommandParameterInternal arg = _arguments[i];
                 if (!arg.ParameterNameSpecified)
                 {
                     if (arg.ArgumentValue is ScriptBlock)

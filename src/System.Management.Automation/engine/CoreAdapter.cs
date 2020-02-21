@@ -870,7 +870,7 @@ namespace System.Management.Automation
 
         private static ParameterInformation[] ExpandParameters(int argCount, ParameterInformation[] parameters, Type elementType)
         {
-            Diagnostics.Assert(parameters[parameters.Length - 1].isParamArray, "ExpandParameters shouldn't be called on non-param method");
+            Diagnostics.Assert(parameters[parameters.Length - 1]._isParamArray, "ExpandParameters shouldn't be called on non-param method");
 
             ParameterInformation[] newParameters = new ParameterInformation[argCount];
             Array.Copy(parameters, newParameters, parameters.Length - 1);
@@ -888,30 +888,30 @@ namespace System.Management.Automation
         /// <returns>1 if method1 is better, -1 if method2 is better, 0 otherwise.</returns>
         private static int CompareOverloadCandidates(OverloadCandidate candidate1, OverloadCandidate candidate2, object[] arguments)
         {
-            Diagnostics.Assert(candidate1.conversionRanks.Length == candidate2.conversionRanks.Length,
+            Diagnostics.Assert(candidate1._conversionRanks.Length == candidate2._conversionRanks.Length,
                                "should have same number of conversions regardless of the number of parameters - default arguments are not included here");
 
-            ParameterInformation[] params1 = candidate1.expandedParameters ?? candidate1.parameters;
-            ParameterInformation[] params2 = candidate2.expandedParameters ?? candidate2.parameters;
+            ParameterInformation[] params1 = candidate1._expandedParameters ?? candidate1._parameters;
+            ParameterInformation[] params2 = candidate2._expandedParameters ?? candidate2._parameters;
 
             int betterCount = 0;
-            int multiplier = candidate1.conversionRanks.Length;
-            for (int i = 0; i < candidate1.conversionRanks.Length; ++i, --multiplier)
+            int multiplier = candidate1._conversionRanks.Length;
+            for (int i = 0; i < candidate1._conversionRanks.Length; ++i, --multiplier)
             {
-                if (candidate1.conversionRanks[i] < candidate2.conversionRanks[i])
+                if (candidate1._conversionRanks[i] < candidate2._conversionRanks[i])
                 {
                     betterCount -= multiplier;
                 }
-                else if (candidate1.conversionRanks[i] > candidate2.conversionRanks[i])
+                else if (candidate1._conversionRanks[i] > candidate2._conversionRanks[i])
                 {
                     betterCount += multiplier;
                 }
-                else if (candidate1.conversionRanks[i] == ConversionRank.UnrelatedArrays)
+                else if (candidate1._conversionRanks[i] == ConversionRank.UnrelatedArrays)
                 {
                     // If both are unrelated arrays, then use the element type conversions instead.
                     Type argElemType = EffectiveArgumentType(arguments[i]).GetElementType();
-                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, params1[i].parameterType.GetElementType());
-                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, params2[i].parameterType.GetElementType());
+                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, params1[i]._parameterType.GetElementType());
+                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, params2[i]._parameterType.GetElementType());
                     if (rank1 < rank2)
                     {
                         betterCount -= multiplier;
@@ -925,8 +925,8 @@ namespace System.Management.Automation
 
             if (betterCount == 0)
             {
-                multiplier = candidate1.conversionRanks.Length;
-                for (int i = 0; i < candidate1.conversionRanks.Length; ++i, multiplier = Math.Abs(multiplier) - 1)
+                multiplier = candidate1._conversionRanks.Length;
+                for (int i = 0; i < candidate1._conversionRanks.Length; ++i, multiplier = Math.Abs(multiplier) - 1)
                 {
                     // The following rather tricky logic tries to pick the best method in 2 very different cases -
                     //   - Pick the most specific method when conversions aren't losing information
@@ -939,8 +939,8 @@ namespace System.Management.Automation
                     //        in this case, we want to call f(int16) because it is more general,
                     //        we know we could lose information with either call, but we will lose
                     //        less information calling f(int16).
-                    ConversionRank rank1 = candidate1.conversionRanks[i];
-                    ConversionRank rank2 = candidate2.conversionRanks[i];
+                    ConversionRank rank1 = candidate1._conversionRanks[i];
+                    ConversionRank rank2 = candidate2._conversionRanks[i];
                     if (rank1 < ConversionRank.NullToValue || rank2 < ConversionRank.NullToValue)
                     {
                         // The tie breaking rules here do not apply to conversions that are not
@@ -966,8 +966,8 @@ namespace System.Management.Automation
 
                     // With a positive multiplier, we'll choose the "most general" type, and a negative
                     // multiplier will choose the "most specific".
-                    rank1 = LanguagePrimitives.GetConversionRank(params1[i].parameterType, params2[i].parameterType);
-                    rank2 = LanguagePrimitives.GetConversionRank(params2[i].parameterType, params1[i].parameterType);
+                    rank1 = LanguagePrimitives.GetConversionRank(params1[i]._parameterType, params2[i]._parameterType);
+                    rank2 = LanguagePrimitives.GetConversionRank(params2[i]._parameterType, params1[i]._parameterType);
                     if (rank1 < rank2)
                     {
                         betterCount += multiplier;
@@ -982,25 +982,25 @@ namespace System.Management.Automation
             if (betterCount == 0)
             {
                 // Check if parameters are the same.  If so, we have a few tiebreakering rules down below.
-                for (int i = 0; i < candidate1.conversionRanks.Length; ++i)
+                for (int i = 0; i < candidate1._conversionRanks.Length; ++i)
                 {
-                    if (params1[i].parameterType != params2[i].parameterType)
+                    if (params1[i]._parameterType != params2[i]._parameterType)
                     {
                         return 0;
                     }
                 }
 
                 // Apply tie breaking rules, related to expanded parameters
-                if (candidate1.expandedParameters != null && candidate2.expandedParameters != null)
+                if (candidate1._expandedParameters != null && candidate2._expandedParameters != null)
                 {
                     // Both are using expanded parameters.  The one with more parameters is better
-                    return (candidate1.parameters.Length > candidate2.parameters.Length) ? 1 : -1;
+                    return (candidate1._parameters.Length > candidate2._parameters.Length) ? 1 : -1;
                 }
-                else if (candidate1.expandedParameters != null)
+                else if (candidate1._expandedParameters != null)
                 {
                     return -1;
                 }
-                else if (candidate2.expandedParameters != null)
+                else if (candidate2._expandedParameters != null)
                 {
                     return 1;
                 }
@@ -1013,11 +1013,11 @@ namespace System.Management.Automation
             // Need to revisit this if we support named arguments
             if (betterCount == 0)
             {
-                if (candidate1.parameters.Length < candidate2.parameters.Length)
+                if (candidate1._parameters.Length < candidate2._parameters.Length)
                 {
                     return 1;
                 }
-                else if (candidate1.parameters.Length > candidate2.parameters.Length)
+                else if (candidate1._parameters.Length > candidate2._parameters.Length)
                 {
                     return -1;
                 }
@@ -1152,13 +1152,13 @@ namespace System.Management.Automation
         /// </summary>
         private static int CompareTypeSpecificity(OverloadCandidate candidate1, OverloadCandidate candidate2)
         {
-            if (!(candidate1.method.isGeneric || candidate2.method.isGeneric))
+            if (!(candidate1._method._isGeneric || candidate2._method._isGeneric))
             {
                 return 0;
             }
 
-            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1.method.method).GetParameters().Select(p => p.ParameterType).ToArray();
-            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2.method.method).GetParameters().Select(p => p.ParameterType).ToArray();
+            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1._method._method).GetParameters().Select(p => p.ParameterType).ToArray();
+            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2._method._method).GetParameters().Select(p => p.ParameterType).ToArray();
             return CompareTypeSpecificity(params1, params2);
         }
 
@@ -1179,16 +1179,16 @@ namespace System.Management.Automation
         [DebuggerDisplay("OverloadCandidate: {method.methodDefinition}")]
         private class OverloadCandidate
         {
-            internal MethodInformation method;
-            internal ParameterInformation[] parameters;
-            internal ParameterInformation[] expandedParameters;
-            internal ConversionRank[] conversionRanks;
+            internal MethodInformation _method;
+            internal ParameterInformation[] _parameters;
+            internal ParameterInformation[] _expandedParameters;
+            internal ConversionRank[] _conversionRanks;
 
             internal OverloadCandidate(MethodInformation method, int argCount)
             {
-                this.method = method;
-                this.parameters = method.parameters;
-                conversionRanks = new ConversionRank[argCount];
+                this._method = method;
+                this._parameters = method._parameters;
+                _conversionRanks = new ConversionRank[argCount];
             }
         }
 
@@ -1196,7 +1196,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(method != null, "Caller should verify method != null");
 
-            if (method.method == null)
+            if (method._method == null)
             {
                 return true; // do not apply methodTargetType constraint to non-.NET types (i.e. to COM or WMI types)
             }
@@ -1211,7 +1211,7 @@ namespace System.Management.Automation
             //
             // will have no method target type.
 
-            var methodDeclaringType = method.method.DeclaringType;
+            var methodDeclaringType = method._method.DeclaringType;
             if (invocationConstraints == null || invocationConstraints.MethodTargetType == null)
             {
                 // If no method target type is specified, we say the constraint is matched as long as the method is not an interface.
@@ -1295,12 +1295,12 @@ namespace System.Management.Automation
                 {
                     if (parameterTypeConstraint != null)
                     {
-                        if (parameterIndex >= overloadCandidate.parameters.Length)
+                        if (parameterIndex >= overloadCandidate._parameters.Length)
                         {
                             return false;
                         }
 
-                        Type parameterType = overloadCandidate.parameters[parameterIndex].parameterType;
+                        Type parameterType = overloadCandidate._parameters[parameterIndex]._parameterType;
                         if (parameterType != parameterTypeConstraint)
                         {
                             return false;
@@ -1357,14 +1357,14 @@ namespace System.Management.Automation
             // If we have such information in invocationConstraints then we should call method on the baseClass.
             if (invocationConstraints != null &&
                 invocationConstraints.MethodTargetType != null &&
-                methodInfo.method != null &&
-                methodInfo.method.DeclaringType != null)
+                methodInfo._method != null &&
+                methodInfo._method.DeclaringType != null)
             {
-                Type targetType = methodInfo.method.DeclaringType;
+                Type targetType = methodInfo._method.DeclaringType;
                 if (targetType != invocationConstraints.MethodTargetType && targetType.IsSubclassOf(invocationConstraints.MethodTargetType))
                 {
-                    var parameterTypes = methodInfo.method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
-                    var targetTypeMethod = invocationConstraints.MethodTargetType.GetMethod(methodInfo.method.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
+                    var parameterTypes = methodInfo._method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
+                    var targetTypeMethod = invocationConstraints.MethodTargetType.GetMethod(methodInfo._method.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
 
                     if (targetTypeMethod != null && (targetTypeMethod.IsPublic || targetTypeMethod.IsFamily || targetTypeMethod.IsFamilyOrAssembly))
                     {
@@ -1395,11 +1395,11 @@ namespace System.Management.Automation
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
             if ((methods.Length == 1) &&
-                (methods[0].hasVarArgs == false) &&
-                (methods[0].isGeneric == false) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+                (methods[0]._hasVarArgs == false) &&
+                (methods[0]._isGeneric == false) &&
+                (methods[0]._method == null || !(methods[0]._method.DeclaringType.IsGenericTypeDefinition)) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
-                (methods[0].parameters.Length == arguments.Length))
+                (methods[0]._parameters.Length == arguments.Length))
             {
                 return methods[0];
             }
@@ -1410,12 +1410,12 @@ namespace System.Management.Automation
             {
                 MethodInformation method = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition)
+                if (method._method != null && method._method.DeclaringType.IsGenericTypeDefinition)
                 {
                     continue; // skip methods defined by an *open* generic type
                 }
 
-                if (method.isGeneric)
+                if (method._isGeneric)
                 {
                     Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
                     Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
@@ -1446,7 +1446,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                ParameterInformation[] parameters = method.parameters;
+                ParameterInformation[] parameters = method._parameters;
                 if (arguments.Length != parameters.Length)
                 {
                     // Skip methods w/ an incorrect # of arguments.
@@ -1454,7 +1454,7 @@ namespace System.Management.Automation
                     if (arguments.Length > parameters.Length)
                     {
                         // If too many args,it's only OK if the method is varargs.
-                        if (!method.hasVarArgs)
+                        if (!method._hasVarArgs)
                         {
                             continue;
                         }
@@ -1462,12 +1462,12 @@ namespace System.Management.Automation
                     else
                     {
                         // Too few args, OK if there are optionals, or varargs with the param array omitted
-                        if (!method.hasOptional && (!method.hasVarArgs || (arguments.Length + 1) != parameters.Length))
+                        if (!method._hasOptional && (!method._hasVarArgs || (arguments.Length + 1) != parameters.Length))
                         {
                             continue;
                         }
 
-                        if (method.hasOptional)
+                        if (method._hasOptional)
                         {
                             // Count optionals.  This code is rarely hit, mainly when calling code in the
                             // assembly Microsoft.VisualBasic.  If it were more frequent, the optional count
@@ -1475,7 +1475,7 @@ namespace System.Management.Automation
                             int optionals = 0;
                             for (int j = 0; j < parameters.Length; j++)
                             {
-                                if (parameters[j].isOptional)
+                                if (parameters[j]._isOptional)
                                 {
                                     optionals += 1;
                                 }
@@ -1494,18 +1494,18 @@ namespace System.Management.Automation
                 for (int j = 0; candidate != null && j < parameters.Length; j++)
                 {
                     ParameterInformation parameter = parameters[j];
-                    if (parameter.isOptional && arguments.Length <= j)
+                    if (parameter._isOptional && arguments.Length <= j)
                     {
                         break; // All the other parameters are optional and it is ok not to have more arguments
                     }
-                    else if (parameter.isParamArray)
+                    else if (parameter._isParamArray)
                     {
-                        Type elementType = parameter.parameterType.GetElementType();
+                        Type elementType = parameter._parameterType.GetElementType();
                         if (parameters.Length == arguments.Length)
                         {
                             ConversionRank arrayConv = GetArgumentConversionRank(
                                 arguments[j],
-                                parameter.parameterType,
+                                parameter._parameterType,
                                 isByRef: false,
                                 allowCastingToByRefLikeType: false);
 
@@ -1517,15 +1517,15 @@ namespace System.Management.Automation
 
                             if (elemConv > arrayConv)
                             {
-                                candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
-                                candidate.conversionRanks[j] = elemConv;
+                                candidate._expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
+                                candidate._conversionRanks[j] = elemConv;
                             }
                             else
                             {
-                                candidate.conversionRanks[j] = arrayConv;
+                                candidate._conversionRanks[j] = arrayConv;
                             }
 
-                            if (candidate.conversionRanks[j] == ConversionRank.None)
+                            if (candidate._conversionRanks[j] == ConversionRank.None)
                             {
                                 candidate = null;
                             }
@@ -1537,13 +1537,13 @@ namespace System.Management.Automation
                             // Note that we go through here when the param array parameter has no argument.
                             for (int k = j; k < arguments.Length; k++)
                             {
-                                candidate.conversionRanks[k] = GetArgumentConversionRank(
+                                candidate._conversionRanks[k] = GetArgumentConversionRank(
                                     arguments[k],
                                     elementType,
                                     isByRef: false,
                                     allowCastingToByRefLikeType: false);
 
-                                if (candidate.conversionRanks[k] == ConversionRank.None)
+                                if (candidate._conversionRanks[k] == ConversionRank.None)
                                 {
                                     // No longer a candidate
                                     candidate = null;
@@ -1553,19 +1553,19 @@ namespace System.Management.Automation
 
                             if (candidate != null)
                             {
-                                candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
+                                candidate._expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
                             }
                         }
                     }
                     else
                     {
-                        candidate.conversionRanks[j] = GetArgumentConversionRank(
+                        candidate._conversionRanks[j] = GetArgumentConversionRank(
                             arguments[j],
-                            parameter.parameterType,
-                            parameter.isByRef,
+                            parameter._parameterType,
+                            parameter._isByRef,
                             allowCastingToByRefLikeType);
 
-                        if (candidate.conversionRanks[j] == ConversionRank.None)
+                        if (candidate._conversionRanks[j] == ConversionRank.None)
                         {
                             // No longer a candidate
                             candidate = null;
@@ -1581,13 +1581,13 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
+                if ((methods.Length > 0) && (methods.All(m => m._method != null && m._method.DeclaringType.IsGenericTypeDefinition && m._method.IsStatic)))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
                         CultureInfo.InvariantCulture,
                         ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType,
-                        methods[0].method.DeclaringType.FullName);
+                        methods[0]._method.DeclaringType.FullName);
                     return null;
                 }
                 else
@@ -1603,8 +1603,8 @@ namespace System.Management.Automation
                 : FindBestCandidate(candidates, arguments, invocationConstraints);
             if (bestCandidate != null)
             {
-                expandParamsOnBest = bestCandidate.expandedParameters != null;
-                return bestCandidate.method;
+                expandParamsOnBest = bestCandidate._expandedParameters != null;
+                return bestCandidate._method;
             }
 
             errorId = "MethodCountCouldNotFindBest";
@@ -1650,7 +1650,7 @@ namespace System.Management.Automation
         {
             using (PSObject.MemberResolution.TraceScope("Checking for possible references."))
             {
-                ParameterInformation[] parameters = methodInformation.parameters;
+                ParameterInformation[] parameters = methodInformation._parameters;
                 for (int i = 0; (i < originalArguments.Length) && (i < parameters.Length) && (i < arguments.Length); i++)
                 {
                     object originalArgument = originalArguments[i];
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation
                     }
 
                     ParameterInformation parameter = parameters[i];
-                    if (!parameter.isByRef)
+                    if (!parameter._isByRef)
                     {
                         continue;
                     }
@@ -1720,7 +1720,7 @@ namespace System.Management.Automation
                 throw new MethodException(errorId, null, errorMsg, methodName, arguments.Length);
             }
 
-            newArguments = GetMethodArgumentsBase(methodName, bestMethod.parameters, arguments, expandParamsOnBest);
+            newArguments = GetMethodArgumentsBase(methodName, bestMethod._parameters, arguments, expandParamsOnBest);
             return bestMethod;
         }
 
@@ -1757,7 +1757,7 @@ namespace System.Management.Automation
             // If we have no arguments left, we use an appropriate empty array for the last parameter
             if (arguments.Length < parametersLength)
             {
-                retValue[parametersLength - 1] = Array.CreateInstance(lastParameter.parameterType.GetElementType(), new int[] { 0 });
+                retValue[parametersLength - 1] = Array.CreateInstance(lastParameter._parameterType.GetElementType(), new int[] { 0 });
                 return retValue;
             }
 
@@ -1773,7 +1773,7 @@ namespace System.Management.Automation
             else
             {
                 object[] remainingArguments = new object[remainingArgumentCount];
-                Type paramsElementType = lastParameter.parameterType.GetElementType();
+                Type paramsElementType = lastParameter._parameterType.GetElementType();
                 for (int j = 0; j < remainingArgumentCount; j++)
                 {
                     int argumentIndex = j + parametersLength - 1;
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation
                 try
                 {
                     retValue[parametersLength - 1] = MethodArgumentConvertTo(remainingArguments,
-                        lastParameter.isByRef, parametersLength - 1, lastParameter.parameterType,
+                        lastParameter._isByRef, parametersLength - 1, lastParameter._parameterType,
                         CultureInfo.InvariantCulture);
                 }
                 catch (InvalidCastException e)
@@ -1806,7 +1806,7 @@ namespace System.Management.Automation
                         "MethodArgumentConversionParamsConversion",
                         e,
                         ExtendedTypeSystem.MethodArgumentConversionException,
-                        parametersLength - 1, remainingArguments, methodName, lastParameter.parameterType, e.Message);
+                        parametersLength - 1, remainingArguments, methodName, lastParameter._parameterType, e.Message);
                 }
             }
 
@@ -1828,8 +1828,8 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    newArguments[index] = MethodArgumentConvertTo(arguments[index], parameter.isByRef, index,
-                        parameter.parameterType, CultureInfo.InvariantCulture);
+                    newArguments[index] = MethodArgumentConvertTo(arguments[index], parameter._isByRef, index,
+                        parameter._parameterType, CultureInfo.InvariantCulture);
                 }
                 catch (InvalidCastException e)
                 {
@@ -1838,13 +1838,13 @@ namespace System.Management.Automation
                         "MethodArgumentConversionInvalidCastArgument",
                         e,
                         ExtendedTypeSystem.MethodArgumentConversionException,
-                        index, arguments[index], methodName, parameter.parameterType, e.Message);
+                        index, arguments[index], methodName, parameter._parameterType, e.Message);
                 }
             }
             else
             {
-                Diagnostics.Assert(parameter.isOptional, "FindBestMethod would not return this method if there is no corresponding argument for a non optional parameter");
-                newArguments[index] = parameter.defaultValue;
+                Diagnostics.Assert(parameter._isOptional, "FindBestMethod would not return this method if there is no corresponding argument for a non optional parameter");
+                newArguments[index] = parameter._defaultValue;
             }
         }
 
@@ -2013,19 +2013,19 @@ namespace System.Management.Automation
         /// An object collection is used to help make populating method cache table more efficient
         /// <see cref="DotNetAdapter.PopulateMethodReflectionTable(Type, CacheTable, BindingFlags)"/>.
         /// </summary>
-        internal Collection<object> memberCollection;
+        internal Collection<object> _memberCollection;
         private readonly Dictionary<string, int> _indexes;
 
         internal CacheTable()
         {
-            memberCollection = new Collection<object>();
+            _memberCollection = new Collection<object>();
             _indexes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         }
 
         internal void Add(string name, object member)
         {
-            _indexes[name] = memberCollection.Count;
-            memberCollection.Add(member);
+            _indexes[name] = _memberCollection.Count;
+            _memberCollection.Add(member);
         }
 
         internal object this[string name]
@@ -2038,7 +2038,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                return memberCollection[indexObj];
+                return _memberCollection[indexObj];
             }
         }
 
@@ -2055,7 +2055,7 @@ namespace System.Management.Automation
             {
                 if (predicate(entry.Key))
                 {
-                    object member = memberCollection[entry.Value];
+                    object member = _memberCollection[entry.Value];
                     if (member is CacheEntry cacheEntry && cacheEntry.IsHidden)
                     {
                         continue;
@@ -2078,7 +2078,7 @@ namespace System.Management.Automation
     [DebuggerDisplay("MethodInformation: {methodDefinition}")]
     internal class MethodInformation
     {
-        internal MethodBase method;
+        internal MethodBase _method;
         private string _cachedMethodDefinition;
         internal string methodDefinition
         {
@@ -2086,8 +2086,8 @@ namespace System.Management.Automation
             {
                 if (_cachedMethodDefinition == null)
                 {
-                    var name = method is ConstructorInfo ? "new" : method.Name;
-                    var methodDefn = DotNetAdapter.GetMethodInfoOverloadDefinition(name, method, method.GetParameters().Length - parameters.Length);
+                    var name = _method is ConstructorInfo ? "new" : _method.Name;
+                    var methodDefn = DotNetAdapter.GetMethodInfoOverloadDefinition(name, _method, _method.GetParameters().Length - _parameters.Length);
                     Interlocked.CompareExchange(ref _cachedMethodDefinition, methodDefn, null);
                 }
 
@@ -2095,10 +2095,10 @@ namespace System.Management.Automation
             }
         }
 
-        internal ParameterInformation[] parameters;
-        internal bool hasVarArgs;
-        internal bool hasOptional;
-        internal bool isGeneric;
+        internal ParameterInformation[] _parameters;
+        internal bool _hasVarArgs;
+        internal bool _hasOptional;
+        internal bool _isGeneric;
 
         private bool _useReflection;
         private delegate object MethodInvoker(object target, object[] arguments);
@@ -2109,29 +2109,29 @@ namespace System.Management.Automation
         /// </summary>
         internal MethodInformation(MethodBase method, int parametersToIgnore)
         {
-            this.method = method;
-            this.isGeneric = method.IsGenericMethod;
+            this._method = method;
+            this._isGeneric = method.IsGenericMethod;
             ParameterInfo[] methodParameters = method.GetParameters();
             int parametersLength = methodParameters.Length - parametersToIgnore;
-            this.parameters = new ParameterInformation[parametersLength];
+            this._parameters = new ParameterInformation[parametersLength];
 
             for (int i = 0; i < parametersLength; i++)
             {
-                this.parameters[i] = new ParameterInformation(methodParameters[i]);
+                this._parameters[i] = new ParameterInformation(methodParameters[i]);
                 if (methodParameters[i].IsOptional)
                 {
-                    hasOptional = true;
+                    _hasOptional = true;
                 }
             }
 
-            this.hasVarArgs = false;
+            this._hasVarArgs = false;
             if (parametersLength > 0)
             {
                 ParameterInfo lastParameter = methodParameters[parametersLength - 1];
 
                 // Optional and params together are forbidden in VB and so we only check for params
                 // if !hasOptional
-                if (!hasOptional && lastParameter.ParameterType.IsArray)
+                if (!_hasOptional && lastParameter.ParameterType.IsArray)
                 {
                     // The extension method 'CustomAttributeExtensions.GetCustomAttributes(ParameterInfo, Type, Boolean)' has inconsistent
                     // behavior on its return value in both FullCLR and CoreCLR. According to MSDN, if the attribute cannot be found, it
@@ -2142,8 +2142,8 @@ namespace System.Management.Automation
                     var paramArrayAttrs = lastParameter.GetCustomAttributes(typeof(ParamArrayAttribute), false);
                     if (paramArrayAttrs != null && paramArrayAttrs.Any())
                     {
-                        this.hasVarArgs = true;
-                        this.parameters[parametersLength - 1].isParamArray = true;
+                        this._hasVarArgs = true;
+                        this._parameters[parametersLength - 1]._isParamArray = true;
                     }
                 }
             }
@@ -2151,9 +2151,9 @@ namespace System.Management.Automation
 
         internal MethodInformation(bool hasvarargs, bool hasoptional, ParameterInformation[] arguments)
         {
-            hasVarArgs = hasvarargs;
-            hasOptional = hasoptional;
-            parameters = arguments;
+            _hasVarArgs = hasvarargs;
+            _hasOptional = hasoptional;
+            _parameters = arguments;
         }
 
         internal object Invoke(object target, object[] arguments)
@@ -2165,7 +2165,7 @@ namespace System.Management.Automation
             // So when reaching here, we only care about (1) if the method return type is
             // BeRef-like; (2) if it's a constrcutor of a ByRef-like type.
 
-            if (method is ConstructorInfo ctor)
+            if (_method is ConstructorInfo ctor)
             {
                 if (ctor.DeclaringType.IsByRefLike)
                 {
@@ -2179,7 +2179,7 @@ namespace System.Management.Automation
                 return ctor.Invoke(arguments);
             }
 
-            var methodInfo = (MethodInfo)method;
+            var methodInfo = (MethodInfo)_method;
             if (methodInfo.ReturnType.IsByRefLike)
             {
                 throw new MethodException(
@@ -2192,7 +2192,7 @@ namespace System.Management.Automation
 
             if (target is PSObject)
             {
-                if (!method.DeclaringType.IsAssignableFrom(target.GetType()))
+                if (!_method.DeclaringType.IsAssignableFrom(target.GetType()))
                 {
                     target = PSObject.Base(target);
                 }
@@ -2211,7 +2211,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return method.Invoke(target, arguments);
+            return _method.Invoke(target, arguments);
         }
 
         private static readonly OpCode[] s_ldc = new OpCode[] {
@@ -2514,34 +2514,34 @@ namespace System.Management.Automation
     /// </summary>
     internal class ParameterInformation
     {
-        internal Type parameterType;
-        internal object defaultValue;
-        internal bool isOptional;
-        internal bool isByRef;
-        internal bool isParamArray;
+        internal Type _parameterType;
+        internal object _defaultValue;
+        internal bool _isOptional;
+        internal bool _isByRef;
+        internal bool _isParamArray;
 
         internal ParameterInformation(System.Reflection.ParameterInfo parameter)
         {
-            this.isOptional = parameter.IsOptional;
-            this.defaultValue = parameter.DefaultValue;
-            this.parameterType = parameter.ParameterType;
-            if (this.parameterType.IsByRef)
+            this._isOptional = parameter.IsOptional;
+            this._defaultValue = parameter.DefaultValue;
+            this._parameterType = parameter.ParameterType;
+            if (this._parameterType.IsByRef)
             {
-                this.isByRef = true;
-                this.parameterType = this.parameterType.GetElementType();
+                this._isByRef = true;
+                this._parameterType = this._parameterType.GetElementType();
             }
             else
             {
-                this.isByRef = false;
+                this._isByRef = false;
             }
         }
 
         internal ParameterInformation(Type parameterType, bool isOptional, object defaultValue, bool isByRef)
         {
-            this.parameterType = parameterType;
-            this.isOptional = isOptional;
-            this.defaultValue = defaultValue;
-            this.isByRef = isByRef;
+            this._parameterType = parameterType;
+            this._isOptional = isOptional;
+            this._defaultValue = defaultValue;
+            this._isByRef = isByRef;
         }
     }
 
@@ -2606,22 +2606,22 @@ namespace System.Management.Automation
 
         internal class MethodCacheEntry : CacheEntry
         {
-            internal readonly MethodInformation[] methodInformationStructures;
+            internal readonly MethodInformation[] _methodInformationStructures;
             /// <summary>
             /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
             /// </summary>
-            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> PSMethodCtor;
+            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> _pSMethodCtor;
 
             internal MethodCacheEntry(MethodBase[] methods)
             {
-                methodInformationStructures = DotNetAdapter.GetMethodInformationArray(methods);
+                _methodInformationStructures = DotNetAdapter.GetMethodInformationArray(methods);
             }
 
             internal MethodInformation this[int i]
             {
                 get
                 {
-                    return methodInformationStructures[i];
+                    return _methodInformationStructures[i];
                 }
             }
 
@@ -2633,9 +2633,9 @@ namespace System.Management.Automation
                     if (_isHidden == null)
                     {
                         bool hasHiddenAttribute = false;
-                        foreach (var method in methodInformationStructures)
+                        foreach (var method in _methodInformationStructures)
                         {
-                            if (method.method.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0)
+                            if (method._method.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0)
                             {
                                 hasHiddenAttribute = true;
                                 break;
@@ -2652,30 +2652,30 @@ namespace System.Management.Automation
 
         internal class EventCacheEntry : CacheEntry
         {
-            internal EventInfo[] events;
+            internal EventInfo[] _events;
 
             internal EventCacheEntry(EventInfo[] events)
             {
-                this.events = events;
+                this._events = events;
             }
         }
 
         internal class ParameterizedPropertyCacheEntry : CacheEntry
         {
-            internal MethodInformation[] getterInformation;
-            internal MethodInformation[] setterInformation;
-            internal string propertyName;
-            internal bool readOnly;
-            internal bool writeOnly;
-            internal Type propertyType;
+            internal MethodInformation[] _getterInformation;
+            internal MethodInformation[] _setterInformation;
+            internal string _propertyName;
+            internal bool _readOnly;
+            internal bool _writeOnly;
+            internal Type _propertyType;
             // propertyDefinition is used as a string representation of the property
-            internal string[] propertyDefinition;
+            internal string[] _propertyDefinition;
 
             internal ParameterizedPropertyCacheEntry(List<PropertyInfo> properties)
             {
                 PropertyInfo firstProperty = properties[0];
-                this.propertyName = firstProperty.Name;
-                this.propertyType = firstProperty.PropertyType;
+                this._propertyName = firstProperty.Name;
+                this._propertyType = firstProperty.PropertyType;
                 var getterList = new List<MethodInfo>();
                 var setterList = new List<MethodInfo>();
                 var definitionArray = new List<string>();
@@ -2685,9 +2685,9 @@ namespace System.Management.Automation
                     PropertyInfo property = properties[i];
                     // Properties can have different return types. If they do
                     // we pretend it is System.Object
-                    if (property.PropertyType != this.propertyType)
+                    if (property.PropertyType != this._propertyType)
                     {
-                        this.propertyType = typeof(object);
+                        this._propertyType = typeof(object);
                     }
 
                     // Get the public getter
@@ -2697,7 +2697,7 @@ namespace System.Management.Automation
                     if (propertyGetter != null)
                     {
                         extraDefinition.Append("get;");
-                        definition.Append(DotNetAdapter.GetMethodInfoOverloadDefinition(this.propertyName, propertyGetter, 0));
+                        definition.Append(DotNetAdapter.GetMethodInfoOverloadDefinition(this._propertyName, propertyGetter, 0));
                         getterList.Add(propertyGetter);
                     }
 
@@ -2708,7 +2708,7 @@ namespace System.Management.Automation
                         extraDefinition.Append("set;");
                         if (definition.Length == 0)
                         {
-                            definition.Append(DotNetAdapter.GetMethodInfoOverloadDefinition(this.propertyName, propertySetter, 1));
+                            definition.Append(DotNetAdapter.GetMethodInfoOverloadDefinition(this._propertyName, propertySetter, 1));
                         }
 
                         setterList.Add(propertySetter);
@@ -2720,21 +2720,21 @@ namespace System.Management.Automation
                     definitionArray.Add(definition.ToString());
                 }
 
-                propertyDefinition = definitionArray.ToArray();
+                _propertyDefinition = definitionArray.ToArray();
 
-                this.writeOnly = getterList.Count == 0;
-                this.readOnly = setterList.Count == 0;
+                this._writeOnly = getterList.Count == 0;
+                this._readOnly = setterList.Count == 0;
 
-                this.getterInformation = new MethodInformation[getterList.Count];
+                this._getterInformation = new MethodInformation[getterList.Count];
                 for (int i = 0; i < getterList.Count; i++)
                 {
-                    this.getterInformation[i] = new MethodInformation(getterList[i], 0);
+                    this._getterInformation[i] = new MethodInformation(getterList[i], 0);
                 }
 
-                this.setterInformation = new MethodInformation[setterList.Count];
+                this._setterInformation = new MethodInformation[setterList.Count];
                 for (int i = 0; i < setterList.Count; i++)
                 {
-                    this.setterInformation[i] = new MethodInformation(setterList[i], 1);
+                    this._setterInformation[i] = new MethodInformation(setterList[i], 1);
                 }
             }
         }
@@ -2746,22 +2746,22 @@ namespace System.Management.Automation
 
             internal PropertyCacheEntry(PropertyInfo property)
             {
-                this.member = property;
-                this.propertyType = property.PropertyType;
+                this._member = property;
+                this._propertyType = property.PropertyType;
                 // Generating code for fields/properties in ValueTypes is complex and will probably
                 // require different delegates
                 // The same is true for generics, COM Types.
                 Type declaringType = property.DeclaringType;
 
                 if (declaringType.IsValueType ||
-                    propertyType.IsGenericType ||
+                    _propertyType.IsGenericType ||
                     declaringType.IsGenericType ||
                     declaringType.IsCOMObject ||
-                    propertyType.IsCOMObject)
+                    _propertyType.IsCOMObject)
                 {
-                    this.readOnly = property.GetSetMethod() == null;
-                    this.writeOnly = property.GetGetMethod() == null;
-                    this.useReflection = true;
+                    this._readOnly = property.GetSetMethod() == null;
+                    this._writeOnly = property.GetGetMethod() == null;
+                    this._useReflection = true;
                     return;
                 }
 
@@ -2769,44 +2769,44 @@ namespace System.Management.Automation
                 MethodInfo propertyGetter = property.GetGetMethod(true);
                 if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily))
                 {
-                    this.isStatic = propertyGetter.IsStatic;
+                    this._isStatic = propertyGetter.IsStatic;
                     // Delegate is initialized later to avoid jit if it's not called
                 }
                 else
                 {
-                    this.writeOnly = true;
+                    this._writeOnly = true;
                 }
 
                 // Get the public or protected setter
                 MethodInfo propertySetter = property.GetSetMethod(true);
                 if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
                 {
-                    this.isStatic = propertySetter.IsStatic;
+                    this._isStatic = propertySetter.IsStatic;
                 }
                 else
                 {
-                    this.readOnly = true;
+                    this._readOnly = true;
                 }
             }
 
             internal PropertyCacheEntry(FieldInfo field)
             {
-                this.member = field;
-                this.isStatic = field.IsStatic;
-                this.propertyType = field.FieldType;
+                this._member = field;
+                this._isStatic = field.IsStatic;
+                this._propertyType = field.FieldType;
 
                 // const fields have no setter and we are getting them with GetValue instead of
                 // using generated code. Init fields are only settable during initialization
                 // then cannot be set afterwards..
                 if (field.IsLiteral || field.IsInitOnly)
                 {
-                    this.readOnly = true;
+                    this._readOnly = true;
                 }
             }
 
             private void InitGetter()
             {
-                if (writeOnly || useReflection)
+                if (_writeOnly || _useReflection)
                 {
                     return;
                 }
@@ -2814,7 +2814,7 @@ namespace System.Management.Automation
                 var parameter = Expression.Parameter(typeof(object));
                 Expression instance = null;
 
-                var field = member as FieldInfo;
+                var field = _member as FieldInfo;
                 if (field != null)
                 {
                     var declaringType = field.DeclaringType;
@@ -2856,17 +2856,17 @@ namespace System.Management.Automation
                     return;
                 }
 
-                var property = (PropertyInfo)member;
+                var property = (PropertyInfo)_member;
                 var propertyGetter = property.GetGetMethod(true);
 
-                instance = this.isStatic ? null : parameter.Cast(propertyGetter.DeclaringType);
+                instance = this._isStatic ? null : parameter.Cast(propertyGetter.DeclaringType);
                 _getterDelegate = Expression.Lambda<GetterDelegate>(
                     Expression.Property(instance, property).Cast(typeof(object)), parameter).Compile();
             }
 
             private void InitSetter()
             {
-                if (readOnly || useReflection)
+                if (_readOnly || _useReflection)
                 {
                     return;
                 }
@@ -2875,7 +2875,7 @@ namespace System.Management.Automation
                 var value = Expression.Parameter(typeof(object));
                 Expression instance = null;
 
-                var field = member as FieldInfo;
+                var field = _member as FieldInfo;
                 if (field != null)
                 {
                     var declaringType = field.DeclaringType;
@@ -2906,7 +2906,7 @@ namespace System.Management.Automation
                             errType = typeof(object);
                         }
                     }
-                    else if (readOnly)
+                    else if (_readOnly)
                     {
                         errMessage = ParserStrings.PropertyIsReadOnly;
                     }
@@ -2931,17 +2931,17 @@ namespace System.Management.Automation
                     return;
                 }
 
-                var property = (PropertyInfo)member;
+                var property = (PropertyInfo)_member;
                 MethodInfo propertySetter = property.GetSetMethod(true);
 
-                instance = this.isStatic ? null : parameter.Cast(propertySetter.DeclaringType);
+                instance = this._isStatic ? null : parameter.Cast(propertySetter.DeclaringType);
                 _setterDelegate =
                     Expression.Lambda<SetterDelegate>(
                         Expression.Assign(Expression.Property(instance, property),
                             Expression.Convert(value, property.PropertyType)), parameter, value).Compile();
             }
 
-            internal MemberInfo member;
+            internal MemberInfo _member;
 
             internal GetterDelegate getterDelegate
             {
@@ -2973,11 +2973,11 @@ namespace System.Management.Automation
 
             private SetterDelegate _setterDelegate;
 
-            internal bool useReflection;
-            internal bool readOnly;
-            internal bool writeOnly;
-            internal bool isStatic;
-            internal Type propertyType;
+            internal bool _useReflection;
+            internal bool _readOnly;
+            internal bool _writeOnly;
+            internal bool _isStatic;
+            internal Type _propertyType;
 
             private bool? _isHidden;
             internal override bool IsHidden
@@ -2986,7 +2986,7 @@ namespace System.Management.Automation
                 {
                     if (_isHidden == null)
                     {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
+                        _isHidden = _member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
                     }
 
                     return _isHidden.Value;
@@ -3001,7 +3001,7 @@ namespace System.Management.Automation
                     if (_attributes == null)
                     {
                         // Since AttributeCollection can only be constructed with an Attribute[], one is built.
-                        var objAttributes = this.member.GetCustomAttributes(true);
+                        var objAttributes = this._member.GetCustomAttributes(true);
                         _attributes = new AttributeCollection(objAttributes.Cast<Attribute>().ToArray());
                     }
 
@@ -3200,10 +3200,10 @@ namespace System.Management.Automation
                 }
             }
 
-            for (int i = 0; i < typeMethods.memberCollection.Count; i++)
+            for (int i = 0; i < typeMethods._memberCollection.Count; i++)
             {
-                typeMethods.memberCollection[i] =
-                    new MethodCacheEntry(((List<MethodBase>)typeMethods.memberCollection[i]).ToArray());
+                typeMethods._memberCollection[i] =
+                    new MethodCacheEntry(((List<MethodBase>)typeMethods._memberCollection[i]).ToArray());
             }
         }
 
@@ -3367,10 +3367,10 @@ namespace System.Management.Automation
                     else
                     {
                         // A property/field declared with new in a derived class might appear twice
-                        if (!string.Equals(previousMember.member.Name, fieldName))
+                        if (!string.Equals(previousMember._member.Name, fieldName))
                         {
                             throw new ExtendedTypeSystemException("NotACLSComplaintField", null,
-                                ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember.member.Name);
+                                ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember._member.Name);
                         }
                     }
                 }
@@ -3577,20 +3577,20 @@ namespace System.Management.Automation
             CacheTable propertyTable = @static
                 ? GetStaticPropertyReflectionTable(type)
                 : GetInstancePropertyReflectionTable(type);
-            for (int i = 0; i < propertyTable.memberCollection.Count; i++)
+            for (int i = 0; i < propertyTable._memberCollection.Count; i++)
             {
-                var propertyCacheEntry = propertyTable.memberCollection[i] as PropertyCacheEntry;
+                var propertyCacheEntry = propertyTable._memberCollection[i] as PropertyCacheEntry;
                 if (propertyCacheEntry != null)
-                    yield return propertyCacheEntry.member;
+                    yield return propertyCacheEntry._member;
             }
 
             CacheTable methodTable = @static
                 ? GetStaticMethodReflectionTable(type)
                 : GetInstanceMethodReflectionTable(type);
-            for (int i = 0; i < methodTable.memberCollection.Count; i++)
+            for (int i = 0; i < methodTable._memberCollection.Count; i++)
             {
-                var method = methodTable.memberCollection[i] as MethodCacheEntry;
-                if (method != null && !method[0].method.IsSpecialName)
+                var method = methodTable._memberCollection[i] as MethodCacheEntry;
+                if (method != null && !method[0]._method.IsSpecialName)
                 {
                     yield return method;
                 }
@@ -3655,13 +3655,13 @@ namespace System.Management.Automation
                 case null:
                     return null;
                 case PropertyCacheEntry cacheEntry when lookingForProperties:
-                    return new PSProperty(cacheEntry.member.Name, this, obj, cacheEntry) { IsHidden = cacheEntry.IsHidden } as T;
+                    return new PSProperty(cacheEntry._member.Name, this, obj, cacheEntry) { IsHidden = cacheEntry.IsHidden } as T;
                 case ParameterizedPropertyCacheEntry paramCacheEntry when lookingForParameterizedProperties:
 
                     // TODO: check for HiddenAttribute
                     // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
                     // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
-                    return new PSParameterizedProperty(paramCacheEntry.propertyName, this, obj, paramCacheEntry) as T;
+                    return new PSParameterizedProperty(paramCacheEntry._propertyName, this, obj, paramCacheEntry) as T;
                 default: return null;
             }
         }
@@ -3686,10 +3686,10 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var isCtor = methods[0].method is ConstructorInfo;
-            bool isSpecial = !isCtor && methods[0].method.IsSpecialName;
+            var isCtor = methods[0]._method is ConstructorInfo;
+            bool isSpecial = !isCtor && methods[0]._method.IsSpecialName;
 
-            return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, methods.IsHidden) as T;
+            return PSMethod.Create(methods[0]._method.Name, this, obj, methods, isSpecial, methods.IsHidden) as T;
         }
 
         internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
@@ -3725,9 +3725,9 @@ namespace System.Management.Automation
 
             foreach (var psEvent in table.Values)
             {
-                if (predicate(psEvent.events[0].Name))
+                if (predicate(psEvent._events[0].Name))
                 {
-                    return new PSEvent(psEvent.events[0]) as T;
+                    return new PSEvent(psEvent._events[0]) as T;
                 }
             }
 
@@ -3771,17 +3771,17 @@ namespace System.Management.Automation
                 ? GetStaticPropertyReflectionTable((Type)obj)
                 : GetInstancePropertyReflectionTable(obj.GetType());
 
-            for (int i = 0; i < table.memberCollection.Count; i++)
+            for (int i = 0; i < table._memberCollection.Count; i++)
             {
-                if (table.memberCollection[i] is PropertyCacheEntry propertyEntry)
+                if (table._memberCollection[i] is PropertyCacheEntry propertyEntry)
                 {
                     if (lookingForProperties)
                     {
-                        if (!ignoreDuplicates || (members[propertyEntry.member.Name] == null))
+                        if (!ignoreDuplicates || (members[propertyEntry._member.Name] == null))
                         {
                             members.Add(
                                 new PSProperty(
-                                    name: propertyEntry.member.Name,
+                                    name: propertyEntry._member.Name,
                                     adapter: this,
                                     baseObject: obj,
                                     adapterData: propertyEntry)
@@ -3791,13 +3791,13 @@ namespace System.Management.Automation
                 }
                 else if (lookingForParameterizedProperties)
                 {
-                    var parameterizedPropertyEntry = (ParameterizedPropertyCacheEntry)table.memberCollection[i];
-                    if (!ignoreDuplicates || (members[parameterizedPropertyEntry.propertyName] == null))
+                    var parameterizedPropertyEntry = (ParameterizedPropertyCacheEntry)table._memberCollection[i];
+                    if (!ignoreDuplicates || (members[parameterizedPropertyEntry._propertyName] == null))
                     {
                         // TODO: check for HiddenAttribute
                         // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
                         // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
-                        members.Add(new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
+                        members.Add(new PSParameterizedProperty(parameterizedPropertyEntry._propertyName,
                             this, obj, parameterizedPropertyEntry) as T);
                     }
                 }
@@ -3815,15 +3815,15 @@ namespace System.Management.Automation
                 ? GetStaticMethodReflectionTable((Type)obj)
                 : GetInstanceMethodReflectionTable(obj.GetType());
 
-            for (int i = 0; i < table.memberCollection.Count; i++)
+            for (int i = 0; i < table._memberCollection.Count; i++)
             {
-                var method = (MethodCacheEntry)table.memberCollection[i];
-                var isCtor = method[0].method is ConstructorInfo;
-                var name = isCtor ? "new" : method[0].method.Name;
+                var method = (MethodCacheEntry)table._memberCollection[i];
+                var isCtor = method[0]._method is ConstructorInfo;
+                var name = isCtor ? "new" : method[0]._method.Name;
 
                 if (!ignoreDuplicates || (members[name] == null))
                 {
-                    bool isSpecial = !isCtor && method[0].method.IsSpecialName;
+                    bool isSpecial = !isCtor && method[0]._method.IsSpecialName;
                     members.Add(PSMethod.Create(name, this, obj, method, isSpecial, method.IsHidden) as T);
                 }
             }
@@ -3842,9 +3842,9 @@ namespace System.Management.Automation
 
             foreach (var psEvent in table.Values)
             {
-                if (!ignoreDuplicates || (members[psEvent.events[0].Name] == null))
+                if (!ignoreDuplicates || (members[psEvent._events[0].Name] == null))
                 {
-                    members.Add(new PSEvent(psEvent.events[0]) as T);
+                    members.Add(new PSEvent(psEvent._events[0]) as T);
                 }
             }
         }
@@ -3876,7 +3876,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return entry.isStatic;
+            return entry._isStatic;
         }
 
         #endregion auxiliary methods and classes
@@ -4013,20 +4013,20 @@ namespace System.Management.Automation
         {
             PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
 
-            if (adapterData.propertyType.IsByRefLike)
+            if (adapterData._propertyType.IsByRefLike)
             {
                 throw new GetValueException(
                     nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
                     innerException: null,
                     ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField,
-                    adapterData.member.Name,
-                    adapterData.propertyType);
+                    adapterData._member.Name,
+                    adapterData._propertyType);
             }
 
-            PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
+            PropertyInfo propertyInfo = adapterData._member as PropertyInfo;
             if (propertyInfo != null)
             {
-                if (adapterData.writeOnly)
+                if (adapterData._writeOnly)
                 {
                     throw new GetValueException(
                         nameof(ExtendedTypeSystem.WriteOnlyProperty),
@@ -4035,7 +4035,7 @@ namespace System.Management.Automation
                         propertyInfo.Name);
                 }
 
-                if (adapterData.useReflection)
+                if (adapterData._useReflection)
                 {
                     return propertyInfo.GetValue(property.baseObject, null);
                 }
@@ -4045,8 +4045,8 @@ namespace System.Management.Automation
                 }
             }
 
-            FieldInfo field = adapterData.member as FieldInfo;
-            if (adapterData.useReflection)
+            FieldInfo field = adapterData._member as FieldInfo;
+            if (adapterData._useReflection)
             {
                 return field?.GetValue(property.baseObject);
             }
@@ -4066,26 +4066,26 @@ namespace System.Management.Automation
         {
             PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
 
-            if (adapterData.readOnly)
+            if (adapterData._readOnly)
             {
                 throw new SetValueException(
                     nameof(ExtendedTypeSystem.ReadOnlyProperty),
                     innerException: null,
                     ExtendedTypeSystem.ReadOnlyProperty,
-                    adapterData.member.Name);
+                    adapterData._member.Name);
             }
 
-            if (adapterData.propertyType.IsByRefLike)
+            if (adapterData._propertyType.IsByRefLike)
             {
                 throw new SetValueException(
                     nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
                     innerException: null,
                     ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField,
-                    adapterData.member.Name,
-                    adapterData.propertyType);
+                    adapterData._member.Name,
+                    adapterData._propertyType);
             }
 
-            PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
+            PropertyInfo propertyInfo = adapterData._member as PropertyInfo;
             if (propertyInfo != null)
             {
                 if (convertIfPossible)
@@ -4093,7 +4093,7 @@ namespace System.Management.Automation
                     setValue = PropertySetAndMethodArgumentConvertTo(setValue, propertyInfo.PropertyType, CultureInfo.InvariantCulture);
                 }
 
-                if (adapterData.useReflection)
+                if (adapterData._useReflection)
                 {
                     propertyInfo.SetValue(property.baseObject, setValue, null);
                 }
@@ -4105,13 +4105,13 @@ namespace System.Management.Automation
                 return;
             }
 
-            FieldInfo field = adapterData.member as FieldInfo;
+            FieldInfo field = adapterData._member as FieldInfo;
             if (convertIfPossible)
             {
                 setValue = PropertySetAndMethodArgumentConvertTo(setValue, field.FieldType, CultureInfo.InvariantCulture);
             }
 
-            if (adapterData.useReflection)
+            if (adapterData._useReflection)
             {
                 field.SetValue(property.baseObject, setValue);
             }
@@ -4128,7 +4128,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            return !((PropertyCacheEntry)property.adapterData).readOnly;
+            return !((PropertyCacheEntry)property.adapterData)._readOnly;
         }
 
         /// <summary>
@@ -4138,7 +4138,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
-            return !((PropertyCacheEntry)property.adapterData).writeOnly;
+            return !((PropertyCacheEntry)property.adapterData)._writeOnly;
         }
 
         /// <summary>
@@ -4149,7 +4149,7 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the member.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            var propertyType = ((PropertyCacheEntry)property.adapterData).propertyType;
+            var propertyType = ((PropertyCacheEntry)property.adapterData)._propertyType;
             return forDisplay ? ToStringCodeMethods.Type(propertyType) : propertyType.FullName;
         }
 
@@ -4235,7 +4235,7 @@ namespace System.Management.Automation
                     "DotNetMethodTargetInvocation",
                     inner,
                     ExtendedTypeSystem.MethodInvocationException,
-                    methodInformation.method.Name, arguments.Length, inner.Message);
+                    methodInformation._method.Name, arguments.Length, inner.Message);
             }
             //
             // Note that FlowControlException, ScriptCallDepthException and ParameterBindingException will be wrapped in
@@ -4247,10 +4247,10 @@ namespace System.Management.Automation
             catch (PipelineStoppedException) { throw; }
             catch (Exception e)
             {
-                if (methodInformation.method.DeclaringType == typeof(SteppablePipeline) &&
-                    (methodInformation.method.Name.Equals("Begin") ||
-                     methodInformation.method.Name.Equals("Process") ||
-                     methodInformation.method.Name.Equals("End")))
+                if (methodInformation._method.DeclaringType == typeof(SteppablePipeline) &&
+                    (methodInformation._method.Name.Equals("Begin") ||
+                     methodInformation._method.Name.Equals("Process") ||
+                     methodInformation._method.Name.Equals("End")))
                 {
                     // Don't wrap exceptions that happen when calling methods on SteppablePipeline
                     // that are only used for proxy commands.
@@ -4261,12 +4261,12 @@ namespace System.Management.Automation
                     "DotNetMethodException",
                     e,
                     ExtendedTypeSystem.MethodInvocationException,
-                    methodInformation.method.Name, arguments.Length, e.Message);
+                    methodInformation._method.Name, arguments.Length, e.Message);
             }
 #pragma warning restore 56500
 
             SetReferences(arguments, methodInformation, originalArguments);
-            MethodInfo methodInfo = methodInformation.method as MethodInfo;
+            MethodInfo methodInfo = methodInformation._method as MethodInfo;
             if (methodInfo != null && methodInfo.ReturnType != typeof(void))
                 return result;
             return AutomationNull.Value;
@@ -4309,7 +4309,7 @@ namespace System.Management.Automation
         {
             object[] newArguments;
             MethodInformation bestMethod = GetBestMethodAndArguments(methodName, methodInformation, invocationConstraints, arguments, out newArguments);
-            if (bestMethod.method is ConstructorInfo)
+            if (bestMethod._method is ConstructorInfo)
             {
                 return InvokeResolvedConstructor(bestMethod, newArguments, arguments);
             }
@@ -4342,7 +4342,7 @@ namespace System.Management.Automation
             if ((PSObject.MemberResolution.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
                 PSObject.MemberResolution.WriteLine("Calling Constructor: {0}", DotNetAdapter.GetMethodInfoOverloadDefinition(null,
-                    bestMethod.method, 0));
+                    bestMethod._method, 0));
             }
 
             return AuxiliaryConstructorInvoke(bestMethod, newArguments, arguments);
@@ -4363,7 +4363,7 @@ namespace System.Management.Automation
             object[] newArguments;
             MethodInformation bestMethod = GetBestMethodAndArguments(propertyName, methodInformation, arguments, out newArguments);
             PSObject.MemberResolution.WriteLine("Calling Set Method: {0}", bestMethod.methodDefinition);
-            ParameterInfo[] bestMethodParameters = bestMethod.method.GetParameters();
+            ParameterInfo[] bestMethodParameters = bestMethod._method.GetParameters();
             Type propertyType = bestMethodParameters[bestMethodParameters.Length - 1].ParameterType;
 
             // we have to convert the last parameter (valuetoSet) manually since it has been
@@ -4511,7 +4511,7 @@ namespace System.Management.Automation
             return DotNetAdapter.MethodInvokeDotNet(
                 method.Name,
                 method.baseObject,
-                methodEntry.methodInformationStructures,
+                methodEntry._methodInformationStructures,
                 invocationConstraints,
                 arguments);
         }
@@ -4525,7 +4525,7 @@ namespace System.Management.Automation
         {
             MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
             IList<string> uniqueValues = methodEntry
-                .methodInformationStructures
+                ._methodInformationStructures
                 .Select(m => m.methodDefinition)
                 .Distinct(StringComparer.Ordinal)
                 .ToList();
@@ -4544,7 +4544,7 @@ namespace System.Management.Automation
         protected override string ParameterizedPropertyType(PSParameterizedProperty property)
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
-            return adapterData.propertyType.FullName;
+            return adapterData._propertyType.FullName;
         }
 
         /// <summary>
@@ -4554,7 +4554,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool ParameterizedPropertyIsSettable(PSParameterizedProperty property)
         {
-            return !((ParameterizedPropertyCacheEntry)property.adapterData).readOnly;
+            return !((ParameterizedPropertyCacheEntry)property.adapterData)._readOnly;
         }
 
         /// <summary>
@@ -4564,7 +4564,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is gettable.</returns>
         protected override bool ParameterizedPropertyIsGettable(PSParameterizedProperty property)
         {
-            return !((ParameterizedPropertyCacheEntry)property.adapterData).writeOnly;
+            return !((ParameterizedPropertyCacheEntry)property.adapterData)._writeOnly;
         }
 
         /// <summary>
@@ -4577,7 +4577,7 @@ namespace System.Management.Automation
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
             return DotNetAdapter.MethodInvokeDotNet(property.Name, property.baseObject,
-                adapterData.getterInformation, null, arguments);
+                adapterData._getterInformation, null, arguments);
         }
 
         /// <summary>
@@ -4589,8 +4589,8 @@ namespace System.Management.Automation
         protected override void ParameterizedPropertySet(PSParameterizedProperty property, object setValue, object[] arguments)
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
-            ParameterizedPropertyInvokeSet(adapterData.propertyName, property.baseObject, setValue,
-                adapterData.setterInformation, arguments);
+            ParameterizedPropertyInvokeSet(adapterData._propertyName, property.baseObject, setValue,
+                adapterData._setterInformation, arguments);
         }
 
         /// <summary>
@@ -4600,9 +4600,9 @@ namespace System.Management.Automation
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
             var returnValue = new Collection<string>();
-            for (int i = 0; i < adapterData.propertyDefinition.Length; i++)
+            for (int i = 0; i < adapterData._propertyDefinition.Length; i++)
             {
-                returnValue.Add(adapterData.propertyDefinition[i]);
+                returnValue.Add(adapterData._propertyDefinition[i]);
             }
 
             return returnValue;
@@ -5871,8 +5871,8 @@ namespace System.Management.Automation
             // the cast is safe, because
             // 1) only ConstructorInfo and MethodInfo derive from MethodBase
             // 2) ConstructorInfo.IsGenericMethod is always false
-            MethodInfo originalMethod = (MethodInfo)genericMethod.method;
-            MethodInfo inferredMethod = TypeInference.Infer(originalMethod, argumentTypes, genericMethod.hasVarArgs);
+            MethodInfo originalMethod = (MethodInfo)genericMethod._method;
+            MethodInfo inferredMethod = TypeInference.Infer(originalMethod, argumentTypes, genericMethod._hasVarArgs);
 
             if (inferredMethod != null)
             {

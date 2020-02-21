@@ -476,7 +476,7 @@ namespace System.Management.Automation
         {
             var psMethod = member as PSMethod;
             var methodCacheEntry = psMethod?.adapterData as DotNetAdapter.MethodCacheEntry;
-            return methodCacheEntry != null && methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
+            return methodCacheEntry != null && methodCacheEntry._methodInformationStructures[0]._method.IsConstructor;
         }
     }
 
@@ -1456,7 +1456,7 @@ namespace System.Management.Automation
                     name = functionMember.Name;
                     break;
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry:
-                    name = methodCacheEntry[0].method.Name;
+                    name = methodCacheEntry[0]._method.Name;
                     break;
             }
 
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation
 
                     return false;
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
-                    if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
+                    if (methodCacheEntry[0]._method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         maybeWantDefaultCtor = false;
                         AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
@@ -1708,9 +1708,9 @@ namespace System.Management.Automation
         {
             if (isInvokeMemberExpressionAst)
             {
-                foreach (var method in methodCacheEntry.methodInformationStructures)
+                foreach (var method in methodCacheEntry._methodInformationStructures)
                 {
-                    if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
+                    if (method._method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
                     {
                         result.Add(new PSTypeName(methodInfo.ReturnType));
                     }

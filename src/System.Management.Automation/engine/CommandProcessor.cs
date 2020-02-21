@@ -175,7 +175,7 @@ namespace System.Management.Automation
                 this.CmdletParameterBinderController.CommandLineParameters.UpdateInvocationInfo(this.Command.MyInvocation);
                 this.Command.MyInvocation.UnboundArguments = new Collections.Generic.List<object>();
 
-                this.CmdletParameterBinderController.BindCommandLineParameters(arguments);
+                this.CmdletParameterBinderController.BindCommandLineParameters(_arguments);
             }
         }
 
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override void DoBegin()
         {
-            if (!RanBeginAlready && CmdletParameterBinderController.ObsoleteParameterWarningList != null)
+            if (!_ranBeginAlready && CmdletParameterBinderController.ObsoleteParameterWarningList != null)
             {
                 using (CommandRuntime.AllowThisCommandToWrite(false))
                 {
@@ -311,9 +311,9 @@ namespace System.Management.Automation
         {
             // Invoke the Command method with the request object
 
-            if (!this.RanBeginAlready)
+            if (!this._ranBeginAlready)
             {
-                RanBeginAlready = true;
+                _ranBeginAlready = true;
                 try
                 {
                     // NOTICE-2004/06/08-JonN 959638
@@ -827,9 +827,9 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
-            if (this.arguments != null)
+            if (this._arguments != null)
             {
-                foreach (CommandParameterInternal parameter in this.arguments)
+                foreach (CommandParameterInternal parameter in this._arguments)
                 {
                     Dbg.Assert(parameter != null, "CommandProcessor.arguments shouldn't have any null arguments");
                     if (parameter.IsDashQuestion())

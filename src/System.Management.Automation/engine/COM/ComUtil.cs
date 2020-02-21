@@ -272,7 +272,7 @@ namespace System.Management.Automation
             bool hasOptional = false;
             foreach (ParameterInformation p in parameters)
             {
-                if (p.isOptional)
+                if (p._isOptional)
                 {
                     hasOptional = true;
                     break;

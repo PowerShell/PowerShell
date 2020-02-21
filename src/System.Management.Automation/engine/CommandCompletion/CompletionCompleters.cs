@@ -117,7 +117,7 @@ namespace System.Management.Automation
                     lastAst.Visit(findFunctionsVisitor);
 
                     WildcardPattern commandNamePattern = WildcardPattern.Get(commandName, WildcardOptions.IgnoreCase);
-                    foreach (var defn in findFunctionsVisitor.FunctionDefinitions)
+                    foreach (var defn in findFunctionsVisitor._functionDefinitions)
                     {
                         if (commandNamePattern.IsMatch(defn.Name)
                             && !commandResults.Where(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)).Any())
@@ -408,11 +408,11 @@ namespace System.Management.Automation
 
         private class FindFunctionsVisitor : AstVisitor
         {
-            internal readonly List<FunctionDefinitionAst> FunctionDefinitions = new List<FunctionDefinitionAst>();
+            internal readonly List<FunctionDefinitionAst> _functionDefinitions = new List<FunctionDefinitionAst>();
 
             public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
             {
-                FunctionDefinitions.Add(functionDefinitionAst);
+                _functionDefinitions.Add(functionDefinitionAst);
                 return AstVisitAction.Continue;
             }
         }
@@ -4602,19 +4602,19 @@ namespace System.Management.Automation
             if (lastAst != null)
             {
                 Ast parent = lastAst.Parent;
-                var findVariablesVisitor = new FindVariablesVisitor { CompletionVariableAst = lastAst };
+                var findVariablesVisitor = new FindVariablesVisitor { _completionVariableAst = lastAst };
                 while (parent != null)
                 {
                     if (parent is IParameterMetadataProvider)
                     {
-                        findVariablesVisitor.Top = parent;
+                        findVariablesVisitor._top = parent;
                         parent.Visit(findVariablesVisitor);
                     }
 
                     parent = parent.Parent;
                 }
 
-                foreach (Tuple<string, Ast> varAst in findVariablesVisitor.VariableSources)
+                foreach (Tuple<string, Ast> varAst in findVariablesVisitor._variableSources)
                 {
                     Ast astTarget = null;
                     string userPath = null;
@@ -4842,15 +4842,15 @@ namespace System.Management.Automation
 
         private class FindVariablesVisitor : AstVisitor
         {
-            internal Ast Top;
-            internal Ast CompletionVariableAst;
-            internal readonly List<Tuple<string, Ast>> VariableSources = new List<Tuple<string, Ast>>();
+            internal Ast _top;
+            internal Ast _completionVariableAst;
+            internal readonly List<Tuple<string, Ast>> _variableSources = new List<Tuple<string, Ast>>();
 
             public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
             {
-                if (variableExpressionAst != CompletionVariableAst)
+                if (variableExpressionAst != _completionVariableAst)
                 {
-                    VariableSources.Add(new Tuple<string, Ast>(variableExpressionAst.VariablePath.UserPath, variableExpressionAst));
+                    _variableSources.Add(new Tuple<string, Ast>(variableExpressionAst.VariablePath.UserPath, variableExpressionAst));
                 }
 
                 return AstVisitAction.Continue;
@@ -4863,7 +4863,7 @@ namespace System.Management.Automation
                 // and is used in the same command. PipelineVariables are not available
                 // in the command they are assigned in. Hence the following code ignores
                 // if the variable being completed is in the command extent.
-                if ((commandAst != CompletionVariableAst) && (!CompletionVariableAst.Extent.IsWithin(commandAst.Extent)))
+                if ((commandAst != _completionVariableAst) && (!_completionVariableAst.Extent.IsWithin(commandAst.Extent)))
                 {
                     string[] desiredParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
 
@@ -4876,7 +4876,7 @@ namespace System.Management.Automation
                         {
                             if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
                             {
-                                VariableSources.Add(new Tuple<string, Ast>((string)parameterBindingResult.ConstantValue, commandAst));
+                                _variableSources.Add(new Tuple<string, Ast>((string)parameterBindingResult.ConstantValue, commandAst));
                             }
                         }
                     }
@@ -4887,17 +4887,17 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
             {
-                return functionDefinitionAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                return functionDefinitionAst != _top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
             }
 
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
-                return scriptBlockExpressionAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                return scriptBlockExpressionAst != _top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
             }
 
             public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
             {
-                return scriptBlockAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                return scriptBlockAst != _top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
             }
         }
 
@@ -5309,9 +5309,9 @@ namespace System.Management.Automation
             var methodCacheEntry = member as DotNetAdapter.MethodCacheEntry;
             if (methodCacheEntry != null)
             {
-                memberName = methodCacheEntry[0].method.Name;
+                memberName = methodCacheEntry[0]._method.Name;
                 isMethod = true;
-                getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(m => m.methodDefinition));
+                getToolTip = () => string.Join("\n", methodCacheEntry._methodInformationStructures.Select(m => m.methodDefinition));
             }
 
             var psMemberInfo = member as PSMemberInfo;
@@ -5427,7 +5427,7 @@ namespace System.Management.Automation
                 var methodCacheEntry = psMethod.adapterData as DotNetAdapter.MethodCacheEntry;
                 if (methodCacheEntry != null)
                 {
-                    return methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
+                    return methodCacheEntry._methodInformationStructures[0]._method.IsConstructor;
                 }
             }
 
@@ -5462,7 +5462,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Get the full type name of the type represented by this instance.
             /// </summary>
-            internal string FullTypeName;
+            internal string _fullTypeName;
 
             /// <summary>
             /// Get the short type name of the type represented by this instance.
@@ -5473,11 +5473,11 @@ namespace System.Management.Automation
                 {
                     if (_shortTypeName == null)
                     {
-                        int lastDotIndex = FullTypeName.LastIndexOf('.');
-                        int lastPlusIndex = FullTypeName.LastIndexOf('+');
+                        int lastDotIndex = _fullTypeName.LastIndexOf('.');
+                        int lastPlusIndex = _fullTypeName.LastIndexOf('+');
                         _shortTypeName = lastPlusIndex != -1
-                                           ? FullTypeName.Substring(lastPlusIndex + 1)
-                                           : FullTypeName.Substring(lastDotIndex + 1);
+                                           ? _fullTypeName.Substring(lastPlusIndex + 1)
+                                           : _fullTypeName.Substring(lastDotIndex + 1);
                     }
 
                     return _shortTypeName;
@@ -5495,8 +5495,8 @@ namespace System.Management.Automation
                 {
                     if (_namespace == null)
                     {
-                        int lastDotIndex = FullTypeName.LastIndexOf('.');
-                        _namespace = FullTypeName.Substring(0, lastDotIndex);
+                        int lastDotIndex = _fullTypeName.LastIndexOf('.');
+                        _namespace = _fullTypeName.Substring(0, lastDotIndex);
                     }
 
                     return _namespace;
@@ -5519,11 +5519,11 @@ namespace System.Management.Automation
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
-                                        ? FullTypeName
-                                        : FullTypeName.Substring(namespaceToRemove.Length + 1);
+                                        ? _fullTypeName
+                                        : _fullTypeName.Substring(namespaceToRemove.Length + 1);
 
                 string listItem = ShortTypeName;
-                string tooltip = FullTypeName;
+                string tooltip = _fullTypeName;
 
                 return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip);
             }
@@ -5547,8 +5547,8 @@ namespace System.Management.Automation
                 {
                     if (_genericArgumentCount == 0)
                     {
-                        var backtick = FullTypeName.LastIndexOf('`');
-                        var argCount = FullTypeName.Substring(backtick + 1);
+                        var backtick = _fullTypeName.LastIndexOf('`');
+                        var argCount = _fullTypeName.Substring(backtick + 1);
                         _genericArgumentCount = LanguagePrimitives.ConvertTo<int>(argCount);
                     }
 
@@ -5571,7 +5571,7 @@ namespace System.Management.Automation
             /// </summary>
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
-                string fullNameWithoutBacktip = RemoveBackTick(FullTypeName);
+                string fullNameWithoutBacktip = RemoveBackTick(_fullTypeName);
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
                                         ? fullNameWithoutBacktip
                                         : fullNameWithoutBacktip.Substring(namespaceToRemove.Length + 1);
@@ -5602,19 +5602,19 @@ namespace System.Management.Automation
         /// </summary>
         private class TypeCompletion : TypeCompletionBase
         {
-            internal Type Type;
+            internal Type _type;
 
             protected string GetTooltipPrefix()
             {
-                if (typeof(Delegate).IsAssignableFrom(Type))
+                if (typeof(Delegate).IsAssignableFrom(_type))
                     return "Delegate ";
-                if (Type.IsInterface)
+                if (_type.IsInterface)
                     return "Interface ";
-                if (Type.IsClass)
+                if (_type.IsClass)
                     return "Class ";
-                if (Type.IsEnum)
+                if (_type.IsEnum)
                     return "Enum ";
-                if (typeof(ValueType).IsAssignableFrom(Type))
+                if (typeof(ValueType).IsAssignableFrom(_type))
                     return "Struct ";
 
                 return string.Empty; // what other interesting types are there?
@@ -5627,24 +5627,24 @@ namespace System.Management.Automation
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
-                string completion = ToStringCodeMethods.Type(Type, false, keyMatched);
+                string completion = ToStringCodeMethods.Type(_type, false, keyMatched);
 
                 // If the completion included a namespace and ToStringCodeMethods.Type found
                 // an accelerator, then just use the type's FullName instead because the user
                 // probably didn't want the accelerator.
                 if (keyMatched.IndexOf('.') != -1 && completion.IndexOf('.') == -1)
                 {
-                    completion = Type.FullName;
+                    completion = _type.FullName;
                 }
 
-                if (!string.IsNullOrEmpty(namespaceToRemove) && completion.Equals(Type.FullName, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(namespaceToRemove) && completion.Equals(_type.FullName, StringComparison.OrdinalIgnoreCase))
                 {
                     // Remove the namespace only if the completion text contains namespace
                     completion = completion.Substring(namespaceToRemove.Length + 1);
                 }
 
-                string listItem = Type.Name;
-                string tooltip = GetTooltipPrefix() + Type.FullName;
+                string listItem = _type.Name;
+                string tooltip = GetTooltipPrefix() + _type.FullName;
 
                 return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip);
             }
@@ -5662,19 +5662,19 @@ namespace System.Management.Automation
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
-                string fullNameWithoutBacktip = RemoveBackTick(Type.FullName);
+                string fullNameWithoutBacktip = RemoveBackTick(_type.FullName);
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
                                         ? fullNameWithoutBacktip
                                         : fullNameWithoutBacktip.Substring(namespaceToRemove.Length + 1);
 
-                string typeName = RemoveBackTick(Type.Name);
+                string typeName = RemoveBackTick(_type.Name);
                 var listItem = typeName + "<>";
 
                 var tooltip = new StringBuilder();
                 tooltip.Append(GetTooltipPrefix());
                 tooltip.Append(fullNameWithoutBacktip);
                 tooltip.Append('[');
-                var genericParameters = Type.GetGenericArguments();
+                var genericParameters = _type.GetGenericArguments();
                 for (int i = 0; i < genericParameters.Length; i++)
                 {
                     if (i != 0) tooltip.Append(", ");
@@ -5692,18 +5692,18 @@ namespace System.Management.Automation
         /// </summary>
         private class NamespaceCompletion : TypeCompletionBase
         {
-            internal string Namespace;
+            internal string _namespace;
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
-                var listItemText = Namespace;
+                var listItemText = _namespace;
                 var dotIndex = listItemText.LastIndexOf('.');
                 if (dotIndex != -1)
                 {
                     listItemText = listItemText.Substring(dotIndex + 1);
                 }
 
-                return new CompletionResult(prefix + Namespace + suffix, listItemText, CompletionResultType.Namespace, "Namespace " + Namespace);
+                return new CompletionResult(prefix + _namespace + suffix, listItemText, CompletionResultType.Namespace, "Namespace " + _namespace);
             }
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
@@ -5715,8 +5715,8 @@ namespace System.Management.Automation
         private class TypeCompletionMapping
         {
             // The Key is the string we'll be searching on.  It could complete to various things.
-            internal string Key;
-            internal List<TypeCompletionBase> Completions = new List<TypeCompletionBase>();
+            internal string _key;
+            internal List<TypeCompletionBase> _completions = new List<TypeCompletionBase>();
         }
 
         private static TypeCompletionMapping[][] s_typeCache;
@@ -5727,18 +5727,16 @@ namespace System.Management.Automation
             var entries = new Dictionary<string, TypeCompletionMapping>(StringComparer.OrdinalIgnoreCase);
             foreach (var type in TypeAccelerators.Get)
             {
-                TypeCompletionMapping entry;
-                var typeCompletionInstance = new TypeCompletion { Type = type.Value };
+                var typeCompletionInstance = new TypeCompletion { _type = type.Value };
 
                 if (entries.TryGetValue(type.Key, out entry))
                 {
                     // Check if this accelerator type is already included in the mapping entry referenced by the same key.
                     Type acceleratorType = type.Value;
-                    bool typeAlreadyIncluded = entry.Completions.Any(
+                    bool typeAlreadyIncluded = entry._completions.Any(
                         item =>
                             {
-                                var typeCompletion = item as TypeCompletion;
-                                return typeCompletion != null && typeCompletion.Type == acceleratorType;
+                                return item is TypeCompletion typeCompletion && typeCompletion._type == acceleratorType;
                             });
 
                     // If it's already included, skip it.
@@ -5750,11 +5748,11 @@ namespace System.Management.Automation
 
                     // If this accelerator type is not included in the mapping entry, add it in.
                     // This may happen when an accelerator name happens to be the short name of a different type (rare case).
-                    entry.Completions.Add(typeCompletionInstance);
+                    entry._completions.Add(typeCompletionInstance);
                 }
                 else
                 {
-                    entries.Add(type.Key, new TypeCompletionMapping { Key = type.Key, Completions = { typeCompletionInstance } });
+                    entries.Add(type.Key, new TypeCompletionMapping { _key = type.Key, _completions = { typeCompletionInstance } });
                 }
 
                 // If the full type name has already been included, then we know for sure that the short type name has also been included.
@@ -5762,7 +5760,7 @@ namespace System.Management.Automation
                 if (entries.ContainsKey(fullTypeName)) { continue; }
 
                 // Otherwise, add the mapping from full type name to the type
-                entries.Add(fullTypeName, new TypeCompletionMapping { Key = fullTypeName, Completions = { typeCompletionInstance } });
+                entries.Add(fullTypeName, new TypeCompletionMapping { _key = fullTypeName, _completions = { typeCompletionInstance } });
 
                 // If the short type name is the same as the accelerator name, then skip it to avoid duplication.
                 string shortTypeName = type.Value.Name;
@@ -5773,11 +5771,11 @@ namespace System.Management.Automation
                 // are in the TypeAccelerator cache.
                 if (!entries.TryGetValue(shortTypeName, out entry))
                 {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
+                    entry = new TypeCompletionMapping { _key = shortTypeName };
                     entries.Add(shortTypeName, entry);
                 }
 
-                entry.Completions.Add(typeCompletionInstance);
+                entry._completions.Add(typeCompletionInstance);
             }
 
             #endregion Process_TypeAccelerators
@@ -5788,7 +5786,7 @@ namespace System.Management.Automation
             // Populate the type completion cache using the namespace-qualified type names.
             foreach (string fullTypeName in ClrFacade.AvailableDotNetTypeNames)
             {
-                var typeCompInString = new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                var typeCompInString = new TypeCompletionInStringFormat { _fullTypeName = fullTypeName };
                 HandleNamespace(entries, typeCompInString.Namespace);
                 HandleType(entries, fullTypeName, typeCompInString.ShortTypeName, null);
             }
@@ -5820,7 +5818,7 @@ namespace System.Management.Automation
 
             #endregion Process_LoadedAssemblies
 
-            var grouping = entries.Values.GroupBy(t => t.Key.Count(c => c == '.')).OrderBy(g => g.Key).ToArray();
+            var grouping = entries.Values.GroupBy(t => t._key.Count(c => c == '.')).OrderBy(g => g.Key).ToArray();
             var localTypeCache = new TypeCompletionMapping[grouping.Last().Key + 1][];
             foreach (var group in grouping)
             {
@@ -5856,14 +5854,14 @@ namespace System.Management.Automation
                 {
                     entry = new TypeCompletionMapping
                     {
-                        Key = subNamespace,
-                        Completions = { new NamespaceCompletion { Namespace = subNamespace } }
+                        _key = subNamespace,
+                        _completions = { new NamespaceCompletion { _namespace = subNamespace } }
                     };
                     entryCache.Add(subNamespace, entry);
                 }
-                else if (!entry.Completions.OfType<NamespaceCompletion>().Any())
+                else if (!entry._completions.OfType<NamespaceCompletion>().Any())
                 {
-                    entry.Completions.Add(new NamespaceCompletion { Namespace = subNamespace });
+                    entry._completions.Add(new NamespaceCompletion { _namespace = subNamespace });
                 }
             }
         }
@@ -5892,9 +5890,9 @@ namespace System.Management.Automation
                 if (isNested) { return; }
 
                 typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new GenericTypeCompletion { Type = actualType }
+                                         ? (TypeCompletionBase)new GenericTypeCompletion { _type = actualType }
 
-                                         : new GenericTypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                                         : new GenericTypeCompletionInStringFormat { _fullTypeName = fullTypeName };
 
                 // Remove the backtick, we only want 1 generic in our results for types like Func or Action.
                 fullTypeName = fullTypeName.Substring(0, backtick);
@@ -5903,9 +5901,9 @@ namespace System.Management.Automation
             else
             {
                 typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new TypeCompletion { Type = actualType }
+                                         ? (TypeCompletionBase)new TypeCompletion { _type = actualType }
 
-                                         : new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                                         : new TypeCompletionInStringFormat { _fullTypeName = fullTypeName };
             }
 
             // If the full type name has already been included, then we know for sure that the short type
@@ -5915,8 +5913,8 @@ namespace System.Management.Automation
             {
                 entry = new TypeCompletionMapping
                 {
-                    Key = fullTypeName,
-                    Completions = { typeCompletionBase }
+                    _key = fullTypeName,
+                    _completions = { typeCompletionBase }
                 };
                 entryCache.Add(fullTypeName, entry);
 
@@ -5924,11 +5922,11 @@ namespace System.Management.Automation
                 // For example, this may happen to System.ServiceProcess.TimeoutException when System.TimeoutException is already in the cache.
                 if (!entryCache.TryGetValue(shortTypeName, out entry))
                 {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
+                    entry = new TypeCompletionMapping { _key = shortTypeName };
                     entryCache.Add(shortTypeName, entry);
                 }
 
-                entry.Completions.Add(typeCompletionBase);
+                entry._completions.Add(typeCompletionBase);
             }
         }
 
@@ -5945,11 +5943,11 @@ namespace System.Management.Automation
 
             var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-            foreach (var entry in localTypeCache[dots].Where(e => e.Completions.OfType<NamespaceCompletion>().Any() && pattern.IsMatch(e.Key)))
+            foreach (var entry in localTypeCache[dots].Where(e => e._completions.OfType<NamespaceCompletion>().Any() && pattern.IsMatch(e._key)))
             {
-                foreach (var completion in entry.Completions)
+                foreach (var completion in entry._completions)
                 {
-                    results.Add(completion.GetCompletionResult(entry.Key, prefix, suffix));
+                    results.Add(completion.GetCompletionResult(entry._key, prefix, suffix));
                 }
             }
 
@@ -5989,12 +5987,12 @@ namespace System.Management.Automation
 
             var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-            foreach (var entry in localTypeCache[dots].Where(e => pattern.IsMatch(e.Key)))
+            foreach (var entry in localTypeCache[dots].Where(e => pattern.IsMatch(e._key)))
             {
-                foreach (var completion in entry.Completions)
+                foreach (var completion in entry._completions)
                 {
                     string namespaceToRemove = GetNamespaceToRemove(context, completion);
-                    var completionResult = completion.GetCompletionResult(entry.Key, prefix, suffix, namespaceToRemove);
+                    var completionResult = completion.GetCompletionResult(entry._key, prefix, suffix, namespaceToRemove);
 
                     // We might get the same completion result twice. For example, the type cache has:
                     //    DscResource->System.Management.Automation.DscResourceAttribute (from accelerator)
@@ -6038,9 +6036,8 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var typeCompletion = completion as TypeCompletion;
-            string typeNameSpace = typeCompletion != null
-                                       ? typeCompletion.Type.Namespace
+            string typeNameSpace = completion is TypeCompletion typeCompletion
+                                       ? typeCompletion._type.Namespace
                                        : ((TypeCompletionInStringFormat)completion).Namespace;
 
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];

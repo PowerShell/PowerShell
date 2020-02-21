@@ -96,7 +96,7 @@ namespace System.Management.Automation
 
                 object returnValue = ComInvoker.Invoke(method.baseObject as IDispatch,
                                                        bestMethod.DispId, newarguments,
-                                                       ComInvoker.GetByRefArray(bestMethod.parameters,
+                                                       ComInvoker.GetByRefArray(bestMethod._parameters,
                                                                                 newarguments.Length,
                                                                                 isPropertySet: false),
                                                        COM.INVOKEKIND.INVOKE_FUNC);

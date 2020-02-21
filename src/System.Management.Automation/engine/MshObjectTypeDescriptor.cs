@@ -396,7 +396,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            propertyType = propertyEntry.propertyType;
+                            propertyType = propertyEntry._propertyType;
                             propertyAttributes = propertyEntry.Attributes;
                             foreach (Attribute attribute in attributes)
                             {

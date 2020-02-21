@@ -2589,18 +2589,18 @@ namespace System.Management.Automation
 
         internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method, bool isSpecial, bool isHidden)
         {
-            if (method[0].method is ConstructorInfo)
+            if (method[0]._method is ConstructorInfo)
             {
                 // Constructor cannot be converted to a delegate, so just return a simple PSMethod instance
                 return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
 
-            if (method.PSMethodCtor == null)
+            if (method._pSMethodCtor == null)
             {
-                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+                method._pSMethodCtor = CreatePSMethodConstructor(method._methodInformationStructures);
             }
 
-            return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
+            return method._pSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
 
         private static Type GetMethodGroupType(MethodInfo methodInfo)
@@ -2693,7 +2693,7 @@ namespace System.Management.Automation
             var types = new Type[methods.Length];
             for (int i = 0; i < methods.Length; i++)
             {
-                types[i] = GetMethodGroupType((MethodInfo)methods[i].method);
+                types[i] = GetMethodGroupType((MethodInfo)methods[i]._method);
             }
 
             var methodGroupType = CreateMethodGroup(types, 0, types.Length);

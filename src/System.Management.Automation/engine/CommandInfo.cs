@@ -535,12 +535,12 @@ namespace System.Management.Automation
                     Context.CurrentCommandProcessor = processor;
 
                     processor.SetCurrentScopeToExecutionScope();
-                    processor.CmdletParameterBinderController.BindCommandLineParametersNoValidation(processor.arguments);
+                    processor.CmdletParameterBinderController.BindCommandLineParametersNoValidation(processor._arguments);
                 }
                 catch (ParameterBindingException)
                 {
                     // Ignore the binding exception if no argument is specified
-                    if (processor.arguments.Count > 0)
+                    if (processor._arguments.Count > 0)
                     {
                         throw;
                     }

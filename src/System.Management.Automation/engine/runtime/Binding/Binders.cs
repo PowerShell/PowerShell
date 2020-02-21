@@ -1667,7 +1667,7 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(args));
             }
 
-            var constructorInfo = (ConstructorInfo)bestMethod.method;
+            var constructorInfo = (ConstructorInfo)bestMethod._method;
             var parameterInfo = constructorInfo.GetParameters();
             var ctorArgs = new Expression[parameterInfo.Length];
             var argIndex = 0;
@@ -5244,7 +5244,7 @@ namespace System.Management.Automation.Language
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
 
-                        if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
+                        if (adapterData._member.DeclaringType.IsGenericTypeDefinition || adapterData._propertyType.IsByRefLike)
                         {
                             // This is kinda lame - we really should throw an error, but accessing property getter
                             // doesn't throw error in PowerShell since V2, even in strict mode.
@@ -5254,8 +5254,8 @@ namespace System.Management.Automation.Language
                         {
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
-                            var targetExpr = _static ? null : GetTargetExpr(target, adapterData.member.DeclaringType);
-                            var propertyAccessor = adapterData.member as PropertyInfo;
+                            var targetExpr = _static ? null : GetTargetExpr(target, adapterData._member.DeclaringType);
+                            var propertyAccessor = adapterData._member as PropertyInfo;
                             if (propertyAccessor != null)
                             {
                                 if (propertyAccessor.GetMethod.IsFamily &&
@@ -5268,9 +5268,9 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                Diagnostics.Assert(adapterData.member is FieldInfo,
+                                Diagnostics.Assert(adapterData._member is FieldInfo,
                                                    "A DotNetAdapter.PropertyCacheEntry has something other than PropertyInfo or FieldInfo.");
-                                expr = Expression.Field(targetExpr, (FieldInfo)adapterData.member);
+                                expr = Expression.Field(targetExpr, (FieldInfo)adapterData._member);
                             }
                         }
                     }
@@ -5755,7 +5755,7 @@ namespace System.Management.Automation.Language
                     if (psMethodInfo != null)
                     {
                         var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
-                        candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(e => e.method));
+                        candidateMethods.AddRange(cacheEntry._methodInformationStructures.Select(e => e._method));
                         memberInfo = null;
                     }
 
@@ -6197,26 +6197,26 @@ namespace System.Management.Automation.Language
                     {
                         Expression expr;
 
-                        if (data.member.DeclaringType.IsGenericTypeDefinition)
+                        if (data._member.DeclaringType.IsGenericTypeDefinition)
                         {
                             Expression innerException = Expression.New(
                                 CachedReflectionInfo.SetValueException_ctor,
                                 Expression.Constant("PropertyAssignmentException"),
                                 Expression.Constant(null, typeof(Exception)),
                                 Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
-                                Expression.NewArrayInit(typeof(object), Expression.Constant(data.member.DeclaringType.FullName)));
+                                Expression.NewArrayInit(typeof(object), Expression.Constant(data._member.DeclaringType.FullName)));
 
                             expr = Compiler.ThrowRuntimeErrorWithInnerException(
                                 "PropertyAssignmentException",
                                 Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
                                 innerException,
                                 this.ReturnType,
-                                Expression.Constant(data.member.DeclaringType.FullName));
+                                Expression.Constant(data._member.DeclaringType.FullName));
 
                             return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
                         }
 
-                        if (data.propertyType.IsByRefLike)
+                        if (data._propertyType.IsByRefLike)
                         {
                             // In theory, it's possible to call the setter with a value that can be implicitly/explicitly casted to the target ByRef-like type.
                             // However, the set-property/set-indexer semantics in PowerShell requires returning the value after the setting operation. We cannot
@@ -6229,14 +6229,14 @@ namespace System.Management.Automation.Language
                                     Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
                                     Expression.NewArrayInit(
                                         typeof(object),
-                                        Expression.Constant(data.member.Name),
-                                        Expression.Constant(data.propertyType, typeof(Type)))),
+                                        Expression.Constant(data._member.Name),
+                                        Expression.Constant(data._propertyType, typeof(Type)))),
                                 this.ReturnType);
 
                             return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
                         }
 
-                        var propertyInfo = data.member as PropertyInfo;
+                        var propertyInfo = data._member as PropertyInfo;
                         Expression lhs;
                         Type lhsType;
 
@@ -6244,12 +6244,12 @@ namespace System.Management.Automation.Language
                         // Order of attributes is the same as order provided by user in the code
                         // We assume that GetCustomAttributes implemented that way.
                         IEnumerable<ArgumentTransformationAttribute> argumentTransformationAttributes =
-                            data.member.GetCustomAttributes<ArgumentTransformationAttribute>();
+                            data._member.GetCustomAttributes<ArgumentTransformationAttribute>();
                         bool transformationNeeded = argumentTransformationAttributes.Any();
 
                         // For static property access, the target expr must be null.  For non-static, we must convert
                         // because target.Expression is typeof(object) because this is a dynamic site.
-                        var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data.member.DeclaringType);
+                        var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data._member.DeclaringType);
                         if (propertyInfo != null)
                         {
                             if (propertyInfo.SetMethod.IsFamily &&
@@ -6263,9 +6263,9 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            Diagnostics.Assert(data.member is FieldInfo,
+                            Diagnostics.Assert(data._member is FieldInfo,
                                                 "A DotNetAdapter.PropertyCacheEntry has something other than PropertyInfo or FieldInfo.");
-                            var fieldInfo = (FieldInfo)data.member;
+                            var fieldInfo = (FieldInfo)data._member;
                             lhsType = fieldInfo.FieldType;
                             lhs = Expression.Field(targetExpr, fieldInfo);
                         }
@@ -6775,7 +6775,7 @@ namespace System.Management.Automation.Language
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
 
                 return InvokeDotNetMethod(CallInfo, Name, _invocationConstraints, _propertySetter ? MethodInvocationType.Setter : MethodInvocationType.Ordinary, target, args, restrictions,
-                    data.methodInformationStructures, typeof(MethodException)).WriteToDebugLog(this);
+                    data._methodInformationStructures, typeof(MethodException)).WriteToDebugLog(this);
             }
 
             var scriptMethod = methodInfo as PSScriptMethod;
@@ -6812,7 +6812,7 @@ namespace System.Management.Automation.Language
             {
                 var p = (DotNetAdapter.ParameterizedPropertyCacheEntry)parameterizedProperty.adapterData;
                 return InvokeDotNetMethod(CallInfo, Name, _invocationConstraints, _propertySetter ? MethodInvocationType.Setter : MethodInvocationType.Ordinary, target, args, restrictions,
-                    _propertySetter ? p.setterInformation : p.getterInformation,
+                    _propertySetter ? p._setterInformation : p._getterInformation,
                     _propertySetter ? typeof(SetValueInvocationException) : typeof(GetValueInvocationException)).WriteToDebugLog(this);
             }
 
@@ -6895,7 +6895,7 @@ namespace System.Management.Automation.Language
 
             if (result != null)
             {
-                var methodInfo = result.method;
+                var methodInfo = result._method;
                 var expr = InvokeMethod(methodInfo, target, args, expandParamsOnBest, methodInvocationType);
                 if (expr.Type == typeof(void))
                 {
@@ -6979,7 +6979,7 @@ namespace System.Management.Automation.Language
                 bool callNonVirtually;
 
                 var mi = Adapter.FindBestMethod(
-                    data.methodInformationStructures,
+                    data._methodInformationStructures,
                     invocationConstraints,
                     allowCastingToByRefLikeType: true,
                     args.Select(arg => arg.Value == AutomationNull.Value ? null : arg.Value).ToArray(),
@@ -6990,7 +6990,7 @@ namespace System.Management.Automation.Language
 
                 if (mi != null)
                 {
-                    result = (MethodInfo)mi.method;
+                    result = (MethodInfo)mi._method;
                 }
             }
 

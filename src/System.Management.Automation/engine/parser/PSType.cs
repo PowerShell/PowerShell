@@ -92,7 +92,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            var constructorInfo = (ConstructorInfo)bestMethod.method;
+            var constructorInfo = (ConstructorInfo)bestMethod._method;
 
             var parameterInfo = constructorInfo.GetParameters();
             var ctorArgs = new object[parameterInfo.Length];

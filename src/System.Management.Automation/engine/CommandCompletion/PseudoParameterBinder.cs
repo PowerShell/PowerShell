@@ -1266,7 +1266,7 @@ namespace System.Management.Automation.Language
                             if (!retryWithNoArgs)
                             {
                                 // Win8 345299: First try with all unbounded arguments
-                                commandProcessor.CmdletParameterBinderController.BindCommandLineParametersNoValidation(commandProcessor.arguments);
+                                commandProcessor.CmdletParameterBinderController.BindCommandLineParametersNoValidation(commandProcessor._arguments);
                             }
                             else
                             {

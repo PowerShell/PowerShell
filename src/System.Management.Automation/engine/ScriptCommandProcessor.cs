@@ -133,9 +133,9 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
-            if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
+            if (_arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
             {
-                foreach (CommandParameterInternal parameter in this.arguments)
+                foreach (CommandParameterInternal parameter in this._arguments)
                 {
                     Dbg.Assert(parameter != null, "CommandProcessor.arguments shouldn't have any null arguments");
                     if (parameter.IsDashQuestion())
@@ -320,9 +320,9 @@ namespace System.Management.Automation
         /// </exception>
         internal override void DoBegin()
         {
-            if (!RanBeginAlready)
+            if (!_ranBeginAlready)
             {
-                RanBeginAlready = true;
+                _ranBeginAlready = true;
 
                 ScriptBlock.LogScriptBlockStart(_scriptBlock, Context.CurrentRunspace.InstanceId);
 
@@ -355,9 +355,9 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (!this.RanBeginAlready)
+            if (!this._ranBeginAlready)
             {
-                RanBeginAlready = true;
+                _ranBeginAlready = true;
 
                 if (_scriptBlock.HasBeginBlock)
                 {
@@ -605,7 +605,7 @@ namespace System.Management.Automation
                 // Parameter binder may need to write warning messages for obsolete parameters
                 using (commandRuntime.AllowThisCommandToWrite(false))
                 {
-                    this.ScriptParameterBinderController.BindCommandLineParameters(arguments);
+                    this.ScriptParameterBinderController.BindCommandLineParameters(_arguments);
                 }
 
                 _localsTuple.SetAutomaticVariable(AutomaticVariable.PSBoundParameters,

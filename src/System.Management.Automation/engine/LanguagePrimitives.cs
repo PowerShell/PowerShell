@@ -3689,7 +3689,7 @@ namespace System.Management.Automation
                     var methods = (MethodCacheEntry)psMethod.adapterData;
                     var isStatic = psMethod.instance is Type;
 
-                    var candidate = (MethodInfo)methods.methodInformationStructures[_matchIndex].method;
+                    var candidate = (MethodInfo)methods._methodInformationStructures[_matchIndex]._method;
                     return isStatic ? candidate.CreateDelegate(resultType)
                                     : candidate.CreateDelegate(resultType, psMethod.instance);
                 }

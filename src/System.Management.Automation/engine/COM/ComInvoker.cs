@@ -120,7 +120,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < argsToProcess; i++)
             {
-                byRef[i] = parameters[i].isByRef;
+                byRef[i] = parameters[i]._isByRef;
             }
 
             return byRef;

@@ -7978,16 +7978,16 @@ namespace Microsoft.PowerShell.Commands
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal unsafe struct WIN32_FIND_DATA
         {
-            internal uint dwFileAttributes;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal uint dwReserved0;
-            internal uint dwReserved1;
-            internal fixed char cFileName[MAX_PATH];
-            internal fixed char cAlternateFileName[14];
+            internal uint _dwFileAttributes;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME _ftCreationTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME _ftLastAccessTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME _ftLastWriteTime;
+            internal uint _nFileSizeHigh;
+            internal uint _nFileSizeLow;
+            internal uint _dwReserved0;
+            internal uint _dwReserved1;
+            internal fixed char _cFileName[MAX_PATH];
+            internal fixed char _cAlternateFileName[14];
         }
 
         /// <summary>
@@ -8168,7 +8168,7 @@ namespace Microsoft.PowerShell.Commands
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if (!handle.IsInvalid && (data._dwReserved0 & 0x20000000) == 0 && (data._dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }

@@ -713,7 +713,7 @@ namespace System.Management.Automation
             // This will convert Null Strings to Empty Strings
             GetBestMethodAndArguments(mdata.Name, methods, arguments, out verifiedArguments);
 
-            ParameterInformation[] parameterList = mdata.MethodInfoStructure.parameters;
+            ParameterInformation[] parameterList = mdata.MethodInfoStructure._parameters;
 
             // GetBestMethodAndArguments should fill verifiedArguments with
             // correct values (even if some values are not specified)
@@ -841,7 +841,7 @@ namespace System.Management.Automation
             {
                 foreach (WMIParameterInformation parameter in parameters.Values)
                 {
-                    string typeName = parameter.parameterType.ToString();
+                    string typeName = parameter._parameterType.ToString();
 
                     PropertyData pData = mData.InParameters.Properties[parameter.Name];
                     if (pData.Type == CimType.Object)
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation
             CacheTable table;
             table = GetInstanceMethodTable(wmiObject, true);
 
-            foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
+            foreach (WMIMethodCacheEntry methodEntry in table._memberCollection)
             {
                 if (members[methodEntry.Name] == null)
                 {
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
             }
 
             CacheTable table = GetInstanceMethodTable(wmiObject, true);
-            foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
+            foreach (WMIMethodCacheEntry methodEntry in table._memberCollection)
             {
                 if (predicate(methodEntry.Name))
                 {
@@ -1222,7 +1222,7 @@ namespace System.Management.Automation
             CacheTable table;
             table = GetInstanceMethodTable(wmiObject, false);
 
-            foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
+            foreach (WMIMethodCacheEntry methodEntry in table._memberCollection)
             {
                 if (members[methodEntry.Name] == null)
                 {

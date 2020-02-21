@@ -67,7 +67,7 @@ namespace System.Management.Automation
 
         // Marker of whether BeginProcessing() has already run,
         // also used by CommandProcessor.
-        internal bool RanBeginAlready;
+        internal bool _ranBeginAlready;
 
         // Marker of whether this command has already been added to
         // a PipelineProcessor. It is an error to add the same command
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         /// host interfaces. These will be sent to the parameter binder controller
         /// for processing.
         /// </summary>
-        internal Collection<CommandParameterInternal> arguments = new Collection<CommandParameterInternal>();
+        internal Collection<CommandParameterInternal> _arguments = new Collection<CommandParameterInternal>();
 
         /// <summary>
         /// Adds an unbound parameter.
@@ -393,7 +393,7 @@ namespace System.Management.Automation
         internal void AddParameter(CommandParameterInternal parameter)
         {
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
-            arguments.Add(parameter);
+            _arguments.Add(parameter);
         }
 
         /// <summary>
@@ -480,9 +480,9 @@ namespace System.Management.Automation
             // DoPrepare(). Since BeginProcessing() can write objects
             // to the downstream commandlet, it will end up calling
             // DoExecute() (from Pipe.Add()) before DoPrepare.
-            if (!RanBeginAlready)
+            if (!_ranBeginAlready)
             {
-                RanBeginAlready = true;
+                _ranBeginAlready = true;
                 Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
                 CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
                 try

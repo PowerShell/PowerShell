@@ -70,7 +70,7 @@ namespace System.Management.Automation
                             // use the type of the first argument to the setter
                             ParameterInformation[] parameterInformation = ComUtil.GetParameterInformation(funcdesc, false);
                             Diagnostics.Assert(parameterInformation.Length == 1, "Invalid number of parameters in a property setter");
-                            _cachedType = parameterInformation[0].parameterType;
+                            _cachedType = parameterInformation[0]._parameterType;
                         }
                     }
                     finally
@@ -187,7 +187,7 @@ namespace System.Management.Automation
                 object returnValue = ComInvoker.Invoke(target as IDispatch,
                                                        bestMethod.DispId,
                                                        newarguments,
-                                                       ComInvoker.GetByRefArray(bestMethod.parameters,
+                                                       ComInvoker.GetByRefArray(bestMethod._parameters,
                                                                                 newarguments.Length,
                                                                                 isPropertySet: false),
                                                        bestMethod.InvokeKind);
@@ -271,7 +271,7 @@ namespace System.Management.Automation
                 ComInvoker.Invoke(target as IDispatch,
                                   bestMethod.DispId,
                                   finalArguments,
-                                  ComInvoker.GetByRefArray(bestMethod.parameters,
+                                  ComInvoker.GetByRefArray(bestMethod._parameters,
                                                            finalArguments.Length,
                                                            isPropertySet: true),
                                   bestMethod.InvokeKind);
