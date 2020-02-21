@@ -3048,10 +3048,6 @@ namespace System.Management.Automation.Language
                     return new ErrorStatementAst(ExtentOf(startExtent, endErrorStatement), configurationToken);
                 }
 
-                #region "Add Configuration Keywords"
-
-                #region "Add Configuration Keywords"
-
                 // If the configuration name is a constant string, then
                 // if we're not at the top level, we'll add it to the list of configuration resource keywords.
                 // If we are at the top level, then we'll add it to the list of keywords defined in this
@@ -3151,8 +3147,6 @@ namespace System.Management.Automation.Language
                         System.Management.Automation.Language.DynamicKeyword.AddKeyword(keywordToAddForThisConfigurationStatement);
                     }
                 }
-
-                #endregion
 
                 // End of dynamic keyword definition for this function...
                 //############################################################

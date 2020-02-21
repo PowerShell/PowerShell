@@ -242,7 +242,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 #region CompoundPropertyToken
-                #region CompoundPropertyToken
                 if (t is CompoundPropertyToken cpt)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
@@ -776,4 +775,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly int _enumerationLimit;
     }
 }
-
