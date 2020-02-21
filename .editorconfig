@@ -153,6 +153,8 @@ dotnet_style_qualification_for_event = false:none
 csharp_style_inlined_variable_declaration = true:error
 # IDE0019: Use pattern matching
 csharp_style_pattern_matching_over_as_with_null_check = true:error
+# IDE0017: Simplify object initialization
+dotnet_style_object_initializer = true:error
 
 # Space preferences
 csharp_space_after_cast = false
