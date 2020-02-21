@@ -8743,16 +8743,16 @@ namespace System.Management.Automation.Internal
 
     internal static class CopyFileRemoteUtils
     {
-        private const string functionToken = "function ";
-        private const string nameToken = "Name";
-        private const string definitionToken = "Definition";
+        private const string FunctionToken = "function ";
+        private const string NameToken = "Name";
+        private const string DefinitionToken = "Definition";
 
         #region PSCopyToSessionHelper
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
         private static readonly string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
-        private static readonly string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
-        private static readonly string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
+        private static readonly string s_psCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
+        private static readonly string s_psCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
         private const string PSCopyToSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
@@ -9200,15 +9200,15 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        private static readonly string s_PSCopyToSessionHelper = functionToken + PSCopyToSessionHelperName + @"
+        private static readonly string s_psCopyToSessionHelper = FunctionToken + PSCopyToSessionHelperName + @"
         {
-        " + s_PSCopyToSessionHelperDefinition + @"
+        " + s_psCopyToSessionHelperDefinition + @"
         }
         ";
 
-        private static readonly Hashtable s_PSCopyToSessionHelperFunction = new Hashtable() {
-            {nameToken, PSCopyToSessionHelperName},
-            {definitionToken, s_PSCopyToSessionHelperDefinitionRestricted}
+        private static readonly Hashtable s_psCopyToSessionHelperFunction = new Hashtable() {
+            {NameToken, PSCopyToSessionHelperName},
+            {DefinitionToken, s_psCopyToSessionHelperDefinitionRestricted}
         };
 
         #endregion
@@ -9216,8 +9216,8 @@ namespace System.Management.Automation.Internal
         #region PSCopyFromSessionHelper
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
-        private static readonly string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
-        private static readonly string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
+        private static readonly string s_psCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
+        private static readonly string s_psCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -9689,15 +9689,15 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        internal static string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
+        internal static string s_psCopyFromSessionHelper = FunctionToken + PSCopyFromSessionHelperName + @"
         {
-        " + s_PSCopyFromSessionHelperDefinition + @"
+        " + s_psCopyFromSessionHelperDefinition + @"
         }
         ";
 
-        private static readonly Hashtable s_PSCopyFromSessionHelperFunction = new Hashtable() {
-            {nameToken, PSCopyFromSessionHelperName},
-            {definitionToken, s_PSCopyFromSessionHelperDefinitionRestricted}
+        private static readonly Hashtable s_psCopyFromSessionHelperFunction = new Hashtable() {
+            {NameToken, PSCopyFromSessionHelperName},
+            {DefinitionToken, s_psCopyFromSessionHelperDefinitionRestricted}
         };
 
         #endregion
@@ -9705,8 +9705,8 @@ namespace System.Management.Automation.Internal
         #region PSCopyRemoteUtils
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
-        internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
-        private static readonly string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
+        internal static string s_psCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
+        private static readonly string s_psCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSRemoteDirectoryExist"", Mandatory=$true)]
@@ -9757,7 +9757,7 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        private const string PSValidatePathFunction = functionToken + "PSValidatePath" + @"
+        private const string PSValidatePathFunction = FunctionToken + "PSValidatePath" + @"
         {
         " + PSValidatePathDefinition + @"
         }
@@ -9861,31 +9861,31 @@ namespace System.Management.Automation.Internal
         return $result
         ";
 
-        internal static string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
+        internal static string s_psCopyRemoteUtils = FunctionToken + PSCopyRemoteUtilsName + @"
         {
-        " + PSCopyRemoteUtilsDefinition + @"
+        " + s_psCopyRemoteUtilsDefinition + @"
         }
         ";
 
-        internal static Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
-            {nameToken, PSCopyRemoteUtilsName},
-            {definitionToken, s_PSCopyRemoteUtilsDefinitionRestricted}
+        internal static Hashtable s_psCopyRemoteUtilsFunction = new Hashtable() {
+            {NameToken, PSCopyRemoteUtilsName},
+            {DefinitionToken, s_psCopyRemoteUtilsDefinitionRestricted}
         };
 
         #endregion
 
-        internal static string s_allCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+        internal static string s_allCopyToRemoteScripts = s_psCopyToSessionHelper + s_psCopyRemoteUtils;
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
-            yield return s_PSCopyToSessionHelperFunction;
-            yield return PSCopyRemoteUtilsFunction;
+            yield return s_psCopyToSessionHelperFunction;
+            yield return s_psCopyRemoteUtilsFunction;
         }
 
-        internal static string s_allCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+        internal static string s_allCopyFromRemoteScripts = s_psCopyFromSessionHelper + s_psCopyRemoteUtils;
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {
-            yield return s_PSCopyFromSessionHelperFunction;
-            yield return PSCopyRemoteUtilsFunction;
+            yield return s_psCopyFromSessionHelperFunction;
+            yield return s_psCopyRemoteUtilsFunction;
         }
     }
 
