@@ -319,7 +319,7 @@ $result
         /// <summary>
         /// The indicator to use when show progress.
         /// </summary>
-        private string[] _indicator = { "|", "/", "-", "\\" };
+        private readonly string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
         /// The activity id.

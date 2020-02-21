@@ -22,9 +22,9 @@ namespace System.Management.Automation.Remoting
         // the following variables are used to block thread from sending
         // data to the client until the client sends a receive request.
         private bool _isRequestPending;
-        private object _syncObject;
-        private ManualResetEvent _waitHandle;
-        private Dictionary<Guid, WSManPluginServerTransportManager> _activeCmdTransportManagers;
+        private readonly object _syncObject;
+        private readonly ManualResetEvent _waitHandle;
+        private readonly Dictionary<Guid, WSManPluginServerTransportManager> _activeCmdTransportManagers;
         private bool _isClosed;
         // used to keep track of last error..this will be used
         // for reporting operation complete to WSMan.
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Remoting
 
     internal class WSManPluginCommandTransportManager : WSManPluginServerTransportManager
     {
-        private WSManPluginServerTransportManager _serverTransportMgr;
+        private readonly WSManPluginServerTransportManager _serverTransportMgr;
         private System.Guid _cmdId;
 
         // Create Cmd Transport Manager for this sessn transport manager

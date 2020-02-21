@@ -65,12 +65,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Punycode version of DNS name.
         /// </summary>
-        private string _punycodeName;
+        private readonly string _punycodeName;
 
         /// <summary>
         /// Unicode version of DNS name.
         /// </summary>
-        private string _unicodeName;
+        private readonly string _unicodeName;
 
         /// <summary>
         /// Ambiguous constructor of a DnsNameRepresentation.
@@ -451,8 +451,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _archivedCerts = false;
-        private X509StoreLocation _storeLocation = null;
-        private string _storeName = null;
+        private readonly X509StoreLocation _storeLocation = null;
+        private readonly string _storeName = null;
         private CertificateStoreHandle _storeHandle = null;
         private bool _valid = false;
         private bool _open = false;
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         /// -- storeLocations
         /// -- pathCache.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new object();
 
         /// <summary>
         /// List of store locations. They do not change once initialized.
@@ -2893,12 +2893,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Localized friendly name of EKU.
         /// </summary>
-        private string _friendlyName;
+        private readonly string _friendlyName;
 
         /// <summary>
         /// OID of EKU.
         /// </summary>
-        private string _oid;
+        private readonly string _oid;
 
         /// <summary>
         /// Constructor of an EnhancedKeyUsageRepresentation.
@@ -3131,7 +3131,7 @@ namespace Microsoft.PowerShell.Commands
 
     public sealed class EnhancedKeyUsageProperty
     {
-        private List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
+        private readonly List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
 
         /// <summary>
         /// Get property of EKUList.
@@ -3175,8 +3175,8 @@ namespace Microsoft.PowerShell.Commands
 
     public sealed class DnsNameProperty
     {
-        private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
-        private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+        private readonly List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
+        private readonly System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
         private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 
@@ -3381,7 +3381,7 @@ namespace Microsoft.PowerShell.Commands
         /// Lock that guards access to the following static members
         /// -- storeNames.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new object();
 
         internal static List<string> storeNames = new List<string>();
 

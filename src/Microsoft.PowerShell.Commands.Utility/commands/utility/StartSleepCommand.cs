@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
         // object used for synchronizes pipeline thread and stop thread
         // access to waitHandle
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         // this is set to true by stopProcessing
         private bool _stopping = false;

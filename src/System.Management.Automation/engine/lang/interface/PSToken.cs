@@ -68,7 +68,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _content;
+        private readonly string _content;
 
         #region Token Type
 

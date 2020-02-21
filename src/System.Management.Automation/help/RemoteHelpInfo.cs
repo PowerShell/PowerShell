@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class RemoteHelpInfo : BaseCommandHelpInfo
     {
-        private PSObject _deserializedRemoteHelp;
+        private readonly PSObject _deserializedRemoteHelp;
 
         internal RemoteHelpInfo(
             ExecutionContext context,

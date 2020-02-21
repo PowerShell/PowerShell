@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// This holds the current configurations XML.
         /// </summary>
-        private XmlDocument rootDocument;
+        private readonly XmlDocument rootDocument;
 
         /// <summary>
         /// Holds the reference to the current document element.
@@ -36,7 +36,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Session of the WsMan sserver.
         /// </summary>
-        private IWSManSession serverSession;
+        private readonly IWSManSession serverSession;
 
         /// <summary>
         /// Gets the server session associated with the configuration.

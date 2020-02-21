@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DefaultCommandRuntime : ICommandRuntime2
     {
-        private List<object> _output;
+        private readonly List<object> _output;
         /// <summary>
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.

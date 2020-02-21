@@ -149,7 +149,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _verb = string.Empty;
+        private readonly string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _noun = string.Empty;
+        private readonly string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -224,7 +224,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSSnapInInfo _PSSnapin;
+        private readonly PSSnapInInfo _PSSnapin;
 
         /// <summary>
         /// Gets the name of the PSSnapin the cmdlet is implemented in.
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _implementingType = null;
+        private readonly Type _implementingType = null;
 
         /// <summary>
         /// Gets the synopsis of the cmdlet.

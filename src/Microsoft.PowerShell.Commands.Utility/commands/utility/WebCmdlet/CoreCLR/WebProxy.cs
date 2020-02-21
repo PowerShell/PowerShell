@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     internal class WebProxy : IWebProxy
     {
         private ICredentials _credentials;
-        private Uri _proxyAddress;
+        private readonly Uri _proxyAddress;
 
         internal WebProxy(Uri address)
         {

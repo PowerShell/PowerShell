@@ -120,7 +120,7 @@ namespace System.Management.Automation
         /// State of powershell when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private PSInvocationState _currState = 0;
+        private readonly PSInvocationState _currState = 0;
     }
 
     #endregion
@@ -263,12 +263,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The current execution state.
         /// </summary>
-        private PSInvocationState _executionState;
+        private readonly PSInvocationState _executionState;
 
         /// <summary>
         /// Non-null exception if the execution state change was due to an error.
         /// </summary>
-        private Exception _exceptionReason;
+        private readonly Exception _exceptionReason;
 
         #endregion
     }
@@ -419,7 +419,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class BatchInvocationContext
     {
-        private AutoResetEvent _completionEvent;
+        private readonly AutoResetEvent _completionEvent;
 
         /// <summary>
         /// Class constructor.
@@ -589,7 +589,7 @@ namespace System.Management.Automation
         private PSDataCollection<ErrorRecord> _errorBuffer;
 
         private bool _isDisposed;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         // client remote powershell if the powershell
         // is executed with a remote runspace pool
@@ -5315,13 +5315,13 @@ namespace System.Management.Automation
         /// </summary>
         private sealed class Worker
         {
-            private ObjectStreamBase _inputStream;
-            private ObjectStreamBase _outputStream;
-            private ObjectStreamBase _errorStream;
-            private PSInvocationSettings _settings;
+            private readonly ObjectStreamBase _inputStream;
+            private readonly ObjectStreamBase _outputStream;
+            private readonly ObjectStreamBase _errorStream;
+            private readonly PSInvocationSettings _settings;
             private bool _isNotActive;
-            private PowerShell _shell;
-            private object _syncObject = new object();
+            private readonly PowerShell _shell;
+            private readonly object _syncObject = new object();
 
             /// <summary>
             /// </summary>
@@ -6126,7 +6126,7 @@ namespace System.Management.Automation
             this.Warning.Clear();
         }
 
-        private PowerShell _powershell;
+        private readonly PowerShell _powershell;
     }
 
     /// <summary>
@@ -6145,8 +6145,8 @@ namespace System.Management.Automation
     /// </example>
     internal class PowerShellStopper : IDisposable
     {
-        private PipelineBase _pipeline;
-        private PowerShell _powerShell;
+        private readonly PipelineBase _pipeline;
+        private readonly PowerShell _powerShell;
         private EventHandler<PipelineStateEventArgs> _eventHandler;
 
         internal PowerShellStopper(ExecutionContext context, PowerShell powerShell)

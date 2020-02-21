@@ -1383,7 +1383,7 @@ namespace System.Management.Automation.Internal
             _redirectionPipes = null;
         }
 
-        private object _stopReasonLock = new object();
+        private readonly object _stopReasonLock = new object();
         /// <summary>
         /// Makes an internal note of the exception, but only if this is
         /// the first error.

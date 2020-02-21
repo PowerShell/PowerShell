@@ -1047,7 +1047,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private string _identifier = null;
+        private readonly string _identifier = null;
 
         /// <summary>
         /// Creates an instance of the CmsMessageRecipient class.
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private X509Certificate2 _pendingCertificate = null;
+        private readonly X509Certificate2 _pendingCertificate = null;
 
         /// <summary>
         /// Gets the certificate associated with this recipient.
@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
         private static bool s_amsiInitFailed = false;
-        private static object s_amsiLockObject = new object();
+        private static readonly object s_amsiLockObject = new object();
 
         /// <summary>
         /// Reset the AMSI session (used to track related script invocations)

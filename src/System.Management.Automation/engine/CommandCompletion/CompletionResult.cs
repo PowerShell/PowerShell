@@ -65,22 +65,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Text to be used as the auto completion result.
         /// </summary>
-        private string _completionText;
+        private readonly string _completionText;
 
         /// <summary>
         /// Text to be displayed in a list.
         /// </summary>
-        private string _listItemText;
+        private readonly string _listItemText;
 
         /// <summary>
         /// The text for the tooltip with details to be displayed about the object.
         /// </summary>
-        private string _toolTip;
+        private readonly string _toolTip;
 
         /// <summary>
         /// Type of completion result.
         /// </summary>
-        private CompletionResultType _resultType;
+        private readonly CompletionResultType _resultType;
 
         /// <summary>
         /// Private member for null instance.

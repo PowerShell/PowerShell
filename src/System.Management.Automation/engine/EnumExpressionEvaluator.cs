@@ -318,7 +318,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private Type _underType = null;
+        private readonly Type _underType = null;
 
         #endregion
 

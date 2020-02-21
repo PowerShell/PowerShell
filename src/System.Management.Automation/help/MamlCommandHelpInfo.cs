@@ -98,7 +98,7 @@ namespace System.Management.Automation
 
         #region Basic Help Properties
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Full help object for this help item.

@@ -799,7 +799,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A stack of the most recently pushed locations.
         /// </summary>
-        private Dictionary<string, Stack<PathInfo>> _workingLocationStack;
+        private readonly Dictionary<string, Stack<PathInfo>> _workingLocationStack;
 
         private const string startingDefaultStackName = "default";
         /// <summary>

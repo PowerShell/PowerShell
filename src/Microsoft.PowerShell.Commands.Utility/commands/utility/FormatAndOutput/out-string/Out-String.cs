@@ -166,6 +166,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Buffer used when buffering until the end.
         /// </summary>
-        private StringBuilder _buffer = new StringBuilder();
+        private readonly StringBuilder _buffer = new StringBuilder();
     }
 }

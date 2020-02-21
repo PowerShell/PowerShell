@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of the pipeline corresponding to this history entry.
         /// </summary>
-        private long _pipelineId;
+        private readonly long _pipelineId;
 
 
         /// <summary>
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Private object for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #endregion private
 

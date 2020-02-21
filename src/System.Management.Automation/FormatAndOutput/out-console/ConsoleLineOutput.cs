@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return GetSplitLengthInternalHelper(str, offset, displayCells, false);
         }
 
-        private PSHostRawUserInterface _rawUserInterface;
+        private readonly PSHostRawUserInterface _rawUserInterface;
     }
 
     /// <summary>
@@ -555,12 +555,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Prompt string as passed at initialization.
             /// </summary>
-            private string _promptString;
+            private readonly string _promptString;
 
             /// <summary>
             /// The cmdlet that uses this prompt helper.
             /// </summary>
-            private ConsoleLineOutput _callingCmdlet = null;
+            private readonly ConsoleLineOutput _callingCmdlet = null;
         }
 
         /// <summary>
@@ -568,25 +568,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// usable width to N-1 (e.g. 80-1) and forcing a call
         /// to WriteLine()
         /// </summary>
-        private bool _forceNewLine = true;
+        private readonly bool _forceNewLine = true;
 
         /// <summary>
         /// Use this if IRawConsole is null;
         /// </summary>
-        private int _fallbackRawConsoleColumnNumber = 80;
+        private readonly int _fallbackRawConsoleColumnNumber = 80;
 
         /// <summary>
         /// Use this if IRawConsole is null;
         /// </summary>
-        private int _fallbackRawConsoleRowNumber = 40;
+        private readonly int _fallbackRawConsoleRowNumber = 40;
 
-        private WriteLineHelper _writeLineHelper;
+        private readonly WriteLineHelper _writeLineHelper;
 
         /// <summary>
         /// Handler to prompt the user for page breaks
         /// if this handler is not null, we have prompting.
         /// </summary>
-        private PromptHandler _prompt = null;
+        private readonly PromptHandler _prompt = null;
 
         /// <summary>
         /// Conter for the # of lines written when prompting is on.
@@ -601,17 +601,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Refecence to the PSHostUserInterface interface we use.
         /// </summary>
-        private PSHostUserInterface _console = null;
+        private readonly PSHostUserInterface _console = null;
 
         /// <summary>
         /// Msh host specific string manipulation helper.
         /// </summary>
-        private DisplayCells _displayCellsPSHost;
+        private readonly DisplayCells _displayCellsPSHost;
 
         /// <summary>
         /// Reference to error context to throw Msh exceptions.
         /// </summary>
-        private TerminatingErrorContext _errorContext = null;
+        private readonly TerminatingErrorContext _errorContext = null;
 
         #endregion
     }

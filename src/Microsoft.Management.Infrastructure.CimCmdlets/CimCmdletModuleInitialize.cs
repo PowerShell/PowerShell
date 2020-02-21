@@ -79,21 +79,21 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             /// </summary>
             internal string Name { get { return this._name; } }
 
-            private string _name;
+            private readonly string _name;
 
             /// <summary>
             /// The string defining real cmdlet name.
             /// </summary>
             internal string Value { get { return this._value; } }
 
-            private string _value = string.Empty;
+            private readonly string _value = string.Empty;
 
             /// <summary>
             /// The string defining real cmdlet name.
             /// </summary>
             internal ScopedItemOptions Options { get { return this._options; } }
 
-            private ScopedItemOptions _options = ScopedItemOptions.AllScope | ScopedItemOptions.ReadOnly;
+            private readonly ScopedItemOptions _options = ScopedItemOptions.AllScope | ScopedItemOptions.ReadOnly;
         }
 
         /// <summary>

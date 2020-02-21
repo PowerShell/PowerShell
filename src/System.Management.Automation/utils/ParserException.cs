@@ -15,7 +15,7 @@ namespace System.Management.Automation
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
-        private ParseError[] _errors;
+        private readonly ParseError[] _errors;
 
         /// <summary>
         /// The list of parser errors.

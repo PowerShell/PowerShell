@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// InputObjectBuffer buffers all InputObject contents available in the pipeline.
         /// </summary>
-        private List<string> _inputObjectBuffer = new List<string>();
+        private readonly List<string> _inputObjectBuffer = new List<string>();
 
         /// <summary>
         /// Returned data structure is a Hashtable instead a CustomPSObject.

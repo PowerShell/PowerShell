@@ -600,34 +600,34 @@ namespace System.Management.Automation.Remoting
         /// Default throttle limit - the maximum number of operations
         /// to be processed at a time.
         /// </summary>
-        private static int s_DEFAULT_THROTTLE_LIMIT = 32;
+        private static readonly int s_DEFAULT_THROTTLE_LIMIT = 32;
 
         /// <summary>
         /// Maximum value that the throttle limit can be set to.
         /// </summary>
-        private static int s_THROTTLE_LIMIT_MAX = int.MaxValue;
+        private static readonly int s_THROTTLE_LIMIT_MAX = int.MaxValue;
 
         /// <summary>
         /// All pending operations.
         /// </summary>
-        private List<IThrottleOperation> _operationsQueue;
+        private readonly List<IThrottleOperation> _operationsQueue;
 
         /// <summary>
         /// List of items on which a StartOperation has
         /// been called.
         /// </summary>
-        private List<IThrottleOperation> _startOperationQueue;
+        private readonly List<IThrottleOperation> _startOperationQueue;
 
         /// <summary>
         /// List of items on which a StopOperation has
         /// been called.
         /// </summary>
-        private List<IThrottleOperation> _stopOperationQueue;
+        private readonly List<IThrottleOperation> _stopOperationQueue;
 
         /// <summary>
         /// Object used to synchronize access to the queues.
         /// </summary>
-        private object _syncObject;
+        private readonly object _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
         private bool _stopping = false;                      // if stop is in process

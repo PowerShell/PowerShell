@@ -605,7 +605,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "PSInvalidCastException";
+        private readonly string _errorId = "PSInvalidCastException";
     }
 }
 

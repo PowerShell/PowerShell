@@ -395,7 +395,7 @@ namespace System.Management.Automation.Host
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
         private sealed class TranscribeOnlyCookie : IDisposable
         {
-            private PSHostUserInterface _ui;
+            private readonly PSHostUserInterface _ui;
             private bool _disposed = false;
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
@@ -949,8 +949,8 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new object();
-        private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
+        private static readonly object s_systemTranscriptLock = new object();
+        private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 

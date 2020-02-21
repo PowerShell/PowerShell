@@ -199,7 +199,7 @@ namespace System.Management.Automation.Internal
         /// The underlying stream.
         /// </summary>
         /// <remarks>Can never be null</remarks>
-        private ObjectStreamBase _stream;
+        private readonly ObjectStreamBase _stream;
 
         #endregion Private Fields
     }

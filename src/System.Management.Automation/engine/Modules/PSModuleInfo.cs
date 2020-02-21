@@ -876,7 +876,7 @@ namespace System.Management.Automation
             get { return _compatiblePSEditions; }
         }
 
-        private List<string> _compatiblePSEditions = new List<string>();
+        private readonly List<string> _compatiblePSEditions = new List<string>();
 
         internal void AddToCompatiblePSEditions(string psEdition)
         {

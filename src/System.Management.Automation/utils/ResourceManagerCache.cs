@@ -16,13 +16,13 @@ namespace System.Management.Automation
         /// to the default resource assembly. The value is another dictionary that is keyed based on the base
         /// name for the resource that is being retrieved. The value for this dictionary is the ResourceManager.
         /// </summary>
-        private static Dictionary<string, Dictionary<string, ResourceManager>> s_resourceManagerCache =
+        private static readonly Dictionary<string, Dictionary<string, ResourceManager>> s_resourceManagerCache =
             new Dictionary<string, Dictionary<string, ResourceManager>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Used to synchronize access to the ResourceManagerCache.
         /// </summary>
-        private static object s_syncRoot = new object();
+        private static readonly object s_syncRoot = new object();
 
         /// <summary>
         /// Gets the ResourceManager from the cache or gets an instance of the ResourceManager

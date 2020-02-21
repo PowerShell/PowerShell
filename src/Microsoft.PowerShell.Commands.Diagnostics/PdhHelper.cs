@@ -423,7 +423,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         // m_ConsumerPathToHandleAndInstanceMap map is used for reading counter date (live or from files).
         //
-        private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
+        private readonly Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.

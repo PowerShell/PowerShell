@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Static Data and Constants
 
         #region Instance Data
-        private string _machineName = localMachineName;  // we might need to have cmdlet work on another machine
+        private readonly string _machineName = localMachineName;  // we might need to have cmdlet work on another machine
 
         /// <summary>
         /// Collection of property names from the Property parameter,

@@ -403,7 +403,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _parameterName = string.Empty;
+        private readonly string _parameterName = string.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -416,7 +416,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _parameterType;
+        private readonly Type _parameterType;
 
         /// <summary>
         /// Gets the Type that was specified as the parameter value.
@@ -429,7 +429,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _typeSpecified;
+        private readonly Type _typeSpecified;
 
         /// <summary>
         /// Gets the errorId of this ParameterBindingException.
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _errorId;
+        private readonly string _errorId;
 
         /// <summary>
         /// Gets the line in the script at which the error occurred.
@@ -455,7 +455,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _line = Int64.MinValue;
+        private readonly Int64 _line = Int64.MinValue;
 
         /// <summary>
         /// Gets the offset on the line in the script at which the error occurred.
@@ -468,7 +468,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _offset = Int64.MinValue;
+        private readonly Int64 _offset = Int64.MinValue;
 
         /// <summary>
         /// Gets the invocation information about the command.
@@ -481,14 +481,14 @@ namespace System.Management.Automation
             }
         }
 
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
         #endregion Properties
 
         #region private
 
-        private string _resourceString;
-        private object[] _args = Array.Empty<object>();
-        private string _commandName;
+        private readonly string _resourceString;
+        private readonly object[] _args = Array.Empty<object>();
+        private readonly string _commandName;
 
         private string BuildMessage()
         {

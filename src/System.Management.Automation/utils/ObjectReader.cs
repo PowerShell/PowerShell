@@ -203,7 +203,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private object _monitorObject = new object();
+        private readonly object _monitorObject = new object();
 
         #endregion Private fields
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Data
 
-        private PSDataCollectionEnumerator<DataStoreType> _enumerator;
+        private readonly PSDataCollectionEnumerator<DataStoreType> _enumerator;
 
         #endregion
 
@@ -649,7 +649,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Data
 
-        private PSDataCollection<DataStoreType> _datastore;
+        private readonly PSDataCollection<DataStoreType> _datastore;
 
         #endregion Private Data
 

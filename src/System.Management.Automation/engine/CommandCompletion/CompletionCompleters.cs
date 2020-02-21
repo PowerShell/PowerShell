@@ -479,7 +479,7 @@ namespace System.Management.Automation
         #endregion Module Names
 
         #region Command Parameters
-        private static string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
+        private static readonly string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
 
         internal static List<CompletionResult> CompleteCommandParameter(CompletionContext context)
         {
@@ -2569,7 +2569,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimAssociationResultClassName_GetResultClassNames(
@@ -2704,7 +2704,7 @@ namespace System.Management.Automation
             result.AddRange(localResults.OrderBy(x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimClassName_GetClassNames(string targetNamespace)
@@ -4505,7 +4505,7 @@ namespace System.Management.Automation
         private const int ERROR_MORE_DATA = 234;
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
-        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior

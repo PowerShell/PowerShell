@@ -37,7 +37,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// The name of the command we're looking for.
@@ -1281,10 +1281,10 @@ namespace System.Management.Automation
                 currentActionSet.Remove(command);
         }
 
-        private HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activeModuleSearch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activeModuleSearch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the resolved paths contained in the PATH environment
@@ -1428,7 +1428,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private static object s_lockObject = new object();
+        private static readonly object s_lockObject = new object();
         private static string s_pathExtCacheKey;
         private static string[] s_cachedPathExtCollection;
         private static string[] s_cachedPathExtCollectionWithPs1;

@@ -51,7 +51,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private object errorSource;
+        private readonly object errorSource;
     }
     #endregion
 
@@ -352,17 +352,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private CimSession session;
+        private readonly CimSession session;
 
         /// <summary>
         /// Async operation that can be observed.
         /// </summary>
-        private IObservable<object> observable;
+        private readonly IObservable<object> observable;
 
         /// <summary>
         /// <see cref="CimResultContext"/> object used during delivering result.
         /// </summary>
-        private CimResultContext context;
+        private readonly CimResultContext context;
         #endregion
     }
 

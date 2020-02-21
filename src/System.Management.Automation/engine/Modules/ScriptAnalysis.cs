@@ -546,7 +546,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
+        private static readonly Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
 
         private class ParameterBindingInfo
         {

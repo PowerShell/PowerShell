@@ -74,7 +74,7 @@ namespace System.Management.Automation
             _xmlNode = xmlNode;
         }
 
-        private XmlNode _xmlNode;
+        private readonly XmlNode _xmlNode;
 
         /// <summary>
         /// Underline xmlNode for this MamlNode object.

@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region ScriptBlockSet
 
-        private List<ScriptBlock> _scripts = new List<ScriptBlock>();
+        private readonly List<ScriptBlock> _scripts = new List<ScriptBlock>();
 
         /// <summary>
         /// Gets or sets the script block to apply in begin processing.

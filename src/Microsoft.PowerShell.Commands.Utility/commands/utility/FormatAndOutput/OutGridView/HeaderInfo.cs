@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class HeaderInfo
     {
-        private List<ColumnInfo> _columns = new List<ColumnInfo>();
+        private readonly List<ColumnInfo> _columns = new List<ColumnInfo>();
 
         internal void AddColumn(ColumnInfo col)
         {

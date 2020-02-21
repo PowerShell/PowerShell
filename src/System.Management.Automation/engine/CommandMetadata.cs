@@ -1532,7 +1532,7 @@ end
         /// The command metadata cache. This is separate from the parameterMetadata cache
         /// because it is specific to cmdlets.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
 
         #endregion

@@ -24,7 +24,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
-        private object _syncObject;
+        private readonly object _syncObject;
 
         protected bool isClosed;
         protected bool isContextReported;
@@ -400,8 +400,8 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
-        private ServerRemoteSession _remoteSession;
+        private readonly Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 
@@ -730,7 +730,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private ServerRemoteSession _remoteSession;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 

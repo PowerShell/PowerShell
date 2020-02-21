@@ -193,6 +193,6 @@ namespace Microsoft.PowerShell.Commands.GetCounter
 
         private PerformanceCounterSample[] _counterSamples = null;
 
-        private ResourceManager _resourceMgr = null;
+        private readonly ResourceManager _resourceMgr = null;
     }
 }

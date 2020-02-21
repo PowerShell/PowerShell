@@ -525,10 +525,10 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used for querying remote runspaces.
-        private QueryRunspaces _queryRunspaces = new QueryRunspaces();
+        private readonly QueryRunspaces _queryRunspaces = new QueryRunspaces();
 
         // Object to collect output data from multiple threads.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         #endregion
     }

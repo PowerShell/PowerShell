@@ -93,6 +93,6 @@ namespace Microsoft.PowerShell
             _ui.WriteToConsole(a, transcribeResult: true);
         }
 
-        private ConsoleHostUserInterface _ui;
+        private readonly ConsoleHostUserInterface _ui;
     }
 }

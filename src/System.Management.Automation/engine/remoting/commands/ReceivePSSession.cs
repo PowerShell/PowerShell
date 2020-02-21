@@ -1303,7 +1303,7 @@ namespace Microsoft.PowerShell.Commands
         private RemotePipeline _remotePipeline;
         private Job _job;
         private ManualResetEvent _stopPipelineReceive;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         #endregion
     }

@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _helpCategory = System.Management.Automation.HelpCategory.None.ToString();
+        private readonly string _helpCategory = System.Management.Automation.HelpCategory.None.ToString();
 
         /// <summary>
         /// Gets name of the help category that is invalid.

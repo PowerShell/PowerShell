@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region tracer
         [TraceSource("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader");
         #endregion tracer
 
         /// <summary>
@@ -2035,7 +2035,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _token;
             }
 
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
             private ExpressionToken _token;
             private bool _fatalError = false;
         }
@@ -2175,7 +2175,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private TextToken _textToken;
             private ExpressionToken _expression;
 
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
         }
 
         #endregion
@@ -2228,7 +2228,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             private ControlBase _control;
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
         }
 
         #endregion

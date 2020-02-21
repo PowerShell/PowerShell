@@ -540,9 +540,9 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private TraceListenerCommandBase _cmdlet;
-        private bool _writeError;
+        private readonly TraceListenerCommandBase _cmdlet;
+        private readonly bool _writeError;
         private bool _isOpen = true;
-        private Collection<PSTraceSource> _matchingSources = new Collection<PSTraceSource>();
+        private readonly Collection<PSTraceSource> _matchingSources = new Collection<PSTraceSource>();
     }
 }

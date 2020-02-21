@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private List<object> _inputObjects = new List<object>();
+        private readonly List<object> _inputObjects = new List<object>();
 
         /// <summary>
         /// Caching the input objects for the command.

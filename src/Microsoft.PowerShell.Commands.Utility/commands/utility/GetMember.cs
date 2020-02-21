@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
 
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
-        private HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
+        private readonly HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
 
         /// <summary>
         /// This method implements the ProcessRecord method for get-member command.

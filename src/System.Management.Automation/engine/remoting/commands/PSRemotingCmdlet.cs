@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private static string s_LOCALHOST = "localhost";
+        private static readonly string s_LOCALHOST = "localhost";
 
         // private PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Cmdlets);
 
@@ -3471,7 +3471,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the command should be invoked and then disconnect the
         /// remote runspace from the client.
         /// </summary>
-        private bool _invokeAndDisconnect;
+        private readonly bool _invokeAndDisconnect;
 
         /// <summary>
         /// The remote runspace created using the computer name

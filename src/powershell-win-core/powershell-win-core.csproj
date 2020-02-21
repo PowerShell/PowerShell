@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <!-- Have default so this builds in Visual Studio -->
-  <PropertyGroup Condition = "'$(SDKToUse)' == ''">
+  <PropertyGroup Condition="'$(SDKToUse)' == ''">
     <SDKToUse>Microsoft.NET.Sdk.WindowsDesktop</SDKToUse>
   </PropertyGroup>
 
@@ -56,10 +56,14 @@
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
     <ProjectReference Include="..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
-    <ProjectReference Include="..\Microsoft.Management.UI.Internal\Microsoft.PowerShell.GraphicalHost.csproj" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' "/>
+    <ProjectReference Include="..\Microsoft.Management.UI.Internal\Microsoft.PowerShell.GraphicalHost.csproj" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 

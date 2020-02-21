@@ -375,7 +375,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Error instance
         /// </para>
         /// </summary>
-        private CimInstance error;
+        private readonly CimInstance error;
 
         internal CimInstance Error
         {
@@ -398,7 +398,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Exception exception;
+        private readonly Exception exception;
 
         /// <summary>
         /// <para>
@@ -406,7 +406,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// the information while issuing the current operation
         /// </para>
         /// </summary>
-        private InvocationContext invocationContext;
+        private readonly InvocationContext invocationContext;
 
         internal InvocationContext CimInvocationContext
         {
@@ -419,7 +419,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <see cref="CimResultConte"/>
         /// </summary>
-        private CimResultContext cimResultContext;
+        private readonly CimResultContext cimResultContext;
 
         internal CimResultContext ResultContext
         {

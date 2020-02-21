@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        private string _provider = string.Empty;
+        private readonly string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         #region trace
 
         [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
 
         #endregion
     }

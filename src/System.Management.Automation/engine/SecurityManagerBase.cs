@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
         #endregion constructor
 
-        private object _policyCheckLock = new object();
+        private readonly object _policyCheckLock = new object();
 
         #region methods to use internally
 

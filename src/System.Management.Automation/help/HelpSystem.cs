@@ -103,7 +103,7 @@ namespace System.Management.Automation
             Initialize();
         }
 
-        private ExecutionContext _executionContext;
+        private readonly ExecutionContext _executionContext;
 
         /// <summary>
         /// ExecutionContext for the help system. Different help providers
@@ -173,7 +173,7 @@ namespace System.Management.Automation
 
         #region Error Handling
 
-        private Collection<ErrorRecord> _lastErrors = new Collection<ErrorRecord>();
+        private readonly Collection<ErrorRecord> _lastErrors = new Collection<ErrorRecord>();
 
         /// <summary>
         /// This is for tracking the last set of errors happened during the help
@@ -540,7 +540,7 @@ namespace System.Management.Automation
 
         #region Help Provider Manager
 
-        private ArrayList _helpProviders = new ArrayList();
+        private readonly ArrayList _helpProviders = new ArrayList();
 
         /// <summary>
         /// Return the list of help providers initialized.

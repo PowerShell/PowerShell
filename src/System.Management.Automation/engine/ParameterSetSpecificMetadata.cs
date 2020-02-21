@@ -209,7 +209,7 @@ namespace System.Management.Automation
             return helpInfo;
         }
 
-        private ParameterAttribute _attribute;
+        private readonly ParameterAttribute _attribute;
     }
 }
 

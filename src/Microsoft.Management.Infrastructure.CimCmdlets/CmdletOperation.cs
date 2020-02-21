@@ -188,7 +188,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private methods
 
-        private CimRemoveCimInstance removeCimInstance;
+        private readonly CimRemoveCimInstance removeCimInstance;
 
         private const string cimRemoveCimInstanceParameterName = @"cimRemoveCimInstance";
 
@@ -268,7 +268,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private methods
 
-        private CimSetCimInstance setCimInstance;
+        private readonly CimSetCimInstance setCimInstance;
 
         private const string theCimSetCimInstanceParameterName = @"theCimSetCimInstance";
 
@@ -331,7 +331,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private methods
 
-        private CimInvokeCimMethod cimInvokeCimMethod;
+        private readonly CimInvokeCimMethod cimInvokeCimMethod;
 
         private const string theCimInvokeCimMethodParameterName = @"theCimInvokeCimMethod";
 
@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private methods
 
-        private CimNewSession cimNewSession;
+        private readonly CimNewSession cimNewSession;
 
         private const string theCimNewSessionParameterName = @"theCimNewSession";
 

@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
 
         #region Alias mapping
 
-        private Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the aliases by command name (used by metadata-driven help)

@@ -563,8 +563,8 @@ namespace System.Management.Automation
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
-            private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
+            private static readonly Dictionary<int, string> usernameCache = new Dictionary<int, string>();
+            private static readonly Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                 private const char CanExecute = 'x';
 
                 // helper for getting unix mode
-                private Dictionary<StatMask, char> modeMap = new Dictionary<StatMask, char>()
+                private readonly Dictionary<StatMask, char> modeMap = new Dictionary<StatMask, char>()
                 {
                         { StatMask.OwnerRead, CanRead },
                         { StatMask.OwnerWrite, CanWrite },
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                         { StatMask.OtherExecute, CanExecute },
                 };
 
-                private StatMask[] permissions = new StatMask[]
+                private readonly StatMask[] permissions = new StatMask[]
                 {
                     StatMask.OwnerRead,
                     StatMask.OwnerWrite,
@@ -723,7 +723,7 @@ namespace System.Management.Automation
                 };
 
                 // The item type and the character representation for the first element in the stat string
-                private Dictionary<ItemType, char> itemTypeTable = new Dictionary<ItemType, char>()
+                private readonly Dictionary<ItemType, char> itemTypeTable = new Dictionary<ItemType, char>()
                 {
                     { ItemType.BlockDevice, 'b' },
                     { ItemType.CharacterDevice, 'c' },

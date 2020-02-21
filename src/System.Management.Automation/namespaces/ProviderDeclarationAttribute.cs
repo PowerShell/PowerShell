@@ -52,7 +52,7 @@ namespace System.Management.Automation.Provider
             ProviderCapabilities = providerCapabilities;
         }
 
-        private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
+        private readonly char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
 
         /// <summary>
         /// Gets the name of the provider.

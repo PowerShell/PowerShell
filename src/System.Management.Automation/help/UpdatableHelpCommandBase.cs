@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool _stopping;
 
         internal int activityId;
-        private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
+        private readonly Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
 
         #region Parameters
 
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor
 
-        private static Dictionary<string, string> s_metadataCache;
+        private static readonly Dictionary<string, string> s_metadataCache;
 
         /// <summary>
         /// Static constructor

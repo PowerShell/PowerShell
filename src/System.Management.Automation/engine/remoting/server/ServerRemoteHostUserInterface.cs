@@ -20,7 +20,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Constructor for ServerRemoteHostUserInterface.

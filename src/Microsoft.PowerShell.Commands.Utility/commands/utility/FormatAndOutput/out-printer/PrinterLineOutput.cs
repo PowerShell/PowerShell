@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Name of the printer to print to. Null means default printer.
         /// </summary>
-        private string _printerName = null;
+        private readonly string _printerName = null;
 
         /// <summary>
         /// Name of the font to use, if null the default is used.
@@ -315,13 +315,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Text lines ready to print (after output cache playback).
         /// </summary>
-        private Queue<string> _lines = new Queue<string>();
+        private readonly Queue<string> _lines = new Queue<string>();
 
         /// <summary>
         /// Cached font object.
         /// </summary>
         private Font _printFont = null;
 
-        private WriteLineHelper _writeLineHelper;
+        private readonly WriteLineHelper _writeLineHelper;
     }
 }

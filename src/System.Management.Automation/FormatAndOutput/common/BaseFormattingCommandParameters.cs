@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-        private bool _noGlobbing;
+        private readonly bool _noGlobbing;
     }
 
     internal class AlignmentEntryDefinition : HashtableEntryDefinition

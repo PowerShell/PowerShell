@@ -1638,13 +1638,13 @@ namespace System.Management.Automation
     /// </summary>
     internal class RangeEnumerator : IEnumerator
     {
-        private int _lowerBound;
+        private readonly int _lowerBound;
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
-        private int _upperBound;
+        private readonly int _upperBound;
         internal int UpperBound
         {
             get { return _upperBound; }
@@ -1667,7 +1667,7 @@ namespace System.Management.Automation
             get { return _current; }
         }
 
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 

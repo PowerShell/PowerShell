@@ -18,12 +18,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Transport manager.
         /// </summary>
-        private BaseClientTransportManager _transportManager;
+        private readonly BaseClientTransportManager _transportManager;
 
         /// <summary>
         /// Client host.
         /// </summary>
-        private PSHost _clientHost;
+        private readonly PSHost _clientHost;
 
         /// <summary>
         /// Client runspace pool id.
@@ -38,7 +38,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Remote host call.
         /// </summary>
-        private RemoteHostCall _remoteHostCall;
+        private readonly RemoteHostCall _remoteHostCall;
 
         /// <summary>
         /// Remote host call.

@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// <summary>
         /// PSObject representation on help.
         /// </summary>
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         #region Load
 

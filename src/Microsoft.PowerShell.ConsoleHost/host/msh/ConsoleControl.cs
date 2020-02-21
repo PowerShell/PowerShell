@@ -3267,7 +3267,7 @@ namespace Microsoft.PowerShell
         }
 
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
-        private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
 #endif
     }
 }

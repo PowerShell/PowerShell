@@ -57,7 +57,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private string methodName;
+            private readonly string methodName;
 
             /// <summary>
             /// <para>parameters collection</para>
@@ -70,7 +70,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private CimMethodParametersCollection collection;
+            private readonly CimMethodParametersCollection collection;
         }
 
         /// <summary>

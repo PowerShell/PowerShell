@@ -632,7 +632,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal class WSManData_ManToUn : IDisposable
         {
-            private WSManDataStruct _internalData;
+            private readonly WSManDataStruct _internalData;
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledObject = IntPtr.Zero;
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
@@ -876,7 +876,7 @@ namespace System.Management.Automation.Remoting.Client
         [StructLayout(LayoutKind.Sequential)]
         internal struct WSManDataDWord
         {
-            private WSManDataType _type;
+            private readonly WSManDataType _type;
             private WSManDWordDataInternal _dwordData;
 
             /// <summary>
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation.Remoting.Client
             // GC handle which prevents garbage collector from collecting this delegate.
             private GCHandle _gcHandle;
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-            private IntPtr _asyncCallback;
+            private readonly IntPtr _asyncCallback;
 
             internal WSManShellAsyncCallback(WSManShellCompletionFunction callback)
             {

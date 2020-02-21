@@ -55,9 +55,9 @@ namespace System.Management.Automation.Remoting
         // these callbacks are used to notify when data becomes available under
         // suc circumstances.
         private OnDataAvailableCallback _onDataAvailableCallback;
-        private SerializedDataStream.OnDataAvailableCallback _onSendCollectionDataAvailable;
+        private readonly SerializedDataStream.OnDataAvailableCallback _onSendCollectionDataAvailable;
         private bool _isHandlingCallback;
-        private object _readSyncObject = new object();
+        private readonly object _readSyncObject = new object();
 
         /// <summary>
         /// Callback that is called once a fragmented data is available to send.
@@ -291,13 +291,13 @@ namespace System.Management.Automation.Remoting
         #region tracer
 
         [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
-        private static PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
+        private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
 
         #region Private Data
         // fragmentor used to defragment objects added to this collection.
-        private Fragmentor _defragmentor;
+        private readonly Fragmentor _defragmentor;
 
         // this stream holds incoming data..this stream doesn't know anything
         // about fragment boundaries.
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Remoting
         // max deserialized object size in bytes
         private int? _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
-        private bool _isCreateByClientTM;
+        private readonly bool _isCreateByClientTM;
 
         // this indicates if any off sync fragments can be ignored
         // this gets reset (to false) upon receiving the next "start" fragment along the stream
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Remoting
 
         // objects need to cleanly release resources without
         // locking entire processing logic.
-        private object _syncObject;
+        private readonly object _syncObject;
         private bool _isDisposed;
         // holds the number of threads that are currently in
         // ProcessRawData method. This might happen only for
@@ -738,9 +738,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private Fragmentor _defragmentor;
-        private ReceiveDataCollection[] _recvdData;
-        private bool _isCreateByClientTM;
+        private readonly Fragmentor _defragmentor;
+        private readonly ReceiveDataCollection[] _recvdData;
+        private readonly bool _isCreateByClientTM;
 
         #endregion
 

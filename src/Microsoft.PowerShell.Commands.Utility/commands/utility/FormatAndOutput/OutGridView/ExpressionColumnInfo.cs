@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class ExpressionColumnInfo : ColumnInfo
     {
-        private PSPropertyExpression _expression;
+        private readonly PSPropertyExpression _expression;
 
         internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, PSPropertyExpression expression)
             : base(staleObjectPropertyName, displayName)

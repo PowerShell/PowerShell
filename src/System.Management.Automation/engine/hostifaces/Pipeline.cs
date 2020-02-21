@@ -113,13 +113,13 @@ namespace System.Management.Automation.Runspaces
         /// State of pipeline when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private PipelineState _currentState = 0;
+        private readonly PipelineState _currentState = 0;
 
         /// <summary>
         /// States of the pipeline expected in method which throws this exception.
         /// </summary>
         [NonSerialized]
-        private PipelineState _expectedState = 0;
+        private readonly PipelineState _expectedState = 0;
     }
 
     #endregion Exceptions

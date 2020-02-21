@@ -21,10 +21,10 @@ namespace System.Management.Automation.Remoting
     {
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        private Version _psversion;
-        private Version _serversion;
+        private readonly Version _psversion;
+        private readonly Version _serversion;
         private Version _protocolVersion;
-        private RemotingDestination _remotingDestination;
+        private readonly RemotingDestination _remotingDestination;
         private static byte[] _timeZoneInByteFormat;
         private TimeZoneInfo _timeZone;
 
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Remoting
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        private Dictionary<HostDefaultDataId, object> data;
+        private readonly Dictionary<HostDefaultDataId, object> data;
 
         #endregion
 
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Is host ui null.
         /// </summary>
-        private bool _isHostUINull;
+        private readonly bool _isHostUINull;
 
         /// <summary>
         /// Is host ui null.
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Is host raw ui null.
         /// </summary>
-        private bool _isHostRawUINull;
+        private readonly bool _isHostRawUINull;
 
         private readonly bool _isHostNull;
 

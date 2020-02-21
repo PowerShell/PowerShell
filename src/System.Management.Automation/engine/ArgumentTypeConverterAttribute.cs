@@ -25,7 +25,7 @@ namespace System.Management.Automation
             _convertTypes = types;
         }
 
-        private Type[] _convertTypes;
+        private readonly Type[] _convertTypes;
 
         internal Type TargetType
         {

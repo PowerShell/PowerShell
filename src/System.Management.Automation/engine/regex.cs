@@ -456,7 +456,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ErrorRecord _errorRecord;
+        private readonly ErrorRecord _errorRecord;
 
         /// <summary>
         /// Constructs an instance of the WildcardPatternException object.

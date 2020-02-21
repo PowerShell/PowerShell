@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Utils
 
         // list of processed parameters obtained from the Expression array
-        private List<MshParameter> _mshParameterList = null;
+        private readonly List<MshParameter> _mshParameterList = null;
 
         // list of unprocessed parameters obtained from the Expression array.
         private List<MshParameter> _unexpandedParameterList = null;
@@ -698,7 +698,7 @@ namespace Microsoft.PowerShell.Commands
             return new OrderByPropertyComparer(ascending, cultureInfo, caseSensitive);
         }
 
-        private ObjectCommandComparer[] _propertyComparers = null;
+        private readonly ObjectCommandComparer[] _propertyComparers = null;
     }
 
     internal class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
@@ -727,6 +727,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private OrderByPropertyComparer _orderByPropertyComparer = null;
+        private readonly OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }

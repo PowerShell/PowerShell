@@ -13,7 +13,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help info.
         /// </summary>
-        private HelpInfo _helpInfo;
+        private readonly HelpInfo _helpInfo;
 
         /// <summary>
         /// Constructor for ProviderCommandHelpInfo.
