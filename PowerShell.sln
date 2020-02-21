@@ -1,7 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16 
-# https://github.com/dotnet/project-system/blob/master/docs/opening-with-new-project-system.md#project-type-guids
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-win-core", "src\powershell-win-core\powershell-win-core.csproj", "{8359D422-E0C4-4A0D-94EB-3C9DD16B7932}"
 EndProject
@@ -42,6 +41,11 @@ EndProject
 #
 # 73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690 - powershell-unix
 # Only Linux is valid, all configurations mapped to Linux
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D0361BC1-7403-4662-B918-215480B5CD17}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeCoverage|Any CPU = CodeCoverage|Any CPU

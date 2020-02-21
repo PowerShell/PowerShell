@@ -11,6 +11,8 @@
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
   </PropertyGroup>
 
   <!-- Have default so this builds in Visual Studio -->
@@ -49,6 +51,10 @@
       <Link>preview\pwsh-preview.cmd</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

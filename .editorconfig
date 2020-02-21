@@ -135,6 +135,13 @@ csharp_style_inlined_variable_declaration = true:suggestion
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
+# Force rules
+
+# IDE0044: Add readonly modifier
+dotnet_style_readonly_field = true:error
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = error
+
 # Space preferences
 csharp_space_after_cast = false
 csharp_space_after_colon_in_inheritance_clause = true
