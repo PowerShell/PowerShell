@@ -66,7 +66,9 @@ namespace Microsoft.PowerShell
 #if UNIX
             AttemptExecPwshLogin(args);
 #endif
+#pragma warning disable CA1062 // Validate arguments of public methods
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
+#pragma warning restore CA1062 // Validate arguments of public methods
         }
 
 #if UNIX
