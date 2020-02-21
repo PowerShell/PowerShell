@@ -23,16 +23,18 @@ namespace System.Diagnostics.Eventing
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
+#pragma warning disable IDE1006 // Naming Styles
         private static WriteEventErrorCode t_returnCode; // thread slot to keep last error
         [ThreadStatic]
         private static Guid t_activityId;
+#pragma warning restore IDE1006 // Naming Styles
 
-        private const int s_basicTypeAllocationBufferSize = 16;
-        private const int s_etwMaxNumberArguments = 32;
-        private const int s_etwAPIMaxStringCount = 8;
-        private const int s_maxEventDataDescriptors = 128;
-        private const int s_traceEventMaximumSize = 65482;
-        private const int s_traceEventMaximumStringSize = 32724;
+        private const int BasicTypeAllocationBufferSize = 16;
+        private const int EtwMaxNumberArguments = 32;
+        private const int EtwAPIMaxStringCount = 8;
+        private const int MaxEventDataDescriptors = 128;
+        private const int TraceEventMaximumSize = 65482;
+        private const int TraceEventMaximumStringSize = 32724;
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public enum WriteEventErrorCode : int
@@ -440,7 +442,7 @@ namespace System.Diagnostics.Eventing
 
             if (IsEnabled(eventLevel, eventKeywords))
             {
-                if (eventMessage.Length > s_traceEventMaximumStringSize)
+                if (eventMessage.Length > TraceEventMaximumStringSize)
                 {
                     t_returnCode = WriteEventErrorCode.EventTooBig;
                     return false;
@@ -511,7 +513,7 @@ namespace System.Diagnostics.Eventing
 
             if (IsEnabled(eventDescriptor.Level, eventDescriptor.Keywords))
             {
-                if (data.Length > s_traceEventMaximumStringSize)
+                if (data.Length > TraceEventMaximumStringSize)
                 {
                     t_returnCode = WriteEventErrorCode.EventTooBig;
                     return false;
@@ -614,23 +616,23 @@ namespace System.Diagnostics.Eventing
                     if ((eventPayload != null) && (eventPayload.Length != 0))
                     {
                         argCount = eventPayload.Length;
-                        if (argCount > s_etwMaxNumberArguments)
+                        if (argCount > EtwMaxNumberArguments)
                         {
                             //
                             // too many arguments to log
                             //
                             throw new ArgumentOutOfRangeException("eventPayload",
-                                string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
+                                string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, EtwMaxNumberArguments));
                         }
 
                         uint totalEventSize = 0;
                         int index;
                         int stringIndex = 0;
-                        int[] stringPosition = new int[s_etwAPIMaxStringCount]; // used to keep the position of strings in the eventPayload parameter
-                        string[] dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter
+                        int[] stringPosition = new int[EtwAPIMaxStringCount]; // used to keep the position of strings in the eventPayload parameter
+                        string[] dataString = new string[EtwAPIMaxStringCount]; // string arrays from the eventPayload parameter
                         EventData* userData = stackalloc EventData[argCount];             // allocation for the data descriptors
                         userDataPtr = (EventData*)userData;
-                        byte* dataBuffer = stackalloc byte[s_basicTypeAllocationBufferSize * argCount]; // 16 byte for unboxing non-string argument
+                        byte* dataBuffer = stackalloc byte[BasicTypeAllocationBufferSize * argCount]; // 16 byte for unboxing non-string argument
                         byte* currentBuffer = dataBuffer;
 
                         //
@@ -643,12 +645,12 @@ namespace System.Diagnostics.Eventing
                         {
                             string isString;
                             isString = EncodeObject(ref eventPayload[index], userDataPtr, currentBuffer);
-                            currentBuffer += s_basicTypeAllocationBufferSize;
+                            currentBuffer += BasicTypeAllocationBufferSize;
                             totalEventSize += userDataPtr->Size;
                             userDataPtr++;
                             if (isString != null)
                             {
-                                if (stringIndex < s_etwAPIMaxStringCount)
+                                if (stringIndex < EtwAPIMaxStringCount)
                                 {
                                     dataString[stringIndex] = isString;
                                     stringPosition[stringIndex] = index;
@@ -657,12 +659,12 @@ namespace System.Diagnostics.Eventing
                                 else
                                 {
                                     throw new ArgumentOutOfRangeException("eventPayload",
-                                        string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, s_etwAPIMaxStringCount));
+                                        string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, EtwAPIMaxStringCount));
                                 }
                             }
                         }
 
-                        if (totalEventSize > s_traceEventMaximumSize)
+                        if (totalEventSize > TraceEventMaximumSize)
                         {
                             t_returnCode = WriteEventErrorCode.EventTooBig;
                             return false;

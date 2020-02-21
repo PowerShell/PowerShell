@@ -7933,7 +7933,9 @@ namespace System.Management.Automation.Language
         }
 
         [ThreadStatic]
+#pragma warning disable IDE1006 // Naming Styles
         private static object[] t_arrayOfOneArg;
+#pragma warning restore IDE1006 // Naming Styles
 
         private static object[] arrayOfTwoArgs
         {
@@ -7941,7 +7943,9 @@ namespace System.Management.Automation.Language
         }
 
         [ThreadStatic]
+#pragma warning disable IDE1006 // Naming Styles
         private static object[] t_arrayOfTwoArgs;
+#pragma warning restore IDE1006 // Naming Styles
 
         internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg)
         {
