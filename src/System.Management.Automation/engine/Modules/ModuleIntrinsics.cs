@@ -812,7 +812,7 @@ namespace System.Management.Automation
                 Hashtable dataFileSetting =
                     PsUtils.GetModuleManifestProperties(
                         manifestPath,
-                        PsUtils.ManifestModuleVersionPropertyName);
+                        PsUtils.s_manifestModuleVersionPropertyName);
 
                 object versionValue = dataFileSetting["ModuleVersion"];
                 if (versionValue != null)
@@ -836,7 +836,7 @@ namespace System.Management.Automation
                 Hashtable dataFileSetting =
                     PsUtils.GetModuleManifestProperties(
                         manifestPath,
-                        PsUtils.ManifestGuidPropertyName);
+                        PsUtils.s_manifestGuidPropertyName);
 
                 object guidValue = dataFileSetting["GUID"];
                 if (guidValue != null)
@@ -860,7 +860,7 @@ namespace System.Management.Automation
                 Hashtable dataFileSetting =
                     PsUtils.GetModuleManifestProperties(
                         manifestPath,
-                        PsUtils.ManifestPrivateDataPropertyName);
+                        PsUtils.s_manifestPrivateDataPropertyName);
 
                 object privateData = dataFileSetting["PrivateData"];
                 if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)

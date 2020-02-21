@@ -168,8 +168,8 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst ParseTask(string fileName, string input, List<Token> tokenList, bool recursed, ParseMode parseMode)
         {
-            bool etwEnabled = ParserEventSource.Log.IsEnabled();
-            if (etwEnabled) ParserEventSource.Log.ParseStart(ParserEventSource.GetFileOrScript(fileName, input), input.Length);
+            bool etwEnabled = ParserEventSource.s_log.IsEnabled();
+            if (etwEnabled) ParserEventSource.s_log.ParseStart(ParserEventSource.GetFileOrScript(fileName, input), input.Length);
 
             ScriptBlockAst ast = null;
 
@@ -215,7 +215,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (etwEnabled) ParserEventSource.Log.ParseStop();
+            if (etwEnabled) ParserEventSource.s_log.ParseStop();
             return ast;
         }
 
@@ -8082,7 +8082,7 @@ namespace System.Management.Automation.Language
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
     internal class ParserEventSource : EventSource
     {
-        internal static ParserEventSource Log = new ParserEventSource();
+        internal static ParserEventSource s_log = new ParserEventSource();
         internal const int MaxScriptLengthToLog = 50;
 
         public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }

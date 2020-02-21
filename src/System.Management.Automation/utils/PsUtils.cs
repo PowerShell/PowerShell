@@ -401,10 +401,10 @@ namespace System.Management.Automation
 
         #endregion EvaluatePowerShellDataFile
 
-        internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
-        internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
-        internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
-        internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
+        internal static readonly string[] s_manifestModuleVersionPropertyName = new[] { "ModuleVersion" };
+        internal static readonly string[] s_manifestGuidPropertyName = new[] { "GUID" };
+        internal static readonly string[] s_manifestPrivateDataPropertyName = new[] { "PrivateData" };
+        internal static readonly string[] s_fastModuleManifestAnalysisPropertyNames = new[]
         {
             "AliasesToExport",
             "CmdletsToExport",
@@ -565,22 +565,22 @@ namespace System.Management.Automation
     internal class CRC32Hash
     {
         // CRC-32C polynomial representations
-        private const uint polynomial = 0x1EDC6F41;
-        private static readonly uint[] table;
+        private const uint Polynomial = 0x1EDC6F41;
+        private static readonly uint[] s_table;
 
         static CRC32Hash()
         {
             uint temp = 0;
-            table = new uint[256];
+            s_table = new uint[256];
 
-            for (int i = 0; i < table.Length; i++)
+            for (int i = 0; i < s_table.Length; i++)
             {
                 temp = (uint)i;
                 for (int j = 0; j < 8; j++)
                 {
                     if ((temp & 1) == 1)
                     {
-                        temp = (temp >> 1) ^ polynomial;
+                        temp = (temp >> 1) ^ Polynomial;
                     }
                     else
                     {
@@ -588,7 +588,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                table[i] = temp;
+                s_table[i] = temp;
             }
         }
 
@@ -598,7 +598,7 @@ namespace System.Management.Automation
             for (int i = 0; i < buffer.Length; ++i)
             {
                 var index = (byte)(crc ^ buffer[i] & 0xff);
-                crc = (crc >> 8) ^ table[index];
+                crc = (crc >> 8) ^ s_table[index];
             }
 
             return ~crc;

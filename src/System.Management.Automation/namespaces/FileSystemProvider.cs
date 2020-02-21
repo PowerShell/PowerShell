@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
-        private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        private static readonly System.IO.EnumerationOptions s_enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchType = MatchType.Win32,
             MatchCasing = MatchCasing.CaseInsensitive,
@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static bool _WNetApiAvailable = true;
+        private static bool s_wNetApiAvailable = true;
 
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
 
                     int code = ERROR_NO_NETWORK;
 
-                    if (_WNetApiAvailable)
+                    if (s_wNetApiAvailable)
                     {
                         try
                         {
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (System.DllNotFoundException)
                         {
-                            _WNetApiAvailable = false;
+                            s_wNetApiAvailable = false;
                         }
                     }
 
@@ -752,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
                 // You need to actually remove the drive.
                 int code = ERROR_NO_NETWORK;
 
-                if (_WNetApiAvailable)
+                if (s_wNetApiAvailable)
                 {
                     try
                     {
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (System.DllNotFoundException)
                     {
-                        _WNetApiAvailable = false;
+                        s_wNetApiAvailable = false;
                     }
                 }
 
@@ -1738,7 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Filter the directories
-                        target.Add(directory.EnumerateDirectories(Filter, _enumerationOptions));
+                        target.Add(directory.EnumerateDirectories(Filter, s_enumerationOptions));
                     }
 
                     // Making sure to obey the StopProcessing.
@@ -1749,7 +1749,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Use the specified filter when retrieving the
                     // children
-                    target.Add(directory.EnumerateFiles(Filter, _enumerationOptions));
+                    target.Add(directory.EnumerateFiles(Filter, s_enumerationOptions));
                 }
                 else
                 {
@@ -4166,7 +4166,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            ps.AddScript(CopyFileRemoteUtils.AllCopyFromRemoteScripts);
+            ps.AddScript(CopyFileRemoteUtils.s_allCopyFromRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
         }
 
@@ -4480,7 +4480,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 
-            ps.AddScript(CopyFileRemoteUtils.AllCopyToRemoteScripts);
+            ps.AddScript(CopyFileRemoteUtils.s_allCopyToRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
         }
 
@@ -7140,7 +7140,7 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
             internal static extern int PathGetDriveNumber(string path);
 
-            private static bool _WNetApiAvailable = true;
+            private static bool s_wNetApiAvailable = true;
 
             /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
@@ -7160,7 +7160,7 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
-                if (!_WNetApiAvailable)
+                if (!s_wNetApiAvailable)
                 {
                     return false;
                 }
@@ -7180,7 +7180,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (System.DllNotFoundException)
                     {
-                        _WNetApiAvailable = false;
+                        s_wNetApiAvailable = false;
                         return false;
                     }
 
@@ -9874,14 +9874,14 @@ namespace System.Management.Automation.Internal
 
         #endregion
 
-        internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+        internal static string s_allCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
             yield return s_PSCopyToSessionHelperFunction;
             yield return PSCopyRemoteUtilsFunction;
         }
 
-        internal static string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+        internal static string s_allCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {
             yield return s_PSCopyFromSessionHelperFunction;

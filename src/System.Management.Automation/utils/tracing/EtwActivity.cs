@@ -259,10 +259,10 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        private static readonly Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
-        private static readonly object syncLock = new object();
+        private static readonly Dictionary<Guid, EventProvider> s_providers = new Dictionary<Guid, EventProvider>();
+        private static readonly object s_syncLock = new object();
 
-        private static readonly EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
+        private static readonly EventDescriptor s_writeTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
         private EventProvider currentProvider;
 
@@ -452,7 +452,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                return _WriteTransferEvent;
+                return s_writeTransferEvent;
             }
         }
 
@@ -492,15 +492,15 @@ namespace System.Management.Automation.Tracing
             if (currentProvider != null)
                 return currentProvider;
 
-            lock (syncLock)
+            lock (s_syncLock)
             {
                 if (currentProvider != null)
                     return currentProvider;
 
-                if (!providers.TryGetValue(ProviderId, out currentProvider))
+                if (!s_providers.TryGetValue(ProviderId, out currentProvider))
                 {
                     currentProvider = new EventProvider(ProviderId);
-                    providers[ProviderId] = currentProvider;
+                    s_providers[ProviderId] = currentProvider;
                 }
             }
 

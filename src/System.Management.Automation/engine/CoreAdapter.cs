@@ -41,7 +41,7 @@ namespace System.Management.Automation
         /// Tracer for this and derivate classes.
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
-        protected static PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        protected static PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
         #region virtual
 
         #region member

@@ -170,7 +170,7 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
-            tracer.WriteLine("Getting member with name {0}", memberName);
+            s_tracer.WriteLine("Getting member with name {0}", memberName);
 
             ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
 
@@ -462,11 +462,11 @@ namespace System.Management.Automation
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
                 if (typeTable != null)
                 {
-                    tracer.WriteLine("Returning method information from internal cache");
+                    s_tracer.WriteLine("Returning method information from internal cache");
                     return typeTable;
                 }
 
-                tracer.WriteLine("Method information not found in internal cache. Constructing one");
+                s_tracer.WriteLine("Method information not found in internal cache. Constructing one");
 
                 try
                 {
@@ -603,7 +603,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(pData != null,
                 "Input PropertyData should not be null");
 
-            tracer.WriteLine("Getting DotNet Type for CimType : {0}", pData.Type);
+            s_tracer.WriteLine("Getting DotNet Type for CimType : {0}", pData.Type);
 
             string retValue;
             switch (pData.Type)
@@ -717,7 +717,7 @@ namespace System.Management.Automation
 
             // GetBestMethodAndArguments should fill verifiedArguments with
             // correct values (even if some values are not specified)
-            tracer.WriteLine("Parameters found {0}. Arguments supplied {0}",
+            s_tracer.WriteLine("Parameters found {0}. Arguments supplied {0}",
                 parameterList.Length, verifiedArguments.Length);
 
             Diagnostics.Assert(parameterList.Length == verifiedArguments.Length,
@@ -866,7 +866,7 @@ namespace System.Management.Automation
                 inParameterString.Remove(inParameterString.Length - 2, 2);
             }
 
-            tracer.WriteLine("Constructing method definition for method {0}", mData.Name);
+            s_tracer.WriteLine("Constructing method definition for method {0}", mData.Name);
             StringBuilder builder = new StringBuilder();
 
             builder.Append("System.Management.ManagementBaseObject ");
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             builder.Append(")");
 
             string returnValue = builder.ToString();
-            tracer.WriteLine("Definition constructed: {0}", returnValue);
+            s_tracer.WriteLine("Definition constructed: {0}", returnValue);
 
             return returnValue;
         }
@@ -995,7 +995,7 @@ namespace System.Management.Automation
         protected override object InvokeManagementMethod(ManagementObject wmiObject,
             string methodName, ManagementBaseObject inParams)
         {
-            tracer.WriteLine("Invoking class method: {0}", methodName);
+            s_tracer.WriteLine("Invoking class method: {0}", methodName);
 
             ManagementClass mClass = wmiObject as ManagementClass;
 
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
             {
                 if (members[methodEntry.Name] == null)
                 {
-                    tracer.WriteLine("Adding method {0}", methodEntry.Name);
+                    s_tracer.WriteLine("Adding method {0}", methodEntry.Name);
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
                 }
             }
@@ -1184,7 +1184,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override object InvokeManagementMethod(ManagementObject obj, string methodName, ManagementBaseObject inParams)
         {
-            tracer.WriteLine("Invoking class method: {0}", methodName);
+            s_tracer.WriteLine("Invoking class method: {0}", methodName);
 
             try
             {
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation
             {
                 if (members[methodEntry.Name] == null)
                 {
-                    tracer.WriteLine("Adding method {0}", methodEntry.Name);
+                    s_tracer.WriteLine("Adding method {0}", methodEntry.Name);
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
                 }
             }

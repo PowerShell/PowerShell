@@ -100,7 +100,7 @@ namespace System.Management.Automation
             ConcurrentDictionary<string, CommandTypes> result = null;
             try
             {
-                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
+                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.s_fastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))

@@ -36,6 +36,7 @@ namespace System.Management.Automation.Tracing
         /// Keyword all.
         /// </summary>
         public const long KeywordAll = 0xFFFFFFFF;
+#pragma warning disable IDE1006 // Naming Styles
         private static Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
         private static readonly EventDescriptor WriteTransferEventEvent;
         private static readonly EventDescriptor DebugMessageEvent;
@@ -119,6 +120,7 @@ namespace System.Management.Automation.Tracing
         private static readonly EventDescriptor M3PWorkflowValidationErrorEvent;
         private static readonly EventDescriptor M3PWorkflowValidationFinishedEvent;
         private static readonly EventDescriptor M3PWorkflowValidationStartedEvent;
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// Static constructor.

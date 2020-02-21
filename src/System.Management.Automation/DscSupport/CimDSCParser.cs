@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 Hashtable dataFileSetting =
                     PsUtils.GetModuleManifestProperties(
                         manifestPath,
-                        PsUtils.ManifestModuleVersionPropertyName);
+                        PsUtils.s_manifestModuleVersionPropertyName);
 
                 object versionValue = dataFileSetting["ModuleVersion"];
                 if (versionValue != null)

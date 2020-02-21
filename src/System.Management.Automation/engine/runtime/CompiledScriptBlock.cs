@@ -166,12 +166,12 @@ namespace System.Management.Automation
             var sw = new Stopwatch();
             sw.Start();
 #endif
-            bool etwEnabled = ParserEventSource.Log.IsEnabled();
+            bool etwEnabled = ParserEventSource.s_log.IsEnabled();
             if (etwEnabled)
             {
                 var extent = _ast.Body.Extent;
                 var text = extent.Text;
-                ParserEventSource.Log.CompileStart(
+                ParserEventSource.s_log.CompileStart(
                     FileName: ParserEventSource.GetFileOrScript(extent.File, text),
                     text.Length,
                     optimize);
@@ -188,7 +188,7 @@ namespace System.Management.Automation
                 TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
             }
 #endif
-            if (etwEnabled) ParserEventSource.Log.CompileStop();
+            if (etwEnabled) ParserEventSource.s_log.CompileStop();
         }
 
         private void PerformSecurityChecks()

@@ -617,10 +617,12 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        bool etwEnabled = ParserEventSource.Log.IsEnabled();
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStart(si.Path);
+                        bool etwEnabled = ParserEventSource.s_log.IsEnabled();
+                        if (etwEnabled)
+                            ParserEventSource.s_log.CheckSecurityStart(si.Path);
                         allowRun = CheckPolicy(si, host, out reason);
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStop(si.Path);
+                        if (etwEnabled)
+                            ParserEventSource.s_log.CheckSecurityStop(si.Path);
                     }
 
                     break;

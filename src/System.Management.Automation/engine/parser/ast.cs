@@ -1282,18 +1282,18 @@ namespace System.Management.Automation.Language
 
         internal void PerformPostParseChecks(Parser parser)
         {
-            bool etwEnabled = ParserEventSource.Log.IsEnabled();
-            if (etwEnabled) ParserEventSource.Log.ResolveSymbolsStart();
+            bool etwEnabled = ParserEventSource.s_log.IsEnabled();
+            if (etwEnabled) ParserEventSource.s_log.ResolveSymbolsStart();
 
             SymbolResolver.ResolveSymbols(parser, this);
             if (etwEnabled)
             {
-                ParserEventSource.Log.ResolveSymbolsStop();
-                ParserEventSource.Log.SemanticChecksStart();
+                ParserEventSource.s_log.ResolveSymbolsStop();
+                ParserEventSource.s_log.SemanticChecksStart();
             }
 
             SemanticChecks.CheckAst(parser, this);
-            if (etwEnabled) ParserEventSource.Log.SemanticChecksStop();
+            if (etwEnabled) ParserEventSource.s_log.SemanticChecksStop();
 
             Diagnostics.Assert(PostParseChecksPerformed, "Post parse checks not set during semantic checks");
         }
