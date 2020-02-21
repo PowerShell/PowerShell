@@ -95,9 +95,12 @@ Describe "Get-Content" -Tags "CI" {
 
     It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
         @{EncodingName = 'String'},
+        @{EncodingName = 'OEM'},
         @{EncodingName = 'Unicode'},
         @{EncodingName = 'BigEndianUnicode'},
         @{EncodingName = 'UTF8'},
+        @{EncodingName = 'UTF8BOM'},
+        @{EncodingName = 'UTF8NoBOM'},
         @{EncodingName = 'UTF7'},
         @{EncodingName = 'UTF32'},
         @{EncodingName = 'Ascii'}
