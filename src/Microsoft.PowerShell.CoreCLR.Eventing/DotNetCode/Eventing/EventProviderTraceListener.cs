@@ -20,12 +20,12 @@ namespace System.Diagnostics.Eventing
         //
         //
         private EventProvider _provider;
-        private const string s_nullStringValue = "null";
-        private const string s_nullStringComaValue = "null,";
-        private const string s_nullCStringValue = ": null";
+        private const string NullStringValue = "null";
+        private const string NullStringComaValue = "null,";
+        private const string NullCStringValue = ": null";
         private string _delimiter = ";";
-        private const uint s_keyWordMask = 0xFFFFFF00;
-        private const int s_defaultPayloadSize = 512;
+        private const uint KeyWordMask = 0xFFFFFF00;
+        private const int DefaultPayloadSize = 512;
 
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public string Delimiter
@@ -145,7 +145,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new StringBuilder(DefaultPayloadSize);
 
             if (data != null)
             {
@@ -153,12 +153,12 @@ namespace System.Diagnostics.Eventing
             }
             else
             {
-                dataString.Append(s_nullCStringValue);
+                dataString.Append(NullCStringValue);
             }
 
             _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
-                            (long)eventType & s_keyWordMask);
+                            (long)eventType & KeyWordMask);
         }
 
         public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, params object[] data)
@@ -174,7 +174,7 @@ namespace System.Diagnostics.Eventing
             }
 
             int index;
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new StringBuilder(DefaultPayloadSize);
 
             if ((data != null) && (data.Length > 0))
             {
@@ -187,7 +187,7 @@ namespace System.Diagnostics.Eventing
                     }
                     else
                     {
-                        dataString.Append(s_nullStringComaValue);
+                        dataString.Append(NullStringComaValue);
                     }
                 }
 
@@ -197,17 +197,17 @@ namespace System.Diagnostics.Eventing
                 }
                 else
                 {
-                    dataString.Append(s_nullStringValue);
+                    dataString.Append(NullStringValue);
                 }
             }
             else
             {
-                dataString.Append(s_nullStringValue);
+                dataString.Append(NullStringValue);
             }
 
             _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
-                            (long)eventType & s_keyWordMask);
+                            (long)eventType & KeyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
@@ -224,7 +224,7 @@ namespace System.Diagnostics.Eventing
 
             _provider.WriteMessageEvent(string.Empty,
                             (byte)eventType,
-                            (long)eventType & s_keyWordMask);
+                            (long)eventType & KeyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
@@ -239,12 +239,12 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new StringBuilder(DefaultPayloadSize);
             dataString.Append(message);
 
             _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
-                            (long)eventType & s_keyWordMask);
+                            (long)eventType & KeyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
@@ -263,13 +263,13 @@ namespace System.Diagnostics.Eventing
             {
                 _provider.WriteMessageEvent(format,
                                 (byte)eventType,
-                                (long)eventType & s_keyWordMask);
+                                (long)eventType & KeyWordMask);
             }
             else
             {
                 _provider.WriteMessageEvent(string.Format(CultureInfo.InvariantCulture, format, args),
                                 (byte)eventType,
-                                (long)eventType & s_keyWordMask);
+                                (long)eventType & KeyWordMask);
             }
         }
 
