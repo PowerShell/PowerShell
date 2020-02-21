@@ -149,6 +149,8 @@ dotnet_style_qualification_for_field = false:none
 dotnet_style_qualification_for_property = false:none
 # IDE0003: Remove qualification
 dotnet_style_qualification_for_event = false:none
+# IDE0018: Inline variable declaration
+csharp_style_inlined_variable_declaration = true:error
 
 # Space preferences
 csharp_space_after_cast = false
